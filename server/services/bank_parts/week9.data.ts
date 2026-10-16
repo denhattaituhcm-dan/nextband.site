@@ -161,152 +161,202 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w9d2_q01",
       roundIndex: 0,
-      prompt: "Theo bài đọc 'Why YouTube stars influence millennials more than traditional celebrities', nhóm đối tượng 'Millennials' sở hữu sức mua khoảng bao nhiêu vào cuối năm 2015?",
+      prompt: "Trong chủ đề Media & Influencers, từ \"authenticity\" trong câu \"Khoai Lang Thang's success lies in his authenticity\" ĐỒNG NGHĨA nhất với:",
       options: [
-        { id: "opt_A", label: "A", text: "Khoảng 1.3 nghìn tỷ USD ($1.3 trillion)" },
-        { id: "opt_B", label: "B", text: "Khoảng 500 tỷ USD ($500 billion)" },
-        { id: "opt_C", label: "C", text: "Khoảng 2.6 tỷ USD ($2.6 billion)" },
-        { id: "opt_D", label: "D", text: "Khoảng 100 triệu USD ($100 million)" }
+        { id: "opt_A", label: "A", text: "genuineness / truthfulness (sự chân thực, tính chân thành tự nhiên)" },
+        { id: "opt_B", label: "B", text: "artificiality / fakery (sự giả tạo, dàn dựng)" },
+        { id: "opt_C", label: "C", text: "extravagance (sự xa hoa lãng phí)" },
+        { id: "opt_D", label: "D", text: "popularity (sự nổi tiếng bề nổi)" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'Millennials are currently the largest group of consumers, with about $1.3 trillion in buying power as of the end of 2015.'"
+      correctAnswerText: "A. genuineness / truthfulness (sự chân thực, tính chân thành tự nhiên)",
+      correctExplanation: "\"Authenticity\" (danh từ) = tính chân thực, không diễn xuất giả tạo, đồng nghĩa với genuineness.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. artificiality / fakery",
+        diagnosticTitle: "Chọn nhầm từ trái nghĩa",
+        explanation: "Fakery/artificiality là sự giả tạo dàn dựng PR, trái ngược hoàn toàn với phẩm chất authenticity của vlogger."
+      }
     },
     {
       id: "doer_w9d2_q02",
       roundIndex: 1,
-      prompt: "Theo nghiên cứu của Defy Media, bao nhiêu % số người được khảo sát từ 13-24 tuổi sẵn sàng dùng thử sản phẩm do một YouTuber gợi ý?",
+      prompt: "Từ TRÁI NGHĨA với \"approachable\" trong câu \"YouTube stars connect better with people by being approachable\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "63%" },
-        { id: "opt_B", label: "B", text: "48%" },
-        { id: "opt_C", label: "C", text: "85%" },
-        { id: "opt_D", label: "D", text: "30%" }
+        { id: "opt_A", label: "A", text: "distant / unapproachable (xa cách, khó gần, lạnh lùng)" },
+        { id: "opt_B", label: "B", text: "friendly / accessible (thân thiện, dễ tiếp cận)" },
+        { id: "opt_C", label: "C", text: "humorous (hài hước)" },
+        { id: "opt_D", label: "D", text: "weird (kỳ lạ)" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'In a study by Defy Media, 63% of respondents aged between 13-24 said that they would try a brand or a product recommended by a YouTube content creator...'"
+      correctAnswerText: "A. distant / unapproachable (xa cách, khó gần, lạnh lùng)",
+      correctExplanation: "\"Approachable\" = thân thiện, dễ gần, tạo cảm giác chan hòa. Từ trái nghĩa là \"distant\" (xa cách, kiêu kỳ như ngôi sao truyền hình).",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. friendly / accessible",
+        diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
+        explanation: "Friendly và accessible là từ đồng nghĩa với approachable. Đề bài yêu cầu tìm từ TRÁI NGHĨA."
+      }
     },
     {
       id: "doer_w9d2_q03",
       roundIndex: 2,
-      prompt: "Tỷ lệ người sẵn sàng dùng thử sản phẩm do các ngôi sao truyền hình hoặc điện ảnh (movie/TV star) gợi ý trong cùng nghiên cứu là bao nhiêu?",
+      prompt: "Cụm danh từ \"peer-to-peer advice\" trong nghiên cứu thị hiếu thế hệ trẻ có nghĩa là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "48%" },
-        { id: "opt_B", label: "B", text: "63%" },
-        { id: "opt_C", label: "C", text: "15%" },
-        { id: "opt_D", label: "D", text: "75%" }
+        { id: "opt_A", label: "A", text: "Lời khuyên, sự tư vấn từ bạn bè đồng trang lứa và cộng đồng ngang hàng" },
+        { id: "opt_B", label: "B", text: "Thông điệp quảng cáo trên sóng truyền hình quốc gia" },
+        { id: "opt_C", label: "C", text: "Chỉ thị hành chính từ cơ quan quản lý nhà nước" },
+        { id: "opt_D", label: "D", text: "Lời phát biểu của các ngôi sao màn bạc Hollywood" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'whereas only 48% mentioned the same about a movie or TV star.'"
+      correctAnswerText: "A. Lời khuyên, sự tư vấn từ bạn bè đồng trang lứa và cộng đồng ngang hàng",
+      correctExplanation: "\"Peer\" là bạn đồng lứa/người ngang hàng. \"Peer-to-peer advice\" là lời khuyên truyền miệng giữa những người có cùng hoàn cảnh sống.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Thông điệp quảng cáo truyền hình",
+        diagnosticTitle: "Nhầm lẫn tiếp thị truyền thông với chia sẻ ngang hàng",
+        explanation: "Quảng cáo truyền hình là tiếp thị áp đặt một chiều (top-down), đối lập với sự tin tưởng tự nhiên của lời khuyên đồng trang lứa (peer-to-peer)."
+      }
     },
     {
       id: "doer_w9d2_q04",
       roundIndex: 3,
-      prompt: "Trong phần mở đầu về vlogger Khoai Lang Thang, yếu tố quan trọng nhất tạo nên thành công của anh ấy là gì?",
+      prompt: "Collocation chuẩn trong bài: \"Unlike traditional celebrities, ordinary influencers are now setting trends and driving ______ on social platforms.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Sự chân thực (authenticity) và những thước phim gần gũi về cuộc sống đời thường" },
-        { id: "opt_B", label: "B", text: "Chiêu trò quảng cáo và scandal gây sốc trên mạng xã hội" },
-        { id: "opt_C", label: "C", text: "Trang phục biểu diễn đắt tiền và dàn siêu xe" },
-        { id: "opt_D", label: "D", text: "Lượng ngân sách tài trợ khổng lồ từ các nhãn hàng xa xỉ" }
+        { id: "opt_A", label: "A", text: "opinions" },
+        { id: "opt_B", label: "B", text: "cars" },
+        { id: "opt_C", label: "C", text: "lorries" },
+        { id: "opt_D", label: "D", text: "roads" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'Khoai Lang Thang's success lies in his authenticity. His videos stand out for their authentic content and offer viewers a unique and intimate look into the places he visits.'"
+      correctAnswerText: "A. opinions",
+      correctExplanation: "Collocation truyền thông học: \"drive opinions\" = định hướng dư luận, dẫn dắt quan điểm công chúng.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. cars",
+        diagnosticTitle: "Dịch nghĩa đen của động từ drive thành lái xe",
+        explanation: "Trong lĩnh vực xã hội học truyền thông, \"drive opinions\" mang nghĩa bóng là dẫn dắt ý kiến số đông."
+      }
     },
     {
       id: "doer_w9d2_q05",
       roundIndex: 4,
-      prompt: "Collocation 'content creator' dùng để chỉ ai trong lĩnh vực truyền thông số?",
+      prompt: "Collocation kinh tế học chỉ khả năng chi trả của người tiêu dùng: \"Millennials represent over $1.3 trillion in ______.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Nhà sáng tạo nội dung (người sản xuất video, bài viết cho các nền tảng mạng xã hội)" },
-        { id: "opt_B", label: "B", text: "Kỹ sư lập trình mạng máy tính" },
-        { id: "opt_C", label: "C", text: "Nhân viên trực tổng đài chăm sóc khách hàng" },
-        { id: "opt_D", label: "D", text: "Biên tập viên nhà xuất bản sách in" }
+        { id: "opt_A", label: "A", text: "buying power (hoặc purchasing power: sức mua)" },
+        { id: "opt_B", label: "B", text: "buying energy" },
+        { id: "opt_C", label: "C", text: "buying muscle" },
+        { id: "opt_D", label: "D", text: "buying effort" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "'content creator' là thuật ngữ chỉ nhà sáng tạo nội dung số (trên YouTube, TikTok, Facebook...)."
+      correctAnswerText: "A. buying power (hoặc purchasing power: sức mua)",
+      correctExplanation: "\"Buying power\" (hoặc purchasing power) là thuật ngữ tài chính tiêu chuẩn chỉ tổng năng lực tài chính và sức mua sắm hàng hóa.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. buying energy",
+        diagnosticTitle: "Dùng từ năng lượng thay vì thuật ngữ sức mua",
+        explanation: "Năng lực mua sắm trong kinh tế bắt buộc dùng danh từ \"power\", không dùng \"energy\" hay \"muscle\"."
+      }
     },
     {
       id: "doer_w9d2_q06",
       roundIndex: 5,
-      prompt: "Cụm 'peer-to-peer advice' trong bài đọc thể hiện điều gì mà thế hệ trẻ tin tưởng nhất?",
+      prompt: "Cụm thành ngữ trong bài: \"The influence of young YouTubers may fall ______ with older generations who prefer traditional media.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Lời khuyên từ bạn bè đồng trang lứa và cộng đồng ngang hàng" },
-        { id: "opt_B", label: "B", text: "Thông điệp quảng cáo trên truyền hình quốc gia" },
-        { id: "opt_C", label: "C", text: "Lời kêu gọi của chính phủ và các chuyên gia kinh tế" },
-        { id: "opt_D", label: "D", text: "Các bài báo PR được trả tiền trong tạp chí chuyên ngành" }
+        { id: "opt_A", label: "A", text: "flat" },
+        { id: "opt_B", label: "B", text: "down" },
+        { id: "opt_C", label: "C", text: "deep" },
+        { id: "opt_D", label: "D", text: "low" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "'peer-to-peer advice' là lời khuyên giữa những người cùng trang lứa/cùng tầng lớp trong cộng đồng."
+      correctAnswerText: "A. flat",
+      correctExplanation: "Idiom chuẩn: \"fall flat\" = thất bại, không tạo được hiệu ứng hay sức hút đối với một nhóm khán giả cụ thể.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. down",
+        diagnosticTitle: "Dịch thành ngữ rơi xuống (fall down)",
+        explanation: "Fall down là ngã sấp cơ học, còn thông điệp/sức ảnh hưởng không có tác dụng với ai phải dùng thành ngữ \"fall flat\"."
+      }
     },
     {
       id: "doer_w9d2_q07",
       roundIndex: 6,
-      prompt: "Từ vựng: 'Millennials don't care much what mainstream celebrities have to say.' Từ 'mainstream' mang nghĩa là gì?",
+      prompt: "Chọn giới từ đúng đi kèm động từ đồng cảm: \"Audiences can easily relate ______ the vlogger's humble background and sincere journey.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Chính thống, truyền thống, đại chúng phổ biến" },
-        { id: "opt_B", label: "B", text: "Độc lạ, dị biệt, thiểu số ngầm" },
-        { id: "opt_C", label: "C", text: "Bị lãng quên, lỗi thời" },
-        { id: "opt_D", label: "D", text: "Mang tính chất tôn giáo khép kín" }
+        { id: "opt_A", label: "A", text: "to" },
+        { id: "opt_B", label: "B", text: "with" },
+        { id: "opt_C", label: "C", text: "for" },
+        { id: "opt_D", label: "D", text: "about" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "'mainstream' = chính thống, xu hướng chủ đạo được số đông đón nhận (ví dụ: mainstream media, mainstream celebrities)."
+      correctAnswerText: "A. to",
+      correctExplanation: "Cấu trúc cảm xúc giao tiếp: \"relate TO somebody/something\" (thấu hiểu, tìm thấy sự đồng cảm sâu sắc với câu chuyện của ai).",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. with",
+        diagnosticTitle: "Dùng giới từ \"with\" do thói quen liên kết nghĩa",
+        explanation: "Mặc dù communicate with có with, cấu trúc đồng cảm tâm lý bắt buộc là \"relate TO somebody\"."
+      }
     },
     {
       id: "doer_w9d2_q08",
       roundIndex: 7,
-      prompt: "Cụm động từ 'relate to something/someone' trong câu 'Viewers can easily relate to his travel experiences' mang ý nghĩa là gì?",
+      prompt: "Cụm danh từ \"distaste for advertising\" trong câu \"people's distaste for advertising has redefined celebrity\" có nghĩa là:",
       options: [
-        { id: "opt_A", label: "A", text: "Dễ dàng đồng cảm, cảm thấy gắn kết và thấy bóng dáng mình trong đó" },
-        { id: "opt_B", label: "B", text: "Có quan hệ huyết thống họ hàng ruột thịt" },
-        { id: "opt_C", label: "C", text: "Phản đối gay gắt vì quan điểm đối lập" },
-        { id: "opt_D", label: "D", text: "Sao chép nguyên văn kịch bản của người khác" }
+        { id: "opt_A", label: "A", text: "Sự ác cảm, chán ghét những mẩu quảng cáo phô trương thiếu trung thực" },
+        { id: "opt_B", label: "B", text: "Vị đắng chát khi nếm thử thức ăn quảng cáo" },
+        { id: "opt_C", label: "C", text: "Niềm đam mê xem lại các clip quảng cáo cũ" },
+        { id: "opt_D", label: "D", text: "Thói quen tắt âm thanh tivi" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "'relate to sb/sth' = tìm thấy sự đồng cảm, liên hệ gần gũi với trải nghiệm của bản thân."
+      correctAnswerText: "A. Sự ác cảm, chán ghét những mẩu quảng cáo phô trương thiếu trung thực",
+      correctExplanation: "\"Distaste for something\" = cảm giác không ưa, ác cảm hoặc phản đối điều gì một cách sâu sắc.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Vị đắng chát thức ăn",
+        diagnosticTitle: "Hiểu nhầm tiền tố dis-taste theo vị giác sinh học",
+        explanation: "Trong ngữ cảnh truyền thông, distaste là thái độ ác cảm về mặt tâm lý, không liên quan đến vị giác trên lưỡi."
+      }
     },
     {
       id: "doer_w9d2_q09",
       roundIndex: 8,
-      prompt: "Theo bài đọc, yếu tố nào đã góp phần định nghĩa lại từ 'celebrity' (người nổi tiếng) trong kỷ nguyên số?",
+      prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào câu phân tích tiếp thị: \"Brands now recruit digital content ______ to forge genuine, transparent dialogues with modern consumers.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Sự bùng nổ của mạng xã hội, sự suy giảm của truyền hình và sự ngán ngẩm của người xem đối với quảng cáo" },
-        { id: "opt_B", label: "B", text: "Giá vé rạp chiếu phim tăng quá cao" },
-        { id: "opt_C", label: "C", text: "Sự xuất hiện của công nghệ trí tuệ nhân tạo đồ hoạ" },
-        { id: "opt_D", label: "D", text: "Các cuộc thi hoa hậu truyền thống ngày càng nhiều" }
+        { id: "opt_A", label: "A", text: "creators (nhà sáng tạo nội dung số)" },
+        { id: "opt_B", label: "B", text: "campuses" },
+        { id: "opt_C", label: "C", text: "burnouts" },
+        { id: "opt_D", label: "D", text: "blands" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'the rise of social media, the declining popularity of TV, and people's distaste for advertising has redefined the word celebrity.'"
+      correctAnswerText: "A. creators (nhà sáng tạo nội dung số)",
+      correctExplanation: "\"Content creators\" là danh từ chuẩn nghề nghiệp chỉ các nhà sáng tạo nội dung trên mạng xã hội hiện đại.",
+      misconception: {
+        baitOptionId: "opt_C",
+        baitOptionText: "C. burnouts",
+        diagnosticTitle: "Chọn sai chủ thể nhân sự",
+        explanation: "Burnout là tình trạng kiệt sức lao động, không phải chức danh nghề nghiệp truyền thông."
+      }
     },
     {
       id: "doer_w9d2_q10",
       roundIndex: 9,
-      prompt: "Collocation 'buying power' (hoặc purchasing power) trong đoạn văn có nghĩa là gì?",
+      prompt: "PARAPHRASE: Câu \"Millennials disdain scripted promotional endorsements by mainstream celebrities, placing their confidence instead in authentic peer-to-peer recommendations\" được diễn đạt lại tương đương nhất là:",
       options: [
-        { id: "opt_A", label: "A", text: "Sức mua, khả năng chi trả tài chính của người tiêu dùng" },
-        { id: "opt_B", label: "B", text: "Quyền lực chính trị của các tập đoàn bán lẻ" },
-        { id: "opt_C", label: "C", text: "Tốc độ thanh toán của thẻ ngân hàng" },
-        { id: "opt_D", label: "D", text: "Mức năng lượng tiêu thụ khi mua sắm" }
+        { id: "opt_A", label: "A", text: "Younger demographics reject staged commercial ads by traditional stars, trusting candid guidance from relatable online personalities instead." },
+        { id: "opt_B", label: "B", text: "Television commercials have completely regained total trust among teenagers who refuse to open mobile applications." },
+        { id: "opt_C", label: "C", text: "Movie stars are officially prohibited from partnering with consumer product manufacturers." },
+        { id: "opt_D", label: "D", text: "Consumers make purchases strictly when celebrities refuse to disclose sponsored agreements." }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "'buying power' = sức mua của người tiêu dùng trên thị trường kinh tế."
+      correctAnswerText: "A. Younger demographics reject staged commercial ads by traditional stars, trusting candid guidance from relatable online personalities instead.",
+      correctExplanation: "\"Younger demographics reject staged commercial ads\" paraphrase cho \"disdain scripted promotional endorsements\", và \"trusting candid guidance from relatable personalities\" paraphrase cho \"confidence in authentic peer-to-peer recommendations\".",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Television commercials regained total trust",
+        diagnosticTitle: "Đảo ngược xu hướng tiêu dùng của giới trẻ",
+        explanation: "Giới trẻ ngày nay né tránh quảng cáo tivi truyền thống và tìm kiếm sự chân thực từ những người có hoàn cảnh tương đồng."
+      }
     }
   ],
 

@@ -161,150 +161,202 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w6d2_q01",
       roundIndex: 0,
-      prompt: "Theo bài đọc về lịch sử ra đời của Facebook, tiền thân đầu tiên của mạng xã hội này là trang web nào do Mark Zuckerberg tạo ra tại Harvard?",
+      prompt: "Trong chủ đề Technology & Business, từ \"settlement\" trong vụ kiện bản quyền ý tưởng của Facebook ĐỒNG NGHĨA nhất với:",
       options: [
-        { id: "opt_A", label: "A", text: "Facemash" },
-        { id: "opt_B", label: "B", text: "HarvardConnection" },
-        { id: "opt_C", label: "C", text: "CampusNet" },
-        { id: "opt_D", label: "D", text: "MySpace" }
+        { id: "opt_A", label: "A", text: "legal agreement / compromise (sự hòa giải, thỏa thuận dàn xếp pháp lý)" },
+        { id: "opt_B", label: "B", text: "court battle / confrontation (cuộc chiến tranh tụng gay gắt)" },
+        { id: "opt_C", label: "C", text: "bankruptcy declaration (tuyên bố phá sản)" },
+        { id: "opt_D", label: "D", text: "residential colony (khu tái định cư)" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc nêu rõ: 'Facemash opened on October 28, 2003—and closed a few days later, after it was shut down by Harvard execs.'"
+      correctAnswerText: "A. legal agreement / compromise (sự hòa giải, thỏa thuận dàn xếp pháp lý)",
+      correctExplanation: "\"Settlement\" trong luật thương mại là sự dàn xếp, thỏa thuận hòa giải ngoài tòa để chấm dứt kiện tụng (thường kèm bồi thường cổ phần/tiền).",
+      misconception: {
+        baitOptionId: "opt_D",
+        baitOptionText: "D. residential colony",
+        diagnosticTitle: "Nhầm lẫn nghĩa địa lý định cư với thuật ngữ luật học",
+        explanation: "Trong bối cảnh tranh chấp bản quyền (lawsuit), settlement là thỏa thuận hòa giải bồi thường, không phải khu định cư dân cư."
+      }
     },
     {
       id: "doer_w6d2_q02",
       roundIndex: 1,
-      prompt: "Sau khi Facemash bị đóng cửa, Mark Zuckerberg đã phải đối mặt với nguy cơ kỷ luật nào từ Đại học Harvard?",
+      prompt: "Từ TRÁI NGHĨA với \"expulsion\" trong câu \"Though he faced expulsion from Harvard for his actions\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "Bị phạt tù 1 năm" },
-        { id: "opt_B", label: "B", text: "Bị buộc thôi học (expulsion)" },
-        { id: "opt_C", label: "C", text: "Bị cấm sử dụng máy tính vĩnh viễn" },
-        { id: "opt_D", label: "D", text: "Bị huỷ kết quả thi học kỳ" }
+        { id: "opt_A", label: "A", text: "admission / enrollment (sự thu nhận, nhập học chính thức)" },
+        { id: "opt_B", label: "B", text: "dismissal (sự sa thải, đuổi học)" },
+        { id: "opt_C", label: "C", text: "suspension (đình chỉ học tạm thời)" },
+        { id: "opt_D", label: "D", text: "punishment (sự trừng phạt)" }
       ],
-      correctOptionId: "opt_B",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Trong bài: 'Though he faced expulsion from Harvard for his actions, all charges against him were eventually dropped.'"
+      correctOptionId: "opt_A",
+      correctAnswerText: "A. admission / enrollment (sự thu nhận, nhập học chính thức)",
+      correctExplanation: "\"Expulsion\" = sự trục xuất, buộc thôi học vĩnh viễn. Từ trái nghĩa trực tiếp là \"admission\" hoặc \"enrollment\" (nhận vào trường).",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. dismissal",
+        diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
+        explanation: "Dismissal là từ đồng nghĩa mang nghĩa đuổi học. Đề bài đang yêu cầu tìm từ TRÁI NGHĨA."
+      }
     },
     {
       id: "doer_w6d2_q03",
       roundIndex: 2,
-      prompt: "Để giải quyết vụ kiện cáo buộc sao chép ý tưởng với anh em nhà Winklevoss và Divya Narendra, Mark Zuckerberg đã phải bồi thường gì?",
+      prompt: "Thuật ngữ tài chính khởi nghiệp \"angel investor\" (như Sean Parker đối với Facebook) dùng để chỉ ai?",
       options: [
-        { id: "opt_A", label: "A", text: "1.2 triệu cổ phần (shares) công ty cho mỗi người vào năm 2008" },
-        { id: "opt_B", label: "B", text: "100 triệu USD tiền mặt ngay lập tức" },
-        { id: "opt_C", label: "C", text: "Nhượng lại toàn bộ quyền sở hữu thương hiệu HarvardConnection" },
-        { id: "opt_D", label: "D", text: "Công khai xin lỗi trên trang chủ Facebook" }
+        { id: "opt_A", label: "A", text: "Nhà đầu tư thiên thần (cá nhân giàu có rót vốn ban đầu hỗ trợ các startup non trẻ)" },
+        { id: "opt_B", label: "B", text: "Tổ chức từ thiện tôn giáo phát tiền miễn phí" },
+        { id: "opt_C", label: "C", text: "Ngân hàng nhà nước bảo lãnh tín dụng" },
+        { id: "opt_D", label: "D", text: "Luật sư đại diện cho các cổ đông thiểu số" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'eventually all three received a settlement in 2008 that included 1.2 million shares in the company each.'"
+      correctAnswerText: "A. Nhà đầu tư thiên thần (cá nhân giàu có rót vốn ban đầu hỗ trợ các startup non trẻ)",
+      correctExplanation: "\"Angel investor\" là thuật ngữ quốc tế chỉ các cá nhân đầu tư thiên thần, chấp nhận rủi ro cao để rót vốn hạt giống cho các công ty khởi nghiệp.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Tổ chức từ thiện tôn giáo",
+        diagnosticTitle: "Dịch nghĩa đen từ chữ \"angel\" thành tổ chức tôn giáo",
+        explanation: "Đây là thuật ngữ tài chính mạo hiểm, hoàn toàn không liên quan đến tôn giáo hay từ thiện đơn thuần."
+      }
     },
     {
       id: "doer_w6d2_q04",
       roundIndex: 3,
-      prompt: "Công ty đã mua lại tên miền 'facebook.com' vào năm 2005 với giá bao nhiêu để bỏ chữ 'The' phía trước?",
+      prompt: "Collocation chuẩn trong bài: \"Mark was on the ______ of expulsion from university due to serious security breaches.\"",
       options: [
-        { id: "opt_A", label: "A", text: "$200,000" },
-        { id: "opt_B", label: "B", text: "$20,000" },
-        { id: "opt_C", label: "C", text: "$2,000,000" },
-        { id: "opt_D", label: "D", text: "$12.7 million" }
+        { id: "opt_A", label: "A", text: "brink" },
+        { id: "opt_B", label: "B", text: "side" },
+        { id: "opt_C", label: "C", text: "corner" },
+        { id: "opt_D", label: "D", text: "limit" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'after purchasing the domain name facebook.com in 2005 for $200,000.'"
+      correctAnswerText: "A. brink",
+      correctExplanation: "Thành ngữ học thuật cố định: \"on the brink of something / doing something\" (đang trên bờ vực gặp phải một nguy hiểm hay biến cố lớn).",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. side",
+        diagnosticTitle: "Dịch từ \"bên cạnh\" thành side",
+        explanation: "Thành ngữ chỉ bờ vực nguy nan bắt buộc phải dùng \"on the brink of\", không dùng \"on the side of\"."
+      }
     },
     {
       id: "doer_w6d2_q05",
       roundIndex: 4,
-      prompt: "Theo chính sách của Facebook được ban hành vào tháng 9 năm 2006, ai có thể tạo tài khoản tham gia mạng xã hội này?",
+      prompt: "Chọn tính từ phù hợp diễn tả đặc tính gây nghiện của mạng xã hội: \"Short video apps are highly ______ to young audiences, making it hard to stop watching.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Bất kỳ ai từ đủ 13 tuổi trở lên và có địa chỉ email hợp lệ" },
-        { id: "opt_B", label: "B", text: "Chỉ sinh viên các trường đại học ở Mỹ" },
-        { id: "opt_C", label: "C", text: "Chỉ những người từ đủ 18 tuổi trở lên" },
-        { id: "opt_D", label: "D", text: "Chỉ học sinh trung học phổ thông có thư giới thiệu" }
+        { id: "opt_A", label: "A", text: "addictive" },
+        { id: "opt_B", label: "B", text: "addicted" },
+        { id: "opt_C", label: "C", text: "addict" },
+        { id: "opt_D", label: "D", text: "addiction" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'In September of 2006, Facebook announced that anyone who was at least 13 years old and had a valid email address could join.'"
+      correctAnswerText: "A. addictive",
+      correctExplanation: "Tính từ đuôi -ive chỉ tính chất gây nghiện của sự vật/ứng dụng: \"highly addictive\". Còn người bị nghiện mới dùng \"addicted to\".",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. addicted",
+        diagnosticTitle: "Nhầm lẫn giữa tính từ bị động (người bị nghiện) và chủ động (vật gây nghiện)",
+        explanation: "Ứng dụng phần mềm có tính chất gây nghiện cho người khác thì phải dùng \"addictive\", không dùng \"addicted\"."
+      }
     },
     {
       id: "doer_w6d2_q06",
       roundIndex: 5,
-      prompt: "True, False hay Not Given: 'Thefacebook.com was initially not available for Harvard outsiders.'",
+      prompt: "Chọn dạng bị động chuẩn cho sự kiện thành lập: \"The social networking platform ______ in 2016 by a Chinese tech entrepreneur.\"",
       options: [
-        { id: "opt_A", label: "A", text: "TRUE" },
-        { id: "opt_B", label: "B", text: "FALSE" },
-        { id: "opt_C", label: "C", text: "NOT GIVEN" }
+        { id: "opt_A", label: "A", text: "was founded" },
+        { id: "opt_B", label: "B", text: "was found" },
+        { id: "opt_C", label: "C", text: "is found" },
+        { id: "opt_D", label: "D", text: "has founded" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "TRUE. Bài đọc viết: 'known as thefacebook.com and made available only to Harvard students', tức người ngoài Harvard (outsiders) không thể truy cập."
+      correctAnswerText: "A. was founded",
+      correctExplanation: "Động từ \"found\" (thành lập) có quá khứ phân từ là \"founded\". Câu bị động chỉ sự kiện lịch sử trong quá khứ: \"was founded\".",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. was found",
+        diagnosticTitle: "Nhầm lẫn giữa động từ find (tìm thấy) và found (thành lập)",
+        explanation: "\"Find - found - found\" là tìm thấy, còn \"found - founded - founded\" là thành lập, sáng lập."
+      }
     },
     {
       id: "doer_w6d2_q07",
       roundIndex: 6,
-      prompt: "True, False hay Not Given: 'Harvard executives shut Facemash down by hacking into it.'",
+      prompt: "Chọn giới từ đúng đi kèm nền tảng kỹ thuật số: \"Over 1 billion users share memorable videos ______ the platform every month.\"",
       options: [
-        { id: "opt_A", label: "A", text: "FALSE" },
-        { id: "opt_B", label: "B", text: "TRUE" },
-        { id: "opt_C", label: "C", text: "NOT GIVEN" }
+        { id: "opt_A", label: "A", text: "on" },
+        { id: "opt_B", label: "B", text: "in" },
+        { id: "opt_C", label: "C", text: "at" },
+        { id: "opt_D", label: "D", text: "by" }
       ],
-      correctOptionId: "opt_C",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "NOT GIVEN. Bài đọc chỉ nói 'it was shut down by Harvard execs', không hề đề cập việc họ có hack (hacking) vào hệ thống hay yêu cầu tắt máy chủ vật lý."
+      correctOptionId: "opt_A",
+      correctAnswerText: "A. on",
+      correctExplanation: "Quy tắc giới từ cho các nền tảng công nghệ, website, ứng dụng số: luôn dùng giới từ \"ON the platform / on the internet / on Facebook\".",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. in",
+        diagnosticTitle: "Dịch từ \"trong nền tảng\" thành giới từ \"in\"",
+        explanation: "Tiếng Việt nói \"trong nền tảng mạng xã hội\", nhưng tiếng Anh bắt buộc dùng \"ON the platform\"."
+      }
     },
     {
       id: "doer_w6d2_q08",
       roundIndex: 7,
-      prompt: "Điền từ thích hợp vào chỗ trống (từ bài đọc): 'Mark was on the brink of ______________ from Harvard because of Facemash.'",
+      prompt: "Trong cụm \"Zuckerberg signed a pledge along with other philanthropists\", từ \"pledge\" mang nghĩa gì?",
       options: [
-        { id: "opt_A", label: "A", text: "expulsion" },
-        { id: "opt_B", label: "B", text: "graduation" },
-        { id: "opt_C", label: "C", text: "settlement" },
-        { id: "opt_D", label: "D", text: "resignation" }
+        { id: "opt_A", label: "A", text: "Lời cam kết chính thức / văn bản thề nguyện hiến tặng tài sản" },
+        { id: "opt_B", label: "B", text: "Hợp đồng vay thế chấp ngân hàng" },
+        { id: "opt_C", label: "C", text: "Đơn khiếu nại bản quyền tại tòa án" },
+        { id: "opt_D", label: "D", text: "Bản báo cáo doanh thu tài chính quý" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Từ bài đọc: 'faced expulsion from Harvard' -> 'on the brink of expulsion' (trên bờ vực bị đuổi học)."
+      correctAnswerText: "A. Lời cam kết chính thức / văn bản thề nguyện hiến tặng tài sản",
+      correctExplanation: "\"A pledge\" là một lời hứa danh dự, bản cam kết công khai đóng góp tài sản vì mục tiêu nhân đạo.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Hợp đồng vay thế chấp",
+        diagnosticTitle: "Nhầm thuật ngữ cam kết với hợp đồng nợ",
+        explanation: "Trong bối cảnh hiến tặng tài sản (philanthropy), \"pledge\" là lời cam kết từ thiện của các tỷ phú."
+      }
     },
     {
       id: "doer_w6d2_q09",
       roundIndex: 8,
-      prompt: "Quỹ từ thiện 'Chan Zuckerberg Initiative' do vợ chồng Mark Zuckerberg thành lập cam kết đóng góp bao nhiêu phần trăm cổ phần Facebook của họ?",
+      prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào câu: \"The tech startup agreed to pay substantial ______ fees to protect its proprietary domain name from counterfeiters.\"",
       options: [
-        { id: "opt_A", label: "A", text: "99%" },
-        { id: "opt_B", label: "B", text: "50%" },
-        { id: "opt_C", label: "C", text: "75%" },
-        { id: "opt_D", label: "D", text: "100%" }
+        { id: "opt_A", label: "A", text: "registration" },
+        { id: "opt_B", label: "B", text: "bland" },
+        { id: "opt_C", label: "C", text: "burnout" },
+        { id: "opt_D", label: "D", text: "pack" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'contribute 99% of their Facebook shares to the Chan Zuckerberg Initiative to improve lives through education, health, scientific research, and energy.'"
+      correctAnswerText: "A. registration",
+      correctExplanation: "\"Registration fees\" = phí đăng ký (đăng ký tên miền hoặc sở hữu trí tuệ để chống hàng giả mạo).",
+      misconception: {
+        baitOptionId: "opt_C",
+        baitOptionText: "C. burnout",
+        diagnosticTitle: "Ghép từ không liên quan ngữ nghĩa kinh doanh",
+        explanation: "Burnout là kiệt sức lao động, hoàn toàn không tương thích với khái niệm bảo vệ tên miền."
+      }
     },
     {
       id: "doer_w6d2_q10",
       roundIndex: 9,
-      prompt: "Từ vựng: 'Angel investor Sean Parker was named president of Facebook.' Cụm 'angel investor' mang nghĩa là gì?",
+      prompt: "PARAPHRASE: Câu \"The rise of social platforms enabled ordinary individuals to set trends and drive public opinions without traditional media gatekeepers\" được diễn đạt lại tương đương nhất là:",
       options: [
-        { id: "opt_A", label: "A", text: "Nhà đầu tư thiên thần (cá nhân giàu có đầu tư vốn cho các startup giai đoạn đầu)" },
-        { id: "opt_B", label: "B", text: "Quỹ đầu tư của các tổ chức tôn giáo" },
-        { id: "opt_C", label: "C", text: "Nhà tài trợ từ thiện không lấy lãi" },
-        { id: "opt_D", label: "D", text: "Chuyên viên tư vấn pháp lý độc lập" }
+        { id: "opt_A", label: "A", text: "Digital networks empowered regular users to spearhead viral movements and influence viewpoints independently of legacy broadcast outlets." },
+        { id: "opt_B", label: "B", text: "Traditional television channels still retain total authoritarian monopoly over youth cultural perceptions." },
+        { id: "opt_C", label: "C", text: "Every user is legally prohibited from producing content on video sharing applications." },
+        { id: "opt_D", label: "D", text: "Tech corporations mandate that only celebrities can express viewpoints on digital forums." }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "'Angel investor' trong thuật ngữ kinh doanh là nhà đầu tư thiên thần, rót vốn ban đầu hỗ trợ doanh nghiệp khởi nghiệp."
+      correctAnswerText: "A. Digital networks empowered regular users to spearhead viral movements and influence viewpoints independently of legacy broadcast outlets.",
+      correctExplanation: "\"Digital networks empowered regular users\" paraphrase cho \"platforms enabled ordinary individuals\", \"spearhead viral movements\" paraphrase cho \"set trends\", và \"independently of legacy broadcast outlets\" paraphrase cho \"without traditional media gatekeepers\".",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Traditional television retains monopoly",
+        diagnosticTitle: "Đảo ngược hoàn toàn thực tế thay đổi của truyền thông",
+        explanation: "Bài đọc nêu rõ truyền hình đang suy giảm và nhường quyền định hình xu hướng cho người sáng tạo số."
+      }
     }
   ],
 

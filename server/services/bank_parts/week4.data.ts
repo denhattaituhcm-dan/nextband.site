@@ -210,201 +210,201 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w4d2_q01",
       roundIndex: 0,
-      prompt: "Theo nghiên cứu về bữa ăn sáng trong bài đọc \"The truth behind some common health beliefs\", nhóm phụ nữ thừa cân ăn bữa sáng lớn có kết quả gì?",
+      prompt: "Trong chủ đề Health, từ ĐỒNG NGHĨA chuẩn xác nhất với \"intake\" trong câu \"a higher intake of red meat\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "Giảm cân nhiều hơn nhóm ăn bữa sáng ít calo và ăn tối nhiều" },
-        { id: "opt_B", label: "B", text: "Tăng cân gấp đôi nhóm ăn bữa tối nhiều" },
-        { id: "opt_C", label: "C", text: "Bị mắc bệnh tiểu đường ngay lập tức" },
-        { id: "opt_D", label: "D", text: "Không thấy có bất kỳ sự khác biệt nào về thể trọng" }
+        { id: "opt_A", label: "A", text: "consumption (sự tiêu thụ, lượng nạp vào cơ thể)" },
+        { id: "opt_B", label: "B", text: "exercise (sự vận động)" },
+        { id: "opt_C", label: "C", text: "release (sự thải ra)" },
+        { id: "opt_D", label: "D", text: "prevention (sự phòng ngừa)" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Giảm cân nhiều hơn nhóm ăn bữa sáng ít calo và ăn tối nhiều",
-      correctExplanation: "Bài đọc nêu: \"those who ate a large breakfast saw greater weight loss than another group who had a low-calorie breakfast and a larger dinner\".",
+      correctAnswerText: "A. consumption (sự tiêu thụ, lượng nạp vào cơ thể)",
+      correctExplanation: "\"Intake\" trong dinh dưỡng học đồng nghĩa với \"consumption\" (lượng thức ăn/nước uống dung nạp vào cơ thể).",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. Tăng cân gấp đôi",
-        diagnosticTitle: "Hiểu sai nghĩa của cụm greater weight loss",
-        explanation: "\"Greater weight loss\" nghĩa là giảm cân nhiều hơn, mang ý nghĩa tích cực, không phải tăng cân."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. release",
+        diagnosticTitle: "Nhầm lẫn giữa nạp vào và thải ra",
+        explanation: "\"Release\" mang nghĩa thải ra/phát tán, trái ngược hoàn toàn với \"intake\" (dung nạp vào)."
       }
     },
     {
       id: "doer_w4d2_q02",
       roundIndex: 1,
-      prompt: "Theo nhà nghiên cứu Brady Holmer, tại sao việc bỏ bữa sáng (skipping breakfast) lại có thể dẫn đến việc tăng cân?",
+      prompt: "Cặp từ TRÁI NGHĨA cốt lõi trong đoạn phân tích thịt đỏ của bài đọc là:",
       options: [
-        { id: "opt_A", label: "A", text: "Vì nó làm tăng mức độ đói vào cuối ngày, dẫn đến việc ăn quá mức (overeating)" },
-        { id: "opt_B", label: "B", text: "Vì cơ thể ngừng đốt cháy calo hoàn toàn trong 24 giờ" },
-        { id: "opt_C", label: "C", text: "Vì người bỏ bữa sáng thường không uống nước" },
-        { id: "opt_D", label: "D", text: "Vì bỏ bữa sáng làm giảm dung tích dạ dày" }
+        { id: "opt_A", label: "A", text: "processed meat (thịt chế biến sẵn) vs. unprocessed meat (thịt tươi chưa chế biến)" },
+        { id: "opt_B", label: "B", text: "red meat vs. white meat" },
+        { id: "opt_C", label: "C", text: "fresh meat vs. cooked meat" },
+        { id: "opt_D", label: "D", text: "healthy meat vs. harmful meat" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Vì nó làm tăng mức độ đói vào cuối ngày, dẫn đến việc ăn quá mức (overeating)",
-      correctExplanation: "Holmer giải thích: \"skipping breakfast leads to increased hunger levels later in the day, and this results in people overeating\".",
+      correctAnswerText: "A. processed meat (thịt chế biến sẵn) vs. unprocessed meat (thịt tươi chưa chế biến)",
+      correctExplanation: "Tiền tố un- tạo nên cặp đối lập kinh điển trong dinh dưỡng học: processed (chế biến công nghiệp nhiều phụ gia) vs. unprocessed (thịt nguyên bản chưa chế biến).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Cơ thể ngừng đốt calo hoàn toàn",
-        diagnosticTitle: "Suy đoán phi khoa học",
-        explanation: "Bài đọc giải thích rõ ràng nguyên nhân nằm ở tâm lý thèm ăn và ăn bù quá mức vào buổi chiều tối."
+        baitOptionText: "B. red meat vs. white meat",
+        diagnosticTitle: "Chọn cặp đối lập màu sắc thông thường ngoài bài",
+        explanation: "Bài đọc nhấn mạnh sự sai lệch nghiên cứu do không phân biệt giữa processed và unprocessed, chứ không so sánh thịt đỏ với thịt trắng."
       }
     },
     {
       id: "doer_w4d2_q03",
       roundIndex: 2,
-      prompt: "Thông điệp kết luận của bài viết về việc có nên ăn bữa sáng hay không là gì?",
+      prompt: "Thuật ngữ y khoa \"cardiovascular disease\" chỉ nhóm bệnh lý liên quan đến hệ cơ quan nào?",
       options: [
-        { id: "opt_A", label: "A", text: "Tùy thuộc vào từng cá nhân; nếu có xu hướng ăn quá độ vào cuối ngày thì một bữa sáng lớn sẽ có ích" },
-        { id: "opt_B", label: "B", text: "Bắt buộc 100% mọi người trên thế giới phải ăn thật nhiều vào bữa sáng" },
-        { id: "opt_C", label: "C", text: "Tất cả mọi người nên bỏ bữa sáng để thanh lọc cơ thể" },
-        { id: "opt_D", label: "D", text: "Bữa sáng chỉ cần một tách cà phê là đủ cho mọi cơ địa" }
+        { id: "opt_A", label: "A", text: "Tim và hệ thống mạch máu tuần hoàn" },
+        { id: "opt_B", label: "B", text: "Phổi và đường hô hấp" },
+        { id: "opt_C", label: "C", text: "Dạ dày và hệ tiêu hóa" },
+        { id: "opt_D", label: "D", text: "Thần kinh não bộ" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Tùy thuộc vào từng cá nhân; nếu có xu hướng ăn quá độ vào cuối ngày thì một bữa sáng lớn sẽ có ích",
-      correctExplanation: "Bài kết luận: \"breakfast is important if it's something that you enjoy... Skipping it may have varying effects for different people. However, if you tend to overeat later in the day, a larger breakfast could help\".",
+      correctAnswerText: "A. Tim và hệ thống mạch máu tuần hoàn",
+      correctExplanation: "\"Cardiovascular\" bắt nguồn từ gốc Hy Lạp: cardio- (tim) và vascular (mạch máu). Cụm này chỉ bệnh tim mạch.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Bắt buộc 100% mọi người phải ăn nhiều",
-        diagnosticTitle: "Tuyệt đối hóa lời khuyên khoa học",
-        explanation: "Bài đọc nhấn mạnh tính cá nhân hóa (varying effects for different people), không có công thức cứng nhắc cho tất cả."
+        baitOptionText: "B. Phổi và đường hô hấp",
+        diagnosticTitle: "Nhầm lẫn với bệnh hô hấp (respiratory disease)",
+        explanation: "Hô hấp là respiratory, còn cardiovascular luôn chuyên biệt cho tim và mạch máu."
       }
     },
     {
       id: "doer_w4d2_q04",
       roundIndex: 3,
-      prompt: "Nguồn gốc của con số \"10,000 bước chân mỗi ngày\" xuất hiện lần đầu tiên từ khi nào?",
+      prompt: "Collocation chuẩn trong bài: \"Skipping breakfast leads to increased hunger levels and results in people ______.\" (ăn bù quá độ)",
       options: [
-        { id: "opt_A", label: "A", text: "Xuất hiện từ những năm 1960 và ban đầu không dựa trên bất kỳ cơ sở khoa học nào" },
-        { id: "opt_B", label: "B", text: "Được Tổ chức Y tế Thế giới (WHO) chứng minh năm 2020" },
-        { id: "opt_C", label: "C", text: "Được các vận động viên Olympic Hy Lạp cổ đại phát minh" },
-        { id: "opt_D", label: "D", text: "Được kiểm nghiệm tại một bệnh viện tim mạch năm 2022" }
+        { id: "opt_A", label: "A", text: "overeating" },
+        { id: "opt_B", label: "B", text: "fasting" },
+        { id: "opt_C", label: "C", text: "dieting" },
+        { id: "opt_D", label: "D", text: "exercising" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Xuất hiện từ những năm 1960 và ban đầu không dựa trên bất kỳ cơ sở khoa học nào",
-      correctExplanation: "Đoạn văn viết: \"this number wasn't based on any science when it first came up in the 1960s, but it might be good advice\".",
+      correctAnswerText: "A. overeating",
+      correctExplanation: "Tiền tố over- mang nghĩa quá mức: \"overeating\" là hành vi ăn quá nhiều, mất kiểm soát do cơn đói dồn lại.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Được WHO chứng minh năm 2020",
-        diagnosticTitle: "Gán ghép tổ chức y tế cho chiến dịch quảng bá cũ",
-        explanation: "Con số 10,000 bước thực chất bắt nguồn từ một chiến dịch tiếp thị máy đếm bước chân ở Nhật thập niên 1960."
+        baitOptionText: "B. fasting",
+        diagnosticTitle: "Chọn từ trái nghĩa (nhịn ăn)",
+        explanation: "Fasting là chủ động nhịn ăn, trái ngược với overeating (ăn vô độ)."
       }
     },
     {
       id: "doer_w4d2_q05",
       roundIndex: 4,
-      prompt: "Theo nghiên cứu năm 2022, điều gì xảy ra với lợi ích sức khỏe sau khi người đi bộ vượt mốc 10,000 bước?",
+      prompt: "Chọn từ phù hợp: \"People who eat a nutritious breakfast are able to stabilize their blood ______ levels throughout the morning.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Lợi ích gia tăng bắt đầu giảm dần (the benefits decrease after hitting the mark)" },
-        { id: "opt_B", label: "B", text: "Nguy cơ mắc bệnh tim mạch lập tức tăng vọt" },
-        { id: "opt_C", label: "C", text: "Cơ thể bị tổn thương xương khớp vĩnh viễn" },
-        { id: "opt_D", label: "D", text: "Lợi ích tăng gấp đôi sau mỗi 1,000 bước tiếp theo" }
+        { id: "opt_A", label: "A", text: "sugar" },
+        { id: "opt_B", label: "B", text: "sweet" },
+        { id: "opt_C", label: "C", text: "salt" },
+        { id: "opt_D", label: "D", text: "spice" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Lợi ích gia tăng bắt đầu giảm dần (the benefits decrease after hitting the mark)",
-      correctExplanation: "Bài viết chỉ ra đường cong hiệu quả đạt ngưỡng: \"However, the benefits decrease after hitting the 10,000-step mark\".",
+      correctAnswerText: "A. sugar",
+      correctExplanation: "Collocation y khoa thông dụng: \"blood sugar levels\" (chỉ số đường huyết trong máu).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Nguy cơ mắc bệnh tim mạch tăng vọt",
-        diagnosticTitle: "Hiểu sai \"benefits decrease\" thành \"tác hại nguy hiểm\"",
-        explanation: "Lợi ích giảm dần (diminishing returns) nghĩa là không thu thêm được nhiều lợi ích tăng thêm, chứ không phải gây hại."
+        baitOptionText: "B. sweet",
+        diagnosticTitle: "Dùng tính từ sweet thay vì danh từ sugar",
+        explanation: "Trong danh từ ghép y khoa chỉ chỉ số đường huyết, từ chuẩn bắt buộc là \"blood sugar\", không dùng tính từ sweet."
       }
     },
     {
       id: "doer_w4d2_q06",
       roundIndex: 5,
-      prompt: "Đi bộ bao nhiêu bước mỗi ngày kết hợp với tốc độ nhanh hơn cũng đã có hiệu quả giảm nguy cơ mắc chứng sa sút trí tuệ (dementia)?",
+      prompt: "Collocation biểu đạt chế độ ăn uống khoa học: \"Breakfast helps you maintain a ______ diet.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Chỉ khoảng 3,800 bước mỗi ngày" },
-        { id: "opt_B", label: "B", text: "Ít nhất 15,000 bước mỗi ngày" },
-        { id: "opt_C", label: "C", text: "Chính xác 10,000 bước không hơn không kém" },
-        { id: "opt_D", label: "D", text: "500 bước mỗi giờ" }
+        { id: "opt_A", label: "A", text: "well-balanced" },
+        { id: "opt_B", label: "B", text: "heavily-sweetened" },
+        { id: "opt_C", label: "C", text: "poorly-managed" },
+        { id: "opt_D", label: "D", text: "strictly-forbidden" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Chỉ khoảng 3,800 bước mỗi ngày",
-      correctExplanation: "Nghiên cứu nêu rõ: \"walking just 3,800 steps per day can be effective in reducing the risk of dementia, but a faster walking pace is also beneficial\".",
+      correctAnswerText: "A. well-balanced",
+      correctExplanation: "\"A well-balanced diet\" là collocation tiêu chuẩn trong IELTS: một chế độ ăn cân bằng đầy đủ dinh dưỡng.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. Chính xác 10,000 bước",
-        diagnosticTitle: "Cố chấp với con số 10,000 bước",
-        explanation: "Nghiên cứu nhấn mạnh ngay cả 3,800 bước với nhịp chân nhanh cũng đã mang lại lợi ích bảo vệ não bộ rõ rệt."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. heavily-sweetened",
+        diagnosticTitle: "Chọn chế độ ăn nhiều đường có hại",
+        explanation: "Heavily-sweetened là nhiều đường ngọt gây hại sức khỏe, mâu thuẫn với lời khuyên ăn uống lành mạnh."
       }
     },
     {
       id: "doer_w4d2_q07",
       roundIndex: 6,
-      prompt: "Lý do vì sao nhiều nghiên cứu trước đây kết luận \"thịt đỏ (red meat) có hại cho sức khỏe\" có thể chưa chính xác?",
+      prompt: "Chọn giới từ đúng đi với động từ phân biệt: \"Many earlier nutritional studies failed to distinguish ______ processed and unprocessed meat.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Vì các nghiên cứu đó không phân biệt giữa thịt đỏ chế biến sẵn và thịt đỏ chưa qua chế biến" },
-        { id: "opt_B", label: "B", text: "Vì các nhà khoa học đã dùng thịt giả để làm thí nghiệm" },
-        { id: "opt_C", label: "C", text: "Vì người tham gia thí nghiệm chỉ ăn toàn mỡ động vật" },
-        { id: "opt_D", label: "D", text: "Vì thịt đỏ thực chất không chứa bất kỳ chất béo nào" }
+        { id: "opt_A", label: "A", text: "between" },
+        { id: "opt_B", label: "B", text: "with" },
+        { id: "opt_C", label: "C", text: "against" },
+        { id: "opt_D", label: "D", text: "at" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Vì các nghiên cứu đó không phân biệt giữa thịt đỏ chế biến sẵn và thịt đỏ chưa qua chế biến",
-      correctExplanation: "Đoạn C giải thích: \"many studies don't distinguish between processed (bacon, sausages, burgers) and unprocessed red meat intake\".",
+      correctAnswerText: "A. between",
+      correctExplanation: "Cấu trúc học thuật cố định: \"distinguish BETWEEN [A] AND [B]\" (phân biệt rạch ròi giữa đối tượng A và đối tượng B).",
       misconception: {
-        baitOptionId: "opt_D",
-        baitOptionText: "D. Thịt đỏ không chứa chất béo",
-        diagnosticTitle: "Sai kiến thức dinh dưỡng cơ bản",
-        explanation: "Thịt đỏ có chứa chất béo, nhưng sự khác biệt sống còn nằm ở các chất bảo quản độc hại trong thịt chế biến sẵn (processed meat)."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. with",
+        diagnosticTitle: "Dịch từ \"với\" trong tiếng Việt thành giới từ \"with\"",
+        explanation: "Tiếng Việt nói \"phân biệt A với B\", nhưng tiếng Anh bắt buộc dùng \"distinguish between A and B\"."
       }
     },
     {
       id: "doer_w4d2_q08",
       roundIndex: 7,
-      prompt: "Khuyến nghị hiện tại của các tổ chức y tế lớn đối với việc ăn thịt đỏ chưa qua chế biến (unprocessed red meat) là gì?",
+      prompt: "Cụm thành ngữ trong bài: \"Science is constantly changing its mind\" mang nghĩa bóng là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Mọi người vẫn có thể tiếp tục ăn thịt đỏ chưa qua chế biến một cách hợp lý" },
-        { id: "opt_B", label: "B", text: "Cấm hoàn toàn việc tiêu thụ bất kỳ loại thịt đỏ nào" },
-        { id: "opt_C", label: "C", text: "Chỉ cho phép ăn thịt xông khói và xúc xích" },
-        { id: "opt_D", label: "D", text: "Yêu cầu thay thế toàn bộ bằng thức ăn tổng hợp" }
+        { id: "opt_A", label: "A", text: "Các kết luận khoa học liên tục được cập nhật, điều chỉnh khi có bằng chứng mới" },
+        { id: "opt_B", label: "B", text: "Các nhà khoa học thường xuyên hay quên những gì mình đã nói" },
+        { id: "opt_C", label: "C", text: "Khoa học hoàn toàn là sự lừa dối không đáng tin cậy" },
+        { id: "opt_D", label: "D", text: "Tất cả các định luật vật lý đều bị bác bỏ hàng năm" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Mọi người vẫn có thể tiếp tục ăn thịt đỏ chưa qua chế biến một cách hợp lý",
-      correctExplanation: "Bài đọc dẫn lời: \"major health organisations have recommended that people can continue to eat unprocessed red meat\".",
+      correctAnswerText: "A. Các kết luận khoa học liên tục được cập nhật, điều chỉnh khi có bằng chứng mới",
+      correctExplanation: "\"Change one's mind\" dùng phép nhân hóa để miêu tả quá trình khoa học tiến bộ: liên tục sửa đổi nhận thức cũ để tiệm cận chân lý.",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. Cấm hoàn toàn",
-        diagnosticTitle: "Đánh đồng mọi loại thịt đỏ đều độc hại",
-        explanation: "Tổ chức y tế không cấm thịt đỏ tươi sống chưa chế biến mà chỉ cảnh báo thịt chế biến sẵn (processed meats)."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. Khoa học là sự lừa dối",
+        diagnosticTitle: "Hiểu sai giọng văn khoa học thường thức",
+        explanation: "Tác giả chỉ nêu ra cảm nhận ban đầu của công chúng trước khi giải thích rằng các nghiên cứu đang giúp ta đến gần sự thật hơn."
       }
     },
     {
       id: "doer_w4d2_q09",
       roundIndex: 8,
-      prompt: "Xét câu True/False/Not Given: \"Major health organizations recommend that people avoid eating all types of red meat.\" Đáp án là:",
+      prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào câu y tế: \"Clinical trials revealed that maintaining a brisk walking ______ significantly reduces the risk of dementia.\"",
       options: [
-        { id: "opt_A", label: "A", text: "FALSE" },
-        { id: "opt_B", label: "B", text: "TRUE" },
-        { id: "opt_C", label: "C", text: "NOT GIVEN" },
-        { id: "opt_D", label: "D", text: "CANNOT BE DETERMINED" }
+        { id: "opt_A", label: "A", text: "pace (nhịp độ, tốc độ bước đi)" },
+        { id: "opt_B", label: "B", text: "cost" },
+        { id: "opt_C", label: "C", text: "bland" },
+        { id: "opt_D", label: "D", text: "burnout" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. FALSE",
-      correctExplanation: "Thông tin này trực tiếp đối lập với câu trong bài (\"major health organisations have recommended that people CAN CONTINUE to eat unprocessed red meat\"), do đó là FALSE.",
+      correctAnswerText: "A. pace (nhịp độ, tốc độ bước đi)",
+      correctExplanation: "\"Walking pace\" = tốc độ, nhịp bước chân đi bộ. \"Brisk walking pace\" là nhịp đi bộ nhanh mang lại lợi ích tim mạch và não bộ.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. NOT GIVEN",
-        diagnosticTitle: "Không đối chiếu được từ phủ định tuyệt đối \"all types\"",
-        explanation: "Bài đã nêu rõ ngoại lệ cho thịt chưa chế biến, nên khẳng định cấm \"all types\" là hoàn toàn sai (FALSE)."
+        baitOptionId: "opt_D",
+        baitOptionText: "D. burnout",
+        diagnosticTitle: "Nhầm thuật ngữ kiệt sức",
+        explanation: "Burnout là trạng thái kiệt quệ, hoàn toàn vô nghĩa khi ghép vào cụm \"walking ______\"."
       }
     },
     {
       id: "doer_w4d2_q10",
       roundIndex: 9,
-      prompt: "Từ \"cardiovascular\" trong cụm từ \"cardiovascular disease\" chỉ nhóm bệnh liên quan đến cơ quan nào trong cơ thể?",
+      prompt: "PARAPHRASE: Câu \"Skipping breakfast leads to increased hunger later in the day, which results in overeating and weight gain\" được diễn đạt lại tương đương nhất là:",
       options: [
-        { id: "opt_A", label: "A", text: "Tim mạch và hệ tuần hoàn máu (heart and blood vessels)" },
-        { id: "opt_B", label: "B", text: "Phổi và hệ hô hấp" },
-        { id: "opt_C", label: "C", text: "Dạ dày và hệ tiêu hóa" },
-        { id: "opt_D", label: "D", text: "Não bộ và hệ thần kinh" }
+        { id: "opt_A", label: "A", text: "Omitting the morning meal triggers intense cravings later on, prompting excessive food intake that hampers weight control." },
+        { id: "opt_B", label: "B", text: "Avoiding morning nourishment is guaranteed to accelerate fat burning and cure cardiovascular ailments." },
+        { id: "opt_C", label: "C", text: "Breakfast should be eliminated by all individuals who wish to regulate their blood glucose effectively." },
+        { id: "opt_D", label: "D", text: "Hunger levels remain completely identical regardless of whether one consumes breakfast or fasts." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Tim mạch và hệ tuần hoàn máu (heart and blood vessels)",
-      correctExplanation: "\"Cardiovascular\" (cardio: tim, vascular: mạch máu) chỉ hệ thống tim mạch.",
+      correctAnswerText: "A. Omitting the morning meal triggers intense cravings later on, prompting excessive food intake that hampers weight control.",
+      correctExplanation: "\"Omitting the morning meal\" paraphrase cho \"skipping breakfast\", \"intense cravings\" paraphrase cho \"increased hunger\", và \"excessive food intake\" paraphrase cho \"overeating\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Phổi và hệ hô hấp",
-        diagnosticTitle: "Nhầm tim mạch với hô hấp (respiratory)",
-        explanation: "Hô hấp là respiratory, còn cardiovascular luôn là tim mạch."
+        baitOptionText: "B. Avoiding morning nourishment is guaranteed to accelerate fat burning",
+        diagnosticTitle: "Đảo ngược quan hệ nhân quả y học",
+        explanation: "Bài đọc chỉ rõ bỏ ăn sáng làm tăng nguy cơ ăn bù và béo phì, không hề kích thích đốt mỡ hay chữa bệnh."
       }
     }
   ],

@@ -210,27 +210,67 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w1d2_q01",
       roundIndex: 0,
-      prompt: "Chọn từ chính xác để hoàn thành câu: \"We offer affordable tuition ______ and many scholarships for talented students.\"",
+      prompt: "Trong chủ đề Education, từ ĐỒNG NGHĨA chuẩn xác nhất với \"tuition fees\" (học phí đại học) là:",
       options: [
-        { id: "opt_A", label: "A", text: "fees" },
-        { id: "opt_B", label: "B", text: "prices" },
-        { id: "opt_C", label: "C", text: "costs" },
-        { id: "opt_D", label: "D", text: "fares" }
+        { id: "opt_A", label: "A", text: "education costs / college charges" },
+        { id: "opt_B", label: "B", text: "travel fares / ticket prices" },
+        { id: "opt_C", label: "C", text: "rental deposit / lease fees" },
+        { id: "opt_D", label: "D", text: "living expenses / allowances" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. fees",
-      correctExplanation: "Collocation chuẩn trong giáo dục: \"tuition fees\" mang nghĩa học phí.",
+      correctAnswerText: "A. education costs / college charges",
+      correctExplanation: "\"Tuition fees\" là tiền học phí, đồng nghĩa với education costs hoặc college charges.",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. prices",
-        diagnosticTitle: "Dịch từ \"giá cả\" trong tiếng Việt",
-        explanation: "Tiếng Việt nói \"giá học phí\", nhưng trong tiếng Anh học thuật, chi phí dịch vụ/trường học dùng \"fees\", không dùng \"prices\"."
+        baitOptionId: "opt_D",
+        baitOptionText: "D. living expenses / allowances",
+        diagnosticTitle: "Nhầm học phí với chi phí sinh hoạt",
+        explanation: "Living expenses là tiền ăn ở, sinh hoạt cá nhân, hoàn toàn tách biệt với tiền học phí (tuition fees)."
       }
     },
     {
       id: "doer_w1d2_q02",
       roundIndex: 1,
-      prompt: "Chọn từ thích hợp: \"Students can learn more about the ______ application of their knowledge.\"",
+      prompt: "Từ TRÁI NGHĨA với \"optimistic\" trong câu miêu tả tinh thần người lính: \"He was so optimistic and committed\" là:",
+      options: [
+        { id: "opt_A", label: "A", text: "pessimistic (bi quan, luôn nghĩ đến điều tiêu cực)" },
+        { id: "opt_B", label: "B", text: "enthusiastic (hào hứng, nhiệt huyết)" },
+        { id: "opt_C", label: "C", text: "exhausted (kiệt sức)" },
+        { id: "opt_D", label: "D", text: "committed (tận tâm, gắn bó)" }
+      ],
+      correctOptionId: "opt_A",
+      correctAnswerText: "A. pessimistic (bi quan, luôn nghĩ đến điều tiêu cực)",
+      correctExplanation: "\"Optimistic\" = lạc quan, tin tưởng vào tương lai tốt đẹp. Trái nghĩa trực tiếp là \"pessimistic\" (bi quan).",
+      misconception: {
+        baitOptionId: "opt_C",
+        baitOptionText: "C. exhausted",
+        diagnosticTitle: "Nhầm lẫn giữa trạng thái thể lực kiệt sức và thái độ bi quan",
+        explanation: "Exhausted là kiệt sức về thể chất, không phải từ trái nghĩa về mặt thái độ tinh thần của optimistic."
+      }
+    },
+    {
+      id: "doer_w1d2_q03",
+      roundIndex: 2,
+      prompt: "Trong câu: \"The camp was really hard, but I passed first time – which was a big relief to me!\", từ \"relief\" mang nghĩa gì?",
+      options: [
+        { id: "opt_A", label: "A", text: "Cảm giác nhẹ nhõm, trút bỏ được âu lo, căng thẳng" },
+        { id: "opt_B", label: "B", text: "Sự thất vọng tột cùng khi gặp thất bại" },
+        { id: "opt_C", label: "C", text: "Sự tức giận vì bài thi quá khắt khe" },
+        { id: "opt_D", label: "D", text: "Nỗi hoang mang lo sợ điều nguy hiểm sắp tới" }
+      ],
+      correctOptionId: "opt_A",
+      correctAnswerText: "A. Cảm giác nhẹ nhõm, trút bỏ được âu lo, căng thẳng",
+      correctExplanation: "\"Relief\" (danh từ) mô tả cảm xúc thư thái, nhẹ nhõm sau khi vượt qua một áp lực hay nỗi âu lo lớn.",
+      misconception: {
+        baitOptionId: "opt_D",
+        baitOptionText: "D. Nỗi hoang mang lo sợ",
+        diagnosticTitle: "Nhầm lẫn cảm xúc tích cực sau thi với áp lực lo lắng trước thi",
+        explanation: "Relief xuất hiện sau khi bạn đã vượt qua thử thách thành công, mang nghĩa trút bỏ gánh nặng."
+      }
+    },
+    {
+      id: "doer_w1d2_q04",
+      roundIndex: 3,
+      prompt: "Chọn từ điền vào collocation chuẩn: \"Students can learn more about the ______ application of their academic knowledge.\"",
       options: [
         { id: "opt_A", label: "A", text: "practical" },
         { id: "opt_B", label: "B", text: "practice" },
@@ -239,172 +279,132 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       ],
       correctOptionId: "opt_A",
       correctAnswerText: "A. practical",
-      correctExplanation: "Trước danh từ \"application\" cần một tính từ bổ nghĩa: \"practical application\" (ứng dụng thực tiễn).",
+      correctExplanation: "Collocation học thuật: \"practical application\" (sự ứng dụng mang tính thực tiễn vào đời sống).",
       misconception: {
         baitOptionId: "opt_B",
         baitOptionText: "B. practice",
-        diagnosticTitle: "Nhầm lẫn danh từ ghép với tính từ",
-        explanation: "Dù có một số noun adjunct, cụm từ chuẩn học thuật là tính từ practical + application."
-      }
-    },
-    {
-      id: "doer_w1d2_q03",
-      roundIndex: 2,
-      prompt: "Chọn từ đúng: \"You can enjoy the friendly environment of our beautiful university ______.\"",
-      options: [
-        { id: "opt_A", label: "A", text: "campus" },
-        { id: "opt_B", label: "B", text: "yard" },
-        { id: "opt_C", label: "C", text: "field" },
-        { id: "opt_D", label: "D", text: "ground" }
-      ],
-      correctOptionId: "opt_A",
-      correctAnswerText: "A. campus",
-      correctExplanation: "Khuôn viên trường đại học gồm giảng đường, thư viện, ký túc xá được gọi là \"campus\".",
-      misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. yard",
-        diagnosticTitle: "Dịch từ \"sân trường\"",
-        explanation: "Yard chỉ là một khoảng sân nhỏ, toàn bộ khuôn viên trường học thuật phải dùng \"campus\"."
-      }
-    },
-    {
-      id: "doer_w1d2_q04",
-      roundIndex: 3,
-      prompt: "Trong bài đọc Wildfire Fighter, từ \"exhausted\" trong ngữ cảnh \"He was exhausted, but he was still there\" có nghĩa là:",
-      options: [
-        { id: "opt_A", label: "A", text: "very tired" },
-        { id: "opt_B", label: "B", text: "very excited" },
-        { id: "opt_C", label: "C", text: "very angry" },
-        { id: "opt_D", label: "D", text: "very happy" }
-      ],
-      correctOptionId: "opt_A",
-      correctAnswerText: "A. very tired",
-      correctExplanation: "\"Exhausted\" là tính từ cực độ (extreme adjective) mang nghĩa kiệt sức, vô cùng mệt mỏi.",
-      misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. very excited",
-        diagnosticTitle: "Nhầm lẫn âm điệu từ với excited",
-        explanation: "Âm /ɪɡˈzɔː.stɪd/ dễ làm thí sinh mất tập trung liên tưởng tới excited."
+        diagnosticTitle: "Nhầm lẫn danh từ practice với tính từ practical đứng trước danh từ",
+        explanation: "Trước danh từ \"application\" cần một tính từ bổ nghĩa là \"practical\"."
       }
     },
     {
       id: "doer_w1d2_q05",
       roundIndex: 4,
-      prompt: "Từ \"optimistic\" trong bài đọc có nghĩa tương đương với:",
+      prompt: "Collocation nào trong bài đọc chỉ việc \"bỏ học giữa chừng / thôi học trước khi tốt nghiệp\"?",
       options: [
-        { id: "opt_A", label: "A", text: "always expecting good things (lạc quan)" },
-        { id: "opt_B", label: "B", text: "feeling afraid (lo sợ)" },
-        { id: "opt_C", label: "C", text: "becoming stronger (trở nên mạnh mẽ hơn)" },
-        { id: "opt_D", label: "D", text: "working alone (làm việc đơn độc)" }
+        { id: "opt_A", label: "A", text: "dropping out of school / university" },
+        { id: "opt_B", label: "B", text: "breaking up with school" },
+        { id: "opt_C", label: "C", text: "going on with university" },
+        { id: "opt_D", label: "D", text: "falling down the exam" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. always expecting good things (lạc quan)",
-      correctExplanation: "Optimistic có nghĩa là lạc quan, luôn tin tưởng vào những điều tích cực.",
+      correctAnswerText: "A. dropping out of school / university",
+      correctExplanation: "\"Drop out of school/university\" là phrasal verb chuẩn xác chỉ hành vi bỏ học giữa chừng.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. becoming stronger",
-        diagnosticTitle: "Đoán nghĩa dựa trên bối cảnh lính cứu hỏa",
-        explanation: "Thí sinh suy diễn lính cứu hỏa thì phải kiên cường mạnh mẽ thay vì nghĩa thực của optimistic."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. breaking up with school",
+        diagnosticTitle: "Dùng phrasal verb quan hệ tình cảm cho trường học",
+        explanation: "Break up dùng cho chia tay người yêu, không dùng cho việc thôi học."
       }
     },
     {
       id: "doer_w1d2_q06",
       roundIndex: 5,
-      prompt: "Trong câu \"The camp was really hard, but I passed first time. It was a big relief\", từ \"relief\" có nghĩa là gì?",
+      prompt: "Cụm collocation \"stay alert\" trong hướng dẫn phòng cháy rừng (\"we always have to stay alert\") có nghĩa là:",
       options: [
-        { id: "opt_A", label: "A", text: "a feeling of happiness and relaxation after worry (sự nhẹ nhõm)" },
-        { id: "opt_B", label: "B", text: "something dangerous (sự nguy hiểm)" },
-        { id: "opt_C", label: "C", text: "a difficult test (bài kiểm tra khó)" },
-        { id: "opt_D", label: "D", text: "an important job (công việc quan trọng)" }
+        { id: "opt_A", label: "A", text: "luôn tỉnh táo, cảnh giác và chú ý cao độ trước nguy hiểm" },
+        { id: "opt_B", label: "B", text: "luôn chạy thật nhanh về phía trước" },
+        { id: "opt_C", label: "C", text: "giữ im lặng tuyệt đối không phát ra tiếng động" },
+        { id: "opt_D", label: "D", text: "ở yên trong lều không được bước ra ngoài" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. a feeling of happiness and relaxation after worry (sự nhẹ nhõm)",
-      correctExplanation: "\"Relief\" chỉ cảm giác nhẹ nhõm, trút bỏ được gánh nặng hay sự lo lắng.",
+      correctAnswerText: "A. luôn tỉnh táo, cảnh giác và chú ý cao độ trước nguy hiểm",
+      correctExplanation: "\"Stay alert\" = duy trì sự tỉnh táo và tập trung cảnh giác cao độ.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. a difficult test",
-        diagnosticTitle: "Nhầm lẫn cảm xúc với nguyên nhân",
-        explanation: "Thí sinh nhầm lẫn cảm giác nhẹ nhõm với bản thân kỳ thi cam go trước đó."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. luôn chạy thật nhanh",
+        diagnosticTitle: "Nhầm trạng thái nhận thức tinh thần với hành động thể chất",
+        explanation: "Alert là trạng thái tập trung nhận thức của não bộ trước rủi ro, không phải hành vi vận động."
       }
     },
     {
       id: "doer_w1d2_q07",
       roundIndex: 6,
-      prompt: "Cụm từ \"vast forests\" mang ý nghĩa là những khu rừng như thế nào?",
+      prompt: "Chọn từ loại thích hợp sau tính từ sở hữu: \"Our university programs encourage students to explore their personal ______.\"",
       options: [
-        { id: "opt_A", label: "A", text: "very large (rộng lớn, bao la)" },
-        { id: "opt_B", label: "B", text: "very dark (tối tăm)" },
-        { id: "opt_C", label: "C", text: "very wet (ẩm ướt)" },
-        { id: "opt_D", label: "D", text: "very old (nguyên sinh)" }
+        { id: "opt_A", label: "A", text: "interests (sở thích, mối quan tâm)" },
+        { id: "opt_B", label: "B", text: "interesting" },
+        { id: "opt_C", label: "C", text: "interested" },
+        { id: "opt_D", label: "D", text: "interestingly" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. very large (rộng lớn, bao la)",
-      correctExplanation: "Tính từ \"vast\" mô tả diện tích hoặc quy mô vô cùng rộng lớn.",
+      correctAnswerText: "A. interests (sở thích, mối quan tâm)",
+      correctExplanation: "Sau tính từ sở hữu \"their personal\" bắt buộc phải là một danh từ số nhiều: \"interests\" (các mối quan tâm / sở thích).",
       misconception: {
-        baitOptionId: "opt_D",
-        baitOptionText: "D. very old",
-        diagnosticTitle: "Nhầm lẫn quy mô diện tích với độ tuổi của rừng",
-        explanation: "Vast hoàn toàn là kích thước/độ mở rộng, không chỉ độ cổ kính."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. interested",
+        diagnosticTitle: "Nhầm lẫn tính từ cảm xúc đuôi -ed với danh từ",
+        explanation: "Interested là tính từ chỉ cảm xúc của người, không thể làm tân ngữ trực tiếp sau explore their."
       }
     },
     {
       id: "doer_w1d2_q08",
       roundIndex: 7,
-      prompt: "Cụm từ \"stay alert\" mà lính cứu hỏa bắt buộc phải duy trì nghĩa là gì?",
+      prompt: "Từ vựng cực độ (extreme adjective): Thay vì nói \"very tired after five days of firefighting\", tác giả đã dùng từ nào?",
       options: [
-        { id: "opt_A", label: "A", text: "pay close attention (luôn cảnh giác, chú ý cao độ)" },
-        { id: "opt_B", label: "B", text: "move quickly (di chuyển nhanh nhẹn)" },
-        { id: "opt_C", label: "C", text: "work alone (làm việc độc lập)" },
-        { id: "opt_D", label: "D", text: "stay silent (giữ im lặng tuyệt đối)" }
+        { id: "opt_A", label: "A", text: "exhausted" },
+        { id: "opt_B", label: "B", text: "bland" },
+        { id: "opt_C", label: "C", text: "relieved" },
+        { id: "opt_D", label: "D", text: "vast" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. pay close attention (luôn cảnh giác, chú ý cao độ)",
-      correctExplanation: "\"Alert\" là trạng thái tỉnh táo, cảnh giác và tập trung cao độ trước các mối nguy hiểm.",
+      correctAnswerText: "A. exhausted",
+      correctExplanation: "\"Exhausted\" là tính từ cực độ tương đương với \"extremely tired / completely worn out\".",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. move quickly",
-        diagnosticTitle: "Nhầm lẫn trạng thái tinh thần với hành động thể chất",
-        explanation: "Alert là nhận thức tỉnh giác, không phải là hành động chạy hay di chuyển cơ thể."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. relieved",
+        diagnosticTitle: "Nhầm cảm giác nhẹ nhõm với kiệt sức",
+        explanation: "Relieved là cảm thấy nhẹ nhõm sau khi trút được gánh lo, không chỉ sự cạn kiệt năng lượng."
       }
     },
     {
       id: "doer_w1d2_q09",
       roundIndex: 8,
-      prompt: "Theo bài đọc, yêu cầu của bài thi \"pack test\" đối với lính cứu hỏa là gì?",
+      prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào câu học thuật: \"The new research lab was built in the center of the university ______ to facilitate collaboration.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Đi bộ 5km mang ba lô 20kg trong tối đa 45 phút mà không được chạy" },
-        { id: "opt_B", label: "B", text: "Chạy bộ 5km mang ba lô 20kg trong 45 phút" },
-        { id: "opt_C", label: "C", text: "Đi bộ 10km mang ba lô 15kg trong 1 giờ" },
-        { id: "opt_D", label: "D", text: "Leo núi mang thiết bị cứu hỏa trong 30 phút" }
+        { id: "opt_A", label: "A", text: "campus" },
+        { id: "opt_B", label: "B", text: "yard" },
+        { id: "opt_C", label: "C", text: "corridor" },
+        { id: "opt_D", label: "D", text: "runway" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Đi bộ 5km mang ba lô 20kg trong tối đa 45 phút mà không được chạy",
-      correctExplanation: "Bài đọc nêu rõ: \"a five-kilometre walk while carrying a backpack that weighs twenty kilograms... complete it in 45 minutes without jogging or running\".",
+      correctAnswerText: "A. campus",
+      correctExplanation: "\"University campus\" là khuôn viên tổng thể của một trường đại học gồm các tòa giảng đường, viện nghiên cứu và tiện ích.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Chạy bộ 5km mang ba lô 20kg trong 45 phút",
-        diagnosticTitle: "Bỏ sót chi tiết cấm chạy (without jogging/running)",
-        explanation: "Đề thi nhấn mạnh đây là bài test đi bộ bền bỉ, nghiêm cấm chạy hoặc chạy bộ."
+        baitOptionText: "B. yard",
+        diagnosticTitle: "Dịch từ \"sân bãi\" thay vì khuôn viên học thuật",
+        explanation: "Yard chỉ khoảnh sân nhỏ trước/sau nhà, không dùng chỉ toàn bộ khuôn viên trường đại học."
       }
     },
     {
       id: "doer_w1d2_q10",
       roundIndex: 9,
-      prompt: "Cụm danh từ \"safety procedures\" trong hướng dẫn an toàn cứu hỏa có nghĩa là:",
+      prompt: "PARAPHRASE: Câu \"Even experienced firefighters can find themselves in difficult situations, so they must follow safety procedures carefully\" được diễn đạt lại chuẩn xác nhất là:",
       options: [
-        { id: "opt_A", label: "A", text: "Quy trình, các bước thực hiện an toàn" },
-        { id: "opt_B", label: "B", text: "Trang phục bảo hộ lao động" },
-        { id: "opt_C", label: "C", text: "Dụng cụ dập lửa chuyên dụng" },
-        { id: "opt_D", label: "D", text: "Phương tiện xe cứu hỏa khẩn cấp" }
+        { id: "opt_A", label: "A", text: "Strict adherence to safety guidelines is essential, as even veteran workers are not immune to hazards." },
+        { id: "opt_B", label: "B", text: "Experienced firefighters never make mistakes because safety rules are completely unnecessary." },
+        { id: "opt_C", label: "C", text: "Firefighters are prohibited from entering dangerous zones without permission from instructors." },
+        { id: "opt_D", label: "D", text: "Following procedures guarantees that no wildfire will ever change its direction." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Quy trình, các bước thực hiện an toàn",
-      correctExplanation: "\"Procedure\" là quy trình, chuỗi các bước tuần tự được thiết lập để làm việc đúng chuẩn.",
+      correctAnswerText: "A. Strict adherence to safety guidelines is essential, as even veteran workers are not immune to hazards.",
+      correctExplanation: "\"Strict adherence to safety guidelines\" paraphrase cho \"follow safety procedures carefully\", và \"veteran workers are not immune to hazards\" paraphrase cho \"experienced firefighters can find themselves in difficult situations\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Trang phục bảo hộ lao động",
-        diagnosticTitle: "Nhầm lẫn quy trình với trang thiết bị bảo hộ",
-        explanation: "Procedure là hướng dẫn/quy trình quy tắc, trang phục bảo hộ là gear/protective clothing."
+        baitOptionText: "B. Experienced firefighters never make mistakes",
+        diagnosticTitle: "Hiểu sai nghĩa cảnh báo thành khẳng định tuyệt đối",
+        explanation: "Đoạn văn cảnh báo người có kinh nghiệm vẫn gặp nguy hiểm, không hề khẳng định họ không bao giờ mắc lỗi."
       }
     }
   ],

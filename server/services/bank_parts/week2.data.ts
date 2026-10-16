@@ -210,201 +210,201 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w2d2_q01",
       roundIndex: 0,
-      prompt: "Theo bài đọc \"The 996 culture in China\", văn hóa làm việc 996 có nghĩa là gì?",
+      prompt: "Trong câu: \"Employees are protesting what is infamous as 996\", từ \"infamous\" (adj) ĐỒNG NGHĨA nhất với từ nào?",
       options: [
-        { id: "opt_A", label: "A", text: "Làm việc từ 9h sáng đến 9h tối, 6 ngày một tuần" },
-        { id: "opt_B", label: "B", text: "Làm việc từ 9h sáng đến 9h tối, 5 ngày một tuần" },
-        { id: "opt_C", label: "C", text: "Làm việc 9 tiếng một ngày, 9 tuần liên tục, nghỉ 6 ngày" },
-        { id: "opt_D", label: "D", text: "Làm việc từ 9h sáng đến 6h chiều trong 9 ngày" }
+        { id: "opt_A", label: "A", text: "notorious (khét tiếng, tai tiếng vì điều xấu)" },
+        { id: "opt_B", label: "B", text: "unpopular / unknown (vô danh, không ai biết)" },
+        { id: "opt_C", label: "C", text: "prestigious (uy tín, danh giá)" },
+        { id: "opt_D", label: "D", text: "admirable (đáng khâm phục, ngưỡng mộ)" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Làm việc từ 9h sáng đến 9h tối, 6 ngày một tuần",
-      correctExplanation: "Đoạn văn định nghĩa rõ: \"working from 9 am to 9 pm six days a week, and it is very common among Chinese tech companies and startups\".",
+      correctAnswerText: "A. notorious (khét tiếng, tai tiếng vì điều xấu)",
+      correctExplanation: "\"Infamous\" đồng nghĩa với \"notorious\": nổi danh vì tai tiếng, gắn với điều tồi tệ hoặc độc hại.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Làm việc từ 9h sáng đến 9h tối, 5 ngày một tuần",
-        diagnosticTitle: "Nhầm số ngày làm việc",
-        explanation: "Con số 6 ở cuối đại diện cho 6 ngày mỗi tuần (chỉ nghỉ 1 ngày)."
+        baitOptionText: "B. unpopular / unknown",
+        diagnosticTitle: "Hiểu nhầm tiền tố in- là phủ định \"không nổi tiếng\"",
+        explanation: "Nhiều người lầm tưởng in- + famous = không nổi tiếng, nhưng infamous thực chất mang nghĩa khét tiếng vì điều xấu."
       }
     },
     {
       id: "doer_w2d2_q02",
       roundIndex: 1,
-      prompt: "Trong câu \"Employees of major companies are protesting what is infamous as 996\", từ \"infamous\" có nghĩa là:",
+      prompt: "Từ TRÁI NGHĨA với \"compulsory\" trong cụm \"compulsory weekend overtime\" (tăng ca bắt buộc cuối tuần) là:",
       options: [
-        { id: "opt_A", label: "A", text: "well-known for something bad (tai tiếng, khét tiếng)" },
-        { id: "opt_B", label: "B", text: "not famous at all (vô danh, không ai biết)" },
-        { id: "opt_C", label: "C", text: "widely praised and loved (được ca ngợi)" },
-        { id: "opt_D", label: "D", text: "legally recognized (hợp pháp)" }
+        { id: "opt_A", label: "A", text: "voluntary / optional (tự nguyện, tùy chọn)" },
+        { id: "opt_B", label: "B", text: "mandatory (bắt buộc theo luật)" },
+        { id: "opt_C", label: "C", text: "punitive (trừng phạt)" },
+        { id: "opt_D", label: "D", text: "relentless (không ngừng nghỉ)" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. well-known for something bad (tai tiếng, khét tiếng)",
-      correctExplanation: "Tiền tố in- trong \"infamous\" không mang nghĩa phủ định \"không nổi tiếng\", mà có nghĩa là khét tiếng vì điều tồi tệ.",
+      correctAnswerText: "A. voluntary / optional (tự nguyện, tùy chọn)",
+      correctExplanation: "\"Compulsory\" = bắt buộc, cưỡng chế. Từ trái nghĩa trực tiếp là \"voluntary\" hoặc \"optional\" (tự nguyện/tùy chọn).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. not famous at all",
-        diagnosticTitle: "Hiểu nhầm tiền tố in- là phủ định đơn thuần",
-        explanation: "Nhiều người nghĩ famous là nổi tiếng nên infamous là không nổi tiếng, nhưng thực tế nó bằng nghĩa với \"notorious\"."
+        baitOptionText: "B. mandatory",
+        diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
+        explanation: "Mandatory là từ đồng nghĩa với compulsory. Đề bài đang yêu cầu tìm từ TRÁI NGHĨA."
       }
     },
     {
       id: "doer_w2d2_q03",
       roundIndex: 2,
-      prompt: "Theo bài đọc, hậu quả trực tiếp nhất của lịch làm việc dày đặc (tight work schedule) đối với nhân viên công nghệ là gì?",
+      prompt: "Trong cụm từ \"workplace burnout\", từ \"burnout\" mô tả chính xác trạng thái nào của người lao động?",
       options: [
-        { id: "opt_A", label: "A", text: "Burnout (kiệt quệ cả thể chất lẫn tinh thần) và thiếu thời gian cho nhu cầu cơ bản" },
-        { id: "opt_B", label: "B", text: "Tăng lương nhanh chóng và thăng tiến vượt bậc" },
-        { id: "opt_C", label: "C", text: "Tự động được nghỉ phép 4 ngày một tuần" },
-        { id: "opt_D", label: "D", text: "Bị công ty sa thải do vi phạm luật pháp" }
+        { id: "opt_A", label: "A", text: "Tình trạng kiệt quệ hoàn toàn về cả thể chất lẫn tinh thần do áp lực công việc kéo dài" },
+        { id: "opt_B", label: "B", text: "Sự nhiệt tình hăng hái cháy hết mình vì dự án" },
+        { id: "opt_C", label: "C", text: "Cơn sốt cao tạm thời do thời tiết thay đổi" },
+        { id: "opt_D", label: "D", text: "Sự tức giận nhất thời khi tranh luận với đồng nghiệp" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Burnout (kiệt quệ cả thể chất lẫn tinh thần) và thiếu thời gian cho nhu cầu cơ bản",
-      correctExplanation: "Bài đọc nêu: \"the tight work schedule means more burnout and less time for basic needs like sleep or a personal life\".",
+      correctAnswerText: "A. Tình trạng kiệt quệ hoàn toàn về cả thể chất lẫn tinh thần do áp lực công việc kéo dài",
+      correctExplanation: "\"Burnout\" là thuật ngữ tâm lý học lao động chỉ sự suy sụp, cạn kiệt năng lượng thể xác và cảm xúc vì làm việc quá tải.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Tăng lương nhanh chóng và thăng tiến vượt bậc",
-        diagnosticTitle: "Suy đoán ngoài thông tin bài đọc",
-        explanation: "Bài đọc tập trung phản ánh tác hại sức khỏe và cái chết thương tâm của nhân viên thay vì lợi ích tài chính."
+        baitOptionText: "B. Sự nhiệt tình hăng hái cháy hết mình",
+        diagnosticTitle: "Dịch nghĩa đen từ chữ \"burn\" thành cháy hết mình tích cực",
+        explanation: "Burnout luôn mang nghĩa tiêu cực chỉ sự kiệt quệ, không dùng cho sự hào hứng cống hiến."
       }
     },
     {
       id: "doer_w2d2_q04",
       roundIndex: 3,
-      prompt: "Quan điểm của cựu CEO Alibaba Jack Ma vào tháng 4/2019 về văn hóa 996 là gì?",
+      prompt: "Collocation chuẩn trong bài: \"An online campaign was launched to ______ awareness about the harsh work culture.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Ủng hộ và gọi 996 là một \"phước lành\" (blessing)" },
-        { id: "opt_B", label: "B", text: "Kịch liệt phản đối và yêu cầu cấm triệt để" },
-        { id: "opt_C", label: "C", text: "Đề xuất chế độ làm việc 4 ngày/tuần như New Zealand" },
-        { id: "opt_D", label: "D", text: "Từ chối đưa ra bất kỳ bình luận nào" }
+        { id: "opt_A", label: "A", text: "raise" },
+        { id: "opt_B", label: "B", text: "rise" },
+        { id: "opt_C", label: "C", text: "make" },
+        { id: "opt_D", label: "D", text: "arise" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Ủng hộ và gọi 996 là một \"phước lành\" (blessing)",
-      correctExplanation: "Đoạn văn viết rõ: \"Alibaba CEO Jack Ma had supported the culture of overwork, calling it a 'blessing'\".",
+      correctAnswerText: "A. raise",
+      correctExplanation: "Collocation học thuật cố định: \"raise awareness about/of something\" (nâng cao nhận thức xã hội về một vấn đề).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Kịch liệt phản đối và yêu cầu cấm triệt để",
-        diagnosticTitle: "Mặc định lãnh đạo sẽ phản đối bóc lột sau các vụ biểu tình",
-        explanation: "Thực tế Jack Ma thời điểm đó đã bảo vệ 996 vì cho rằng nó tạo động lực phát triển kinh tế cho Trung Quốc."
+        baitOptionText: "B. rise",
+        diagnosticTitle: "Nhầm lẫn giữa ngoại động từ raise (cần tân ngữ) và nội động từ rise",
+        explanation: "\"Rise\" là nội động từ không đi kèm tân ngữ. Muốn tác động lên tân ngữ \"awareness\" bắt buộc phải dùng ngoại động từ \"raise\"."
       }
     },
     {
       id: "doer_w2d2_q05",
       roundIndex: 4,
-      prompt: "Xét câu hỏi True/False/Not Given: \"The 955 schedule is proved to be healthier than the 996 one.\" Đáp án đúng là:",
+      prompt: "Chọn động từ phù hợp diễn tả việc \"áp đặt, bắt buộc thi hành quy định giờ giấc\": \"Many companies still ______ the 12-hour workday informally.\"",
       options: [
-        { id: "opt_A", label: "A", text: "NOT GIVEN" },
-        { id: "opt_B", label: "B", text: "TRUE" },
-        { id: "opt_C", label: "C", text: "FALSE" },
-        { id: "opt_D", label: "D", text: "CANNOT BE DETERMINED" }
+        { id: "opt_A", label: "A", text: "enforce" },
+        { id: "opt_B", label: "B", text: "reinforce" },
+        { id: "opt_C", label: "C", text: "comfort" },
+        { id: "opt_D", label: "D", text: "forgive" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. NOT GIVEN",
-      correctExplanation: "Bài đọc chỉ nói nhân viên đòi hỏi văn hóa 955 (9am-5pm 5 days/week), nhưng không có bằng chứng khoa học hay nghiên cứu nào trong bài chứng minh nó lành mạnh hơn.",
+      correctAnswerText: "A. enforce",
+      correctExplanation: "\"Enforce rules/hours\" nghĩa là thực thi, bắt buộc tuân thủ quy chế hoặc luật lệ.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. TRUE",
-        diagnosticTitle: "Dùng kiến thức đời sống thay vì bám sát bài đọc",
-        explanation: "Thực tế đời sống 955 rõ ràng tốt hơn 996, nhưng trong IELTS Reading nếu bài không đề cập bằng chứng so sánh thì phải là NOT GIVEN."
+        baitOptionText: "B. reinforce",
+        diagnosticTitle: "Nhầm lẫn giữa enforce (thực thi) và reinforce (củng cố, gia cố)",
+        explanation: "Reinforce mang nghĩa gia cố độ bền hoặc củng cố lập luận, không dùng cho việc bắt buộc thực thi giờ làm việc."
       }
     },
     {
       id: "doer_w2d2_q06",
       roundIndex: 5,
-      prompt: "Hai quốc gia phát triển nào được nhắc đến trong bài vì đã thử nghiệm chế độ làm việc 4 ngày/tuần (four-day workweek)?",
+      prompt: "Chọn trạng từ phù hợp: \"Though the schedule is technically prohibited by law, startups apply it formally or ______.\"",
       options: [
-        { id: "opt_A", label: "A", text: "New Zealand và Nhật Bản (Japan)" },
-        { id: "opt_B", label: "B", text: "Mỹ (USA) và Anh (UK)" },
-        { id: "opt_C", label: "C", text: "Trung Quốc và Singapore" },
-        { id: "opt_D", label: "D", text: "Đức và Pháp" }
+        { id: "opt_A", label: "A", text: "informally" },
+        { id: "opt_B", label: "B", text: "informal" },
+        { id: "opt_C", label: "C", text: "information" },
+        { id: "opt_D", label: "D", text: "informative" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. New Zealand và Nhật Bản (Japan)",
-      correctExplanation: "Đoạn văn viết: \"The well-known ones among them are New Zealand and Japan\".",
+      correctAnswerText: "A. informally",
+      correctExplanation: "Cấu trúc song hành với trạng từ \"formally\": \"formally or informally\" (một cách chính thức hoặc ngấm ngầm phi chính thức).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Mỹ (USA) và Anh (UK)",
-        diagnosticTitle: "Suy diễn các cường quốc phương Tây",
-        explanation: "Bài đọc chỉ đích danh Thủ tướng New Zealand Jacinda Ardern và hướng dẫn chính sách của chính phủ Nhật Bản."
+        baitOptionText: "B. informal",
+        diagnosticTitle: "Vi phạm tính song hành từ loại (parallel structure)",
+        explanation: "Từ kết nối bởi liên từ \"or\" với trạng từ \"formally\" bắt buộc cũng phải là một trạng từ (\"informally\")."
       }
     },
     {
       id: "doer_w2d2_q07",
       roundIndex: 6,
-      prompt: "Chọn từ thích hợp điền vào câu: \"An online campaign launched in 2019 aimed to raise ______ about 996 and reduce pressure on employees.\"",
+      prompt: "Trong cụm \"protest against 996 culture\", động từ \"protest\" đi với giới từ nào khi muốn diễn tả sự phản kháng chống lại một điều bất công?",
       options: [
-        { id: "opt_A", label: "A", text: "awareness" },
-        { id: "opt_B", label: "B", text: "attention" },
-        { id: "opt_C", label: "C", text: "knowledge" },
-        { id: "opt_D", label: "D", text: "interest" }
+        { id: "opt_A", label: "A", text: "against" },
+        { id: "opt_B", label: "B", text: "with" },
+        { id: "opt_C", label: "C", text: "for" },
+        { id: "opt_D", label: "D", text: "at" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. awareness",
-      correctExplanation: "Cụm collocation chuẩn: \"raise awareness about something\" (nâng cao nhận thức về điều gì).",
+      correctAnswerText: "A. against",
+      correctExplanation: "Cấu trúc chuẩn: \"protest against something\" (phản đối, biểu tình chống lại chính sách/hành động).",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. attention",
-        diagnosticTitle: "Nhầm với cụm attract/pay attention",
-        explanation: "Động từ đi với attention thường là pay attention hoặc draw/attract attention, không dùng raise attention."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. for",
+        diagnosticTitle: "Dùng giới từ chỉ sự ủng hộ thay vì phản đối",
+        explanation: "Protest for là đấu tranh đòi một quyền lợi, còn phản đối chống lại văn hóa độc hại phải dùng \"protest against\"."
       }
     },
     {
       id: "doer_w2d2_q08",
       roundIndex: 7,
-      prompt: "Cụm từ \"compulsory overtime\" mang ý nghĩa là gì?",
+      prompt: "Thành ngữ / cấu trúc: \"Is it really worth it to exchange our lives for money?\" mang cấu trúc chuẩn nào?",
       options: [
-        { id: "opt_A", label: "A", text: "Làm thêm giờ bắt buộc" },
-        { id: "opt_B", label: "B", text: "Làm thêm giờ tự nguyện" },
-        { id: "opt_C", label: "C", text: "Được trả tiền tăng ca gấp đôi" },
-        { id: "opt_D", label: "D", text: "Nghỉ bù sau khi làm việc cuối tuần" }
+        { id: "opt_A", label: "A", text: "exchange [A] for [B] (đánh đổi cái này lấy cái khác)" },
+        { id: "opt_B", label: "B", text: "exchange [A] into [B]" },
+        { id: "opt_C", label: "C", text: "exchange [A] with [B]" },
+        { id: "opt_D", label: "D", text: "exchange [A] at [B]" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Làm thêm giờ bắt buộc",
-      correctExplanation: "\"Compulsory\" mang nghĩa bắt buộc do quy định hoặc áp lực từ cấp trên.",
+      correctAnswerText: "A. exchange [A] for [B] (đánh đổi cái này lấy cái khác)",
+      correctExplanation: "\"Exchange something for something\" là cấu trúc chuẩn để chỉ sự đánh đổi hoặc trao đổi lấy vật phẩm/tiền bạc.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Làm thêm giờ tự nguyện",
-        diagnosticTitle: "Nhầm lẫn từ trái nghĩa (voluntary vs compulsory)",
-        explanation: "Compulsory là bắt buộc, hoàn toàn trái ngược với voluntary (tự nguyện)."
+        baitOptionText: "B. exchange [A] into [B]",
+        diagnosticTitle: "Nhầm lẫn với chuyển đổi tiền tệ",
+        explanation: "Đổi ngoại tệ thành đồng tiền khác dùng exchange money into, còn đánh đổi thứ trừu tượng (mạng sống lấy tiền) phải dùng \"for\"."
       }
     },
     {
       id: "doer_w2d2_q09",
       roundIndex: 8,
-      prompt: "Xét tính hợp pháp của chế độ 996: Mặc dù luật pháp Trung Quốc nghiêm cấm, tại sao các công ty vẫn áp dụng?",
+      prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào câu: \"The tech industry in the city is notorious for its ______ schedule, leaving employees with barely any personal time.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Họ thực thi một cách chính thức hoặc phi chính thức (informally or formally)" },
-        { id: "opt_B", label: "B", text: "Chính phủ Trung Quốc đã hủy bỏ toàn bộ luật lao động" },
-        { id: "opt_C", label: "C", text: "Tất cả nhân viên đều tự nguyện ký cam kết không cần ngủ" },
-        { id: "opt_D", label: "D", text: "Tòa án đã phán quyết 996 là hoàn toàn hợp hiến" }
+        { id: "opt_A", label: "A", text: "tight" },
+        { id: "opt_B", label: "B", text: "loose" },
+        { id: "opt_C", label: "C", text: "bland" },
+        { id: "opt_D", label: "D", text: "relief" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Họ thực thi một cách chính thức hoặc phi chính thức (informally or formally)",
-      correctExplanation: "Bài đọc chỉ rõ: \"Though the practice is technically prohibited by Chinese law, many companies still enforce the hours informally or formally\".",
+      correctAnswerText: "A. tight",
+      correctExplanation: "\"A tight schedule\" là collocation tự nhiên chỉ lịch trình làm việc kín đặc, dày đặc và căng thẳng.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. Tất cả nhân viên đều tự nguyện",
-        diagnosticTitle: "Đánh giá sai nguyên nhân áp đặt",
-        explanation: "Đây là văn hóa doanh nghiệp ép buộc nhân viên, nhiều người biểu tình phản đối chứ không hề tự nguyện."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. loose",
+        diagnosticTitle: "Chọn từ trái nghĩa (lỏng lẻo)",
+        explanation: "Loose schedule là lịch rảnh rỗi lỏng lẻo, mâu thuẫn trực tiếp với vế sau \"barely any personal time\"."
       }
     },
     {
       id: "doer_w2d2_q10",
       roundIndex: 9,
-      prompt: "Trong câu cảm thán của blogger: \"Is it really worth it to exchange our lives for money?\", người viết muốn truyền tải thông điệp gì?",
+      prompt: "PARAPHRASE: Câu \"Young tech workers suffer from burnout because the tight work schedule leaves little time for sleep or personal life\" được diễn đạt lại tương đương nhất là:",
       options: [
-        { id: "opt_A", label: "A", text: "Tiền bạc không xứng đáng để đánh đổi bằng mạng sống và sức khỏe con người" },
-        { id: "opt_B", label: "B", text: "Càng làm nhiều việc thì càng có nhiều tiền để chữa bệnh" },
-        { id: "opt_C", label: "C", text: "Khuyên nhân viên nên xin tăng lương cao hơn trước khi làm việc 996" },
-        { id: "opt_D", label: "D", text: "Khẳng định làm việc đến kiệt sức là con đường duy nhất để thành công" }
+        { id: "opt_A", label: "A", text: "Severe physical and mental exhaustion among tech staff stems from grueling hours that severely restrict rest." },
+        { id: "opt_B", label: "B", text: "Employees enjoy working late at night because it boosts their productivity and financial freedom." },
+        { id: "opt_C", label: "C", text: "Startups have officially outlawed overtime to ensure young workers maintain optimal physical health." },
+        { id: "opt_D", label: "D", text: "Lack of personal life is completely unrelated to the excessive working hours demanded by tech firms." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Tiền bạc không xứng đáng để đánh đổi bằng mạng sống và sức khỏe con người",
-      correctExplanation: "Câu hỏi tu từ (rhetorical question) thể hiện sự bất bình sâu sắc trước các ca tử vong vì làm việc quá sức ở tuổi đôi mươi.",
+      correctAnswerText: "A. Severe physical and mental exhaustion among tech staff stems from grueling hours that severely restrict rest.",
+      correctExplanation: "\"Severe physical and mental exhaustion\" paraphrase cho \"burnout\", và \"grueling hours that severely restrict rest\" paraphrase cho \"tight schedule leaves little time for sleep\".",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. Khuyên nhân viên nên xin tăng lương",
-        diagnosticTitle: "Hiểu sai giọng điệu câu hỏi tu từ",
-        explanation: "Tác giả đặt câu hỏi để khẳng định việc đổi tính mạng lấy tiền là hoàn toàn sai trái, không phải mặc cả lương."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Employees enjoy working late",
+        diagnosticTitle: "Đảo ngược thông điệp chỉ trích thành sự thích thú",
+        explanation: "Bài đọc nêu rõ sự đau khổ và cái chết vì kiệt sức, không phải sự thích thú làm việc đêm."
       }
     }
   ],

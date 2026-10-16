@@ -161,152 +161,202 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w8d2_q01",
       roundIndex: 0,
-      prompt: "Theo bài đọc về đường dây buôn bán cần sa bất hợp pháp tại Anh, nhân vật Cường Nguyễn quê ở tỉnh nào tại Việt Nam?",
+      prompt: "Trong chủ đề Crime & Law, từ \"lucrative\" trong tiêu đề \"Britain's lucrative marijuana trade\" ĐỒNG NGHĨA nhất với:",
       options: [
-        { id: "opt_A", label: "A", text: "Hải Phòng (Haiphong)" },
-        { id: "opt_B", label: "B", text: "Hà Tĩnh" },
-        { id: "opt_C", label: "C", text: "Nghệ An" },
-        { id: "opt_D", label: "D", text: "Quảng Ninh" }
+        { id: "opt_A", label: "A", text: "highly profitable / moneymaking (siêu lợi nhuận, kiếm được rất nhiều tiền)" },
+        { id: "opt_B", label: "B", text: "unprofitable / loss-making (thua lỗ)" },
+        { id: "opt_C", label: "C", text: "legal / lawful (hợp pháp)" },
+        { id: "opt_D", label: "D", text: "perilous (nguy hiểm)" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'His dangerous journey from the poor town of Haiphong to Britain's illegal cannabis farms was driven by big dreams.'"
+      correctAnswerText: "A. highly profitable / moneymaking (siêu lợi nhuận, kiếm được rất nhiều tiền)",
+      correctExplanation: "\"Lucrative\" (tính từ học thuật) mô tả một hoạt động hoặc thương vụ đem lại nguồn lợi nhuận kếch xù (profitable).",
+      misconception: {
+        baitOptionId: "opt_C",
+        baitOptionText: "C. legal / lawful",
+        diagnosticTitle: "Nhầm lẫn giữa tính sinh lời với tính hợp pháp",
+        explanation: "Buôn bán ma túy là phạm pháp (illegal) nhưng mang lại lợi nhuận khổng lồ nên gọi là lucrative trade."
+      }
     },
     {
       id: "doer_w8d2_q02",
       roundIndex: 1,
-      prompt: "Để trốn sang châu Âu tham gia đường dây trồng cần sa, Cường đã trả cho đường dây môi giới bao nhiêu tiền để có hộ chiếu giả?",
+      prompt: "Từ TRÁI NGHĨA với \"broke\" trong câu miêu tả tình cảnh khi hồi hương: \"Cuong returned broke and now lives in a modest house\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "US$15,000" },
-        { id: "opt_B", label: "B", text: "US$19,000" },
-        { id: "opt_C", label: "C", text: "US$3,200" },
-        { id: "opt_D", label: "D", text: "US$50,000" }
+        { id: "opt_A", label: "A", text: "wealthy / affluent (giàu có, dư dả tiền bạc)" },
+        { id: "opt_B", label: "B", text: "penniless / bankrupt (cháy túi, khánh kiệt)" },
+        { id: "opt_C", label: "C", text: "reformed (hoàn lương)" },
+        { id: "opt_D", label: "D", text: "imprisoned (bị tống giam)" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'he paid US$15,000 to brokers for a fake passport to join a tour to Europe.'"
+      correctAnswerText: "A. wealthy / affluent (giàu có, dư dả tiền bạc)",
+      correctExplanation: "\"Broke\" (tính từ khẩu ngữ thông dụng) = hoàn toàn rỗng túi, khánh kiệt tài chính. Từ trái nghĩa là \"wealthy\" hoặc \"affluent\".",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. penniless / bankrupt",
+        diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
+        explanation: "Penniless/bankrupt đồng nghĩa với broke. Đề bài đang yêu cầu tìm từ TRÁI NGHĨA."
+      }
     },
     {
       id: "doer_w8d2_q03",
       roundIndex: 2,
-      prompt: "Từ trại tị nạn ở Calais (Pháp), Cường và những người di cư đã vượt biên vào nước Anh bằng cách nào?",
+      prompt: "Thuật ngữ tội phạm \"human trafficker\" trong bài đọc dùng để chỉ ai?",
       options: [
-        { id: "opt_A", label: "A", text: "Trốn dưới gầm một chiếc xe tải (underneath a lorry)" },
-        { id: "opt_B", label: "B", text: "Đi bằng xuồng hơi cao su vượt eo biển Manche" },
-        { id: "opt_C", label: "C", text: "Dùng visa du lịch đường hàng không" },
-        { id: "opt_D", label: "D", text: "Ẩn nấp trong thùng container đông lạnh" }
+        { id: "opt_A", label: "A", text: "Kẻ buôn người / tội phạm buôn bán, vận chuyển người vượt biên trái phép" },
+        { id: "opt_B", label: "B", text: "Cảnh sát điều phối giao thông đường bộ" },
+        { id: "opt_C", label: "C", text: "Cán bộ quản lý xuất nhập cảnh tại sân bay" },
+        { id: "opt_D", label: "D", text: "Tài xế lái xe buýt du lịch châu Âu" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'transported to the UK, under a lorry. \"If you fall you're dead,\" explains Cuong...'"
+      correctAnswerText: "A. Kẻ buôn người / tội phạm buôn bán, vận chuyển người vượt biên trái phép",
+      correctExplanation: "\"Human trafficker\" là tội phạm buôn bán người xuyên quốc gia (trafficking: buôn lậu bất hợp pháp hàng cấm hoặc con người).",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Cảnh sát điều phối giao thông",
+        diagnosticTitle: "Dịch nhầm từ gốc traffic (giao thông)",
+        explanation: "Trong hình sự, trafficking là tội phạm buôn lậu/buôn người, không liên quan đến trật tự giao thông đường bộ."
+      }
     },
     {
       id: "doer_w8d2_q04",
       roundIndex: 3,
-      prompt: "Tại thành phố Bristol, công việc hàng ngày của Cường tại các ngôi nhà trồng cần sa ngoại ô gồm những gì?",
+      prompt: "Collocation tố tụng hình sự: \"The defendant was convicted of cultivating illicit plants and ______ to 10 months in prison.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Trộn phân bón dinh dưỡng, chiếu đèn sưởi 2 tiếng mỗi ngày và tưới nước cho cây" },
-        { id: "opt_B", label: "B", text: "Giao cần sa trực tiếp cho người tiêu dùng trên phố" },
-        { id: "opt_C", label: "C", text: "Lái xe tải vận chuyển cần sa sang các thành phố khác" },
-        { id: "opt_D", label: "D", text: "Nấu ăn cho đội ngũ bảo vệ người Anh" }
+        { id: "opt_A", label: "A", text: "sentenced (bị tòa tuyên án phạt tù)" },
+        { id: "opt_B", label: "B", text: "worded" },
+        { id: "opt_C", label: "C", text: "phrased" },
+        { id: "opt_D", label: "D", text: "scripted" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: '\"I got up early, ate rice, and prepared feed for my plants... put them under lights for two hours and watered them,\" recalls Cuong.'"
+      correctAnswerText: "A. sentenced (bị tòa tuyên án phạt tù)",
+      correctExplanation: "Cấu trúc pháp lý chuẩn: \"be sentenced to [time] in prison/jail\" (bị toà tuyên phạt mức án bao lâu).",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. worded",
+        diagnosticTitle: "Dịch nhầm từ nghĩa ngữ pháp của sentence (câu văn)",
+        explanation: "Trong luật pháp, \"sentence\" là bản án/tuyên án của thẩm phán, không liên quan đến câu cú ngữ pháp."
+      }
     },
     {
       id: "doer_w8d2_q05",
       roundIndex: 4,
-      prompt: "Cường bị cảnh sát bắt giữ tại London vào năm 2014 vì hành vi gì?",
+      prompt: "Chọn động từ đúng chỉ biện pháp hành chính cưỡng chế trục xuất người nhập cư trái phép: \"The immigration authorities ______ him back to his home country.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Bị bắt vì hút cần sa công khai và dấu vân tay trùng khớp với trang trại cần sa ở Bristol" },
-        { id: "opt_B", label: "B", text: "Đánh nhau tại một quán bar ở trung tâm London" },
-        { id: "opt_C", label: "C", text: "Cướp tiệm vàng ở khu người Việt" },
-        { id: "opt_D", label: "D", text: "Bị phát hiện dùng hộ chiếu giả ở sân bay Heathrow" }
+        { id: "opt_A", label: "A", text: "deported" },
+        { id: "opt_B", label: "B", text: "imported" },
+        { id: "opt_C", label: "C", text: "supported" },
+        { id: "opt_D", label: "D", text: "transported" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'in 2014 he was arrested for smoking cannabis. His fingerprints tied him to the Bristol grow house.'"
+      correctAnswerText: "A. deported",
+      correctExplanation: "\"Deport somebody (back to...)\" là thuật ngữ xuất nhập cảnh chỉ hành vi cưỡng chế trục xuất người nhập cư không hợp lệ về nước.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. imported",
+        diagnosticTitle: "Nhầm lẫn với hành vi nhập khẩu hàng hóa",
+        explanation: "Import là nhập khẩu hàng hóa, deport mới là trục xuất con người vi phạm visa/nhập cảnh."
+      }
     },
     {
       id: "doer_w8d2_q06",
       roundIndex: 5,
-      prompt: "Sau khi thụ án 10 tháng tù giam tại Anh, Cường đã phải đối mặt với hình phạt hành chính nào tiếp theo?",
+      prompt: "Chọn tính từ phù hợp diễn tả nỗ lực làm lại cuộc đời: \"Now he claims he is fully ______ and hopes to start clean with an honest livelihood.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Bị Bộ Nội vụ Anh trục xuất (deported) về Việt Nam" },
-        { id: "opt_B", label: "B", text: "Bị phạt lao động công ích vĩnh viễn ở Scotland" },
-        { id: "opt_C", label: "C", text: "Bị đưa vào trại tị nạn không thời hạn" },
-        { id: "opt_D", label: "D", text: "Được cấp quy chế tị nạn nhân đạo" }
+        { id: "opt_A", label: "A", text: "reformed (đã hoàn lương, cải tà quy chính)" },
+        { id: "opt_B", label: "B", text: "deformed" },
+        { id: "opt_C", label: "C", text: "uninformed" },
+        { id: "opt_D", label: "D", text: "misinformed" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'sentenced to 10 months in jail. Eventually, the UK Home Office deported him. He joined more than 1,600 returnees to Vietnam...'"
+      correctAnswerText: "A. reformed (đã hoàn lương, cải tà quy chính)",
+      correctExplanation: "\"A reformed criminal/character\" chỉ người từng phạm pháp nay đã ăn năn hối cải và hoàn lương sống lương thiện.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. deformed",
+        diagnosticTitle: "Nhầm lẫn từ biến dạng thể xác với cải tạo nhân cách",
+        explanation: "Deformed là bị biến dạng hình thể dị tật, hoàn toàn khác với reformed (hoàn lương)."
+      }
     },
     {
       id: "doer_w8d2_q07",
       roundIndex: 6,
-      prompt: "Thực hiện bài tập tóm tắt điền 1 từ: 'In Vietnam, Cuong found it difficult to adjust to life as he was ____________.'",
+      prompt: "Chọn giới từ đúng miêu tả phương thức trốn nguy hiểm của người vượt biên: \"Migrants risked their lives hiding ______ a lorry to cross the English Channel.\"",
       options: [
-        { id: "opt_A", label: "A", text: "broke" },
-        { id: "opt_B", label: "B", text: "rich" },
-        { id: "opt_C", label: "C", text: "injured" },
-        { id: "opt_D", label: "D", text: "imprisoned" }
+        { id: "opt_A", label: "A", text: "underneath" },
+        { id: "opt_B", label: "B", text: "above" },
+        { id: "opt_C", label: "C", text: "along" },
+        { id: "opt_D", label: "D", text: "between" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Từ bài đọc: 'who returned broke and now lives in a modest house in Haiphong' -> broke (cháy túi, khánh kiệt tài chính)."
+      correctAnswerText: "A. underneath",
+      correctExplanation: "\"Underneath a lorry\" (dưới gầm xe tải): Giới từ chỉ vị trí ẩn nấp nguy hiểm chết người của người tị nạn/di cư chui.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. above",
+        diagnosticTitle: "Chọn vị trí trên nóc xe sai sự thật bài đọc",
+        explanation: "Họ đu bám dưới trục gầm xe (underneath/under), trèo lên nóc xe (above) sẽ bị camera quét nhiệt phát hiện ngay lập tức."
+      }
     },
     {
       id: "doer_w8d2_q08",
       roundIndex: 7,
-      prompt: "Ước tính của các nhà nghiên cứu về quy mô thị trường mua bán cần sa bất hợp pháp hàng năm tại Anh là bao nhiêu?",
+      prompt: "Cụm danh từ \"fake passport\" trong bài đọc thuộc chủ đề giấy tờ giả mạo được viết chuẩn ngữ pháp là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Khoảng 2.6 tỷ Bảng Anh (tương đương 3.2 tỷ USD)" },
-        { id: "opt_B", label: "B", text: "Khoảng 500 triệu Bảng Anh" },
-        { id: "opt_C", label: "C", text: "Khoảng 10 tỷ Bảng Anh" },
-        { id: "opt_D", label: "D", text: "Khoảng 100 triệu USD" }
+        { id: "opt_A", label: "A", text: "fake passport / fraudulent passport" },
+        { id: "opt_B", label: "B", text: "untrue passport" },
+        { id: "opt_C", label: "C", text: "wrong passport" },
+        { id: "opt_D", label: "D", text: "error passport" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "Bài đọc: 'huge cannabis trade - which researchers value at around £2.6 billion (US$3.2 billion) a year.'"
+      correctAnswerText: "A. fake passport / fraudulent passport",
+      correctExplanation: "Collocation bất di bất dịch trong tội phạm giấy tờ: \"fake passport\" hoặc thuật ngữ pháp lý \"fraudulent passport\" (hộ chiếu giả mạo).",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. untrue passport",
+        diagnosticTitle: "Dịch từ \"hộ chiếu không thật\"",
+        explanation: "Tiếng Anh không dùng untrue hay wrong cho giấy tờ giả, bắt buộc dùng fake/fraudulent/counterfeit."
+      }
     },
     {
       id: "doer_w8d2_q09",
       roundIndex: 8,
-      prompt: "Từ vựng: 'Cuong was sentenced to 10 months in jail.' Từ 'sentenced' mang ý nghĩa gì?",
+      prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp hoàn thành câu: \"International syndicates exploit vulnerable individuals to operate an extensive ______ drug network across borders.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Bị toà tuyên án / phạt tù" },
-        { id: "opt_B", label: "B", text: "Được toà tha bổng vô điều kiện" },
-        { id: "opt_C", label: "C", text: "Bị bắt giữ chờ xét xử" },
-        { id: "opt_D", label: "D", text: "Viết bản tường trình nộp toà án" }
+        { id: "opt_A", label: "A", text: "illicit (bất hợp pháp, phi pháp)" },
+        { id: "opt_B", label: "B", text: "campus" },
+        { id: "opt_C", label: "C", text: "bland" },
+        { id: "opt_D", label: "D", text: "relief" }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "'to be sentenced to [time] in jail/prison' là cụm pháp lý chỉ việc bị tuyên án phạt tù bao lâu."
+      correctAnswerText: "A. illicit (bất hợp pháp, phi pháp)",
+      correctExplanation: "\"Illicit drug network\" là collocation học thuật band cao trong IELTS: mạng lưới buôn bán chất cấm phi pháp.",
+      misconception: {
+        baitOptionId: "opt_C",
+        baitOptionText: "C. bland",
+        diagnosticTitle: "Chọn tính từ nhạt nhẽo của thức ăn",
+        explanation: "Bland là hương vị thức ăn nhạt, hoàn toàn vô nghĩa trong văn cảnh tội phạm ma túy."
+      }
     },
     {
       id: "doer_w8d2_q10",
       roundIndex: 9,
-      prompt: "Cụm 'human trafficker' trong bài đọc có nghĩa là gì?",
+      prompt: "PARAPHRASE: Câu \"Impoverished migrants were coerced by organized gangs into cultivating illegal cannabis in suburban stash houses\" được diễn đạt lại tương đương nhất là:",
       options: [
-        { id: "opt_A", label: "A", text: "Kẻ buôn người / môi giới đưa người di cư bất hợp pháp" },
-        { id: "opt_B", label: "B", text: "Người điều phối giao thông đường bộ" },
-        { id: "opt_C", label: "C", text: "Cán bộ quản lý xuất nhập cảnh" },
-        { id: "opt_D", label: "D", text: "Tài xế lái xe tải đường dài" }
+        { id: "opt_A", label: "A", text: "Criminal cartels exploited desperate laborers from underprivileged backgrounds to maintain clandestine marijuana farms." },
+        { id: "opt_B", label: "B", text: "All migrants voluntarily invested millions of dollars into lawful agricultural greenhouses." },
+        { id: "opt_C", label: "C", text: "British suburban homeowners regularly hire international botanists to cultivate rare ornamental flowers." },
+        { id: "opt_D", label: "D", text: "Immigration authorities offered handsome subsidies to encourage underground cannabis distribution." }
       ],
       correctOptionId: "opt_A",
-      timeLimitSeconds: 20,
-      points: 1000,
-      explanation: "'Human trafficker' là tội phạm buôn người, buôn bán nạn nhân vượt biên."
+      correctAnswerText: "A. Criminal cartels exploited desperate laborers from underprivileged backgrounds to maintain clandestine marijuana farms.",
+      correctExplanation: "\"Criminal cartels\" paraphrase cho \"organized gangs\", \"desperate laborers from underprivileged backgrounds\" paraphrase cho \"impoverished migrants coerced\", và \"clandestine marijuana farms\" paraphrase cho \"illegal cannabis in suburban stash houses\".",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Migrants voluntarily invested in lawful greenhouses",
+        diagnosticTitle: "Tẩy trắng hoạt động tội phạm thành đầu tư nông nghiệp hợp pháp",
+        explanation: "Bài đọc nêu rõ đây là chuỗi tội phạm ngầm bất hợp pháp với những lao động nghèo khó bị bóc lột."
+      }
     }
   ],
 

@@ -210,27 +210,87 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w5d2_q01",
       roundIndex: 0,
-      prompt: "Năm 2021, Trung Quốc đã ban hành lệnh giới hạn trẻ vị thành niên (dưới 18 tuổi) chơi điện tử tối đa bao nhiêu giờ mỗi tuần?",
+      prompt: "Trong bài đọc Karaoke in Vietnam, từ \"communal\" trong cụm \"one of its great communal joys\" ĐỒNG NGHĨA nhất với từ nào?",
       options: [
-        { id: "opt_A", label: "A", text: "Không quá 3 giờ mỗi tuần" },
-        { id: "opt_B", label: "B", text: "Không quá 10 giờ mỗi tuần" },
-        { id: "opt_C", label: "C", text: "1 giờ mỗi ngày (tổng 7 giờ/tuần)" },
-        { id: "opt_D", label: "D", text: "Cấm vĩnh viễn không được chơi một phút nào" }
+        { id: "opt_A", label: "A", text: "shared / collective (thuộc về tập thể, cộng đồng cùng chia sẻ)" },
+        { id: "opt_B", label: "B", text: "private / solitary (riêng tư, đơn độc)" },
+        { id: "opt_C", label: "C", text: "commercial (mang tính thương mại)" },
+        { id: "opt_D", label: "D", text: "competitive (có tính cạnh tranh gay gắt)" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Không quá 3 giờ mỗi tuần",
-      correctExplanation: "Đoạn văn viết: \"children under the age of 18 are banned from playing video games more than three hours per week\".",
+      correctAnswerText: "A. shared / collective (thuộc về tập thể, cộng đồng cùng chia sẻ)",
+      correctExplanation: "\"Communal\" = mang tính cộng đồng, tập thể cùng chung vui, đồng nghĩa với shared/collective.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. 1 giờ mỗi ngày",
-        diagnosticTitle: "Nhầm 3 giờ/tuần thành mỗi ngày 1 giờ",
-        explanation: "Quy định quy định tối đa 3 giờ trong cả tuần (thường chia vào 1 giờ vào các tối thứ 6, thứ 7 và chủ nhật)."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. private / solitary",
+        diagnosticTitle: "Chọn nhầm từ trái nghĩa",
+        explanation: "Private/solitary là riêng tư cá nhân, trái ngược hoàn toàn với ý nghĩa cộng đồng của communal."
       }
     },
     {
       id: "doer_w5d2_q02",
       roundIndex: 1,
-      prompt: "Chọn giới từ đúng đi kèm cấu trúc cấm đoán: \"Children under 18 are banned ______ playing video games more than 3 hours per week.\"",
+      prompt: "Từ TRÁI NGHĨA với \"inappropriate\" trong câu \"a karaoke machine pops up at completely inappropriate moments\" là:",
+      options: [
+        { id: "opt_A", label: "A", text: "suitable / fitting (thích hợp, đúng lúc, phù hợp hoàn cảnh)" },
+        { id: "opt_B", label: "B", text: "hilarious (vui nhộn, buồn cười)" },
+        { id: "opt_C", label: "C", text: "bizarre (kỳ dị, quái đản)" },
+        { id: "opt_D", label: "D", text: "awkward (ngượng ngùng)" }
+      ],
+      correctOptionId: "opt_A",
+      correctAnswerText: "A. suitable / fitting (thích hợp, đúng lúc, phù hợp hoàn cảnh)",
+      correctExplanation: "Tiền tố in- mang nghĩa phủ định: inappropriate = không thích hợp, vô duyên. Từ trái nghĩa trực tiếp là \"suitable\" hoặc \"fitting\".",
+      misconception: {
+        baitOptionId: "opt_C",
+        baitOptionText: "C. bizarre",
+        diagnosticTitle: "Nhầm lẫn giữa từ đồng nghĩa và trái nghĩa",
+        explanation: "Bizarre (kỳ lạ) mang tính chất tương tự với inappropriate trong ngữ cảnh bất thường. Đề bài yêu cầu tìm từ TRÁI NGHĨA."
+      }
+    },
+    {
+      id: "doer_w5d2_q03",
+      roundIndex: 2,
+      prompt: "Trong câu: \"Vietnamese folk songs are a bit of a nightmare for the untrained tongue\", cụm ẩn dụ \"the untrained tongue\" ám chỉ điều gì?",
+      options: [
+        { id: "opt_A", label: "A", text: "Người nước ngoài chưa được luyện tập phát âm hệ thống thanh điệu tiếng Việt phức tạp" },
+        { id: "opt_B", label: "B", text: "Người bị mất giọng sau khi hát quá nhiều bài" },
+        { id: "opt_C", label: "C", text: "Thiết bị micro không thu được âm thanh chất lượng cao" },
+        { id: "opt_D", label: "D", text: "Ca sĩ chuyên nghiệp từ chối hát nhạc dân gian" }
+      ],
+      correctOptionId: "opt_A",
+      correctAnswerText: "A. Người nước ngoài chưa được luyện tập phát âm hệ thống thanh điệu tiếng Việt phức tạp",
+      correctExplanation: "\"Untrained tongue\" là lối nói ẩn dụ chỉ chiếc lưỡi chưa được tập luyện để uốn âm và phát âm các thanh sắc, hỏi, ngã, nặng trong tiếng Việt.",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Người bị mất giọng",
+        diagnosticTitle: "Dịch nghĩa đen từ \"tongue\" thành vấn đề cổ họng",
+        explanation: "Đây là cách nói tu từ về kỹ năng phát âm ngoại ngữ, không phải bệnh lý mất giọng."
+      }
+    },
+    {
+      id: "doer_w5d2_q04",
+      roundIndex: 3,
+      prompt: "Collocation chuẩn trong bài: \"Singing some traditional songs helps foreigners leave a favorable ______ on the local residents.\"",
+      options: [
+        { id: "opt_A", label: "A", text: "impression" },
+        { id: "opt_B", label: "B", text: "imprint" },
+        { id: "opt_C", label: "C", text: "pressure" },
+        { id: "opt_D", label: "D", text: "oppression" }
+      ],
+      correctOptionId: "opt_A",
+      correctAnswerText: "A. impression",
+      correctExplanation: "Collocation học thuật: \"leave a favorable/good impression on somebody\" (để lại ấn tượng tốt đẹp trong lòng ai).",
+      misconception: {
+        baitOptionId: "opt_B",
+        baitOptionText: "B. imprint",
+        diagnosticTitle: "Dùng từ dấu ấn vật lý thay vì ấn tượng tâm lý",
+        explanation: "Imprint là dấu vết in hằn cơ học, còn tạo ấn tượng cảm xúc với người khác bắt buộc dùng \"impression\"."
+      }
+    },
+    {
+      id: "doer_w5d2_q05",
+      roundIndex: 4,
+      prompt: "Chọn động từ đi với giới từ FROM trong quy định pháp luật: \"Minors are strictly banned ______ engaging in online gaming for more than 3 hours weekly.\"",
       options: [
         { id: "opt_A", label: "A", text: "from" },
         { id: "opt_B", label: "B", text: "to" },
@@ -239,18 +299,18 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       ],
       correctOptionId: "opt_A",
       correctAnswerText: "A. from",
-      correctExplanation: "Cấu trúc bị động chuẩn: be banned FROM doing something (bị cấm làm gì).",
+      correctExplanation: "Cấu trúc cấm đoán pháp lý: \"be banned / prohibited FROM doing something\" (bị nghiêm cấm làm việc gì).",
       misconception: {
         baitOptionId: "opt_B",
         baitOptionText: "B. to",
-        diagnosticTitle: "Dùng to-infinitive sau ban",
-        explanation: "Các động từ ngăn cản/cấm đoán như prevent, ban, prohibit luôn đi với \"from + V-ing\"."
+        diagnosticTitle: "Dùng to-V sau động từ ban",
+        explanation: "Động từ ban không đi với to-V mà bắt buộc dùng giới từ \"from + V-ing\"."
       }
     },
     {
-      id: "doer_w5d2_q03",
-      roundIndex: 2,
-      prompt: "Chọn từ loại đúng để diễn đạt trạng thái đắm chìm: \"Young people love to ______ themselves in a virtual gaming world.\"",
+      id: "doer_w5d2_q06",
+      roundIndex: 5,
+      prompt: "Chọn từ loại đúng để hoàn thành cấu trúc phản thân: \"Players love to ______ themselves in a fantasy virtual universe.\"",
       options: [
         { id: "opt_A", label: "A", text: "immerse" },
         { id: "opt_B", label: "B", text: "immersion" },
@@ -259,152 +319,92 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       ],
       correctOptionId: "opt_A",
       correctAnswerText: "A. immerse",
-      correctExplanation: "Cấu trúc phản thân học thuật: \"immerse oneself in something\" (đắm mình/chìm đắm vào thế giới nào đó).",
+      correctExplanation: "Cấu trúc động từ nguyên thể sau to: \"immerse oneself in sth\" (đắm chìm bản thân vào điều gì).",
       misconception: {
         baitOptionId: "opt_B",
         baitOptionText: "B. immersion",
-        diagnosticTitle: "Nhầm lẫn giữa động từ và danh từ",
-        explanation: "Sau to-infinitive cần động từ nguyên thể \"immerse\", không dùng danh từ immersion."
-      }
-    },
-    {
-      id: "doer_w5d2_q04",
-      roundIndex: 3,
-      prompt: "Theo bài đọc \"Karaoke in Vietnam\", tác giả ngoại quốc đã nhận thấy điều gì về thái độ của đàn ông Việt Nam đối với việc hát karaoke?",
-      options: [
-        { id: "opt_A", label: "A", text: "Hầu hết đàn ông Việt Nam đều tự tin nghĩ rằng mình hát hay, nhắm mắt phiêu theo bài hát ngay cả khi hát trật nốt" },
-        { id: "opt_B", label: "B", text: "Họ luôn e ngại và từ chối cầm mic hát trước đám đông" },
-        { id: "opt_C", label: "C", text: "Họ chỉ hát khi được trả thù lao ca hát" },
-        { id: "opt_D", label: "D", text: "Họ chỉ thích nghe ca sĩ chuyên nghiệp biểu diễn" }
-      ],
-      correctOptionId: "opt_A",
-      correctAnswerText: "A. Hầu hết đàn ông Việt Nam đều tự tin nghĩ rằng mình hát hay, nhắm mắt phiêu theo bài hát ngay cả khi hát trật nốt",
-      correctExplanation: "Tác giả hóm hỉnh miêu tả: \"Most Vietnamese men think they can sing. You can tell by the way they close their eyes and look to the heavens as they miss the high notes\".",
-      misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. Họ luôn e ngại và từ chối",
-        diagnosticTitle: "Suy đoán ngược lại hoàn toàn với tính cách vui vẻ cởi mở trong bài",
-        explanation: "Bài đọc nhấn mạnh karaoke ở VN là một nét văn hóa bùng nổ, ai cũng say mê cầm mic hát hết mình."
-      }
-    },
-    {
-      id: "doer_w5d2_q05",
-      roundIndex: 4,
-      prompt: "Theo tác giả, bản chất sâu sắc của văn hóa hát Karaoke mà người Việt Nam thấu hiểu rất rõ là gì?",
-      options: [
-        { id: "opt_A", label: "A", text: "Karaoke là phương tiện gắn kết con người (a means of human connection) và sẻ chia cảm xúc" },
-        { id: "opt_B", label: "B", text: "Là cách duy nhất để kiếm tiền thưởng từ các cuộc thi âm nhạc" },
-        { id: "opt_C", label: "C", text: "Là hoạt động để cạnh tranh xem ai có giọng hát kỹ thuật tốt hơn" },
-        { id: "opt_D", label: "D", text: "Là dịp để quảng cáo các thiết bị loa đài âm thanh đắt tiền" }
-      ],
-      correctOptionId: "opt_A",
-      correctAnswerText: "A. Karaoke là phương tiện gắn kết con người (a means of human connection) và sẻ chia cảm xúc",
-      correctExplanation: "Đoạn F khẳng định: \"Music has the capacity to connect us. Karaoke is a means of human connection - a way for even terrible singers to immerse themselves in a universal art form\".",
-      misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. Để cạnh tranh kỹ thuật giọng hát",
-        diagnosticTitle: "Hiểu sai tinh thần gắn kết cộng đồng",
-        explanation: "Bài viết nhấn mạnh karaoke không phải để phô diễn kỹ thuật chuyên nghiệp mà là để mọi người kết nối và vui cười cùng nhau."
-      }
-    },
-    {
-      id: "doer_w5d2_q06",
-      roundIndex: 5,
-      prompt: "Chọn từ thích hợp: \"Foreigners who can sing some popular Vietnamese songs can leave a good ______ on the locals.\"",
-      options: [
-        { id: "opt_A", label: "A", text: "impression" },
-        { id: "opt_B", label: "B", text: "impressive" },
-        { id: "opt_C", label: "C", text: "impress" },
-        { id: "opt_D", label: "D", text: "impressively" }
-      ],
-      correctOptionId: "opt_A",
-      correctAnswerText: "A. impression",
-      correctExplanation: "Collocation bất hủ: \"leave a good impression on somebody\" (để lại ấn tượng tốt đẹp trong lòng ai).",
-      misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. impressive",
-        diagnosticTitle: "Nhầm lẫn tính từ và danh từ sau mạo từ \"a\"",
-        explanation: "Sau cụm \"a good + [Noun]\" phải là danh từ impression, không thể dùng tính từ impressive."
+        diagnosticTitle: "Dùng nhầm danh từ sau to",
+        explanation: "Sau \"love to\" cần một động từ nguyên mẫu (immerse), không dùng danh từ immersion."
       }
     },
     {
       id: "doer_w5d2_q07",
       roundIndex: 6,
-      prompt: "Trong bài nghe \"Events during Kenton Festival\", sự kiện lễ hội Kenton bắt đầu vào ngày nào?",
+      prompt: "Từ vựng chỉ sự kiện kỷ niệm tròn 100 năm: Trong cụm \"celebrating Helen Tungate's centenary\", từ \"centenary\" có nghĩa là:",
       options: [
-        { id: "opt_A", label: "A", text: "16th of May" },
-        { id: "opt_B", label: "B", text: "19th of May" },
-        { id: "opt_C", label: "C", text: "15th of May" },
-        { id: "opt_D", label: "D", text: "20th of May" }
+        { id: "opt_A", label: "A", text: "Lễ kỷ niệm tròn 100 năm (the 100th anniversary)" },
+        { id: "opt_B", label: "B", text: "Lễ kỷ niệm 50 năm nửa thế kỷ" },
+        { id: "opt_C", label: "C", text: "Lễ tang tưởng niệm người đã khuất" },
+        { id: "opt_D", label: "D", text: "Lễ nhậm chức thị trưởng" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. 16th of May",
-      correctExplanation: "Người phụ trách phòng vé thông báo: \"the festival begins on the 16th of May and goes on till the 19th\".",
+      correctAnswerText: "A. Lễ kỷ niệm tròn 100 năm (the 100th anniversary)",
+      correctExplanation: "Gốc từ Latin \"cent-\" = 100 (như century: thế kỷ). \"Centenary\" là lễ kỷ niệm tròn đúng 100 năm.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. 15th of May",
-        diagnosticTitle: "Nhầm lẫn ngày du khách đến với ngày lễ hội bắt đầu",
-        explanation: "Người phụ nữ nói bà ấy sẽ đến Kenton từ ngày 15, nhưng lễ hội chính thức khai mạc vào ngày 16/5."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Lễ kỷ niệm 50 năm",
+        diagnosticTitle: "Nhầm lẫn với golden jubilee (50 năm)",
+        explanation: "50 năm là jubilee, 100 năm là centenary / centennial."
       }
     },
     {
       id: "doer_w5d2_q08",
       roundIndex: 7,
-      prompt: "Nhân vật lịch sử Helen Tungate được tôn vinh tại lễ hội Kenton nhân dịp kỷ niệm 100 năm ngày sinh từng làm nghề gì?",
+      prompt: "Cụm danh từ \"mixed reactions\" trong câu \"The gaming curfew caused mixed reactions among citizens\" mang sắc thái gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Scientist / Biologist (nhà khoa học / sinh học)" },
-        { id: "opt_B", label: "B", text: "Mayor of the town (thị trưởng)" },
-        { id: "opt_C", label: "C", text: "Choir singer (ca sĩ hợp xướng)" },
-        { id: "opt_D", label: "D", text: "Army officer (sĩ quan quân đội)" }
+        { id: "opt_A", label: "A", text: "Các phản ứng trái chiều (người khen người chê, kẻ đồng tình kẻ phản đối)" },
+        { id: "opt_B", label: "B", text: "100% người dân đều kịch liệt phản đối" },
+        { id: "opt_C", label: "C", text: "Toàn bộ xã hội đồng thuận tuyệt đối không ý kiến" },
+        { id: "opt_D", label: "D", text: "Người dân hoàn toàn thờ ơ không ai quan tâm" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Scientist / Biologist (nhà khoa học / sinh học)",
-      correctExplanation: "Người phụ nữ nói: \"I certainly have heard of her. She was a scientist... I'm a biologist, so I've always been interested in her\".",
+      correctAnswerText: "A. Các phản ứng trái chiều (người khen người chê, kẻ đồng tình kẻ phản đối)",
+      correctExplanation: "\"Mixed reactions\" miêu tả luồng ý kiến phân hóa: phụ huynh thì vui mừng trong khi giới trẻ coi đó là vi phạm quyền tự do.",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. Mayor of the town",
-        diagnosticTitle: "Nhầm với người khai mạc buổi lễ",
-        explanation: "Thị trưởng (mayor) là người phát biểu khai mạc, còn vở kịch là nói về nhà khoa học nữ Helen Tungate."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. Toàn bộ xã hội đồng thuận",
+        diagnosticTitle: "Hiểu sai chữ mixed thành hòa hợp đồng thuận",
+        explanation: "\"Mixed\" là pha trộn các ý kiến mâu thuẫn trái chiều nhau, không phải đồng thuận một chiều."
       }
     },
     {
       id: "doer_w5d2_q09",
       roundIndex: 8,
-      prompt: "Màn trình diễn pháo hoa (fireworks display) vào buổi tối nên được xem từ địa điểm nào để có góc nhìn đẹp nhất?",
+      prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào câu: \"The interactive theatre play provided an exceptionally ______ experience for the audience, making them feel part of the story.\"",
       options: [
-        { id: "opt_A", label: "A", text: "The park (công viên)" },
-        { id: "opt_B", label: "B", text: "The town hall (tòa thị chính)" },
-        { id: "opt_C", label: "C", text: "The central post office (bưu điện)" },
-        { id: "opt_D", label: "D", text: "The roof of the library" }
+        { id: "opt_A", label: "A", text: "immersive (mang lại trải nghiệm đắm chìm chân thực)" },
+        { id: "opt_B", label: "B", text: "bland" },
+        { id: "opt_C", label: "C", text: "exhausted" },
+        { id: "opt_D", label: "D", text: "compulsory" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. The park (công viên)",
-      correctExplanation: "Chỉ dẫn trong bài nghe: \"You should go to the park to watch, as you'll get the best view from there, and the display takes place on the opposite side\".",
+      correctAnswerText: "A. immersive (mang lại trải nghiệm đắm chìm chân thực)",
+      correctExplanation: "\"An immersive experience\" là tính từ cao cấp chỉ trải nghiệm cuốn hút đến mức người tham gia như hòa mình hoàn toàn vào không gian tác phẩm.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. The town hall",
-        diagnosticTitle: "Chọn vị trí trung tâm hành chính",
-        explanation: "Bài nghe khẳng định công viên (the park) mới là nơi quan sát pháo hoa đẹp nhất bên bờ sông."
+        baitOptionText: "B. bland",
+        diagnosticTitle: "Chọn tính từ tiêu cực mâu thuẫn ngữ cảnh",
+        explanation: "Bland là nhạt nhẽo vô vị, trái ngược với sự cuốn hút của vở kịch tương tác."
       }
     },
     {
       id: "doer_w5d2_q10",
       roundIndex: 9,
-      prompt: "Từ \"centenary\" trong bài nghe (\"celebrating her centenary\") mang ý nghĩa là lễ kỷ niệm bao nhiêu năm?",
+      prompt: "PARAPHRASE: Câu \"Music has the capacity to connect us and serves as a means of human connection across cultures\" được diễn đạt lại tương đương nhất là:",
       options: [
-        { id: "opt_A", label: "A", text: "100 năm (the 100th anniversary)" },
-        { id: "opt_B", label: "B", text: "50 năm" },
-        { id: "opt_C", label: "C", text: "200 năm" },
-        { id: "opt_D", label: "D", text: "10 năm" }
+        { id: "opt_A", label: "A", text: "Musical expression possesses the unique power to bridge social divides and foster interpersonal bonds." },
+        { id: "opt_B", label: "B", text: "Foreigners are strictly prohibited from singing local folk songs without formal artistic certifications." },
+        { id: "opt_C", label: "C", text: "Music divides communities because people argue over who misses the high notes." },
+        { id: "opt_D", label: "D", text: "Only professional vocalists have the legal right to express themselves in communal gatherings." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. 100 năm (the 100th anniversary)",
-      correctExplanation: "Gốc từ Latin \"cent-\" có nghĩa là 100. Centenary là lễ kỷ niệm tròn 100 năm (tròn 1 thế kỷ).",
+      correctAnswerText: "A. Musical expression possesses the unique power to bridge social divides and foster interpersonal bonds.",
+      correctExplanation: "\"Bridge social divides and foster interpersonal bonds\" paraphrase tuyệt vời cho \"capacity to connect us and serves as a means of human connection\".",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. 50 năm",
-        diagnosticTitle: "Nhầm với golden jubilee (50 năm)",
-        explanation: "Kỷ niệm 50 năm là golden jubilee, 100 năm là centenary / centennial."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. Music divides communities",
+        diagnosticTitle: "Đảo ngược thông điệp gắn kết thành chia rẽ",
+        explanation: "Đoạn văn ca ngợi âm nhạc là cầu nối nhân văn, không hề chia rẽ người nghe."
       }
     }
   ],
