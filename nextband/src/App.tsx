@@ -121,6 +121,7 @@ const SpeakingForecastSeasonPage = lazyWithRetry(() => import("@/pages/public/sp
 const SpeakingForecastTopicPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastTopic"));
 const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingUniversePage"));
 const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
+const EnglishIdiomsCatalogPage = lazyWithRetry(() => import("@/pages/public/reading/EnglishIdiomsCatalogPage"));
 const EnglishIdiomsHubPage = lazyWithRetry(() => import("@/pages/public/reading/EnglishIdiomsHubPage"));
 const SelfStudyPage = lazyWithRetry(() => import("@/pages/public/SelfStudyPage"));
 const BuddyLandingPage = lazyWithRetry(() => import("@/pages/public/BuddyLandingPage"));
@@ -371,7 +372,8 @@ const App = () => (
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/reading" element={<ReadingUniversePage />} />
-                <Route path="/reading/idioms" element={<EnglishIdiomsHubPage />} />
+                <Route path="/reading/idioms" element={<EnglishIdiomsCatalogPage />} />
+                <Route path="/reading/idioms/:unitId" element={<EnglishIdiomsHubPage />} />
                 <Route path="/self-study-courses" element={<SelfStudyPage />} />
                 <Route path="/tu-hoc" element={<Navigate to="/self-study-courses" replace />} />
                 <Route path="/self-study" element={<Navigate to="/self-study-courses" replace />} />

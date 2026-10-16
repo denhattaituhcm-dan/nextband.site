@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { SEO } from "@/components/common/SEO";
 import {
   Volume2,
@@ -30,7 +30,13 @@ import unit05Data from "@/data/idioms/unit05";
 import { UNIT_05_ETYMOLOGY } from "@/data/idioms/unit05_etymology";
 
 export default function EnglishIdiomsHubPage() {
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5>(1);
+  const { unitId } = useParams<{ unitId?: string }>();
+  const navigate = useNavigate();
+
+  const parsedId = unitId ? parseInt(unitId, 10) : 1;
+  const initialUnitId = (parsedId >= 1 && parsedId <= 5 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5;
+
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,6 +44,22 @@ export default function EnglishIdiomsHubPage() {
   const [openEtymologyDrawers, setOpenEtymologyDrawers] = useState<Record<string, boolean>>({});
   const [currentlyPlayingAudio, setCurrentlyPlayingAudio] = useState<string | null>(null);
   const [listenedIds, setListenedIds] = useState<Set<string>>(new Set());
+
+  // Synchronize when URL param changes
+  useEffect(() => {
+    if (unitId) {
+      const p = parseInt(unitId, 10);
+      if (p >= 1 && p <= 5 && p !== selectedUnitId) {
+        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5);
+        setActiveModuleFilter("ALL");
+        reset23();
+        reset25();
+        reset26();
+        reset27();
+        reset28();
+      }
+    }
+  }, [unitId]);
 
   // Audio ref
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -669,6 +691,7 @@ export default function EnglishIdiomsHubPage() {
     reset26();
     reset27();
     reset28();
+    navigate(`/reading/idioms/${unitId}`);
   };
 
   return (
@@ -683,68 +706,37 @@ export default function EnglishIdiomsHubPage() {
       {/* Sub-nav Header */}
       <nav className="border-b border-[#EAE3D9] bg-[#FAF7F2]/95 sticky top-0 z-30 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4 sm:gap-6 text-xs font-medium text-[#7A7067]">
-            <Link to="/reading" className="hover:text-[#2D2825] transition-colors pb-1">
-              ← Tủ sách đọc báo
+          <div className="flex items-center gap-3 sm:gap-5 text-xs font-medium text-[#7A7067]">
+            <Link
+              to="/reading/idioms"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAE3D9]/70 hover:bg-[#EAE3D9] text-[#002147] font-bold text-xs transition cursor-pointer"
+            >
+              ← Chọn Unit khác
             </Link>
 
-            {/* Unit Switcher Pills in Sub-nav */}
-            <div className="flex items-center p-0.5 bg-[#EAE3D9]/60 rounded-lg">
-              <button
-                type="button"
-                onClick={() => handleSelectUnit(1)}
-                className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
-                  selectedUnitId === 1
-                    ? "bg-white text-[#002147] shadow-xs"
-                    : "text-[#7A7067] hover:text-[#2D2825]"
-                }`}
-              >
-                Unit 01: Age
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectUnit(2)}
-                className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
-                  selectedUnitId === 2
-                    ? "bg-white text-[#002147] shadow-xs"
-                    : "text-[#7A7067] hover:text-[#2D2825]"
-                }`}
-              >
-                Unit 02: Friends & Family
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectUnit(3)}
-                className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
-                  selectedUnitId === 3
-                    ? "bg-white text-[#002147] shadow-xs"
-                    : "text-[#7A7067] hover:text-[#2D2825]"
-                }`}
-              >
-                Unit 03: Appearance & Background
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectUnit(4)}
-                className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
-                  selectedUnitId === 4
-                    ? "bg-white text-[#002147] shadow-xs"
-                    : "text-[#7A7067] hover:text-[#2D2825]"
-                }`}
-              >
-                Unit 04: Personality Traits
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSelectUnit(5)}
-                className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
-                  selectedUnitId === 5
-                    ? "bg-white text-[#002147] shadow-xs"
-                    : "text-[#7A7067] hover:text-[#2D2825]"
-                }`}
-              >
-                Unit 05: Good Things
-              </button>
+            {/* Current Unit Indicator & Quick Jump */}
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-[#EAE3D9]">
+              <span className="text-xs font-black text-[#002147] bg-white px-2.5 py-1 rounded-lg border border-[#EAE3D9] shadow-xs">
+                Unit {currentUnitData.unit_number_str}: {currentUnitData.unit_title}
+              </span>
+              {selectedUnitId > 1 && (
+                <button
+                  type="button"
+                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5)}
+                  className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
+                >
+                  ← Unit 0{selectedUnitId - 1}
+                </button>
+              )}
+              {selectedUnitId < 5 && (
+                <button
+                  type="button"
+                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5)}
+                  className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
+                >
+                  Unit 0{selectedUnitId + 1} →
+                </button>
+              )}
             </div>
 
             <button
