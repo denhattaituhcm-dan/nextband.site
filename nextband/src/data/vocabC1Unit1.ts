@@ -7689,5 +7689,974 @@ export const VOCAB_C1_UNIT_7: VocabC1Unit = {
 };
 
 
-export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7];
+
+export const VOCAB_C1_UNIT_8: VocabC1Unit = {
+  unitId: 8,
+  title: "Unit 8: Progression & Transition",
+  subtitle: "The Vocabulary Files - Level C1 (Pages 31-34)",
+
+  // 1. Words in Action (10 core words from Page 31 Exercise A & B)
+  wordsInAction: [
+    {
+      id: "u8-wia-1",
+      word: "abate",
+      ipa: "/əˈbeɪt/",
+      nuance: "[Subside; become less intense, severe or widespread]",
+      register: "Formal / Academic",
+      collocations: ["storm abates", "pain abates", "fever abates", "without abating"],
+      enDef: "To become less strong, severe, or intense; to subside or reduce in degree.",
+      viDef: "Dịu đi, lắng xuống, giảm bớt cường độ (bão tố, cơn đau, dịch bệnh, tranh luận).",
+      example: "As soon as the raging storm **abated**, the naval rescue ships were allowed to set sail.",
+      targetKeyword: "abate"
+    },
+    {
+      id: "u8-wia-2",
+      word: "adroit",
+      ipa: "/əˈdrɔɪt/",
+      nuance: "[Clever or skillful in using the hands or mind; deft]",
+      register: "Formal / Literary",
+      collocations: ["adroit handling", "adroit politician", "adroit negotiator", "adroitly manage"],
+      enDef: "Clever or skillful in using the hands or mind; showing exceptional dexterity or diplomatic tact.",
+      viDef: "Khéo léo, tài tình, ứng biến mau lẹ (đặc biệt trong giao tế ngoại giao hoặc xử lý khủng hoảng).",
+      example: "The Secretary of State handled the diplomatic dispute **adroitly** and prevented a catastrophic war.",
+      targetKeyword: "adroit"
+    },
+    {
+      id: "u8-wia-3",
+      word: "accost",
+      ipa: "/əˈkɒst/",
+      nuance: "[Approach and speak to someone boldly, aggressively or rudely]",
+      register: "Formal / Dramatic",
+      collocations: ["accosted by strangers", "accosted on the street", "aggressively accost"],
+      enDef: "To approach and speak to someone in an assertive, intrusive, or aggressive way.",
+      viDef: "Tiếp cận và bắt chuyện đột ngột, suồng sã hoặc thô lỗ (thường bất ngờ trên đường phố).",
+      example: "I bumped into John in Athens and he **accosted** me before I even had time to speak first.",
+      targetKeyword: "accost"
+    },
+    {
+      id: "u8-wia-4",
+      word: "aggravate",
+      ipa: "/ˈæɡ.rə.veɪt/",
+      nuance: "[Make a disease, problem or injury worse and more serious]",
+      register: "Medical / Formal",
+      collocations: ["aggravate an injury", "aggravate symptoms", "aggravate a problem", "aggravate the crisis"],
+      enDef: "To make an existing illness, wound, pain, or difficult situation worse and more serious.",
+      viDef: "Làm trầm trọng thêm, làm bệnh tình hoặc vết thương xấu đi; làm xấu thêm tình hình.",
+      example: "The doctor warned him that if he continued to pick the sore, he would severely **aggravate** it.",
+      targetKeyword: "aggravate"
+    },
+    {
+      id: "u8-wia-5",
+      word: "arrogance",
+      ipa: "/ˈær.ə.ɡəns/",
+      nuance: "[An offensive attitude of superiority; overbearing haughtiness]",
+      register: "General / Formal",
+      collocations: ["sheer arrogance", "intellectual arrogance", "arrogant attitude", "know-it-all arrogance"],
+      enDef: "An attitude of superior self-importance accompanied by contempt or disdain for others; haughtiness.",
+      viDef: "Sự kiêu căng, ngạo mạn, trịch thượng; thái độ tự phụ xem thường người khác.",
+      example: "I detest that **arrogant**, know-it-all expression permanently stamped across his face.",
+      targetKeyword: "arrogance"
+    },
+    {
+      id: "u8-wia-6",
+      word: "brim",
+      ipa: "/brɪm/",
+      nuance: "[The top edge of a cup, glass, bowl, or hat]",
+      register: "Standard / Descriptive",
+      collocations: ["brim of a glass", "brim of a hat", "filled to the brim", "brimming with joy"],
+      enDef: "The top, outermost rim of a cup, glass, or container; also the projecting edge of a hat.",
+      viDef: "Vành, mép trên cùng (của miệng ly, tách, bát đĩa) hoặc vành nón/mũ.",
+      example: "The bartender poured the cider until the sparkling liquid reached the very **brim** of the glass.",
+      targetKeyword: "brim"
+    },
+    {
+      id: "u8-wia-7",
+      word: "chaste",
+      ipa: "/tʃeɪst/",
+      nuance: "[Morally pure, virtuous, abstaining from extramarital or casual sex]",
+      register: "Literary / Ethical",
+      collocations: ["chaste life", "chaste kiss", "pure and chaste", "remain chaste"],
+      enDef: "Morally pure in thought and conduct; strictly abstaining from illicit or promiscuous relations.",
+      viDef: "Trong trắng, thanh khiết, tiết hạnh, đoan trang (về mặt đạo đức và lối sống).",
+      example: "The ancient order required its acolytes to lead an austere, humble, and strictly **chaste** existence.",
+      targetKeyword: "chaste"
+    },
+    {
+      id: "u8-wia-8",
+      word: "defect",
+      ipa: "/dɪˈfekt/",
+      nuance: "[Abandon one's country, party or allegiance to join an adversary]",
+      register: "Political / Military",
+      collocations: ["defect to the enemy", "defect from the party", "high-level defector", "political defection"],
+      enDef: "To abandon one's cause, political party, country, or allegiance in order to adopt another.",
+      viDef: "Đào tẩu, phản bội hàng ngũ, bỏ đảng/tổ quốc để chạy sang phe đối lập hoặc đối phương.",
+      example: "The corrupt politician was secretly bribed to **defect** to the opposing party before the ballot.",
+      targetKeyword: "defect"
+    },
+    {
+      id: "u8-wia-9",
+      word: "demolish",
+      ipa: "/dɪˈmɒl.ɪʃ/",
+      nuance: "[Completely pull or tear down a building, structure or system]",
+      register: "Engineering / Formal",
+      collocations: ["demolish a building", "demolish old tenements", "demolition team", "demolish an argument"],
+      enDef: "To pull or knock down a building or structure completely; to dismantle or destroy utterly.",
+      viDef: "Phá bỏ, san phẳng, đánh sập hoàn toàn (tòa nhà, công trình cũ kỹ hư hỏng).",
+      example: "The city council designated a specialized **demolition** team to tear down the dilapidated warehouse.",
+      targetKeyword: "demolish"
+    },
+    {
+      id: "u8-wia-10",
+      word: "commence",
+      ipa: "/kəˈmens/",
+      nuance: "[Begin; start formal proceedings or official events]",
+      register: "Formal / Ceremonial",
+      collocations: ["commence operations", "commence proceedings", "commence work", "due to commence"],
+      enDef: "To begin or start an activity, ceremony, legal proceeding, or formal performance.",
+      viDef: "Bắt đầu, khởi sự, khai mạc (nghi lễ, buổi diễn, phiên tòa hoặc hoạt động chính thức).",
+      example: "Let's hurry to the auditorium; the philharmonic concert is scheduled to **commence** at eight sharp.",
+      targetKeyword: "commence"
+    }
+  ],
+
+  // 2. Word Formation (10 Transformation Items from Page 32 Task Two)
+  wordFormation: [
+    {
+      id: "u8-wf-1",
+      adjective: "prefer",
+      noun: "have a preference for",
+      root: "prefer",
+      suffix: "-ence (Noun Phrase)",
+      meaningVi: "Thích cái gì hơn (thay prefer bằng cụm danh từ 'have a preference for')",
+      suffixChoices: ["have a preference for", "have a preferment to", "have a preferability of", "make a preference in"],
+      ruleTip: "Cụm danh từ học thuật C1: 'prefer X' ➔ 'have a preference for X'."
+    },
+    {
+      id: "u8-wf-2",
+      adjective: "act positively",
+      noun: "take positive action",
+      root: "act",
+      suffix: "-ion (Noun Phrase)",
+      meaningVi: "Hành động tích cực, quyết đoán (thay act bằng 'take positive action')",
+      suffixChoices: ["take positive action", "make positive activity", "do positive acting", "have positive enact"],
+      ruleTip: "Collocation C1 với động từ TAKE: 'act positively' ➔ 'take positive action'."
+    },
+    {
+      id: "u8-wf-3",
+      adjective: "gather",
+      noun: "turn out",
+      root: "turn",
+      suffix: "Phrasal Verb",
+      meaningVi: "Tập hợp, tụ họp đông đảo (thay gather bằng 'turn out')",
+      suffixChoices: ["turn out", "turn in", "turn up", "turn on"],
+      ruleTip: "Phrasal verb C1: 'turn out for sth' = tụ tập, kéo đến tham gia sự kiện số lượng lớn."
+    },
+    {
+      id: "u8-wf-4",
+      adjective: "appear",
+      noun: "put in an appearance",
+      root: "appear",
+      suffix: "-ance (Idiom)",
+      meaningVi: "Xuất hiện, ghé mặt qua một chốc (thay appear bằng 'put in an appearance')",
+      suffixChoices: ["put in an appearance", "make an apparition", "take an appearance", "set an appearance"],
+      ruleTip: "Idiom C1: 'put in an appearance' = xuất hiện chớp nhoáng tại một buổi gặp mặt."
+    },
+    {
+      id: "u8-wf-5",
+      adjective: "end",
+      noun: "come to an end",
+      root: "come",
+      suffix: "Collocation",
+      meaningVi: "Đi đến hồi kết, kết thúc (thay end bằng 'come to an end')",
+      suffixChoices: ["come to an end", "bring to an end", "make an end", "get to an end"],
+      ruleTip: "Collocation C1 nội động: 'The war ended' ➔ 'The war came to an end'."
+    },
+    {
+      id: "u8-wf-6",
+      adjective: "consider",
+      noun: "take into consideration",
+      root: "consider",
+      suffix: "-ation (Idiom)",
+      meaningVi: "Cân nhắc, tính đến yếu tố gì (thay consider bằng 'take into consideration')",
+      suffixChoices: ["take into consideration", "bring to considering", "put into consider", "make consideration of"],
+      ruleTip: "Collocation C1 học thuật: 'consider sth' ➔ 'take sth into consideration / account'."
+    },
+    {
+      id: "u8-wf-7",
+      adjective: "survey",
+      noun: "make a survey of",
+      root: "survey",
+      suffix: "Noun Collocation",
+      meaningVi: "Tiến hành khảo sát, giám định nhà cửa (thay survey bằng 'make a survey of')",
+      suffixChoices: ["make a survey of", "take a survey on", "do a survey for", "give a survey to"],
+      ruleTip: "Collocation kỹ thuật C1: 'make a survey of the house' = thực hiện khảo sát kết cấu nhà."
+    },
+    {
+      id: "u8-wf-8",
+      adjective: "fit",
+      noun: "equip with",
+      root: "equip",
+      suffix: "Verb Transformation",
+      meaningVi: "Trang bị, lắp đặt thiết bị (thay fit safety belts bằng 'equip with')",
+      suffixChoices: ["equip with", "furnish into", "install by", "fit out to"],
+      ruleTip: "Cấu trúc C1: 'fit X in vehicles' ➔ 'equip all vehicles with X'."
+    },
+    {
+      id: "u8-wf-9",
+      adjective: "manage",
+      noun: "get by",
+      root: "get",
+      suffix: "Phrasal Verb",
+      meaningVi: "Xoay xở trang trải cuộc sống (thay manage on poor salary bằng 'get by')",
+      suffixChoices: ["get by", "get on", "get through", "get over"],
+      ruleTip: "Phrasal verb C1: 'get by on a salary/pension' = xoay xở sinh sống với mức tiền ít ỏi."
+    },
+    {
+      id: "u8-wf-10",
+      adjective: "attend",
+      noun: "drop out of",
+      root: "drop",
+      suffix: "Phrasal Verb",
+      meaningVi: "Bỏ học giữa chừng (thay stop attending college bằng 'drop out of college')",
+      suffixChoices: ["drop out of", "drop off", "drop away from", "drop down on"],
+      ruleTip: "Phrasal verb C1: 'drop out of college/university' = thôi học, bỏ dở giảng đường."
+    }
+  ],
+
+  // 3. Confusable Words (7 Pairs from Page 32 Task One)
+  confusableWords: [
+    {
+      id: "u8-cw-1",
+      pairKey: "thrive-strive",
+      wordA: "thrive",
+      wordB: "strive",
+      diffHighlightA: { before: "", highlight: "thrive", after: "" },
+      diffHighlightB: { before: "", highlight: "strive", after: "" },
+      promptSentence: "The stray cat she adopted will ______ now that it has a warm shelter and enough food.",
+      correctWord: "thrive",
+      defA: "Thrive: Phát triển thịnh vượng, lớn nhanh như thổi, khỏe mạnh sinh sôi nảy nở (prosper, flourish).",
+      defB: "Strive: Nỗ lực hết mình, phấn đấu không ngừng để đạt được mục đích (try hard, make great efforts).",
+      mnemonic: "TH-rive = Thriving (thịnh vượng); ST-rive = Striving (gắng sức tranh đấu)."
+    },
+    {
+      id: "u8-cw-2",
+      pairKey: "sustain-retain",
+      wordA: "sustain",
+      wordB: "retain",
+      diffHighlightA: { before: "", highlight: "sustain", after: "" },
+      diffHighlightB: { before: "", highlight: "retain", after: "" },
+      promptSentence: "The historic city ______ minor structural damage during the moderate earthquake.",
+      correctWord: "sustained",
+      defA: "Sustain (damage/injuries): Chịu đựng, gánh chịu tổn thất, thương tích; hoặc duy trì nâng đỡ.",
+      defB: "Retain: Giữ lại, tiếp tục sở hữu, duy trì quyền kiểm soát không để mất đi (keep or continue to hold).",
+      mnemonic: "Sustain damage = gánh chịu thiệt hại; Retain control = nắm giữ quyền hạn."
+    },
+    {
+      id: "u8-cw-3",
+      pairKey: "yoke-yolk",
+      wordA: "yoke",
+      wordB: "yolk",
+      diffHighlightA: { before: "", highlight: "yoke", after: "" },
+      diffHighlightB: { before: "", highlight: "yolk", after: "" },
+      promptSentence: "The egg ______ is exceptionally nutritious and contains high concentrations of choline.",
+      correctWord: "yolk",
+      defA: "Yoke: Cái ách nô lệ, sự kìm kẹp áp bức (bondage, servitude) hoặc ách trâu bò kéo cày.",
+      defB: "Yolk: Lòng đỏ trứng gà/vịt (phần tròn màu vàng giàu dưỡng chất của quả trứng).",
+      mnemonic: "Yolk có chữ 'L' như 'Lòng đỏ trứng'; Yoke tượng trưng cho 'ách nô lệ'."
+    },
+    {
+      id: "u8-cw-4",
+      pairKey: "document-documentary",
+      wordA: "document",
+      wordB: "documentary",
+      diffHighlightA: { before: "", highlight: "document", after: "" },
+      diffHighlightB: { before: "", highlight: "documentary", after: "" },
+      promptSentence: "Last night they watched a captivating ______ on biodiversity in the Amazon rain forest.",
+      correctWord: "documentary",
+      defA: "Document: Văn kiện, tài liệu, hồ sơ pháp lý hoặc giấy tờ có giá trị bằng chứng.",
+      defB: "Documentary: Phim tài liệu (điện ảnh hoặc truyền hình miêu tả đời sống con người, động vật).",
+      mnemonic: "Documentary có đuôi -ary = thể loại phim tài liệu điện ảnh/truyền hình."
+    },
+    {
+      id: "u8-cw-5",
+      pairKey: "constrain-restrain",
+      wordA: "constrain",
+      wordB: "restrain",
+      diffHighlightA: { before: "", highlight: "constrain", after: "" },
+      diffHighlightB: { before: "", highlight: "restrain", after: "" },
+      promptSentence: "That aggressive guard dog is a public hazard and should definitely be ______ on a leash.",
+      correctWord: "restrained",
+      defA: "Constrain: Bắt ép, cưỡng bách làm gì đó bằng áp lực hoặc hoàn cảnh bắt buộc (compel).",
+      defB: "Restrain: Kìm chế, xích lại, giữ chặt trong tầm kiểm soát để không gây hại (keep under physical control).",
+      mnemonic: "Restrain dog on leash = ghìm giữ, khống chế thể chất; Constrained by budget = bị gò bó bởi ngân sách."
+    },
+    {
+      id: "u8-cw-6",
+      pairKey: "soothe-seethe",
+      wordA: "soothe",
+      wordB: "seethe",
+      diffHighlightA: { before: "", highlight: "soothe", after: "" },
+      diffHighlightB: { before: "", highlight: "seethe", after: "" },
+      promptSentence: "Try applying this aloe vera gel; it will immediately ______ your painful sunburn.",
+      correctWord: "soothe",
+      defA: "Soothe: Làm dịu cơn đau, xoa dịu vết bỏng hoặc dỗ dành cảm xúc tức giận (calm, ease pain).",
+      defB: "Seethe: Sôi sục, tức tối nghẹn họng, giận dữ đến phát cuồng (boil with agitation and hidden fury).",
+      mnemonic: "Soothe = xoa dịu mát lành; Seethe = sục sôi lửa giận căm hờn."
+    },
+    {
+      id: "u8-cw-7",
+      pairKey: "subside-subsidize",
+      wordA: "subside",
+      wordB: "subsidize",
+      diffHighlightA: { before: "", highlight: "subside", after: "" },
+      diffHighlightB: { before: "", highlight: "subsidize", after: "" },
+      promptSentence: "It took a very long time for his intense grief to ______ after his beloved grandmother died.",
+      correctWord: "subside",
+      defA: "Subside: Dịu dần, rút xuống, lắng xuống, sụt giảm mức độ nghiêm trọng (sink to a lower level).",
+      defB: "Subsidize: Trợ cấp kinh phí, hỗ trợ tiền bạc cho một tổ chức hoặc hoạt động (fund financially).",
+      mnemonic: "Subside = lắng dịu, sụt xuống; Subsidize = cấp bù tiền viện trợ, trợ giá."
+    }
+  ],
+
+  // 4. Synonym Filter (4 Thematic Sets from Page 33 Task Four)
+  synonymFilter: [
+    {
+      id: "u8-sf-1",
+      targetWord: "imminent",
+      targetCategory: "Unit 8 Context Vocabulary",
+      targetMeaning: "Coming on / about to happen very soon",
+      targetMeaningVi: "Sắp xảy ra đến nơi, cận kề (bão táp, hiểm họa, sự cố)",
+      note: "Tìm 4 từ đồng nghĩa diễn tả sự việc sắp xảy ra ngay trước mắt và 2 từ KHÔNG cùng nhóm nghĩa.",
+      words: [
+        { word: "impending", isSynonym: true, meaningVi: "Đang lơ lửng cận kề" },
+        { word: "approaching", isSynonym: true, meaningVi: "Đang tiến lại rất gần" },
+        { word: "looming", isSynonym: true, meaningVi: "Hiện ra lù lù đe dọa" },
+        { word: "forthcoming", isSynonym: true, meaningVi: "Sắp tới, chuẩn bị diễn ra" },
+        { word: "distant", isSynonym: false, meaningVi: "Xa xôi, còn lâu mới tới" },
+        { word: "retrospective", isSynonym: false, meaningVi: "Hồi tưởng về quá khứ" }
+      ]
+    },
+    {
+      id: "u8-sf-2",
+      targetWord: "prospering",
+      targetCategory: "Unit 8 Context Vocabulary",
+      targetMeaning: "Doing exceptionally well / booming economically",
+      targetMeaningVi: "Phát đạt thịnh vượng, làm ăn khấm khá vượt bậc",
+      note: "Tìm 4 từ đồng nghĩa diễn tả tình trạng kinh doanh hoặc sự sống phát đạt, và 2 từ lạc quẻ.",
+      words: [
+        { word: "thriving", isSynonym: true, meaningVi: "Phát triển mạnh mẽ sinh sôi" },
+        { word: "flourishing", isSynonym: true, meaningVi: "Nở rộ, hưng thịnh rực rỡ" },
+        { word: "booming", isSynonym: true, meaningVi: "Bùng nổ tăng trưởng vũ bão" },
+        { word: "burgeoning", isSynonym: true, meaningVi: "Đâm chồi nảy lộc, tăng nhanh" },
+        { word: "languishing", isSynonym: false, meaningVi: "Mòn mỏi, suy đồi ốm yếu" },
+        { word: "stagnating", isSynonym: false, meaningVi: "Đình trệ, dậm chân tại chỗ" }
+      ]
+    },
+    {
+      id: "u8-sf-3",
+      targetWord: "precarious",
+      targetCategory: "Unit 8 Context Vocabulary",
+      targetMeaning: "Far from safe / dangerously unstable or risky",
+      targetMeaningVi: "Bấp bênh, hiểm nghèo, không an toàn, dễ sụp đổ",
+      note: "Tìm 4 từ đồng nghĩa chỉ trạng thái bấp bênh nguy hiểm và 2 từ thể hiện sự kiên định vững vàng.",
+      words: [
+        { word: "perilous", isSynonym: true, meaningVi: "Hiểm nghèo đầy rủi ro" },
+        { word: "insecure", isSynonym: true, meaningVi: "Không vững chắc, bấp bênh" },
+        { word: "hazardous", isSynonym: true, meaningVi: "Nguy hại rình rập" },
+        { word: "shaky", isSynonym: true, meaningVi: "Lung lay, thiếu ổn định" },
+        { word: "unshakable", isSynonym: false, meaningVi: "Vững như bàn thạch, kiên định" },
+        { word: "resilient", isSynonym: false, meaningVi: "Kiên cường dẻo dai hồi phục" }
+      ]
+    },
+    {
+      id: "u8-sf-4",
+      targetWord: "entail",
+      targetCategory: "Unit 8 Context Vocabulary",
+      targetMeaning: "Have as a necessary result or consequence / involve",
+      targetMeaningVi: "Đòi hỏi phải có, tất yếu kéo theo hệ quả là",
+      note: "Tìm 4 từ đồng nghĩa biểu thị tính kéo theo hệ quả tất yếu và 2 từ diễn tả sự né tránh, loại trừ.",
+      words: [
+        { word: "involve", isSynonym: true, meaningVi: "Kéo theo, bao hàm đòi hỏi" },
+        { word: "necessitate", isSynonym: true, meaningVi: "Đòi hỏi tất yếu phải có" },
+        { word: "imply", isSynonym: true, meaningVi: "Ngụ ý, hàm chứa hệ lụy" },
+        { word: "engender", isSynonym: true, meaningVi: "Sinh ra, đem lại kết quả tất yếu" },
+        { word: "obviate", isSynonym: false, meaningVi: "Loại trừ, xóa bỏ sự cần thiết" },
+        { word: "preclude", isSynonym: false, meaningVi: "Ngăn ngừa, loại bỏ từ trước" }
+      ]
+    }
+  ],
+
+  // 5. Smart Cloze (The Great Depression & Milton Hershey's Utopia - Page 34 Ex A)
+  clozePassages: [
+    {
+      id: "u8-cp-1",
+      title: "The Industrial Oasis: Hershey During The Great Depression",
+      sourceLabel: "Level C1 Academic Reading (The Vocabulary Files - Page 34)",
+      passageTemplate: "Despite the continued {{gap_1}} of those early town perks, it wasn't until the Depression that modern Hershey started to take shape. Perhaps the only town in the country actually to {{gap_2}} during the 1930s, it thrived because Hershey vowed his Utopia would never see a breadline. Instead he {{gap_3}} a massive building boom that gave rise to the most visited buildings in today's Hershey and delivered wages to more than 600 workers. He admitted that his {{gap_4}} were partly selfish: \"If I don't provide work for them, I'll have to feed them. And since building materials are now at their lowest cost levels, I'm going to build and give them jobs.\"\n\nHe seems to have {{gap_5}} no expense; most of the new buildings were strikingly {{gap_6}}. The first to be finished was the three-million-dollar limestone Community Center, home to the 1,904-seat Venetian-style Hershey Community Theater, which has played {{gap_7}} since 1933 to touring Broadway shows and to music, dance, and opera performances. It offers just as much to look at when the lights are on and the curtains closed. The floors in the {{gap_8}} named Grand Lobby are polished Italian lava rock, surrounded by marble walls and capped with a bas-relief ceiling showing sheaves of wheat, beehives, swans, and scenes from Roman mythology. With the {{gap_9}} inner foyer, Hershey thumbed his nose even harder at the ravages of the Depression: The arched ceiling is tiled in gold, the fire curtain bears a painting of Venice, and the ceiling is {{gap_10}} with 88 tiny lightbulbs to re-create a star-lit night.",
+      gaps: [
+        {
+          gapNumber: 1,
+          options: [
+            { label: "A", text: "flexibility" },
+            { label: "B", text: "rigidity" },
+            { label: "C", text: "elasticity" },
+            { label: "D", text: "resilience" }
+          ],
+          correctLabel: "D",
+          correctWord: "resilience",
+          targetWord: "resilience",
+          explanations: {
+            A: "Flexibility: sự linh hoạt, không hợp ngữ cảnh sức chống chịu bền bỉ của chính sách phúc lợi thị trấn.",
+            B: "Rigidity: sự cứng nhắc nhắc nhở, đối lập ý nghĩa với sự bền bỉ tích cực.",
+            C: "Elasticity: tính đàn hồi vật lý hoặc co giãn kinh tế lượng.",
+            D: "Resilience: sức bật bền bỉ dẻo dai của các đặc quyền phúc lợi (early town perks) qua năm tháng."
+          },
+          explanationVi: "Resilience diễn tả khả năng phục hồi và đứng vững kiên cường của các chính sách phúc lợi trước biến cố."
+        },
+        {
+          gapNumber: 2,
+          options: [
+            { label: "A", text: "prosper" },
+            { label: "B", text: "decline" },
+            { label: "C", text: "get on" },
+            { label: "D", text: "flower" }
+          ],
+          correctLabel: "A",
+          correctWord: "prosper",
+          targetWord: "prosper",
+          explanations: {
+            A: "Prosper: phát triển phồn thịnh, ăn nên làm ra giữa bối cảnh đại khủng hoảng (đồng nghĩa với it thrived).",
+            B: "Decline: suy giảm tụt dốc, hoàn toàn mâu thuẫn với mệnh đề 'it thrived'.",
+            C: "Get on: hòa thuận hoặc tiếp tục sống, không mang tính học thuật phồn vinh kinh tế.",
+            D: "Flower: nở rộ (thường dùng ẩn dụ nghệ thuật/văn hóa, không chuẩn ngữ pháp 'town to prosper')."
+          },
+          explanationVi: "Prosper = phát triển kinh tế thịnh vượng rực rỡ trong giai đoạn suy thoái thập niên 1930."
+        },
+        {
+          gapNumber: 3,
+          options: [
+            { label: "A", text: "trusted" },
+            { label: "B", text: "funded" },
+            { label: "C", text: "accounted" },
+            { label: "D", text: "stocked" }
+          ],
+          correctLabel: "B",
+          correctWord: "funded",
+          targetWord: "funded",
+          explanations: {
+            A: "Trusted: tin tưởng ai đó, không đi trực tiếp với danh từ tân ngữ chỉ dự án kinh tế 'a massive building boom'.",
+            B: "Funded: tài trợ vốn toàn diện, bỏ tiền túi cấp kinh phí cho đợt bùng nổ xây dựng quy mô lớn.",
+            C: "Accounted: đi với for = giải trình cho hoặc chiếm tỉ lệ.",
+            D: "Stocked: tích trữ hàng hóa."
+          },
+          explanationVi: "Funded a massive building boom = tài trợ toàn bộ chi phí tài chính cho làn sóng xây dựng khổng lồ."
+        },
+        {
+          gapNumber: 4,
+          options: [
+            { label: "A", text: "pretensions" },
+            { label: "B", text: "objections" },
+            { label: "C", text: "preoccupation" },
+            { label: "D", text: "intentions" }
+          ],
+          correctLabel: "D",
+          correctWord: "intentions",
+          targetWord: "intentions",
+          explanations: {
+            A: "Pretensions: sự kỳ vọng khoe khoang, tự phụ hão huyền.",
+            B: "Objections: lời phản đối bất bình.",
+            C: "Preoccupation: mối bận tâm canh cánh trong lòng.",
+            D: "Intentions: ý định, mục đích hành động (his intentions were partly selfish = ý đồ tạo việc làm mang động cơ cá nhân)."
+          },
+          explanationVi: "Intentions = chủ đích, ý đồ dự định trong kế hoạch sử dụng nhân công xây dựng."
+        },
+        {
+          gapNumber: 5,
+          options: [
+            { label: "A", text: "spared" },
+            { label: "B", text: "spent" },
+            { label: "C", text: "allowed" },
+            { label: "D", text: "justified" }
+          ],
+          correctLabel: "A",
+          correctWord: "spared",
+          targetWord: "spared",
+          explanations: {
+            A: "Spared: Collocation thành ngữ C1 'spare no expense' = không tiếc bất kỳ khoản chi phí nào để đạt chất lượng cao nhất.",
+            B: "Spent: Dùng 'spent no expense' sai ngữ pháp thành ngữ cố định tiếng Anh.",
+            C: "Allowed: Cho phép.",
+            D: "Justified: Biện minh thanh minh."
+          },
+          explanationVi: "Thành ngữ chuẩn C1: 'spare no expense' = vung tiền không tiếc tay, đầu tư tối đa."
+        },
+        {
+          gapNumber: 6,
+          options: [
+            { label: "A", text: "impoverished" },
+            { label: "B", text: "unattractive" },
+            { label: "C", text: "poor" },
+            { label: "D", text: "opulent" }
+          ],
+          correctLabel: "D",
+          correctWord: "opulent",
+          targetWord: "opulent",
+          explanations: {
+            A: "Impoverished: nghèo nàn kiệt quệ, trái ngược với 'spared no expense'.",
+            B: "Unattractive: xấu xí không thu hút.",
+            C: "Poor: nghèo nàn chất lượng thấp.",
+            D: "Opulent: cực kỳ xa hoa lộng lẫy, tráng lệ sang trọng (tòa nhà 3 triệu USD thời bấy giờ).",
+          },
+          explanationVi: "Opulent = xa hoa rực rỡ, trang hoàng lộng lẫy tột bậc bằng đá cẩm thạch và dát vàng."
+        },
+        {
+          gapNumber: 7,
+          options: [
+            { label: "A", text: "hosting" },
+            { label: "B", text: "housing" },
+            { label: "C", text: "host" },
+            { label: "D", text: "homogeneously" }
+          ],
+          correctLabel: "C",
+          correctWord: "host",
+          targetWord: "host",
+          explanations: {
+            A: "Hosting: sai cấu trúc ngữ pháp sau động từ played.",
+            B: "Housing: cung cấp chỗ ở.",
+            C: "Host: Collocation C1 'play host to sth' = đứng ra làm địa điểm đăng cai/chào đón các chương trình biểu diễn.",
+            D: "Homogeneously: phó từ trạng thái đồng nhất."
+          },
+          explanationVi: "Collocation C1 cao cấp: 'play host to touring Broadway shows' = đăng cai, tổ chức đón các đoàn diễn Broadway."
+        },
+        {
+          gapNumber: 8,
+          options: [
+            { label: "A", text: "aptly" },
+            { label: "B", text: "inappropriately" },
+            { label: "C", text: "seemingly" },
+            { label: "D", text: "frightfully" }
+          ],
+          correctLabel: "A",
+          correctWord: "aptly",
+          targetWord: "aptly",
+          explanations: {
+            A: "Aptly: một cách vô cùng thích hợp, hoàn toàn xác đáng (aptly named = được đặt tên rất đúng với tầm vóc hoành tráng).",
+            B: "Inappropriately: một cách bất hợp lý, thiếu phù hợp.",
+            C: "Seemingly: có vẻ dường như.",
+            D: "Frightfully: ghê sợ kinh hoàng."
+          },
+          explanationVi: "Aptly named = được đặt tên hết sức xứng đáng và phù hợp với thực tế không gian."
+        },
+        {
+          gapNumber: 9,
+          options: [
+            { label: "A", text: "dizzying" },
+            { label: "B", text: "gaudy" },
+            { label: "C", text: "dazzling" },
+            { label: "D", text: "bland" }
+          ],
+          correctLabel: "C",
+          correctWord: "dazzling",
+          targetWord: "dazzling",
+          explanations: {
+            A: "Dizzying: gây chóng mặt hoa mắt tiêu cực.",
+            B: "Gaudy: lòe loẹt, diêm dúa diêm dúa rẻ tiền thiếu tinh tế.",
+            C: "Dazzling: chói lọi, lộng lẫy say đắm lòng người (dazzling inner foyer dát vàng tuyệt mỹ).",
+            D: "Bland: nhạt nhẽo đơn điệu không điểm nhấn."
+          },
+          explanationVi: "Dazzling = đẹp rực rỡ lộng lẫy, tỏa sáng lung linh với vòm trần ốp vàng."
+        },
+        {
+          gapNumber: 10,
+          options: [
+            { label: "A", text: "holed" },
+            { label: "B", text: "studded" },
+            { label: "C", text: "supported" },
+            { label: "D", text: "magnified" }
+          ],
+          correctLabel: "B",
+          correctWord: "studded",
+          targetWord: "studded",
+          explanations: {
+            A: "Holed: bị đục lỗ thủng lỗ chỗ.",
+            B: "Studded: Collocation 'studded with' = được đính đầy, khảm kín bởi (88 bóng đèn nhỏ tạo bầu trời ngàn sao).",
+            C: "Supported: được chống đỡ hỗ trợ.",
+            D: "Magnified: được phóng to qua thấu kính."
+          },
+          explanationVi: "Studded with lightbulbs = được khảm/đính dày đặc bóng đèn li ti tựa bầu trời đêm đầy sao."
+        }
+      ]
+    }
+  ],
+
+  // 6. Speed Blitz (20 Instant-Recall Questions from Page 33 Task Three & Page 34 Ex B)
+  speedBlitz: [
+    // Questions 1-10: Confusable Words & Context Nuances (Page 33 Task Three)
+    {
+      id: "u8-sb-1",
+      questionNumber: 1,
+      prompt: "I knew from the ______ that the ambitious business plan would turn out to be a complete flop.",
+      options: [
+        { key: "a", text: "onslaught" },
+        { key: "b", text: "onset" },
+        { key: "c", text: "outburst" },
+        { key: "d", text: "outset" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "onslaught", pos: "n", vi: "Sai: cuộc tấn công dữ dội như vũ bão của quân đội" },
+        { key: "b", word: "onset", pos: "n", vi: "Chính xác: from the onset = ngay từ thời điểm bắt đầu diễn biến của sự việc" },
+        { key: "c", word: "outburst", pos: "n", vi: "Sai: sự bộc phát cơn giận dữ" },
+        { key: "d", word: "outset", pos: "n", vi: "At the outset (còn trong đề bài dùng 'from the onset')" }
+      ]
+    },
+    {
+      id: "u8-sb-2",
+      questionNumber: 2,
+      prompt: "We are almost ready to sign the property contract; now, what's the ______?",
+      options: [
+        { key: "a", text: "snug" },
+        { key: "b", text: "snag" },
+        { key: "c", text: "slug" },
+        { key: "d", text: "smug" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "snug", pos: "adj", vi: "Ấm cúng, vừa vặn" },
+        { key: "b", word: "snag", pos: "n", vi: "Chính xác: what's the snag? = Trục trặc hoặc vướng mắc bất ngờ là gì?" },
+        { key: "c", word: "slug", pos: "n", vi: "Con sên" },
+        { key: "d", word: "smug", pos: "adj", vi: "Tự mãn tự phụ" }
+      ]
+    },
+    {
+      id: "u8-sb-3",
+      questionNumber: 3,
+      prompt: "A reckless driver may even collide with a completely ______ vehicle parked on the kerb.",
+      options: [
+        { key: "a", text: "stationery" },
+        { key: "b", text: "stationary" },
+        { key: "c", text: "stagnant" },
+        { key: "d", text: "stationed" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "stationery", pos: "n", vi: "Sai chính tả: văn phòng phẩm (tập vở, bút viết)" },
+        { key: "b", word: "stationary", pos: "adj", vi: "Chính xác: đứng yên một chỗ, không di chuyển (stationary vehicle)" },
+        { key: "c", word: "stagnant", pos: "adj", vi: "Nước tù đọng hoặc kinh tế trì trệ" },
+        { key: "d", word: "stationed", pos: "v", vi: "Được điều động đóng quân" }
+      ]
+    },
+    {
+      id: "u8-sb-4",
+      questionNumber: 4,
+      prompt: "No set of unforeseen reverses could ever ______ him from proceeding with his lifelong mission.",
+      options: [
+        { key: "a", text: "defer" },
+        { key: "b", text: "deter" },
+        { key: "c", text: "defend" },
+        { key: "d", text: "differ" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "defer", pos: "v", vi: "Hoãn lại hoặc chiều theo ý kiến người khác" },
+        { key: "b", word: "deter", pos: "collocation", vi: "Chính xác: deter sb from doing sth = ngăn cản, làm thoái chí nản lòng" },
+        { key: "c", word: "defend", pos: "v", vi: "Bảo vệ, phòng thủ" },
+        { key: "d", word: "differ", pos: "v", vi: "Khác biệt" }
+      ]
+    },
+    {
+      id: "u8-sb-5",
+      questionNumber: 5,
+      prompt: "The champion team has secured their fifth ______ victory this month without a single loss.",
+      options: [
+        { key: "a", text: "successful" },
+        { key: "b", text: "successive" },
+        { key: "c", text: "succeeding" },
+        { key: "d", text: "successional" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "successful", pos: "adj", vi: "Thành công (không mang nghĩa liên tiếp theo chuỗi)" },
+        { key: "b", word: "successive", pos: "adj", vi: "Chính xác: liên tiếp, dồn dập kế tiếp nhau (successive victories/games)" },
+        { key: "c", word: "succeeding", pos: "adj", vi: "Kế tục tiếp sau" },
+        { key: "d", word: "successional", pos: "adj", vi: "Liên quan đến diễn thế sinh thái" }
+      ]
+    },
+    {
+      id: "u8-sb-6",
+      questionNumber: 6,
+      prompt: "After surviving two train delays and meeting the prime minister, what an ______ day it has been!",
+      options: [
+        { key: "a", text: "inventive" },
+        { key: "b", text: "eventful" },
+        { key: "c", text: "eventual" },
+        { key: "d", text: "evident" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "inventive", pos: "adj", vi: "Có óc phát minh sáng tạo" },
+        { key: "b", word: "eventful", pos: "adj", vi: "Chính xác: eventful day = ngày đầy ắp các sự kiện biến cố sôi động" },
+        { key: "c", word: "eventual", pos: "adj", vi: "Rốt cuộc, cuối cùng xảy ra" },
+        { key: "d", word: "evident", pos: "adj", vi: "Hiển nhiên rõ ràng" }
+      ]
+    },
+    {
+      id: "u8-sb-7",
+      questionNumber: 7,
+      prompt: "Austere governmental measures invariably mean practising ______ and inflexible economics.",
+      options: [
+        { key: "a", text: "frigid" },
+        { key: "b", text: "rigid" },
+        { key: "c", text: "rancid" },
+        { key: "d", text: "timid" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "frigid", pos: "adj", vi: "Lạnh buốt, lãnh cảm thờ ơ" },
+        { key: "b", word: "rigid", pos: "collocation", vi: "Chính xác: rigid economics = chính sách thắt lưng buộc bụng cứng rắn nghiêm ngặt" },
+        { key: "c", word: "rancid", pos: "adj", vi: "Ôi thiu, bốc mùi khét của mỡ" },
+        { key: "d", word: "timid", pos: "adj", vi: "Nhút nhát rụt rè" }
+      ]
+    },
+    {
+      id: "u8-sb-8",
+      questionNumber: 8,
+      prompt: "Despite the grim company outlook, the CEO was in an unusually ______ mood that afternoon.",
+      options: [
+        { key: "a", text: "trivial" },
+        { key: "b", text: "jovial" },
+        { key: "c", text: "juvenile" },
+        { key: "d", text: "jubilant" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "trivial", pos: "adj", vi: "Tầm phào vụn vặt" },
+        { key: "b", word: "jovial", pos: "adj", vi: "Chính xác: jovial mood = tâm trạng vui vẻ, cởi mở sảng khoái và ấm áp" },
+        { key: "c", word: "juvenile", pos: "adj", vi: "Vị thành niên, trẻ con" },
+        { key: "d", word: "jubilant", pos: "adj", vi: "Hân hoan tưng bừng ăn mừng chiến thắng" }
+      ]
+    },
+    {
+      id: "u8-sb-9",
+      questionNumber: 9,
+      prompt: "Unlike ailments transmitted by touch, measles is an exceptionally ______ disease.",
+      options: [
+        { key: "a", text: "contiguous" },
+        { key: "b", text: "contagious" },
+        { key: "c", text: "continuous" },
+        { key: "d", text: "contingent" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "contiguous", pos: "adj", vi: "Tiếp giáp địa lý, kề sát chung biên giới (contiguous states)" },
+        { key: "b", word: "contagious", pos: "adj", vi: "Chính xác: contagious disease = bệnh truyền nhiễm lây lan nhanh qua không khí hoặc tiếp xúc" },
+        { key: "c", word: "continuous", pos: "adj", vi: "Liên tục không ngắt quãng" },
+        { key: "d", word: "contingent", pos: "adj", vi: "Phụ thuộc vào điều kiện" }
+      ]
+    },
+    {
+      id: "u8-sb-10",
+      questionNumber: 10,
+      prompt: "In navigation, the sailor needs to know how to ______ the boat through narrow reefs.",
+      options: [
+        { key: "a", text: "stir" },
+        { key: "b", text: "steer" },
+        { key: "c", text: "stow" },
+        { key: "d", text: "stem" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "stir", pos: "v", vi: "Khuấy nước hoặc khơi dậy cảm xúc" },
+        { key: "b", word: "steer", pos: "collocation", vi: "Chính xác: steer the boat = bẻ lái, điều khiển hướng đi của con tàu" },
+        { key: "c", word: "stow", pos: "v", vi: "Xếp hành lý cất gọn" },
+        { key: "d", word: "stem", pos: "v", vi: "Ngăn chặn dòng chảy" }
+      ]
+    },
+
+    // Questions 11-20: Advanced C1 Practice Multiple-Choice (Page 34 Ex B)
+    {
+      id: "u8-sb-11",
+      questionNumber: 11,
+      prompt: "Employees who harbour a legitimate ______ are strongly encouraged to discuss it with HR.",
+      options: [
+        { key: "a", text: "hindrance" },
+        { key: "b", text: "grievance" },
+        { key: "c", text: "disturbance" },
+        { key: "d", text: "precaution" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "hindrance", pos: "n", vi: "Vật cản trở" },
+        { key: "b", word: "grievance", pos: "collocation", vi: "Chính xác: air a grievance = mối bất bình, khiếu nại về đối xử bất công trong việc làm" },
+        { key: "c", word: "disturbance", pos: "n", vi: "Sự quấy rầy mất trật tự" },
+        { key: "d", word: "precaution", pos: "n", vi: "Biện pháp phòng ngừa" }
+      ]
+    },
+    {
+      id: "u8-sb-12",
+      questionNumber: 12,
+      prompt: "Extreme physical decrepitude and old age seriously ______ both vision and hearing faculties.",
+      options: [
+        { key: "a", text: "impairs" },
+        { key: "b", text: "enhances" },
+        { key: "c", text: "withers" },
+        { key: "d", text: "shrinks" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "impairs", pos: "collocation", vi: "Chính xác: impair vision/hearing = làm suy yếu, tổn hại chức năng thị giác/thính giác" },
+        { key: "b", word: "enhances", pos: "v", vi: "Trái nghĩa: tăng cường nâng cao" },
+        { key: "c", word: "withers", pos: "v", vi: "Tàn héo (hoa lá hoặc sự tàn phai danh tiếng)" },
+        { key: "d", word: "shrinks", pos: "v", vi: "Co lại về kích thước" }
+      ]
+    },
+    {
+      id: "u8-sb-13",
+      questionNumber: 13,
+      prompt: "The audit committee ______ his financial proposal under a microscope before accepting it.",
+      options: [
+        { key: "a", text: "rejected" },
+        { key: "b", text: "ignored" },
+        { key: "c", text: "overlooked" },
+        { key: "d", text: "scrutinised" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "rejected", pos: "v", vi: "Bác bỏ (sau đó lại nói before accepting it)" },
+        { key: "b", word: "ignored", pos: "v", vi: "Phớt lờ bỏ qua" },
+        { key: "c", word: "overlooked", pos: "v", vi: "Bỏ sót không nhìn thấy" },
+        { key: "d", word: "scrutinised", pos: "collocation", vi: "Chính xác: scrutinised his proposal = thẩm định, soi xét kỹ lưỡng đến từng chi tiết" }
+      ]
+    },
+    {
+      id: "u8-sb-14",
+      questionNumber: 14,
+      prompt: "A few political extremists deliberately ______ the agitated crowd to attack the riot police.",
+      options: [
+        { key: "a", text: "incited" },
+        { key: "b", text: "animated" },
+        { key: "c", text: "stirred" },
+        { key: "d", text: "agitated" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "incited", pos: "collocation", vi: "Chính xác: incite the crowd to do sth = kích động, xúi giục đám đông bạo lực" },
+        { key: "b", word: "animated", pos: "v", vi: "Làm sống động vui tươi" },
+        { key: "c", word: "stirred", pos: "v", vi: "Stir up a crowd (thiếu giới từ)" },
+        { key: "d", word: "agitated", pos: "v", vi: "Làm bồn chồn (agitate for rights)" }
+      ]
+    },
+    {
+      id: "u8-sb-15",
+      questionNumber: 15,
+      prompt: "He spent his entire adventurous youth ______ round the world, never settling down anywhere.",
+      options: [
+        { key: "a", text: "scattering" },
+        { key: "b", text: "roaming" },
+        { key: "c", text: "exploring" },
+        { key: "d", text: "transporting" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "scattering", pos: "v", vi: "Rải rác phân tán" },
+        { key: "b", word: "roaming", pos: "collocation", vi: "Chính xác: roam round the world = phiêu bạt, lang bạt khắp năm châu bốn bể" },
+        { key: "c", word: "exploring", pos: "v", vi: "Exploring the world (không đi với giới từ round the world)" },
+        { key: "d", word: "transporting", pos: "v", vi: "Vận chuyển hàng hóa" }
+      ]
+    },
+    {
+      id: "u8-sb-16",
+      questionNumber: 16,
+      prompt: "The examiner's piercing cold stare completely ______ Mary, making her forget her lines.",
+      options: [
+        { key: "a", text: "amazed" },
+        { key: "b", text: "dumbfounded" },
+        { key: "c", text: "imperiled" },
+        { key: "d", text: "disconcerted" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "amazed", pos: "v", vi: "Làm kinh ngạc thán phục" },
+        { key: "b", word: "dumbfounded", pos: "v", vi: "Làm chết lặng vì sốc" },
+        { key: "c", word: "imperiled", pos: "v", vi: "Làm nguy hiểm đến tính mạng" },
+        { key: "d", word: "disconcerted", pos: "v", vi: "Chính xác: disconcert sb = làm ai đó lúng túng, bối rối mất hết tự chủ" }
+      ]
+    },
+    {
+      id: "u8-sb-17",
+      questionNumber: 17,
+      prompt: "It's high time we ______ the formal surgical procedure in the operating room.",
+      options: [
+        { key: "a", text: "tortured" },
+        { key: "b", text: "occurred" },
+        { key: "c", text: "commenced" },
+        { key: "d", text: "soothed" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "tortured", pos: "v", vi: "Tra tấn hành hạ" },
+        { key: "b", word: "occurred", pos: "v", vi: "Xảy ra diễn ra" },
+        { key: "c", word: "commenced", pos: "collocation", vi: "Chính xác: commence the procedure = bắt đầu tiến hành quy trình phẫu thuật trang nghiêm" },
+        { key: "d", word: "soothed", pos: "v", vi: "Làm dịu vết đau" }
+      ]
+    },
+    {
+      id: "u8-sb-18",
+      questionNumber: 18,
+      prompt: "Due to late filing of evidence, the judge decided to ______ the high-profile trial till next week.",
+      options: [
+        { key: "a", text: "admire" },
+        { key: "b", text: "admit" },
+        { key: "c", text: "adjust" },
+        { key: "d", text: "adjourn" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "admire", pos: "v", vi: "Ngưỡng mộ kính trọng" },
+        { key: "b", word: "admit", pos: "v", vi: "Thừa nhận dung nạp" },
+        { key: "c", word: "adjust", pos: "v", vi: "Điều chỉnh cân đối" },
+        { key: "d", word: "adjourn", pos: "collocation", vi: "Chính xác: adjourn a trial = hoãn phiên tòa đến một ngày giờ khác" }
+      ]
+    },
+    {
+      id: "u8-sb-19",
+      questionNumber: 19,
+      prompt: "Under no circumstances would I ever like to ______ my hard-earned professional reputation.",
+      options: [
+        { key: "a", text: "enrich" },
+        { key: "b", text: "jeopardise" },
+        { key: "c", text: "constrain" },
+        { key: "d", text: "prolong" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "enrich", pos: "v", vi: "Làm giàu thêm" },
+        { key: "b", word: "jeopardise", pos: "collocation", vi: "Chính xác: jeopardise one's reputation = gây nguy hiểm, liều mạng hủy hoại danh tiếng" },
+        { key: "c", word: "constrain", pos: "v", vi: "Gò ép bắt buộc" },
+        { key: "d", word: "prolong", pos: "v", vi: "Kéo dài thời gian" }
+      ]
+    },
+    {
+      id: "u8-sb-20",
+      questionNumber: 20,
+      prompt: "If I was reckless enough to do that, it would certainly ______ my employer's wrath and displeasure.",
+      options: [
+        { key: "a", text: "occur" },
+        { key: "b", text: "incur" },
+        { key: "c", text: "recur" },
+        { key: "d", text: "concur" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "occur", pos: "v", vi: "Xảy ra" },
+        { key: "b", word: "incur", pos: "collocation", vi: "Chính xác: incur sb's displeasure / wrath / debts = tự rước lấy cơn thịnh nộ, gánh chịu hậu quả bất lợi" },
+        { key: "c", word: "recur", pos: "v", vi: "Tái diễn định kỳ" },
+        { key: "d", word: "concur", pos: "v", vi: "Đồng thuận nhất trí" }
+      ]
+    }
+  ]
+};
+
+
+export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7, VOCAB_C1_UNIT_8];
+
 

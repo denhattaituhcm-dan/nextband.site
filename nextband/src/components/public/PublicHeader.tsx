@@ -53,7 +53,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
       { label: "Reading Challenge", href: "/reading-challenge", badge: "Mới" },
       { label: "Tủ sách tương tác (Reading Cases)", href: "/reading#tu-sach", badge: "Articles" },
       { label: "English Idioms (Unit 1: Age)", href: "/reading/idioms" },
-      { label: "Vocabulary Files C1 (Unit 1 - 7)", href: "/vocab-c1", badge: "Mới" },
+      { label: "Vocabulary Files C1 (Unit 1 - 8)", href: "/vocab-c1", badge: "Mới" },
       { label: "DIVIDER", href: "", isDivider: true },
       { label: "Phương pháp đọc sâu (Philosophy)", href: "/reading#phuong-phap" },
     ],

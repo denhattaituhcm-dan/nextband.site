@@ -96,6 +96,13 @@ const getUnitMeta = (unitId: number) => {
         descVi: "Phân biệt shrink, contract, wither, dwindle, lessen, impair và abate.",
         pages: "Trang 27–30"
       };
+    case 8:
+      return {
+        shortLabel: "Unit 8: Transition",
+        themeVi: "Tiến trình, Chuyển tiếp & Khởi sắc",
+        descVi: "Phân biệt abate, adroit, accost, aggravate, prosper, resilient, opulent và các cụm từ C1 tinh tế.",
+        pages: "Trang 31–34"
+      };
     default:
       return {
         shortLabel: `Unit ${unitId}`,
@@ -1569,7 +1576,9 @@ export const VocabC1Page: React.FC = () => {
                   ? (stage6Index < 10 ? "Task One (Trang 20)" : "Phần B (Trang 22)")
                   : VOCAB_C1_UNIT_1.unitId === 6
                   ? (stage6Index < 10 ? "Task One (Trang 24)" : "Phần B (Trang 26)")
-                  : (stage6Index < 10 ? "Ex A & B (Trang 27)" : "Phần B (Trang 30)")}
+                  : VOCAB_C1_UNIT_1.unitId === 7
+                  ? (stage6Index < 10 ? "Ex A & B (Trang 27)" : "Phần B (Trang 30)")
+                  : (stage6Index < 10 ? "Task Three (Trang 33)" : "Phần B (Trang 34)")}
               </span>
             </div>
 
