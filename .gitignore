@@ -13,6 +13,7 @@ ielts-be/uploads/
 logs/
 
 .vercel
+*.tsbuildinfo
 
 # AI Skills & Local Agent Tools
 .agents/

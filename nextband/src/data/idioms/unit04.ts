@@ -52,6 +52,13 @@ export interface UnitIdiomsData {
   unit_number_str: string;
   unit_title: string;
   major_section: string;
+  summary: {
+    total_idioms: number;
+    total_teaching_modules: number;
+    total_practice_exercises: number;
+    total_audios: number;
+    accent: string;
+  };
   modules: IdiomModule[];
   exercises: IdiomExercise[];
 }
@@ -61,6 +68,13 @@ export const UNIT_04_DATA: UnitIdiomsData = {
   unit_number_str: "04",
   unit_title: "Personality traits",
   major_section: "Describing people and things",
+  summary: {
+    total_idioms: 20,
+    total_teaching_modules: 2,
+    total_practice_exercises: 5,
+    total_audios: 20,
+    accent: "US",
+  },
   modules: [
     {
       module_id: "4.1",
