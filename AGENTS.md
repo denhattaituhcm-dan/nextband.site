@@ -35,4 +35,7 @@
     - **Vercel Project:** `nextband-site-frontend` ➔ Domain: `https://nextband.site`.
     - **Supabase Backend:** Project `qxtpbonwjmxmogriyfox` (`FRONTEND_URL=https://nextband.site`).
     - **Cấm tuyệt đối:** Không bao giờ push code từ workspace này sang repo `nextband.git` (nay là `legacy_nextband`). Mọi lệnh `git push` mặc định sẽ đẩy lên `origin/main` (`nextband.site.git`).
+14. **Tự động Commit & Push khi hoàn thành (Bắt buộc không cần nhắc):**
+    - Sau khi hoàn thành bất kỳ task chỉnh sửa/thêm tính năng nào và đã kiểm tra `sanity_check.mjs` / `typecheck` thành công, AI Agent **phải tự động stage, commit (với commit message chuẩn Conventional Commits) và chạy ngay `git push origin main`**.
+    - Tuyệt đối không để code nằm lại ở uncommitted / unpushed state và không bao giờ đợi user phải nhắc *"đẩy code lên chưa"*.
 
