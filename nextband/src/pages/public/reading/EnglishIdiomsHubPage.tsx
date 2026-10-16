@@ -22,9 +22,11 @@ import unit01Data from "@/data/idioms/unit01";
 import { UNIT_01_ETYMOLOGY } from "@/data/idioms/unit01_etymology";
 import unit02Data from "@/data/idioms/unit02";
 import { UNIT_02_ETYMOLOGY } from "@/data/idioms/unit02_etymology";
+import unit03Data from "@/data/idioms/unit03";
+import { UNIT_03_ETYMOLOGY } from "@/data/idioms/unit03_etymology";
 
 export default function EnglishIdiomsHubPage() {
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2>(1);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3>(1);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -138,8 +140,14 @@ export default function EnglishIdiomsHubPage() {
   };
 
   // Current Unit Data & Etymology
-  const currentUnitData = selectedUnitId === 1 ? unit01Data : unit02Data;
-  const currentEtymologyData = selectedUnitId === 1 ? UNIT_01_ETYMOLOGY : UNIT_02_ETYMOLOGY;
+  const currentUnitData =
+    selectedUnitId === 1 ? unit01Data : selectedUnitId === 2 ? unit02Data : unit03Data;
+  const currentEtymologyData =
+    selectedUnitId === 1
+      ? UNIT_01_ETYMOLOGY
+      : selectedUnitId === 2
+      ? UNIT_02_ETYMOLOGY
+      : UNIT_03_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -429,14 +437,14 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry18(false);
   };
 
-  // ================= UNIT 2 EXERCISE HANDLERS =================
-  // EXERCISE 2.3 LOGIC (DEFINITION MATCHING)
-  const ex23 = unit02Data.exercises.find((e) => e.exercise_id === "2.3");
+  // ================= UNIT 2 & UNIT 3 EXERCISE HANDLERS =================
+  // EXERCISE DEFINITION MATCHING (2.3 / 3.4)
+  const ex23 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_type === "DEFINITION_MATCHING");
   const check23 = () => {
     if (!ex23?.questions) return;
     const res: Record<number, boolean> = {};
     let hasFail = false;
-    ex23.questions.forEach((q) => {
+    ex23.questions.forEach((q: any) => {
       const isMatch = selected23[q.question_number] === q.target_definition;
       res[q.question_number] = isMatch;
       if (!isMatch) hasFail = true;
@@ -471,15 +479,15 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry23(false);
   };
 
-  // EXERCISE 2.5 LOGIC (FILL IN THE BLANKS)
-  const ex25 = unit02Data.exercises.find((e) => e.exercise_id === "2.5");
+  // EXERCISE FILL IN THE BLANKS (2.5 / 3.5)
+  const ex25 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_type === "FILL_IN_THE_BLANKS");
   const check25 = () => {
     if (!ex25?.questions) return;
     const res: Record<number, boolean> = {};
     let hasFail = false;
-    ex25.questions.forEach((q) => {
+    ex25.questions.forEach((q: any) => {
       const val = (answers25[q.question_number] || "").trim().toLowerCase().replace(/[.,!]/g, "");
-      const isMatch = q.accepted_answers.some((ans) => ans.toLowerCase().replace(/[.,!]/g, "") === val);
+      const isMatch = q.accepted_answers.some((ans: string) => ans.toLowerCase().replace(/[.,!]/g, "") === val);
       res[q.question_number] = isMatch;
       if (!isMatch) hasFail = true;
     });
@@ -513,13 +521,13 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry25(false);
   };
 
-  // EXERCISE 2.6 LOGIC (MULTIPLE CHOICE)
-  const ex26 = unit02Data.exercises.find((e) => e.exercise_id === "2.6");
+  // EXERCISE MULTIPLE CHOICE (2.6 / 3.6)
+  const ex26 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_type === "MULTIPLE_CHOICE_CONTEXT");
   const check26 = () => {
     if (!ex26?.questions) return;
     const res: Record<number, boolean> = {};
     let hasFail = false;
-    ex26.questions.forEach((q) => {
+    ex26.questions.forEach((q: any) => {
       const isMatch = selected26[q.question_number] === q.correct_key;
       res[q.question_number] = isMatch;
       if (!isMatch) hasFail = true;
@@ -554,13 +562,13 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry26(false);
   };
 
-  // EXERCISE 2.7 LOGIC (SITUATIONAL JUDGMENT)
-  const ex27 = unit02Data.exercises.find((e) => e.exercise_id === "2.7");
+  // EXERCISE SITUATIONAL JUDGMENT (2.7 / 3.7)
+  const ex27 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_type === "SITUATIONAL_JUDGMENT");
   const check27 = () => {
     if (!ex27?.questions) return;
     const res: Record<number, boolean> = {};
     let hasFail = false;
-    ex27.questions.forEach((q) => {
+    ex27.questions.forEach((q: any) => {
       const isMatch = selected27[q.question_number] === q.correct_key;
       res[q.question_number] = isMatch;
       if (!isMatch) hasFail = true;
@@ -595,13 +603,13 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry27(false);
   };
 
-  // EXERCISE 2.8 LOGIC (CONCEPTUAL IMAGE MATCHING - UNIT 2)
-  const ex28 = unit02Data.exercises.find((e) => e.exercise_id === "2.8");
+  // EXERCISE CONCEPTUAL IMAGE MATCHING (2.8 / 3.8)
+  const ex28 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_type === "CONCEPTUAL_IMAGE_MATCHING");
   const check28 = () => {
     if (!ex28?.questions) return;
     const res: Record<number, boolean> = {};
     let hasFail = false;
-    ex28.questions.forEach((q) => {
+    ex28.questions.forEach((q: any) => {
       const isMatch = selected28[q.question_number] === q.correct_key;
       res[q.question_number] = isMatch;
       if (!isMatch) hasFail = true;
@@ -636,6 +644,16 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry28(false);
   };
 
+  const handleSelectUnit = (unitId: 1 | 2 | 3) => {
+    setSelectedUnitId(unitId);
+    setActiveModuleFilter("ALL");
+    reset23();
+    reset25();
+    reset26();
+    reset27();
+    reset28();
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2D2825] font-sans selection:bg-[#F2DBD3] selection:text-[#2D2825]">
       <SEO
@@ -657,10 +675,7 @@ export default function EnglishIdiomsHubPage() {
             <div className="flex items-center p-0.5 bg-[#EAE3D9]/60 rounded-lg">
               <button
                 type="button"
-                onClick={() => {
-                  setSelectedUnitId(1);
-                  setActiveModuleFilter("ALL");
-                }}
+                onClick={() => handleSelectUnit(1)}
                 className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
                   selectedUnitId === 1
                     ? "bg-white text-[#002147] shadow-xs"
@@ -671,10 +686,7 @@ export default function EnglishIdiomsHubPage() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setSelectedUnitId(2);
-                  setActiveModuleFilter("ALL");
-                }}
+                onClick={() => handleSelectUnit(2)}
                 className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
                   selectedUnitId === 2
                     ? "bg-white text-[#002147] shadow-xs"
@@ -682,6 +694,17 @@ export default function EnglishIdiomsHubPage() {
                 }`}
               >
                 Unit 02: Friends & Family
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectUnit(3)}
+                className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
+                  selectedUnitId === 3
+                    ? "bg-white text-[#002147] shadow-xs"
+                    : "text-[#7A7067] hover:text-[#2D2825]"
+                }`}
+              >
+                Unit 03: Appearance & Background
               </button>
             </div>
 
@@ -703,7 +726,7 @@ export default function EnglishIdiomsHubPage() {
                   : "hover:text-[#2D2825]"
               }`}
             >
-              ✍️ Luyện tập ({selectedUnitId === 1 ? "5 bài" : "5 bài"})
+              ✍️ Luyện tập (5 bài)
             </button>
           </div>
 
@@ -730,7 +753,9 @@ export default function EnglishIdiomsHubPage() {
             <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-light">
               {selectedUnitId === 1
                 ? "Khám phá 20 thành ngữ cốt lõi và cụm từ cố định về tuổi thơ, thanh xuân, bước ngoặt trưởng thành và những năm tháng xế chiều."
-                : "Khám phá 20 thành ngữ then chốt diễn tả tình bạn, kết giao, phai nhạt liên lạc cùng các mối quan hệ ruột thịt gia đình nhiều thế hệ."}
+                : selectedUnitId === 2
+                ? "Khám phá 20 thành ngữ then chốt diễn tả tình bạn, kết giao, phai nhạt liên lạc cùng các mối quan hệ ruột thịt gia đình nhiều thế hệ."
+                : "Khám phá 20 thành ngữ ấn tượng miêu tả diện mạo, nét tương đồng, phong thái ăn mặc chỉn chu cùng xuất thân và vị thế xã hội."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
@@ -1696,15 +1721,15 @@ export default function EnglishIdiomsHubPage() {
               </>
             )}
 
-            {/* ===================== UNIT 2 EXERCISES ===================== */}
-            {selectedUnitId === 2 && (
+            {/* ===================== UNIT 2 & UNIT 3 EXERCISES ===================== */}
+            {selectedUnitId !== 1 && (
               <>
-                {/* EXERCISE 2.3: DEFINITION MATCHING */}
+                {/* EXERCISE DEFINITION MATCHING */}
                 {ex23 && (
                   <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
                     <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
                       <span className="px-3 py-1 rounded-md bg-[#002147] text-white text-xs font-bold whitespace-nowrap">
-                        Bài tập 2.3
+                        Bài tập {ex23.exercise_id}
                       </span>
                       <div>
                         <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex23.instruction}</h3>
@@ -1796,12 +1821,12 @@ export default function EnglishIdiomsHubPage() {
                   </div>
                 )}
 
-                {/* EXERCISE 2.5: FILL IN THE BLANKS */}
+                {/* EXERCISE FILL IN THE BLANKS */}
                 {ex25 && (
                   <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
                     <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
                       <span className="px-3 py-1 rounded-md bg-[#0284c7] text-white text-xs font-bold whitespace-nowrap">
-                        Bài tập 2.5
+                        Bài tập {ex25.exercise_id}
                       </span>
                       <div>
                         <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex25.instruction}</h3>
@@ -1892,12 +1917,12 @@ export default function EnglishIdiomsHubPage() {
                   </div>
                 )}
 
-                {/* EXERCISE 2.6: MULTIPLE CHOICE */}
+                {/* EXERCISE MULTIPLE CHOICE */}
                 {ex26 && (
                   <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
                     <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
                       <span className="px-3 py-1 rounded-md bg-[#002147] text-white text-xs font-bold whitespace-nowrap">
-                        Bài tập 2.6
+                        Bài tập {ex26.exercise_id}
                       </span>
                       <div>
                         <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex26.instruction}</h3>
@@ -2007,12 +2032,12 @@ export default function EnglishIdiomsHubPage() {
                   </div>
                 )}
 
-                {/* EXERCISE 2.7: SITUATIONAL JUDGMENT */}
+                {/* EXERCISE SITUATIONAL JUDGMENT */}
                 {ex27 && (
                   <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
                     <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
                       <span className="px-3 py-1 rounded-md bg-purple-600 text-white text-xs font-bold whitespace-nowrap">
-                        Bài tập 2.7 🌟 Vận dụng
+                        Bài tập {ex27.exercise_id} 🌟 Vận dụng
                       </span>
                       <div>
                         <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex27.instruction}</h3>
@@ -2122,13 +2147,13 @@ export default function EnglishIdiomsHubPage() {
                   </div>
                 )}
 
-                {/* EXERCISE 2.8: CONCEPTUAL IMAGE & FIGURATIVE MATCHING */}
+                {/* EXERCISE CONCEPTUAL IMAGE & FIGURATIVE MATCHING */}
                 {ex28 && (
                   <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
                     <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
                       <span className="px-3 py-1 rounded-md bg-amber-600 text-white text-xs font-bold whitespace-nowrap flex items-center gap-1">
                         <Compass className="w-3.5 h-3.5" />
-                        Bài tập 2.8
+                        Bài tập {ex28.exercise_id}
                       </span>
                       <div>
                         <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex28.instruction}</h3>
