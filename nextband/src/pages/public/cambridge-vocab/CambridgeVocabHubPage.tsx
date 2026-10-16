@@ -791,25 +791,19 @@ export default function CambridgeVocabHubPage() {
         {/* ================= STAGE 1: NUANCE MAGNET ================= */}
         {currentStage === 1 && (
           <section className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-mono text-[11px] font-bold uppercase tracking-wider">
-                    CHẶNG 1 &bull; NUANCE MAGNET
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">Nhận diện sắc thái từ vựng & Collocation</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-0.5 tracking-tight">
-                  Từ Trường Ngữ Cảnh: Chọn Viên Nang Khớp Nghĩa
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-indigo-600 text-white font-mono text-xs flex items-center justify-center font-bold">1</span>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                  Chọn từ khớp ngữ cảnh
                 </h2>
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm text-xs font-mono text-slate-600">
-                  <span>Tiến độ:</span>
                   <span className="font-bold text-indigo-600">{stage1Index + 1} / {magnets.length}</span>
-                  <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                  <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                     <div
-                      className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-300"
+                      className="h-full bg-indigo-600 transition-all duration-300"
                       style={{ width: `${((stage1Index + 1) / magnets.length) * 100}%` }}
                     />
                   </div>
@@ -821,17 +815,6 @@ export default function CambridgeVocabHubPage() {
                   Bỏ qua
                 </button>
               </div>
-            </div>
-
-            {/*  Keyboard Hint  */}
-            <div className="flex items-center justify-between text-xs text-slate-500 bg-indigo-50/60 border border-indigo-100 rounded-xl px-4 py-2">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-indigo-600 flex-shrink-0" />
-                <span>
-                  <strong>Keyboard-First:</strong> Bấm phím <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono font-bold text-slate-800">1</kbd> <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono font-bold text-slate-800">2</kbd> <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded font-mono font-bold text-slate-800">3</kbd> để chọn viên nang.
-                </span>
-              </div>
-              <span className="hidden md:block font-mono text-[11px] text-indigo-700 font-semibold">⚡ Tốc độ mục tiêu: &lt; 3.5s/câu</span>
             </div>
 
             {/*  Center Context Card  */}
@@ -848,8 +831,8 @@ export default function CambridgeVocabHubPage() {
                     </span>
                   ) : (
                     <span className="inline-flex items-center justify-center min-w-[140px] px-4 py-1.5 mx-2 rounded-xl border-2 border-dashed border-indigo-400 bg-indigo-50/60 text-indigo-700 font-bold align-middle">
-                      <Magnet className="w-4 h-4 text-indigo-600 mr-1.5 animate-bounce" />
-                      <span className="font-mono text-sm sm:text-base">Từ trường hút</span>
+                      <Magnet className="w-4 h-4 text-indigo-600 mr-1.5" />
+                      <span className="font-mono text-sm sm:text-base">[ ? ]</span>
                     </span>
                   )}
 
@@ -962,28 +945,22 @@ export default function CambridgeVocabHubPage() {
         {/* ================= STAGE 2: LIFE-TIMELINE BUILDER ================= */}
         {currentStage === 2 && (
           <section className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-violet-100 text-violet-800 font-mono text-[11px] font-bold uppercase tracking-wider">
-                    CHẶNG 2 &bull; LIFE-TIMELINE BUILDER
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">Lắp ghép hành trình học tập suốt đời từ 3 tuổi đến 60+</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-0.5 tracking-tight">
-                  Trục Thời Gian Tương Tác: Khôi Phục Dòng Chảy Học Thuật
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-violet-600 text-white font-mono text-xs flex items-center justify-center font-bold">2</span>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                  Khôi phục dòng thời gian
                 </h2>
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm text-xs font-mono text-slate-600">
-                  <span>Cột mốc:</span>
                   <span className="font-bold text-violet-600">{stage2Index + 1} / {milestones.length}</span>
                 </div>
                 <button
                   onClick={() => { setStage2Index(0); setStage2Solved(false); setStage2SlotWord(null); }}
                   className="text-xs text-slate-400 hover:text-slate-600 underline font-medium"
                 >
-                  Bắt đầu lại timeline
+                  Làm lại
                 </button>
               </div>
             </div>
@@ -1021,7 +998,7 @@ export default function CambridgeVocabHubPage() {
                             isCompleted
                               ? "bg-emerald-500 border-emerald-600 text-white"
                               : isActive
-                              ? "bg-violet-600 border-violet-400 text-white ring-4 ring-violet-200 animate-pulse"
+                              ? "bg-violet-600 border-violet-400 text-white ring-4 ring-violet-200"
                               : "bg-slate-100 border-slate-300 text-slate-400"
                           }`}
                         >
@@ -1044,13 +1021,10 @@ export default function CambridgeVocabHubPage() {
                       {currentMilestone.age}
                     </span>
                     <h3 className="text-base font-bold text-slate-900">{currentMilestone.title}</h3>
-                    <span className="text-xs text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
-                      {currentMilestone.stageTag}
-                    </span>
                   </div>
                   <span className="text-xs font-mono text-slate-500 flex items-center gap-1">
                     <Lock className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Cần nạp 1 mảnh ghép</span>
+                    <span>Nạp 1 từ</span>
                   </span>
                 </div>
 
@@ -1078,8 +1052,8 @@ export default function CambridgeVocabHubPage() {
                       {stage2SlotWord}
                     </span>
                   ) : (
-                    <span className="inline-flex items-center justify-center min-w-[130px] px-3.5 py-1 mx-1.5 rounded-lg border-2 border-dashed border-violet-400 bg-violet-50 text-violet-700 font-bold font-mono text-sm animate-pulse">
-                      [ ? Chạm để nạp ]
+                    <span className="inline-flex items-center justify-center min-w-[130px] px-3.5 py-1 mx-1.5 rounded-lg border-2 border-dashed border-violet-400 bg-violet-50 text-violet-700 font-bold font-mono text-sm">
+                      [ ? ]
                     </span>
                   )}
 
@@ -1091,14 +1065,10 @@ export default function CambridgeVocabHubPage() {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <Filter className="w-4 h-4 text-violet-600" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">
-                        KHAY MẢNH GHÉP ĐÃ LỌC THÔNG MINH
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-violet-100 text-violet-700 text-[10px] font-mono font-bold">
-                        NHÓM {currentMilestone.pos.toUpperCase()}S
+                      <span className="text-xs font-bold tracking-wider text-slate-700 font-mono">
+                        Chọn từ phù hợp [1-4]
                       </span>
                     </div>
-                    <span className="text-[11px] text-slate-500 font-mono">Bấm phím [1] [2] [3] [4] để nạp nhanh</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -1150,16 +1120,11 @@ export default function CambridgeVocabHubPage() {
         {/* ================= STAGE 3: 2-STEP MORPHOLOGY FORGE ================= */}
         {currentStage === 3 && (
           <section className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-mono text-[11px] font-bold uppercase tracking-wider">
-                    CHẶNG 3 &bull; 2-STEP MORPHOLOGY FORGE
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">Thực chiến bài luận IELTS Task 2 & Lò rèn hình thái từ</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-0.5 tracking-tight">
-                  Rèn Bài Luận Hoàn Chỉnh: Nạp Từ Gốc & Biến Đổi Ngữ Pháp
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-amber-600 text-white font-mono text-xs flex items-center justify-center font-bold">3</span>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                  Bài luận IELTS & Biến thể từ
                 </h2>
               </div>
 
@@ -1314,10 +1279,10 @@ export default function CambridgeVocabHubPage() {
                 <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs font-mono">⚡</span>
-                      <h4 className="font-bold text-sm text-slate-900">KHO VŨ KHÍ TỪ VỰNG</h4>
+                      <span className="w-5 h-5 rounded bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs font-mono">⚡</span>
+                      <h4 className="font-bold text-sm text-slate-900">Từ vựng cốt lõi</h4>
                     </div>
-                    <span className="text-[11px] font-mono text-slate-400">12 Từ Gốc</span>
+                    <span className="text-[11px] font-mono text-slate-400">12 từ gốc</span>
                   </div>
 
                   {/*  Search Input  */}
@@ -1327,16 +1292,9 @@ export default function CambridgeVocabHubPage() {
                       type="text"
                       value={stage3ArsenalSearch}
                       onChange={e => setStage3ArsenalSearch(e.target.value)}
-                      placeholder="Gõ 2 chữ cái để tìm..."
+                      placeholder="Tìm từ vựng..."
                       className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 font-mono transition-all"
                     />
-                  </div>
-
-                  {/*  Quick instruction  */}
-                  <div className="text-[11px] text-slate-500 bg-amber-50/70 border border-amber-200/60 rounded-xl p-2.5 leading-relaxed">
-                    <strong>Quy trình 2 bước:</strong><br />
-                    1. Chạm vào ô trống trong bài luận.<br />
-                    2. Chọn từ gốc bên dưới &rarr; xoay <strong>Lò Rèn Biến Thể</strong> để chọn dạng từ đúng ngữ pháp!
                   </div>
 
                   {/*  Arsenal List  */}
