@@ -28,6 +28,7 @@ export const UNIT_01_DATA = {
         {
           "id": "1_1_springchicken",
           "headword": "no spring chicken",
+          "phonetic": "/nəʊ sprɪŋ ˈtʃɪk.ɪn/",
           "definition_en": "no longer young",
           "context_sentence": "After climbing the hill, I realized I'm no spring chicken!",
           "page_number": 10,
@@ -41,11 +42,30 @@ export const UNIT_01_DATA = {
           },
           "usage_pattern": "be no spring chicken",
           "register": "Informal",
-          "tone": "Humorous / Self-deprecating"
+          "tone": "Humorous / Self-deprecating",
+          "register_info": {
+            "badge": "Informal • Speaking Only",
+            "is_ielts_writing_safe": false,
+            "guidance": "Tuyệt đối tránh dùng trong bài luận IELTS Writing Task 2 vì tính khẩu ngữ. Dùng tự nhiên trong Speaking Part 1 & 2 khi tự trào hoặc nói vui về tuổi tác người thân quen."
+          },
+          "cognitive_anchor": {
+            "metaphor_core": "Gà non nở đầu xuân (thịt mềm ngọt, bán giá cao) vs Gà già qua mùa đông (thịt dai ngoách, giảm giá)",
+            "visual_equation": "Gà non mùa xuân (thanh xuân) ➔ 'No spring chicken' = Đã qua thời trẻ khỏe, luống tuổi",
+            "origin_summary": "Nông dân và thương nhân chợ phiên Anh thế kỷ 18 vạch cánh gà kiểm tra để không bị lừa mua phải gà già gán mác gà xuân."
+          },
+          "micro_check": {
+            "prompt": "Bạn có nên dùng cụm từ này trong bài luận IELTS Writing Task 2 (ví dụ: 'Governments should support citizens who are no spring chickens') không?",
+            "options": [
+              { "key": "A", "text": "Nên, vì đây là thành ngữ tự nhiên giúp tăng điểm Lexical Resource.", "is_correct": false },
+              { "key": "B", "text": "Không nên, vì đây là khẩu ngữ (informal). Trong bài thi Viết học thuật nên dùng 'the elderly' hoặc 'older citizens'.", "is_correct": true }
+            ],
+            "feedback": "Chính xác! Giám khảo Writing Task 2 chấm nghiêm ngặt tiêu chí văn phong học thuật (academic tone). Đưa 'no spring chicken' vào bài luận sẽ bị trừ điểm phong cách (register mismatch)."
+          }
         },
         {
           "id": "1_1_wetbehindears",
           "headword": "wet behind the ears",
+          "phonetic": "/wet bɪˈhaɪnd ði ɪəz/",
           "definition_en": "young and inexperienced",
           "context_sentence": "My assistant is a bit wet behind the ears. He still has a lot to learn.",
           "page_number": 10,
@@ -59,11 +79,30 @@ export const UNIT_01_DATA = {
           },
           "usage_pattern": "be (a bit / still) wet behind the ears",
           "register": "Informal",
-          "tone": "Mildly critical"
+          "tone": "Mildly critical",
+          "register_info": {
+            "badge": "Informal • Speaking Only",
+            "is_ielts_writing_safe": false,
+            "guidance": "Không dùng trong Writing Task 2. Rất đắt giá cho Speaking Part 1 & 3 khi chia sẻ về cảm giác bỡ ngỡ thời mới ra trường hoặc nhận xét về nhân sự trẻ thiếu trải nghiệm thực tế."
+          },
+          "cognitive_anchor": {
+            "metaphor_core": "Nếp gấp phía sau vành tai của bê con/ngựa non là vị trí khó chạm tới nhất và khô nước ối sau cùng sau khi được mẹ liếm sạch.",
+            "visual_equation": "Sau tai còn ướt nước ối ➔ Vừa mới chào đời ➔ Miệng còn hôi sữa, non nớt kinh nghiệm",
+            "origin_summary": "Thành ngữ mượn từ tiếng Đức cổ thế kỷ 17 ('noch nass hinter den Ohren'), du nhập vào báo chí Mỹ giữa thế kỷ 19 để chỉ người mới vào nghề."
+          },
+          "micro_check": {
+            "prompt": "Trong tình huống nào sau đây, việc dùng 'wet behind the ears' là tự nhiên và chính xác nhất?",
+            "options": [
+              { "key": "A", "text": "Trong IELTS Speaking Part 1 khi kể: 'On my very first day as an intern, I felt completely wet behind the ears.'", "is_correct": true },
+              { "key": "B", "text": "Trong một bản sơ yếu lý lịch (CV) xin việc trang trọng gửi cho nhà tuyển dụng.", "is_correct": false }
+            ],
+            "feedback": "Chính xác! Cụm từ mang sắc thái khẩu ngữ thân mật và tự trào nhẹ nhàng, hoàn hảo cho Speaking nhưng không bao giờ xuất hiện trong văn bản hành chính/CV."
+          }
         },
         {
           "id": "1_1_getoninyears",
           "headword": "get on in years",
+          "phonetic": "/ɡet ɒn ɪn jɪəz/",
           "definition_en": "getting old",
           "context_sentence": "Becky's worried she's getting on in years after spotting more gray hairs. (US)",
           "page_number": 10,
@@ -77,7 +116,25 @@ export const UNIT_01_DATA = {
           },
           "usage_pattern": "be getting on in years",
           "register": "Neutral / Polite",
-          "tone": "Euphemistic"
+          "tone": "Euphemistic",
+          "register_info": {
+            "badge": "Polite / Neutral • Speaking & Letters",
+            "is_ielts_writing_safe": false,
+            "guidance": "Đây là uyển ngữ (euphemism) rất nhã nhặn, tôn trọng khi nói về người lớn tuổi. Trong Speaking Part 1 & 2 hoặc General Writing (thư bán trang trọng) rất đắt giá, nhưng trong Writing Task 2 nên dùng thuật ngữ học thuật trực tiếp như 'elderly individuals' hoặc 'the aging demographic'."
+          },
+          "cognitive_anchor": {
+            "metaphor_core": "'Get on' (tiến bước theo dòng chảy) + 'in years' (tích lũy số năm cuộc đời)",
+            "visual_equation": "Từng bước tiến xa trên trục thời gian đời người ➔ tích lũy nhiều năm tháng ➔ có tuổi, luống tuổi",
+            "origin_summary": "Bắt nguồn từ phép nói giảm nói tránh lịch thiệp của xã hội Anh thế kỷ 19 để thể hiện lòng kính trọng và tránh làm người cao tuổi cảm thấy bi quan về sự già nua."
+          },
+          "micro_check": {
+            "prompt": "Tại sao người bản xứ thường dùng 'getting on in years' thay vì nói thẳng 'getting old' khi nói về người cao tuổi?",
+            "options": [
+              { "key": "A", "text": "Để thể hiện phép lịch sự tế nhị (euphemism), tránh cảm giác sỗ sàng hoặc tổn thương tâm lý người lớn tuổi.", "is_correct": true },
+              { "key": "B", "text": "Vì ngữ pháp tiếng Anh quy định từ 'old' chỉ được dùng cho đồ vật chứ không dùng cho người.", "is_correct": false }
+            ],
+            "feedback": "Chính xác! 'Get on in years' là uyển ngữ xã giao chuẩn mực, giúp người nói thể hiện sự tinh tế và kính trọng khi nhắc đến tuổi tác của người khác."
+          }
         },
         {
           "id": "1_1_oldashills",
@@ -343,6 +400,7 @@ export const UNIT_01_DATA = {
         {
           "id": "1_2_comeofage",
           "headword": "come of age",
+          "phonetic": "/kʌm əv eɪdʒ/",
           "definition_en": "reach maturity, or have the same legal rights as adults",
           "context_sentence": "In many countries, there is a big celebration when young people come of age.",
           "page_number": 11,
@@ -356,7 +414,25 @@ export const UNIT_01_DATA = {
           },
           "usage_pattern": "come of age (động từ: comes / came of age; danh từ: coming-of-age)",
           "register": "Neutral / Formal",
-          "tone": "Objective"
+          "tone": "Objective",
+          "register_info": {
+            "badge": "Neutral / Formal • Safe for Writing & Speaking",
+            "is_ielts_writing_safe": true,
+            "guidance": "Hoàn toàn an toàn và được đánh giá cao trong cả IELTS Speaking và Writing Task 2 khi thảo luận về cột mốc trưởng thành, quyền bầu cử công dân, hoặc sự phát triển chín muồi của một xu hướng công nghệ ('AI has truly come of age')."
+          },
+          "cognitive_anchor": {
+            "metaphor_core": "'Come of' (bước đến cột mốc / ra đời) + 'age' (độ tuổi hợp thức được xã hội thừa nhận)",
+            "visual_equation": "Bước qua ngưỡng cửa tuổi thơ ➔ chạm đến cột mốc tuổi trưởng thành có đủ quyền và nghĩa vụ công dân",
+            "origin_summary": "Bắt nguồn từ luật tập quán phong kiến Anh thời Trung cổ (thế kỷ 13), khi con cái giới quý tộc chạm mốc 21 tuổi được chuyển giao quyền thừa kế đất đai và gánh vác nghĩa vụ hiệp sĩ."
+          },
+          "micro_check": {
+            "prompt": "Trong câu 'When young people come of age, they should be entitled to vote in national elections', cụm từ 'come of age' có phù hợp trong văn cảnh học thuật/IELTS Writing Task 2 không?",
+            "options": [
+              { "key": "A", "text": "Hoàn toàn phù hợp, vì đây là thành ngữ chuẩn hóa (semi-formal/academic) mang tính pháp lý và xã hội rõ ràng.", "is_correct": true },
+              { "key": "B", "text": "Không phù hợp, vì mọi thành ngữ tiếng Anh đều bị cấm trong bài thi Viết học thuật.", "is_correct": false }
+            ],
+            "feedback": "Chính xác! Giám khảo IELTS không cấm toàn bộ idiom, mà chỉ trừ điểm các khẩu ngữ thân mật (informal idioms) không hợp văn phong. Những thành ngữ chuẩn mực, trung tính như 'come of age' dùng đúng ngữ cảnh được đánh giá rất cao."
+          }
         },
         {
           "id": "1_2_improveage",
