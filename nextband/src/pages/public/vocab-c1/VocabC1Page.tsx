@@ -124,6 +124,13 @@ const getUnitMeta = (unitId: number) => {
         descVi: "Phân biệt tinh vi discard, forsake, desert, relinquish, abdicate, cede, renounce và các chuyển đổi tính từ C1.",
         pages: "Trang 47–50"
       };
+    case 12:
+      return {
+        shortLabel: "Unit 12: Valuation",
+        themeVi: "Định giá, Đánh giá & Thuật ngữ Pháp lý",
+        descVi: "Phân biệt sắc thái evaluate, appreciate, esteem, calculate, estimate, appraise, assess, đảo ngữ và thuật ngữ tư pháp.",
+        pages: "Trang 51–54"
+      };
     default:
       return {
         shortLabel: `Unit ${unitId}`,

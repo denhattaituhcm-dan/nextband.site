@@ -11648,7 +11648,1032 @@ export const VOCAB_C1_UNIT_11: VocabC1Unit = {
 };
 
 
-export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7, VOCAB_C1_UNIT_8, VOCAB_C1_UNIT_9, VOCAB_C1_UNIT_10, VOCAB_C1_UNIT_11];
+
+export const VOCAB_C1_UNIT_12: VocabC1Unit = {
+  unitId: 12,
+  title: "Unit 12: Valuation, Estimation & Legal Terminology",
+  subtitle: "The Vocabulary Files - Level C1 (Pages 51-54)",
+
+  // 1. Words in Action (10 Nuanced Verbs from Page 51 Exercise A & Page 54)
+  wordsInAction: [
+    {
+      id: "u12-wia-1",
+      word: "evaluate",
+      ipa: "/ɪˈvæl.ju.eɪt/",
+      nuance: "[Calculate or judge the value, quality, or importance after studying good and bad points]",
+      register: "Academic / Formal",
+      collocations: ["evaluate the success", "evaluate performance", "evaluate property", "carefully evaluate"],
+      enDef: "To calculate or judge the value or importance of something after studying its good and bad points.",
+      viDef: "Đánh giá, định lượng giá trị hoặc tầm quan trọng sau khi cân nhắc kỹ lưỡng ưu khuyết điểm.",
+      example: "Before buying the sprawling suburban estate, why don't you hire a certified surveyor to **evaluate** the property thoroughly?",
+      targetKeyword: "evaluate"
+    },
+    {
+      id: "u12-wia-2",
+      word: "appreciate",
+      ipa: "/əˈpriː.ʃi.eɪt/",
+      nuance: "[Understand and enjoy the good qualities or value of something; be grateful for]",
+      register: "Formal / General",
+      collocations: ["appreciate beauty", "appreciate one's efforts", "deeply appreciate", "fully appreciate"],
+      enDef: "To understand and enjoy the good qualities or value of something; to be deeply grateful for assistance.",
+      viDef: "Trân trọng, thưởng thức và thấu hiểu giá trị tốt đẹp; hoặc cảm kích trước sự giúp đỡ.",
+      example: "After an exhausting year of nonstop clinical research, the medical staff all **appreciated** a peaceful holiday.",
+      targetKeyword: "appreciate"
+    },
+    {
+      id: "u12-wia-3",
+      word: "calculated",
+      ipa: "/ˈkæl.kjə.leɪ.tɪd/",
+      nuance: "[Found out by numbers or careful reasoning; planned or deliberately judged]",
+      register: "Analytical / Technical",
+      collocations: ["calculated risk", "carefully calculated", "calculated the cost", "calculated that"],
+      enDef: "Found out something by using numbers or systematic reasoning; carefully planned to have a specific effect.",
+      viDef: "Đã tính toán, xác định bằng những con số hay phép tính; hoặc ước lượng cẩn trọng.",
+      example: "The master builder **calculated** that it would take at least six months and substantial capital to renovate the derelict townhouse.",
+      targetKeyword: "calculated"
+    },
+    {
+      id: "u12-wia-4",
+      word: "esteem",
+      ipa: "/ɪˈstiːm/",
+      nuance: "[Respect and admire greatly; hold somebody in high regard and veneration]",
+      register: "High / Formal",
+      collocations: ["hold in high esteem", "earn one's esteem", "great esteem", "fall in one's esteem"],
+      enDef: "To respect and admire greatly; a feeling of great respect and admiration for somebody.",
+      viDef: "Kính trọng, nể trọng, đánh giá cao phẩm hạnh hoặc cống hiến của ai đó.",
+      example: "Dr. David is universally held in high **esteem** by the international medical community for his pioneering research into oncology.",
+      targetKeyword: "esteem"
+    },
+    {
+      id: "u12-wia-5",
+      word: "deem",
+      ipa: "/diːm/",
+      nuance: "[Consider, think or regard in a specified condition, especially in formal or legal contexts]",
+      register: "Formal / Juridical",
+      collocations: ["deem necessary", "deem fit", "deem appropriate", "deemed illegal"],
+      enDef: "To consider, think or regard somebody/something in a specified way.",
+      viDef: "Cho rằng, coi là, phán xét là (thường dùng trong văn phong pháp lý, quy chế chính thức).",
+      example: "The regulatory commission empowered the lead inspector to make any immediate amendments to the protocol he **deemed** necessary.",
+      targetKeyword: "deem"
+    },
+    {
+      id: "u12-wia-6",
+      word: "estimate",
+      ipa: "/ˈes.tɪ.meɪt/",
+      nuance: "[Form an approximate judgment or calculation of cost, size, or value without exact figures]",
+      register: "Commercial / General",
+      collocations: ["estimate the cost", "estimate the value", "rough estimate", "conservatively estimate"],
+      enDef: "To judge or calculate approximately the value, size, or amount of something without precise measuring.",
+      viDef: "Ước tính, ước lượng sơ bộ về giá cả, số lượng hay kích thước mà không đo đạc tuyệt đối.",
+      example: "The residential contractors were asked to **estimate** how much it would cost to construct a modern garage extension.",
+      targetKeyword: "estimate"
+    },
+    {
+      id: "u12-wia-7",
+      word: "appraise",
+      ipa: "/əˈpreɪz/",
+      nuance: "[Make an official or professional evaluation of something, setting a market price or legal value]",
+      register: "Professional / Juridical",
+      collocations: ["appraise real estate", "official appraisal", "appraise jewelry", "expertly appraise"],
+      enDef: "To make an official evaluation of something; to set a price or value on, especially by authority of law.",
+      viDef: "Thẩm định giá, giám định chuyên môn để xác định giá trị thị trường hoặc pháp lý (nhà đất, cổ vật).",
+      example: "A licensed auctioneer was commissioned to **appraise** the antique diamond necklace before the historic estate sale.",
+      targetKeyword: "appraise"
+    },
+    {
+      id: "u12-wia-8",
+      word: "assessed",
+      ipa: "/əˈsest/",
+      nuance: "[Determined the amount, value, or damage of property specifically for taxation or insurance claims]",
+      register: "Financial / Insurance / Regulatory",
+      collocations: ["assess damage", "assess liability", "assessed for tax", "assess the impact"],
+      enDef: "Determined the amount or value of property or damage for taxation, insurance, or legal compensation.",
+      viDef: "Đã định giá tính thuế, thẩm định mức độ thiệt hại tài sản cho cơ quan thuế hoặc bảo hiểm.",
+      example: "Following the traffic collision, the independent loss adjuster **assessed** the structural damage caused to the vehicle at £500.",
+      targetKeyword: "assessed"
+    },
+    {
+      id: "u12-wia-9",
+      word: "scour",
+      ipa: "/ˈskaʊər/",
+      nuance: "[Search a place, territory, or document thoroughly, energetically and exhaustively]",
+      register: "Standard / Energetic",
+      collocations: ["scour the district", "scour records", "scour the area", "scour the countryside"],
+      enDef: "To search a place or document thoroughly in order to locate someone or something elusive.",
+      viDef: "Lùng sục, sục sạo, rà soát khắp nơi để tìm kiếm nghi can hoặc manh mối.",
+      example: "Dozens of elite patrol officers **scoured** the entire mountainous district searching for the fugitive.",
+      targetKeyword: "scoured"
+    },
+    {
+      id: "u12-wia-10",
+      word: "impart",
+      ipa: "/ɪmˈpɑːt/",
+      nuance: "[Convey, disclose or pass on vital information, wisdom, knowledge or a distinctive quality]",
+      register: "Formal / Academic",
+      collocations: ["impart knowledge", "impart information", "impart wisdom", "impart flavor"],
+      enDef: "To pass on information, news, or a specific quality or knowledge to someone.",
+      viDef: "Truyền đạt, phổ biến kiến thức, trao truyền tin tức hay giá trị quan trọng.",
+      example: "The veteran statesman requested an urgent private consultation to **impart** vital geopolitical intelligence to the ambassador.",
+      targetKeyword: "impart"
+    }
+  ],
+
+  // 2. Word Formation (12 Sentence Transformations from Page 52 Task One)
+  wordFormation: [
+    {
+      id: "u12-wf-1",
+      adjective: "To earn a living",
+      noun: "To earn a living is difficult for a young poet",
+      root: "How difficult it is for a young poet to earn his living.",
+      suffix: "Infinitive Subject Fronting",
+      meaningVi: "Đưa cụm động từ nguyên mẫu làm chủ ngữ nhấn mạnh: 'To earn a living is difficult for a young poet'.",
+      suffixChoices: [
+        "To earn a living is difficult",
+        "For earning a living being difficult",
+        "To have earned a living makes difficulty",
+        "Living earning is difficult"
+      ],
+      ruleTip: "Chuyển câu cảm thán/giả định thành câu chủ ngữ nguyên mẫu (Infinitive phrase as Subject): 'To earn a living is difficult...'."
+    },
+    {
+      id: "u12-wf-2",
+      adjective: "was presented with a medal",
+      noun: "Each of the lifeboatmen was presented with a medal",
+      root: "They presented a medal to each of the lifeboatmen.",
+      suffix: "Dative Passive Inversion",
+      meaningVi: "Chuyển tân ngữ gián tiếp lên đầu câu làm chủ ngữ bị động: 'Each of the lifeboatmen was presented with a medal'.",
+      suffixChoices: [
+        "was presented with a medal",
+        "was being presenting a medal",
+        "had a medal presenting",
+        "were presented by medals"
+      ],
+      ruleTip: "Cấu trúc bị động C1: 'present sb with sth' ➔ 'Each of the lifeboatmen was presented with a medal'."
+    },
+    {
+      id: "u12-wf-3",
+      adjective: "could he possibly have found",
+      noun: "No other occupation could he possibly have found that would have suited his needs so well",
+      root: "He couldn't possibly have found any other occupation to suit his needs so well.",
+      suffix: "Negative Inversion (No other...)",
+      meaningVi: "Đảo ngữ phủ định với No other: 'No other occupation could he possibly have found that would have suited his needs so well'.",
+      suffixChoices: [
+        "could he possibly have found",
+        "he could possibly find",
+        "did he possibly find",
+        "would he have possibly found"
+      ],
+      ruleTip: "Đảo ngữ với cụm từ phủ định đứng đầu câu: 'No other + N + trợ động từ (could) + S (he) + V (possibly have found)'."
+    },
+    {
+      id: "u12-wf-4",
+      adjective: "was blamed on the trade unions",
+      noun: "All the trouble was blamed on the trade unions",
+      root: "The trade unions were blamed for all the trouble.",
+      suffix: "Prepositional Reversal (blame sth on sb)",
+      meaningVi: "Đổi hướng giới từ từ 'blame sb for sth' sang 'blame sth on sb': 'All the trouble was blamed on the trade unions'.",
+      suffixChoices: [
+        "was blamed on the trade unions",
+        "was blamed for the trade unions",
+        "put blame to the trade unions",
+        "was blaming of the trade unions"
+      ],
+      ruleTip: "Cấu trúc chủ động/bị động đối ngẫu: 'blame sb for sth' ➔ 'sth was blamed on sb' (hoặc 'was put down to')."
+    },
+    {
+      id: "u12-wf-5",
+      adjective: "Had we set out earlier",
+      noun: "Had we set out earlier it might have been a pleasant outing",
+      root: "It might have been a pleasant outing if we had set out earlier.",
+      suffix: "Third Conditional Inversion",
+      meaningVi: "Đảo ngữ câu điều kiện loại 3: 'Had we set out earlier it might have been a pleasant outing'.",
+      suffixChoices: [
+        "Had we set out earlier",
+        "If had we set out earlier",
+        "Should we set out earlier",
+        "Were we setting out earlier"
+      ],
+      ruleTip: "Bỏ 'if' và đảo trợ động từ 'Had' lên trước chủ ngữ trong điều kiện quá khứ: 'Had + S + V3/ed'."
+    },
+    {
+      id: "u12-wf-6",
+      adjective: "what we are specifically exempt from",
+      noun: "This kind of task is what we are specifically exempt from",
+      root: "It is specifically this kind of task from which we are exempted.",
+      suffix: "Pseudo-Cleft Wh-Transformation",
+      meaningVi: "Chuyển câu chẻ It is... sang câu chẻ Wh-cleft: 'This kind of task is what we are specifically exempt from'.",
+      suffixChoices: [
+        "is what we are specifically exempt from",
+        "which we are exempted specifically",
+        "is that we are exempting of",
+        "being what is exempt from"
+      ],
+      ruleTip: "Chuyển câu chẻ nhấn mạnh 'It is X that/from which...' thành 'X is what...' và dùng tính từ 'exempt from'."
+    },
+    {
+      id: "u12-wf-7",
+      adjective: "was found to be suffering",
+      noun: "30% of the population was found to be suffering from malnutrition",
+      root: "They found that 30% of the population was suffering from malnutrition.",
+      suffix: "Personal Passive with Progressive Infinitive",
+      meaningVi: "Chuyển câu tường thuật gián tiếp sang bị động với động từ nguyên mẫu tiếp diễn: 'was found to be suffering from malnutrition'.",
+      suffixChoices: [
+        "was found to be suffering",
+        "found suffering from",
+        "was finding to suffer",
+        "had been found that suffering"
+      ],
+      ruleTip: "Cấu trúc bị động khách quan: 'S + be found + to be V-ing' khi diễn tả trạng thái đang diễn ra."
+    },
+    {
+      id: "u12-wf-8",
+      adjective: "is a man's real influence exerted",
+      noun: "Only after a man's death is his real influence exerted",
+      root: "A man's real influence is exerted only after his death.",
+      suffix: "Restrictive Temporal Inversion",
+      meaningVi: "Đảo ngữ với trạng ngữ thời gian giới hạn Only after: 'Only after a man's death is his real influence exerted'.",
+      suffixChoices: [
+        "is his real influence exerted",
+        "his real influence is exerted",
+        "did his real influence exert",
+        "was his real influence exerting"
+      ],
+      ruleTip: "Đảo ngữ C1 với 'Only after + cụm danh từ/mệnh đề + to be/trợ động từ + S + V'."
+    },
+    {
+      id: "u12-wf-9",
+      adjective: "is sweeping through the U.S. at present",
+      noun: "An influenza epidemic is sweeping through the U.S. at present",
+      root: "We, in the U.S., are at present in the middle of an influenza epidemic.",
+      suffix: "Metaphorical Dynamic Verb Shift",
+      meaningVi: "Chuyển từ ngữ cảnh tĩnh 'in the middle of' sang động từ chuyển động mạnh mẽ 'is sweeping through' (hoặc 'is widespread/prevalent in'): 'An influenza epidemic is sweeping through the U.S. at present'.",
+      suffixChoices: [
+        "is sweeping through the U.S. at present",
+        "is in the middle of us at present",
+        "has been middle in the U.S.",
+        "sweeps over us presently"
+      ],
+      ruleTip: "Collocation học thuật C1 cho dịch bệnh: 'an epidemic sweeps through a country' hoặc 'is widespread / prevalent in'."
+    },
+    {
+      id: "u12-wf-10",
+      adjective: "may result from continued research",
+      noun: "A fearful destruction of the environment may result from continued research on modern science",
+      root: "Continued research on modern science may lead to a fearful destruction of the environment.",
+      suffix: "Causality Reversal (lead to -> result from)",
+      meaningVi: "Đảo ngược quan hệ nhân quả: 'A leads to B' chuyển thành 'B may result from A'.",
+      suffixChoices: [
+        "may result from continued research",
+        "may lead to continued research",
+        "results into research continued",
+        "is resulting by modern research"
+      ],
+      ruleTip: "Cặp động từ diễn tả nhân quả đối nghịch trong Academic English: 'cause / lead to' ➔ 'result from / stem from'."
+    },
+    {
+      id: "u12-wf-11",
+      adjective: "must be dealt with at greater length",
+      noun: "This problem must be dealt with at greater length",
+      root: "You must deal with this problem at greater length.",
+      suffix: "Phrasal Verb Passive Shift",
+      meaningVi: "Chuyển sang bị động khiếm khuyết giữ nguyên giới từ: 'must be dealt with at greater length'.",
+      suffixChoices: [
+        "must be dealt with at greater length",
+        "must deal at greater length",
+        "must have dealt with greater length",
+        "is being dealt greater length"
+      ],
+      ruleTip: "Bị động của cụm động từ (Phrasal Verb): 'deal with sth' ➔ 'sth must be dealt with'."
+    },
+    {
+      id: "u12-wf-12",
+      adjective: "is an easier question to answer than his",
+      noun: "Yours is an easier question to answer than his",
+      root: "It is more difficult to answer his question than yours.",
+      suffix: "Antonymic Comparative Fronting",
+      meaningVi: "Đưa đại từ sở hữu Yours lên đầu câu và chuyển tính từ so sánh sang thể đối nghịch: 'Yours is an easier question to answer than his'.",
+      suffixChoices: [
+        "is an easier question to answer than his",
+        "is more difficult question than his",
+        "being easier than answering his question",
+        "has been easier question of his"
+      ],
+      ruleTip: "Biến đổi cấu trúc so sánh hơn sang tính từ trái nghĩa (more difficult than X ➔ X is easier than...)."
+    }
+  ],
+
+  // 3. Confusable Words (10 Idioms & Expressions from Page 53 Task Two)
+  confusableWords: [
+    {
+      id: "u12-cw-1",
+      pairKey: "bit-the-dust-got-dusty",
+      wordA: "bit the dust",
+      wordB: "got dusty",
+      diffHighlightA: { before: "", highlight: "bit the dust", after: "" },
+      diffHighlightB: { before: "", highlight: "got dusty", after: "" },
+      promptSentence: "In the dramatic climax of the classic Western film, the outlaw leader ______ in a furious gunfight.",
+      correctWord: "bit the dust",
+      defA: "Bite the dust: Thành ngữ chỉ việc bị giết, ngã xuống tử trận hoặc thất bại thảm hại (were killed).",
+      defB: "Get dusty: Bị bám bụi bẩn, phủ đầy lớp bụi vật lý.",
+      mnemonic: "Bite the dust = ngã xuống cắn đất / tử trận; Get dusty = bám bụi bặm."
+    },
+    {
+      id: "u12-cw-2",
+      pairKey: "in-a-spot-in-a-dilemma",
+      wordA: "in a spot",
+      wordB: "in a dilemma",
+      diffHighlightA: { before: "", highlight: "in a spot", after: "" },
+      diffHighlightB: { before: "", highlight: "in a dilemma", after: "" },
+      promptSentence: "Having forgotten both his passport and wallet at home before his international flight, Mark found himself ______.",
+      correctWord: "in a spot",
+      defA: "In a spot: Rơi vào tình thế nan giải, khó xử, ngặt nghèo (in a difficult or awkward situation).",
+      defB: "In a dilemma: Ở thế lưỡng nan giữa 2 lựa chọn có tính logic hoặc đạo đức ngang bằng nhau.",
+      mnemonic: "In a tight spot = mắc kẹt trong thế bí; In a dilemma = phân vân giữa 2 ngả đường."
+    },
+    {
+      id: "u12-cw-3",
+      pairKey: "blow-his-top-be-sad",
+      wordA: "blow his top",
+      wordB: "be sad",
+      diffHighlightA: { before: "", highlight: "blow his top", after: "" },
+      diffHighlightB: { before: "", highlight: "be sad", after: "" },
+      promptSentence: "The head chef will definitely ______ if he sees the kitchen staff contaminating the fresh seafood.",
+      correctWord: "blow his top",
+      defA: "Blow one's top: Nổi trận lôi đình, bốc hỏa mất kiểm soát (be extremely angry).",
+      defB: "Be sad: Buồn bã, ủ rũ, u sầu trong lòng.",
+      mnemonic: "Blow top = nắp nồi áp suất nổ tung ➔ nổi cơn thịnh nộ; Be sad = u sầu."
+    },
+    {
+      id: "u12-cw-4",
+      pairKey: "within-an-ace-of-holding-aces",
+      wordA: "within an ace of",
+      wordB: "holding all the aces",
+      diffHighlightA: { before: "", highlight: "within an ace of", after: "" },
+      diffHighlightB: { before: "", highlight: "holding all the aces", after: "" },
+      promptSentence: "The mountaineer slipped on the sheer ice ledge and came ______ tumbling thousands of feet into the abyss.",
+      correctWord: "within an ace of",
+      defA: "Within an ace of: Trong gang tấc, suýt chết, suýt nữa thì gặp đại họa (had a narrow escape).",
+      defB: "Hold all the aces: Nắm giữ mọi lợi thế tuyệt đối trong tay (có toàn quyền chi phối).",
+      mnemonic: "Within an ace of = suýt nữa thì đứt bóng trong gang tấc; Hold the aces = nắm đằng chuôi."
+    },
+    {
+      id: "u12-cw-5",
+      pairKey: "stock-mentality",
+      wordA: "stock",
+      wordB: "mentality",
+      diffHighlightA: { before: "", highlight: "stock", after: "" },
+      diffHighlightB: { before: "", highlight: "mentality", after: "" },
+      promptSentence: "The indigenous cattle breed found in these isolated Scottish highlands is of ancient Celtic ______.",
+      correctWord: "stock",
+      defA: "Stock: Nguồn gốc, dòng dõi gia tộc, tổ tiên dòng máu (ancestry, lineage).",
+      defB: "Mentality: Tâm lý, tính khí, lối tư duy suy nghĩ.",
+      mnemonic: "Of good stock = xuất thân dòng dõi tốt / gốc gác thuần chủng."
+    },
+    {
+      id: "u12-cw-6",
+      pairKey: "sweat-guts-out-loiter-about",
+      wordA: "sweat my guts out",
+      wordB: "loiter about",
+      diffHighlightA: { before: "", highlight: "sweat my guts out", after: "" },
+      diffHighlightB: { before: "", highlight: "loiter about", after: "" },
+      promptSentence: "I didn't ______ sixty hours a week in this firm just to see an incompetent newcomer take all the credit.",
+      correctWord: "sweat my guts out",
+      defA: "Sweat one's guts out: Lao động cật lực đến kiệt sức, làm việc vắt kiệt mồ hôi nước mắt (work very hard).",
+      defB: "Loiter about: Lêu lổng, đi vất vơ vất vưởng lãng phí thời gian không mục đích.",
+      mnemonic: "Sweat guts out = vắt ruột đổ mồ hôi cày cuốc; Loiter = lượn lờ lông bông."
+    },
+    {
+      id: "u12-cw-7",
+      pairKey: "not-by-a-long-shot-so-so",
+      wordA: "Not by a long shot",
+      wordB: "So so",
+      diffHighlightA: { before: "", highlight: "Not by a long shot", after: "" },
+      diffHighlightB: { before: "", highlight: "So so", after: "" },
+      promptSentence: "'Did the rookie candidate manage to convince the veteran committee?' '______; they dismissed him in minutes.'",
+      correctWord: "Not by a long shot",
+      defA: "Not by a long shot: Hoàn toàn không, chẳng có cơ may nào, tuyệt nhiên không (not at all).",
+      defB: "So so: Thường thường bậc trung, tàm tạm không có gì nổi trội.",
+      mnemonic: "Not by a long shot = bắn xa cả dặm cũng chẳng trúng ➔ tuyệt đối không; So so = tàm tạm."
+    },
+    {
+      id: "u12-cw-8",
+      pairKey: "a-closed-book-forbidden-knowledge",
+      wordA: "a closed book",
+      wordB: "forbidden knowledge",
+      diffHighlightA: { before: "", highlight: "a closed book", after: "" },
+      diffHighlightB: { before: "", highlight: "forbidden knowledge", after: "" },
+      promptSentence: "To the average layman without formal medical training, advanced molecular immunology is virtually ______.",
+      correctWord: "a closed book",
+      defA: "A closed book: Một lĩnh vực/đề tài hoàn toàn mù tịt, không hiểu biết tí gì (I don't know anything about it).",
+      defB: "Forbidden knowledge: Kiến thức cấm kỵ, điều bí mật bị pháp luật hay đạo đức ngăn cấm.",
+      mnemonic: "A closed book to me = quyển sách đóng kín với tôi ➔ mù tịt hoàn toàn."
+    },
+    {
+      id: "u12-cw-9",
+      pairKey: "round-the-bend-reasonable",
+      wordA: "round the bend",
+      wordB: "reasonable",
+      diffHighlightA: { before: "", highlight: "round the bend", after: "" },
+      diffHighlightB: { before: "", highlight: "reasonable", after: "" },
+      promptSentence: "Living alone in total darkness and constant terror for six weeks made the castaway go completely ______.",
+      correctWord: "round the bend",
+      defA: "Round the bend: Phát điên, hóa rồ, mất trí hoàn toàn (insane, crazy).",
+      defB: "Reasonable: Hợp lý, sáng suốt, có lý lẽ đúng mực.",
+      mnemonic: "Go round the bend = đi qua khúc cua ngoằn ngoèo ➔ thần kinh mất lái phát điên."
+    },
+    {
+      id: "u12-cw-10",
+      pairKey: "on-edge-calm-poised",
+      wordA: "on edge",
+      wordB: "calm and poised",
+      diffHighlightA: { before: "", highlight: "on edge", after: "" },
+      diffHighlightB: { before: "", highlight: "calm and poised", after: "" },
+      promptSentence: "Before walking onto the stage to perform before a royal audience, the young violinist was visibly ______.",
+      correctWord: "on edge",
+      defA: "On edge: Bồn chồn, căng thẳng, đứng ngồi không yên vì lo lắng (tense and nervous).",
+      defB: "Calm and poised: Bình tĩnh, điềm đạm, tự chủ và đĩnh đạc.",
+      mnemonic: "On edge = đứng mấp mé bên bờ vực nhọn ➔ thần kinh căng thẳng bồn chồn."
+    }
+  ],
+
+  // 4. Synonym Filter (Thematic Clusters from Page 53 Task Three)
+  synonymFilter: [
+    {
+      id: "u12-sf-1",
+      targetWord: "impartiality",
+      targetCategory: "Unit 12 Judicial Integrity & Fair Conduct",
+      targetMeaning: "Freedom from bias, prejudice, or favoritism; fair and objective judgment",
+      targetMeaningVi: "Tính khách quan, sự công minh vô tư không thiên vị trong xét xử",
+      note: "Chọn 4 từ đồng nghĩa chỉ tính công minh liêm chính và 2 từ biểu thị sự bất chính, gian dối.",
+      words: [
+        { word: "impartiality", isSynonym: true, meaningVi: "Tính công bằng, sự vô tư không thiên vị" },
+        { word: "objectivity", isSynonym: true, meaningVi: "Tính khách quan, không bị cảm tính chi phối" },
+        { word: "even-handedness", isSynonym: true, meaningVi: "Sự công tâm đối xử bình đẳng mọi bên" },
+        { word: "neutrality", isSynonym: true, meaningVi: "Thái độ trung lập, không nghiêng về phe nào" },
+        { word: "perjury", isSynonym: false, meaningVi: "Tội khai man, thề dối trá trước tòa án" },
+        { word: "extortion", isSynonym: false, meaningVi: "Tội tống tiền, cưỡng đoạt bằng đe dọa bạo lực" }
+      ]
+    },
+    {
+      id: "u12-sf-2",
+      targetWord: "impunity",
+      targetCategory: "Unit 12 Exemption from Punishment & Retribution",
+      targetMeaning: "Exemption from punishment or freedom from injurious consequences",
+      targetMeaningVi: "Sự miễn phạt, không bị trừng trị trừng phạt khi làm điều sai trái",
+      note: "Chọn 4 từ đồng nghĩa chỉ sự miễn trừ trừng phạt và 2 từ biểu thị sự trừng phạt, định tội.",
+      words: [
+        { word: "impunity", isSynonym: true, meaningVi: "Tình trạng miễn phạt, tự do vô sự trước pháp luật" },
+        { word: "immunity", isSynonym: true, meaningVi: "Quyền miễn trừ tư pháp, không bị truy cứu" },
+        { word: "exemption", isSynonym: true, meaningVi: "Sự miễn trừ nghĩa vụ hoặc hình phạt" },
+        { word: "dispensation", isSynonym: true, meaningVi: "Đặc xá, sự chuẩn miễn đặc quyền" },
+        { word: "conviction", isSynonym: false, meaningVi: "Sự kết án, phán quyết có tội trước tòa" },
+        { word: "retribution", isSynonym: false, meaningVi: "Sự trừng phạt đích đáng, quả báo nghiêm khắc" }
+      ]
+    },
+    {
+      id: "u12-sf-3",
+      targetWord: "avarice",
+      targetCategory: "Unit 12 Greed & Insatiable Cupidity",
+      targetMeaning: "Extreme greed for wealth or material gain; insatiable desire to amass riches",
+      targetMeaningVi: "Tính tham lam vô độ, lòng hám tiền của và tài sản thái quá",
+      note: "Chọn 4 từ đồng nghĩa chỉ lòng tham lam của cải và 2 từ biểu thị lòng nhân ái, vị tha.",
+      words: [
+        { word: "avarice", isSynonym: true, meaningVi: "Lòng tham lam của cải vô độ" },
+        { word: "cupidity", isSynonym: true, meaningVi: "Lòng hám tiền bạc vật chất thái quá" },
+        { word: "rapacity", isSynonym: true, meaningVi: "Sự vơ vét tham tàn, cướp đoạt tàn nhẫn" },
+        { word: "covetousness", isSynonym: true, meaningVi: "Tính thèm muốn tài sản của người khác" },
+        { word: "philanthropy", isSynonym: false, meaningVi: "Lòng thương người, hoạt động từ thiện vị tha" },
+        { word: "benevolence", isSynonym: false, meaningVi: "Lòng nhân từ, sự rộng lượng nhân hậu" }
+      ]
+    },
+    {
+      id: "u12-sf-4",
+      targetWord: "armistice",
+      targetCategory: "Unit 12 Wartime Truce & Cessation of Hostilities",
+      targetMeaning: "An agreement made by opposing sides in a war to stop fighting for a certain time; a truce",
+      targetMeaningVi: "Hiệp ước đình chiến, thỏa thuận ngừng bắn tạm thời trong chiến tranh",
+      note: "Chọn 4 từ đồng nghĩa chỉ sự đình chiến hòa hoãn và 2 từ biểu thị sự tấn công, xung đột bạo lực.",
+      words: [
+        { word: "armistice", isSynonym: true, meaningVi: "Hiệp ước đình chiến quân sự chính thức" },
+        { word: "truce", isSynonym: true, meaningVi: "Lệnh tạm ngừng bắn, thỏa thuận đình chiến" },
+        { word: "ceasefire", isSynonym: true, meaningVi: "Lệnh ngừng bắn tức thì" },
+        { word: "suspension of hostilities", isSynonym: true, meaningVi: "Sự tạm đình chỉ các hành vi thù địch" },
+        { word: "offensive", isSynonym: false, meaningVi: "Cuộc tổng tấn công quân sự dồn dập" },
+        { word: "bombardment", isSynonym: false, meaningVi: "Trận oanh tạc bằng pháo kích hoặc bom dữ dội" }
+      ]
+    }
+  ],
+
+  // 5. Smart Cloze (Page 54 Exercise A: The Great Depression & SEC Regulations)
+  clozePassages: [
+    {
+      id: "u12-cp-1",
+      title: "The Great Depression and the SEC Regulations",
+      sourceLabel: "The Vocabulary Files C1 - Page 54 Exercise A",
+      passageTemplate:
+        "The Depression didn't end until the production {{gap_11}} of World War II, but Franklin Roosevelt's New Deal programs {{gap_12}} to help. One, the Securities and Exchange Commission, was created in 1934 to shift the job of {{gap_13}} securities trade from the states to the federal government. Today brokers and dealers must {{gap_14}} with the SEC, to prevent price manipulation, and there are strict {{gap_15}} for the minimum down payments to buy stocks. Of course although we haven't since experienced a depression on the {{gap_16}} of the one in the 1930s, the SEC hasn't rendered the stock market crash extinct. On October 19, 1987, the Dow suffered its largest one-day {{gap_17}} since 1914, and on April 14, 2000, it fell 617.78 points, the largest-ever single-day point loss.\n\n\"I used to be quite an {{gap_18}},\" the economist John Kenneth Galbraith once said. \"I thought that by keeping the memory of the 1929 crash alive we would have a {{gap_19}} against the kind of feckless, fatuous optimism which caused people to get in and shove up the markets ... and get {{gap_20}} by the illusion of ever-increasing wealth. I've given up on that hope because we've had it happen too often again since.\"",
+      gaps: [
+        {
+          gapNumber: 11,
+          options: [
+            { label: "A", text: "purge" },
+            { label: "B", text: "end" },
+            { label: "C", text: "demise" },
+            { label: "D", text: "surge" }
+          ],
+          correctLabel: "D",
+          correctWord: "surge",
+          targetWord: "production surge",
+          explanationVi: "Chính xác: 'production surge' = sự bùng nổ/gia tăng sản xuất đột biến thời Thế chiến II đã vực dậy nền kinh tế khỏi Đại Suy thoái."
+        },
+        {
+          gapNumber: 12,
+          options: [
+            { label: "A", text: "asked" },
+            { label: "B", text: "aimed" },
+            { label: "C", text: "suspected" },
+            { label: "D", text: "failed" }
+          ],
+          correctLabel: "B",
+          correctWord: "aimed",
+          targetWord: "aimed to help",
+          explanationVi: "Chính xác: 'aimed to help' = các chương trình New Deal của Tổng thống Roosevelt nhằm mục đích trợ giúp nền kinh tế."
+        },
+        {
+          gapNumber: 13,
+          options: [
+            { label: "A", text: "ruling" },
+            { label: "B", text: "freeing" },
+            { label: "C", text: "regulating" },
+            { label: "D", text: "demanding" }
+          ],
+          correctLabel: "C",
+          correctWord: "regulating",
+          targetWord: "regulating securities trade",
+          explanationVi: "Chính xác: 'regulating securities trade' = việc kiểm soát, giám sát và quản chế hoạt động giao dịch chứng khoán của SEC."
+        },
+        {
+          gapNumber: 14,
+          options: [
+            { label: "A", text: "join" },
+            { label: "B", text: "announce" },
+            { label: "C", text: "ally" },
+            { label: "D", text: "register" }
+          ],
+          correctLabel: "D",
+          correctWord: "register",
+          targetWord: "register with",
+          explanationVi: "Chính xác: 'register with the SEC' = đăng ký hành nghề chính thức với Ủy ban Giao dịch Chứng khoán để phòng chống thao túng giá."
+        },
+        {
+          gapNumber: 15,
+          options: [
+            { label: "A", text: "requirements" },
+            { label: "B", text: "wishes" },
+            { label: "C", text: "laws" },
+            { label: "D", text: "expectations" }
+          ],
+          correctLabel: "A",
+          correctWord: "requirements",
+          targetWord: "strict requirements for",
+          explanationVi: "Chính xác: 'strict requirements for the minimum down payments' = các quy định/yêu cầu khắt khe về khoản thanh toán ký quỹ tối thiểu."
+        },
+        {
+          gapNumber: 16,
+          options: [
+            { label: "A", text: "range" },
+            { label: "B", text: "climb" },
+            { label: "C", text: "scale" },
+            { label: "D", text: "ascend" }
+          ],
+          correctLabel: "C",
+          correctWord: "scale",
+          targetWord: "on the scale of",
+          explanationVi: "Chính xác: cụm từ cố định 'on the scale of' = ở quy mô/mức độ rộng lớn tương đương như cuộc khủng hoảng những năm 1930."
+        },
+        {
+          gapNumber: 17,
+          options: [
+            { label: "A", text: "increase" },
+            { label: "B", text: "collapse" },
+            { label: "C", text: "ferocity" },
+            { label: "D", text: "fall" }
+          ],
+          correctLabel: "D",
+          correctWord: "fall",
+          targetWord: "one-day fall",
+          explanationVi: "Chính xác: 'largest one-day fall' = đợt sụt giảm điểm số trong một ngày lớn nhất của chỉ số Dow kể từ năm 1914."
+        },
+        {
+          gapNumber: 18,
+          options: [
+            { label: "A", text: "optimist" },
+            { label: "B", text: "egocentric" },
+            { label: "C", text: "illusionist" },
+            { label: "D", text: "pessimist" }
+          ],
+          correctLabel: "A",
+          correctWord: "optimist",
+          targetWord: "quite an optimist",
+          explanationVi: "Chính xác: 'I used to be quite an optimist' = Tôi từng là một người khá lạc quan (khi từng tin rằng trí nhớ con người sẽ ngăn ngừa được sự bốc đồng)."
+        },
+        {
+          gapNumber: 19,
+          options: [
+            { label: "A", text: "knowledge" },
+            { label: "B", text: "warning" },
+            { label: "C", text: "radar" },
+            { label: "D", text: "speculation" }
+          ],
+          correctLabel: "B",
+          correctWord: "warning",
+          targetWord: "a warning against",
+          explanationVi: "Chính xác: 'have a warning against...' = đóng vai trò như một lời cảnh tỉnh, chuông báo động chống lại thói lạc quan nông nổi."
+        },
+        {
+          gapNumber: 20,
+          options: [
+            { label: "A", text: "carried away" },
+            { label: "B", text: "enthusiastic" },
+            { label: "C", text: "swept" },
+            { label: "D", text: "obscured" }
+          ],
+          correctLabel: "A",
+          correctWord: "carried away",
+          targetWord: "get carried away by",
+          explanationVi: "Chính xác: thành ngữ 'get carried away by' = bị cuốn theo, mê muội mất lý trí bởi ảo tưởng làm giàu nhanh chóng."
+        }
+      ]
+    }
+  ],
+
+  // 6. Speed Blitz (20 Rapid-Recall Questions from Page 54 Ex B & Page 53)
+  speedBlitz: [
+    {
+      id: "u12-sb-1",
+      questionNumber: 1,
+      prompt: "The police ______ the entire district for the thief before finding him hidden in an abandoned warehouse.",
+      options: [
+        { key: "a", text: "scoured" },
+        { key: "b", text: "brushed" },
+        { key: "c", text: "ran" },
+        { key: "d", text: "penetrated" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "scoured", pos: "v", vi: "Chính xác: scour the district = lùng sục, rà soát khắp toàn bộ khu vực" },
+        { key: "b", word: "brushed", pos: "v", vi: "Chải, quét nhẹ bề mặt" },
+        { key: "c", word: "ran", pos: "v", vi: "Chạy; không dùng với cấu trúc này" },
+        { key: "d", word: "penetrated", pos: "v", vi: "Thâm nhập, xuyên qua" }
+      ]
+    },
+    {
+      id: "u12-sb-2",
+      questionNumber: 2,
+      prompt: "At the ______ moment, just as the contract was about to be signed, the foreign investor backed out.",
+      options: [
+        { key: "a", text: "insignificant" },
+        { key: "b", text: "meaningful" },
+        { key: "c", text: "crucial" },
+        { key: "d", text: "trifling" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "insignificant", pos: "adj", vi: "Không quan trọng, tầm thường" },
+        { key: "b", word: "meaningful", pos: "adj", vi: "Có ý nghĩa sâu sắc" },
+        { key: "c", word: "crucial", pos: "adj", vi: "Chính xác: at the crucial moment = vào thời khắc quyết định then chốt" },
+        { key: "d", word: "trifling", pos: "adj", vi: "Nhỏ nhặt, không đáng kể" }
+      ]
+    },
+    {
+      id: "u12-sb-3",
+      questionNumber: 3,
+      prompt: "Her suburban house was ______ at a high value by the independent tax assessors.",
+      options: [
+        { key: "a", text: "considered" },
+        { key: "b", text: "deemed" },
+        { key: "c", text: "assessed" },
+        { key: "d", text: "appreciated" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "considered", pos: "v", vi: "Được xem xét/coi là" },
+        { key: "b", word: "deemed", pos: "v", vi: "Được nhận định là" },
+        { key: "c", word: "assessed", pos: "v", vi: "Chính xác: be assessed at a value = được thẩm định giá ở mức..." },
+        { key: "d", word: "appreciated", pos: "v", vi: "Tăng giá trị theo thời gian hoặc được trân trọng" }
+      ]
+    },
+    {
+      id: "u12-sb-4",
+      questionNumber: 4,
+      prompt: "What a(n) ______ appearance he's got with that neon green wig and mismatched vintage suit!",
+      options: [
+        { key: "a", text: "huge" },
+        { key: "b", text: "enormous" },
+        { key: "c", text: "weird" },
+        { key: "d", text: "benevolent" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "huge", pos: "adj", vi: "Khổng lồ về kích thước" },
+        { key: "b", word: "enormous", pos: "adj", vi: "To lớn đồ sộ" },
+        { key: "c", word: "weird", pos: "adj", vi: "Chính xác: weird appearance = diện mạo kỳ dị, quái đản, khác thường" },
+        { key: "d", word: "benevolent", pos: "adj", vi: "Nhân từ rộng lượng" }
+      ]
+    },
+    {
+      id: "u12-sb-5",
+      questionNumber: 5,
+      prompt: "Don't be ______ to your elders; showing basic courtesy is essential in this household.",
+      options: [
+        { key: "a", text: "affable" },
+        { key: "b", text: "consistent" },
+        { key: "c", text: "impertinent" },
+        { key: "d", text: "respectable" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "affable", pos: "adj", vi: "Niềm nở, lịch thiệp" },
+        { key: "b", word: "consistent", pos: "adj", vi: "Nhất quán kiên định" },
+        { key: "c", word: "impertinent", pos: "adj", vi: "Chính xác: impertinent to sb = xấc xược, láo xược, thiếu tôn trọng" },
+        { key: "d", word: "respectable", pos: "adj", vi: "Đáng kính, đoan trang" }
+      ]
+    },
+    {
+      id: "u12-sb-6",
+      questionNumber: 6,
+      prompt: "He's one of the best cardiovascular surgeons in the nation and held in high ______ by his peers.",
+      options: [
+        { key: "a", text: "esteem" },
+        { key: "b", text: "estimation" },
+        { key: "c", text: "value" },
+        { key: "d", text: "appraisal" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "esteem", pos: "n", vi: "Chính xác: held in high esteem = được hết sức kính trọng và nể phục" },
+        { key: "b", word: "estimation", pos: "n", vi: "In my estimation = theo ước tính/đánh giá của tôi" },
+        { key: "c", word: "value", pos: "n", vi: "Giá trị" },
+        { key: "d", word: "appraisal", pos: "n", vi: "Sự thẩm định giá" }
+      ]
+    },
+    {
+      id: "u12-sb-7",
+      questionNumber: 7,
+      prompt: "You may make any modifications to the original proposal that you ______ necessary.",
+      options: [
+        { key: "a", text: "evaluate" },
+        { key: "b", text: "recommend" },
+        { key: "c", text: "esteem" },
+        { key: "d", text: "deem" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "evaluate", pos: "v", vi: "Đánh giá ưu nhược điểm" },
+        { key: "b", word: "recommend", pos: "v", vi: "Khuyến nghị đề xuất" },
+        { key: "c", word: "esteem", pos: "v", vi: "Kính trọng" },
+        { key: "d", word: "deem", pos: "v", vi: "Chính xác: deem necessary = cho là/thấy rằng cần thiết" }
+      ]
+    },
+    {
+      id: "u12-sb-8",
+      questionNumber: 8,
+      prompt: "I've got something of great importance and sensitivity to ______ to you in strict confidence.",
+      options: [
+        { key: "a", text: "impair" },
+        { key: "b", text: "compare" },
+        { key: "c", text: "impart" },
+        { key: "d", text: "deport" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "impair", pos: "v", vi: "Làm suy yếu, làm tổn hại" },
+        { key: "b", word: "compare", pos: "v", vi: "So sánh" },
+        { key: "c", word: "impart", pos: "v", vi: "Chính xác: impart something to somebody = truyền đạt, tâm sự điều quan trọng" },
+        { key: "d", word: "deport", pos: "v", vi: "Trục xuất người ra khỏi quốc gia" }
+      ]
+    },
+    {
+      id: "u12-sb-9",
+      questionNumber: 9,
+      prompt: "Planting too many dense trees right around the cottage will ______ it of vital natural air and sunlight.",
+      options: [
+        { key: "a", text: "deprive" },
+        { key: "b", text: "deprave" },
+        { key: "c", text: "deride" },
+        { key: "d", text: "derive" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "deprive", pos: "v", vi: "Chính xác: deprive somebody/something of = tước đoạt, lấy đi dưỡng khí và ánh sáng" },
+        { key: "b", word: "deprave", pos: "v", vi: "Làm đồi trụy hóa tâm hồn" },
+        { key: "c", word: "deride", pos: "v", vi: "Chế giễu nhạo báng" },
+        { key: "d", word: "derive", pos: "v", vi: "Bắt nguồn từ (derive from)" }
+      ]
+    },
+    {
+      id: "u12-sb-10",
+      questionNumber: 10,
+      prompt: "The bloodthirsty and disorderly ______ stormed the courthouse wanting to avenge their leader's death.",
+      options: [
+        { key: "a", text: "mop" },
+        { key: "b", text: "mob" },
+        { key: "c", text: "clog" },
+        { key: "d", text: "flog" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "mop", pos: "n", vi: "Cây lau nhà" },
+        { key: "b", word: "mob", pos: "n", vi: "Chính xác: mob = đám đông bạo loạn, hỗn tạp và hung hãn" },
+        { key: "c", word: "clog", pos: "n/v", vi: "Guốc gỗ / làm tắc nghẽn" },
+        { key: "d", word: "flog", pos: "v", vi: "Đánh bằng roi vọt" }
+      ]
+    },
+    {
+      id: "u12-sb-11",
+      questionNumber: 11,
+      prompt: "Obtaining money by using threats, intimidation and violence is legally defined as ______.",
+      options: [
+        { key: "a", text: "bribery" },
+        { key: "b", text: "perjury" },
+        { key: "c", text: "extortion" },
+        { key: "d", text: "alimony" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "bribery", pos: "n", vi: "Hành vi đút lót, hối lộ" },
+        { key: "b", word: "perjury", pos: "n", vi: "Tội thề dối trá trước tòa" },
+        { key: "c", word: "extortion", pos: "n", vi: "Chính xác: extortion = tội tống tiền, cưỡng đoạt bằng đe dọa bạo lực" },
+        { key: "d", word: "alimony", pos: "n", vi: "Tiền cấp dưỡng sau ly hôn" }
+      ]
+    },
+    {
+      id: "u12-sb-12",
+      questionNumber: 12,
+      prompt: "The decaying ______ of the deer was torn to pieces by a scavenging pack of jackals.",
+      options: [
+        { key: "a", text: "carcass" },
+        { key: "b", text: "replica" },
+        { key: "c", text: "armature" },
+        { key: "d", text: "pageantry" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "carcass", pos: "n", vi: "Chính xác: carcass = xác chết động vật" },
+        { key: "b", word: "replica", pos: "n", vi: "Bản sao chuẩn xác" },
+        { key: "c", word: "armature", pos: "n", vi: "Khung cốt gia cố" },
+        { key: "d", word: "pageantry", pos: "n", vi: "Nghi lễ lộng lẫy" }
+      ]
+    },
+    {
+      id: "u12-sb-13",
+      questionNumber: 13,
+      prompt: "The presiding judge is celebrated throughout the commonwealth for his scrupulous ______ and fairness.",
+      options: [
+        { key: "a", text: "piety" },
+        { key: "b", text: "impartiality" },
+        { key: "c", text: "impunity" },
+        { key: "d", text: "avarice" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "piety", pos: "n", vi: "Lòng sùng kính mộ đạo" },
+        { key: "b", word: "impartiality", pos: "n", vi: "Chính xác: impartiality = sự công tâm, vô tư không thiên vị" },
+        { key: "c", word: "impunity", pos: "n", vi: "Sự miễn trừ hình phạt" },
+        { key: "d", word: "avarice", pos: "n", vi: "Lòng tham tiền của" }
+      ]
+    },
+    {
+      id: "u12-sb-14",
+      questionNumber: 14,
+      prompt: "Corrupt oligarchs mistakenly believed they could disregard commercial regulations with absolute ______.",
+      options: [
+        { key: "a", text: "armistice" },
+        { key: "b", text: "perjury" },
+        { key: "c", text: "piety" },
+        { key: "d", text: "impunity" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "armistice", pos: "n", vi: "Thỏa ước đình chiến" },
+        { key: "b", word: "perjury", pos: "n", vi: "Tội khai gian trước tòa" },
+        { key: "c", word: "piety", pos: "n", vi: "Lòng thành kính đức tin" },
+        { key: "d", word: "impunity", pos: "n", vi: "Chính xác: with impunity = với sự nhởn nhơ vô sự, không sợ bị trừng phạt" }
+      ]
+    },
+    {
+      id: "u12-sb-15",
+      questionNumber: 15,
+      prompt: "She is entitled to live on an equitable court-mandated ______ paid monthly by her former husband.",
+      options: [
+        { key: "a", text: "pension" },
+        { key: "b", text: "alimony" },
+        { key: "c", text: "royalty" },
+        { key: "d", text: "bounty" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "pension", pos: "n", vi: "Lương hưu tuổi già" },
+        { key: "b", word: "alimony", pos: "n", vi: "Chính xác: alimony = tiền cấp dưỡng sau ly hôn do tòa phán quyết" },
+        { key: "c", word: "royalty", pos: "n", vi: "Tiền nhuận bút, tác quyền" },
+        { key: "d", word: "bounty", pos: "n", vi: "Tiền thưởng săn tìm" }
+      ]
+    },
+    {
+      id: "u12-sb-16",
+      questionNumber: 16,
+      prompt: "The key prosecution witness was indicted for ______ after detectives proved he gave false testimony under oath.",
+      options: [
+        { key: "a", text: "perjury" },
+        { key: "b", text: "extortion" },
+        { key: "c", text: "blasphemy" },
+        { key: "d", text: "treason" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "perjury", pos: "n", vi: "Chính xác: perjury = tội man khai trước tòa án khi đã tuyên thệ" },
+        { key: "b", word: "extortion", pos: "n", vi: "Tống tiền bằng vũ lực" },
+        { key: "c", word: "blasphemy", pos: "n", vi: "Tội báng bổ thần linh" },
+        { key: "d", word: "treason", pos: "n", vi: "Tội phản quốc" }
+      ]
+    },
+    {
+      id: "u12-sb-17",
+      questionNumber: 17,
+      prompt: "The maritime museum commissioned a meticulous, full-scale ______ of Sir Francis Drake's flagship.",
+      options: [
+        { key: "a", text: "caricature" },
+        { key: "b", text: "facade" },
+        { key: "c", text: "replica" },
+        { key: "d", text: "monument" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "caricature", pos: "n", vi: "Tranh biếm họa châm biếm" },
+        { key: "b", word: "facade", pos: "n", vi: "Mặt tiền tòa nhà hoặc vỏ bọc giả tạo" },
+        { key: "c", word: "replica", pos: "n", vi: "Chính xác: replica = bản sao chép y như thật theo đúng tỷ lệ" },
+        { key: "d", word: "monument", pos: "n", vi: "Tượng đài tưởng niệm" }
+      ]
+    },
+    {
+      id: "u12-sb-18",
+      questionNumber: 18,
+      prompt: "Unchecked ______ for amassing immense riches at all ethical costs is a destructive moral vice.",
+      options: [
+        { key: "a", text: "piety" },
+        { key: "b", text: "avarice" },
+        { key: "c", text: "pageantry" },
+        { key: "d", text: "amenity" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "piety", pos: "n", vi: "Lòng sùng kính" },
+        { key: "b", word: "avarice", pos: "n", vi: "Chính xác: avarice = lòng tham lam của cải vô độ" },
+        { key: "c", word: "pageantry", pos: "n", vi: "Lễ nghi long trọng xa hoa" },
+        { key: "d", word: "amenity", pos: "n", vi: "Tiện nghi sinh hoạt" }
+      ]
+    },
+    {
+      id: "u12-sb-19",
+      questionNumber: 19,
+      prompt: "Negotiators from both belligerent states signed an immediate ______ to temporarily halt hostilities.",
+      options: [
+        { key: "a", text: "decapitation" },
+        { key: "b", text: "extortion" },
+        { key: "c", text: "skirmish" },
+        { key: "d", text: "armistice" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "decapitation", pos: "n", vi: "Sự chém đầu tử hình" },
+        { key: "b", word: "extortion", pos: "n", vi: "Tội tống tiền" },
+        { key: "c", word: "skirmish", pos: "n", vi: "Cuộc đụng độ nhỏ lẻ" },
+        { key: "d", word: "armistice", pos: "n", vi: "Chính xác: armistice = hiệp định đình chiến ngừng bắn" }
+      ]
+    },
+    {
+      id: "u12-sb-20",
+      questionNumber: 20,
+      prompt: "The venerable hermit was renowned across the realm for his lifelong ascetic devotion and deep ______.",
+      options: [
+        { key: "a", text: "piety" },
+        { key: "b", text: "impiety" },
+        { key: "c", text: "impunity" },
+        { key: "d", text: "perfidy" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "piety", pos: "n", vi: "Chính xác: piety = lòng mộ đạo sùng kính đấng linh thiêng" },
+        { key: "b", word: "impiety", pos: "n", vi: "Sự bất kính vô đạo" },
+        { key: "c", word: "impunity", pos: "n", vi: "Sự miễn tội nhởn nhơ" },
+        { key: "d", word: "perfidy", pos: "n", vi: "Sự bội bạc phản trắc" }
+      ]
+    }
+  ]
+};
+
+
+export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7, VOCAB_C1_UNIT_8, VOCAB_C1_UNIT_9, VOCAB_C1_UNIT_10, VOCAB_C1_UNIT_11, VOCAB_C1_UNIT_12];
 
 
 
