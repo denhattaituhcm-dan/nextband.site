@@ -53,6 +53,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
       { label: "Reading Challenge", href: "/reading-challenge", badge: "Mới" },
       { label: "Tủ sách tương tác (Reading Cases)", href: "/reading#tu-sach", badge: "Articles" },
       { label: "English Idioms (Unit 1: Age)", href: "/reading/idioms" },
+      { label: "Vocabulary Files C1 (Unit 1 - 7)", href: "/vocab-c1", badge: "Mới" },
       { label: "DIVIDER", href: "", isDivider: true },
       { label: "Phương pháp đọc sâu (Philosophy)", href: "/reading#phuong-phap" },
     ],
@@ -82,12 +83,22 @@ export function PublicHeader() {
         return true;
       }
     }
+    if (item.href === "/reading") {
+      if (
+        location.pathname.startsWith("/reading") ||
+        location.pathname.startsWith("/reading-challenge") ||
+        location.pathname.startsWith("/vocab-c1")
+      ) {
+        return true;
+      }
+    }
     if (item.href !== "/" && location.pathname.startsWith(item.href)) return true;
     return false;
   };
 
   const isSubActive = (href: string) => {
     if (href === "/courses" && location.pathname === "/courses") return true;
+    if (href === "/vocab-c1" && (location.pathname === "/vocab-c1" || location.pathname === "/reading/vocab-c1")) return true;
     if (href !== "/courses" && location.pathname === href) return true;
     return false;
   };

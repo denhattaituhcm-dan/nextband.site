@@ -133,6 +133,9 @@ const CambridgeStudentRoomJoin = lazyWithRetry(() => import("@/pages/public/Camb
 const ChallengeHubPage = lazyWithRetry(() => import("@/features/reading-challenge/pages/ChallengeHubPage").then(m => ({ default: m.ChallengeHubPage })));
 const ChallengeUnitPage = lazyWithRetry(() => import("@/features/reading-challenge/pages/ChallengeUnitPage").then(m => ({ default: m.ChallengeUnitPage })));
 
+// Lazy-loaded Vocabulary Files C1 Focus App
+const VocabC1Page = lazyWithRetry(() => import("@/pages/public/vocab-c1/VocabC1Page"));
+
 
 // Lazy-loaded Auth Pages
 const LoginPage = lazyWithRetry(() => import("@/pages/auth/LoginPage"));
@@ -390,6 +393,10 @@ const App = () => (
               <Route path="/reading-challenge/:unitId" element={<ChallengeUnitPage />} />
               <Route path="/cambridge/test/:testCode" element={<CambridgeStudentExam />} />
               <Route path="/cambridge/room/:roomCode" element={<CambridgeStudentRoomJoin />} />
+              
+              {/* The Vocabulary Files C1 Focus App */}
+              <Route path="/vocab-c1" element={<VocabC1Page />} />
+              <Route path="/reading/vocab-c1" element={<VocabC1Page />} />
               
               {/* Class Arena Live Routes */}
               <Route
