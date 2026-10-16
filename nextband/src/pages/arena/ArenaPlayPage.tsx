@@ -13,9 +13,10 @@ import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { StudentAnswerCard } from '@/components/arena/StudentAnswerCard';
 import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { GoldQuestChestModal } from '@/components/arena/GoldQuestChestModal';
+import { QuestionTypeRevengeModal, RevengeQuestionItem } from '@/components/arena/QuestionTypeRevengeModal';
 import { ArenaQuestionOption, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { CheckCircle2, XCircle, Trophy, Sparkles, Medal, Crown } from 'lucide-react';
+import { CheckCircle2, XCircle, Trophy, Sparkles, Medal, Crown, BookOpen } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
 import { ArenaErrorBoundary } from '@/components/arena/ArenaErrorBoundary';
@@ -78,6 +79,10 @@ export default function ArenaPlayPage() {
   const [isLocked, setIsLocked] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<boolean>(false);
   const [isJoinedAcknowledged, setIsJoinedAcknowledged] = useState<boolean>(false);
+
+  // State theo dõi các câu làm sai để phục vụ Sổ tay học thuật sau trận
+  const [wrongQuestions, setWrongQuestions] = useState<RevengeQuestionItem[]>([]);
+  const [isRevengeModalOpen, setIsRevengeModalOpen] = useState<boolean>(false);
 
   const { playClickSound, playCorrectSound, playWrongSound } = useArenaAudio();
   const channelRef = useRef<any>(null);
@@ -330,6 +335,26 @@ export default function ArenaPlayPage() {
 
       const isAnsCorrect = optionId === currentQuestion.correctOptionId;
 
+      // Thu thập câu trả lời sai vào sổ tay ôn tập cá nhân
+      if (!isAnsCorrect) {
+        setWrongQuestions((prev) => {
+          if (prev.some((q) => q.id === currentQuestion.id)) return prev;
+          return [
+            ...prev,
+            {
+              id: currentQuestion.id,
+              prompt: currentQuestion.prompt,
+              options: currentQuestion.options,
+              correctOptionId: currentQuestion.correctOptionId,
+              correctAnswerText: currentQuestion.correctAnswerText,
+              correctExplanation: currentQuestion.correctExplanation,
+              selectedOptionId: optionId,
+              isCorrect: false,
+            },
+          ];
+        });
+      }
+
       // Gửi nộp bài Authoritative lên Server
       if (roomId && playerToken) {
         try {
@@ -525,8 +550,22 @@ export default function ArenaPlayPage() {
                 Thứ hạng chung cuộc: #{myRanking?.rank ?? 1}
               </p>
               <p className="text-xs text-purple-200/80 max-w-xs mx-auto">
-                Chúc mừng bạn đã hoàn thành xuất sắc tất cả các vòng đấu IELTS Collocation hôm nay!
+                Chúc mừng bạn đã hoàn thành xuất sắc tất cả các vòng đấu hôm nay!
               </p>
+
+              {/* Nút Mở Sổ Tay Học Thuật & Luyện Lại Câu Sai */}
+              <div className="pt-4 max-w-xs mx-auto">
+                <button
+                  onClick={() => setIsRevengeModalOpen(true)}
+                  className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-xl shadow-purple-900/50 border border-purple-400/40 flex items-center justify-center gap-2.5 transition active:scale-95"
+                >
+                  <BookOpen className="w-5 h-5 text-purple-200" />
+                  <span>Sổ Tay Học Thuật ({wrongQuestions.length} câu cần củng cố)</span>
+                </button>
+                <p className="text-[11px] text-purple-300/70 mt-1.5 font-medium">
+                  Chạm để xem giải thích bẫy kiến thức & luyện lại ngay
+                </p>
+              </div>
             </div>
           </div>
         ) : !showResult ? (
@@ -622,6 +661,14 @@ export default function ArenaPlayPage() {
       <footer className="text-center py-2 border-t border-purple-900/40 text-[11px] text-purple-300/60 font-medium">
         NextQuiz
       </footer>
+
+      {/* Modal Sổ Tay Học Thuật & Phục Thù Câu Sai */}
+      <QuestionTypeRevengeModal
+        isOpen={isRevengeModalOpen}
+        onClose={() => setIsRevengeModalOpen(false)}
+        wrongQuestions={wrongQuestions}
+        allQuestionsCount={totalQuestions}
+      />
 
       {/* Modal Mở Rương Kho Báu & Cướp Vàng */}
       <GoldQuestChestModal
