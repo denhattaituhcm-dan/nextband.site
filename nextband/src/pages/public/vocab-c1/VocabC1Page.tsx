@@ -45,8 +45,70 @@ const playWordAudio = (text: string) => {
   window.speechSynthesis.speak(utterance);
 };
 
+const getUnitMeta = (unitId: number) => {
+  switch (unitId) {
+    case 1:
+      return {
+        shortLabel: "Unit 1: Courage",
+        themeVi: "Tinh thần Quả cảm & Hào hiệp",
+        descVi: "Phân biệt sắc thái can trường, táo bạo, hào hiệp và bất khuất trước hiểm nguy.",
+        pages: "Trang 3–6"
+      };
+    case 2:
+      return {
+        shortLabel: "Unit 2: Physique",
+        themeVi: "Hình thể, Vóc dáng & Thể chất",
+        descVi: "Hệ thống tính từ miêu tả thể trạng vạm vỡ, mảnh khảnh, tiều tụy hoặc phốp pháp.",
+        pages: "Trang 7–10"
+      };
+    case 3:
+      return {
+        shortLabel: "Unit 3: Obstruction",
+        themeVi: "Sự Cản trở, Ngăn chặn & Đình trệ",
+        descVi: "Các động từ và danh từ C1 diễn tả sự cản bước, làm chệch hướng hoặc kìm hãm.",
+        pages: "Trang 11–14"
+      };
+    case 4:
+      return {
+        shortLabel: "Unit 4: Elimination",
+        themeVi: "Sự Xóa bỏ, Triệt tiêu & Bãi bỏ",
+        descVi: "Phân biệt chuẩn xác các cấp độ hủy bỏ đạo luật, xóa sổ dịch bệnh hay loại trừ.",
+        pages: "Trang 15–18"
+      };
+    case 5:
+      return {
+        shortLabel: "Unit 5: Sharpness",
+        themeVi: "Sự Gay gắt, Chua cay & Khắc nghiệt",
+        descVi: "Từ vựng miêu tả vị chua chát, lời lẽ mỉa mai sâu cay và quy định nghiêm ngặt.",
+        pages: "Trang 19–22"
+      };
+    case 6:
+      return {
+        shortLabel: "Unit 6: Adversity",
+        themeVi: "Nghịch cảnh, Thảm họa & Nỗi thống khổ",
+        descVi: "Cấp độ từ sự cố nhỏ (mishap) tới đại thảm họa (calamity) và cảnh cơ hàn (destitution).",
+        pages: "Trang 23–26"
+      };
+    case 7:
+      return {
+        shortLabel: "Unit 7: Diminution",
+        themeVi: "Sự Suy giảm, Co rút & Hao mòn",
+        descVi: "Phân biệt shrink, contract, wither, dwindle, lessen, impair và abate.",
+        pages: "Trang 27–30"
+      };
+    default:
+      return {
+        shortLabel: `Unit ${unitId}`,
+        themeVi: "Từ vựng Học thuật C1",
+        descVi: "Rèn luyện phản xạ từ vựng học thuật qua 6 chặng tương tác.",
+        pages: ""
+      };
+  }
+};
+
 export const VocabC1Page: React.FC = () => {
-  // Unit Selection: 0 = Unit 1, 1 = Unit 2
+  // Unit Selection Hub state (default true when entering /vocab-c1)
+  const [isSelectingUnit, setIsSelectingUnit] = useState<boolean>(true);
   const [selectedUnitIndex, setSelectedUnitIndex] = useState<number>(0);
   const VOCAB_C1_UNIT_1 = VOCAB_C1_UNITS[selectedUnitIndex];
 
@@ -190,6 +252,7 @@ export const VocabC1Page: React.FC = () => {
   const handleSelectUnit = (idx: number) => {
     setSelectedUnitIndex(idx);
     handleRestartUnit();
+    setIsSelectingUnit(false);
   };
 
   // Stage 2 Submit
@@ -360,6 +423,7 @@ export const VocabC1Page: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) return;
+      if (isSelectingUnit) return;
 
       const key = e.key;
 
@@ -491,6 +555,7 @@ export const VocabC1Page: React.FC = () => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
+    isSelectingUnit,
     isUnitCompleted,
     currentStage,
     stage1Index,
@@ -534,58 +599,65 @@ export const VocabC1Page: React.FC = () => {
       {/* 1. TOP BAR HUD (64px)                                        */}
       {/* ============================================================ */}
       <header className="h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 border-b border-slate-200 bg-white/95 backdrop-blur-md z-20 shadow-xs gap-2">
-        {/* Left: Unit Selector (Clean, without book title) */}
+        {/* Left: Back to Unit Selection Hub + Current Unit Indicator */}
         <div className="flex items-center gap-2.5 shrink-0">
-          <div className="px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono text-xs sm:text-sm font-bold">
-            C1
-          </div>
-          <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-            {VOCAB_C1_UNITS.map((u, idx) => {
-              const isSelected = selectedUnitIndex === idx;
-              const shortLabel = u.unitId === 1 ? "Unit 1: Courage" : u.unitId === 2 ? "Unit 2: Physique" : u.unitId === 3 ? "Unit 3: Obstruction" : u.unitId === 4 ? "Unit 4: Elimination" : u.unitId === 5 ? "Unit 5: Sharpness" : u.unitId === 6 ? "Unit 6: Adversity" : "Unit 7: Diminution";
+          {isSelectingUnit ? (
+            <>
+              <a
+                href="/reading"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Reading</span>
+              </a>
+              <div className="px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono text-xs sm:text-sm font-bold">
+                C1 • THE VOCABULARY FILES
+              </div>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setIsSelectingUnit(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 font-bold text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap"
+                title="Quay lại màn hình chọn Unit"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Chọn Unit</span>
+              </button>
+              <div className="px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-800 font-bold text-xs sm:text-sm whitespace-nowrap">
+                {getUnitMeta(VOCAB_C1_UNIT_1.unitId).shortLabel}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Center: 6-Stage Segmented Pill Bar (Only shown inside Study Screen) */}
+        {!isSelectingUnit && (
+          <nav className="hidden lg:flex items-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+            {stages.map((stage) => {
+              const Icon = stage.icon;
+              const isActive = currentStage === stage.num;
               return (
                 <button
-                  key={u.unitId}
-                  onClick={() => handleSelectUnit(idx)}
-                  title={u.title}
-                  className={`px-3 py-1 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    isSelected
-                      ? "bg-white text-indigo-700 shadow-xs border border-slate-200/80"
-                      : "text-slate-600 hover:text-slate-900"
+                  key={stage.num}
+                  onClick={() => setCurrentStage(stage.num)}
+                  title={`${stage.name} (${stage.time}): ${stage.desc}`}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                    isActive
+                      ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20 font-bold"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white"
                   }`}
                 >
-                  {shortLabel}
+                  <Icon className="w-4 h-4" />
+                  <span>{stage.name}</span>
+                  <span className={`text-xs font-mono px-1.5 py-0.5 rounded font-bold ${isActive ? "bg-white/25 text-white" : "bg-slate-200 text-slate-700"}`}>
+                    {stage.current}/{stage.total}
+                  </span>
                 </button>
               );
             })}
-          </div>
-        </div>
-
-        {/* Center: 6-Stage Segmented Pill Bar */}
-        <nav className="hidden lg:flex items-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-          {stages.map((stage) => {
-            const Icon = stage.icon;
-            const isActive = currentStage === stage.num;
-            return (
-              <button
-                key={stage.num}
-                onClick={() => setCurrentStage(stage.num)}
-                title={`${stage.name} (${stage.time}): ${stage.desc}`}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer whitespace-nowrap ${
-                  isActive
-                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20 font-bold"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-white"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{stage.name}</span>
-                <span className={`text-xs font-mono px-1.5 py-0.5 rounded font-bold ${isActive ? "bg-white/25 text-white" : "bg-slate-200 text-slate-700"}`}>
-                  {stage.current}/{stage.total}
-                </span>
-              </button>
-            );
-          })}
-        </nav>
+          </nav>
+        )}
 
         {/* Right: Mistake Vault Button */}
         <div className="flex items-center gap-3 shrink-0">
@@ -606,81 +678,180 @@ export const VocabC1Page: React.FC = () => {
       </header>
 
       {/* ============================================================ */}
-      {/* 2. MAIN STAGE (Center Focus Area - Single Viewport)          */}
+      {/* 2A. UNIT SELECTION HUB SCREEN                                */}
       {/* ============================================================ */}
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 relative z-10 overflow-hidden">
-        
-        {/* UNIT COMPLETE SCREEN */}
-        {isUnitCompleted ? (
-          <div className="w-full max-w-2xl bg-white border border-slate-200 shadow-2xl rounded-3xl p-8 sm:p-10 flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
-            <div className="w-20 h-20 bg-gradient-to-tr from-amber-400 to-amber-200 rounded-3xl flex items-center justify-center text-4xl shadow-lg shadow-amber-200/50 mb-6">
-              <Trophy className="w-10 h-10 text-amber-900" />
+      {isSelectingUnit ? (
+        <main className="flex-1 overflow-y-auto px-4 sm:px-8 py-8 sm:py-12 relative z-10">
+          <div className="max-w-6xl mx-auto">
+            {/* Hero Header */}
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <span className="inline-block text-xs font-mono font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 border border-indigo-200 px-3.5 py-1 rounded-full mb-3">
+                CEFR LEVEL C1 • ACADEMIC LEXICON
+              </span>
+              <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">
+                The Vocabulary Files — Level C1
+              </h1>
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                Chọn bài học (Unit) để bước vào lộ trình 6 chặng phản xạ từ vựng học thuật: <span className="font-semibold text-slate-800">Words in Action</span>, <span className="font-semibold text-slate-800">Word Formation</span>, <span className="font-semibold text-slate-800">Confusable Words</span>, <span className="font-semibold text-slate-800">Synonym Filter</span>, <span className="font-semibold text-slate-800">Smart Cloze</span> và <span className="font-semibold text-slate-800">Speed Blitz</span>.
+              </p>
             </div>
 
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full mb-3">
-              Unit {VOCAB_C1_UNIT_1.unitId} Completed
-            </span>
-            
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">
-              Tuyệt vời! Bạn đã chinh phục trọn vẹn Unit {VOCAB_C1_UNIT_1.unitId}
-            </h2>
+            {/* Grid of Unit Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pb-10">
+              {VOCAB_C1_UNITS.map((unit, idx) => {
+                const meta = getUnitMeta(unit.unitId);
+                const cleanTitle = unit.title.replace(/^Unit \d+:\s*/i, "");
+                const previewWords = unit.wordsInAction.slice(0, 5);
+                const remainingCount = Math.max(0, unit.wordsInAction.length - previewWords.length);
 
-            <p className="text-slate-600 text-base max-w-lg mb-8">
-              Bạn đã đi qua toàn bộ 6 chặng phản xạ từ vựng C1 của {VOCAB_C1_UNIT_1.title}.
-            </p>
+                return (
+                  <div
+                    key={unit.unitId}
+                    onClick={() => handleSelectUnit(idx)}
+                    className="group bg-white border border-slate-200 hover:border-indigo-400 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-200 flex flex-col justify-between cursor-pointer"
+                  >
+                    <div>
+                      {/* Top Badge Row */}
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-mono text-xs font-bold tracking-wider">
+                          UNIT {unit.unitId < 10 ? `0${unit.unitId}` : unit.unitId}
+                        </span>
+                        <span className="text-xs font-mono font-semibold text-slate-400">
+                          {meta.pages}
+                        </span>
+                      </div>
 
-            {/* Performance Metric Cards */}
-            <div className="grid grid-cols-3 gap-4 w-full mb-8">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                <div className="text-2xl sm:text-3xl font-mono font-black text-slate-900">{VOCAB_C1_UNIT_1.wordsInAction.length}</div>
-                <div className="text-xs text-slate-500 font-medium mt-1">Từ vựng cốt lõi</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
-                <div className="text-2xl sm:text-3xl font-mono font-black text-emerald-700">{accuracyPercentage}%</div>
-                <div className="text-xs text-emerald-600 font-medium mt-1">Tỉ lệ chính xác</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200">
-                <div className="text-2xl sm:text-3xl font-mono font-black text-rose-700">{mistakeVault.length}</div>
-                <div className="text-xs text-rose-600 font-medium mt-1">Từ cần lưu ý</div>
-              </div>
-            </div>
+                      {/* Unit Title & Vietnamese Subtitle */}
+                      <h2 className="text-xl font-black text-slate-900 group-hover:text-indigo-700 transition-colors mb-1">
+                        {cleanTitle}
+                      </h2>
+                      <p className="text-xs font-bold text-indigo-600 mb-2">
+                        {meta.themeVi}
+                      </p>
+                      <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                        {meta.descVi}
+                      </p>
 
-            {/* Primary Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
-              {mistakeVault.length > 0 && (
-                <button
-                  onClick={() => setIsVaultOpen(true)}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-base shadow-md shadow-amber-500/20 transition-all cursor-pointer"
-                >
-                  <Bookmark className="w-4 h-4 text-white" />
-                  <span>Mở Mistake Vault ({mistakeVault.length} từ)</span>
-                  <kbd className="font-mono text-xs bg-amber-700/60 text-white px-2 py-0.5 rounded">[V]</kbd>
-                </button>
-              )}
-              
-              <button
-                onClick={handleRestartUnit}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-base shadow-md transition-all cursor-pointer"
-              >
-                <RotateCcw className="w-4 h-4 text-white" />
-                <span>Học lại Unit {VOCAB_C1_UNIT_1.unitId}</span>
-                <kbd className="font-mono text-xs bg-slate-700 text-white px-2 py-0.5 rounded">[R]</kbd>
-              </button>
+                      {/* Sample Words Pills */}
+                      <div className="flex flex-wrap gap-1.5 mb-5">
+                        {previewWords.map((w) => (
+                          <span
+                            key={w.id}
+                            className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 font-mono text-xs font-semibold"
+                          >
+                            {w.word}
+                          </span>
+                        ))}
+                        {remainingCount > 0 && (
+                          <span className="px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-100 text-indigo-600 font-mono text-xs font-bold">
+                            +{remainingCount} từ
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-              {selectedUnitIndex < VOCAB_C1_UNITS.length - 1 && (
-                <button
-                  onClick={() => handleSelectUnit(selectedUnitIndex + 1)}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base shadow-md transition-all cursor-pointer"
-                >
-                  <span>Sang Unit {VOCAB_C1_UNITS[selectedUnitIndex + 1].unitId} →</span>
-                </button>
-              )}
+                    {/* Card Footer */}
+                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                      <span className="text-xs font-mono text-slate-500 font-semibold">
+                        {unit.wordsInAction.length} từ • 6 chặng
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 group-hover:translate-x-1 transition-transform">
+                        <span>Vào học</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        ) : null}
+        </main>
+      ) : (
+        <>
+          {/* ============================================================ */}
+          {/* 2B. MAIN STUDY STAGE (Single Viewport)                       */}
+          {/* ============================================================ */}
+          <main className="flex-1 flex items-center justify-center p-4 sm:p-6 relative z-10 overflow-hidden">
+          
+          {/* UNIT COMPLETE SCREEN */}
+          {isUnitCompleted ? (
+            <div className="w-full max-w-2xl bg-white border border-slate-200 shadow-2xl rounded-3xl p-8 sm:p-10 flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
+              <div className="w-20 h-20 bg-gradient-to-tr from-amber-400 to-amber-200 rounded-3xl flex items-center justify-center text-4xl shadow-lg shadow-amber-200/50 mb-6">
+                <Trophy className="w-10 h-10 text-amber-900" />
+              </div>
 
-        {/* STAGE 1: WORDS IN ACTION (ACTIVE RECALL) */}
-        {!isUnitCompleted && currentStage === 1 && (
+              <span className="text-xs font-mono font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full mb-3">
+                Unit {VOCAB_C1_UNIT_1.unitId} Completed
+              </span>
+              
+              <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">
+                Tuyệt vời! Bạn đã chinh phục trọn vẹn Unit {VOCAB_C1_UNIT_1.unitId}
+              </h2>
+
+              <p className="text-slate-600 text-base max-w-lg mb-8">
+                Bạn đã đi qua toàn bộ 6 chặng phản xạ từ vựng C1 của {VOCAB_C1_UNIT_1.title}.
+              </p>
+
+              {/* Performance Metric Cards */}
+              <div className="grid grid-cols-3 gap-4 w-full mb-8">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                  <div className="text-2xl sm:text-3xl font-mono font-black text-slate-900">{VOCAB_C1_UNIT_1.wordsInAction.length}</div>
+                  <div className="text-xs text-slate-500 font-medium mt-1">Từ vựng cốt lõi</div>
+                </div>
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
+                  <div className="text-2xl sm:text-3xl font-mono font-black text-emerald-700">{accuracyPercentage}%</div>
+                  <div className="text-xs text-emerald-600 font-medium mt-1">Tỉ lệ chính xác</div>
+                </div>
+                <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200">
+                  <div className="text-2xl sm:text-3xl font-mono font-black text-rose-700">{mistakeVault.length}</div>
+                  <div className="text-xs text-rose-600 font-medium mt-1">Từ cần lưu ý</div>
+                </div>
+              </div>
+
+              {/* Primary Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
+                <button
+                  onClick={() => setIsSelectingUnit(true)}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-base transition-all cursor-pointer"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Danh sách Unit</span>
+                </button>
+
+                {mistakeVault.length > 0 && (
+                  <button
+                    onClick={() => setIsVaultOpen(true)}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-base shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+                  >
+                    <Bookmark className="w-4 h-4 text-white" />
+                    <span>Mở Mistake Vault ({mistakeVault.length} từ)</span>
+                    <kbd className="font-mono text-xs bg-amber-700/60 text-white px-2 py-0.5 rounded">[V]</kbd>
+                  </button>
+                )}
+                
+                <button
+                  onClick={handleRestartUnit}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-base shadow-md transition-all cursor-pointer"
+                >
+                  <RotateCcw className="w-4 h-4 text-white" />
+                  <span>Học lại Unit {VOCAB_C1_UNIT_1.unitId}</span>
+                  <kbd className="font-mono text-xs bg-slate-700 text-white px-2 py-0.5 rounded">[R]</kbd>
+                </button>
+
+                {selectedUnitIndex < VOCAB_C1_UNITS.length - 1 && (
+                  <button
+                    onClick={() => handleSelectUnit(selectedUnitIndex + 1)}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base shadow-md transition-all cursor-pointer"
+                  >
+                    <span>Sang Unit {VOCAB_C1_UNITS[selectedUnitIndex + 1].unitId} →</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          {/* STAGE 1: WORDS IN ACTION (ACTIVE RECALL) */}
+          {!isUnitCompleted && currentStage === 1 && (
           <div className="w-full max-w-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-200 min-h-[460px]">
             {/* Header info */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
@@ -1490,7 +1661,7 @@ export const VocabC1Page: React.FC = () => {
                   onClick={handleStage6Next}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-bold shadow-md shadow-indigo-500/25 transition-all cursor-pointer"
                 >
-                  <span>{stage6Index < VOCAB_C1_UNIT_1.speedBlitz.length - 1 ? "Câu tiếp theo" : "Hoàn thành Unit 1"}</span>
+                  <span>{stage6Index < VOCAB_C1_UNIT_1.speedBlitz.length - 1 ? "Câu tiếp theo" : `Hoàn thành Unit ${VOCAB_C1_UNIT_1.unitId}`}</span>
                   <kbd className="font-mono text-xs bg-black/20 px-1.5 py-0.5 rounded">Enter ↵</kbd>
                 </button>
               )}
@@ -1523,6 +1694,8 @@ export const VocabC1Page: React.FC = () => {
           </span>
         </div>
       </footer>
+        </>
+      )}
 
       {/* ============================================================ */}
       {/* 4. MISTAKE VAULT MODAL (Human Readable)                      */}
