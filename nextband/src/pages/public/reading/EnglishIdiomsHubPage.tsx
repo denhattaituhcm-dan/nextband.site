@@ -17,6 +17,7 @@ import {
   History,
   FileCheck2,
   ExternalLink,
+  Star,
 } from "lucide-react";
 import unit01Data from "@/data/idioms/unit01";
 import { UNIT_01_ETYMOLOGY } from "@/data/idioms/unit01_etymology";
@@ -49,7 +50,57 @@ export default function EnglishIdiomsHubPage() {
   const [openDrawers, setOpenDrawers] = useState<Record<string, boolean>>({});
   const [openEtymologyDrawers, setOpenEtymologyDrawers] = useState<Record<string, boolean>>({});
   const [currentlyPlayingAudio, setCurrentlyPlayingAudio] = useState<string | null>(null);
-  const [listenedIds, setListenedIds] = useState<Set<string>>(new Set());
+
+  // Audio listened tracking persisted in localStorage
+  const [listenedIds, setListenedIds] = useState<Set<string>>(() => {
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        const saved = localStorage.getItem("nb_idioms_listened_v1");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            return new Set<string>(parsed.filter((item): item is string => typeof item === "string"));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to load listened idioms from localStorage", e);
+    }
+    return new Set<string>();
+  });
+
+  // Prototype Unit 01 Active Retrieval & Bookmark State
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem("nextband_bookmarked_idioms");
+      if (saved) {
+        return new Set(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.warn("Failed to load bookmarks from localStorage", e);
+    }
+    return new Set<string>();
+  });
+  const [onlyBookmarkedFilter, setOnlyBookmarkedFilter] = useState(false);
+  const [cardActiveTabs, setCardActiveTabs] = useState<Record<string, "context" | "metaphor" | "quiz">>({});
+  const [microQuizAnswers, setMicroQuizAnswers] = useState<Record<string, string>>({});
+
+  const toggleBookmark = (id: string) => {
+    setBookmarkedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      try {
+        localStorage.setItem("nextband_bookmarked_idioms", JSON.stringify(Array.from(next)));
+      } catch (e) {
+        console.warn("Failed to save bookmark to localStorage", e);
+      }
+      return next;
+    });
+  };
 
   // Synchronize when URL param changes
   useEffect(() => {
@@ -152,7 +203,19 @@ export default function EnglishIdiomsHubPage() {
     audioRef.current.play().then(() => {
       setCurrentlyPlayingAudio(url);
       if (idiomId) {
-        setListenedIds((prev) => new Set(prev).add(idiomId));
+        setListenedIds((prev) => {
+          if (prev.has(idiomId)) return prev;
+          const next = new Set(prev);
+          next.add(idiomId);
+          try {
+            if (typeof window !== "undefined" && window.localStorage) {
+              localStorage.setItem("nb_idioms_listened_v1", JSON.stringify(Array.from(next)));
+            }
+          } catch (e) {
+            console.warn("Failed to save listened idioms to localStorage", e);
+          }
+          return next;
+        });
       }
     }).catch((err) => {
       console.warn("Audio playback interrupted or failed:", err);
@@ -215,7 +278,11 @@ export default function EnglishIdiomsHubPage() {
     }))
   );
 
+  // Unit-specific listened count (matches current unit idioms)
+  const unitListenedCount = allIdioms.filter((item) => listenedIds.has(item.id)).length;
+
   const filteredIdioms = allIdioms.filter((item) => {
+    if (onlyBookmarkedFilter && !bookmarkedIds.has(item.id)) return false;
     if (activeModuleFilter !== "ALL" && item.moduleId !== activeModuleFilter) return false;
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase().trim();
@@ -782,7 +849,7 @@ export default function EnglishIdiomsHubPage() {
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE9DF] text-[11px] font-semibold text-[#635951]">
               <span>🎧 Đã nghe:</span>
-              <span className="font-bold text-[#2D2825]">{listenedIds.size}/20</span>
+              <span className="font-bold text-[#2D2825]">{unitListenedCount}/{allIdioms.length}</span>
             </div>
           </div>
         </div>
@@ -846,19 +913,35 @@ export default function EnglishIdiomsHubPage() {
                 <button
                   onClick={() => setActiveModuleFilter("ALL")}
                   className={`px-3 py-1.5 rounded-full font-semibold transition cursor-pointer ${
-                    activeModuleFilter === "ALL"
+                    activeModuleFilter === "ALL" && !onlyBookmarkedFilter
                       ? "bg-[#002147] text-white"
                       : "bg-white border border-[#EAE3D9] text-[#635951] hover:bg-slate-50"
                   }`}
                 >
                   Tất cả ({allIdioms.length})
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setOnlyBookmarkedFilter((prev) => !prev)}
+                  className={`px-3 py-1.5 rounded-full font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                    onlyBookmarkedFilter
+                      ? "bg-amber-500 text-white shadow-xs"
+                      : "bg-white border border-[#EAE3D9] text-[#635951] hover:bg-slate-50"
+                  }`}
+                  title="Lọc các thành ngữ đã đánh dấu sao"
+                >
+                  <Star className={`w-3.5 h-3.5 ${onlyBookmarkedFilter ? "fill-white" : "text-amber-500"}`} />
+                  <span>Đã lưu ({allIdioms.filter((i) => bookmarkedIds.has(i.id)).length})</span>
+                </button>
                 {currentUnitData.modules.map((m) => (
                   <button
                     key={m.module_id}
-                    onClick={() => setActiveModuleFilter(m.module_id)}
+                    onClick={() => {
+                      setActiveModuleFilter(m.module_id);
+                      setOnlyBookmarkedFilter(false);
+                    }}
                     className={`px-3 py-1.5 rounded-full font-semibold transition cursor-pointer ${
-                      activeModuleFilter === m.module_id
+                      activeModuleFilter === m.module_id && !onlyBookmarkedFilter
                         ? "bg-[#002147] text-white"
                         : "bg-white border border-[#EAE3D9] text-[#635951] hover:bg-slate-50"
                     }`}
@@ -878,6 +961,263 @@ export default function EnglishIdiomsHubPage() {
                 const etym = currentEtymologyData[item.id];
                 const isInformal = (item.register || "").toLowerCase().includes("informal");
                 const isFormal = (item.register || "").toLowerCase().includes("formal");
+                const isBookmarked = bookmarkedIds.has(item.id);
+
+                // Prototype items feature rich anchor, micro check, and register guidance
+                const protoItem = item as any;
+                const isPrototype = !!(protoItem.cognitive_anchor || protoItem.register_info || protoItem.micro_check);
+                const activeCardTab = cardActiveTabs[item.id] || "context";
+                const selectedMicroAnswer = microQuizAnswers[item.id];
+
+                if (isPrototype) {
+                  return (
+                    <div
+                      key={item.id}
+                      className="bg-white rounded-2xl border-2 border-amber-300/80 p-5 flex flex-col justify-between shadow-xs hover:shadow-md transition duration-200 ring-1 ring-amber-100"
+                    >
+                      <div className="space-y-3.5">
+                        {/* Top Header Row */}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-500 text-white tracking-wide shadow-xs">
+                              VERIFIED
+                            </span>
+                            {protoItem.register_info ? (
+                              <span
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border ${
+                                  protoItem.register_info.is_ielts_writing_safe
+                                    ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                                    : "bg-amber-50 text-amber-900 border-amber-300"
+                                }`}
+                              >
+                                {protoItem.register_info.badge}
+                              </span>
+                            ) : (
+                              item.register && (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-slate-100 text-slate-700">
+                                  {item.register}
+                                </span>
+                              )
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {/* Bookmark Button */}
+                            <button
+                              type="button"
+                              onClick={() => toggleBookmark(item.id)}
+                              className={`w-9 h-9 rounded-full flex items-center justify-center transition cursor-pointer border ${
+                                isBookmarked
+                                  ? "bg-amber-500 text-white border-amber-600 shadow-xs"
+                                  : "bg-slate-50 text-slate-400 hover:text-amber-500 hover:bg-amber-50 border-slate-200"
+                              }`}
+                              title={isBookmarked ? "Bỏ lưu thành ngữ" : "Lưu thành ngữ vào sổ tay ôn tập"}
+                            >
+                              <Star className={`w-4 h-4 ${isBookmarked ? "fill-white" : ""}`} />
+                            </button>
+
+                            {/* Audio Button */}
+                            <button
+                              type="button"
+                              onClick={() => playAudio(item.audio_url, item.id)}
+                              className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition cursor-pointer ${
+                                isPlaying
+                                  ? "bg-amber-500 text-white animate-pulse"
+                                  : "bg-sky-50 text-sky-700 hover:bg-sky-600 hover:text-white"
+                              }`}
+                              title="Nghe phát âm và câu ví dụ"
+                            >
+                              <Volume2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Headword & Phonetic */}
+                        <div>
+                          <div className="flex items-baseline gap-2 flex-wrap">
+                            <h3 className="font-extrabold text-lg text-slate-900 leading-snug">{item.headword}</h3>
+                            {protoItem.phonetic && (
+                              <span className="text-xs font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+                                {protoItem.phonetic}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs font-bold text-sky-800 mt-1 flex items-center gap-1">
+                            <span>🇻🇳</span> {item.vietnamese.meaning}
+                          </p>
+                        </div>
+
+                        {/* Sub-tabs Pills */}
+                        <div className="flex rounded-lg bg-slate-100 p-0.5 text-xs font-semibold">
+                          <button
+                            type="button"
+                            onClick={() => setCardActiveTabs((prev) => ({ ...prev, [item.id]: "context" }))}
+                            className={`flex-1 py-1.5 px-2 rounded-md transition text-center text-[11px] cursor-pointer ${
+                              activeCardTab === "context"
+                                ? "bg-white text-slate-900 shadow-xs font-bold"
+                                : "text-slate-600 hover:text-slate-900"
+                            }`}
+                          >
+                            📘 Ngữ cảnh
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setCardActiveTabs((prev) => ({ ...prev, [item.id]: "metaphor" }))}
+                            className={`flex-1 py-1.5 px-2 rounded-md transition text-center text-[11px] cursor-pointer ${
+                              activeCardTab === "metaphor"
+                                ? "bg-white text-slate-900 shadow-xs font-bold"
+                                : "text-slate-600 hover:text-slate-900"
+                            }`}
+                          >
+                            💡 Ẩn dụ
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setCardActiveTabs((prev) => ({ ...prev, [item.id]: "quiz" }))}
+                            className={`flex-1 py-1.5 px-2 rounded-md transition text-center text-[11px] cursor-pointer ${
+                              activeCardTab === "quiz"
+                                ? "bg-white text-slate-900 shadow-xs font-bold"
+                                : "text-slate-600 hover:text-slate-900"
+                            }`}
+                          >
+                            🎯 Phản xạ
+                          </button>
+                        </div>
+
+                        {/* TAB 1: Ngữ cảnh */}
+                        {activeCardTab === "context" && (
+                          <div className="space-y-2.5 pt-1 text-xs">
+                            <p className="font-serif italic text-xs text-purple-900 bg-purple-50/60 p-2 rounded-lg border border-purple-100">
+                              "{item.definition_en}"
+                            </p>
+                            <div className="p-2.5 bg-slate-50 border-l-2 border-purple-500 rounded-r-lg text-xs leading-relaxed text-slate-800">
+                              <span className="block text-[10px] font-bold text-purple-700 uppercase tracking-wider mb-1">
+                                Ví dụ ngữ cảnh:
+                              </span>
+                              {renderHighlightedSentence(item.context_sentence, item.headword)}
+                            </div>
+                            {item.usage_pattern && (
+                              <div className="text-[11px] text-emerald-950 bg-emerald-50/70 p-2 rounded-lg border border-emerald-200">
+                                <strong className="font-bold text-emerald-900">Cấu trúc:</strong> {item.usage_pattern}
+                              </div>
+                            )}
+                            {protoItem.register_info?.guidance && (
+                              <div className="text-[11px] text-amber-950 bg-amber-50/70 p-2 rounded-lg border border-amber-200 leading-relaxed">
+                                <strong className="font-bold text-amber-900">Khuyến nghị IELTS:</strong>{" "}
+                                {protoItem.register_info.guidance}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* TAB 2: Bản đồ Ẩn dụ */}
+                        {activeCardTab === "metaphor" && protoItem.cognitive_anchor && (
+                          <div className="space-y-2.5 pt-1 text-xs">
+                            <div className="p-2.5 rounded-lg bg-sky-50 border border-sky-200 text-sky-950 text-[11px] space-y-1">
+                              <div className="font-bold text-sky-900 flex items-center gap-1 text-[10px] uppercase tracking-wide">
+                                <span>🎨</span> Bản chất ẩn dụ
+                              </div>
+                              <p className="leading-relaxed">{protoItem.cognitive_anchor.metaphor_core}</p>
+                            </div>
+                            <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-950 text-[11px] space-y-1">
+                              <div className="font-bold text-emerald-900 flex items-center gap-1 text-[10px] uppercase tracking-wide">
+                                <span>⚡</span> Phương trình tư duy trực quan
+                              </div>
+                              <p className="font-mono text-[10.5px] leading-relaxed font-semibold text-emerald-900">
+                                {protoItem.cognitive_anchor.visual_equation}
+                              </p>
+                            </div>
+                            <div className="p-2.5 rounded-lg bg-amber-50/80 border border-amber-200 text-amber-950 text-[11px] space-y-1">
+                              <div className="font-bold text-amber-900 flex items-center gap-1 text-[10px] uppercase tracking-wide">
+                                <span>📜</span> Nguồn gốc đã xác minh
+                              </div>
+                              <p className="leading-relaxed text-slate-700">
+                                {protoItem.cognitive_anchor.origin_summary}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* TAB 3: Phản xạ (Micro-Check) */}
+                        {activeCardTab === "quiz" && protoItem.micro_check && (
+                          <div className="space-y-2.5 pt-1 text-xs">
+                            <div className="p-2.5 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-950 text-[11px] font-medium leading-relaxed">
+                              <span className="font-bold text-indigo-900 block mb-1">Tình huống phản xạ:</span>
+                              {protoItem.micro_check.prompt}
+                            </div>
+
+                            <div className="space-y-1.5">
+                              {protoItem.micro_check.options.map((opt: any) => {
+                                const isSelected = selectedMicroAnswer === opt.key;
+                                const hasAnswered = !!selectedMicroAnswer;
+                                return (
+                                  <button
+                                    key={opt.key}
+                                    type="button"
+                                    disabled={hasAnswered}
+                                    onClick={() =>
+                                      setMicroQuizAnswers((prev) => ({ ...prev, [item.id]: opt.key }))
+                                    }
+                                    className={`w-full text-left p-2.5 rounded-xl text-[11px] transition border cursor-pointer flex items-start gap-2 ${
+                                      !hasAnswered
+                                        ? "bg-white hover:bg-slate-50 border-slate-200 text-slate-800"
+                                        : opt.is_correct
+                                        ? "bg-emerald-50 border-emerald-400 text-emerald-950 font-semibold"
+                                        : isSelected
+                                        ? "bg-rose-50 border-rose-300 text-rose-950"
+                                        : "bg-slate-50 border-slate-200 text-slate-400 opacity-60"
+                                    }`}
+                                  >
+                                    <span className="font-bold shrink-0 mt-0.5">[{opt.key}]</span>
+                                    <span className="flex-1 leading-snug">{opt.text}</span>
+                                    {hasAnswered && opt.is_correct && (
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                                    )}
+                                    {hasAnswered && isSelected && !opt.is_correct && (
+                                      <XCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            {selectedMicroAnswer && (
+                              <div className="space-y-2 pt-1">
+                                <div
+                                  className={`p-2.5 rounded-lg text-[11px] leading-relaxed border ${
+                                    protoItem.micro_check.options.find(
+                                      (o: any) => o.key === selectedMicroAnswer
+                                    )?.is_correct
+                                      ? "bg-emerald-50/80 border-emerald-300 text-emerald-900"
+                                      : "bg-rose-50/80 border-rose-300 text-rose-900"
+                                  }`}
+                                >
+                                  <div className="font-bold mb-0.5 flex items-center gap-1">
+                                    <span>💡 Giám khảo giải thích:</span>
+                                  </div>
+                                  {protoItem.micro_check.feedback}
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setMicroQuizAnswers((prev) => {
+                                      const next = { ...prev };
+                                      delete next[item.id];
+                                      return next;
+                                    })
+                                  }
+                                  className="text-[10px] text-slate-500 hover:text-slate-800 font-semibold underline cursor-pointer"
+                                >
+                                  Thử chọn lại
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
 
                 return (
                   <div
