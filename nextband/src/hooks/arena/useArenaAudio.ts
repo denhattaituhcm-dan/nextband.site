@@ -30,7 +30,7 @@ export function useArenaAudio() {
     return audioCtxRef.current;
   }, []);
 
-  // Phát tiếng tích tắc/nhịp tim hồi hộp kịch tính bằng Web Audio API
+  // Phát tiếng gõ nhịp nhẹ nhàng (warm woodblock tick) mô phỏng đồng hồ học tập
   const playSuspenseBeep = useCallback((isUrgent = false) => {
     if (!isBgmEnabled) return;
     const ctx = getAudioContext();
@@ -40,21 +40,29 @@ export function useArenaAudio() {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
 
-      osc.type = isUrgent ? 'sawtooth' : 'sine';
-      // Tần số cao hơn và dồn dập hơn khi cận giờ
-      osc.frequency.setValueAtTime(isUrgent ? 880 : 440, ctx.currentTime);
+      // Sử dụng sóng hình sin thuần túy (sine) dịu tai, không dùng sawtooth gây chói
+      osc.type = 'sine';
+      
       if (isUrgent) {
-        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.08);
+        // 5 giây cuối: Tiếng gõ nhịp mộc kép nhẹ nhàng (520Hz -> 380Hz) thay vì tiếng còi báo động 1200Hz
+        osc.frequency.setValueAtTime(520, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(380, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.06);
+      } else {
+        // Nhịp bình thường: Tiếng tích tắc mộc ấm áp 330Hz (E4) rất êm dịu
+        osc.frequency.setValueAtTime(330, ctx.currentTime);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
       }
-
-      gain.gain.setValueAtTime(isUrgent ? 0.25 : 0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (isUrgent ? 0.12 : 0.08));
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start();
-      osc.stop(ctx.currentTime + (isUrgent ? 0.12 : 0.08));
     } catch {
       // Ignore
     }
@@ -124,7 +132,7 @@ export function useArenaAudio() {
     });
   }, []);
 
-  const playSound = useCallback((soundPath: string, volume = 0.7) => {
+  const playSound = useCallback((soundPath: string, volume = 0.5) => {
     if (typeof window === 'undefined' || !isBgmEnabled) return;
     try {
       const sound = new Audio(soundPath);
@@ -133,27 +141,31 @@ export function useArenaAudio() {
     } catch {}
   }, [isBgmEnabled]);
 
-  const playClickSound = useCallback(() => {
+  // Click trên máy học sinh: ưu tiên haptic vibration (rung kín đáo), không phát loa ngoài gây ồn phòng
+  const playClickSound = useCallback((playSoundAudio = false) => {
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-      try { navigator.vibrate(20); } catch {}
+      try { navigator.vibrate(15); } catch {}
     }
-    playSound('/sound/Da_hieu.mp3', 0.5);
+    // Mặc định không phát loa ngoài trên điện thoại học sinh để tránh dội âm 30 máy
+    if (playSoundAudio) {
+      playSound('/sound/Da_hieu.mp3', 0.2);
+    }
   }, [playSound]);
 
   const playCorrectSound = useCallback(() => {
-    playSound('/sound/Dung.mp3', 0.8);
+    playSound('/sound/Dung.mp3', 0.5);
   }, [playSound]);
 
   const playWrongSound = useCallback(() => {
-    playSound('/sound/Sai.mp3', 0.8);
+    playSound('/sound/Sai.mp3', 0.4);
   }, [playSound]);
 
   const playClimberSound = useCallback(() => {
-    playSound('/images/levelup.mp3', 0.8);
+    playSound('/images/levelup.mp3', 0.5);
   }, [playSound]);
 
   const playPodiumSound = useCallback(() => {
-    playSound('/sound/thang_cap.mp3', 0.9);
+    playSound('/sound/thang_cap.mp3', 0.6);
   }, [playSound]);
 
   useEffect(() => {
