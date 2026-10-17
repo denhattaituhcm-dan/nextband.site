@@ -292,7 +292,7 @@ export class ArenaEngineService {
       // Xác định câu cuối dựa trên tổng số câu hỏi thực tế của trận đấu (0-indexed: roundIndex === totalQuestions - 1)
       const isFinalQuestion = totalQuestions > 0 && roundIndex >= totalQuestions - 1;
       const roomConfig = (room.config && typeof room.config === "object") ? (room.config as Record<string, any>) : {};
-      const isClassicMode = roomConfig.gameMode !== "GOLD_QUEST";
+      const isClassicMode = !roomConfig.gameMode || roomConfig.gameMode === "CLASSIC";
       const multiplier = (isClassicMode && isFinalQuestion) ? 2 : 1;
 
       scoreAwarded = baseScore * multiplier;

@@ -61,8 +61,12 @@ export default function ArenaPlayPage() {
   const currentCharacter = CHARACTER_AVATARS[avatarId] || getCharacterBySeed(nickname);
 
   const [gameState, setGameState] = useState<StudentGameState>('LOBBY_WAITING');
-  const [gameMode, setGameMode] = useState<'CLASSIC' | 'GOLD_QUEST'>('CLASSIC');
+  const [gameMode, setGameMode] = useState<'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100'>('CLASSIC');
   const [gold, setGold] = useState<number>(0);
+  const [lives, setLives] = useState<number>(3);
+  const [maxLives, setMaxLives] = useState<number>(3);
+  const [lastLifeDelta, setLastLifeDelta] = useState<number>(0);
+  const [wasEliminatedBeforeRound, setWasEliminatedBeforeRound] = useState<boolean>(false);
   const [playersList, setPlayersList] = useState<PlayerCandidate[]>([]);
   const [isChestModalOpen, setIsChestModalOpen] = useState<boolean>(false);
   const [isKicked, setIsKicked] = useState<boolean>(false);
@@ -110,6 +114,9 @@ export default function ArenaPlayPage() {
   const isSubmittingRef = useRef<boolean>(false);
   const submittedQuestionIdsRef = useRef<Set<string>>(new Set());
   const handleConfirmAnswerRef = useRef<(fallbackId?: string) => void>(() => {});
+  const roundRevealAppliedRef = useRef<number>(-1);
+  const livesRef = useRef<number>(lives);
+  livesRef.current = lives;
 
   // Self-Healing Watchdog: Tự động khôi phục nếu mất đồng bộ hoặc drop kết nối
   const handleResyncRequired = useCallback(() => {
@@ -199,6 +206,8 @@ export default function ArenaPlayPage() {
         if (payload?.targetPlayerId === playerId || !payload?.targetPlayerId) {
           setIsJoinedAcknowledged(true);
           if (payload?.gameMode) setGameMode(payload.gameMode);
+          if (typeof payload?.survivalInitialLives === 'number') setMaxLives(payload.survivalInitialLives);
+          if (typeof payload?.lives === 'number') setLives(payload.lives);
           if (payload?.state) {
             if (payload.state === 'QUESTION_LIVE') setGameState('QUESTION_LIVE');
             else if (payload.state === 'ANSWER_LOCKED') setGameState('ROUND_LOCKED');
@@ -232,9 +241,23 @@ export default function ArenaPlayPage() {
           }
         }
         if (payload?.question) setCurrentQuestion(payload.question);
-        if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
+        if (typeof payload?.questionIndex === 'number') {
+          setQuestionIndex(payload.questionIndex);
+          if (payload.questionIndex === 0 && payload.countdown === 3) {
+            const initL = typeof payload?.survivalInitialLives === 'number' ? payload.survivalInitialLives : 3;
+            setMaxLives(initL);
+            setLives(initL);
+            setWasEliminatedBeforeRound(false);
+            setLastLifeDelta(0);
+            roundRevealAppliedRef.current = -1;
+          } else if (payload.countdown === 3) {
+            setWasEliminatedBeforeRound(livesRef.current <= 0);
+            setLastLifeDelta(0);
+          }
+        }
         if (typeof payload?.totalQuestions === 'number') setTotalQuestions(payload.totalQuestions);
         if (payload?.gameMode) setGameMode(payload.gameMode);
+        if (typeof payload?.survivalInitialLives === 'number') setMaxLives(payload.survivalInitialLives);
         if (payload?.timeLimit) {
           setTimeLeft(payload.timeLimit);
           setRoundTimeLimit(payload.timeLimit);
@@ -252,6 +275,7 @@ export default function ArenaPlayPage() {
         setIsJoinedAcknowledged(true);
         setStartCountdown(null);
         if (payload?.gameMode) setGameMode(payload.gameMode);
+        if (typeof payload?.survivalInitialLives === 'number') setMaxLives(payload.survivalInitialLives);
         if (payload?.timeLimit) {
           setTimeLeft(payload.timeLimit);
           setRoundTimeLimit(payload.timeLimit);
@@ -261,9 +285,21 @@ export default function ArenaPlayPage() {
         }
 
         if (payload?.question) setCurrentQuestion(payload.question);
-        if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
+        if (typeof payload?.questionIndex === 'number') {
+          setQuestionIndex(payload.questionIndex);
+          if (payload.questionIndex === 0) {
+            const initL = typeof payload?.survivalInitialLives === 'number' ? payload.survivalInitialLives : 3;
+            setMaxLives(initL);
+            setLives(initL);
+            setWasEliminatedBeforeRound(false);
+            roundRevealAppliedRef.current = -1;
+          } else {
+            setWasEliminatedBeforeRound(livesRef.current <= 0);
+          }
+        }
         if (typeof payload?.totalQuestions === 'number') setTotalQuestions(payload.totalQuestions);
 
+        setLastLifeDelta(0);
         setGameState('QUESTION_LIVE');
         setIsLocked(false);
         setHasSubmitted(false);
@@ -276,6 +312,13 @@ export default function ArenaPlayPage() {
         setIsJoinedAcknowledged(true);
         setStartCountdown(null);
         if (payload?.gameMode) setGameMode(payload.gameMode);
+        const initL = typeof payload?.survivalInitialLives === 'number' ? payload.survivalInitialLives : 3;
+        setMaxLives(initL);
+        setLives(initL);
+        setWasEliminatedBeforeRound(false);
+        setLastLifeDelta(0);
+        roundRevealAppliedRef.current = -1;
+
         if (payload?.timeLimit) {
           setTimeLeft(payload.timeLimit);
           setRoundTimeLimit(payload.timeLimit);
@@ -301,7 +344,20 @@ export default function ArenaPlayPage() {
         setIsLocked(true);
         setGameState('ROUND_LOCKED');
       })
-      .on('broadcast', { event: 'round-reveal' }, () => {
+      .on('broadcast', { event: 'round-reveal' }, ({ payload }) => {
+        if (payload?.survivalUpdates) {
+          const myKey = Object.keys(payload.survivalUpdates).find(
+            (k) => k.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase()
+          );
+          if (myKey) {
+            const myStat = payload.survivalUpdates[myKey];
+            setLives(myStat.lives);
+            setMaxLives(myStat.maxLives);
+            setLastLifeDelta(myStat.delta);
+            setStreak(myStat.streak);
+            roundRevealAppliedRef.current = Date.now();
+          }
+        }
         setShowResult(true);
         setGameState('ROUND_REVEAL');
       })
@@ -314,6 +370,8 @@ export default function ArenaPlayPage() {
           );
           if (me) {
             setMyRanking({ rank: me.rank, totalScore: me.totalScore });
+            if (typeof me.lives === 'number') setLives(me.lives);
+            if (typeof me.maxLives === 'number') setMaxLives(me.maxLives);
           }
         }
       })
@@ -326,6 +384,8 @@ export default function ArenaPlayPage() {
           );
           if (me) {
             setMyRanking({ rank: me.rank, totalScore: me.totalScore });
+            if (typeof me.lives === 'number') setLives(me.lives);
+            if (typeof me.maxLives === 'number') setMaxLives(me.maxLives);
           }
         }
       })
@@ -337,15 +397,25 @@ export default function ArenaPlayPage() {
         setShowResult(false);
         setIsChestModalOpen(false);
         setGold(0);
+        setLives(maxLives);
+        setWasEliminatedBeforeRound(false);
+        setLastLifeDelta(0);
         setMyRanking(null);
         setQuestionIndex(0);
         setCurrentQuestion(ARENA_COLLOCATION_QUESTIONS[0]);
       })
       .on('broadcast', { event: 'players-sync' }, ({ payload }) => {
+        if (payload?.gameMode) setGameMode(payload.gameMode);
+        if (typeof payload?.survivalInitialLives === 'number') setMaxLives(payload.survivalInitialLives);
         if (payload?.players) {
           setPlayersList(payload.players);
-          if (payload.players.some((item: any) => item.name?.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase())) {
+          const me = payload.players.find(
+            (item: any) => item.name?.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase()
+          );
+          if (me) {
             setIsJoinedAcknowledged(true);
+            if (typeof me.lives === 'number') setLives(me.lives);
+            if (typeof me.maxLives === 'number') setMaxLives(me.maxLives);
           }
         }
       })
@@ -567,7 +637,8 @@ export default function ArenaPlayPage() {
   };
 
   useEffect(() => {
-    if (showResult && gameMode === 'CLASSIC') {
+    if (!showResult) return;
+    if (gameMode === 'CLASSIC') {
       if (hasSubmitted && isCorrect) {
         setStreak((prev) => prev + 1);
         playCorrectSound();
@@ -575,8 +646,34 @@ export default function ArenaPlayPage() {
         setStreak(0);
         playWrongSound();
       }
+    } else if (gameMode === 'ARENA_100') {
+      if (hasSubmitted && isCorrect) {
+        playCorrectSound();
+      } else {
+        playWrongSound();
+      }
+      // Fallback tính mạng cục bộ nếu chưa nhận gói survivalUpdates từ Host (ví dụ khi hết giờ tự mở showResult)
+      if (roundRevealAppliedRef.current !== questionIndex && Date.now() - roundRevealAppliedRef.current > 2000) {
+        roundRevealAppliedRef.current = questionIndex;
+        if (!wasEliminatedBeforeRound && livesRef.current > 0) {
+          if (hasSubmitted && isCorrect) {
+            setStreak((prev) => {
+              const nextS = prev + 1;
+              if (maxLives > 1 && nextS % 3 === 0 && livesRef.current < maxLives) {
+                setLives((l) => Math.min(maxLives, l + 1));
+                setLastLifeDelta(1);
+              }
+              return nextS;
+            });
+          } else {
+            setStreak(0);
+            setLives((l) => Math.max(0, l - 1));
+            setLastLifeDelta(-1);
+          }
+        }
+      }
     }
-  }, [showResult, hasSubmitted, isCorrect, playCorrectSound, playWrongSound, gameMode]);
+  }, [showResult, hasSubmitted, isCorrect, playCorrectSound, playWrongSound, gameMode, questionIndex, wasEliminatedBeforeRound, maxLives]);
 
   return (
     <div className="min-h-screen min-h-[100dvh] bg-[#150a33] text-white flex flex-col justify-between p-4 font-sans select-none max-w-lg mx-auto w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
@@ -598,6 +695,32 @@ export default function ArenaPlayPage() {
           {gameMode === 'GOLD_QUEST' && (
             <div className="px-3 py-1 bg-amber-500/20 border border-amber-400/40 rounded-full text-xs font-black text-amber-300 font-mono flex items-center gap-1 shadow-sm">
               <span>🪙</span> {gold} Vàng
+            </div>
+          )}
+          {gameMode === 'ARENA_100' && (
+            <div
+              className={`px-3 py-1 rounded-full text-xs font-black flex items-center gap-1 shadow-sm border ${
+                lives > 0
+                  ? 'bg-rose-500/20 border-rose-400/50 text-rose-200'
+                  : 'bg-slate-800/80 border-slate-600/50 text-slate-300'
+              }`}
+            >
+              {lives > 0 ? (
+                <>
+                  <span>
+                    {Array.from({ length: maxLives }).map((_, i) => (
+                      <span key={i} className={i < lives ? 'opacity-100' : 'opacity-25 grayscale'}>
+                        ❤️
+                      </span>
+                    ))}
+                  </span>
+                  <span className="ml-0.5 text-[10px] text-rose-300 font-mono">
+                    {lives}/{maxLives}
+                  </span>
+                </>
+              ) : (
+                <span className="text-[10px] text-amber-300">👀 Chế độ Thử Sức</span>
+              )}
             </div>
           )}
           <div className="px-2.5 py-1 bg-white/10 border border-white/20 rounded-full text-xs font-mono font-bold text-orange-300">
@@ -634,7 +757,11 @@ export default function ArenaPlayPage() {
                   </h2>
                   <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-200 text-xs font-bold shadow-inner">
                     <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300 animate-pulse" />
-                    {gameMode === 'CLASSIC' ? '🎯 Nhân đôi x2 điểm số · Cơ hội bứt phá!' : '💰 Rương vàng cuối cùng · Về đích!'}
+                    {gameMode === 'CLASSIC'
+                      ? '🎯 Nhân đôi x2 điểm số · Cơ hội bứt phá!'
+                      : gameMode === 'ARENA_100'
+                      ? '🛡️ Chặng cuối Đấu Trường 100 · Trụ vững đến cùng!'
+                      : '💰 Rương vàng cuối cùng · Về đích!'}
                   </div>
                   <p className="text-[11px] text-amber-300/80 pt-0.5">
                     Nhìn lên màn chiếu đọc đề và bấm nút trả lời thật nhanh!
@@ -646,7 +773,7 @@ export default function ArenaPlayPage() {
               <>
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-bold tracking-wide uppercase shadow-lg">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>CÂU {questionIndex + 1} / ${totalQuestions}</span>
+                  <span>CÂU {questionIndex + 1} / {totalQuestions}</span>
                 </div>
 
                 <div className="relative">
@@ -734,6 +861,11 @@ export default function ArenaPlayPage() {
                     {myRanking?.totalScore ?? (gameMode === 'GOLD_QUEST' ? gold : 0)}{' '}
                     {gameMode === 'GOLD_QUEST' ? '🪙 Vàng' : 'Điểm'}
                   </p>
+                  {gameMode === 'ARENA_100' && (
+                    <span className="text-[11px] font-bold text-rose-300 block mt-0.5">
+                      {lives > 0 ? `Còn ${lives}/${maxLives} ❤️ trụ hạng` : '👀 Chế độ Thử Sức'}
+                    </span>
+                  )}
                 </div>
                 <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="sm" />
               </div>
@@ -758,7 +890,10 @@ export default function ArenaPlayPage() {
                           <span className="font-mono font-black text-amber-400 w-4">#{r.rank}</span>
                           <span className="truncate">{r.nickname}</span>
                         </div>
-                        <span className="font-mono text-amber-300 ml-2">{r.totalScore}đ</span>
+                        <span className="font-mono text-amber-300 ml-2">
+                          {gameMode === 'ARENA_100' && r.lives !== undefined ? `${'❤️'.repeat(Math.max(0, r.lives))} · ` : ''}
+                          {r.totalScore}đ
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -805,11 +940,20 @@ export default function ArenaPlayPage() {
           </div>
         ) : !showResult ? (
           <>
+            {/* Banner thông báo Chế độ Thử sức nếu học sinh đã hết mạng trong ARENA_100 */}
+            {gameMode === 'ARENA_100' && lives <= 0 && (
+              <div className="px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-400/40 text-amber-200 text-[11px] font-bold text-center">
+                👀 Bạn đã hết mạng trụ hạng — Vẫn được chọn đáp án để tự ôn luyện & ghi vào Sổ Tay Học Thuật!
+              </div>
+            )}
+
             {/* Round info & prompt */}
             <div className="text-center space-y-0.5">
               <span className="text-[11px] font-mono font-bold text-purple-300 uppercase tracking-widest flex items-center justify-center gap-1">
                 {gameMode === 'GOLD_QUEST'
                   ? `💰 CƯỚP VÀNG · CÂU ${questionIndex + 1}/${totalQuestions}`
+                  : gameMode === 'ARENA_100'
+                  ? `🛡️ ĐẤU TRƯỜNG 100 · CÂU ${questionIndex + 1}/${totalQuestions} · ${roundTimeLimit} GIÂY`
                   : totalQuestions > 0 && questionIndex >= totalQuestions - 1
                   ? `⚡ CÂU CUỐI CÙNG (X2 ĐIỂM) · CÂU ${questionIndex + 1}/${totalQuestions}`
                   : `🎯 CÂU HỎI ${questionIndex + 1}/${totalQuestions} · ${roundTimeLimit} GIÂY`}
@@ -900,22 +1044,38 @@ export default function ArenaPlayPage() {
               )}
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <h2 className="text-2xl sm:text-3xl font-black text-white">
                 {isUnanswered ? 'HẾT GIỜ CHƯA CHỐT!' : isCorrect ? 'CHÍNH XÁC!' : 'CHƯA CHÍNH XÁC'}
               </h2>
               <p className="text-xs sm:text-sm font-bold text-purple-200">
-                {isUnanswered
-                  ? 'Bạn chưa kịp bấm Xác nhận trước khi hết giờ (0 điểm)'
-                  : isCorrect
-                  ? gameMode === 'GOLD_QUEST'
+                {gameMode === 'ARENA_100' ? (
+                  wasEliminatedBeforeRound ? (
+                    isCorrect
+                      ? '👏 Tuyệt vời! Bạn vẫn trả lời đúng trong Chế độ Thử Sức!'
+                      : '💡 Đã lưu câu này vào Sổ Tay Học Thuật để bạn ôn tập!'
+                  ) : isCorrect ? (
+                    lastLifeDelta > 0
+                      ? `💖 CHUỖI ${streak} CÂU ĐÚNG! HỒI PHỤC +1 MẠNG (Còn ${lives}/${maxLives} ❤️)`
+                      : `🛡️ Trụ hạng an toàn! (Còn ${lives}/${maxLives} ❤️ · Chuỗi ${streak}/3 hồi mạng)`
+                  ) : lives > 0 ? (
+                    `💔 Mất 1 mạng! Bạn còn ${lives}/${maxLives} ❤️ để tiếp tục chiến đấu!`
+                  ) : (
+                    '💀 Bạn đã hết mạng trụ hạng! Chuyển sang Chế độ Thử Sức từ câu sau.'
+                  )
+                ) : isUnanswered ? (
+                  'Bạn chưa kịp bấm Xác nhận trước khi hết giờ (0 điểm)'
+                ) : isCorrect ? (
+                  gameMode === 'GOLD_QUEST'
                     ? `Kho vàng: ${gold} 🪙`
                     : totalQuestions > 0 && questionIndex >= totalQuestions - 1
                     ? '⚡ ĐÃ NHÂN ĐÔI ĐIỂM CÂU CUỐI (X2)!'
                     : streak > 1
                     ? `🔥 Chuỗi ${streak} câu đúng liên tiếp! (+100 Điểm Tốc Độ)`
                     : '+100 Điểm Tốc Độ'
-                  : 'Đừng nản lòng, chú ý collocation tiếp theo'}
+                ) : (
+                  'Đừng nản lòng, chú ý collocation tiếp theo'
+                )}
               </p>
             </div>
 
