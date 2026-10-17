@@ -321,6 +321,27 @@ export const CHARACTER_AVATARS: CharacterAvatar[] = [
     "url": "/assets/Arena/avatars/individual/avatar_44.png",
     "type": "pop_heroes",
     "name": "Hiệp Sĩ Bóng Đêm Batman"
+  },
+  {
+    "id": 45,
+    "fileName": "avatar_45.png",
+    "url": "/assets/Arena/avatars/individual/avatar_45.png",
+    "type": "anime_fantasy",
+    "name": "Thần Rồng Slifer (Osiris)"
+  },
+  {
+    "id": 46,
+    "fileName": "avatar_46.png",
+    "url": "/assets/Arena/avatars/individual/avatar_46.png",
+    "type": "anime_fantasy",
+    "name": "Thần Binh Obelisk"
+  },
+  {
+    "id": 47,
+    "fileName": "avatar_47.png",
+    "url": "/assets/Arena/avatars/individual/avatar_47.png",
+    "type": "anime_fantasy",
+    "name": "Thần Rồng Có Cánh Ra"
   }
 ];
 

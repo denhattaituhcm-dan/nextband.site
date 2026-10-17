@@ -13,12 +13,12 @@ interface AvatarPickerModalProps {
 }
 
 const CATEGORIES = [
-  { id: 'all', label: 'Tất cả (45)', icon: Sparkles },
-  { id: 'anime_fantasy', label: 'Yu-Gi-Oh! & Anime (9)', icon: Shield },
-  { id: 'pop_heroes', label: 'Siêu Anh Hùng (9)', icon: Rocket },
-  { id: 'cute_chibi', label: 'Đáng Yêu & Chibi (9)', icon: Heart },
-  { id: 'space_nature', label: 'Vũ Trụ & Tự Nhiên (9)', icon: Smile },
-  { id: 'creative', label: 'Sáng Tạo (9)', icon: Palette },
+  { id: 'all', label: 'Tất cả', icon: Sparkles },
+  { id: 'anime_fantasy', label: 'Yu-Gi-Oh! & Anime', icon: Shield },
+  { id: 'pop_heroes', label: 'Siêu Anh Hùng', icon: Rocket },
+  { id: 'cute_chibi', label: 'Đáng Yêu & Chibi', icon: Heart },
+  { id: 'space_nature', label: 'Vũ Trụ & Tự Nhiên', icon: Smile },
+  { id: 'creative', label: 'Sáng Tạo', icon: Palette },
 ];
 
 export const AvatarPickerModal: React.FC<AvatarPickerModalProps> = ({
@@ -123,7 +123,9 @@ export const AvatarPickerModal: React.FC<AvatarPickerModalProps> = ({
                   }`}
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-amber-400'}`} />
-                  {cat.label}
+                  <span>
+                    {cat.label} ({cat.id === 'all' ? CHARACTER_AVATARS.length : CHARACTER_AVATARS.filter((a) => a.type === cat.id).length})
+                  </span>
                 </button>
               );
             })}
