@@ -185,5 +185,99 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
       }
     }
   );
+
+  // GET /arena/questions - Xem bộ câu hỏi của bài học (tùy chỉnh hoặc mặc định)
+  fastify.get<{
+    Querystring: { examId?: string; lessonKey?: string };
+  }>(
+    "/questions",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      try {
+        const { examId, lessonKey } = request.query;
+        const { ArenaBankService } = await import("../services/arena-bank.service.js");
+        const bankService = new ArenaBankService(fastify.prisma);
+        const data = await bankService.getQuestionsByLesson(lessonKey, examId);
+        return reply.send({
+          success: true,
+          data,
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Không thể tải bộ câu hỏi.",
+        });
+      }
+    }
+  );
+
+  // PUT /arena/questions - Admin lưu lại chỉnh sửa bộ câu hỏi
+  fastify.put<{
+    Body: {
+      examId?: string;
+      lessonKey?: string;
+      questions: any[];
+    };
+  }>(
+    "/questions",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      try {
+        const { examId, lessonKey, questions } = request.body || {};
+        if (!Array.isArray(questions) || questions.length === 0) {
+          return reply.code(400).send({
+            success: false,
+            error: "Danh sách câu hỏi không được để trống.",
+          });
+        }
+
+        const { ArenaBankService } = await import("../services/arena-bank.service.js");
+        const bankService = new ArenaBankService(fastify.prisma);
+        await bankService.saveCustomQuestions({
+          lessonKey,
+          examId,
+          questions,
+        });
+
+        return reply.send({
+          success: true,
+          message: "Đã lưu bộ câu hỏi thành công!",
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Không thể lưu bộ câu hỏi.",
+        });
+      }
+    }
+  );
+
+  // DELETE /arena/questions - Khôi phục về bộ câu hỏi mặc định của giáo trình
+  fastify.delete<{
+    Querystring: { examId?: string; lessonKey?: string };
+  }>(
+    "/questions",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      try {
+        const { examId, lessonKey } = request.query;
+        const { ArenaBankService } = await import("../services/arena-bank.service.js");
+        const bankService = new ArenaBankService(fastify.prisma);
+        await bankService.resetCustomQuestions(lessonKey, examId);
+        return reply.send({
+          success: true,
+          message: "Đã khôi phục bộ câu hỏi gốc của giáo trình thành công!",
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Không thể khôi phục bộ câu hỏi.",
+        });
+      }
+    }
+  );
 }
 

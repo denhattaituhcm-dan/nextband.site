@@ -102932,6 +102932,12 @@ var init_doer_questions_bank_data = __esm({
 });
 
 // server/services/arena-bank.service.ts
+var arena_bank_service_exports = {};
+__export(arena_bank_service_exports, {
+  ArenaBankService: () => ArenaBankService,
+  hashSeed: () => hashSeed,
+  shuffleQuestionOptions: () => shuffleQuestionOptions
+});
 function cleanHtml(raw) {
   if (!raw) return "";
   return raw.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, " ").trim();
@@ -102942,6 +102948,15 @@ function hashSeed(str) {
     hash = (hash << 5) - hash + str.charCodeAt(i) | 0;
   }
   return Math.abs(hash);
+}
+function normalizeMisconception(m) {
+  if (!m) return void 0;
+  return {
+    baitOptionId: m.baitOptionId || "opt_B",
+    baitOptionText: m.baitOptionText || "",
+    diagnosticTitle: m.diagnosticTitle || "",
+    explanation: m.explanation || ""
+  };
 }
 function shuffleQuestionOptions(question, seedStr) {
   if (!question.options || question.options.length < 2) {
@@ -102998,8 +103013,133 @@ var init_arena_bank_service = __esm({
         this.prisma = prisma;
       }
       /**
+       * Helper to fetch custom override questions from SiteSettings
+       */
+      async getCustomOverride(lessonKey, examId) {
+        try {
+          if (lessonKey) {
+            const setting = await this.prisma.siteSettings.findFirst({
+              where: { key: `arena_custom_${lessonKey}` }
+            });
+            if (setting && Array.isArray(setting.value?.questions)) {
+              return setting.value.questions;
+            }
+          }
+          if (examId) {
+            const setting = await this.prisma.siteSettings.findFirst({
+              where: { key: `arena_custom_exam_${examId}` }
+            });
+            if (setting && Array.isArray(setting.value?.questions)) {
+              return setting.value.questions;
+            }
+          }
+          return null;
+        } catch (err) {
+          console.warn("[ArenaBankService] L\u1ED7i \u0111\u1ECDc custom override:", err);
+          return null;
+        }
+      }
+      /**
+       * Saves custom questions edited by Admin into SiteSettings
+       */
+      async saveCustomQuestions(params) {
+        const { lessonKey, examId, questions } = params;
+        const key = lessonKey ? `arena_custom_${lessonKey}` : `arena_custom_exam_${examId}`;
+        if (!key) throw new Error("C\u1EA7n lessonKey ho\u1EB7c examId \u0111\u1EC3 l\u01B0u b\u1ED9 c\xE2u h\u1ECFi");
+        const payload = {
+          lessonKey,
+          examId,
+          questions,
+          updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+        };
+        const existing = await this.prisma.siteSettings.findFirst({
+          where: { key }
+        });
+        if (existing) {
+          await this.prisma.siteSettings.update({
+            where: { id: existing.id },
+            data: { value: payload }
+          });
+        } else {
+          await this.prisma.siteSettings.create({
+            data: {
+              key,
+              value: payload
+            }
+          });
+        }
+      }
+      /**
+       * Deletes custom questions override, restoring original textbook bank
+       */
+      async resetCustomQuestions(lessonKey, examId) {
+        if (lessonKey) {
+          await this.prisma.siteSettings.deleteMany({
+            where: { key: `arena_custom_${lessonKey}` }
+          });
+        }
+        if (examId) {
+          await this.prisma.siteSettings.deleteMany({
+            where: { key: `arena_custom_exam_${examId}` }
+          });
+        }
+      }
+      /**
+       * Retrieves editable questions for a lesson / exam (either custom edited or DOER textbook default)
+       */
+      async getQuestionsByLesson(lessonKey, examId) {
+        let resolvedKey = lessonKey || "";
+        let examTitle = "";
+        if (examId) {
+          const exam = await this.prisma.exam.findUnique({
+            where: { id: examId },
+            select: { id: true, title: true }
+          });
+          if (exam) {
+            examTitle = exam.title;
+            if (!resolvedKey) {
+              resolvedKey = matchDoerLessonKey(exam.title) || "";
+            }
+          }
+        }
+        const custom2 = await this.getCustomOverride(resolvedKey, examId);
+        if (custom2 && custom2.length > 0) {
+          return {
+            lessonKey: resolvedKey,
+            examTitle,
+            isCustom: true,
+            questions: custom2
+          };
+        }
+        if (resolvedKey && DOER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
+          return {
+            lessonKey: resolvedKey,
+            examTitle,
+            isCustom: false,
+            questions: DOER_ARENA_LESSON_QUESTIONS[resolvedKey]
+          };
+        }
+        const standardMapped = ARENA_STANDARD_QUESTIONS.map((q, idx) => ({
+          id: q.id,
+          roundIndex: idx,
+          prompt: q.prompt,
+          options: q.options,
+          correctOptionId: q.correctOptionId,
+          timeLimitSeconds: 30,
+          points: 1e3,
+          explanation: q.correctExplanation,
+          misconception: q.misconception
+        }));
+        return {
+          lessonKey: resolvedKey,
+          examTitle,
+          isCustom: false,
+          questions: standardMapped
+        };
+      }
+      /**
        * Loads and normalizes playable Arena questions from a specific Exam in DB.
-       * If exam has no multiple choice questions or examId is null, fallbacks to ARENA_STANDARD_QUESTIONS.
+       * Checks custom override first -> then DB questions -> then DOER textbook bank -> fallback.
        * Options are shuffled deterministically per room/seed so correct answers are not predictably 'A'.
        */
       async getQuestionsForRoom(examId, seed) {
@@ -103025,7 +103165,42 @@ var init_arena_bank_service = __esm({
               }
             }
           });
+          const doerKey = exam?.title ? matchDoerLessonKey(exam.title) : null;
+          const customQuestions = await this.getCustomOverride(doerKey, examId);
+          if (customQuestions && customQuestions.length > 0) {
+            return customQuestions.map((bq, idx) => {
+              const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
+              const rawQ = {
+                id: bq.id || `custom_q_${idx}`,
+                roundIndex: idx,
+                prompt: bq.prompt,
+                options: bq.options,
+                correctOptionId: bq.correctOptionId,
+                correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
+                correctExplanation: bq.explanation || `\u0110\xE1p \xE1n ch\xEDnh x\xE1c: ${correctOpt.label}. ${correctOpt.text}`,
+                misconception: normalizeMisconception(bq.misconception)
+              };
+              return shuffleQuestionOptions(rawQ, seed ? `${seed}_${rawQ.id}` : rawQ.id);
+            });
+          }
           if (!exam || !exam.sections || exam.sections.length === 0) {
+            if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
+              const bankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
+              return bankQuestions.map((bq, idx) => {
+                const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
+                const rawQ = {
+                  id: bq.id,
+                  roundIndex: idx,
+                  prompt: bq.prompt,
+                  options: bq.options,
+                  correctOptionId: bq.correctOptionId,
+                  correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
+                  correctExplanation: bq.explanation,
+                  misconception: normalizeMisconception(bq.misconception)
+                };
+                return shuffleQuestionOptions(rawQ, seed ? `${seed}_${bq.id}` : bq.id);
+              });
+            }
             return ARENA_STANDARD_QUESTIONS;
           }
           const allDbQuestions = [];
@@ -103107,9 +103282,9 @@ var init_arena_bank_service = __esm({
             return playableQuestions;
           }
           if (exam && exam.title) {
-            const doerKey = matchDoerLessonKey(exam.title);
-            if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
-              const bankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
+            const doerKey2 = matchDoerLessonKey(exam.title);
+            if (doerKey2 && DOER_ARENA_LESSON_QUESTIONS[doerKey2]) {
+              const bankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey2];
               return bankQuestions.map((bq, idx) => {
                 const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
                 const rawQ = {
@@ -103120,7 +103295,7 @@ var init_arena_bank_service = __esm({
                   correctOptionId: bq.correctOptionId,
                   correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
                   correctExplanation: bq.explanation,
-                  misconception: bq.misconception
+                  misconception: normalizeMisconception(bq.misconception)
                 };
                 return shuffleQuestionOptions(rawQ, seed ? `${seed}_${bq.id}` : bq.id);
               });
@@ -123736,6 +123911,82 @@ async function arenaRoutes(fastify) {
           success: false,
           error: err?.message || "L\u1ED7i khi kh\xF4i ph\u1EE5c snapshot Host.",
           code: err?.code || "INTERNAL_ERROR"
+        });
+      }
+    }
+  );
+  fastify.get(
+    "/questions",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      try {
+        const { examId, lessonKey } = request.query;
+        const { ArenaBankService: ArenaBankService2 } = await Promise.resolve().then(() => (init_arena_bank_service(), arena_bank_service_exports));
+        const bankService = new ArenaBankService2(fastify.prisma);
+        const data = await bankService.getQuestionsByLesson(lessonKey, examId);
+        return reply.send({
+          success: true,
+          data
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Kh\xF4ng th\u1EC3 t\u1EA3i b\u1ED9 c\xE2u h\u1ECFi."
+        });
+      }
+    }
+  );
+  fastify.put(
+    "/questions",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      try {
+        const { examId, lessonKey, questions } = request.body || {};
+        if (!Array.isArray(questions) || questions.length === 0) {
+          return reply.code(400).send({
+            success: false,
+            error: "Danh s\xE1ch c\xE2u h\u1ECFi kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng."
+          });
+        }
+        const { ArenaBankService: ArenaBankService2 } = await Promise.resolve().then(() => (init_arena_bank_service(), arena_bank_service_exports));
+        const bankService = new ArenaBankService2(fastify.prisma);
+        await bankService.saveCustomQuestions({
+          lessonKey,
+          examId,
+          questions
+        });
+        return reply.send({
+          success: true,
+          message: "\u0110\xE3 l\u01B0u b\u1ED9 c\xE2u h\u1ECFi th\xE0nh c\xF4ng!"
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Kh\xF4ng th\u1EC3 l\u01B0u b\u1ED9 c\xE2u h\u1ECFi."
+        });
+      }
+    }
+  );
+  fastify.delete(
+    "/questions",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      try {
+        const { examId, lessonKey } = request.query;
+        const { ArenaBankService: ArenaBankService2 } = await Promise.resolve().then(() => (init_arena_bank_service(), arena_bank_service_exports));
+        const bankService = new ArenaBankService2(fastify.prisma);
+        await bankService.resetCustomQuestions(lessonKey, examId);
+        return reply.send({
+          success: true,
+          message: "\u0110\xE3 kh\xF4i ph\u1EE5c b\u1ED9 c\xE2u h\u1ECFi g\u1ED1c c\u1EE7a gi\xE1o tr\xECnh th\xE0nh c\xF4ng!"
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Kh\xF4ng th\u1EC3 kh\xF4i ph\u1EE5c b\u1ED9 c\xE2u h\u1ECFi."
         });
       }
     }

@@ -24,10 +24,12 @@ import {
   CalendarDays,
   Loader2,
   Search,
-  Filter
+  Filter,
+  SlidersHorizontal
 } from "lucide-react";
 import { REGISTERED_GAMES, GameEngineId } from "@/lib/arena/gameCatalogue";
 import { coursesApi, examsApi, arenaApi } from "@/lib/api";
+import { ArenaQuestionEditorModal } from "@/components/arena/ArenaQuestionEditorModal";
 
 export default function AdminGameArenaPage() {
   const [selectedGameId, setSelectedGameId] = useState<GameEngineId>("class_arena");
@@ -35,6 +37,7 @@ export default function AdminGameArenaPage() {
   const [selectedExamId, setSelectedExamId] = useState<string>("");
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
   const [searchFilter, setSearchFilter] = useState("");
+  const [editingExam, setEditingExam] = useState<any | null>(null);
 
   const selectedGame = REGISTERED_GAMES.find((g) => g.id === selectedGameId) || REGISTERED_GAMES[0];
 
@@ -475,7 +478,19 @@ export default function AdminGameArenaPage() {
                           </div>
                         </div>
 
-                        <div className="shrink-0">
+                        <div className="shrink-0 flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingExam(exam);
+                            }}
+                            className="border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-800 font-bold text-xs rounded-xl px-3 py-1.5 shadow-sm transition-all"
+                            title="Xem và chỉnh sửa 10 câu hỏi của bài học này"
+                          >
+                            <SlidersHorizontal className="w-3.5 h-3.5 mr-1 text-orange-600" /> Xem & Sửa
+                          </Button>
                           <Button
                             size="sm"
                             onClick={(e) => {
@@ -483,7 +498,7 @@ export default function AdminGameArenaPage() {
                               setSelectedExamId(exam.id);
                               handleLaunchHost(exam.id);
                             }}
-                            className="bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl px-3.5 py-1.5 shadow-sm shadow-orange-600/20"
+                            className="bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl px-3.5 py-1.5 shadow-sm shadow-orange-600/20 transition-all hover:scale-105 active:scale-95"
                           >
                             <Play className="w-3.5 h-3.5 mr-1 fill-white" /> Dạy bài này
                           </Button>
@@ -599,6 +614,14 @@ export default function AdminGameArenaPage() {
         </div>
         </div>
       )}
+
+      {/* Modal Xem & Chỉnh sửa bộ câu hỏi cho Admin */}
+      <ArenaQuestionEditorModal
+        isOpen={!!editingExam}
+        onClose={() => setEditingExam(null)}
+        examId={editingExam?.id}
+        examTitle={editingExam?.title}
+      />
     </div>
   );
 }

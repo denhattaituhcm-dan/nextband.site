@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { ARENA_STANDARD_QUESTIONS, ArenaQuestion, ArenaQuestionOption } from "./arena-questions.data.js";
-import { DOER_ARENA_LESSON_QUESTIONS, matchDoerLessonKey } from "./doer-questions-bank.data.js";
+import { DOER_ARENA_LESSON_QUESTIONS, matchDoerLessonKey, ArenaQuestionItem } from "./doer-questions-bank.data.js";
 
 /**
  * Strips HTML tags and decodes common HTML entities for crisp text display in Arena HUD
@@ -28,6 +28,16 @@ export function hashSeed(str: string): number {
     hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
   }
   return Math.abs(hash);
+}
+
+function normalizeMisconception(m?: any): ArenaQuestion["misconception"] {
+  if (!m) return undefined;
+  return {
+    baitOptionId: m.baitOptionId || "opt_B",
+    baitOptionText: m.baitOptionText || "",
+    diagnosticTitle: m.diagnosticTitle || "",
+    explanation: m.explanation || "",
+  };
 }
 
 /**
@@ -97,8 +107,157 @@ export class ArenaBankService {
   constructor(private prisma: PrismaClient) {}
 
   /**
+   * Helper to fetch custom override questions from SiteSettings
+   */
+  public async getCustomOverride(lessonKey?: string | null, examId?: string | null): Promise<ArenaQuestionItem[] | null> {
+    try {
+      if (lessonKey) {
+        const setting = await this.prisma.siteSettings.findFirst({
+          where: { key: `arena_custom_${lessonKey}` },
+        });
+        if (setting && Array.isArray((setting.value as any)?.questions)) {
+          return (setting.value as any).questions;
+        }
+      }
+      if (examId) {
+        const setting = await this.prisma.siteSettings.findFirst({
+          where: { key: `arena_custom_exam_${examId}` },
+        });
+        if (setting && Array.isArray((setting.value as any)?.questions)) {
+          return (setting.value as any).questions;
+        }
+      }
+      return null;
+    } catch (err) {
+      console.warn("[ArenaBankService] Lỗi đọc custom override:", err);
+      return null;
+    }
+  }
+
+  /**
+   * Saves custom questions edited by Admin into SiteSettings
+   */
+  public async saveCustomQuestions(params: {
+    lessonKey?: string | null;
+    examId?: string | null;
+    questions: ArenaQuestionItem[];
+  }): Promise<void> {
+    const { lessonKey, examId, questions } = params;
+    const key = lessonKey ? `arena_custom_${lessonKey}` : `arena_custom_exam_${examId}`;
+    if (!key) throw new Error("Cần lessonKey hoặc examId để lưu bộ câu hỏi");
+
+    const payload = {
+      lessonKey,
+      examId,
+      questions,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const existing = await this.prisma.siteSettings.findFirst({
+      where: { key },
+    });
+
+    if (existing) {
+      await this.prisma.siteSettings.update({
+        where: { id: existing.id },
+        data: { value: payload as any },
+      });
+    } else {
+      await this.prisma.siteSettings.create({
+        data: {
+          key,
+          value: payload as any,
+        },
+      });
+    }
+  }
+
+  /**
+   * Deletes custom questions override, restoring original textbook bank
+   */
+  public async resetCustomQuestions(lessonKey?: string | null, examId?: string | null): Promise<void> {
+    if (lessonKey) {
+      await this.prisma.siteSettings.deleteMany({
+        where: { key: `arena_custom_${lessonKey}` },
+      });
+    }
+    if (examId) {
+      await this.prisma.siteSettings.deleteMany({
+        where: { key: `arena_custom_exam_${examId}` },
+      });
+    }
+  }
+
+  /**
+   * Retrieves editable questions for a lesson / exam (either custom edited or DOER textbook default)
+   */
+  public async getQuestionsByLesson(lessonKey?: string | null, examId?: string | null): Promise<{
+    lessonKey: string;
+    examTitle: string;
+    isCustom: boolean;
+    questions: ArenaQuestionItem[];
+  }> {
+    let resolvedKey = lessonKey || "";
+    let examTitle = "";
+
+    if (examId) {
+      const exam = await this.prisma.exam.findUnique({
+        where: { id: examId },
+        select: { id: true, title: true },
+      });
+      if (exam) {
+        examTitle = exam.title;
+        if (!resolvedKey) {
+          resolvedKey = matchDoerLessonKey(exam.title) || "";
+        }
+      }
+    }
+
+    // 1. Check custom override in SiteSettings
+    const custom = await this.getCustomOverride(resolvedKey, examId);
+    if (custom && custom.length > 0) {
+      return {
+        lessonKey: resolvedKey,
+        examTitle,
+        isCustom: true,
+        questions: custom,
+      };
+    }
+
+    // 2. Check DOER questions bank
+    if (resolvedKey && DOER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
+      return {
+        lessonKey: resolvedKey,
+        examTitle,
+        isCustom: false,
+        questions: DOER_ARENA_LESSON_QUESTIONS[resolvedKey],
+      };
+    }
+
+    // 3. Fallback to standard questions
+    const standardMapped: ArenaQuestionItem[] = ARENA_STANDARD_QUESTIONS.map((q, idx) => ({
+      id: q.id,
+      roundIndex: idx,
+      prompt: q.prompt,
+      options: q.options,
+      correctOptionId: q.correctOptionId,
+      timeLimitSeconds: 30,
+      points: 1000,
+      explanation: q.correctExplanation,
+      misconception: q.misconception,
+    }));
+
+    return {
+      lessonKey: resolvedKey,
+      examTitle,
+      isCustom: false,
+      questions: standardMapped,
+    };
+  }
+
+  /**
    * Loads and normalizes playable Arena questions from a specific Exam in DB.
-   * If exam has no multiple choice questions or examId is null, fallbacks to ARENA_STANDARD_QUESTIONS.
+   * Checks custom override first -> then DB questions -> then DOER textbook bank -> fallback.
    * Options are shuffled deterministically per room/seed so correct answers are not predictably 'A'.
    */
   public async getQuestionsForRoom(examId?: string | null, seed?: string): Promise<ArenaQuestion[]> {
@@ -126,7 +285,46 @@ export class ArenaBankService {
         },
       });
 
+      const doerKey = exam?.title ? matchDoerLessonKey(exam.title) : null;
+
+      // 1. ƯU TIÊN HÀNG ĐẦU: Kiểm tra bộ câu hỏi tùy chỉnh do Admin đã sửa và lưu lại
+      const customQuestions = await this.getCustomOverride(doerKey, examId);
+      if (customQuestions && customQuestions.length > 0) {
+        return customQuestions.map((bq, idx) => {
+          const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
+          const rawQ: ArenaQuestion = {
+            id: bq.id || `custom_q_${idx}`,
+            roundIndex: idx,
+            prompt: bq.prompt,
+            options: bq.options as ArenaQuestionOption[],
+            correctOptionId: bq.correctOptionId,
+            correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
+            correctExplanation: bq.explanation || `Đáp án chính xác: ${correctOpt.label}. ${correctOpt.text}`,
+            misconception: normalizeMisconception(bq.misconception),
+          };
+          return shuffleQuestionOptions(rawQ, seed ? `${seed}_${rawQ.id}` : rawQ.id);
+        });
+      }
+
       if (!exam || !exam.sections || exam.sections.length === 0) {
+        // Nếu không có sections trong DB nhưng có trong DOER Bank
+        if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
+          const bankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
+          return bankQuestions.map((bq, idx) => {
+            const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
+            const rawQ: ArenaQuestion = {
+              id: bq.id,
+              roundIndex: idx,
+              prompt: bq.prompt,
+              options: bq.options as ArenaQuestionOption[],
+              correctOptionId: bq.correctOptionId,
+              correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
+              correctExplanation: bq.explanation,
+              misconception: normalizeMisconception(bq.misconception),
+            };
+            return shuffleQuestionOptions(rawQ, seed ? `${seed}_${bq.id}` : bq.id);
+          });
+        }
         return ARENA_STANDARD_QUESTIONS;
       }
 
@@ -244,7 +442,7 @@ export class ArenaBankService {
               correctOptionId: bq.correctOptionId,
               correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
               correctExplanation: bq.explanation,
-              misconception: bq.misconception,
+              misconception: normalizeMisconception(bq.misconception),
             };
             return shuffleQuestionOptions(rawQ, seed ? `${seed}_${bq.id}` : bq.id);
           });

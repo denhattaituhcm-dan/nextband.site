@@ -29,6 +29,12 @@ export interface ArenaQuestionItem {
   timeLimitSeconds: number;
   points: number;
   explanation: string;
+  misconception?: {
+    baitOptionId?: string;
+    baitOptionText?: string;
+    diagnosticTitle?: string;
+    explanation?: string;
+  };
 }
 
 export const DOER_ARENA_LESSON_QUESTIONS: Record<string, ArenaQuestionItem[]> = {

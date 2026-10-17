@@ -14,302 +14,33 @@ import { toCanonicalClass, toCanonicalStudent } from "./classDataMapper";
 import { AudioStorageService } from "./audioStorageService";
 import type { ClassPeerRank } from "../types/domain.types";
 
-export const resolveApiBaseUrl = (): string => {
-  const envUrl =
-    (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_URL) ||
-    (typeof process !== "undefined" && process.env?.VITE_API_URL);
+import {
+  resolveApiBaseUrl,
+  API_BASE_URL,
+  ApiErrorCode,
+  ApiError,
+  handleApiResponse,
+  getAuthToken,
+  gatewayHealthApi,
+  GatewayUnavailableError,
+  FetchWithResilienceOptions,
+  fetchWithResilience,
+  authenticatedFetch,
+} from "./api/client";
 
-  if (envUrl && !envUrl.includes("localhost") && !envUrl.includes("api.nextband.site")) {
-    return envUrl;
-  }
-
-  // In browser on production / preview domain, use same-origin /api/v1
-  if (typeof window !== "undefined" && !window.location.hostname.includes("localhost")) {
-    return "/api/v1";
-  }
-
-  if (envUrl && !envUrl.includes("api.nextband.site")) {
-    return envUrl;
-  }
-
-  return "http://localhost:3000/api/v1";
+export {
+  resolveApiBaseUrl,
+  API_BASE_URL,
+  type ApiErrorCode,
+  ApiError,
+  handleApiResponse,
+  getAuthToken,
+  gatewayHealthApi,
+  GatewayUnavailableError,
+  type FetchWithResilienceOptions,
+  fetchWithResilience,
+  authenticatedFetch,
 };
-
-export const API_BASE_URL = resolveApiBaseUrl();
-
-export type ApiErrorCode =
-  | "AUTH_ERROR"
-  | "PERMISSION_ERROR"
-  | "SERVER_ERROR"
-  | "NETWORK_ERROR"
-  | "NOT_FOUND"
-  | "VALIDATION_ERROR"
-  | "UNKNOWN";
-
-export class ApiError extends Error {
-  public status: number;
-  public code: ApiErrorCode;
-  public details?: any;
-
-  constructor(
-    message: string,
-    status: number = 500,
-    code: ApiErrorCode = "UNKNOWN",
-    details?: any
-  ) {
-    super(message);
-    this.name = "ApiError";
-    this.status = status;
-    this.code = code;
-    this.details = details;
-  }
-}
-
-export async function handleApiResponse<T = any>(
-  res: Response,
-  fallbackErrorMsg: string = "Yêu cầu thất bại"
-): Promise<T> {
-  if (res.ok) {
-    return (await res.json()) as T;
-  }
-
-  let errorDetails: any = null;
-  let errorMessage = fallbackErrorMsg;
-  try {
-    errorDetails = await res.json();
-    if (errorDetails?.error || errorDetails?.message) {
-      errorMessage = errorDetails.error || errorDetails.message;
-    }
-  } catch {
-    // Non-JSON response body
-  }
-
-  if (res.status === 401) {
-    throw new ApiError(
-      "Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.",
-      401,
-      "AUTH_ERROR",
-      errorDetails
-    );
-  }
-
-  if (res.status === 403) {
-    throw new ApiError(
-      "Bạn không có quyền thực hiện thao tác này.",
-      403,
-      "PERMISSION_ERROR",
-      errorDetails
-    );
-  }
-
-  if (res.status === 404) {
-    throw new ApiError(
-      errorMessage || "Không tìm thấy tài nguyên được yêu cầu.",
-      404,
-      "NOT_FOUND",
-      errorDetails
-    );
-  }
-
-  if (res.status === 400 || res.status === 422) {
-    throw new ApiError(
-      errorMessage,
-      res.status,
-      "VALIDATION_ERROR",
-      errorDetails
-    );
-  }
-
-  if (res.status >= 500) {
-    throw new ApiError(
-      errorMessage || "Máy chủ gặp sự cố khi xử lý yêu cầu.",
-      res.status,
-      "SERVER_ERROR",
-      errorDetails
-    );
-  }
-
-  throw new ApiError(errorMessage, res.status, "UNKNOWN", errorDetails);
-}
-
-export const getAuthToken = async (): Promise<string | null> => {
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.access_token) {
-      // Auto-refresh token if it expires in less than 2 minutes
-      const expiresAt = session.expires_at; // timestamp in seconds
-      if (expiresAt && Date.now() / 1000 > expiresAt - 120) {
-        try {
-          const { data: refreshed } = await supabase.auth.refreshSession();
-          if (refreshed?.session?.access_token) {
-            return refreshed.session.access_token;
-          }
-        } catch (refreshErr) {
-          console.warn("[Auth] Token refresh notice:", refreshErr);
-        }
-      }
-      return session.access_token;
-    }
-
-    // Fallback: Check localStorage for cached Supabase session
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("sb-") && key.endsWith("-auth-token")) {
-        const raw = localStorage.getItem(key);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed.access_token) return parsed.access_token;
-        }
-      }
-    }
-    return null;
-  } catch {
-    return null;
-  }
-};
-
-export const gatewayHealthApi = {
-  checkHealth: async (timeoutMs: number = 5000): Promise<{ isHealthy: boolean; latencyMs?: number; statusText?: string }> => {
-    const start = Date.now();
-    const abortCtrl = new AbortController();
-    const timeoutId = setTimeout(() => abortCtrl.abort(), timeoutMs);
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/health`, {
-        signal: abortCtrl.signal,
-      }).finally(() => clearTimeout(timeoutId));
-
-      const latencyMs = Date.now() - start;
-      if (res.ok) {
-        return { isHealthy: true, latencyMs, statusText: "OK" };
-      }
-      return { isHealthy: false, latencyMs, statusText: `HTTP ${res.status}` };
-    } catch (err: any) {
-      clearTimeout(timeoutId);
-      const isTimeout = err?.name === "AbortError";
-      return {
-        isHealthy: false,
-        statusText: isTimeout ? "Timeout" : "Connection Failed",
-      };
-    }
-  },
-};
-
-export class GatewayUnavailableError extends Error {
-  isGatewayError = true;
-  httpStatus: number;
-  constructor(
-    message: string = "Máy chủ đang khởi động lại hoặc kết nối không ổn định. Vui lòng thử lại sau giây lát.",
-    status: number = 502
-  ) {
-    super(message);
-    this.name = "GatewayUnavailableError";
-    this.httpStatus = status;
-  }
-}
-
-export interface FetchWithResilienceOptions extends RequestInit {
-  retries?: number;
-  retryDelayMs?: number;
-  timeoutMs?: number;
-}
-
-export async function fetchWithResilience(
-  url: string,
-  options: FetchWithResilienceOptions = {}
-): Promise<Response> {
-  const {
-    retries = 2,
-    retryDelayMs = 800,
-    timeoutMs = 12000,
-    ...fetchOptions
-  } = options;
-
-  let attempt = 0;
-  while (attempt <= retries) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-    try {
-      const response = await fetch(url, {
-        ...fetchOptions,
-        signal: controller.signal,
-      }).finally(() => clearTimeout(timer));
-
-      // Gateway / Cloud Cold-start errors: 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout
-      if (response.status === 502 || response.status === 503 || response.status === 504) {
-        if (attempt < retries) {
-          attempt++;
-          await new Promise((resolve) => setTimeout(resolve, retryDelayMs * attempt));
-          continue;
-        }
-        throw new GatewayUnavailableError(
-          "Máy chủ đang khởi động lại. Vui lòng thử lại sau giây lát.",
-          response.status
-        );
-      }
-
-      return response;
-    } catch (err: any) {
-      clearTimeout(timer);
-      if (err instanceof GatewayUnavailableError) {
-        throw err;
-      }
-
-      const isAbort = err?.name === "AbortError";
-      const isNetwork =
-        err instanceof TypeError ||
-        isAbort ||
-        (err?.message && (
-          err.message.toLowerCase().includes("failed to fetch") ||
-          err.message.toLowerCase().includes("networkerror") ||
-          err.message.toLowerCase().includes("network error")
-        ));
-
-      if (isNetwork && attempt < retries) {
-        attempt++;
-        await new Promise((resolve) => setTimeout(resolve, retryDelayMs * attempt));
-        continue;
-      }
-
-      if (isNetwork) {
-        throw new GatewayUnavailableError(
-          "Không thể kết nối tới máy chủ. Đang tự động kết nối lại...",
-          502
-        );
-      }
-
-      throw err;
-    }
-  }
-
-  throw new GatewayUnavailableError();
-}
-
-/**
- * Robust wrapper over fetchWithResilience with automatic Bearer token injection,
- * JSON content-type default, and standardized handling of network errors.
- */
-export async function authenticatedFetch(
-  url: string,
-  options: FetchWithResilienceOptions = {}
-): Promise<Response> {
-  const token = await getAuthToken();
-  const headers = new Headers(options.headers || {});
-
-  if (token && !headers.has("Authorization")) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
-
-  if (options.body && typeof options.body === "string" && !headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
-  }
-
-  return fetchWithResilience(url, {
-    ...options,
-    headers,
-  });
-}
 
 // Helper to format URLs
 export const formatStorageUrl = (path: string | null | undefined) => {
@@ -1581,39 +1312,7 @@ export const submissionsApi = {
   },
 };
 
-export const milestonesApi = {
-  getClaims: async (): Promise<string[]> => {
-    const token = await getAuthToken();
-    if (!token) return [];
-    const res = await fetchWithResilience(`${API_BASE_URL}/milestones/claims`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data.claimedKeys || [];
-    }
-    return [];
-  },
-
-  claim: async (milestoneKey: string): Promise<{ isFirstClaim: boolean; claim: any }> => {
-    const token = await getAuthToken();
-    if (!token) return { isFirstClaim: false, claim: null };
-    const res = await fetchWithResilience(`${API_BASE_URL}/milestones/claim`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ milestoneKey }),
-    });
-    if (res.ok) {
-      return await res.json();
-    }
-    return { isFirstClaim: false, claim: null };
-  },
-};
+export { milestonesApi } from "./api/domains/milestones.api";
 
 // =============================================
 // USERS API (Cleaned Production Store - No Silent RAM Fallbacks)
@@ -2265,182 +1964,9 @@ export const reportsApi = {
 // =============================================
 // BRANCHES & ROOMS API
 // =============================================
-export interface Branch {
-  id: string;
-  code: string;
-  name: string;
-  address: string;
-  phone?: string | null;
-  isActive: boolean;
-  /** isPrimary: true = đây là Cơ sở chính của hệ thống. Tối đa 1 active Branch có giá trị này. */
-  isPrimary: boolean;
-  createdAt: string;
-  updatedAt?: string;
-  _count?: {
-    rooms: number;
-    classes: number;
-    leads: number;
-  };
-  rooms?: Room[];
-}
+export { branchesApi, type Branch } from "./api/domains/branches.api";
 
-export interface Room {
-  id: string;
-  branchId: string;
-  name: string;
-  capacity: number;
-  isActive: boolean;
-  createdAt?: string;
-  branch?: { id: string; name: string; code: string };
-  _count?: { classes: number };
-}
-
-export const branchesApi = {
-
-  /** Lấy danh sách chi nhánh active. includeInactive=true dùng cho trang Settings. */
-  list: async (includeInactive = false): Promise<Branch[]> => {
-    const token = await getAuthToken();
-    const query = includeInactive ? "?includeInactive=true" : "";
-    const res = await fetch(`${API_BASE_URL}/branches${query}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-    if (!res.ok) throw new Error("Không thể tải danh sách chi nhánh");
-    const json = await res.json();
-    return json.data || [];
-  },
-
-  /** Lấy Cơ sở chính (isPrimary = true). Dùng cho auto-select trên form. */
-  getPrimary: async (): Promise<Branch | null> => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/branches/primary`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.data || null;
-  },
-
-  getById: async (id: string): Promise<Branch> => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/branches/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-    if (!res.ok) throw new Error("Không thể tải thông tin chi nhánh");
-    const json = await res.json();
-    return json.data;
-  },
-
-  create: async (data: { code: string; name: string; address: string; phone?: string }): Promise<Branch> => {
-    const res = await authenticatedFetch(`${API_BASE_URL}/branches`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || err.error || "Không thể tạo chi nhánh");
-    }
-    const json = await res.json();
-    return json.data;
-  },
-
-  update: async (id: string, data: { name?: string; address?: string; phone?: string }): Promise<Branch> => {
-    const res = await authenticatedFetch(`${API_BASE_URL}/branches/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || err.error || "Không thể cập nhật chi nhánh");
-    }
-    const json = await res.json();
-    return json.data;
-  },
-
-  /** Đặt chi nhánh này làm Cơ sở chính. Admin only. Transaction đảm bảo chỉ 1 primary. */
-  setPrimary: async (id: string): Promise<Branch> => {
-    const res = await authenticatedFetch(`${API_BASE_URL}/branches/${id}/set-primary`, {
-      method: "PATCH",
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || err.error || "Không thể đặt làm cơ sở chính");
-    }
-    const json = await res.json();
-    return json.data;
-  },
-
-  /** Ngừng hoạt động chi nhánh (soft-delete). Không được áp dụng cho Cơ sở chính. Admin only. */
-  deactivate: async (id: string): Promise<Branch> => {
-    const res = await authenticatedFetch(`${API_BASE_URL}/branches/${id}/deactivate`, {
-      method: "PATCH",
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || err.error || "Không thể ngừng hoạt động chi nhánh");
-    }
-    const json = await res.json();
-    return json.data;
-  },
-
-  /** Kích hoạt lại chi nhánh đang inactive. Admin only. */
-  activate: async (id: string): Promise<Branch> => {
-    const res = await authenticatedFetch(`${API_BASE_URL}/branches/${id}/activate`, {
-      method: "PATCH",
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || err.error || "Không thể kích hoạt chi nhánh");
-    }
-    const json = await res.json();
-    return json.data;
-  },
-};
-
-
-export const roomsApi = {
-  list: async (branchId?: string): Promise<Room[]> => {
-    const query = branchId && branchId !== "ALL" ? `?branchId=${branchId}` : "";
-    const res = await authenticatedFetch(`${API_BASE_URL}/rooms${query}`);
-    if (!res.ok) throw new Error("Không thể tải danh sách phòng học");
-    const json = await res.json();
-    return json.data || [];
-  },
-
-  create: async (data: { branchId: string; name: string; capacity?: number }): Promise<Room> => {
-    const res = await authenticatedFetch(`${API_BASE_URL}/rooms`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || err.error || "Không thể tạo phòng");
-    }
-    const json = await res.json();
-    return json.data;
-  },
-
-  update: async (id: string, data: { name?: string; capacity?: number; isActive?: boolean }): Promise<Room> => {
-    const res = await authenticatedFetch(`${API_BASE_URL}/rooms/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || err.error || "Không thể cập nhật phòng");
-    }
-    const json = await res.json();
-    return json.data;
-  },
-};
+export { roomsApi, type Room } from "./api/domains/rooms.api";
 
 export interface ClassGraduationStudent {
   studentId: string;
@@ -3579,39 +3105,7 @@ export const siteSettingsApi = {
   },
 };
 
-export const invitationsApi = {
-  joinByCode: async (payload: { code: string }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-    const response = await fetch(`${API_BASE_URL}/invitations/join`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ inviteCode: payload.code.trim().toUpperCase() }),
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || result.message || "Failed to join class");
-    return result;
-  },
-
-  generate: async (payload: { classId: string; inviteCode?: string }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-    const response = await fetch(`${API_BASE_URL}/invitations/generate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Failed to generate invitation");
-    return result;
-  },
-};
+export { invitationsApi } from "./api/domains/invitations.api";
 
 export interface StudentLessonProgress {
   homeworkSubmitted: boolean;
@@ -4755,316 +4249,28 @@ export const cambridgeApi = {
   },
 };
 
-export const speakingForecastApi = {
-  getPublicData: async () => {
-    const response = await fetch(`${API_BASE_URL}/speaking-forecast`);
-    if (!response.ok) throw new Error("Không thể tải dữ liệu Speaking Forecast");
-    return response.json();
-  },
+export { speakingForecastApi } from "./api/domains/speaking-forecast.api";
 
-  getAdminData: async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-    const response = await fetch(`${API_BASE_URL}/speaking-forecast/admin`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) throw new Error("Không thể tải dữ liệu Speaking Forecast (Admin)");
-    return response.json();
-  },
-
-  saveAdminData: async (payload: { seasons: any[]; topics: any[]; selectedSeasonId?: string }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-    const response = await fetch(`${API_BASE_URL}/speaking-forecast/admin`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-  },
-};
-
-export const interventionsApi = {
-  listByStudent: async (studentId: string) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-    const response = await fetch(`${API_BASE_URL}/interventions/student/${studentId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error || "Không thể tải nhật ký can thiệp học vụ");
-    }
-    const result = await response.json();
-    return result.data || [];
-  },
-
-  create: async (payload: {
-    studentId: string;
-    classId?: string | null;
-    category?: string;
-    title?: string | null;
-    notes: string;
-    actionTaken?: string | null;
-    agreedPlan?: string | null;
-    followUpDate?: string | null;
-    status?: string;
-  }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-    const response = await fetch(`${API_BASE_URL}/interventions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error || "Không thể tạo ghi chú can thiệp");
-    }
-    const result = await response.json();
-    return result.data;
-  },
-
-  update: async (id: string, payload: {
-    category?: string;
-    title?: string | null;
-    notes?: string;
-    actionTaken?: string | null;
-    agreedPlan?: string | null;
-    followUpDate?: string | null;
-    status?: string;
-  }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-    const response = await fetch(`${API_BASE_URL}/interventions/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error || "Không thể cập nhật nhật ký can thiệp");
-    }
-    const result = await response.json();
-    return result.data;
-  },
-
-  delete: async (id: string) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-    const response = await fetch(`${API_BASE_URL}/interventions/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error || "Không thể xóa ghi chú can thiệp");
-    }
-    return response.json();
-  },
-};
+export { interventionsApi } from "./api/domains/interventions.api";
 
 // =============================================
 // TUITION API (Financial Awareness)
 // =============================================
-export const tuitionApi = {
-  getSummary: async (params?: { branchId?: string }) => {
-    const token = await getAuthToken();
-    const queryParams = new URLSearchParams();
-    if (params?.branchId && params.branchId !== "ALL") queryParams.set("branchId", params.branchId);
+export { tuitionApi } from "./api/domains/tuition.api";
 
-    const url = `${API_BASE_URL}/admin/tuition/summary${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
-    const res = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error || err?.message || "Không thể tải dữ liệu học phí");
-    }
-
-    const json = await res.json();
-    return json.data || json;
-  },
-
-  updateStudentTuition: async (
-    classStudentId: string,
-    payload: {
-      tuitionFee?: number;
-      paidAmount?: number;
-      paymentStatus?: string;
-      paymentNote?: string | null;
-      externalRef?: string | null;
-    }
-  ) => {
-    const token = await getAuthToken();
-    const url = `${API_BASE_URL}/admin/tuition/students/${classStudentId}`;
-    const res = await fetch(url, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error || err?.message || "Không thể cập nhật học phí");
-    }
-
-    const json = await res.json();
-    return json.data || json;
-  },
-};
-
-export const referralsApi = {
-  validateCode: async (code: string) => {
-    const url = `${API_BASE_URL}/referrals/validate-code/${encodeURIComponent(code)}`;
-    const res = await fetch(url);
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.message || "Mã giới thiệu không hợp lệ");
-    }
-    return res.json();
-  },
-
-  getMyReferrals: async () => {
-    const token = await getAuthToken();
-    const url = `${API_BASE_URL}/referrals/my-referrals`;
-    const res = await fetch(url, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error || err?.message || "Không thể tải danh sách giới thiệu");
-    }
-
-    return res.json();
-  },
-};
+export { referralsApi } from "./api/domains/referrals.api";
 
 export default supabase;
 
 // =============================================
 // TEACHER PROFILE API
 // =============================================
-export const teacherProfileApi = {
-  /**
-   * Lấy hồ sơ năng lực của giáo viên (profile + currentClasses + workload).
-   */
-  get: async (userId: string) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-
-    const res = await fetch(`/api/teacher-profile/${userId}`, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error || err?.message || "Không thể tải hồ sơ giáo viên");
-    }
-
-    return res.json() as Promise<{
-      profile: TeacherProfileData | null;
-      currentClasses: TeacherClassItem[];
-      workload: {
-        currentClasses: number;
-        maxClasses: number | null;
-        maxHours: number | null;
-        capacityStatus: "available" | "nearFull" | "full" | "unknown";
-      };
-    }>;
-  },
-
-  /**
-   * Upsert hồ sơ năng lực (admin only).
-   */
-  upsert: async (userId: string, data: Partial<TeacherProfileData>) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-
-    const res = await fetch(`/api/teacher-profile/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error || err?.message || "Không thể cập nhật hồ sơ giáo viên");
-    }
-
-    return res.json();
-  },
-};
-
-// Teacher Profile types
-export interface TeacherProfileData {
-  id?: string;
-  userId?: string;
-  ieltsOverall?: number | null;
-  ieltsL?: number | null;
-  ieltsR?: number | null;
-  ieltsW?: number | null;
-  ieltsS?: number | null;
-  ieltsTestedAt?: string | null;
-  yearsTeachingIelts?: number | null;
-  yearsTeachingEnglish?: number | null;
-  certificates?: string[];
-  educationLevel?: string | null;
-  teachableLevels?: string[];
-  strongSkills?: string[];
-  strengths?: string[];
-  developmentAreas?: string[];
-  internalNotes?: string | null;
-  availabilitySlots?: AvailabilitySlot[] | null;
-  maxClassesPerWeek?: number | null;
-  maxHoursPerWeek?: number | null;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface AvailabilitySlot {
-  dayOfWeek: number; // 1=Mon, 2=Tue, ..., 7=Sun
-  startTime: string; // "18:00"
-  endTime: string;   // "21:30"
-}
-
-export interface TeacherClassItem {
-  id: string;
-  name: string;
-  status: string;
-  startDate: string | null;
-  endDate: string | null;
-  studentCount: number;
-}
+export {
+  teacherProfileApi,
+  type TeacherProfileData,
+  type AvailabilitySlot,
+  type TeacherClassItem,
+} from "./api/domains/teacher-profile.api";
 
 // Parent Progress Hub types & API Client
 export interface ParentReportData {
@@ -6049,7 +5255,175 @@ export const arenaApi = {
     );
     return json.data;
   },
+
+  async getLessonQuestions(params: {
+    examId?: string;
+    lessonKey?: string;
+  }): Promise<{
+    lessonKey: string;
+    examTitle: string;
+    isCustom: boolean;
+    questions: any[];
+  }> {
+    const token = await getAuthToken();
+    const query = new URLSearchParams();
+    if (params.examId) query.set("examId", params.examId);
+    if (params.lessonKey) query.set("lessonKey", params.lessonKey);
+
+    const res = await fetch(`${API_BASE_URL}/arena/questions?${query.toString()}`, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể tải danh sách câu hỏi Arena"
+    );
+    return json.data;
+  },
+
+  async saveLessonQuestions(params: {
+    examId?: string;
+    lessonKey?: string;
+    questions: any[];
+  }): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/arena/questions`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: JSON.stringify(params),
+    });
+    const json = await handleApiResponse<{ success: boolean; message: string }>(
+      res,
+      "Không thể lưu bộ câu hỏi Arena"
+    );
+    return json;
+  },
+
+  async resetLessonQuestions(params: {
+    examId?: string;
+    lessonKey?: string;
+  }): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    const token = await getAuthToken();
+    const query = new URLSearchParams();
+    if (params.examId) query.set("examId", params.examId);
+    if (params.lessonKey) query.set("lessonKey", params.lessonKey);
+
+    const res = await fetch(`${API_BASE_URL}/arena/questions?${query.toString()}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+    const json = await handleApiResponse<{ success: boolean; message: string }>(
+      res,
+      "Không thể khôi phục bộ câu hỏi Arena"
+    );
+    return json;
+  },
 };
+
+export const facultyApi = {
+  getPublic: async (): Promise<any[]> => {
+    const res = await fetchWithResilience(`${API_BASE_URL}/faculty`);
+    const json = await handleApiResponse<{ success: boolean; data: any[] }>(
+      res,
+      "Không thể tải danh sách giảng viên"
+    );
+    return json.data || [];
+  },
+
+  getAll: async (): Promise<any[]> => {
+    const res = await authenticatedFetch(`${API_BASE_URL}/faculty/all`);
+    const json = await handleApiResponse<{ success: boolean; data: any[] }>(
+      res,
+      "Không thể tải danh sách toàn bộ giảng viên"
+    );
+    return json.data || [];
+  },
+
+  save: async (profile: any): Promise<any> => {
+    const res = await authenticatedFetch(`${API_BASE_URL}/faculty`, {
+      method: "POST",
+      body: JSON.stringify(profile),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể lưu hồ sơ giảng viên"
+    );
+    return json.data;
+  },
+
+  togglePublish: async (id: string, isPublished: boolean): Promise<any> => {
+    const res = await authenticatedFetch(`${API_BASE_URL}/faculty/${id}/toggle-publish`, {
+      method: "PATCH",
+      body: JSON.stringify({ isPublished }),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể cập nhật trạng thái giảng viên"
+    );
+    return json.data;
+  },
+
+  delete: async (id: string): Promise<boolean> => {
+    const res = await authenticatedFetch(`${API_BASE_URL}/faculty/${id}`, {
+      method: "DELETE",
+    });
+    await handleApiResponse<{ success: boolean }>(res, "Không thể xóa giảng viên");
+    return true;
+  },
+};
+
+export const evidenceApi = {
+  getPublished: async (): Promise<any[]> => {
+    const res = await fetchWithResilience(`${API_BASE_URL}/evidence`);
+    const json = await handleApiResponse<{ success: boolean; data: any[] }>(
+      res,
+      "Không thể tải danh sách vinh danh"
+    );
+    return json.data || [];
+  },
+
+  getAll: async (): Promise<any[]> => {
+    const res = await authenticatedFetch(`${API_BASE_URL}/evidence/all`);
+    const json = await handleApiResponse<{ success: boolean; data: any[] }>(
+      res,
+      "Không thể tải toàn bộ danh sách vinh danh"
+    );
+    return json.data || [];
+  },
+
+  save: async (item: any): Promise<any> => {
+    const res = await authenticatedFetch(`${API_BASE_URL}/evidence`, {
+      method: "POST",
+      body: JSON.stringify(item),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể lưu vinh danh"
+    );
+    return json.data;
+  },
+
+  delete: async (id: string): Promise<boolean> => {
+    const res = await authenticatedFetch(`${API_BASE_URL}/evidence/${id}`, {
+      method: "DELETE",
+    });
+    await handleApiResponse<{ success: boolean }>(res, "Không thể xóa vinh danh");
+    return true;
+  },
+};
+
 
 
 
