@@ -142,7 +142,12 @@ export class ArenaEngineService {
       }
 
       case "SHOW_LEADERBOARD": {
-        nextStatus = "LEADERBOARD";
+        // Nếu là câu cuối cùng, bảo toàn bí mật điểm số bằng cách chuyển thẳng sang PODIUM
+        if (room.currentRound >= totalQuestions - 1) {
+          nextStatus = "PODIUM";
+        } else {
+          nextStatus = "LEADERBOARD";
+        }
         break;
       }
 

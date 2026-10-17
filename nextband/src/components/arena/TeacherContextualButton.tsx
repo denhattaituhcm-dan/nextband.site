@@ -64,23 +64,46 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
 
       case 'REVEAL_PERSONAL':
         return (
-          <button
-            onClick={() => onExecuteCommand('START_DEBRIEF')}
-            disabled={isLoading}
-            className="flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-blue-600/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
-          >
-            <BookOpen className="w-6 h-6" /> GIẢI THÍCH BẪY HỌC THUẬT
-          </button>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => onExecuteCommand('START_DEBRIEF')}
+              disabled={isLoading}
+              className="flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-blue-600/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+            >
+              <BookOpen className="w-6 h-6" /> GIẢI THÍCH BẪY HỌC THUẬT
+            </button>
+            {isLastRound && (
+              <button
+                onClick={() => onExecuteCommand('NEXT_ROUND')}
+                disabled={isLoading}
+                className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-black text-lg rounded-2xl shadow-2xl shadow-amber-500/30 transition-all cursor-pointer transform hover:scale-105 active:scale-95 animate-pulse"
+              >
+                <Trophy className="w-6 h-6 text-yellow-200" /> LÊN BỤC VINH DANH 🏆
+              </button>
+            )}
+          </div>
         );
 
       case 'TEACHER_DEBRIEF':
         return (
           <button
-            onClick={() => onExecuteCommand('SHOW_LEADERBOARD')}
+            onClick={() => onExecuteCommand(isLastRound ? 'NEXT_ROUND' : 'SHOW_LEADERBOARD')}
             disabled={isLoading}
-            className="flex items-center justify-center gap-3 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-purple-600/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+            className={`flex items-center justify-center gap-3 px-8 py-4 ${
+              isLastRound
+                ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-black text-xl shadow-2xl shadow-amber-500/40 animate-pulse'
+                : 'bg-purple-600 hover:bg-purple-700 text-white font-black text-lg shadow-xl shadow-purple-600/20'
+            } rounded-2xl transition-all cursor-pointer transform hover:scale-105 active:scale-95`}
           >
-            <Trophy className="w-6 h-6" /> BẢNG XẾP HẠNG
+            {isLastRound ? (
+              <>
+                <Trophy className="w-7 h-7 text-yellow-200 animate-bounce" /> LÊN BỤC VINH DANH (PODIUM) 🏆
+              </>
+            ) : (
+              <>
+                <Trophy className="w-6 h-6" /> BẢNG XẾP HẠNG
+              </>
+            )}
           </button>
         );
 

@@ -718,16 +718,33 @@ export default function ArenaHostPage() {
           setState('TEACHER_DEBRIEF');
           break;
         case 'SHOW_LEADERBOARD':
-          playClimberSound();
-          setState('LEADERBOARD');
-          if (channelRef.current) {
-            channelRef.current.send({
-              type: 'broadcast',
-              event: 'show-leaderboard',
-              payload: {
-                rankings: allRankings,
-              },
-            });
+          if (isLastRound) {
+            // Ở câu hỏi cuối cùng: Tuyệt đối không hiển thị bảng xếp hạng trước để giữ 100% bí mật kịch tính cho Podium
+            stopQuestionSuspense();
+            playPodiumSound();
+            setState('PODIUM');
+            if (channelRef.current) {
+              channelRef.current.send({
+                type: 'broadcast',
+                event: 'arena-finished',
+                payload: {
+                  podium: allRankings.slice(0, 3),
+                  rankings: allRankings,
+                },
+              });
+            }
+          } else {
+            playClimberSound();
+            setState('LEADERBOARD');
+            if (channelRef.current) {
+              channelRef.current.send({
+                type: 'broadcast',
+                event: 'show-leaderboard',
+                payload: {
+                  rankings: allRankings,
+                },
+              });
+            }
           }
           break;
         case 'NEXT_ROUND': {

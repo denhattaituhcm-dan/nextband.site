@@ -103242,7 +103242,11 @@ var init_arena_engine_service = __esm({
             break;
           }
           case "SHOW_LEADERBOARD": {
-            nextStatus = "LEADERBOARD";
+            if (room.currentRound >= totalQuestions - 1) {
+              nextStatus = "PODIUM";
+            } else {
+              nextStatus = "LEADERBOARD";
+            }
             break;
           }
           case "NEXT_ROUND": {

@@ -691,8 +691,14 @@ export default function ArenaPlayPage() {
             </div>
 
             <div className="pt-2">
-              <span className="text-xs text-purple-300/70 font-medium">
-                Nhìn lên màn hình của Thầy/Cô để xem phân tích chi tiết.
+              <span className="text-xs text-purple-300/80 font-medium">
+                {questionIndex >= totalQuestions - 1 ? (
+                  <span className="text-amber-300 font-bold block bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl animate-pulse">
+                    🏁 Câu hỏi cuối cùng đã kết thúc! Điểm số chung cuộc đang được giữ bí mật. Hãy ngẩng đầu nhìn lên màn chiếu lớn để theo dõi BỤC VINH DANH QUÁN QUÂN!
+                  </span>
+                ) : (
+                  'Nhìn lên màn hình của Thầy/Cô để xem phân tích chi tiết.'
+                )}
               </span>
             </div>
           </div>

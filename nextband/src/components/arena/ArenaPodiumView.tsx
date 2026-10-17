@@ -154,11 +154,72 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
       {/* Canvas pháo hoa overlay toàn màn hình khi Quán quân lộ diện */}
       <canvas
         ref={canvasRef}
-        className="pointer-events-none absolute inset-0 w-full h-full z-20"
+        className="pointer-events-none absolute inset-0 w-full h-full z-30"
       />
 
+      {/* THEATRICAL SPOTLIGHT SYSTEM (Đèn rọi sân khấu cho Quán Quân Hạng 1) */}
+      {(isDrumRolling || hasRevealedFirst) && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden z-10 transition-opacity duration-1000">
+          {/* Lớp màn tối sân khấu tập trung ánh nhìn vào Quán Quân */}
+          <div className="absolute inset-0 bg-slate-950/60 transition-opacity duration-1000" />
+
+          {/* Đèn rọi thẳng từ trần xuống đỉnh bục Quán Quân */}
+          <div
+            className={`absolute top-0 left-1/2 -translate-x-1/2 w-80 md:w-96 h-full transition-all duration-700 ${
+              hasRevealedFirst
+                ? 'opacity-90 animate-pulse'
+                : 'opacity-40 animate-pulse'
+            }`}
+            style={{
+              clipPath: 'polygon(42% 0%, 58% 0%, 92% 100%, 8% 100%)',
+              background:
+                'linear-gradient(180deg, rgba(254, 240, 138, 0.95) 0%, rgba(250, 204, 21, 0.4) 45%, rgba(245, 158, 11, 0.15) 85%, transparent 100%)',
+              filter: 'blur(2px)',
+            }}
+          />
+
+          {/* Luồng sáng chéo từ bên trái rọi vào Quán Quân */}
+          <div
+            className={`hidden md:block absolute top-0 left-1/4 w-72 h-[88%] origin-top -rotate-[22deg] transition-all duration-700 ${
+              hasRevealedFirst ? 'opacity-65' : 'opacity-25 animate-pulse'
+            }`}
+            style={{
+              clipPath: 'polygon(45% 0%, 55% 0%, 96% 100%, 4% 100%)',
+              background:
+                'linear-gradient(180deg, rgba(253, 224, 71, 0.8) 0%, rgba(245, 158, 11, 0.3) 50%, transparent 100%)',
+              filter: 'blur(4px)',
+            }}
+          />
+
+          {/* Luồng sáng chéo từ bên phải rọi vào Quán Quân */}
+          <div
+            className={`hidden md:block absolute top-0 right-1/4 w-72 h-[88%] origin-top rotate-[22deg] transition-all duration-700 ${
+              hasRevealedFirst ? 'opacity-65' : 'opacity-25 animate-pulse'
+            }`}
+            style={{
+              clipPath: 'polygon(45% 0%, 55% 0%, 96% 100%, 4% 100%)',
+              background:
+                'linear-gradient(180deg, rgba(253, 224, 71, 0.8) 0%, rgba(245, 158, 11, 0.3) 50%, transparent 100%)',
+              filter: 'blur(4px)',
+            }}
+          />
+
+          {/* Quầng sáng phản chiếu rực rỡ trên sàn ngay chân bục Hạng 1 */}
+          <div
+            className={`absolute bottom-4 left-1/2 -translate-x-1/2 w-72 md:w-96 h-20 rounded-[100%] transition-all duration-700 ${
+              hasRevealedFirst ? 'opacity-95 scale-110' : 'opacity-40 scale-95'
+            }`}
+            style={{
+              background:
+                'radial-gradient(ellipse at center, rgba(254, 240, 138, 0.85) 0%, rgba(245, 158, 11, 0.45) 45%, transparent 75%)',
+              filter: 'blur(8px)',
+            }}
+          />
+        </div>
+      )}
+
       {/* Title */}
-      <div className="text-center space-y-2 z-10">
+      <div className="text-center space-y-2 z-20">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-500/20 border border-amber-400/40 rounded-full text-amber-300 text-xs font-black uppercase tracking-widest shadow-lg">
           <Sparkles className="w-4 h-4 text-amber-400 animate-spin" /> BẢNG VINH DANH CHUNG CUỘC
         </div>
@@ -167,7 +228,7 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
         </h1>
         <p className="text-sm text-purple-200/80 font-medium">
           {isDrumRolling ? (
-            <span className="text-amber-300 font-extrabold animate-pulse">
+            <span className="text-amber-300 font-extrabold animate-pulse text-base drop-shadow-[0_0_15px_rgba(251,191,36,0.8)]">
               🥁 Tiếng trống dồn: Ai sẽ là QUÁN QUÂN của hôm nay?!
             </span>
           ) : hasRevealedFirst ? (
@@ -179,7 +240,7 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
       </div>
 
       {/* Olympic 3-tier Podium */}
-      <div className="flex items-end justify-center gap-3 md:gap-6 w-full max-w-2xl pt-8 pb-4 z-10">
+      <div className="flex items-end justify-center gap-3 md:gap-6 w-full max-w-2xl pt-8 pb-4 z-20">
         {/* Hạng 2 (Silver) */}
         <div className="flex-1 flex flex-col items-center space-y-3">
           {second && hasRevealedSecond ? (
@@ -211,14 +272,14 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
         {/* Hạng 1 (Gold - Cao nhất) */}
         <div className="flex-1 flex flex-col items-center space-y-3 -mt-6">
           {first && hasRevealedFirst ? (
-            <div className="flex flex-col items-center space-y-1 relative animate-bounce transition-all duration-1000 scale-105">
-              <div className="absolute -top-8 text-amber-400 animate-pulse drop-shadow-md">
-                <Crown className="w-10 h-10 fill-amber-400" />
+            <div className="flex flex-col items-center space-y-1 relative animate-bounce transition-all duration-1000 scale-105 z-30">
+              <div className="absolute -top-9 text-amber-300 animate-bounce drop-shadow-[0_0_25px_rgba(250,204,21,1)]">
+                <Crown className="w-11 h-11 fill-amber-400 stroke-amber-200 stroke-[1.5]" />
               </div>
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-amber-400/30 border-4 border-amber-400 flex items-center justify-center text-3xl md:text-4xl font-black text-amber-300 shadow-2xl shadow-amber-500/50">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-amber-400/40 border-4 border-amber-300 flex items-center justify-center text-3xl md:text-4xl font-black text-amber-200 shadow-[0_0_40px_rgba(251,191,36,0.9)] ring-4 ring-amber-300/60">
                 {first.nickname.charAt(0).toUpperCase()}
               </div>
-              <span className="font-black text-base md:text-lg text-amber-300 truncate max-w-[140px]">
+              <span className="font-black text-base md:text-lg text-amber-300 truncate max-w-[140px] drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]">
                 {first.nickname}
               </span>
               <span className="text-sm md:text-base font-black text-amber-400 font-mono">
@@ -228,7 +289,7 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
           ) : (
             <div className="h-24 flex flex-col items-center justify-center">
               {isDrumRolling ? (
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 border border-amber-400/50 rounded-full text-amber-300 text-xs font-black animate-ping">
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/30 border border-amber-400 rounded-full text-amber-300 text-xs font-black animate-ping shadow-[0_0_20px_rgba(251,191,36,0.9)]">
                   🥁 ???
                 </div>
               ) : (
@@ -239,7 +300,7 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
             </div>
           )}
           <div className={`w-full h-44 md:h-56 bg-gradient-to-t from-amber-700 via-amber-600 to-amber-500 rounded-t-2xl border-t-4 border-amber-300 flex flex-col items-center justify-center text-white shadow-2xl transition-all duration-700 ${
-            hasRevealedFirst ? 'shadow-amber-500/50 ring-2 ring-amber-300' : ''
+            hasRevealedFirst ? 'shadow-[0_0_50px_rgba(245,158,11,0.8)] ring-2 ring-amber-300 relative z-20' : ''
           }`}>
             <Trophy className="w-10 h-10 text-amber-200 mb-1 animate-pulse" />
             <span className="text-4xl md:text-5xl font-black">1</span>
