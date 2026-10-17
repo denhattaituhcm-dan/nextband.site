@@ -18,6 +18,7 @@ export interface ExecuteCommandInput {
   action: HostCommandAction;
   pin: string;
   hostToken: string;
+  gameMode?: string;
 }
 
 export interface SubmitAnswerInput {
@@ -185,6 +186,9 @@ export class ArenaEngineService {
     }
 
     // Ghi nhận Database an toàn trước khi trả kết quả
+    const currentConfig = (room.config && typeof room.config === "object") ? (room.config as Record<string, any>) : {};
+    const nextConfig = input.gameMode ? { ...currentConfig, gameMode: input.gameMode } : room.config;
+
     const updatedRoom = await this.prisma.arenaRoom.update({
       where: { id: room.id },
       data: {
@@ -194,6 +198,7 @@ export class ArenaEngineService {
         roundStartedAt: nextStatus === "QUESTION_LIVE" ? now : room.roundStartedAt,
         roundDeadlineAt: deadlineAt,
         lastCommandId: commandId,
+        config: nextConfig,
       },
     });
 
@@ -271,6 +276,7 @@ export class ArenaEngineService {
 
     // 3. Server tính điểm: Tuyệt đối không dùng điểm số do Client gửi lên
     const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
+    const totalQuestions = questions.length;
     const question = questions[roundIndex];
     const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
 
@@ -280,7 +286,15 @@ export class ArenaEngineService {
         ? Math.max(0, Math.ceil((room.roundDeadlineAt.getTime() - serverReceivedAt.getTime()) / 1000))
         : 1;
       // Công thức Kahoot chuẩn: 100 điểm cơ bản + 10 điểm cho mỗi giây còn lại
-      scoreAwarded = 100 + timeLeftSeconds * 10;
+      const baseScore = 100 + timeLeftSeconds * 10;
+
+      // Xác định câu cuối dựa trên tổng số câu hỏi thực tế của trận đấu (0-indexed: roundIndex === totalQuestions - 1)
+      const isFinalQuestion = totalQuestions > 0 && roundIndex >= totalQuestions - 1;
+      const roomConfig = (room.config && typeof room.config === "object") ? (room.config as Record<string, any>) : {};
+      const isClassicMode = roomConfig.gameMode !== "GOLD_QUEST";
+      const multiplier = (isClassicMode && isFinalQuestion) ? 2 : 1;
+
+      scoreAwarded = baseScore * multiplier;
     }
 
     // 4. Transaction ghi nhận vào DB: Chống nộp kép bằng Unique Constraint

@@ -123,18 +123,20 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
       action: any;
       pin: string;
       hostToken: string;
+      gameMode?: string;
     };
   }>(
     "/rooms/:id/command",
     async (request, reply) => {
       try {
-        const { commandId, action, pin, hostToken } = request.body || {};
+        const { commandId, action, pin, hostToken, gameMode } = request.body || {};
         const engineService = new (await import("../services/arena-engine.service.js")).ArenaEngineService(fastify.prisma);
         const result = await engineService.executeHostCommand({
           commandId,
           action,
           pin,
           hostToken,
+          gameMode,
         });
         return reply.code(200).send({
           success: true,

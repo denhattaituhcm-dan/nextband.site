@@ -217,5 +217,94 @@ describe("🎮 PHASE 4: SERVER-AUTHORITATIVE STATE MACHINE & SCORING SPEC SUITE"
         code: "EXPIRED_SUBMISSION",
       });
     });
+
+    it("nhân đôi điểm (x2) chính xác cho câu cuối cùng ở chế độ CLASSIC", async () => {
+      const room = await roomService.createRoom({});
+      createdRoomIds.push(room.roomId);
+
+      const p1 = await roomService.joinRoom({
+        pin: room.pin,
+        nickname: "Thanh Hằng",
+      });
+
+      await engineService.executeHostCommand({
+        commandId: randomUUID(),
+        action: "START_ARENA",
+        pin: room.pin,
+        hostToken: room.hostToken,
+        gameMode: "CLASSIC",
+      });
+
+      const totalQuestions = ARENA_STANDARD_QUESTIONS.length;
+      const lastIndex = totalQuestions - 1;
+      const lastQ = ARENA_STANDARD_QUESTIONS[lastIndex];
+
+      // Đặt phòng sang câu hỏi cuối cùng
+      await prisma.arenaRoom.update({
+        where: { id: room.roomId },
+        data: {
+          currentRound: lastIndex,
+          currentQuestionId: lastQ.id,
+          roundDeadlineAt: new Date(Date.now() + 15000),
+        },
+      });
+
+      const submitResult = await engineService.submitAnswer({
+        roomId: room.roomId,
+        playerSessionToken: p1.playerSessionToken,
+        questionId: lastQ.id,
+        roundIndex: lastIndex,
+        selectedOptionId: lastQ.correctOptionId,
+      });
+
+      expect(submitResult.isCorrect).toBe(true);
+      // Base score tối thiểu 100, nhân đôi x2 phải >= 200
+      expect(submitResult.scoreAwarded).toBeGreaterThanOrEqual(200);
+      expect(submitResult.totalScore).toBe(submitResult.scoreAwarded);
+    });
+
+    it("KHÔNG nhân đôi điểm câu cuối khi ở chế độ GOLD_QUEST", async () => {
+      const room = await roomService.createRoom({});
+      createdRoomIds.push(room.roomId);
+
+      const p1 = await roomService.joinRoom({
+        pin: room.pin,
+        nickname: "Quốc Anh",
+      });
+
+      await engineService.executeHostCommand({
+        commandId: randomUUID(),
+        action: "START_ARENA",
+        pin: room.pin,
+        hostToken: room.hostToken,
+        gameMode: "GOLD_QUEST",
+      });
+
+      const totalQuestions = ARENA_STANDARD_QUESTIONS.length;
+      const lastIndex = totalQuestions - 1;
+      const lastQ = ARENA_STANDARD_QUESTIONS[lastIndex];
+
+      // Đặt phòng sang câu hỏi cuối cùng với 1s còn lại để baseScore ~ 110
+      await prisma.arenaRoom.update({
+        where: { id: room.roomId },
+        data: {
+          currentRound: lastIndex,
+          currentQuestionId: lastQ.id,
+          roundDeadlineAt: new Date(Date.now() + 1000),
+        },
+      });
+
+      const submitResult = await engineService.submitAnswer({
+        roomId: room.roomId,
+        playerSessionToken: p1.playerSessionToken,
+        questionId: lastQ.id,
+        roundIndex: lastIndex,
+        selectedOptionId: lastQ.correctOptionId,
+      });
+
+      expect(submitResult.isCorrect).toBe(true);
+      // Base score khi còn 1s là 110. Vì GOLD_QUEST không x2 nên scoreAwarded < 150
+      expect(submitResult.scoreAwarded).toBeLessThan(150);
+    });
   });
 });

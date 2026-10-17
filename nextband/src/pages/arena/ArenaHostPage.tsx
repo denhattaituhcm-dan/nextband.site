@@ -378,12 +378,16 @@ export default function ArenaHostPage() {
         
         let score = 0;
         if (isCorrect) {
+          const isFinalQuestion = totalQuestions > 0 && questionIndex >= totalQuestions - 1;
+          const isClassicMode = roomSettingsRef.current.gameMode === 'CLASSIC';
+          const finalMultiplier = (isClassicMode && isFinalQuestion) ? 2 : 1;
+
           if (roomSettingsRef.current.scoringMode === 'double') {
-            score = (100 + (payload.timeLeft || 1) * 10) * 2;
+            score = (100 + (payload.timeLeft || 1) * 10) * 2 * finalMultiplier;
           } else if (roomSettingsRef.current.scoringMode === 'no_points') {
             score = 0;
           } else {
-            score = 100 + (payload.timeLeft || 1) * 10;
+            score = (100 + (payload.timeLeft || 1) * 10) * finalMultiplier;
           }
         }
 
@@ -649,6 +653,7 @@ export default function ArenaHostPage() {
             action: command,
             pin: pinCode,
             hostToken,
+            gameMode: roomSettings.gameMode,
           });
           if (res?.question) {
             serverQuestion = res.question;
@@ -992,10 +997,16 @@ export default function ArenaHostPage() {
           <div className="w-full space-y-6">
             <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase flex items-center justify-center gap-2">
               <span>CÂU HỎI {questionIndex + 1} / {totalQuestions} · IELTS COLLOCATION ({roomSettings.timeLimit} GIÂY)</span>
-              {roomSettings.gameMode === 'GOLD_QUEST' && (
+              {roomSettings.gameMode === 'GOLD_QUEST' ? (
                 <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-400/40 rounded-full text-[10px]">
                   💰 CƯỚP VÀNG LIVE
                 </span>
+              ) : (
+                isLastRound && (
+                  <span className="px-2.5 py-0.5 bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-300 border border-amber-400/50 rounded-full text-[10px] font-black animate-pulse flex items-center gap-1 shadow-sm">
+                    ⚡ CÂU CUỐI X2 ĐIỂM
+                  </span>
+                )
               )}
             </div>
 

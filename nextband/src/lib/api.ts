@@ -5193,6 +5193,7 @@ export const arenaApi = {
     action: string;
     pin: string;
     hostToken: string;
+    gameMode?: string;
   }): Promise<{
     idempotent: boolean;
     roomId: string;

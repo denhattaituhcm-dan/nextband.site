@@ -684,6 +684,8 @@ export default function ArenaPlayPage() {
               <span className="text-[11px] font-mono font-bold text-purple-300 uppercase tracking-widest flex items-center justify-center gap-1">
                 {gameMode === 'GOLD_QUEST'
                   ? `💰 CƯỚP VÀNG · CÂU ${questionIndex + 1}/${totalQuestions}`
+                  : totalQuestions > 0 && questionIndex >= totalQuestions - 1
+                  ? `⚡ CÂU CUỐI CÙNG (X2 ĐIỂM) · CÂU ${questionIndex + 1}/${totalQuestions}`
                   : `🎯 CÂU HỎI ${questionIndex + 1}/${totalQuestions} · 15 GIÂY`}
               </span>
               <h2 className="text-lg md:text-xl font-bold text-white leading-snug">
@@ -774,7 +776,13 @@ export default function ArenaPlayPage() {
                 {isCorrect ? 'CHÍNH XÁC!' : 'CHƯA CHÍNH XÁC'}
               </h2>
               <p className="text-sm font-semibold text-purple-200">
-                {isCorrect ? (gameMode === 'GOLD_QUEST' ? `Kho vàng: ${gold} 🪙` : '+100 Điểm Tốc Độ') : 'Đừng nản lòng, chú ý collocation tiếp theo'}
+                {isCorrect
+                  ? gameMode === 'GOLD_QUEST'
+                    ? `Kho vàng: ${gold} 🪙`
+                    : totalQuestions > 0 && questionIndex >= totalQuestions - 1
+                    ? '⚡ ĐÃ NHÂN ĐÔI ĐIỂM CÂU CUỐI (X2)!'
+                    : '+100 Điểm Tốc Độ'
+                  : 'Đừng nản lòng, chú ý collocation tiếp theo'}
               </p>
             </div>
 
