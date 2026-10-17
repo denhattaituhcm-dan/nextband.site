@@ -23,9 +23,13 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
           <button
             onClick={() => onExecuteCommand('START_ARENA')}
             disabled={isLoading}
-            className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-orange-500/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-orange-500/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95 group"
           >
-            <Play className="w-6 h-6 fill-white" /> BẮT ĐẦU TRẬN ĐẤU
+            <Play className="w-6 h-6 fill-white" />
+            <span>BẮT ĐẦU TRẬN ĐẤU</span>
+            <kbd className="ml-2 hidden sm:inline-flex items-center px-2 py-0.5 text-xs font-mono font-bold bg-black/25 text-white/90 rounded border border-white/20">
+              Enter ↵
+            </kbd>
           </button>
         );
 
@@ -36,7 +40,11 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
             disabled={isLoading}
             className="flex items-center justify-center gap-3 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-red-600/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95 animate-pulse"
           >
-            <Lock className="w-6 h-6" /> KHÓA CÂU HỎI
+            <Lock className="w-6 h-6" />
+            <span>KHÓA CÂU HỎI</span>
+            <kbd className="ml-2 hidden sm:inline-flex items-center px-2 py-0.5 text-xs font-mono font-bold bg-black/25 text-white/90 rounded border border-white/20">
+              Enter ↵
+            </kbd>
           </button>
         );
 
@@ -47,7 +55,11 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
             disabled={isLoading}
             className="flex items-center justify-center gap-3 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-indigo-600/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
           >
-            <BarChart2 className="w-6 h-6" /> HIỆN PHÂN PHỐI ĐÁP ÁN
+            <BarChart2 className="w-6 h-6" />
+            <span>HIỆN PHÂN PHỐI ĐÁP ÁN</span>
+            <kbd className="ml-2 hidden sm:inline-flex items-center px-2 py-0.5 text-xs font-mono font-bold bg-black/25 text-white/90 rounded border border-white/20">
+              Enter ↵
+            </kbd>
           </button>
         );
 
@@ -58,7 +70,11 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
             disabled={isLoading}
             className="flex items-center justify-center gap-3 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-600/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
           >
-            <Eye className="w-6 h-6" /> CÔNG BỐ ĐÁP ÁN ĐÚNG
+            <Eye className="w-6 h-6" />
+            <span>CÔNG BỐ ĐÁP ÁN ĐÚNG</span>
+            <kbd className="ml-2 hidden sm:inline-flex items-center px-2 py-0.5 text-xs font-mono font-bold bg-black/25 text-white/90 rounded border border-white/20">
+              Enter ↵
+            </kbd>
           </button>
         );
 
@@ -70,7 +86,11 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
               disabled={isLoading}
               className="flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-blue-600/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
             >
-              <BookOpen className="w-6 h-6" /> GIẢI THÍCH BẪY HỌC THUẬT
+              <BookOpen className="w-6 h-6" />
+              <span>GIẢI THÍCH BẪY HỌC THUẬT</span>
+              <kbd className="ml-2 hidden sm:inline-flex items-center px-2 py-0.5 text-xs font-mono font-bold bg-black/25 text-white/90 rounded border border-white/20">
+                Enter ↵
+              </kbd>
             </button>
             {isLastRound && (
               <button
@@ -78,7 +98,8 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
                 disabled={isLoading}
                 className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-black text-lg rounded-2xl shadow-2xl shadow-amber-500/30 transition-all cursor-pointer transform hover:scale-105 active:scale-95 animate-pulse"
               >
-                <Trophy className="w-6 h-6 text-yellow-200" /> LÊN BỤC VINH DANH 🏆
+                <Trophy className="w-6 h-6 text-yellow-200" />
+                <span>LÊN BỤC VINH DANH 🏆</span>
               </button>
             )}
           </div>
@@ -97,13 +118,18 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
           >
             {isLastRound ? (
               <>
-                <Trophy className="w-7 h-7 text-yellow-200 animate-bounce" /> LÊN BỤC VINH DANH (PODIUM) 🏆
+                <Trophy className="w-7 h-7 text-yellow-200 animate-bounce" />
+                <span>LÊN BỤC VINH DANH (PODIUM) 🏆</span>
               </>
             ) : (
               <>
-                <Trophy className="w-6 h-6" /> BẢNG XẾP HẠNG
+                <Trophy className="w-6 h-6" />
+                <span>BẢNG XẾP HẠNG</span>
               </>
             )}
+            <kbd className="ml-2 hidden sm:inline-flex items-center px-2 py-0.5 text-xs font-mono font-bold bg-black/25 text-white/90 rounded border border-white/20">
+              Enter ↵
+            </kbd>
           </button>
         );
 
@@ -116,13 +142,18 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
           >
             {isLastRound ? (
               <>
-                <Trophy className="w-6 h-6 text-amber-300" /> XEM BỤC VINH DANH 🏆
+                <Trophy className="w-6 h-6 text-amber-300" />
+                <span>XEM BỤC VINH DANH 🏆</span>
               </>
             ) : (
               <>
-                <ArrowRight className="w-6 h-6" /> CÂU HỎI TIẾP THEO
+                <ArrowRight className="w-6 h-6" />
+                <span>CÂU HỎI TIẾP THEO</span>
               </>
             )}
+            <kbd className="ml-2 hidden sm:inline-flex items-center px-2 py-0.5 text-xs font-mono font-bold bg-black/25 text-white/90 rounded border border-white/20">
+              Enter ↵
+            </kbd>
           </button>
         );
 
@@ -133,7 +164,11 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
             disabled={isLoading}
             className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-orange-500/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
           >
-            <Play className="w-6 h-6 fill-white" /> BẮT ĐẦU TRẬN MỚI (VỀ SẢNH)
+            <Play className="w-6 h-6 fill-white" />
+            <span>BẮT ĐẦU TRẬN MỚI (VỀ SẢNH)</span>
+            <kbd className="ml-2 hidden sm:inline-flex items-center px-2 py-0.5 text-xs font-mono font-bold bg-black/25 text-white/90 rounded border border-white/20">
+              Enter ↵
+            </kbd>
           </button>
         );
 

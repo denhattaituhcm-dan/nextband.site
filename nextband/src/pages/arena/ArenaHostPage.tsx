@@ -886,6 +886,61 @@ export default function ArenaHostPage() {
     ]
   );
 
+  // Phím tắt bàn phím (Enter / Space) dành riêng cho Giáo viên/Host trên Máy tính
+  const lastKeyTriggerRef = useRef<number>(0);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Bỏ qua nếu đang mở modal cài đặt hoặc đang gõ phím trong input/textarea
+      if (isSettingsOpen) return;
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+
+        // Debounce 400ms để tránh tình trạng bấm đúp nhảy cóc qua màn hình
+        const now = Date.now();
+        if (now - lastKeyTriggerRef.current < 400) return;
+        lastKeyTriggerRef.current = now;
+
+        // Xác định lệnh tiếp theo dựa trên trạng thái hiện tại của phòng
+        switch (state) {
+          case 'LOBBY':
+            handleExecuteCommand('START_ARENA');
+            break;
+          case 'QUESTION_LIVE':
+            handleExecuteCommand('LOCK_ROUND');
+            break;
+          case 'ANSWER_LOCKED':
+            handleExecuteCommand('REVEAL_DISTRIBUTION');
+            break;
+          case 'REVEAL_DISTRIBUTION':
+            handleExecuteCommand('REVEAL_PERSONAL');
+            break;
+          case 'REVEAL_PERSONAL':
+            handleExecuteCommand(isLastRound ? 'NEXT_ROUND' : 'START_DEBRIEF');
+            break;
+          case 'TEACHER_DEBRIEF':
+            handleExecuteCommand(isLastRound ? 'NEXT_ROUND' : 'SHOW_LEADERBOARD');
+            break;
+          case 'LEADERBOARD':
+            handleExecuteCommand('NEXT_ROUND');
+            break;
+          case 'PODIUM':
+            handleExecuteCommand('RESTART_ARENA');
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [state, isLastRound, isSettingsOpen, handleExecuteCommand]);
+
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : '/arena/join';
 
   return (
@@ -1069,8 +1124,35 @@ export default function ArenaHostPage() {
               ))}
             </div>
 
-            <div className="text-xs text-purple-200/80">
-              Đã nhận câu trả lời: <span className="text-orange-400 font-bold">{Object.keys(answers).length}</span> / {players.length} học viên
+            {/* Thống kê số lượng học viên đã trả lời (Làm nổi bật rõ ràng cho máy chiếu) */}
+            <div className="max-w-md mx-auto mt-2 p-3 rounded-2xl bg-purple-950/70 border-2 border-purple-500/40 shadow-xl shadow-purple-950/60 backdrop-blur-sm">
+              <div className="flex items-center justify-between gap-4 mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-xs md:text-sm font-extrabold uppercase tracking-wider text-purple-200">
+                    Tiến độ nộp bài
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-1 font-mono">
+                  <span className="text-2xl md:text-3xl font-black text-amber-300 drop-shadow-[0_2px_10px_rgba(251,191,36,0.5)]">
+                    {Object.keys(answers).length}
+                  </span>
+                  <span className="text-sm md:text-base font-bold text-purple-300/80">
+                    / {players.length}
+                  </span>
+                  <span className="text-xs font-semibold text-purple-200 ml-1">học viên</span>
+                </div>
+              </div>
+
+              {/* Thanh tiến độ trực quan */}
+              <div className="w-full h-3 bg-purple-900/60 rounded-full overflow-hidden p-0.5 border border-purple-700/50">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-emerald-400 rounded-full transition-all duration-300 shadow-sm"
+                  style={{
+                    width: `${players.length > 0 ? Math.min(100, Math.round((Object.keys(answers).length / players.length) * 100)) : 0}%`,
+                  }}
+                />
+              </div>
             </div>
 
             {/* Live Feed cảnh báo cướp vàng nếu ở chế độ GOLD_QUEST */}
