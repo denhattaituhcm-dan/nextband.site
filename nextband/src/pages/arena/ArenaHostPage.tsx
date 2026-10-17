@@ -16,11 +16,12 @@ import { arenaApi } from '@/lib/api';
 import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { TeacherContextualButton } from '@/components/arena/TeacherContextualButton';
 import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/components/arena/HostSettingsModal';
+import { ArenaRulesModal } from '@/components/arena/ArenaRulesModal';
 import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
 import { ArenaFreeFireLeaderboard } from '@/components/arena/ArenaFreeFireLeaderboard';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap, Users } from 'lucide-react';
+import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap, Users, BookOpen, HelpCircle } from 'lucide-react';
 
 interface PlayerAnswerRecord {
   playerId: string;
@@ -53,6 +54,7 @@ export default function ArenaHostPage() {
   // Cài đặt thông số phòng (Mặc định chuẩn nếu giáo viên không chỉnh gì)
   const [roomSettings, setRoomSettings] = useState<RoomSettings>(DEFAULT_ROOM_SETTINGS);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [isRulesOpen, setIsRulesOpen] = useState<boolean>(false);
 
   // Quản lý câu hỏi đa vòng & Tổng điểm tích lũy qua các vòng
   const [roomId, setRoomId] = useState<string>('');
@@ -912,8 +914,8 @@ export default function ArenaHostPage() {
   const lastKeyTriggerRef = useRef<number>(0);
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Bỏ qua nếu đang mở modal cài đặt hoặc đang gõ phím trong input/textarea
-      if (isSettingsOpen) return;
+      // Bỏ qua nếu đang mở modal cài đặt/hướng dẫn hoặc đang gõ phím trong input/textarea
+      if (isSettingsOpen || isRulesOpen) return;
       const target = e.target as HTMLElement | null;
       if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
         return;
@@ -961,7 +963,7 @@ export default function ArenaHostPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [state, isLastRound, isSettingsOpen, handleExecuteCommand]);
+  }, [state, isLastRound, isSettingsOpen, isRulesOpen, handleExecuteCommand]);
 
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : '/arena/join';
 
@@ -990,16 +992,26 @@ export default function ArenaHostPage() {
           </div>
         )}
 
-        {/* Nút Cài đặt & Music Toggle */}
+        {/* Nút Hướng dẫn & Nội quy, Cài đặt & Music Toggle */}
         <div className="flex items-center gap-3">
           {state === 'LOBBY' && (
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-xs font-bold rounded-full transition-all cursor-pointer text-purple-200 hover:text-white"
-            >
-              <Settings className="w-4 h-4 text-purple-300" />
-              <span>Cài đặt ({roomSettings.gameMode === 'GOLD_QUEST' ? 'Cướp Vàng' : 'Cổ Điển'})</span>
-            </button>
+            <>
+              <button
+                onClick={() => setIsRulesOpen(true)}
+                className="flex items-center gap-2 px-3.5 py-1.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-400/50 text-xs font-bold rounded-full transition-all cursor-pointer text-amber-300 hover:text-amber-200 shadow-sm"
+              >
+                <BookOpen className="w-4 h-4 text-amber-400" />
+                <span>Hướng dẫn & Nội quy</span>
+              </button>
+
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-xs font-bold rounded-full transition-all cursor-pointer text-purple-200 hover:text-white"
+              >
+                <Settings className="w-4 h-4 text-purple-300" />
+                <span>Cài đặt ({roomSettings.gameMode === 'GOLD_QUEST' ? 'Cướp Vàng' : 'Cổ Điển'})</span>
+              </button>
+            </>
           )}
 
           <button
@@ -1110,6 +1122,7 @@ export default function ArenaHostPage() {
             pinCode={pinCode}
             joinUrl={joinUrl}
             onKickPlayer={handleKickPlayer}
+            onOpenRules={() => setIsRulesOpen(true)}
           />
         )}
 
@@ -1308,6 +1321,13 @@ export default function ArenaHostPage() {
         onClose={() => setIsSettingsOpen(false)}
         settings={roomSettings}
         onSaveSettings={(newSet) => setRoomSettings(newSet)}
+      />
+
+      {/* Modal Hướng dẫn trả lời & Nội quy thi đấu */}
+      <ArenaRulesModal
+        isOpen={isRulesOpen}
+        onClose={() => setIsRulesOpen(false)}
+        gameMode={roomSettings.gameMode}
       />
     </div>
   );

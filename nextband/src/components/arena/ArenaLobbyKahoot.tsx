@@ -8,7 +8,7 @@
  */
 
 import React, { useState } from 'react';
-import { Users, UserCheck, Sparkles, QrCode, Maximize2, X, UserX } from 'lucide-react';
+import { Users, UserCheck, Sparkles, QrCode, Maximize2, X, UserX, BookOpen, HelpCircle } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { getCharacterBySeed } from '@/lib/arena/characterCatalog';
 
@@ -27,6 +27,7 @@ interface ArenaLobbyKahootProps {
   pinCode: string;
   joinUrl?: string;
   onKickPlayer?: (player: LobbyPlayer) => void;
+  onOpenRules?: () => void;
 }
 
 const CARD_PALETTES = [
@@ -44,6 +45,7 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
   pinCode,
   joinUrl = '/arena/join',
   onKickPlayer,
+  onOpenRules,
 }) => {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const currentCount = players.length;
@@ -63,7 +65,7 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
       <div className="w-full bg-white text-slate-900 rounded-[2.5rem] shadow-[0_25px_60px_rgba(0,0,0,0.5)] p-5 md:p-8 flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 border-4 border-purple-200">
         
         {/* CỘT 1: Hướng dẫn tham gia & Link web */}
-        <div className="text-center lg:text-left space-y-2 flex-1">
+        <div className="text-center lg:text-left space-y-3 flex-1">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-purple-100 text-purple-900 rounded-full text-xs md:text-sm font-black uppercase tracking-wider">
             <Sparkles className="w-4 h-4 text-purple-600 animate-spin" /> Tham gia trận đấu
           </div>
@@ -73,6 +75,19 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
           <p className="text-sm md:text-base text-slate-600 font-bold">
             📱 Dùng Camera điện thoại quét mã vạch bên cạnh để vào ngay!
           </p>
+
+          {onOpenRules && (
+            <div className="pt-1">
+              <button
+                type="button"
+                onClick={onOpenRules}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 hover:from-purple-800 hover:to-indigo-900 text-white rounded-2xl text-xs md:text-sm font-black shadow-lg shadow-purple-900/30 hover:shadow-purple-900/50 transition-all cursor-pointer transform hover:-translate-y-0.5"
+              >
+                <BookOpen className="w-4 h-4 text-amber-300" />
+                <span>Xem Hướng Dẫn & Nội Quy</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* CỘT 2: GAME PIN SIÊU TO KHỔNG LỒ */}
