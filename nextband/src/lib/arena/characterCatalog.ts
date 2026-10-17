@@ -342,6 +342,27 @@ export const CHARACTER_AVATARS: CharacterAvatar[] = [
     "url": "/assets/Arena/avatars/individual/avatar_47.png",
     "type": "anime_fantasy",
     "name": "Thần Rồng Có Cánh Ra"
+  },
+  {
+    "id": 48,
+    "fileName": "avatar_48.png",
+    "url": "/assets/Arena/avatars/individual/avatar_48.png",
+    "type": "cute_chibi",
+    "name": "Kuromi Tinh Nghịch"
+  },
+  {
+    "id": 49,
+    "fileName": "avatar_49.png",
+    "url": "/assets/Arena/avatars/individual/avatar_49.png",
+    "type": "cute_chibi",
+    "name": "Capybara Vô Tri"
+  },
+  {
+    "id": 50,
+    "fileName": "avatar_50.png",
+    "url": "/assets/Arena/avatars/individual/avatar_50.png",
+    "type": "anime_fantasy",
+    "name": "Doraemon Mèo Máy"
   }
 ];
 
