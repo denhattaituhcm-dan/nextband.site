@@ -188,21 +188,21 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w1d1_q10",
       roundIndex: 9,
-      prompt: "Chọn câu có dạng chia động từ đúng cho chủ ngữ \"His advice on careers\":",
+      prompt: "Xác định câu viết SAI cấu trúc Subject - Finite Verb trong các câu sau:",
       options: [
-        { id: "opt_A", label: "A", text: "His advice on careers is very useful to me." },
-        { id: "opt_B", label: "B", text: "His advice on careers are very useful to me." },
-        { id: "opt_C", label: "C", text: "His advice on careers were very useful to me." },
-        { id: "opt_D", label: "D", text: "His advices on careers are very useful to me." }
+        { id: "opt_A", label: "A", text: "The course helps him can write professional emails in English." },
+        { id: "opt_B", label: "B", text: "Studying abroad allows students to broaden their knowledge of different cultures." },
+        { id: "opt_C", label: "C", text: "Not doing regular exercise makes people's physical health poorer." },
+        { id: "opt_D", label: "D", text: "His detailed advice on future career choices is very helpful to us." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. His advice on careers is very useful to me.",
-      correctExplanation: "Advice là danh từ không đếm được (luôn số ít), cụm giới từ \"on careers\" chỉ là bổ ngữ, nên động từ to be chia là \"is\".",
+      correctAnswerText: "A. The course helps him can write professional emails in English.",
+      correctExplanation: "Sau cấu trúc help someone, động từ theo sau là V nguyên mẫu (write) hoặc to-V (to write), KHÔNG BAO GIỜ kẹp thêm modal verb \"can\" (lỗi thừa động từ vị ngữ: helps him write).",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. His advice on careers are very useful to me.",
-        diagnosticTitle: "Bẫy hòa hợp với danh từ bổ ngữ \"careers\"",
-        explanation: "Học viên thấy careers có s đứng gần to be nên chọn are, quên mất chủ ngữ chính của câu là danh từ không đếm được advice."
+        baitOptionId: "opt_D",
+        baitOptionText: "D. His detailed advice on future career choices is very helpful to us.",
+        diagnosticTitle: "Bẫy danh từ bổ ngữ số nhiều \"choices\"",
+        explanation: "Học viên hay tưởng nhầm câu D sai vì thấy choices là số nhiều đi với is, nhưng chủ ngữ chính thật sự là danh từ không đếm được advice (chia is là hoàn toàn đúng)."
       }
     }
   ],
