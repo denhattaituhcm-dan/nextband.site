@@ -20,7 +20,7 @@ import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
 import { ArenaFreeFireLeaderboard } from '@/components/arena/ArenaFreeFireLeaderboard';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap } from 'lucide-react';
+import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap, Users } from 'lucide-react';
 
 interface PlayerAnswerRecord {
   playerId: string;
@@ -973,6 +973,15 @@ export default function ArenaHostPage() {
           </div>
         </div>
 
+        {/* Badge Sĩ số học viên tại Sảnh chờ (Cực kỳ nổi bật cho Host) */}
+        {state === 'LOBBY' && (
+          <div className="flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/20 border-2 border-emerald-400/50 text-emerald-200 font-extrabold text-xs md:text-sm shadow-lg shadow-emerald-950/60 animate-pulse">
+            <Users className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
+            <span className="font-mono text-base md:text-lg text-emerald-300">{players.length}</span>
+            <span>HỌC VIÊN ĐÃ VÀO</span>
+          </div>
+        )}
+
         {/* Nút Cài đặt & Music Toggle */}
         <div className="flex items-center gap-3">
           {state === 'LOBBY' && (
@@ -1280,6 +1289,7 @@ export default function ArenaHostPage() {
           state={state}
           onExecuteCommand={handleExecuteCommand}
           isLastRound={isLastRound}
+          playerCount={players.length}
         />
       </footer>
 

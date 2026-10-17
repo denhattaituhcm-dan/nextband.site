@@ -76,13 +76,17 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
         </div>
 
         {/* CỘT 2: GAME PIN SIÊU TO KHỔNG LỒ */}
-        <div className="text-center px-8 md:px-10 py-4 bg-gradient-to-b from-slate-50 to-purple-50 rounded-3xl border-2 border-purple-200 shadow-inner">
+        <div className="text-center px-8 md:px-10 py-4 bg-gradient-to-b from-slate-50 to-purple-50 rounded-3xl border-2 border-purple-200 shadow-inner flex flex-col items-center">
           <span className="text-xs md:text-sm font-black text-purple-600 uppercase tracking-widest block mb-1">
             MÃ PIN TRẬN ĐẤU
           </span>
           <span className="text-5xl md:text-7xl lg:text-8xl font-black text-slate-950 tracking-widest font-mono drop-shadow-md">
             {pinCode.length === 6 ? `${pinCode.slice(0, 3)} ${pinCode.slice(3)}` : pinCode}
           </span>
+          <div className="mt-2.5 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-purple-100 border border-purple-300 text-purple-900 font-extrabold text-xs md:text-sm shadow-sm">
+            <Users className="w-4 h-4 text-purple-700" />
+            <span>{currentCount} người chơi đã vào</span>
+          </div>
         </div>
 
         {/* CỘT 3: MÃ VẠCH QR CODE SIÊU LỚN (ĐƯỢC NÂNG CẤP KÍCH THƯỚC ĐỂ NGỒI XA QUÉT DỄ DÀNG) */}
@@ -164,13 +168,18 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
         </div>
 
         {/* Counter sĩ số học viên */}
-        <div className="flex items-center gap-3 px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-xl">
-          <div className="w-8 h-8 rounded-full bg-emerald-400/20 border border-emerald-400 flex items-center justify-center text-emerald-400 font-black text-sm">
+        <div className="flex items-center gap-3.5 px-6 py-2.5 bg-purple-950/80 backdrop-blur-md rounded-2xl border-2 border-purple-500/50 shadow-xl">
+          <div className="w-10 h-10 rounded-xl bg-emerald-400/20 border-2 border-emerald-400 flex items-center justify-center text-emerald-300 font-black text-lg font-mono shadow-sm">
             {currentCount}
           </div>
-          <span className="text-sm font-bold text-slate-100">
-            {currentCount === 0 ? 'Đang đợi học viên tham gia...' : `${currentCount} học viên đã vào phòng`}
-          </span>
+          <div className="text-left">
+            <span className="text-[10px] font-extrabold text-purple-200/80 uppercase tracking-widest block">
+              Sĩ số hiện tại
+            </span>
+            <span className="text-sm md:text-base font-black text-white">
+              {currentCount === 0 ? 'Đang đợi học viên tham gia...' : `${currentCount} học viên đã vào phòng`}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -185,6 +194,11 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
               key={p.id || idx}
               className={`p-3.5 ${palette.bg} border-2 ${palette.border} rounded-2xl flex flex-col items-center text-center space-y-2 shadow-xl ${palette.glow} animate-in fade-in zoom-in-75 duration-300 transform hover:-translate-y-1 transition-all min-h-[180px] justify-between cursor-default relative group`}
             >
+              {/* Badge số thứ tự tham gia (#1, #2, #3...) để Host liếc nhìn là biết ngay sĩ số */}
+              <span className="absolute -top-2.5 -left-2.5 px-2.5 py-0.5 rounded-full bg-slate-950 border-2 border-amber-400 text-amber-300 font-black text-xs shadow-lg z-10 font-mono">
+                #{idx + 1}
+              </span>
+
               {/* Nút Kick mời học viên ra khỏi sảnh để vào lại */}
               {onKickPlayer && (
                 <button

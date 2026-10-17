@@ -13,10 +13,11 @@ interface TeacherContextualButtonProps {
   onExecuteCommand: (command: HostCommandType) => void;
   isLoading?: boolean;
   isLastRound?: boolean;
+  playerCount?: number;
 }
 
 export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = React.memo(
-  ({ state, onExecuteCommand, isLoading = false, isLastRound = false }) => {
+  ({ state, onExecuteCommand, isLoading = false, isLastRound = false, playerCount }) => {
     switch (state) {
       case 'LOBBY':
         return (
@@ -26,7 +27,10 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
             className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-orange-500/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95 group"
           >
             <Play className="w-6 h-6 fill-white" />
-            <span>BẮT ĐẦU TRẬN ĐẤU</span>
+            <span>
+              BẮT ĐẦU TRẬN ĐẤU
+              {typeof playerCount === 'number' && ` (${playerCount} NGƯỜI)`}
+            </span>
             <kbd className="ml-2 hidden sm:inline-flex items-center px-2 py-0.5 text-xs font-mono font-bold bg-black/25 text-white/90 rounded border border-white/20">
               Enter ↵
             </kbd>
