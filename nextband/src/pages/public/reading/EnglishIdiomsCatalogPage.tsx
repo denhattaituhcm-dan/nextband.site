@@ -24,6 +24,7 @@ import unit07Data from "@/data/idioms/unit07";
 import unit08Data from "@/data/idioms/unit08";
 import unit09Data from "@/data/idioms/unit09";
 import unit10Data from "@/data/idioms/unit10";
+import unit11Data from "@/data/idioms/unit11";
 
 interface UnitCatalogItem {
   id: number;
@@ -316,13 +317,44 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     accent: "US (Mỹ)",
     isAvailable: true,
   },
+  {
+    id: 11,
+    unit_number_str: unit11Data.unit_number_str,
+    title_en: unit11Data.unit_title,
+    title_vi: "Cảm xúc & Tâm trạng con người",
+    section: unit11Data.major_section,
+    description_vi:
+      "20 thành ngữ kinh điển khắc họa các cung bậc cảm xúc dữ dội của con người qua ẩn dụ bộ phận cơ thể, sắc màu tâm trạng và thế giới ẩm thực.",
+    total_idioms: unit11Data.summary.total_idioms,
+    total_exercises: unit11Data.summary.total_practice_exercises,
+    modules: [
+      {
+        id: "11.1",
+        title: "Idioms using vocabulary about the body",
+        sample: "at each other's throats, wears heart on sleeve, got cold feet, tongue-tied...",
+      },
+      {
+        id: "11.2",
+        title: "Idioms using vocabulary about colors",
+        sample: "feeling blue, saw red, green with envy, as white as a sheet...",
+      },
+      {
+        id: "11.3",
+        title: "Idioms using vocabulary about food",
+        sample: "went bananas, driving me nuts, full of beans, had egg on my face...",
+      },
+    ],
+    tags: ["Cảm xúc", "Tâm trạng", "Ẩn dụ cơ thể", "IELTS Speaking & Writing"],
+    accent: "UK (Anh)",
+    isAvailable: true,
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 11, unit_number_str: "11", title_en: "Emotions", title_vi: "Cảm xúc & Tâm trạng con người" },
   { id: 12, unit_number_str: "12", title_en: "Relationships", title_vi: "Quan hệ tình cảm & bạn bè sâu rộng" },
   { id: 13, unit_number_str: "13", title_en: "Communication", title_vi: "Giao tiếp, đối thoại & truyền thông" },
   { id: 14, unit_number_str: "14", title_en: "Work", title_vi: "Công việc, sự nghiệp & công sở" },
+  { id: 15, unit_number_str: "15", title_en: "Money", title_vi: "Tiền bạc, tài chính & đầu tư" },
 ];
 
 export default function EnglishIdiomsCatalogPage() {
@@ -367,7 +399,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              10 Units Sẵn Sàng (200 Idioms)
+              11 Units Sẵn Sàng (220 Idioms)
             </span>
           </div>
         </div>
@@ -395,11 +427,11 @@ export default function EnglishIdiomsCatalogPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">10</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">11</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">200</div>
+                <div className="text-2xl sm:text-3xl font-black text-sky-200">220</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
@@ -407,7 +439,7 @@ export default function EnglishIdiomsCatalogPage() {
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">50</div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-200">55</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
             </div>

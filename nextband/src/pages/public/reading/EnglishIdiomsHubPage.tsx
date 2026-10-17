@@ -39,15 +39,17 @@ import unit09Data from "@/data/idioms/unit09";
 import { UNIT_09_ETYMOLOGY } from "@/data/idioms/unit09_etymology";
 import unit10Data from "@/data/idioms/unit10";
 import { UNIT_10_ETYMOLOGY } from "@/data/idioms/unit10_etymology";
+import unit11Data from "@/data/idioms/unit11";
+import { UNIT_11_ETYMOLOGY } from "@/data/idioms/unit11_etymology";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
 
   const parsedId = unitId ? parseInt(unitId, 10) : 1;
-  const initialUnitId = (parsedId >= 1 && parsedId <= 10 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+  const initialUnitId = (parsedId >= 1 && parsedId <= 11 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10>(initialUnitId);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -110,14 +112,16 @@ export default function EnglishIdiomsHubPage() {
   useEffect(() => {
     if (unitId) {
       const p = parseInt(unitId, 10);
-      if (p >= 1 && p <= 10 && p !== selectedUnitId) {
-        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10);
+      if (p >= 1 && p <= 11 && p !== selectedUnitId) {
+        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11);
         setActiveModuleFilter("ALL");
         reset23();
         reset25();
         reset26();
         reset27();
         reset28();
+        resetErrCorr();
+        resetAudioOrder();
       }
     }
   }, [unitId]);
@@ -159,6 +163,16 @@ export default function EnglishIdiomsHubPage() {
   const [selected28, setSelected28] = useState<Record<number, string>>({});
   const [checked28, setChecked28] = useState<Record<number, boolean | null>>({});
   const [showRetry28, setShowRetry28] = useState(false);
+
+  // Exercise Error Correction (Unit 9 / Unit 11)
+  const [answersErrCorr, setAnswersErrCorr] = useState<Record<number, string>>({});
+  const [checkedErrCorr, setCheckedErrCorr] = useState<Record<number, boolean | null>>({});
+  const [showRetryErrCorr, setShowRetryErrCorr] = useState(false);
+
+  // Exercise Audio Order Matching (Unit 9 / Unit 11)
+  const [selectedAudioOrder, setSelectedAudioOrder] = useState<Record<string, number>>({});
+  const [checkedAudioOrder, setCheckedAudioOrder] = useState<Record<string, boolean | null>>({});
+  const [showRetryAudioOrder, setShowRetryAudioOrder] = useState(false);
 
   // Exercise 1.4 State (Listening Fill-in-the-blank)
   const [answers14, setAnswers14] = useState<Record<number, string>>({});
@@ -258,7 +272,9 @@ export default function EnglishIdiomsHubPage() {
       ? unit08Data
       : selectedUnitId === 9
       ? unit09Data
-      : unit10Data;
+      : selectedUnitId === 10
+      ? unit10Data
+      : unit11Data;
 
   const currentEtymologyData =
     selectedUnitId === 1
@@ -279,7 +295,9 @@ export default function EnglishIdiomsHubPage() {
       ? UNIT_08_ETYMOLOGY
       : selectedUnitId === 9
       ? UNIT_09_ETYMOLOGY
-      : UNIT_10_ETYMOLOGY;
+      : selectedUnitId === 10
+      ? UNIT_10_ETYMOLOGY
+      : UNIT_11_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -780,7 +798,92 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry28(false);
   };
 
-  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) => {
+  // EXERCISE ERROR CORRECTION (11.4 / 9.4)
+  const exErrCorr = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_type === "ERROR_CORRECTION");
+  const checkErrCorr = () => {
+    if (!exErrCorr?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    exErrCorr.questions.forEach((q: any) => {
+      const val = (answersErrCorr[q.question_number] || "").trim().toLowerCase().replace(/[.,!]/g, "");
+      const targetIdiom = (q.correct_idiom || "").toLowerCase().replace(/[.,!]/g, "");
+      const targetCorrected = (q.target_corrected || "").toLowerCase().replace(/[.,!]/g, "");
+      const isMatch = (targetIdiom && (val === targetIdiom || val.includes(targetIdiom))) ||
+                      (targetCorrected && (val === targetCorrected || targetCorrected.includes(val)));
+      res[q.question_number] = Boolean(isMatch);
+      if (!isMatch) hasFail = true;
+    });
+    setCheckedErrCorr(res);
+    setShowRetryErrCorr(hasFail);
+  };
+
+  const resetErrCorr = () => {
+    setAnswersErrCorr({});
+    setCheckedErrCorr({});
+    setShowRetryErrCorr(false);
+  };
+
+  const retryErrCorr = () => {
+    setAnswersErrCorr((prev) => {
+      const updated = { ...prev };
+      Object.keys(checkedErrCorr).forEach((k) => {
+        const num = Number(k);
+        if (checkedErrCorr[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setCheckedErrCorr((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetryErrCorr(false);
+  };
+
+  // EXERCISE AUDIO ORDER MATCHING (11.5 / 9.5)
+  const exAudioOrder = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_type === "AUDIO_ORDER_MATCHING");
+  const checkAudioOrder = () => {
+    if (!exAudioOrder?.audio_tracks) return;
+    const res: Record<string, boolean> = {};
+    let hasFail = false;
+    exAudioOrder.audio_tracks.forEach((track: any) => {
+      const val = selectedAudioOrder[track.track_id];
+      const isMatch = val === track.order_number;
+      res[track.track_id] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setCheckedAudioOrder(res);
+    setShowRetryAudioOrder(hasFail);
+  };
+
+  const resetAudioOrder = () => {
+    setSelectedAudioOrder({});
+    setCheckedAudioOrder({});
+    setShowRetryAudioOrder(false);
+  };
+
+  const retryAudioOrder = () => {
+    setSelectedAudioOrder((prev) => {
+      const updated = { ...prev };
+      Object.keys(checkedAudioOrder).forEach((k) => {
+        if (checkedAudioOrder[k] === false) delete updated[k];
+      });
+      return updated;
+    });
+    setCheckedAudioOrder((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        if (updated[k] === false) delete updated[k];
+      });
+      return updated;
+    });
+    setShowRetryAudioOrder(false);
+  };
+
+  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
     reset23();
@@ -788,6 +891,8 @@ export default function EnglishIdiomsHubPage() {
     reset26();
     reset27();
     reset28();
+    resetErrCorr();
+    resetAudioOrder();
     navigate(`/reading/idioms/${unitId}`);
   };
 
@@ -819,16 +924,16 @@ export default function EnglishIdiomsHubPage() {
               {selectedUnitId > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10)}
+                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   ← Unit {selectedUnitId - 1 < 10 ? `0${selectedUnitId - 1}` : selectedUnitId - 1}
                 </button>
               )}
-              {selectedUnitId < 10 && (
+              {selectedUnitId < 11 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10)}
+                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   Unit {selectedUnitId + 1 < 10 ? `0${selectedUnitId + 1}` : selectedUnitId + 1} →
@@ -897,7 +1002,9 @@ export default function EnglishIdiomsHubPage() {
                 ? "Khám phá 20 thành ngữ đặc sắc mượn chất liệu ẩm thực, bánh trái, bơ sữa và thói quen ăn uống để khắc họa tâm lý, thế giới nghề nghiệp và các mối quan hệ xã hội."
                 : selectedUnitId === 9
                 ? "Khám phá 20 thành ngữ then chốt diễn tả sự đồng thuận, bất đồng nảy lửa và nghệ thuật thương lượng, từ 'bury the hatchet', 'strike a deal' đến 'on the same wavelength'."
-                : "Khám phá 20 thành ngữ then chốt diễn tả cách đối nhân xử thế, lòng nhân ái trắc ẩn, thái độ bóc lột tệ bạc, trò đùa tai quái và chuẩn mực hành vi con người."}
+                : selectedUnitId === 10
+                ? "Khám phá 20 thành ngữ then chốt diễn tả cách đối nhân xử thế, lòng nhân ái trắc ẩn, thái độ bóc lột tệ bạc, trò đùa tai quái và chuẩn mực hành vi con người."
+                : "Khám phá 20 thành ngữ then chốt khắc họa các cung bậc cảm xúc dữ dội của con người qua ẩn dụ bộ phận cơ thể, sắc màu tâm trạng và thế giới ẩm thực."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
@@ -2138,9 +2245,237 @@ export default function EnglishIdiomsHubPage() {
               </>
             )}
 
-            {/* ===================== UNIT 2 & UNIT 3 EXERCISES ===================== */}
+            {/* ===================== UNITS 2 - 11 EXERCISES ===================== */}
             {selectedUnitId !== 1 && (
               <>
+                {/* EXERCISE ERROR CORRECTION (11.4 / 9.4) */}
+                {exErrCorr && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-rose-600 text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập {exErrCorr.exercise_id}
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{exErrCorr.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {exErrCorr.description || "Phát hiện lỗi dùng sai từ trong thành ngữ và viết lại chính xác"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {exErrCorr.questions?.map((q: any) => {
+                        const status = checkedErrCorr[q.question_number];
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-4 rounded-2xl border text-xs sm:text-sm space-y-2.5 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-start gap-2">
+                              <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
+                                {q.question_number}
+                              </span>
+                              <div className="text-slate-800 leading-relaxed font-medium">
+                                {q.prompt}
+                              </div>
+                            </div>
+
+                            {q.incorrect_phrase && (
+                              <div className="pl-8 text-xs text-rose-700 font-medium">
+                                Cụm sai: <span className="line-through bg-rose-100 px-1.5 py-0.5 rounded font-mono font-bold">{q.incorrect_phrase}</span>
+                              </div>
+                            )}
+
+                            <div className="pl-8 flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={answersErrCorr[q.question_number] || ""}
+                                onChange={(e) =>
+                                  setAnswersErrCorr((prev) => ({ ...prev, [q.question_number]: e.target.value }))
+                                }
+                                placeholder="Nhập thành ngữ đúng..."
+                                className="w-full sm:max-w-md px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500"
+                              />
+                              {q.audio_url && (
+                                <button
+                                  type="button"
+                                  onClick={() => playAudio(q.audio_url)}
+                                  className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer shrink-0"
+                                  title="Nghe audio phát âm chuẩn"
+                                >
+                                  <Volume2 className="w-4 h-4 text-slate-600" />
+                                </button>
+                              )}
+                            </div>
+
+                            {status === true && (
+                              <div className="pl-8 text-xs font-semibold text-emerald-800">
+                                ✓ Chính xác! Đáp án chuẩn: <strong>{q.correct_idiom || q.target_corrected}</strong>
+                                {q.explanation && <div className="mt-0.5 font-normal text-emerald-700">{q.explanation}</div>}
+                              </div>
+                            )}
+                            {status === false && (
+                              <div className="pl-8 text-xs text-red-800">
+                                ✗ Chưa chính xác. Đáp án đúng: <strong>{q.correct_idiom || q.target_corrected}</strong>
+                                {q.explanation && <div className="mt-0.5 font-normal text-red-700">{q.explanation}</div>}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={resetErrCorr}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={checkErrCorr}
+                        className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra sửa lỗi
+                      </button>
+                      {showRetryErrCorr && (
+                        <button
+                          type="button"
+                          onClick={retryErrCorr}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE AUDIO ORDER MATCHING (11.5 / 9.5) */}
+                {exAudioOrder && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-indigo-600 text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập {exAudioOrder.exercise_id}
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{exAudioOrder.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {exAudioOrder.description || "Nghe audio và chọn số thứ tự bạn nghe thấy (1-8)"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {exAudioOrder.audio_tracks?.map((track: any) => {
+                        const status = checkedAudioOrder[track.track_id];
+                        const unitFolder = `unit${String(selectedUnitId).padStart(2, "0")}`;
+                        const audioUrl = `/audio/idioms/${unitFolder}/${track.file}`;
+                        return (
+                          <div
+                            key={track.track_id}
+                            className={`p-4 rounded-2xl border text-xs sm:text-sm space-y-3 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 text-xs">
+                                  Track {track.track_id}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => playAudio(audioUrl)}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs cursor-pointer border border-indigo-200"
+                                >
+                                  <Volume2 className="w-3.5 h-3.5" />
+                                  <span>Nghe audio</span>
+                                </button>
+                              </div>
+
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs text-slate-500 font-medium">Thứ tự:</span>
+                                <select
+                                  value={selectedAudioOrder[track.track_id] || ""}
+                                  onChange={(e) =>
+                                    setSelectedAudioOrder((prev) => ({
+                                      ...prev,
+                                      [track.track_id]: parseInt(e.target.value, 10),
+                                    }))
+                                  }
+                                  className="px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                >
+                                  <option value="">--</option>
+                                  {exAudioOrder.audio_tracks.map((_: any, idx: number) => (
+                                    <option key={idx + 1} value={idx + 1}>
+                                      {idx + 1}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+
+                            <p className="text-slate-700 italic text-xs bg-white p-2.5 rounded-xl border border-slate-100">
+                              "{track.spoken_text}"
+                            </p>
+
+                            {status === true && (
+                              <div className="text-xs font-semibold text-emerald-800">
+                                ✓ Chính xác! Thứ tự audio: {track.order_number}
+                              </div>
+                            )}
+                            {status === false && (
+                              <div className="text-xs text-red-800">
+                                ✗ Chưa đúng. Thứ tự nghe chính xác: <strong>{track.order_number}</strong>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={resetAudioOrder}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={checkAudioOrder}
+                        className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra thứ tự audio
+                      </button>
+                      {showRetryAudioOrder && (
+                        <button
+                          type="button"
+                          onClick={retryAudioOrder}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* EXERCISE DEFINITION MATCHING */}
                 {ex23 && (
                   <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
