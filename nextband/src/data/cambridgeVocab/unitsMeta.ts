@@ -32,7 +32,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Chế độ ăn uống, Thể thao & Sức khỏe",
     descriptionVi: "Dinh dưỡng học đường, tập luyện thể chất, phòng ngừa bệnh lý và lối sống lành mạnh.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["balanced diet", "sedentary lifestyle", "cardiovascular health", "vital nutrients"]
   },
   {
