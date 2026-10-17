@@ -19,7 +19,7 @@ import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/compon
 import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize } from 'lucide-react';
+import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap } from 'lucide-react';
 
 interface PlayerAnswerRecord {
   playerId: string;
@@ -668,6 +668,83 @@ export default function ArenaHostPage() {
         }
       }
 
+      const runQuestionCountdown = (targetIndex: number, targetQuestion: any, totalQ: number, isInitialStart = false) => {
+        if (countdownTimerRef.current) {
+          clearInterval(countdownTimerRef.current);
+          countdownTimerRef.current = null;
+        }
+
+        const isFinal = targetIndex >= totalQ - 1;
+        const basePayload = {
+          pin: pinCode,
+          timeLimit: roomSettings.timeLimit,
+          gameMode: roomSettings.gameMode,
+          questionIndex: targetIndex,
+          totalQuestions: totalQ,
+          question: targetQuestion,
+          isFinalQuestion: isFinal,
+        };
+
+        setStartCountdown(3);
+        playCountdownBeep(3);
+
+        if (channelRef.current) {
+          channelRef.current.send({
+            type: 'broadcast',
+            event: 'arena-countdown',
+            payload: { ...basePayload, countdown: 3 },
+          });
+        }
+
+        let currentCount = 3;
+        countdownTimerRef.current = setInterval(() => {
+          currentCount -= 1;
+          if (currentCount > 0) {
+            setStartCountdown(currentCount);
+            playCountdownBeep(currentCount);
+            if (channelRef.current) {
+              channelRef.current.send({
+                type: 'broadcast',
+                event: 'arena-countdown',
+                payload: { ...basePayload, countdown: currentCount },
+              });
+            }
+          } else if (currentCount === 0) {
+            setStartCountdown(0);
+            playCountdownBeep(0);
+            if (channelRef.current) {
+              channelRef.current.send({
+                type: 'broadcast',
+                event: 'arena-countdown',
+                payload: { ...basePayload, countdown: 0 },
+              });
+            }
+          } else {
+            clearInterval(countdownTimerRef.current);
+            countdownTimerRef.current = null;
+            setStartCountdown(null);
+            setState('QUESTION_LIVE');
+            setTimeLeft(roomSettings.timeLimit);
+            startQuestionSuspense(roomSettings.timeLimit);
+
+            if (channelRef.current) {
+              channelRef.current.send({
+                type: 'broadcast',
+                event: 'question-live',
+                payload: basePayload,
+              });
+              if (isInitialStart) {
+                channelRef.current.send({
+                  type: 'broadcast',
+                  event: 'arena-started',
+                  payload: basePayload,
+                });
+              }
+            }
+          }
+        }, 1000);
+      };
+
       switch (command) {
         case 'START_ARENA': {
           setQuestionIndex(0);
@@ -676,73 +753,7 @@ export default function ArenaHostPage() {
           stopLobbyBgm();
 
           const qToBroadcast = serverQuestion || currentQuestion;
-          const payload = {
-            pin: pinCode,
-            timeLimit: roomSettings.timeLimit,
-            gameMode: roomSettings.gameMode,
-            questionIndex: 0,
-            totalQuestions: serverTotal,
-            question: qToBroadcast,
-          };
-
-          // Đếm ngược 3 giây khởi động kịch tính trước Câu 1 (3... 2... 1... BẮT ĐẦU!)
-          if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-          setStartCountdown(3);
-          playCountdownBeep(3);
-
-          if (channelRef.current) {
-            channelRef.current.send({
-              type: 'broadcast',
-              event: 'arena-countdown',
-              payload: { ...payload, countdown: 3 },
-            });
-          }
-
-          let currentCount = 3;
-          countdownTimerRef.current = setInterval(() => {
-            currentCount -= 1;
-            if (currentCount > 0) {
-              setStartCountdown(currentCount);
-              playCountdownBeep(currentCount);
-              if (channelRef.current) {
-                channelRef.current.send({
-                  type: 'broadcast',
-                  event: 'arena-countdown',
-                  payload: { ...payload, countdown: currentCount },
-                });
-              }
-            } else if (currentCount === 0) {
-              setStartCountdown(0);
-              playCountdownBeep(0);
-              if (channelRef.current) {
-                channelRef.current.send({
-                  type: 'broadcast',
-                  event: 'arena-countdown',
-                  payload: { ...payload, countdown: 0 },
-                });
-              }
-            } else {
-              clearInterval(countdownTimerRef.current);
-              countdownTimerRef.current = null;
-              setStartCountdown(null);
-              setState('QUESTION_LIVE');
-              setTimeLeft(roomSettings.timeLimit);
-              startQuestionSuspense(roomSettings.timeLimit);
-
-              if (channelRef.current) {
-                channelRef.current.send({
-                  type: 'broadcast',
-                  event: 'question-live',
-                  payload,
-                });
-                channelRef.current.send({
-                  type: 'broadcast',
-                  event: 'arena-started',
-                  payload,
-                });
-              }
-            }
-          }, 1000);
+          runQuestionCountdown(0, qToBroadcast, serverTotal, true);
           break;
         }
         case 'LOCK_ROUND':
@@ -831,28 +842,17 @@ export default function ArenaHostPage() {
             const nextIdx = questionIndex + 1;
             setQuestionIndex(nextIdx);
             setAnswers({});
-            setTimeLeft(roomSettings.timeLimit);
-            setState('QUESTION_LIVE');
-            startQuestionSuspense(roomSettings.timeLimit);
             const nextQ = serverQuestion || currentQuestion;
-            if (channelRef.current) {
-              channelRef.current.send({
-                type: 'broadcast',
-                event: 'question-live',
-                payload: {
-                  pin: pinCode,
-                  timeLimit: roomSettings.timeLimit,
-                  gameMode: roomSettings.gameMode,
-                  questionIndex: nextIdx,
-                  totalQuestions: serverTotal,
-                  question: nextQ,
-                },
-              });
-            }
+            runQuestionCountdown(nextIdx, nextQ, serverTotal, false);
           }
           break;
         }
         case 'RESTART_ARENA':
+          if (countdownTimerRef.current) {
+            clearInterval(countdownTimerRef.current);
+            countdownTimerRef.current = null;
+          }
+          setStartCountdown(null);
           stopQuestionSuspense();
           setQuestionIndex(0);
           setAnswers({});
@@ -954,32 +954,66 @@ export default function ArenaHostPage() {
 
       {/* Main Classroom Projection Display */}
       <main className="flex-1 flex flex-col items-center justify-center my-6 text-center max-w-6xl mx-auto w-full">
-        {/* Animated Countdown Overlay before Question 1 (3... 2... 1... BẮT ĐẦU!) */}
+        {/* Animated Countdown Overlay before Questions (Kèm thông báo Câu Quyết Định ở câu cuối) */}
         {startCountdown !== null && (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="relative flex flex-col items-center justify-center space-y-6">
-              <div className="px-5 py-1.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 font-bold text-xs uppercase tracking-widest shadow-lg shadow-purple-950/50">
-                Trận Đấu Bắt Đầu · NextQuiz Arena
-              </div>
-              
-              <div className="relative">
-                <div className="absolute -inset-8 rounded-full bg-purple-600/30 blur-2xl animate-pulse" />
-                <div className="relative flex items-center justify-center w-48 h-48 rounded-full bg-gradient-to-br from-purple-600 to-indigo-800 border-4 border-purple-300/60 shadow-2xl shadow-purple-600/50">
-                  <span className="text-7xl md:text-8xl font-black text-white tracking-wider animate-in zoom-in-50 duration-300" key={startCountdown}>
-                    {startCountdown > 0 ? startCountdown : 'GO!'}
-                  </span>
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-md animate-in fade-in duration-200">
+            {isLastRound ? (
+              // CÂU HỎI QUYẾT ĐỊNH (FINAL ROUND)
+              <div className="relative flex flex-col items-center justify-center space-y-6 max-w-2xl px-4 animate-in zoom-in-95 duration-300">
+                <div className="px-6 py-2 rounded-full bg-gradient-to-r from-amber-500/20 via-rose-500/30 to-amber-500/20 border-2 border-amber-400 text-amber-300 font-black text-xs md:text-sm uppercase tracking-widest shadow-2xl shadow-amber-950/80 flex items-center gap-2.5 animate-pulse">
+                  <Flame className="w-5 h-5 text-amber-400 animate-bounce" />
+                  <span>CHẶNG VỀ ĐÍCH · CÂU HỎI QUYẾT ĐỊNH</span>
+                  <Sparkles className="w-5 h-5 text-amber-400" />
+                </div>
+
+                <div className="relative">
+                  <div className="absolute -inset-10 rounded-full bg-gradient-to-r from-amber-500/40 via-rose-600/40 to-yellow-500/40 blur-3xl animate-pulse" />
+                  <div className="relative flex items-center justify-center w-52 h-52 rounded-full bg-gradient-to-br from-amber-500 via-rose-600 to-amber-700 border-4 border-amber-200/90 shadow-2xl shadow-amber-500/60">
+                    <span className="text-8xl md:text-9xl font-black text-white tracking-wider drop-shadow-lg animate-in zoom-in-50 duration-300" key={startCountdown}>
+                      {startCountdown > 0 ? startCountdown : 'GO!'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-center space-y-2.5">
+                  <h3 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 drop-shadow-md">
+                    {startCountdown > 0 ? `CÂU ${questionIndex + 1} / ${totalQuestions}: CÂU QUYẾT ĐỊNH!` : 'BẮT ĐẦU VÒNG CHUNG CUỘC!'}
+                  </h3>
+                  <div className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-200 font-extrabold text-sm md:text-base shadow-inner">
+                    <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300 animate-pulse" />
+                    {roomSettings.gameMode === 'CLASSIC' ? '🎯 ĐIỂM SỐ NHÂN ĐÔI (x2) · CƠ HỘI LỘI NGƯỢC DÒNG!' : '💰 RƯƠNG VÀNG CUỐI CÙNG · BỨT PHÁ VỀ ĐÍCH!'}
+                  </div>
+                  <p className="text-sm md:text-base text-amber-200/80 font-medium">
+                    Cả lớp tập trung cao độ — Điểm số câu này sẽ quyết định ngôi vị Quán quân!
+                  </p>
                 </div>
               </div>
+            ) : (
+              // CÂU HỎI THƯỜNG
+              <div className="relative flex flex-col items-center justify-center space-y-6">
+                <div className="px-5 py-1.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 font-bold text-xs uppercase tracking-widest shadow-lg shadow-purple-950/50">
+                  CÂU {questionIndex + 1} / {totalQuestions} · NextQuiz Arena
+                </div>
 
-              <div className="text-center space-y-1">
-                <h3 className="text-xl md:text-2xl font-black text-white">
-                  {startCountdown > 0 ? 'Chuẩn bị bước vào Câu 1!' : 'BẮT ĐẦU!'}
-                </h3>
-                <p className="text-sm text-purple-300/80 font-medium">
-                  Tập trung quan sát và chọn đáp án chính xác nhất
-                </p>
+                <div className="relative">
+                  <div className="absolute -inset-8 rounded-full bg-purple-600/30 blur-2xl animate-pulse" />
+                  <div className="relative flex items-center justify-center w-48 h-48 rounded-full bg-gradient-to-br from-purple-600 to-indigo-800 border-4 border-purple-300/60 shadow-2xl shadow-purple-600/50">
+                    <span className="text-7xl md:text-8xl font-black text-white tracking-wider animate-in zoom-in-50 duration-300" key={startCountdown}>
+                      {startCountdown > 0 ? startCountdown : 'GO!'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-center space-y-1">
+                  <h3 className="text-xl md:text-2xl font-black text-white">
+                    {startCountdown > 0 ? `Chuẩn bị bước vào Câu ${questionIndex + 1}!` : 'BẮT ĐẦU!'}
+                  </h3>
+                  <p className="text-sm text-purple-300/80 font-medium">
+                    Tập trung quan sát và chọn đáp án chính xác nhất
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

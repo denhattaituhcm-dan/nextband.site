@@ -159,7 +159,8 @@ export class ArenaEngineService {
           nextStatus = "QUESTION_LIVE";
           nextRound = room.currentRound + 1;
           activeQuestionId = questions[nextRound]?.id || null;
-          deadlineAt = new Date(now.getTime() + 15 * 1000);
+          // 15 giây làm bài + 3 giây đếm lùi giới thiệu câu hỏi cho học sinh sẵn sàng
+          deadlineAt = new Date(now.getTime() + (15 + 3) * 1000);
         }
         break;
       }

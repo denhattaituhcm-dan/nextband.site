@@ -16,7 +16,7 @@ import { GoldQuestChestModal } from '@/components/arena/GoldQuestChestModal';
 import { QuestionTypeRevengeModal, RevengeQuestionItem } from '@/components/arena/QuestionTypeRevengeModal';
 import { ArenaQuestionOption, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { CheckCircle2, XCircle, Trophy, Sparkles, Medal, Crown, BookOpen } from 'lucide-react';
+import { CheckCircle2, XCircle, Trophy, Sparkles, Medal, Crown, BookOpen, Flame, Zap } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
 import { ArenaErrorBoundary } from '@/components/arena/ArenaErrorBoundary';
@@ -80,6 +80,7 @@ export default function ArenaPlayPage() {
   const [showResult, setShowResult] = useState<boolean>(false);
   const [isJoinedAcknowledged, setIsJoinedAcknowledged] = useState<boolean>(false);
   const [startCountdown, setStartCountdown] = useState<number | null>(null);
+  const isFinalRound = Boolean(totalQuestions > 0 && questionIndex >= totalQuestions - 1);
 
   // State theo dõi các câu làm sai để phục vụ Sổ tay học thuật sau trận
   const [wrongQuestions, setWrongQuestions] = useState<RevengeQuestionItem[]>([]);
@@ -223,6 +224,13 @@ export default function ArenaPlayPage() {
         if (typeof payload?.totalQuestions === 'number') setTotalQuestions(payload.totalQuestions);
         if (payload?.gameMode) setGameMode(payload.gameMode);
         if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
+
+        // Chuẩn bị cho vòng mới: Xóa trạng thái câu cũ để hiển thị màn hình đệm
+        setHasSubmitted(false);
+        setSelectedOptionId(null);
+        setShowResult(false);
+        setIsLocked(false);
+        setIsChestModalOpen(false);
       })
       .on('broadcast', { event: 'question-live' }, ({ payload }) => {
         recordHeartbeat('question-live');
@@ -557,29 +565,65 @@ export default function ArenaPlayPage() {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col justify-center my-4 space-y-4">
         {startCountdown !== null ? (
-          /* MÀN HÌNH ĐẾM LÙI KHỞI ĐỘNG CÂU 1 (3... 2... 1... BẮT ĐẦU!) */
+          /* MÀN HÌNH ĐẾM LÙI TRƯỚC CÂU HỎI (KÈM CÂU QUYẾT ĐỊNH CHO CÂU CUỐI) */
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 py-6 animate-in zoom-in-95 duration-200">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-bold tracking-wide uppercase shadow-lg">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Chuẩn Bị Bắt Đầu!
-            </div>
+            {isFinalRound ? (
+              // CÂU HỎI QUYẾT ĐỊNH (FINAL ROUND)
+              <>
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-950/90 via-rose-950/90 to-amber-950/90 border-2 border-amber-400 text-amber-300 text-xs font-black tracking-wide uppercase shadow-lg shadow-amber-950/50 animate-pulse">
+                  <Flame className="w-4 h-4 text-amber-400 animate-bounce" />
+                  <span>CÂU QUYẾT ĐỊNH · ĐIỂM SỐ x2!</span>
+                </div>
 
-            <div className="relative">
-              <div className="absolute -inset-6 rounded-full bg-purple-600/30 blur-xl animate-pulse" />
-              <div className="relative flex items-center justify-center w-36 h-36 rounded-full bg-gradient-to-br from-purple-600 to-indigo-800 border-4 border-purple-300/60 shadow-2xl shadow-purple-600/50">
-                <span className="text-6xl font-black text-white tracking-wider" key={startCountdown}>
-                  {startCountdown > 0 ? startCountdown : 'GO!'}
-                </span>
-              </div>
-            </div>
+                <div className="relative">
+                  <div className="absolute -inset-8 rounded-full bg-gradient-to-r from-amber-500/40 via-rose-600/40 to-yellow-500/40 blur-2xl animate-pulse" />
+                  <div className="relative flex items-center justify-center w-40 h-40 rounded-full bg-gradient-to-br from-amber-500 via-rose-600 to-amber-700 border-4 border-amber-200 shadow-2xl shadow-amber-500/60">
+                    <span className="text-7xl font-black text-white tracking-wider" key={startCountdown}>
+                      {startCountdown > 0 ? startCountdown : 'GO!'}
+                    </span>
+                  </div>
+                </div>
 
-            <div className="space-y-1">
-              <h2 className="text-xl font-black text-white">
-                {startCountdown > 0 ? 'Sẵn sàng chọn đáp án!' : 'BẮT ĐẦU!'}
-              </h2>
-              <p className="text-xs text-purple-200/80 max-w-xs mx-auto">
-                Nhìn lên màn chiếu để đọc câu hỏi và bấm nút màu tương ứng!
-              </p>
-            </div>
+                <div className="space-y-2 px-3">
+                  <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400">
+                    {startCountdown > 0 ? `Câu ${questionIndex + 1} / ${totalQuestions} (Câu Cuối!)` : 'BẮT ĐẦU!'}
+                  </h2>
+                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-200 text-xs font-bold shadow-inner">
+                    <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300 animate-pulse" />
+                    {gameMode === 'CLASSIC' ? '🎯 Nhân đôi x2 điểm số · Cơ hội bứt phá!' : '💰 Rương vàng cuối cùng · Về đích!'}
+                  </div>
+                  <p className="text-[11px] text-amber-300/80 pt-0.5">
+                    Nhìn lên màn chiếu đọc đề và bấm nút trả lời thật nhanh!
+                  </p>
+                </div>
+              </>
+            ) : (
+              // CÂU HỎI THƯỜNG
+              <>
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-bold tracking-wide uppercase shadow-lg">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>CÂU {questionIndex + 1} / {totalQuestions}</span>
+                </div>
+
+                <div className="relative">
+                  <div className="absolute -inset-6 rounded-full bg-purple-600/30 blur-xl animate-pulse" />
+                  <div className="relative flex items-center justify-center w-36 h-36 rounded-full bg-gradient-to-br from-purple-600 to-indigo-800 border-4 border-purple-300/60 shadow-2xl shadow-purple-600/50">
+                    <span className="text-6xl font-black text-white tracking-wider" key={startCountdown}>
+                      {startCountdown > 0 ? startCountdown : 'GO!'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <h2 className="text-xl font-black text-white">
+                    {startCountdown > 0 ? `Chuẩn bị bước vào Câu ${questionIndex + 1}!` : 'BẮT ĐẦU!'}
+                  </h2>
+                  <p className="text-xs text-purple-200/80 max-w-xs mx-auto">
+                    Nhìn lên màn chiếu để đọc câu hỏi và bấm nút màu tương ứng!
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         ) : gameState === 'LOBBY_WAITING' ? (
           /* SẢNH CHỜ HỌC VIÊN - CHUẨN KAHOOT ZERO-FLUFF & PVZ AVATAR */
