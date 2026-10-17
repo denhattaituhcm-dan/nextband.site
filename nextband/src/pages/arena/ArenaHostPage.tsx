@@ -793,6 +793,7 @@ export default function ArenaHostPage() {
           pin: pinCode,
           timeLimit: roomSettings.timeLimit,
           gameMode: roomSettings.gameMode,
+          survivalInitialLives: roomSettings.survivalInitialLives,
           questionIndex: targetIndex,
           totalQuestions: totalQ,
           question: targetQuestion,
@@ -864,6 +865,16 @@ export default function ArenaHostPage() {
           setQuestionIndex(0);
           setAnswers({});
           setCumulativeScores({});
+          setRoundProcessedIndex(-1);
+          setEliminatedRoundMap({});
+          setPlayerStreakMap({});
+          setLiveLogs([]);
+          // Khởi tạo đủ mạng cho toàn bộ chiến binh
+          const initialLivesObj: Record<string, number> = {};
+          players.forEach((p) => {
+            initialLivesObj[p.name] = roomSettings.survivalInitialLives;
+          });
+          setPlayerLivesMap(initialLivesObj);
           stopLobbyBgm();
 
           const qToBroadcast = serverQuestion || currentQuestion;
@@ -890,9 +901,95 @@ export default function ArenaHostPage() {
             });
           }
           break;
-        case 'REVEAL_PERSONAL':
+        case 'REVEAL_PERSONAL': {
           playCorrectSound();
           setState('REVEAL_PERSONAL');
+
+          // Xử lý luật sinh tồn Đấu Trường 100 (Trừ mạng câu sai/hết giờ & Hồi mạng khi Streak x3)
+          let survivalUpdates: Record<string, { lives: number; maxLives: number; delta: number; streak: number; isEliminated: boolean }> | undefined = undefined;
+
+          if (roomSettings.gameMode === 'ARENA_100' && roundProcessedIndex !== questionIndex) {
+            setRoundProcessedIndex(questionIndex);
+            const maxL = roomSettings.survivalInitialLives;
+            const nextLivesMap: Record<string, number> = { ...playerLivesMap };
+            const nextStreakMap: Record<string, number> = { ...playerStreakMap };
+            const nextElimMap: Record<string, number> = { ...eliminatedRoundMap };
+            const roundEvents: string[] = [];
+            survivalUpdates = {};
+
+            players.forEach((p) => {
+              const name = p.name;
+              const prevLives = nextLivesMap[name] ?? maxL;
+              const prevStreak = nextStreakMap[name] ?? 0;
+
+              // Nếu học viên đã bị loại từ vòng trước -> Giữ nguyên trạng thái Khán giả / Thử sức
+              if (prevLives <= 0) {
+                nextLivesMap[name] = 0;
+                survivalUpdates![name] = {
+                  lives: 0,
+                  maxLives: maxL,
+                  delta: 0,
+                  streak: 0,
+                  isEliminated: true,
+                };
+                return;
+              }
+
+              const ans = answers[name];
+              const isAnsCorrect = Boolean(ans && ans.optionId === currentQuestion.correctOptionId);
+
+              if (isAnsCorrect) {
+                const newStreak = prevStreak + 1;
+                nextStreakMap[name] = newStreak;
+                let newLives = prevLives;
+                let delta = 0;
+
+                // Cơ chế Hồi mạng: Đạt chuỗi 3 câu đúng liên tiếp (Streak x3, x6, x9...) và đang bị mất mạng
+                if (maxL > 1 && newStreak > 0 && newStreak % 3 === 0 && prevLives < maxL) {
+                  newLives = Math.min(maxL, prevLives + 1);
+                  delta = 1;
+                  roundEvents.push(`💖 [${name}] đạt chuỗi ${newStreak} câu đúng liên tiếp và hồi phục +1 mạng!`);
+                }
+
+                nextLivesMap[name] = newLives;
+                survivalUpdates![name] = {
+                  lives: newLives,
+                  maxLives: maxL,
+                  delta,
+                  streak: newStreak,
+                  isEliminated: false,
+                };
+              } else {
+                // Trả lời sai hoặc hết giờ chưa chốt -> Mất 1 mạng
+                const newLives = Math.max(0, prevLives - 1);
+                nextLivesMap[name] = newLives;
+                nextStreakMap[name] = 0;
+
+                if (newLives === 0) {
+                  nextElimMap[name] = questionIndex;
+                  roundEvents.push(`💀 [${name}] đã hết mạng và dừng bước tại Câu ${questionIndex + 1}!`);
+                } else {
+                  roundEvents.push(`💔 [${name}] mất 1 mạng (còn ${newLives}/${maxL} ❤️)`);
+                }
+
+                survivalUpdates![name] = {
+                  lives: newLives,
+                  maxLives: maxL,
+                  delta: -1,
+                  streak: 0,
+                  isEliminated: newLives === 0,
+                };
+              }
+            });
+
+            setPlayerLivesMap(nextLivesMap);
+            setPlayerStreakMap(nextStreakMap);
+            setEliminatedRoundMap(nextElimMap);
+            if (roundEvents.length > 0) {
+              setLiveLogs((prev) => [...roundEvents, ...prev].slice(0, 6));
+            }
+          }
+
           if (channelRef.current) {
             channelRef.current.send({
               type: 'broadcast',
@@ -900,16 +997,18 @@ export default function ArenaHostPage() {
               payload: {
                 correctOptionId: currentQuestion.correctOptionId,
                 explanation: currentQuestion.correctExplanation,
+                survivalUpdates,
               },
             });
           }
           break;
+        }
         case 'START_DEBRIEF':
           setState('TEACHER_DEBRIEF');
           break;
         case 'SHOW_LEADERBOARD':
-          if (isLastRound) {
-            // Ở câu hỏi cuối cùng: Tuyệt đối không hiển thị bảng xếp hạng trước để giữ 100% bí mật kịch tính cho Podium
+          if (effectiveIsLastRound) {
+            // Ở câu hỏi cuối cùng hoặc khi Đấu Trường 100 đã tìm ra Quán quân trụ lại cuối cùng
             stopQuestionSuspense();
             playPodiumSound();
             setState('PODIUM');
@@ -938,7 +1037,7 @@ export default function ArenaHostPage() {
           }
           break;
         case 'NEXT_ROUND': {
-          if (isLastRound) {
+          if (effectiveIsLastRound) {
             stopQuestionSuspense();
             playPodiumSound();
             setState('PODIUM');
@@ -971,6 +1070,10 @@ export default function ArenaHostPage() {
           setQuestionIndex(0);
           setAnswers({});
           setCumulativeScores({});
+          setRoundProcessedIndex(-1);
+          setEliminatedRoundMap({});
+          setPlayerStreakMap({});
+          setLiveLogs([]);
           setState('LOBBY');
           if (channelRef.current) {
             channelRef.current.send({
@@ -990,13 +1093,22 @@ export default function ArenaHostPage() {
       stopQuestionSuspense,
       roomSettings.timeLimit,
       roomSettings.gameMode,
+      roomSettings.survivalInitialLives,
       distribution,
       currentQuestion,
-      isLastRound,
+      effectiveIsLastRound,
       questionIndex,
       allRankings,
       roomId,
       totalQuestions,
+      players,
+      playerLivesMap,
+      playerStreakMap,
+      eliminatedRoundMap,
+      roundProcessedIndex,
+      answers,
+      stopLobbyBgm,
+      playCountdownBeep,
     ]
   );
 
@@ -1034,10 +1146,10 @@ export default function ArenaHostPage() {
             handleExecuteCommand('REVEAL_PERSONAL');
             break;
           case 'REVEAL_PERSONAL':
-            handleExecuteCommand(isLastRound ? 'NEXT_ROUND' : 'START_DEBRIEF');
+            handleExecuteCommand(effectiveIsLastRound ? 'NEXT_ROUND' : 'START_DEBRIEF');
             break;
           case 'TEACHER_DEBRIEF':
-            handleExecuteCommand(isLastRound ? 'NEXT_ROUND' : 'SHOW_LEADERBOARD');
+            handleExecuteCommand(effectiveIsLastRound ? 'NEXT_ROUND' : 'SHOW_LEADERBOARD');
             break;
           case 'LEADERBOARD':
             handleExecuteCommand('NEXT_ROUND');
@@ -1053,9 +1165,23 @@ export default function ArenaHostPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [state, isLastRound, isSettingsOpen, isRulesOpen, handleExecuteCommand]);
+  }, [state, effectiveIsLastRound, isSettingsOpen, isRulesOpen, handleExecuteCommand]);
 
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : '/arena/join';
+
+  const modeBadgeLabel =
+    roomSettings.gameMode === 'GOLD_QUEST'
+      ? 'Chế độ Cướp Vàng 💰'
+      : roomSettings.gameMode === 'ARENA_100'
+      ? `Đấu Trường 100 🛡️ (${roomSettings.survivalInitialLives} ❤️)`
+      : 'Chế độ Cổ điển 🎯';
+
+  const modeShortLabel =
+    roomSettings.gameMode === 'GOLD_QUEST'
+      ? 'Cướp Vàng'
+      : roomSettings.gameMode === 'ARENA_100'
+      ? `Đấu Trường 100 · ${roomSettings.survivalInitialLives}❤️`
+      : 'Cổ Điển';
 
   return (
     <div className="min-h-screen bg-[#150a33] text-white flex flex-col justify-between p-6 select-none font-sans bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
@@ -1068,19 +1194,28 @@ export default function ArenaHostPage() {
           <div>
             <h1 className="text-base font-black tracking-wide text-slate-200">NEXTQUIZ</h1>
             <span className="text-xs text-purple-300/70 font-medium">
-              NextQuiz Classroom Engine · {roomSettings.gameMode === 'GOLD_QUEST' ? 'Chế độ Cướp Vàng 💰' : 'Chế độ Cổ điển 🎯'}
+              NextQuiz Classroom Engine · {modeBadgeLabel}
             </span>
           </div>
         </div>
 
-        {/* Badge Sĩ số học viên tại Sảnh chờ (Cực kỳ nổi bật cho Host) */}
-        {state === 'LOBBY' && (
+        {/* Badge Sĩ số học viên tại Sảnh chờ hoặc Bộ đếm Sinh Tồn Đấu Trường 100 */}
+        {state === 'LOBBY' ? (
           <div className="flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/20 border-2 border-emerald-400/50 text-emerald-200 font-extrabold text-xs md:text-sm shadow-lg shadow-emerald-950/60 animate-pulse">
             <Users className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
             <span className="font-mono text-base md:text-lg text-emerald-300">{players.length}</span>
             <span>HỌC VIÊN ĐÃ VÀO</span>
           </div>
-        )}
+        ) : roomSettings.gameMode === 'ARENA_100' && state !== 'PODIUM' ? (
+          <div className="flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-rose-500/20 border-2 border-rose-400/60 text-rose-200 font-extrabold text-xs md:text-sm shadow-lg shadow-rose-950/60">
+            <Shield className="w-4 h-4 md:w-5 md:h-5 text-rose-400" />
+            <span>TRỤ HẠNG:</span>
+            <span className="font-mono text-base md:text-lg text-amber-300">
+              {survivingPlayersCount} / {players.length}
+            </span>
+            <span className="hidden sm:inline">CHIẾN BINH</span>
+          </div>
+        ) : null}
 
         {/* Nút Hướng dẫn & Nội quy, Cài đặt & Music Toggle */}
         <div className="flex items-center gap-3">
@@ -1099,7 +1234,7 @@ export default function ArenaHostPage() {
                 className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-xs font-bold rounded-full transition-all cursor-pointer text-purple-200 hover:text-white"
               >
                 <Settings className="w-4 h-4 text-purple-300" />
-                <span>Cài đặt ({roomSettings.gameMode === 'GOLD_QUEST' ? 'Cướp Vàng' : 'Cổ Điển'})</span>
+                <span>Cài đặt ({modeShortLabel})</span>
               </button>
             </>
           )}
@@ -1169,10 +1304,14 @@ export default function ArenaHostPage() {
                   </h3>
                   <div className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-200 font-extrabold text-sm md:text-base shadow-inner">
                     <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300 animate-pulse" />
-                    {roomSettings.gameMode === 'CLASSIC' ? '🎯 ĐIỂM SỐ NHÂN ĐÔI (x2) · CƠ HỘI LỘI NGƯỢC DÒNG!' : '💰 RƯƠNG VÀNG CUỐI CÙNG · BỨT PHÁ VỀ ĐÍCH!'}
+                    {roomSettings.gameMode === 'CLASSIC'
+                      ? '🎯 ĐIỂM SỐ NHÂN ĐÔI (x2) · CƠ HỘI LỘI NGƯỢC DÒNG!'
+                      : roomSettings.gameMode === 'ARENA_100'
+                      ? `🛡️ VÒNG CHUNG KẾT ĐẤU TRƯỜNG 100 · CÒN ${survivingPlayersCount} CHIẾN BINH TRỤ HẠNG!`
+                      : '💰 RƯƠNG VÀNG CUỐI CÙNG · BỨT PHÁ VỀ ĐÍCH!'}
                   </div>
                   <p className="text-sm md:text-base text-amber-200/80 font-medium">
-                    Cả lớp tập trung cao độ — Điểm số câu này sẽ quyết định ngôi vị Quán quân!
+                    Cả lớp tập trung cao độ — Câu hỏi này sẽ định đoạt ngôi vị Quán quân!
                   </p>
                 </div>
               </div>
@@ -1180,7 +1319,10 @@ export default function ArenaHostPage() {
               // CÂU HỎI THƯỜNG
               <div className="relative flex flex-col items-center justify-center space-y-6">
                 <div className="px-5 py-1.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 font-bold text-xs uppercase tracking-widest shadow-lg shadow-purple-950/50">
-                  CÂU {questionIndex + 1} / {totalQuestions} · NextQuiz Arena
+                  CÂU {questionIndex + 1} / {totalQuestions} ·{' '}
+                  {roomSettings.gameMode === 'ARENA_100'
+                    ? `Đấu Trường 100 (Còn ${survivingPlayersCount}/${players.length} trụ lại)`
+                    : 'NextQuiz Arena'}
                 </div>
 
                 <div className="relative">
@@ -1218,11 +1360,15 @@ export default function ArenaHostPage() {
 
         {state === 'QUESTION_LIVE' && (
           <div className="w-full space-y-6">
-            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase flex items-center justify-center gap-2">
+            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase flex items-center justify-center gap-2 flex-wrap">
               <span>CÂU HỎI {questionIndex + 1} / {totalQuestions} · IELTS COLLOCATION ({roomSettings.timeLimit} GIÂY)</span>
               {roomSettings.gameMode === 'GOLD_QUEST' ? (
                 <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-400/40 rounded-full text-[10px]">
                   💰 CƯỚP VÀNG LIVE
+                </span>
+              ) : roomSettings.gameMode === 'ARENA_100' ? (
+                <span className="px-2.5 py-0.5 bg-rose-500/20 text-rose-300 border border-rose-400/50 rounded-full text-[10px] font-black flex items-center gap-1">
+                  🛡️ ĐẤU TRƯỜNG 100 · {survivingPlayersCount}/{players.length} TRỤ HẠNG
                 </span>
               ) : (
                 isLastRound && (
@@ -1360,6 +1506,43 @@ export default function ArenaHostPage() {
               })}
             </div>
 
+            {/* Bảng Trạng Thái Sinh Tồn Đấu Trường 100 sau khi công bố đáp án */}
+            {roomSettings.gameMode === 'ARENA_100' && state !== 'REVEAL_DISTRIBUTION' && (
+              <div className="max-w-3xl mx-auto p-4 rounded-2xl bg-rose-950/40 border border-rose-500/40 space-y-3 animate-fadeIn">
+                <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider">
+                  <span className="text-rose-300 flex items-center gap-1.5">
+                    <Shield className="w-4 h-4 text-rose-400" /> Sàn Đấu Sinh Tồn Đấu Trường 100
+                  </span>
+                  <span className="text-amber-300">
+                    {isSurvivalShowdownOver
+                      ? '🏆 ĐÃ TÌM RA QUÁN QUÂN TRỤ HẠNG CUỐI CÙNG!'
+                      : `Còn ${survivingPlayersCount} / ${players.length} chiến binh trụ lại`}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center max-h-28 overflow-y-auto p-1">
+                  {players.map((p) => {
+                    const lives = playerLivesMap[p.name] ?? roomSettings.survivalInitialLives;
+                    const isOut = lives <= 0;
+                    return (
+                      <div
+                        key={p.id}
+                        className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border transition-all ${
+                          isOut
+                            ? 'bg-slate-900/70 border-slate-700/50 text-slate-500 line-through opacity-60'
+                            : 'bg-rose-500/20 border-rose-400/50 text-white shadow-sm'
+                        }`}
+                      >
+                        <span className="truncate max-w-[110px]">{p.name}</span>
+                        <span className="text-[10px]">
+                          {isOut ? '💀' : '❤️'.repeat(lives)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Misconception Academic Diagnostic */}
             {state === 'TEACHER_DEBRIEF' && roomSettings.showDebrief && currentQuestion.misconception && (
               <div className="max-w-xl mx-auto mt-4 p-4 bg-red-950/60 border border-red-500/40 rounded-2xl text-left animate-fadeIn space-y-1 shadow-lg">
@@ -1400,7 +1583,7 @@ export default function ArenaHostPage() {
         <TeacherContextualButton
           state={state}
           onExecuteCommand={handleExecuteCommand}
-          isLastRound={isLastRound}
+          isLastRound={effectiveIsLastRound}
           playerCount={players.length}
         />
       </footer>
@@ -1418,6 +1601,7 @@ export default function ArenaHostPage() {
         isOpen={isRulesOpen}
         onClose={() => setIsRulesOpen(false)}
         gameMode={roomSettings.gameMode}
+        survivalInitialLives={roomSettings.survivalInitialLives}
       />
     </div>
   );
