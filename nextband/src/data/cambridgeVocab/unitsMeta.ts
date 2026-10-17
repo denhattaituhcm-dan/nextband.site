@@ -43,7 +43,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Phong cách sống, Cân bằng & Thư giãn",
     descriptionVi: "Cân bằng công việc - cuộc sống (work-life balance), áp lực công việc và hoạt động giải trí.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["hectic pace of life", "work-life balance", "recreational activities", "relieve tension"]
   },
   {
