@@ -178,6 +178,69 @@ describe("🎮 PHASE 4: SERVER-AUTHORITATIVE STATE MACHINE & SCORING SPEC SUITE"
       });
     });
 
+    it("xử lý an toàn hai submission đồng thời (concurrent race condition) mà không nhân đôi điểm", async () => {
+      const room = await roomService.createRoom({});
+      createdRoomIds.push(room.roomId);
+
+      const p1 = await roomService.joinRoom({
+        pin: room.pin,
+        nickname: "Quậy Phá Concurrent",
+      });
+
+      await engineService.executeHostCommand({
+        commandId: randomUUID(),
+        action: "START_ARENA",
+        pin: room.pin,
+        hostToken: room.hostToken,
+      });
+
+      const q0 = ARENA_STANDARD_QUESTIONS[0];
+
+      // Bắn 2 request nộp bài đồng thời cùng lúc (Promise.allSettled)
+      const results = await Promise.allSettled([
+        engineService.submitAnswer({
+          roomId: room.roomId,
+          playerSessionToken: p1.playerSessionToken,
+          questionId: q0.id,
+          roundIndex: 0,
+          selectedOptionId: q0.correctOptionId,
+        }),
+        engineService.submitAnswer({
+          roomId: room.roomId,
+          playerSessionToken: p1.playerSessionToken,
+          questionId: q0.id,
+          roundIndex: 0,
+          selectedOptionId: q0.correctOptionId,
+        }),
+      ]);
+
+      const fulfilled = results.filter((r) => r.status === "fulfilled");
+      const rejected = results.filter((r) => r.status === "rejected");
+
+      // Bắt buộc: Đúng 1 request thành công, 1 request bị từ chối với ALREADY_SUBMITTED
+      expect(fulfilled.length).toBe(1);
+      expect(rejected.length).toBe(1);
+      expect((rejected[0] as PromiseRejectedResult).reason).toMatchObject({
+        statusCode: 409,
+        code: "ALREADY_SUBMITTED",
+      });
+
+      // Kiểm tra trong DB: Chỉ có đúng 1 record answer được ghi nhận
+      const answersInDb = await prisma.arenaAnswer.findMany({
+        where: {
+          participantId: p1.participantId,
+          questionId: q0.id,
+        },
+      });
+      expect(answersInDb.length).toBe(1);
+
+      // Điểm số học sinh chỉ được cộng đúng 1 lần
+      const participantInDb = await prisma.arenaParticipant.findUnique({
+        where: { id: p1.participantId },
+      });
+      expect(participantInDb?.totalScore).toBe(answersInDb[0].scoreAwarded);
+    });
+
     it("từ chối bài nộp khi đã quá thời hạn (EXPIRED_SUBMISSION)", async () => {
       const room = await roomService.createRoom({});
       createdRoomIds.push(room.roomId);

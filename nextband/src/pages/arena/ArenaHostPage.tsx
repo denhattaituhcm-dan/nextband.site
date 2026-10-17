@@ -373,6 +373,13 @@ export default function ArenaHostPage() {
       })
       .on('broadcast', { event: 'player-answered' }, ({ payload }) => {
         if (!payload || !payload.nickname) return;
+        const playerKey = payload.nickname.trim().toLowerCase();
+
+        // Chống tính điểm và cộng dồn trùng lặp cho cùng một học sinh trong cùng lượt câu hỏi
+        if (answers[playerKey] || answers[payload.nickname]) {
+          return;
+        }
+
         const optionId = payload.optionId;
         const isCorrect = optionId === currentQuestionRef.current.correctOptionId;
         
@@ -391,23 +398,30 @@ export default function ArenaHostPage() {
           }
         }
 
-        setAnswers((prev) => ({
-          ...prev,
-          [payload.nickname]: {
-            playerId: payload.nickname,
-            nickname: payload.nickname,
-            optionId,
-            timeLeft: payload.timeLeft || 0,
-            score,
-            gold: payload.gold || 0,
-          },
-        }));
+        setAnswers((prev) => {
+          if (prev[payload.nickname]) return prev;
+          return {
+            ...prev,
+            [payload.nickname]: {
+              playerId: payload.nickname,
+              nickname: payload.nickname,
+              optionId,
+              timeLeft: payload.timeLeft || 0,
+              score,
+              gold: payload.gold || 0,
+            },
+          };
+        });
 
         if (score > 0) {
-          setCumulativeScores((prev) => ({
-            ...prev,
-            [payload.nickname]: (prev[payload.nickname] || 0) + score,
-          }));
+          setCumulativeScores((prev) => {
+            // Kiểm tra một lần nữa trong updater callback để an toàn tuyệt đối
+            if (answers[payload.nickname]) return prev;
+            return {
+              ...prev,
+              [payload.nickname]: (prev[payload.nickname] || 0) + score,
+            };
+          });
         }
       })
       .on('broadcast', { event: 'gold-updated' }, ({ payload }) => {

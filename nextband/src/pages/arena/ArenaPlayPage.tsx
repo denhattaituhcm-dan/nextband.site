@@ -75,6 +75,7 @@ export default function ArenaPlayPage() {
 
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [roundTimeLimit, setRoundTimeLimit] = useState<number>(15);
   const [timeLeft, setTimeLeft] = useState<number>(15);
   const [isLocked, setIsLocked] = useState<boolean>(false);
@@ -104,6 +105,8 @@ export default function ArenaPlayPage() {
   selectedOptionIdRef.current = selectedOptionId;
   const hasSubmittedRef = useRef<boolean>(hasSubmitted);
   hasSubmittedRef.current = hasSubmitted;
+  const isSubmittingRef = useRef<boolean>(false);
+  const submittedQuestionIdsRef = useRef<Set<string>>(new Set());
   const handleConfirmAnswerRef = useRef<(fallbackId?: string) => void>(() => {});
 
   // Self-Healing Watchdog: Tự động khôi phục nếu mất đồng bộ hoặc drop kết nối
@@ -204,8 +207,15 @@ export default function ArenaPlayPage() {
           }
           if (typeof payload?.timeLeft === 'number') setTimeLeft(payload.timeLeft);
           if (payload?.question) setCurrentQuestion(payload.question);
-          if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
           if (typeof payload?.totalQuestions === 'number') setTotalQuestions(payload.totalQuestions);
+          if (typeof payload?.questionIndex === 'number') {
+            const newIndex = payload.questionIndex;
+            setQuestionIndex(newIndex);
+            const questionKey = `${payload.question?.id || currentQuestion.id}_${newIndex}`;
+            if (submittedQuestionIdsRef.current.has(questionKey)) {
+              setHasSubmitted(true);
+            }
+          }
         }
       })
       .on('broadcast', { event: 'lobby-ping' }, () => {
@@ -286,9 +296,7 @@ export default function ArenaPlayPage() {
         playClickSoundRef.current();
       })
       .on('broadcast', { event: 'round-locked' }, () => {
-        if (selectedOptionIdRef.current && !hasSubmittedRef.current) {
-          handleConfirmAnswerRef.current(selectedOptionIdRef.current);
-        }
+        // Khi Host khóa câu hỏi, chỉ khóa giao diện, tuyệt đối không tự động nộp câu trả lời chưa xác nhận
         setIsLocked(true);
         setGameState('ROUND_LOCKED');
       })
@@ -386,9 +394,7 @@ export default function ArenaPlayPage() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          if (selectedOptionIdRef.current && !hasSubmittedRef.current) {
-            handleConfirmAnswerRef.current(selectedOptionIdRef.current);
-          }
+          // Khi hết thời gian, khóa vòng thi ngay lập tức. Tuyệt đối không tự động nộp bài (auto-submit) nếu học sinh chưa chủ động bấm Xác nhận.
           setIsLocked(true);
           setGameState('ROUND_LOCKED');
           setTimeout(() => {
@@ -408,7 +414,7 @@ export default function ArenaPlayPage() {
   // Xử lý khi học sinh chọn một phương án (cho phép đổi trước khi bấm Xác nhận)
   const handleSelectOption = useCallback(
     (optionId: string) => {
-      if (isLocked || hasSubmitted) return;
+      if (isLocked || hasSubmitted || isSubmittingRef.current) return;
       playClickSound();
       setSelectedOptionId(optionId);
     },
@@ -419,10 +425,26 @@ export default function ArenaPlayPage() {
   const handleConfirmAnswer = useCallback(
     async (fallbackOptionId?: string) => {
       const optionId = fallbackOptionId || selectedOptionId;
-      if (!optionId || isLocked || hasSubmitted) return;
+      const questionKey = `${currentQuestion.id}_${questionIndex}`;
 
-      playClickSound();
+      // Chặn ngay lập tức mọi race condition, multi-touch hoặc click liên tục (Synchronous Lock Guard)
+      if (
+        !optionId ||
+        isLocked ||
+        hasSubmittedRef.current ||
+        isSubmittingRef.current ||
+        submittedQuestionIdsRef.current.has(questionKey)
+      ) {
+        return;
+      }
+
+      // Khóa tức thì đồng bộ trước mọi tác vụ async
+      isSubmittingRef.current = true;
+      hasSubmittedRef.current = true;
+      submittedQuestionIdsRef.current.add(questionKey);
       setHasSubmitted(true);
+      setIsSubmitting(true);
+      playClickSound();
 
       const isAnsCorrect = optionId === currentQuestion.correctOptionId;
 
@@ -449,19 +471,24 @@ export default function ArenaPlayPage() {
       // Gửi nộp bài Authoritative lên Server
       if (roomId && playerToken) {
         try {
-          arenaApi.submitAnswer({
+          await arenaApi.submitAnswer({
             roomId,
             playerSessionToken: playerToken,
             questionId: currentQuestion.id,
             roundIndex: questionIndex,
             selectedOptionId: optionId,
             clientTelemetryTime: new Date().toISOString(),
-          }).catch((err) => {
-            console.warn('[ArenaPlayPage] submitAnswer warning:', err);
           });
-        } catch (e) {
-          console.warn('[ArenaPlayPage] Error initiating submitAnswer:', e);
+        } catch (err: any) {
+          console.warn('[ArenaPlayPage] submitAnswer response/status:', err?.message || err);
+          // Nếu server báo đã nộp trước đó (ALREADY_SUBMITTED), tiếp tục giữ khóa an toàn
+        } finally {
+          setIsSubmitting(false);
+          isSubmittingRef.current = false;
         }
+      } else {
+        setIsSubmitting(false);
+        isSubmittingRef.current = false;
       }
 
       // Gửi broadcast đáp án của học sinh lên Host để hiển thị real-time
@@ -768,22 +795,26 @@ export default function ArenaPlayPage() {
               ))}
             </div>
 
-            {/* Action Bar: Nút Xác Nhận Đáp Án để tránh bấm nhầm */}
+            {/* Action Bar: Nút Xác Nhận Đáp Án ghim cố định ở đáy (Sticky Bottom) chống trôi/khuất màn hình mobile */}
             {!hasSubmitted && !isLocked ? (
-              <div className="pt-2 animate-fadeIn space-y-2">
+              <div className="sticky bottom-0 z-30 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-[#150a33] via-[#150a33]/95 to-transparent backdrop-blur-sm space-y-1.5 animate-fadeIn">
                 <button
                   type="button"
                   onClick={() => handleConfirmAnswer()}
-                  disabled={!selectedOptionId}
-                  className={`w-full py-4 px-6 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-2.5 transition-all shadow-xl cursor-pointer ${
-                    selectedOptionId
+                  disabled={!selectedOptionId || isSubmitting}
+                  className={`w-full py-3.5 sm:py-4 px-6 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-2.5 transition-all shadow-2xl cursor-pointer ${
+                    selectedOptionId && !isSubmitting
                       ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/30 active:scale-95 animate-pulse'
+                      : isSubmitting
+                      ? 'bg-emerald-600/60 text-white/90 border border-emerald-400/30 cursor-wait'
                       : 'bg-white/10 text-white/40 border border-white/10 cursor-not-allowed opacity-60'
                   }`}
                 >
-                  <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                  <CheckCircle2 className={`w-5 h-5 sm:w-6 sm:h-6 ${isSubmitting ? 'animate-spin' : ''}`} />
                   <span>
-                    {selectedOptionId
+                    {isSubmitting
+                      ? 'ĐANG GỬI BÀI...'
+                      : selectedOptionId
                       ? `XÁC NHẬN ĐÁP ÁN ${currentQuestion.options.find((o) => o.id === selectedOptionId)?.label}`
                       : 'CHỌN 1 ĐÁP ÁN ĐỂ XÁC NHẬN'}
                   </span>
@@ -795,19 +826,19 @@ export default function ArenaPlayPage() {
                 </p>
               </div>
             ) : (
-              /* Status notice when submitted or locked */
-              <div className="text-center pt-2">
+              /* Status notice when submitted or locked: Ghim cố định rõ ràng */
+              <div className="sticky bottom-0 z-30 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-[#150a33] via-[#150a33]/95 to-transparent text-center backdrop-blur-sm">
                 {hasSubmitted ? (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-bold text-xs sm:text-sm shadow-md animate-pulse">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <div className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400/50 text-emerald-200 font-extrabold text-xs sm:text-sm shadow-xl shadow-emerald-950/60 animate-pulse">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
                     <span>
                       {gameMode === 'GOLD_QUEST' && isCorrect
-                        ? '✓ Chính xác! Đang chuẩn bị mở Rương Kho Báu...'
-                        : `✓ Đã chốt đáp án ${currentQuestion.options.find((o) => o.id === selectedOptionId)?.label || ''}! Đang chờ khóa câu...`}
+                        ? '✓ Đã chốt đáp án! Đang chuẩn bị mở Rương Kho Báu...'
+                        : `✓ Đã chốt đáp án ${currentQuestion.options.find((o) => o.id === selectedOptionId)?.label || ''}! Hãy nhìn lên màn hình.`}
                     </span>
                   </div>
                 ) : (
-                  <span className="text-xs text-slate-400 font-semibold">
+                  <span className="text-xs text-slate-400 font-semibold inline-block py-2">
                     Đã hết thời gian trả lời
                   </span>
                 )}
