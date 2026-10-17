@@ -223,13 +223,13 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 3,
       prompt: "Collocation tố tụng hình sự: \"The defendant was convicted of cultivating illicit plants and ______ to 10 months in prison.\"",
       options: [
-        { id: "opt_A", label: "A", text: "sentenced (bị tòa tuyên án phạt tù)" },
+        { id: "opt_A", label: "A", text: "sentenced" },
         { id: "opt_B", label: "B", text: "worded" },
         { id: "opt_C", label: "C", text: "phrased" },
         { id: "opt_D", label: "D", text: "scripted" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. sentenced (bị tòa tuyên án phạt tù)",
+      correctAnswerText: "A. sentenced",
       correctExplanation: "Cấu trúc pháp lý chuẩn: \"be sentenced to [time] in prison/jail\" (bị toà tuyên phạt mức án bao lâu).",
       misconception: {
         baitOptionId: "opt_B",
@@ -263,13 +263,13 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 5,
       prompt: "Chọn tính từ phù hợp diễn tả nỗ lực làm lại cuộc đời: \"Now he claims he is fully ______ and hopes to start clean with an honest livelihood.\"",
       options: [
-        { id: "opt_A", label: "A", text: "reformed (đã hoàn lương, cải tà quy chính)" },
+        { id: "opt_A", label: "A", text: "reformed" },
         { id: "opt_B", label: "B", text: "deformed" },
         { id: "opt_C", label: "C", text: "uninformed" },
         { id: "opt_D", label: "D", text: "misinformed" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. reformed (đã hoàn lương, cải tà quy chính)",
+      correctAnswerText: "A. reformed",
       correctExplanation: "\"A reformed criminal/character\" chỉ người từng phạm pháp nay đã ăn năn hối cải và hoàn lương sống lương thiện.",
       misconception: {
         baitOptionId: "opt_B",
@@ -323,13 +323,13 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 8,
       prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp hoàn thành câu: \"International syndicates exploit vulnerable individuals to operate an extensive ______ drug network across borders.\"",
       options: [
-        { id: "opt_A", label: "A", text: "illicit (bất hợp pháp, phi pháp)" },
+        { id: "opt_A", label: "A", text: "illicit" },
         { id: "opt_B", label: "B", text: "campus" },
         { id: "opt_C", label: "C", text: "bland" },
         { id: "opt_D", label: "D", text: "relief" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. illicit (bất hợp pháp, phi pháp)",
+      correctAnswerText: "A. illicit",
       correctExplanation: "\"Illicit drug network\" là collocation học thuật band cao trong IELTS: mạng lưới buôn bán chất cấm phi pháp.",
       misconception: {
         baitOptionId: "opt_C",

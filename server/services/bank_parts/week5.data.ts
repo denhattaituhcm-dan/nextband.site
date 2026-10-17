@@ -372,13 +372,13 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       roundIndex: 8,
       prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào câu: \"The interactive theatre play provided an exceptionally ______ experience for the audience, making them feel part of the story.\"",
       options: [
-        { id: "opt_A", label: "A", text: "immersive (mang lại trải nghiệm đắm chìm chân thực)" },
+        { id: "opt_A", label: "A", text: "immersive" },
         { id: "opt_B", label: "B", text: "bland" },
         { id: "opt_C", label: "C", text: "exhausted" },
         { id: "opt_D", label: "D", text: "compulsory" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. immersive (mang lại trải nghiệm đắm chìm chân thực)",
+      correctAnswerText: "A. immersive",
       correctExplanation: "\"An immersive experience\" là tính từ cao cấp chỉ trải nghiệm cuốn hút đến mức người tham gia như hòa mình hoàn toàn vào không gian tác phẩm.",
       misconception: {
         baitOptionId: "opt_B",

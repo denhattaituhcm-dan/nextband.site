@@ -243,13 +243,13 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 4,
       prompt: "Collocation kinh tế học chỉ khả năng chi trả của người tiêu dùng: \"Millennials represent over $1.3 trillion in ______.\"",
       options: [
-        { id: "opt_A", label: "A", text: "buying power (hoặc purchasing power: sức mua)" },
+        { id: "opt_A", label: "A", text: "buying power" },
         { id: "opt_B", label: "B", text: "buying energy" },
         { id: "opt_C", label: "C", text: "buying muscle" },
         { id: "opt_D", label: "D", text: "buying effort" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. buying power (hoặc purchasing power: sức mua)",
+      correctAnswerText: "A. buying power",
       correctExplanation: "\"Buying power\" (hoặc purchasing power) là thuật ngữ tài chính tiêu chuẩn chỉ tổng năng lực tài chính và sức mua sắm hàng hóa.",
       misconception: {
         baitOptionId: "opt_B",
@@ -323,13 +323,13 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 8,
       prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào câu phân tích tiếp thị: \"Brands now recruit digital content ______ to forge genuine, transparent dialogues with modern consumers.\"",
       options: [
-        { id: "opt_A", label: "A", text: "creators (nhà sáng tạo nội dung số)" },
+        { id: "opt_A", label: "A", text: "creators" },
         { id: "opt_B", label: "B", text: "campuses" },
         { id: "opt_C", label: "C", text: "burnouts" },
         { id: "opt_D", label: "D", text: "blands" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. creators (nhà sáng tạo nội dung số)",
+      correctAnswerText: "A. creators",
       correctExplanation: "\"Content creators\" là danh từ chuẩn nghề nghiệp chỉ các nhà sáng tạo nội dung trên mạng xã hội hiện đại.",
       misconception: {
         baitOptionId: "opt_C",

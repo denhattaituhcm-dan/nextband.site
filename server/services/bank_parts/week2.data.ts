@@ -352,13 +352,13 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       roundIndex: 7,
       prompt: "Thành ngữ / cấu trúc: \"Is it really worth it to exchange our lives for money?\" mang cấu trúc chuẩn nào?",
       options: [
-        { id: "opt_A", label: "A", text: "exchange [A] for [B] (đánh đổi cái này lấy cái khác)" },
+        { id: "opt_A", label: "A", text: "exchange [A] for [B]" },
         { id: "opt_B", label: "B", text: "exchange [A] into [B]" },
         { id: "opt_C", label: "C", text: "exchange [A] with [B]" },
         { id: "opt_D", label: "D", text: "exchange [A] at [B]" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. exchange [A] for [B] (đánh đổi cái này lấy cái khác)",
+      correctAnswerText: "A. exchange [A] for [B]",
       correctExplanation: "\"Exchange something for something\" là cấu trúc chuẩn để chỉ sự đánh đổi hoặc trao đổi lấy vật phẩm/tiền bạc.",
       misconception: {
         baitOptionId: "opt_B",

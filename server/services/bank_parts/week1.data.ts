@@ -332,13 +332,13 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       roundIndex: 6,
       prompt: "Chọn từ loại thích hợp sau tính từ sở hữu: \"Our university programs encourage students to explore their personal ______.\"",
       options: [
-        { id: "opt_A", label: "A", text: "interests (sở thích, mối quan tâm)" },
+        { id: "opt_A", label: "A", text: "interests" },
         { id: "opt_B", label: "B", text: "interesting" },
         { id: "opt_C", label: "C", text: "interested" },
         { id: "opt_D", label: "D", text: "interestingly" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. interests (sở thích, mối quan tâm)",
+      correctAnswerText: "A. interests",
       correctExplanation: "Sau tính từ sở hữu \"their personal\" bắt buộc phải là một danh từ số nhiều: \"interests\" (các mối quan tâm / sở thích).",
       misconception: {
         baitOptionId: "opt_C",

@@ -223,13 +223,13 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       roundIndex: 3,
       prompt: "Collocation chuẩn trong bài: \"The industrial plant discharged waste which contained toxins that ______ the permitted safety level.\"",
       options: [
-        { id: "opt_A", label: "A", text: "exceeded (vượt quá ngưỡng cho phép)" },
+        { id: "opt_A", label: "A", text: "exceeded" },
         { id: "opt_B", label: "B", text: "succeeded" },
         { id: "opt_C", label: "C", text: "receded" },
         { id: "opt_D", label: "D", text: "proceeded" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. exceeded (vượt quá ngưỡng cho phép)",
+      correctAnswerText: "A. exceeded",
       correctExplanation: "Collocation môi trường pháp lý: \"exceed the permitted level / standard\" (vượt quá ngưỡng quy chuẩn an toàn cho phép).",
       misconception: {
         baitOptionId: "opt_B",
@@ -323,13 +323,13 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       roundIndex: 8,
       prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào báo cáo sinh thái: \"The environmental agency placed an immediate ______ on fishing in polluted coastal zones.\"",
       options: [
-        { id: "opt_A", label: "A", text: "ban (lệnh cấm chính thức)" },
+        { id: "opt_A", label: "A", text: "ban" },
         { id: "opt_B", label: "B", text: "campus" },
         { id: "opt_C", label: "C", text: "burnout" },
         { id: "opt_D", label: "D", text: "itinerary" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. ban (lệnh cấm chính thức)",
+      correctAnswerText: "A. ban",
       correctExplanation: "Collocation: \"place a ban on something\" (áp đặt lệnh cấm đối với hoạt động đánh bắt/mua bán nào đó).",
       misconception: {
         baitOptionId: "opt_D",
@@ -384,7 +384,7 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
         { id: "opt_A", label: "A", text: "/ɪz/" },
         { id: "opt_B", label: "B", text: "/s/" },
         { id: "opt_C", label: "C", text: "/z/" },
-        { id: "opt_D", label: "D", text: "Câm không phát âm" }
+        { id: "opt_D", label: "D", text: "Âm câm" }
       ],
       correctOptionId: "opt_A",
       timeLimitSeconds: 20,

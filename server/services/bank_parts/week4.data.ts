@@ -232,13 +232,13 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Cặp từ TRÁI NGHĨA cốt lõi trong đoạn phân tích thịt đỏ của bài đọc là:",
       options: [
-        { id: "opt_A", label: "A", text: "processed meat (thịt chế biến sẵn) vs. unprocessed meat (thịt tươi chưa chế biến)" },
+        { id: "opt_A", label: "A", text: "processed meat vs. unprocessed meat" },
         { id: "opt_B", label: "B", text: "red meat vs. white meat" },
         { id: "opt_C", label: "C", text: "fresh meat vs. cooked meat" },
         { id: "opt_D", label: "D", text: "healthy meat vs. harmful meat" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. processed meat (thịt chế biến sẵn) vs. unprocessed meat (thịt tươi chưa chế biến)",
+      correctAnswerText: "A. processed meat vs. unprocessed meat",
       correctExplanation: "Tiền tố un- tạo nên cặp đối lập kinh điển trong dinh dưỡng học: processed (chế biến công nghiệp nhiều phụ gia) vs. unprocessed (thịt nguyên bản chưa chế biến).",
       misconception: {
         baitOptionId: "opt_B",
@@ -372,13 +372,13 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       roundIndex: 8,
       prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp điền vào câu y tế: \"Clinical trials revealed that maintaining a brisk walking ______ significantly reduces the risk of dementia.\"",
       options: [
-        { id: "opt_A", label: "A", text: "pace (nhịp độ, tốc độ bước đi)" },
+        { id: "opt_A", label: "A", text: "pace" },
         { id: "opt_B", label: "B", text: "cost" },
         { id: "opt_C", label: "C", text: "bland" },
         { id: "opt_D", label: "D", text: "burnout" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. pace (nhịp độ, tốc độ bước đi)",
+      correctAnswerText: "A. pace",
       correctExplanation: "\"Walking pace\" = tốc độ, nhịp bước chân đi bộ. \"Brisk walking pace\" là nhịp đi bộ nhanh mang lại lợi ích tim mạch và não bộ.",
       misconception: {
         baitOptionId: "opt_D",

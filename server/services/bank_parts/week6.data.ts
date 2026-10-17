@@ -414,7 +414,7 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
         { id: "opt_A", label: "A", text: "/ɪd/" },
         { id: "opt_B", label: "B", text: "/t/" },
         { id: "opt_C", label: "C", text: "/d/" },
-        { id: "opt_D", label: "D", text: "Câm (không phát âm)" }
+        { id: "opt_D", label: "D", text: "Âm câm" }
       ],
       correctOptionId: "opt_A",
       timeLimitSeconds: 20,
