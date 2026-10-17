@@ -525,8 +525,25 @@ export function getEvidenceList(): EvidenceItem[] {
   }
 }
 
-// Fetch from Fastify API with automatic cache sync
+// Fetch from Fastify API with automatic cache sync (public endpoint for students and visitors)
 export async function fetchEvidenceListAsync(): Promise<EvidenceItem[]> {
+  try {
+    const data = await evidenceApi.getPublished();
+
+    if (data && data.length > 0) {
+      const mapped = data.map(mapSupabaseToEvidence);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
+      return mapped;
+    }
+  } catch (err) {
+    console.warn("Using local evidence fallback", err);
+  }
+
+  return getEvidenceList();
+}
+
+// Fetch all evidence items including drafts for Admin workspace
+export async function fetchAllEvidenceListAsync(): Promise<EvidenceItem[]> {
   try {
     const data = await evidenceApi.getAll();
 
@@ -536,7 +553,7 @@ export async function fetchEvidenceListAsync(): Promise<EvidenceItem[]> {
       return mapped;
     }
   } catch (err) {
-    console.warn("Using local evidence fallback", err);
+    console.warn("Using local admin evidence fallback", err);
   }
 
   return getEvidenceList();

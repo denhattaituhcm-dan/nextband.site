@@ -1,4 +1,4 @@
-import { supabase } from "../../supabase";
+import { API_BASE_URL, authenticatedFetch, handleApiResponse } from "../client";
 
 // Teacher Profile types
 export interface AvailabilitySlot {
@@ -46,21 +46,8 @@ export const teacherProfileApi = {
    * Lấy hồ sơ năng lực của giáo viên (profile + currentClasses + workload).
    */
   get: async (userId: string) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-
-    const res = await fetch(`/api/teacher-profile/${userId}`, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error || err?.message || "Không thể tải hồ sơ giáo viên");
-    }
-
-    return res.json() as Promise<{
+    const res = await authenticatedFetch(`${API_BASE_URL}/teacher-profile/${userId}`);
+    return handleApiResponse<{
       profile: TeacherProfileData | null;
       currentClasses: TeacherClassItem[];
       workload: {
@@ -69,30 +56,17 @@ export const teacherProfileApi = {
         maxHours: number | null;
         capacityStatus: "available" | "nearFull" | "full" | "unknown";
       };
-    }>;
+    }>(res, "Không thể tải hồ sơ giáo viên");
   },
 
   /**
    * Upsert hồ sơ năng lực (admin only).
    */
   upsert: async (userId: string, data: Partial<TeacherProfileData>) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-
-    const res = await fetch(`/api/teacher-profile/${userId}`, {
+    const res = await authenticatedFetch(`${API_BASE_URL}/teacher-profile/${userId}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
       body: JSON.stringify(data),
     });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error || err?.message || "Không thể cập nhật hồ sơ giáo viên");
-    }
-
-    return res.json();
+    return handleApiResponse(res, "Không thể cập nhật hồ sơ giáo viên");
   },
 };

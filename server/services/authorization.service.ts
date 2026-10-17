@@ -243,7 +243,7 @@ export class AuthorizationService {
     }
 
     const teacherId = section.exam?.course?.teacherId;
-    if (teacherId && teacherId !== userId) {
+    if (!teacherId || teacherId !== userId) {
       throw new AuthorizationError(
         "Từ chối quyền: Bạn không phụ trách khóa học chứa phần thi này.",
         403,
@@ -279,7 +279,7 @@ export class AuthorizationService {
     }
 
     const teacherId = group.section?.exam?.course?.teacherId;
-    if (teacherId && teacherId !== userId) {
+    if (!teacherId || teacherId !== userId) {
       throw new AuthorizationError(
         "Từ chối quyền: Bạn không phụ trách khóa học chứa nhóm câu hỏi này.",
         403,
@@ -319,7 +319,7 @@ export class AuthorizationService {
     }
 
     const teacherId = question.group?.section?.exam?.course?.teacherId;
-    if (teacherId && teacherId !== userId) {
+    if (!teacherId || teacherId !== userId) {
       throw new AuthorizationError(
         "Từ chối quyền: Bạn không phụ trách khóa học chứa câu hỏi này.",
         403,

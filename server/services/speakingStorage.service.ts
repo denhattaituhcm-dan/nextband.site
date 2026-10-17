@@ -228,8 +228,31 @@ export class SpeakingStorageService {
       return { buffer, mimeType, fileName };
     }
 
-    // 4. Nếu là URL bên ngoài (http/https), fetch trực tiếp
+    // 4. Nếu là URL bên ngoài (http/https), chỉ cho phép tải từ Supabase domain hợp lệ (chống SSRF)
     if (clean.startsWith("http://") || clean.startsWith("https://")) {
+      let allowedHost: string | null = null;
+      try {
+        if (env.SUPABASE_URL) {
+          allowedHost = new URL(env.SUPABASE_URL).hostname;
+        }
+      } catch {}
+
+      let targetHost = "";
+      try {
+        targetHost = new URL(clean).hostname;
+      } catch {
+        throw new Error(`URL âm thanh không hợp lệ: ${clean}`);
+      }
+
+      const isSupabaseHost =
+        (allowedHost && targetHost === allowedHost) ||
+        targetHost.endsWith(".supabase.co") ||
+        targetHost.endsWith(".supabase.in");
+
+      if (!isSupabaseHost) {
+        throw new Error(`Từ chối truy cập: Nguồn âm thanh ngoài không được ủy quyền (${targetHost}).`);
+      }
+
       const fetchRes = await fetch(clean);
       if (!fetchRes.ok) {
         throw new Error(`Không thể tải tệp âm thanh từ URL: ${clean}`);

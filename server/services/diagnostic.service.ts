@@ -590,7 +590,15 @@ export class DiagnosticService {
     const results = questions.map((q) => {
       const studentVal = String(submission.answers[q.id] || '').trim().toLowerCase();
       const correctVal = String(q.correctAnswer || '').trim().toLowerCase();
-      const isCorrect = studentVal !== '' && (studentVal === correctVal || correctVal.includes(studentVal));
+      
+      const acceptableAnswers = correctVal
+        .split(/[/|]/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      const isCorrect =
+        studentVal !== '' &&
+        (studentVal === correctVal || acceptableAnswers.includes(studentVal));
 
       if (isCorrect) {
         correctCount++;
@@ -636,7 +644,15 @@ export class DiagnosticService {
 
     const studentVal = String(answer || '').trim().toLowerCase();
     const correctVal = String(question.correctAnswer || '').trim().toLowerCase();
-    const isCorrect = studentVal !== '' && (studentVal === correctVal || correctVal.includes(studentVal));
+
+    const acceptableAnswers = correctVal
+      .split(/[/|]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const isCorrect =
+      studentVal !== '' &&
+      (studentVal === correctVal || acceptableAnswers.includes(studentVal));
 
     return {
       questionId: question.id,

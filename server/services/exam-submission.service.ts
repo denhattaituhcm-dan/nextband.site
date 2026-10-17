@@ -1703,7 +1703,7 @@ export class ExamSubmissionService {
         }
 
         const targetWhere: any = g.answerId
-          ? { id: g.answerId }
+          ? { id: g.answerId, submissionId: id }
           : g.questionId
           ? { submissionId: id, questionId: g.questionId }
           : null;
@@ -1925,8 +1925,8 @@ export class ExamSubmissionService {
       // Mode B: Partial overrides from Teacher Manual Regrade
       if (data.grades && data.grades.length > 0) {
         for (const g of data.grades) {
-          await tx.answer.update({
-            where: { id: g.answerId },
+          await tx.answer.updateMany({
+            where: { id: g.answerId, submissionId: id },
             data: {
               score: g.score,
               feedback: g.feedback || null,

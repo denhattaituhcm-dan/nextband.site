@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { authenticate } from "../middlewares/auth.middleware.js";
+import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { ArenaRoomService } from "../services/arena-room.service.js";
 
 export default async function arenaRoutes(fastify: FastifyInstance) {
@@ -13,7 +13,7 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
     };
   }>(
     "/rooms",
-    { preHandler: [authenticate] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       const user = request.user as any;
       const hostUserId = user?.userId || user?.id;
@@ -227,7 +227,7 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
     Querystring: { examId?: string; lessonKey?: string };
   }>(
     "/questions",
-    { preHandler: [authenticate] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       try {
         const { examId, lessonKey } = request.query;
@@ -257,7 +257,7 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
     };
   }>(
     "/questions",
-    { preHandler: [authenticate] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       try {
         const { examId, lessonKey, questions } = request.body || {};
@@ -295,7 +295,7 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
     Querystring: { examId?: string; lessonKey?: string };
   }>(
     "/questions",
-    { preHandler: [authenticate] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       try {
         const { examId, lessonKey } = request.query;

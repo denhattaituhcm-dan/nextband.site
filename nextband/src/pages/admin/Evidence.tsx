@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import {
   EvidenceItem,
   getEvidenceList,
-  fetchEvidenceListAsync,
+  fetchAllEvidenceListAsync,
   saveEvidenceItemAsync,
   deleteEvidenceItemAsync,
   toggleEvidencePublished,
@@ -50,7 +50,7 @@ export default function AdminEvidence() {
   const [previewItem, setPreviewItem] = useState<EvidenceItem | null>(null);
 
   const loadData = async () => {
-    const list = await fetchEvidenceListAsync();
+    const list = await fetchAllEvidenceListAsync();
     setItems(list);
   };
 
