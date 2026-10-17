@@ -67,7 +67,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Giao tiếp, Ngôn ngữ & Ngôn ngữ học",
     descriptionVi: "Năng lực biểu đạt, ngôn ngữ cơ thể, rào cản ngôn ngữ và sự phát triển của tiếng mẹ đẻ.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["express oneself", "linguistic diversity", "non-verbal communication", "mother tongue"]
   },
   {
