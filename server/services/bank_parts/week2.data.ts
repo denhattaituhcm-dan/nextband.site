@@ -412,21 +412,21 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w2d3_q01",
       roundIndex: 0,
-      prompt: "Cặp nguyên âm sau /u:/ và /ʊ/ phân biệt rõ nhất qua hai từ nào?",
+      prompt: "Từ nào sau đây có phần gạch chân chứa nguyên âm ngắn /ʊ/ khác với các từ còn lại?",
       options: [
-        { id: "opt_A", label: "A", text: "food /fuːd/ vs. foot /fʊt/" },
-        { id: "opt_B", label: "B", text: "pen /pen/ vs. pain /peɪn/" },
-        { id: "opt_C", label: "C", text: "four /fɔː/ vs. far /fɑː/" },
-        { id: "opt_D", label: "D", text: "chain /tʃeɪn/ vs. chance /tʃɑːns/" }
+        { id: "opt_A", label: "A", text: "cushion" },
+        { id: "opt_B", label: "B", text: "bamboo" },
+        { id: "opt_C", label: "C", text: "balloon" },
+        { id: "opt_D", label: "D", text: "monsoon" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. food /fuːd/ vs. foot /fʊt/",
-      correctExplanation: "Food có âm u dài /u:/ (chu môi tròn chặt), foot có âm u ngắn /ʊ/ (môi hơi mở, thả lỏng).",
+      correctAnswerText: "A. cushion",
+      correctExplanation: "\"cushion\" phát âm là /ˈkʊʃ.ən/ chứa nguyên âm ngắn /ʊ/. Trong khi \"bamboo\" /bæmˈbuː/, \"balloon\" /bəˈluːn/, \"monsoon\" /mɒnˈsuːn/ đều chứa nguyên âm dài /uː/.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. children",
-        diagnosticTitle: "Nhầm sang cặp /ɔː/ và /ɑː/",
-        explanation: "Four vs far là cặp phân biệt giữa âm o dài tròn môi và âm a dài hạ hàm."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. bamboo",
+        diagnosticTitle: "Nhầm lẫn chữ cái 'oo' với âm ngắn",
+        explanation: "Học viên hay nhầm các từ có đuôi -oo là âm ngắn, nhưng bamboo mang âm /uː/ kéo dài."
       }
     },
     {

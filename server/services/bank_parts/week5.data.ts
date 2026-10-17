@@ -414,19 +414,19 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Từ nào sau đây chứa cụm phụ âm (consonant cluster) gồm 3 phụ âm đứng liền nhau ở đầu từ?",
       options: [
-        { id: "opt_A", label: "A", text: "street /str-/" },
-        { id: "opt_B", label: "B", text: "play /pl-/" },
-        { id: "opt_C", label: "C", text: "bread /br-/" },
-        { id: "opt_D", label: "D", text: "clean /kl-/" }
+        { id: "opt_A", label: "A", text: "street" },
+        { id: "opt_B", label: "B", text: "play" },
+        { id: "opt_C", label: "C", text: "bread" },
+        { id: "opt_D", label: "D", text: "clean" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. street /str-/",
-      correctExplanation: "\"Street\" bắt đầu bằng cụm 3 phụ âm /s-t-r/ (street, spring, scream, splash). Các từ còn lại chỉ có 2 phụ âm đầu.",
+      correctAnswerText: "A. street",
+      correctExplanation: "\"Street\" bắt đầu bằng cụm 3 phụ âm /s-t-r/ (street, spring, scream, splash). Các từ còn lại chỉ có 2 phụ âm đầu (/pl-/, /br-/, /kl-/).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
+        baitOptionText: "B. play",
         diagnosticTitle: "Chọn cụm chỉ có 2 phụ âm",
-        explanation: "/pl-/ chỉ gồm 2 phụ âm p và l."
+        explanation: "Play chỉ gồm 2 phụ âm /p/ và /l/ đứng đầu."
       }
     },
     {
@@ -444,7 +444,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Người bản xứ thường nuốt âm \"or\" để phát âm thành 3 âm tiết: /ˈkʌmf.tə.bəl/ (comf-ta-ble).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
+        baitOptionText: "B. Chính xác 5 âm tiết",
         diagnosticTitle: "Đếm từng chữ cái com-for-ta-b-le",
         explanation: "Người học nhìn mặt chữ đếm âm tiết rất dễ phát âm thừa âm tiết làm mất tự nhiên."
       }
@@ -454,17 +454,17 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       roundIndex: 2,
       prompt: "Trọng âm chính (primary stress) của từ \"competitive\" nằm ở âm tiết thứ mấy?",
       options: [
-        { id: "opt_A", label: "A", text: "Âm tiết thứ 2 (/kəmˈpet.ɪ.tɪv/)" },
-        { id: "opt_B", label: "B", text: "Âm tiết thứ 1 (/ˈkɒm.pə.tɪ.tɪv/)" },
+        { id: "opt_A", label: "A", text: "Âm tiết thứ 2" },
+        { id: "opt_B", label: "B", text: "Âm tiết thứ 1" },
         { id: "opt_C", label: "C", text: "Âm tiết thứ 3" },
         { id: "opt_D", label: "D", text: "Âm tiết thứ 4" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Âm tiết thứ 2 (/kəmˈpet.ɪ.tɪv/)",
-      correctExplanation: "Competitive có trọng âm rơi vào âm tiết thứ hai \"pet\". (Lưu ý: danh từ \"competition\" lại có trọng âm ở âm tiết thứ 3).",
+      correctAnswerText: "A. Âm tiết thứ 2",
+      correctExplanation: "Competitive (/kəmˈpet.ɪ.tɪv/) có trọng âm rơi vào âm tiết thứ hai \"pet\". (Lưu ý: danh từ \"competition\" lại có trọng âm ở âm tiết thứ 3).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
+        baitOptionText: "B. Âm tiết thứ 1",
         diagnosticTitle: "Nhầm với động từ gốc \"compete\" hoặc danh từ \"company\"",
         explanation: "Đây là từ rất hay bị học viên phát âm sai trọng âm vào âm tiết đầu tiên."
       }

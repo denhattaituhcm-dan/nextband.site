@@ -366,23 +366,23 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Phát biểu nào sau đây là ĐÚNG về Trọng âm câu (Sentence Stress) trong tiếng Anh giao tiếp?",
       options: [
-        { id: "opt_A", label: "A", text: "Sentence stress không cố định mà linh hoạt phụ thuộc vào từ mang thông tin (content words) mà người nói muốn nhấn mạnh" },
+        { id: "opt_A", label: "A", text: "Linh hoạt phụ thuộc vào từ mang thông tin (content words) mà người nói muốn nhấn mạnh" },
         { id: "opt_B", label: "B", text: "Mọi từ trong câu đều phải được nói với cao độ và độ lớn hoàn toàn ngang bằng nhau" },
         { id: "opt_C", label: "C", text: "Chỉ có từ đầu tiên và từ cuối cùng của câu mới được nhấn trọng âm" },
-        { id: "opt_D", label: "D", text: "Các mạo từ và giới từ luôn luôn là từ được nhấn mạnh nhất" }
+        { id: "opt_D", label: "D", text: "Các mạo từ và giới từ luôn luôn là từ được nhấn mạnh nhất trong câu" }
       ],
       correctOptionId: "opt_A",
       timeLimitSeconds: 20,
       points: 1000,
-      explanation: "Sentence stress linh hoạt: Người nói nhấn mạnh vào Content Words (nouns, main verbs, adjectives) hoặc từ họ muốn làm nổi bật ý định thông báo."
+      explanation: "Sentence stress linh hoạt: Người nói nhấn mạnh vào Content Words (nouns, main verbs, adjectives) hoặc từ họ muốn làm nổi bật ý định thông báo.",
     },
     {
       id: "doer_w8d3_q02",
       roundIndex: 1,
       prompt: "Khi nói 'I gave her a BOX of chocolates for her birthday' (nhấn mạnh vào từ BOX), người nói muốn truyền tải ý gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Nhấn mạnh vào số lượng/hình thức gói quà là cả một cái HỘP to chứ không phải chỉ một thanh kẹo nhỏ" },
-        { id: "opt_B", label: "B", text: "Nhấn mạnh món quà là sô-cô-la chứ không phải món khác" },
+        { id: "opt_A", label: "A", text: "Nhấn mạnh quy cách đóng gói (cả một cái hộp lớn chứ không phải thanh kẹo nhỏ)" },
+        { id: "opt_B", label: "B", text: "Nhấn mạnh loại quà tặng là sô-cô-la chứ không phải bánh kẹo khác" },
         { id: "opt_C", label: "C", text: "Nhấn mạnh tặng vào dịp sinh nhật chứ không phải ngày lễ khác" },
         { id: "opt_D", label: "D", text: "Nhấn mạnh chính tôi là người tặng chứ không phải người khác" }
       ],
