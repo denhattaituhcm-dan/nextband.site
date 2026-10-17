@@ -11,15 +11,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Trophy, Medal, RotateCcw, Crown, Sparkles, Award } from 'lucide-react';
 import { PlayerPublicRank } from '@/lib/arena/types';
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
+import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
+import { getCharacterBySeed } from '@/lib/arena/characterCatalog';
+import { LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
 
 interface ArenaPodiumViewProps {
   rankings: PlayerPublicRank[];
+  players?: LobbyPlayer[];
   gameMode?: 'CLASSIC' | 'GOLD_QUEST';
   onRestart?: () => void;
 }
 
 export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
   rankings,
+  players = [],
   gameMode = 'CLASSIC',
   onRestart,
 }) => {
@@ -27,6 +32,15 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
   const second = rankings[1];
   const third = rankings[2];
   const rest = rankings.slice(3, 5);
+
+  const getAvatarSeed = (rankPlayer?: PlayerPublicRank) => {
+    if (!rankPlayer) return 'student';
+    if (rankPlayer.avatarSeed !== undefined) return rankPlayer.avatarSeed;
+    const found = players.find(
+      (p) => p.name.toLowerCase() === rankPlayer.nickname.toLowerCase() || p.id === rankPlayer.playerId
+    );
+    return found?.avatarSeed !== undefined ? found.avatarSeed : rankPlayer.nickname;
+  };
 
   const unitLabel = gameMode === 'GOLD_QUEST' ? '🪙 Vàng' : 'pts';
 
@@ -244,13 +258,18 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
         {/* Hạng 2 (Silver) */}
         <div className="flex-1 flex flex-col items-center space-y-3">
           {second && hasRevealedSecond ? (
-            <div className="flex flex-col items-center space-y-1 animate-bounce transition-all duration-700">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-slate-300/20 border-2 border-slate-300 flex items-center justify-center text-2xl md:text-3xl font-black text-slate-200 shadow-xl shadow-slate-400/30">
-                {second.nickname.charAt(0).toUpperCase()}
+            <div className="flex flex-col items-center space-y-1.5 animate-bounce transition-all duration-700">
+              <div className="p-1 rounded-2xl bg-gradient-to-tr from-slate-400 via-slate-100 to-slate-400 shadow-xl shadow-slate-400/30">
+                <PvZCardAvatar seed={getAvatarSeed(second)} size="md" />
               </div>
-              <span className="font-black text-sm md:text-base text-slate-200 truncate max-w-[110px]">
-                {second.nickname}
-              </span>
+              <div className="text-center">
+                <span className="font-black text-sm md:text-base text-slate-200 truncate max-w-[120px] block">
+                  {second.nickname}
+                </span>
+                <span className="text-[10px] font-bold text-slate-400 block truncate max-w-[120px]">
+                  {getCharacterBySeed(getAvatarSeed(second)).name}
+                </span>
+              </div>
               <span className="text-xs md:text-sm font-black text-slate-300 font-mono">
                 {second.totalScore} {unitLabel}
               </span>
@@ -272,16 +291,21 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
         {/* Hạng 1 (Gold - Cao nhất) */}
         <div className="flex-1 flex flex-col items-center space-y-3 -mt-6">
           {first && hasRevealedFirst ? (
-            <div className="flex flex-col items-center space-y-1 relative animate-bounce transition-all duration-1000 scale-105 z-30">
-              <div className="absolute -top-9 text-amber-300 animate-bounce drop-shadow-[0_0_25px_rgba(250,204,21,1)]">
-                <Crown className="w-11 h-11 fill-amber-400 stroke-amber-200 stroke-[1.5]" />
+            <div className="flex flex-col items-center space-y-1.5 relative animate-bounce transition-all duration-1000 scale-105 z-30">
+              <div className="absolute -top-10 text-amber-300 animate-bounce drop-shadow-[0_0_25px_rgba(250,204,21,1)]">
+                <Crown className="w-12 h-12 fill-amber-400 stroke-amber-200 stroke-[1.5]" />
               </div>
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-amber-400/40 border-4 border-amber-300 flex items-center justify-center text-3xl md:text-4xl font-black text-amber-200 shadow-[0_0_40px_rgba(251,191,36,0.9)] ring-4 ring-amber-300/60">
-                {first.nickname.charAt(0).toUpperCase()}
+              <div className="p-1.5 rounded-3xl bg-gradient-to-tr from-amber-400 via-yellow-200 to-amber-500 shadow-[0_0_40px_rgba(251,191,36,0.9)] ring-4 ring-amber-300/60">
+                <PvZCardAvatar seed={getAvatarSeed(first)} size="lg" />
               </div>
-              <span className="font-black text-base md:text-lg text-amber-300 truncate max-w-[140px] drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]">
-                {first.nickname}
-              </span>
+              <div className="text-center">
+                <span className="font-black text-base md:text-lg text-amber-300 truncate max-w-[150px] drop-shadow-[0_0_10px_rgba(251,191,36,0.8)] block">
+                  {first.nickname}
+                </span>
+                <span className="text-xs font-bold text-amber-200/90 block truncate max-w-[150px]">
+                  {getCharacterBySeed(getAvatarSeed(first)).name}
+                </span>
+              </div>
               <span className="text-sm md:text-base font-black text-amber-400 font-mono">
                 {first.totalScore} {unitLabel}
               </span>
@@ -311,13 +335,18 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
         {/* Hạng 3 (Bronze) */}
         <div className="flex-1 flex flex-col items-center space-y-3">
           {third && hasRevealedThird ? (
-            <div className="flex flex-col items-center space-y-1 animate-bounce transition-all duration-700">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-amber-800/30 border-2 border-amber-700 flex items-center justify-center text-2xl md:text-3xl font-black text-amber-500 shadow-xl shadow-amber-800/30">
-                {third.nickname.charAt(0).toUpperCase()}
+            <div className="flex flex-col items-center space-y-1.5 animate-bounce transition-all duration-700">
+              <div className="p-1 rounded-2xl bg-gradient-to-tr from-amber-700 via-amber-500 to-amber-800 shadow-xl shadow-amber-800/30">
+                <PvZCardAvatar seed={getAvatarSeed(third)} size="md" />
               </div>
-              <span className="font-black text-sm md:text-base text-amber-400 truncate max-w-[110px]">
-                {third.nickname}
-              </span>
+              <div className="text-center">
+                <span className="font-black text-sm md:text-base text-amber-400 truncate max-w-[120px] block">
+                  {third.nickname}
+                </span>
+                <span className="text-[10px] font-bold text-amber-500/90 block truncate max-w-[120px]">
+                  {getCharacterBySeed(getAvatarSeed(third)).name}
+                </span>
+              </div>
               <span className="text-xs md:text-sm font-black text-amber-500 font-mono">
                 {third.totalScore} {unitLabel}
               </span>
@@ -347,13 +376,21 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
             {rest.map((p) => (
               <div
                 key={p.playerId}
-                className="flex items-center justify-between px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl"
+                className="flex items-center justify-between px-4 py-2 bg-white/5 border border-white/10 rounded-xl"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <span className="w-6 h-6 rounded-md bg-purple-900/60 border border-purple-700 flex items-center justify-center text-xs font-black text-purple-300">
                     {p.rank}
                   </span>
-                  <span className="text-sm font-bold text-slate-200">{p.nickname}</span>
+                  <div className="shrink-0">
+                    <PvZCardAvatar seed={getAvatarSeed(p)} size="sm" className="scale-75" />
+                  </div>
+                  <div className="text-left">
+                    <span className="text-sm font-bold text-slate-200 block">{p.nickname}</span>
+                    <span className="text-[10px] text-purple-300/80 font-medium block">
+                      {getCharacterBySeed(getAvatarSeed(p)).name}
+                    </span>
+                  </div>
                 </div>
                 <span className="text-xs font-mono font-bold text-amber-400">
                   {p.totalScore} {unitLabel}

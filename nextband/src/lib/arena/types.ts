@@ -48,6 +48,7 @@ export interface PlayerPublicRank {
   nickname: string;
   totalScore: number;
   isClimber?: boolean;
+  avatarSeed?: number | string;
 }
 
 export interface PlayerPersonalResult {

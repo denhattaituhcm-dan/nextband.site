@@ -534,12 +534,16 @@ export default function ArenaHostPage() {
   const allRankings: PlayerPublicRank[] = useMemo(() => {
     if (roomSettings.gameMode === 'GOLD_QUEST') {
       const sorted = Object.entries(playerGoldMap).sort(([, a], [, b]) => b - a);
-      return sorted.map(([name, gold], idx) => ({
-        rank: idx + 1,
-        playerId: name,
-        nickname: name,
-        totalScore: gold,
-      }));
+      return sorted.map(([name, gold], idx) => {
+        const found = players.find(p => p.name.toLowerCase() === name.toLowerCase() || p.id === name);
+        return {
+          rank: idx + 1,
+          playerId: name,
+          nickname: name,
+          totalScore: gold,
+          avatarSeed: found?.avatarSeed !== undefined ? found.avatarSeed : name,
+        };
+      });
     }
 
     const scoreMap: Record<string, number> = { ...cumulativeScores };
@@ -550,12 +554,16 @@ export default function ArenaHostPage() {
     });
 
     const sorted = Object.entries(scoreMap).sort(([, a], [, b]) => b - a);
-    return sorted.map(([name, score], idx) => ({
-      rank: idx + 1,
-      playerId: name,
-      nickname: name,
-      totalScore: score,
-    }));
+    return sorted.map(([name, score], idx) => {
+      const found = players.find(p => p.name.toLowerCase() === name.toLowerCase() || p.id === name);
+      return {
+        rank: idx + 1,
+        playerId: name,
+        nickname: name,
+        totalScore: score,
+        avatarSeed: found?.avatarSeed !== undefined ? found.avatarSeed : name,
+      };
+    });
   }, [cumulativeScores, playerGoldMap, players, roomSettings.gameMode]);
 
 
@@ -1277,6 +1285,7 @@ export default function ArenaHostPage() {
         {state === 'PODIUM' && (
           <ArenaPodiumView
             rankings={allRankings}
+            players={players}
             gameMode={roomSettings.gameMode}
             onRestart={() => handleExecuteCommand('RESTART_ARENA')}
           />
