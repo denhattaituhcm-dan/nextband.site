@@ -941,26 +941,16 @@ export default function ArenaHostPage() {
               if (isAnsCorrect) {
                 const newStreak = prevStreak + 1;
                 nextStreakMap[name] = newStreak;
-                let newLives = prevLives;
-                let delta = 0;
 
-                // Cơ chế Hồi mạng: Đạt chuỗi 3 câu đúng liên tiếp (Streak x3, x6, x9...) và đang bị mất mạng
-                if (maxL > 1 && newStreak > 0 && newStreak % 3 === 0 && prevLives < maxL) {
-                  newLives = Math.min(maxL, prevLives + 1);
-                  delta = 1;
-                  roundEvents.push(`💖 [${name}] đạt chuỗi ${newStreak} câu đúng liên tiếp và hồi phục +1 mạng!`);
-                }
-
-                nextLivesMap[name] = newLives;
                 survivalUpdates![name] = {
-                  lives: newLives,
+                  lives: prevLives,
                   maxLives: maxL,
-                  delta,
+                  delta: 0,
                   streak: newStreak,
                   isEliminated: false,
                 };
               } else {
-                // Trả lời sai hoặc hết giờ chưa chốt -> Mất 1 mạng
+                // Trả lời sai hoặc hết giờ chưa chốt -> Mất 1 mạng (Không có cơ chế hồi mạng)
                 const newLives = Math.max(0, prevLives - 1);
                 nextLivesMap[name] = newLives;
                 nextStreakMap[name] = 0;

@@ -657,14 +657,8 @@ export default function ArenaPlayPage() {
         roundRevealAppliedRef.current = questionIndex;
         if (!wasEliminatedBeforeRound && livesRef.current > 0) {
           if (hasSubmitted && isCorrect) {
-            setStreak((prev) => {
-              const nextS = prev + 1;
-              if (maxLives > 1 && nextS % 3 === 0 && livesRef.current < maxLives) {
-                setLives((l) => Math.min(maxLives, l + 1));
-                setLastLifeDelta(1);
-              }
-              return nextS;
-            });
+            setStreak((prev) => prev + 1);
+            setLastLifeDelta(0);
           } else {
             setStreak(0);
             setLives((l) => Math.max(0, l - 1));

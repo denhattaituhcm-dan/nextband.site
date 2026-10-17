@@ -168,7 +168,7 @@ export const HostSettingsModal: React.FC<HostSettingsModalProps> = ({
                   <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400" /> Luật Sinh Tồn Đấu Trường 100
                 </span>
                 <span className="text-[11px] text-amber-300 font-semibold">
-                  🔥 Streak x3 câu đúng: Hồi +1 mạng
+                  ⚠️ Không thể hồi mạng — Càng chơi càng khốc liệt
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-2.5">

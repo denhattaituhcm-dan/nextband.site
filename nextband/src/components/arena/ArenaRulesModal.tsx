@@ -159,18 +159,13 @@ export const ArenaRulesModal: React.FC<ArenaRulesModalProps> = ({
                 </div>
                 <ul className="text-xs text-rose-100/90 leading-relaxed space-y-1.5 list-disc pl-4">
                   <li>
-                    Mỗi chiến binh bước vào đấu trường với <strong>{survivalInitialLives} mạng ❤️</strong>. Trả lời đúng thì trụ lại; trả lời sai hoặc hết giờ sẽ bị <strong>trừ 1 mạng</strong>.
+                    Mỗi chiến binh bước vào đấu trường với <strong>{survivalInitialLives} mạng ❤️</strong>. Trả lời đúng thì tiếp tục trụ lại; trả lời sai hoặc hết giờ sẽ bị <strong>trừ 1 mạng (Không thể hồi mạng)</strong>.
                   </li>
-                  {survivalInitialLives > 1 && (
-                    <li>
-                      <strong>Cơ chế Hồi Phục (Streak Heal):</strong> Đạt chuỗi <strong>3 câu trả lời đúng liên tiếp (Streak x3)</strong> sẽ được hồi phục ngay <strong>+1 mạng ❤️</strong> (tối đa {survivalInitialLives} mạng).
-                    </li>
-                  )}
                   <li>
                     <strong>Chế độ Thử Sức khi hết mạng:</strong> Học viên hết mạng sẽ rời sàn đấu chính nhưng vẫn được chọn đáp án trên điện thoại để tự ôn tập và lưu vào Sổ Tay Học Thuật!
                   </li>
                   <li>
-                    <strong>Điều kiện Chiến Thắng:</strong> Chiến binh cuối cùng trụ lại trên sàn đấu sẽ đăng quang Quán Quân ngay lập tức, hoặc xếp hạng theo số mạng & điểm tốc độ khi hết bộ câu hỏi.
+                    <strong>Điều kiện Chiến Thắng:</strong> Chiến binh cuối cùng trụ lại trên sàn đấu sẽ đăng quang Quán Quân ngay lập tức, hoặc phân định theo số mạng còn lại & điểm tốc độ khi hết bộ câu hỏi.
                   </li>
                 </ul>
               </div>
