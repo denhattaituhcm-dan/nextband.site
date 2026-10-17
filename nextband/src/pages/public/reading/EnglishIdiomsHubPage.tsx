@@ -43,15 +43,17 @@ import unit11Data from "@/data/idioms/unit11";
 import { UNIT_11_ETYMOLOGY } from "@/data/idioms/unit11_etymology";
 import unit12Data from "@/data/idioms/unit12";
 import { UNIT_12_ETYMOLOGY } from "@/data/idioms/unit12_etymology";
+import unit13Data from "@/data/idioms/unit13";
+import { UNIT_13_ETYMOLOGY } from "@/data/idioms/unit13_etymology";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
 
   const parsedId = unitId ? parseInt(unitId, 10) : 1;
-  const initialUnitId = (parsedId >= 1 && parsedId <= 12 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+  const initialUnitId = (parsedId >= 1 && parsedId <= 13 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(initialUnitId);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -114,8 +116,8 @@ export default function EnglishIdiomsHubPage() {
   useEffect(() => {
     if (unitId) {
       const p = parseInt(unitId, 10);
-      if (p >= 1 && p <= 12 && p !== selectedUnitId) {
-        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12);
+      if (p >= 1 && p <= 13 && p !== selectedUnitId) {
+        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13);
         setActiveModuleFilter("ALL");
         reset23();
         reset25();
@@ -125,6 +127,7 @@ export default function EnglishIdiomsHubPage() {
         resetErrCorr();
         resetAudioOrder();
         resetWordOrder();
+        resetAudioPic();
       }
     }
   }, [unitId]);
@@ -181,6 +184,11 @@ export default function EnglishIdiomsHubPage() {
   const [answersWordOrder, setAnswersWordOrder] = useState<Record<number, string>>({});
   const [checkedWordOrder, setCheckedWordOrder] = useState<Record<number, boolean | null>>({});
   const [showRetryWordOrder, setShowRetryWordOrder] = useState(false);
+
+  // Exercise Audio Picture Matching (Unit 13)
+  const [selectedAudioPic, setSelectedAudioPic] = useState<Record<number, string>>({});
+  const [checkedAudioPic, setCheckedAudioPic] = useState<Record<number, boolean | null>>({});
+  const [showRetryAudioPic, setShowRetryAudioPic] = useState(false);
 
   // Exercise 1.4 State (Listening Fill-in-the-blank)
   const [answers14, setAnswers14] = useState<Record<number, string>>({});
@@ -284,7 +292,9 @@ export default function EnglishIdiomsHubPage() {
       ? unit10Data
       : selectedUnitId === 11
       ? unit11Data
-      : unit12Data;
+      : selectedUnitId === 12
+      ? unit12Data
+      : unit13Data;
 
   const currentEtymologyData =
     selectedUnitId === 1
@@ -309,7 +319,9 @@ export default function EnglishIdiomsHubPage() {
       ? UNIT_10_ETYMOLOGY
       : selectedUnitId === 11
       ? UNIT_11_ETYMOLOGY
-      : UNIT_12_ETYMOLOGY;
+      : selectedUnitId === 12
+      ? UNIT_12_ETYMOLOGY
+      : UNIT_13_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -937,7 +949,48 @@ export default function EnglishIdiomsHubPage() {
     setShowRetryWordOrder(false);
   };
 
-  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12) => {
+  // EXERCISE AUDIO PICTURE MATCHING (13.6)
+  const exAudioPic = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_type === "AUDIO_PICTURE_MATCHING");
+  const checkAudioPic = () => {
+    if (!exAudioPic?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    exAudioPic.questions.forEach((q: any) => {
+      const isMatch = selectedAudioPic[q.question_number] === q.correct_key;
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setCheckedAudioPic(res);
+    setShowRetryAudioPic(hasFail);
+  };
+
+  const resetAudioPic = () => {
+    setSelectedAudioPic({});
+    setCheckedAudioPic({});
+    setShowRetryAudioPic(false);
+  };
+
+  const retryAudioPic = () => {
+    setSelectedAudioPic((prev) => {
+      const updated = { ...prev };
+      Object.keys(checkedAudioPic).forEach((k) => {
+        const num = Number(k);
+        if (checkedAudioPic[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setCheckedAudioPic((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetryAudioPic(false);
+  };
+
+  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
     reset23();
@@ -948,6 +1001,7 @@ export default function EnglishIdiomsHubPage() {
     resetErrCorr();
     resetAudioOrder();
     resetWordOrder();
+    resetAudioPic();
     navigate(`/reading/idioms/${unitId}`);
   };
 
@@ -979,16 +1033,16 @@ export default function EnglishIdiomsHubPage() {
               {selectedUnitId > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12)}
+                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   ← Unit {selectedUnitId - 1 < 10 ? `0${selectedUnitId - 1}` : selectedUnitId - 1}
                 </button>
               )}
-              {selectedUnitId < 12 && (
+              {selectedUnitId < 13 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12)}
+                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   Unit {selectedUnitId + 1 < 10 ? `0${selectedUnitId + 1}` : selectedUnitId + 1} →
@@ -1061,7 +1115,9 @@ export default function EnglishIdiomsHubPage() {
                 ? "Khám phá 20 thành ngữ then chốt diễn tả cách đối nhân xử thế, lòng nhân ái trắc ẩn, thái độ bóc lột tệ bạc, trò đùa tai quái và chuẩn mực hành vi con người."
                 : selectedUnitId === 11
                 ? "Khám phá 20 thành ngữ then chốt khắc họa các cung bậc cảm xúc dữ dội của con người qua ẩn dụ bộ phận cơ thể, sắc màu tâm trạng và thế giới ẩm thực."
-                : "Khám phá 20 thành ngữ ngập tràn năng lượng tích cực, niềm hân hoan tột đỉnh, tình yêu say đắm, lòng nhiệt huyết hăng say và sự phấn khích hồi hộp khó tả."}
+                : selectedUnitId === 12
+                ? "Khám phá 20 thành ngữ ngập tràn năng lượng tích cực, niềm hân hoan tột đỉnh, tình yêu say đắm, lòng nhiệt huyết hăng say và sự phấn khích hồi hộp khó tả."
+                : "Khám phá 20 thành ngữ then chốt diễn tả các sắc thái cảm xúc tiêu cực, từ nỗi buồn sâu lắng, cơn giận dữ sôi máu, nỗi khiếp đảm lạnh sống lưng cho đến sự ngượng ngùng muốn độn thổ."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
@@ -2650,6 +2706,150 @@ export default function EnglishIdiomsHubPage() {
                         <button
                           type="button"
                           onClick={retryWordOrder}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE AUDIO PICTURE MATCHING (13.6) */}
+                {exAudioPic && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-blue-600 text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập {exAudioPic.exercise_id}
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{exAudioPic.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {exAudioPic.description || "Nghe audio bản ngữ và chọn bức tranh miêu tả chính xác câu bạn nghe thấy"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      {exAudioPic.questions?.map((q: any) => {
+                        const status = checkedAudioPic[q.question_number];
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-5 rounded-2xl border text-xs sm:text-sm space-y-4 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                              <div className="flex items-center gap-2">
+                                <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">
+                                  {q.question_number}
+                                </span>
+                                <span className="font-semibold text-slate-800">
+                                  Nghe câu số {q.question_number} và đối chiếu tranh:
+                                </span>
+                              </div>
+
+                              {q.audio_url && (
+                                <button
+                                  type="button"
+                                  onClick={() => playAudio(q.audio_url)}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs cursor-pointer border border-blue-200 shadow-2xs transition"
+                                >
+                                  <Volume2 className="w-4 h-4" />
+                                  <span>Nghe audio {q.question_number}</span>
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              {q.options?.map((opt: { key: string; label: string; description: string }) => {
+                                const isSelected = selectedAudioPic[q.question_number] === opt.key;
+                                return (
+                                  <label
+                                    key={opt.key}
+                                    className={`flex flex-col p-3.5 rounded-xl border cursor-pointer transition text-xs sm:text-sm space-y-2 ${
+                                      isSelected
+                                        ? "bg-blue-50/90 border-blue-500 font-semibold text-blue-950 ring-2 ring-blue-400/20"
+                                        : "bg-white border-slate-200 hover:bg-slate-50 text-slate-800"
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="radio"
+                                        name={`qAudioPic-${q.question_number}`}
+                                        value={opt.key}
+                                        checked={isSelected}
+                                        onChange={() =>
+                                          setSelectedAudioPic((prev) => ({ ...prev, [q.question_number]: opt.key }))
+                                        }
+                                        className="text-blue-600 focus:ring-blue-500"
+                                      />
+                                      <span className="font-extrabold text-blue-900 text-sm">
+                                        Tranh {opt.label}
+                                      </span>
+                                    </div>
+                                    <p className="text-slate-600 text-xs font-normal leading-relaxed pl-5">
+                                      {opt.description}
+                                    </p>
+                                  </label>
+                                );
+                              })}
+                            </div>
+
+                            {status !== undefined && (
+                              <div
+                                className={`p-3 rounded-xl text-xs leading-relaxed ${
+                                  status === true
+                                    ? "bg-emerald-100/70 text-emerald-900 border border-emerald-300 font-medium"
+                                    : "bg-red-100/70 text-red-900 border border-red-300 font-medium"
+                                }`}
+                              >
+                                <div className="flex items-center gap-1.5 font-bold">
+                                  {status === true ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                                  ) : (
+                                    <XCircle className="w-4 h-4 text-red-700" />
+                                  )}
+                                  <span>
+                                    {status === true ? "Chính xác!" : "Chưa chuẩn xác."} (Đáp án chuẩn: Tranh {q.correct_key})
+                                  </span>
+                                </div>
+                                <div className="mt-1 text-slate-700 font-normal">
+                                  Câu nói: <em>"{q.spoken_text}"</em>
+                                </div>
+                                <div className="mt-0.5 text-slate-700 font-normal">{q.explanation}</div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={resetAudioPic}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={checkAudioPic}
+                        className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra tranh & audio
+                      </button>
+                      {showRetryAudioPic && (
+                        <button
+                          type="button"
+                          onClick={retryAudioPic}
                           className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />

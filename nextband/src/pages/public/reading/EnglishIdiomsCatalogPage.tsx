@@ -26,6 +26,7 @@ import unit09Data from "@/data/idioms/unit09";
 import unit10Data from "@/data/idioms/unit10";
 import unit11Data from "@/data/idioms/unit11";
 import unit12Data from "@/data/idioms/unit12";
+import unit13Data from "@/data/idioms/unit13";
 
 interface UnitCatalogItem {
   id: number;
@@ -385,13 +386,49 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     accent: "UK (Anh)",
     isAvailable: true,
   },
+  {
+    id: 13,
+    unit_number_str: unit13Data.unit_number_str,
+    title_en: unit13Data.unit_title,
+    title_vi: "Cảm xúc tiêu cực (Buồn bã, Tức giận, Nỗi sợ & Xấu hổ)",
+    section: unit13Data.major_section,
+    description_vi:
+      "Khám phá 20 thành ngữ then chốt diễn tả các sắc thái cảm xúc tiêu cực, từ nỗi buồn sâu lắng, cơn giận dữ sôi máu, nỗi khiếp đảm lạnh sống lưng cho đến sự ngượng ngùng muốn độn thổ.",
+    total_idioms: unit13Data.summary.total_idioms,
+    total_exercises: unit13Data.summary.total_practice_exercises,
+    modules: [
+      {
+        id: "13.1",
+        title: "Sadness",
+        sample: "down in the dumps, a lump in his throat, with a heavy heart, reduced to tears, a downer...",
+      },
+      {
+        id: "13.2",
+        title: "Anger",
+        sample: "makes my blood boil, driving me crazy, kicked myself, hit the roof, on the warpath...",
+      },
+      {
+        id: "13.3",
+        title: "Fear",
+        sample: "that sinking feeling, sent shivers down my spine, blood ran cold, on edge, shaking in boots...",
+      },
+      {
+        id: "13.4",
+        title: "Embarrassment",
+        sample: "lost face, wanted the earth to swallow her up, died of shame, tails between their legs...",
+      },
+    ],
+    tags: ["Cảm xúc tiêu cực", "Nỗi buồn", "Tức giận", "Nỗi sợ", "Xấu hổ", "IELTS Speaking & Writing"],
+    accent: "US (Mỹ)",
+    isAvailable: true,
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 13, unit_number_str: "13", title_en: "Communication", title_vi: "Giao tiếp, đối thoại & truyền thông" },
-  { id: 14, unit_number_str: "14", title_en: "Work", title_vi: "Công việc, sự nghiệp & công sở" },
-  { id: 15, unit_number_str: "15", title_en: "Money", title_vi: "Tiền bạc, tài chính & đầu tư" },
-  { id: 16, unit_number_str: "16", title_en: "Success and failure", title_vi: "Thành bại, thăng trầm & cơ hội" },
+  { id: 14, unit_number_str: "14", title_en: "Remembering and forgetting", title_vi: "Ký ức & Quên lãng" },
+  { id: 15, unit_number_str: "15", title_en: "Sight and hearing", title_vi: "Thị giác & Thính giác" },
+  { id: 16, unit_number_str: "16", title_en: "Smell, taste, and touch", title_vi: "Khứu giác, vị giác & xúc giác" },
+  { id: 17, unit_number_str: "17", title_en: "Communication", title_vi: "Giao tiếp, đối thoại & truyền thông" },
 ];
 
 export default function EnglishIdiomsCatalogPage() {
@@ -436,7 +473,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              12 Units Sẵn Sàng (240 Idioms)
+              13 Units Sẵn Sàng (260 Idioms)
             </span>
           </div>
         </div>
@@ -464,11 +501,11 @@ export default function EnglishIdiomsCatalogPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">12</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">13</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">240</div>
+                <div className="text-2xl sm:text-3xl font-black text-sky-200">260</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
@@ -476,7 +513,7 @@ export default function EnglishIdiomsCatalogPage() {
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">60</div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-200">65</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
             </div>
