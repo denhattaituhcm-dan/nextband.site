@@ -205,41 +205,85 @@ export function useArenaAudio() {
     playSound('/sound/thang_cap.mp3', 0.6);
   }, [playSound]);
 
-  // Tiếng trống dồn dập kịch tính (Drum Roll) trước khi công bố Quán quân
-  const playDrumroll = useCallback((durationMs = 2000) => {
+  // Tiếng trống dồn dập kịch tính (Snare Drumroll + Suspense Heartbeat) trước khi công bố Quán quân
+  const playDrumroll = useCallback((durationMs = 4000) => {
     if (!isBgmEnabled) return;
     const ctx = getAudioContext();
     if (!ctx) return;
 
     try {
-      // Buffer noise giả lập snare drum roll
-      const bufferSize = ctx.sampleRate * (durationMs / 1000);
+      const now = ctx.currentTime;
+      const totalSec = durationMs / 1000;
+
+      // 1. Snare Drum Texture: Noise modulated by fast Tremolo LFO (26Hz -> 38Hz)
+      const bufferSize = Math.floor(ctx.sampleRate * totalSec);
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.5;
+        data[i] = (Math.random() * 2 - 1) * 0.7;
       }
 
       const noise = ctx.createBufferSource();
       noise.buffer = buffer;
 
-      // Bandpass filter tạo chất âm snare drum
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(240, ctx.currentTime);
-      filter.Q.setValueAtTime(3.0, ctx.currentTime);
+      // Dải tần lưới kim loại mặt dưới trống rè (Snare wire rattle: 1500Hz - 3200Hz)
+      const snareFilter = ctx.createBiquadFilter();
+      snareFilter.type = 'bandpass';
+      snareFilter.frequency.setValueAtTime(1600, now);
+      snareFilter.Q.setValueAtTime(2.2, now);
 
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.05, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime + durationMs / 1000 - 0.05);
-      gain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + durationMs / 1000);
+      // Tremolo VCA: Mô phỏng dùi trống gõ dồn liên thanh (t-t-t-t-t...) tăng tốc độ
+      const tremoloGain = ctx.createGain();
+      const lfo = ctx.createOscillator();
+      lfo.type = 'sine';
+      lfo.frequency.setValueAtTime(26, now);
+      lfo.frequency.exponentialRampToValueAtTime(38, now + totalSec);
 
-      noise.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.setValueAtTime(0.45, now);
 
-      noise.start();
-      noise.stop(ctx.currentTime + durationMs / 1000);
+      lfo.connect(lfoGain);
+      lfoGain.connect(tremoloGain.gain);
+      lfo.start(now);
+      lfo.stop(now + totalSec);
+
+      // Master Crescendo: Âm lượng trống dồn tăng dần từ hồi hộp lên bùng nổ
+      const rollGain = ctx.createGain();
+      rollGain.gain.setValueAtTime(0.08, now);
+      rollGain.gain.exponentialRampToValueAtTime(0.45, now + totalSec - 0.08);
+      rollGain.gain.linearRampToValueAtTime(0.001, now + totalSec);
+
+      noise.connect(snareFilter);
+      snareFilter.connect(tremoloGain);
+      tremoloGain.connect(rollGain);
+      rollGain.connect(ctx.destination);
+
+      noise.start(now);
+      noise.stop(now + totalSec);
+
+      // 2. Nhịp trống định âm / Nhịp tim kịch tính (Suspense Timpani Heartbeat Thuds)
+      const thudOffsets = [0.15, 0.95, 1.75, 2.45, 3.05, 3.45, 3.75];
+      thudOffsets.forEach((tOffset) => {
+        if (tOffset < totalSec - 0.1) {
+          const hitTime = now + tOffset;
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(115, hitTime);
+          osc.frequency.exponentialRampToValueAtTime(45, hitTime + 0.19);
+
+          const intensity = 0.14 + (tOffset / totalSec) * 0.22;
+          g.gain.setValueAtTime(intensity, hitTime);
+          g.gain.exponentialRampToValueAtTime(0.001, hitTime + 0.22);
+
+          osc.connect(g);
+          g.connect(ctx.destination);
+
+          osc.start(hitTime);
+          osc.stop(hitTime + 0.22);
+        }
+      });
     } catch {}
   }, [getAudioContext, isBgmEnabled]);
 

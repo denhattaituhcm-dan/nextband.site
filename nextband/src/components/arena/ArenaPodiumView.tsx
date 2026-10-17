@@ -137,18 +137,18 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
       playClimberSound();
     }, 4500);
 
-    // 7.2s: Tiếng trống dồn kịch tính (Drum Roll) trước khi xướng tên Top 1
+    // 7.0s: Bắt đầu hồi hộp: Đèn spotlight rọi quét qua lại + Tiếng trống dồn dập 4 giây
     const t3 = setTimeout(() => {
       setRevealStage(3);
-      playDrumroll(1800);
-    }, 7200);
+      playDrumroll(4000);
+    }, 7000);
 
-    // 9.0s: QUÁN QUÂN XUẤT HIỆN!
+    // 11.0s: QUÁN QUÂN XUẤT HIỆN! Đèn spotlight khóa chặt vào Hạng 1, Kèn chiến thắng & Pháo hoa
     const t4 = setTimeout(() => {
       setRevealStage(4);
       playChampionFanfare();
       playPodiumSound();
-    }, 9000);
+    }, 11000);
 
     return () => {
       clearTimeout(t1);
@@ -165,68 +165,113 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
 
   return (
     <div className="relative w-full max-w-4xl mx-auto flex flex-col items-center justify-center py-6 px-4 space-y-8 animate-fadeIn overflow-hidden">
+      {/* Keyframe animation cho đèn spotlight quét qua lại hồi hộp */}
+      <style>{`
+        @keyframes sweepSpotlightLeft {
+          0% { transform: rotate(-38deg); opacity: 0.75; }
+          45% { transform: rotate(18deg); opacity: 0.95; }
+          100% { transform: rotate(-34deg); opacity: 0.8; }
+        }
+        @keyframes sweepSpotlightRight {
+          0% { transform: rotate(38deg); opacity: 0.75; }
+          50% { transform: rotate(-18deg); opacity: 0.95; }
+          100% { transform: rotate(32deg); opacity: 0.8; }
+        }
+        @keyframes sweepSpotlightCenter {
+          0% { transform: translateX(-50%) rotate(-28deg); opacity: 0.65; }
+          30% { transform: translateX(-50%) rotate(24deg); opacity: 0.85; }
+          70% { transform: translateX(-50%) rotate(-18deg); opacity: 0.75; }
+          100% { transform: translateX(-50%) rotate(0deg); opacity: 0.9; }
+        }
+        @keyframes sweepPuddleFloor {
+          0% { transform: translateX(-160%) scaleX(1.2); opacity: 0.5; }
+          50% { transform: translateX(60%) scaleX(1.3); opacity: 0.85; }
+          100% { transform: translateX(-120%) scaleX(1.1); opacity: 0.6; }
+        }
+      `}</style>
+
       {/* Canvas pháo hoa overlay toàn màn hình khi Quán quân lộ diện */}
       <canvas
         ref={canvasRef}
         className="pointer-events-none absolute inset-0 w-full h-full z-30"
       />
 
-      {/* THEATRICAL SPOTLIGHT SYSTEM (Đèn rọi sân khấu cho Quán Quân Hạng 1) */}
+      {/* THEATRICAL SPOTLIGHT SYSTEM (Đèn rọi sân khấu quét tìm kiếm Quán Quân) */}
       {(isDrumRolling || hasRevealedFirst) && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden z-10 transition-opacity duration-1000">
           {/* Lớp màn tối sân khấu tập trung ánh nhìn vào Quán Quân */}
-          <div className="absolute inset-0 bg-slate-950/60 transition-opacity duration-1000" />
+          <div className={`absolute inset-0 transition-opacity duration-1000 ${
+            isDrumRolling ? 'bg-slate-950/75' : 'bg-slate-950/60'
+          }`} />
 
-          {/* Đèn rọi thẳng từ trần xuống đỉnh bục Quán Quân */}
+          {/* Đèn rọi trung tâm: Quét tìm kiếm khi drumroll -> Khóa thẳng vào bục Quán quân khi công bố */}
           <div
-            className={`absolute top-0 left-1/2 -translate-x-1/2 w-80 md:w-96 h-full transition-all duration-700 ${
-              hasRevealedFirst
-                ? 'opacity-90 animate-pulse'
-                : 'opacity-40 animate-pulse'
+            className={`absolute top-0 left-1/2 -translate-x-1/2 w-80 md:w-96 h-full origin-top transition-all duration-700 ${
+              isDrumRolling
+                ? 'opacity-80'
+                : hasRevealedFirst
+                ? 'opacity-95 animate-pulse'
+                : 'opacity-0'
             }`}
             style={{
               clipPath: 'polygon(42% 0%, 58% 0%, 92% 100%, 8% 100%)',
               background:
-                'linear-gradient(180deg, rgba(254, 240, 138, 0.95) 0%, rgba(250, 204, 21, 0.4) 45%, rgba(245, 158, 11, 0.15) 85%, transparent 100%)',
+                'linear-gradient(180deg, rgba(254, 240, 138, 0.95) 0%, rgba(250, 204, 21, 0.45) 45%, rgba(245, 158, 11, 0.2) 85%, transparent 100%)',
               filter: 'blur(2px)',
+              animation: isDrumRolling ? 'sweepSpotlightCenter 2.8s ease-in-out infinite alternate' : 'none',
             }}
           />
 
-          {/* Luồng sáng chéo từ bên trái rọi vào Quán Quân */}
+          {/* Luồng sáng chéo từ bên trái: Quét chéo qua lại khi drumroll -> Khóa vào bục Quán quân */}
           <div
-            className={`hidden md:block absolute top-0 left-1/4 w-72 h-[88%] origin-top -rotate-[22deg] transition-all duration-700 ${
-              hasRevealedFirst ? 'opacity-65' : 'opacity-25 animate-pulse'
+            className={`hidden md:block absolute top-0 left-1/4 w-80 h-[92%] origin-top transition-all duration-700 ${
+              isDrumRolling
+                ? 'opacity-85'
+                : hasRevealedFirst
+                ? 'opacity-70 -rotate-[20deg]'
+                : 'opacity-0'
             }`}
             style={{
               clipPath: 'polygon(45% 0%, 55% 0%, 96% 100%, 4% 100%)',
               background:
-                'linear-gradient(180deg, rgba(253, 224, 71, 0.8) 0%, rgba(245, 158, 11, 0.3) 50%, transparent 100%)',
-              filter: 'blur(4px)',
+                'linear-gradient(180deg, rgba(254, 240, 138, 0.9) 0%, rgba(250, 204, 21, 0.45) 45%, rgba(245, 158, 11, 0.15) 85%, transparent 100%)',
+              filter: 'blur(3px)',
+              animation: isDrumRolling ? 'sweepSpotlightLeft 2.4s ease-in-out infinite alternate' : 'none',
             }}
           />
 
-          {/* Luồng sáng chéo từ bên phải rọi vào Quán Quân */}
+          {/* Luồng sáng chéo từ bên phải: Quét chéo qua lại khi drumroll -> Khóa vào bục Quán quân */}
           <div
-            className={`hidden md:block absolute top-0 right-1/4 w-72 h-[88%] origin-top rotate-[22deg] transition-all duration-700 ${
-              hasRevealedFirst ? 'opacity-65' : 'opacity-25 animate-pulse'
+            className={`hidden md:block absolute top-0 right-1/4 w-80 h-[92%] origin-top transition-all duration-700 ${
+              isDrumRolling
+                ? 'opacity-85'
+                : hasRevealedFirst
+                ? 'opacity-70 rotate-[20deg]'
+                : 'opacity-0'
             }`}
             style={{
               clipPath: 'polygon(45% 0%, 55% 0%, 96% 100%, 4% 100%)',
               background:
-                'linear-gradient(180deg, rgba(253, 224, 71, 0.8) 0%, rgba(245, 158, 11, 0.3) 50%, transparent 100%)',
-              filter: 'blur(4px)',
+                'linear-gradient(180deg, rgba(254, 240, 138, 0.9) 0%, rgba(250, 204, 21, 0.45) 45%, rgba(245, 158, 11, 0.15) 85%, transparent 100%)',
+              filter: 'blur(3px)',
+              animation: isDrumRolling ? 'sweepSpotlightRight 2.1s ease-in-out infinite alternate' : 'none',
             }}
           />
 
-          {/* Quầng sáng phản chiếu rực rỡ trên sàn ngay chân bục Hạng 1 */}
+          {/* Quầng sáng phản chiếu trên sàn: Quét theo đèn khi drumroll -> Định vị chân bục Hạng 1 */}
           <div
-            className={`absolute bottom-4 left-1/2 -translate-x-1/2 w-72 md:w-96 h-20 rounded-[100%] transition-all duration-700 ${
-              hasRevealedFirst ? 'opacity-95 scale-110' : 'opacity-40 scale-95'
+            className={`absolute bottom-4 left-1/2 -translate-x-1/2 w-80 md:w-96 h-24 rounded-[100%] transition-all duration-700 ${
+              isDrumRolling
+                ? 'opacity-70 scale-95'
+                : hasRevealedFirst
+                ? 'opacity-95 scale-110'
+                : 'opacity-0'
             }`}
             style={{
               background:
-                'radial-gradient(ellipse at center, rgba(254, 240, 138, 0.85) 0%, rgba(245, 158, 11, 0.45) 45%, transparent 75%)',
+                'radial-gradient(ellipse at center, rgba(254, 240, 138, 0.9) 0%, rgba(245, 158, 11, 0.5) 45%, transparent 75%)',
               filter: 'blur(8px)',
+              animation: isDrumRolling ? 'sweepPuddleFloor 2.4s ease-in-out infinite alternate' : 'none',
             }}
           />
         </div>
@@ -238,12 +283,12 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
           <Sparkles className="w-4 h-4 text-amber-400 animate-spin" /> BẢNG VINH DANH CHUNG CUỘC
         </div>
         <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-          {hasRevealedFirst ? 'QUÁN QUÂN NEXTQUIZ 🏆' : 'ĐANG CÔNG BỐ KẾT QUẢ...'}
+          {hasRevealedFirst ? 'QUÁN QUÂN NEXTQUIZ 🏆' : isDrumRolling ? '🥁 AI SẼ LÀ QUÁN QUÂN?!' : 'ĐANG CÔNG BỐ KẾT QUẢ...'}
         </h1>
         <p className="text-sm text-purple-200/80 font-medium">
           {isDrumRolling ? (
-            <span className="text-amber-300 font-extrabold animate-pulse text-base drop-shadow-[0_0_15px_rgba(251,191,36,0.8)]">
-              🥁 Tiếng trống dồn: Ai sẽ là QUÁN QUÂN của hôm nay?!
+            <span className="text-amber-300 font-extrabold animate-pulse text-base drop-shadow-[0_0_15px_rgba(251,191,36,0.9)]">
+              🥁 Tiếng trống dồn dập... Đèn spotlight đang quét tìm chủ nhân ngôi vị QUÁN QUÂN hôm nay!
             </span>
           ) : hasRevealedFirst ? (
             'Chúc mừng các chiến binh xuất sắc nhất của trận đấu hôm nay!'
@@ -313,8 +358,13 @@ export const ArenaPodiumView: React.FC<ArenaPodiumViewProps> = React.memo(({
           ) : (
             <div className="h-24 flex flex-col items-center justify-center">
               {isDrumRolling ? (
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/30 border border-amber-400 rounded-full text-amber-300 text-xs font-black animate-ping shadow-[0_0_20px_rgba(251,191,36,0.9)]">
-                  🥁 ???
+                <div className="flex flex-col items-center justify-center space-y-1.5 animate-pulse">
+                  <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-500/40 via-yellow-300/30 to-amber-600/40 border-2 border-amber-300/80 flex items-center justify-center shadow-[0_0_35px_rgba(251,191,36,0.9)] animate-bounce">
+                    <span className="text-3xl font-black text-amber-300">?</span>
+                  </div>
+                  <span className="text-[10px] font-black text-amber-300 uppercase tracking-widest bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-400/50">
+                    🥁 Đang Tìm Kiếm...
+                  </span>
                 </div>
               ) : (
                 <span className="text-xs font-bold text-amber-500/60 font-mono">
