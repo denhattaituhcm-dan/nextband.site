@@ -818,21 +818,21 @@ export default function CambridgeVocabHubPage() {
             </div>
 
             {/*  Center Context Card  */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-sm relative overflow-hidden">
-              <div className="max-w-3xl mx-auto text-center space-y-8">
+            <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-sm relative overflow-hidden">
+              <div className="max-w-5xl mx-auto text-center space-y-6">
                 {/*  Sentence with Magnetic Slot  */}
-                <div className="text-lg sm:text-2xl font-medium text-slate-800 leading-relaxed sm:leading-loose">
+                <div className="text-xl sm:text-2xl font-medium text-slate-800 leading-relaxed sm:leading-snug px-2">
                   <span>{currentMagnet.sentenceBefore} </span>
 
                   {stage1Solved ? (
-                    <span className="inline-flex items-center justify-center min-w-[140px] px-4 py-1.5 mx-2 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold font-mono text-base shadow-sm">
+                    <span className="inline-flex items-center justify-center min-w-[140px] px-4 py-1 mx-2 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold font-mono text-base shadow-sm align-middle">
                       <Check className="w-4 h-4 text-emerald-600 mr-1.5" />
                       {stage1ActiveSlotWord}
                     </span>
                   ) : (
-                    <span className="inline-flex items-center justify-center min-w-[140px] px-4 py-1.5 mx-2 rounded-xl border-2 border-dashed border-indigo-400 bg-indigo-50/60 text-indigo-700 font-bold align-middle">
+                    <span className="inline-flex items-center justify-center min-w-[140px] px-4 py-1 mx-2 rounded-xl border-2 border-dashed border-indigo-400 bg-indigo-50/60 text-indigo-700 font-bold align-middle">
                       <Magnet className="w-4 h-4 text-indigo-600 mr-1.5" />
-                      <span className="font-mono text-sm sm:text-base">[ ? ]</span>
+                      <span className="font-mono text-base">[ ? ]</span>
                     </span>
                   )}
 
@@ -840,34 +840,59 @@ export default function CambridgeVocabHubPage() {
                 </div>
 
                 {/*  3 Magnetic Word Pills  */}
-                <div className="pt-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4 font-mono">
+                <div className="pt-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 font-mono">
                     CHỌN VIÊN NANG TỪ VỰNG CHÍNH XÁC
                   </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
                     {currentMagnet.options.map((opt, idx) => {
+                      const isTarget = opt.word.toLowerCase() === currentMagnet.target.toLowerCase();
+
+                      let cardStyle = "bg-white border-slate-200 hover:border-indigo-400 hover:shadow-md";
+                      if (stage1Solved) {
+                        if (isTarget) {
+                          cardStyle = "bg-emerald-50/40 border-emerald-500 ring-2 ring-emerald-200 shadow-sm";
+                        } else {
+                          cardStyle = "bg-slate-50/60 border-slate-200 opacity-60";
+                        }
+                      }
+
                       return (
                         <div
                           key={idx}
                           onClick={() => handleSelectStage1Option(idx)}
-                          className="group relative bg-white border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-400 hover:shadow-md transition-all flex flex-col items-center justify-center text-center space-y-2 select-none"
+                          className={`group relative border rounded-2xl p-4 cursor-pointer transition-all flex flex-col items-center justify-between text-center select-none ${cardStyle}`}
                         >
-                          <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-700 transition-colors">
+                          <span className={`absolute top-2.5 left-2.5 px-2 py-0.5 rounded-lg font-mono text-xs font-bold transition-colors ${
+                            stage1Solved && isTarget 
+                              ? "bg-emerald-600 text-white" 
+                              : "bg-slate-100 text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-700"
+                          }`}>
                             [{idx + 1}]
                           </span>
-                          <div className="pt-2">
-                            <span className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors font-mono">
+                          
+                          <div className="pt-1.5 pb-2.5 w-full">
+                            <span className={`text-xl sm:text-2xl font-bold font-mono transition-colors tracking-tight ${
+                              stage1Solved && isTarget ? "text-emerald-700" : "text-slate-900 group-hover:text-indigo-600"
+                            }`}>
                               {opt.word}
                             </span>
-                            <span className="text-xs font-mono text-slate-400 ml-1">({opt.pos})</span>
+                            <span className="text-xs font-mono text-slate-400 ml-1.5 font-normal">({opt.pos})</span>
                           </div>
-                          {/*  Radar Hint  */}
-                          <div className="w-full text-left bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-[11px] text-slate-600 space-y-1 transition-all">
-                            <div className="flex items-center gap-1 font-mono text-[10px] font-bold text-indigo-700 uppercase">
-                              <Compass className="w-3 h-3 text-indigo-600" />
-                              Radar Ngữ Cảnh:
+
+                          {/* Radar Hint */}
+                          <div className={`w-full text-left rounded-xl p-3 space-y-1.5 transition-all border ${
+                            stage1Solved && isTarget
+                              ? "bg-white/80 border-emerald-200/80 text-slate-700"
+                              : "bg-slate-50 group-hover:bg-indigo-50/40 border-slate-200/80 group-hover:border-indigo-200 text-slate-700"
+                          }`}>
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-700 tracking-wide">
+                              <Compass className="w-3.5 h-3.5 text-indigo-600 flex-shrink-0" />
+                              <span>Ngữ cảnh sử dụng:</span>
                             </div>
-                            <p className="leading-tight">{opt.hint}</p>
+                            <p className="text-sm text-slate-700 leading-relaxed font-normal">
+                              {opt.hint}
+                            </p>
                           </div>
                         </div>
                       );
@@ -877,62 +902,66 @@ export default function CambridgeVocabHubPage() {
 
                 {/*  Wrong Feedback  */}
                 {stage1WrongMessage && (
-                  <div className="text-left bg-rose-50 border border-rose-200 rounded-2xl p-4 text-xs text-rose-800 space-y-1">
+                  <div className="text-left bg-rose-50 border border-rose-200 rounded-2xl p-4 text-sm text-rose-800 space-y-1">
                     <div className="flex items-center gap-1.5 font-bold text-rose-900">
                       <AlertCircle className="w-4 h-4 text-rose-600" />
                       <span>{stage1WrongMessage.title}</span>
                     </div>
-                    <p className="text-rose-700">{stage1WrongMessage.exp}</p>
-                    <p className="text-[11px] text-rose-600 italic">Đã tự động thêm vào Sổ Tay Cần Ôn Tập góc phải.</p>
+                    <p className="text-rose-700 leading-relaxed">{stage1WrongMessage.exp}</p>
+                    <p className="text-xs text-rose-600 italic">Đã tự động thêm vào Sổ Tay Cần Ôn Tập góc phải.</p>
                   </div>
                 )}
 
                 {/*  Slide-out IELTS Insight Card when correct  */}
                 {stage1Solved && (
-                  <div className="text-left bg-gradient-to-r from-emerald-50/80 to-teal-50/80 border border-emerald-200 rounded-2xl p-5 shadow-sm space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-sm">
-                          <CheckCircle2 className="w-4 h-4" />
+                  <div className="text-left bg-gradient-to-r from-emerald-50/90 to-teal-50/90 border border-emerald-300 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-200/80 pb-3">
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm">
+                          <CheckCircle2 className="w-5 h-5" />
                         </span>
-                        <span className="text-sm font-bold text-emerald-900 font-mono tracking-tight">
-                          GÓC MỞ RỘNG IELTS &bull; COLLOCATION RADAR
-                        </span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-emerald-950 font-mono tracking-tight">
+                              GÓC MỞ RỘNG IELTS &bull; COLLOCATION RADAR
+                            </span>
+                            <span className="px-2 py-0.5 rounded-md font-mono text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                              {currentMagnet.ieltsInsight.bandScore}
+                            </span>
+                          </div>
+                          <p className="text-xs text-emerald-800 mt-0.5">Bạn đã chọn chính xác từ vựng cho ngữ cảnh học thuật này.</p>
+                        </div>
                       </div>
-                      <span className="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                        {currentMagnet.ieltsInsight.bandScore}
-                      </span>
+
+                      {/* Primary Next Button right at the top so user never has to scroll */}
+                      <button
+                        onClick={handleNextStage1Item}
+                        className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm flex items-center gap-2 shadow-md shadow-emerald-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                      >
+                        <span>Câu Tiếp Theo</span>
+                        <kbd className="hidden sm:inline-block px-1.5 py-0.5 bg-emerald-700/80 rounded text-[11px] font-mono font-bold">Space / Enter</kbd>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                      <div className="space-y-1">
-                        <span className="font-bold text-slate-700">Cụm Collocation Chuẩn:</span>
-                        <p className="font-mono text-indigo-700 font-semibold bg-white/70 p-2 rounded-lg border border-emerald-200/60">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="space-y-1.5">
+                        <span className="font-bold text-slate-800 text-xs uppercase tracking-wider">Cụm Collocation Chuẩn:</span>
+                        <p className="font-mono text-indigo-800 font-semibold bg-white/80 p-2.5 rounded-xl border border-emerald-200/80">
                           {currentMagnet.ieltsInsight.collocation}
                         </p>
                       </div>
-                      <div className="space-y-1">
-                        <span className="font-bold text-slate-700">Từ Đồng Nghĩa Thay Thế:</span>
-                        <p className="text-slate-600 bg-white/70 p-2 rounded-lg border border-emerald-200/60 font-medium">
+                      <div className="space-y-1.5">
+                        <span className="font-bold text-slate-800 text-xs uppercase tracking-wider">Từ Đồng Nghĩa Thay Thế:</span>
+                        <p className="text-slate-700 bg-white/80 p-2.5 rounded-xl border border-emerald-200/80 font-medium">
                           {currentMagnet.ieltsInsight.synonyms.join(", ")}
                         </p>
                       </div>
                     </div>
 
-                    <div className="text-xs text-slate-600 bg-white/80 p-3 rounded-lg border border-emerald-200/60 flex items-start gap-2">
+                    <div className="text-sm text-slate-700 bg-white/85 p-3.5 rounded-xl border border-emerald-200/80 flex items-start gap-2.5">
                       <Lightbulb className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                      <p>{currentMagnet.ieltsInsight.academicTip}</p>
-                    </div>
-
-                    <div className="pt-2 flex justify-end">
-                      <button
-                        onClick={handleNextStage1Item}
-                        className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-2 shadow-md shadow-emerald-200 transition-all"
-                      >
-                        <span>Câu Tiếp Theo</span>
-                        <kbd className="px-1.5 py-0.5 bg-emerald-700 rounded text-[10px] font-mono font-bold">Tab / Space</kbd>
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
+                      <p className="leading-relaxed">{currentMagnet.ieltsInsight.academicTip}</p>
                     </div>
                   </div>
                 )}
