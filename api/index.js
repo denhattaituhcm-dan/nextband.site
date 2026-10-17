@@ -123779,6 +123779,52 @@ var ArenaRoomService = class {
       throw dbError;
     }
   }
+  /**
+   * Kicks a participant from the lobby, removing them from ArenaParticipant
+   * so their nickname is freed and they can rejoin cleanly.
+   */
+  async kickParticipant(input) {
+    const { pin, hostToken, participantId } = input;
+    const room = await this.prisma.arenaRoom.findFirst({
+      where: {
+        pin: pin.trim(),
+        status: { not: "ENDED" }
+      }
+    });
+    if (!room) {
+      const err = new Error("Ph\xF2ng thi \u0111\u1EA5u kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 k\u1EBFt th\xFAc.");
+      err.statusCode = 404;
+      err.code = "ROOM_NOT_FOUND";
+      throw err;
+    }
+    const isTokenValid = this.pinService.verifyHostToken(hostToken, room.hostTokenHash);
+    if (!isTokenValid) {
+      const err = new Error("Host Token kh\xF4ng h\u1EE3p l\u1EC7. B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n m\u1EDDi h\u1ECDc sinh ra kh\u1ECFi ph\xF2ng.");
+      err.statusCode = 403;
+      err.code = "INVALID_HOST_TOKEN";
+      throw err;
+    }
+    const participant = await this.prisma.arenaParticipant.findFirst({
+      where: {
+        id: participantId,
+        roomId: room.id
+      }
+    });
+    if (!participant) {
+      const err = new Error("H\u1ECDc sinh kh\xF4ng t\u1ED3n t\u1EA1i trong ph\xF2ng thi \u0111\u1EA5u n\xE0y.");
+      err.statusCode = 404;
+      err.code = "PARTICIPANT_NOT_FOUND";
+      throw err;
+    }
+    await this.prisma.arenaParticipant.delete({
+      where: { id: participant.id }
+    });
+    return {
+      success: true,
+      kickedParticipantId: participant.id,
+      nickname: participant.nickname
+    };
+  }
 };
 
 // server/routes/arena.routes.ts
@@ -123833,6 +123879,31 @@ async function arenaRoutes(fastify) {
         return reply.code(statusCode).send({
           success: false,
           error: err?.message || "L\u1ED7i khi tham gia ph\xF2ng \u0111\u1EA5u.",
+          code: err?.code || "INTERNAL_ERROR"
+        });
+      }
+    }
+  );
+  fastify.post(
+    "/rooms/:pin/kick",
+    async (request, reply) => {
+      try {
+        const { pin } = request.params;
+        const { hostToken, participantId } = request.body || {};
+        const result = await roomService.kickParticipant({
+          pin,
+          hostToken,
+          participantId
+        });
+        return reply.code(200).send({
+          success: true,
+          data: result
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "L\u1ED7i khi m\u1EDDi h\u1ECDc sinh ra kh\u1ECFi ph\xF2ng.",
           code: err?.code || "INTERNAL_ERROR"
         });
       }

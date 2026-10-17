@@ -5161,6 +5161,32 @@ export const arenaApi = {
     return json.data;
   },
 
+  async kickParticipant(params: {
+    pin: string;
+    hostToken: string;
+    participantId: string;
+  }): Promise<{
+    success: boolean;
+    kickedParticipantId: string;
+    nickname: string;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/arena/rooms/${encodeURIComponent(params.pin)}/kick`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        hostToken: params.hostToken,
+        participantId: params.participantId,
+      }),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể mời học sinh ra khỏi phòng"
+    );
+    return json.data;
+  },
+
   async executeHostCommand(params: {
     roomId: string;
     commandId: string;

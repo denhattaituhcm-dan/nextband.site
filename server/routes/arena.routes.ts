@@ -81,6 +81,40 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
       }
     }
   );
+
+  // POST /arena/rooms/:pin/kick - Host kick học sinh ra khỏi sảnh chờ để họ có thể tự vào lại
+  fastify.post<{
+    Params: { pin: string };
+    Body: {
+      hostToken: string;
+      participantId: string;
+    };
+  }>(
+    "/rooms/:pin/kick",
+    async (request, reply) => {
+      try {
+        const { pin } = request.params;
+        const { hostToken, participantId } = request.body || {};
+        const result = await roomService.kickParticipant({
+          pin,
+          hostToken,
+          participantId,
+        });
+        return reply.code(200).send({
+          success: true,
+          data: result,
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Lỗi khi mời học sinh ra khỏi phòng.",
+          code: err?.code || "INTERNAL_ERROR",
+        });
+      }
+    }
+  );
+
   // POST /arena/rooms/:id/command - Thực thi lệnh Host (Server-Authoritative State Machine)
   fastify.post<{
     Params: { id: string };

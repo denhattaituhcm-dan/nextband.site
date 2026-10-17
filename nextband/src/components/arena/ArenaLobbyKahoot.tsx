@@ -8,7 +8,7 @@
  */
 
 import React, { useState } from 'react';
-import { Users, UserCheck, Sparkles, QrCode, Maximize2, X } from 'lucide-react';
+import { Users, UserCheck, Sparkles, QrCode, Maximize2, X, UserX } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { getCharacterBySeed } from '@/lib/arena/characterCatalog';
 
@@ -26,6 +26,7 @@ interface ArenaLobbyKahootProps {
   maxSlots?: number;
   pinCode: string;
   joinUrl?: string;
+  onKickPlayer?: (player: LobbyPlayer) => void;
 }
 
 const CARD_PALETTES = [
@@ -42,6 +43,7 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
   maxSlots = 24,
   pinCode,
   joinUrl = '/arena/join',
+  onKickPlayer,
 }) => {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const currentCount = players.length;
@@ -181,8 +183,23 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
           return p ? (
             <div
               key={p.id || idx}
-              className={`p-3.5 ${palette.bg} border-2 ${palette.border} rounded-2xl flex flex-col items-center text-center space-y-2 shadow-xl ${palette.glow} animate-in fade-in zoom-in-75 duration-300 transform hover:-translate-y-1 transition-all min-h-[180px] justify-between cursor-default relative`}
+              className={`p-3.5 ${palette.bg} border-2 ${palette.border} rounded-2xl flex flex-col items-center text-center space-y-2 shadow-xl ${palette.glow} animate-in fade-in zoom-in-75 duration-300 transform hover:-translate-y-1 transition-all min-h-[180px] justify-between cursor-default relative group`}
             >
+              {/* Nút Kick mời học viên ra khỏi sảnh để vào lại */}
+              {onKickPlayer && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onKickPlayer(p);
+                  }}
+                  className="absolute -top-2 -right-2 w-7 h-7 bg-rose-600 hover:bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer z-20 opacity-90 sm:opacity-0 group-hover:opacity-100 border border-white/40"
+                  title={`Mời ${p.name} ra khỏi sảnh chờ để đặt lại tên hoặc vào lại`}
+                >
+                  <X className="w-4 h-4 stroke-[3]" />
+                </button>
+              )}
+
               {/* Thẻ bài Avatar Sprite */}
               <div className="relative pt-0.5">
                 <PvZCardAvatar seed={p.avatarSeed !== undefined ? p.avatarSeed : p.name} size="md" />

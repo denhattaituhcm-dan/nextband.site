@@ -193,5 +193,71 @@ export class ArenaRoomService {
       throw dbError;
     }
   }
+
+  /**
+   * Kicks a participant from the lobby, removing them from ArenaParticipant
+   * so their nickname is freed and they can rejoin cleanly.
+   */
+  public async kickParticipant(input: {
+    pin: string;
+    hostToken: string;
+    participantId: string;
+  }): Promise<{
+    success: boolean;
+    kickedParticipantId: string;
+    nickname: string;
+  }> {
+    const { pin, hostToken, participantId } = input;
+
+    // 1. Kiểm tra phòng tồn tại
+    const room = await this.prisma.arenaRoom.findFirst({
+      where: {
+        pin: pin.trim(),
+        status: { not: "ENDED" },
+      },
+    });
+
+    if (!room) {
+      const err: any = new Error("Phòng thi đấu không tồn tại hoặc đã kết thúc.");
+      err.statusCode = 404;
+      err.code = "ROOM_NOT_FOUND";
+      throw err;
+    }
+
+    // 2. Xác thực Host Token
+    const isTokenValid = this.pinService.verifyHostToken(hostToken, room.hostTokenHash);
+    if (!isTokenValid) {
+      const err: any = new Error("Host Token không hợp lệ. Bạn không có quyền mời học sinh ra khỏi phòng.");
+      err.statusCode = 403;
+      err.code = "INVALID_HOST_TOKEN";
+      throw err;
+    }
+
+    // 3. Tìm thông tin participant trong phòng
+    const participant = await this.prisma.arenaParticipant.findFirst({
+      where: {
+        id: participantId,
+        roomId: room.id,
+      },
+    });
+
+    if (!participant) {
+      const err: any = new Error("Học sinh không tồn tại trong phòng thi đấu này.");
+      err.statusCode = 404;
+      err.code = "PARTICIPANT_NOT_FOUND";
+      throw err;
+    }
+
+    // 4. Xóa bản ghi participant để giải phóng nickname và slot
+    await this.prisma.arenaParticipant.delete({
+      where: { id: participant.id },
+    });
+
+    return {
+      success: true,
+      kickedParticipantId: participant.id,
+      nickname: participant.nickname,
+    };
+  }
 }
 

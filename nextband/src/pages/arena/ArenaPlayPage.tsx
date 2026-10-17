@@ -133,6 +133,21 @@ export default function ArenaPlayPage() {
           joinedAt: new Date().toISOString(),
         },
       });
+
+      bc.onmessage = (event) => {
+        if (event.data?.type === 'player-kicked') {
+          const payload = event.data.payload;
+          const myName = nicknameRef.current?.trim().toLowerCase();
+          const kickedName = (payload?.nickname || '').trim().toLowerCase();
+          if (payload?.participantId === playerId || (kickedName.length > 0 && kickedName === myName)) {
+            sessionStorage.removeItem(`arena_session_${pin}`);
+            sessionStorage.removeItem(`arena_player_${pin}`);
+            alert('Host đã mời bạn ra khỏi sảnh chờ để bạn có thể đặt lại tên hoặc đăng nhập lại.');
+            window.location.href = `/arena/join?pin=${pin}`;
+          }
+        }
+      };
+
       return () => bc.close();
     } catch {}
   }, [pin, playerId, nickname, avatarId]);
@@ -299,6 +314,22 @@ export default function ArenaPlayPage() {
         if (payload?.victimName?.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase()) {
           setGold((prev) => Math.max(0, prev - (payload.amount || 0)));
           playWrongSoundRef.current();
+        }
+      })
+      .on('broadcast', { event: 'player-kicked' }, ({ payload }) => {
+        const myName = nicknameRef.current?.trim().toLowerCase();
+        const kickedName = (payload?.nickname || '').trim().toLowerCase();
+        const isMe =
+          payload?.participantId === playerId ||
+          (kickedName.length > 0 && kickedName === myName);
+
+        if (isMe) {
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem(`arena_session_${pin}`);
+            sessionStorage.removeItem(`arena_player_${pin}`);
+          }
+          alert('Host đã mời bạn ra khỏi sảnh chờ để bạn có thể đặt lại tên hoặc đăng nhập lại.');
+          window.location.href = `/arena/join?pin=${pin}`;
         }
       });
 

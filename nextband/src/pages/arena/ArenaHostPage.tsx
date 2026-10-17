@@ -541,6 +541,66 @@ export default function ArenaHostPage() {
 
   const topFive: PlayerPublicRank[] = useMemo(() => allRankings.slice(0, 5), [allRankings]);
 
+  // Cho phép Host kick học viên ra khỏi sảnh chờ để họ có thể tự vào lại
+  const handleKickPlayer = useCallback(
+    async (player: LobbyPlayer) => {
+      const confirmKick = window.confirm(
+        `Bạn có chắc muốn mời học viên "${player.name}" ra khỏi sảnh chờ để bạn ấy có thể tự vào lại không?`
+      );
+      if (!confirmKick) return;
+
+      try {
+        const hostToken = typeof window !== 'undefined' ? sessionStorage.getItem(`arena_host_token_${pinCode}`) : null;
+        if (!hostToken) {
+          alert('Không tìm thấy Host Token. Vui lòng thử lại!');
+          return;
+        }
+
+        // 1. Gọi backend xóa participant khỏi Database
+        await arenaApi.kickParticipant({
+          pin: pinCode,
+          hostToken,
+          participantId: player.id,
+        });
+
+        // 2. Gửi Supabase Realtime broadcast thông báo cho học viên
+        if (channelRef.current) {
+          channelRef.current.send({
+            type: 'broadcast',
+            event: 'player-kicked',
+            payload: {
+              participantId: player.id,
+              nickname: player.name,
+              pin: pinCode,
+            },
+          });
+        }
+
+        // 3. Đồng bộ tab cục bộ (nếu test cùng trình duyệt)
+        try {
+          if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+            const bc = new BroadcastChannel(`arena-local-sync-${pinCode}`);
+            bc.postMessage({
+              type: 'player-kicked',
+              payload: {
+                participantId: player.id,
+                nickname: player.name,
+              },
+            });
+            bc.close();
+          }
+        } catch (e) {}
+
+        // 4. Xóa khỏi danh sách người chơi tại Host
+        setPlayers((prev) => prev.filter((p) => p.id !== player.id && p.name.toLowerCase() !== player.name.toLowerCase()));
+      } catch (err: any) {
+        console.error('[ArenaHost] Lỗi kick học viên:', err);
+        alert(err.message || 'Không thể mời học viên ra khỏi phòng.');
+      }
+    },
+    [pinCode]
+  );
+
   // Phát BGM ở Lobby
   useEffect(() => {
     if (state === 'LOBBY') {
@@ -924,6 +984,7 @@ export default function ArenaHostPage() {
             maxSlots={roomSettings.maxSlots}
             pinCode={pinCode}
             joinUrl={joinUrl}
+            onKickPlayer={handleKickPlayer}
           />
         )}
 

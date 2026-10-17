@@ -116,5 +116,53 @@ describe("🤝 PHASE 2: JOIN HANDSHAKE & SESSION ISSUANCE SPEC SUITE", () => {
         code: "DUPLICATE_NICKNAME",
       });
     });
+
+    it("cho phép Host kick học sinh ra khỏi sảnh chờ và giải phóng nickname để học sinh có thể tự vào lại", async () => {
+      const room = await roomService.createRoom({});
+      createdRoomIds.push(room.roomId);
+
+      // 1. Học sinh đăng ký tham gia sảnh chờ
+      const joinRes = await roomService.joinRoom({
+        pin: room.pin,
+        nickname: "Hoàng Long",
+      });
+
+      // 2. Chặn nếu token host không hợp lệ
+      await expect(
+        roomService.kickParticipant({
+          pin: room.pin,
+          hostToken: "wrong_token",
+          participantId: joinRes.participantId,
+        })
+      ).rejects.toMatchObject({
+        statusCode: 403,
+        code: "INVALID_HOST_TOKEN",
+      });
+
+      // 3. Host kick thành công với đúng hostToken
+      const kickRes = await roomService.kickParticipant({
+        pin: room.pin,
+        hostToken: room.hostToken,
+        participantId: joinRes.participantId,
+      });
+
+      expect(kickRes.success).toBe(true);
+      expect(kickRes.kickedParticipantId).toBe(joinRes.participantId);
+      expect(kickRes.nickname).toBe("Hoàng Long");
+
+      // 4. Kiểm tra trong DB: Participant đã bị xóa hoàn toàn khỏi phòng
+      const inDb = await prisma.arenaParticipant.findUnique({
+        where: { id: joinRes.participantId },
+      });
+      expect(inDb).toBeNull();
+
+      // 5. Học sinh có thể tự tham gia lại bằng chính nickname đó mà không bị lỗi 409
+      const rejoinRes = await roomService.joinRoom({
+        pin: room.pin,
+        nickname: "Hoàng Long",
+      });
+      expect(rejoinRes.participantId).toBeDefined();
+      expect(rejoinRes.nickname).toBe("Hoàng Long");
+    });
   });
 });
