@@ -1,9 +1,10 @@
 /**
  * TEACHER HOST VIEW (/arena/host)
  * Màn hình trình chiếu của Giáo viên cho phòng học 10-20 học viên.
- * Hỗ trợ 2 chế độ:
+ * Hỗ trợ 3 chế độ:
  * 1. 'CLASSIC': Kahoot Cổ Điển (Đua điểm trắc nghiệm)
  * 2. 'GOLD_QUEST': Cướp Vàng (Mở rương, Live Gold Leaderboard, Cướp vàng trực tiếp giữa học sinh)
+ * 3. 'ARENA_100': Đấu Trường 100 (Sinh tồn qua các vòng, trụ hạng tìm người sống sót cuối cùng)
  * Mặc định: Giữ nguyên chế độ Cổ điển nếu giáo viên không chỉnh gì trong Cài đặt.
  */
 
@@ -21,7 +22,7 @@ import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
 import { ArenaFreeFireLeaderboard } from '@/components/arena/ArenaFreeFireLeaderboard';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap, Users, BookOpen, HelpCircle } from 'lucide-react';
+import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap, Users, BookOpen, HelpCircle, Shield, Heart } from 'lucide-react';
 
 interface PlayerAnswerRecord {
   playerId: string;
@@ -70,6 +71,11 @@ export default function ArenaHostPage() {
   const [players, setPlayers] = useState<LobbyPlayer[]>([]);
   const [answers, setAnswers] = useState<Record<string, PlayerAnswerRecord>>({});
   const [playerGoldMap, setPlayerGoldMap] = useState<Record<string, number>>({});
+  // Trạng thái sinh tồn cho Đấu Trường 100 (ARENA_100)
+  const [playerLivesMap, setPlayerLivesMap] = useState<Record<string, number>>({});
+  const [playerStreakMap, setPlayerStreakMap] = useState<Record<string, number>>({});
+  const [eliminatedRoundMap, setEliminatedRoundMap] = useState<Record<string, number>>({});
+  const [roundProcessedIndex, setRoundProcessedIndex] = useState<number>(-1);
   const [liveLogs, setLiveLogs] = useState<string[]>([]);
   const [timeLeft, setTimeLeft] = useState<number>(DEFAULT_ROOM_SETTINGS.timeLimit);
 
@@ -134,6 +140,8 @@ export default function ArenaHostPage() {
   roomSettingsRef.current = roomSettings;
   const pinCodeRef = useRef<string>(pinCode);
   pinCodeRef.current = pinCode;
+  const playerLivesMapRef = useRef<Record<string, number>>(playerLivesMap);
+  playerLivesMapRef.current = playerLivesMap;
 
   const registerPlayer = useCallback((p: {
     id?: string;
@@ -166,6 +174,10 @@ export default function ArenaHostPage() {
     });
 
     setPlayerGoldMap((prev) => ({ ...prev, [playerName]: prev[playerName] ?? 0 }));
+    setPlayerLivesMap((prev) => ({
+      ...prev,
+      [playerName]: prev[playerName] ?? roomSettingsRef.current.survivalInitialLives,
+    }));
 
     // Phản hồi ACK xác nhận cho học sinh qua Supabase channel nếu có
     try {
@@ -235,6 +247,15 @@ export default function ArenaHostPage() {
             });
             setCumulativeScores(scoreObj);
             setPlayerGoldMap(goldObj);
+            setPlayerLivesMap((prev) => {
+              const next = { ...prev };
+              snapshot.participants.forEach((p: any) => {
+                if (next[p.nickname] === undefined) {
+                  next[p.nickname] = roomSettingsRef.current.survivalInitialLives;
+                }
+              });
+              return next;
+            });
           }
           if (snapshot.roomId) {
             setRoomId(snapshot.roomId);
@@ -351,8 +372,9 @@ export default function ArenaHostPage() {
       })
       .on('broadcast', { event: 'player-sync-request' }, ({ payload }) => {
         if (!payload || !payload.playerId) return;
-        if (payload.nickname || payload.name) {
-          registerPlayer({ id: payload.playerId, name: payload.nickname || payload.name });
+        const reqName = (payload.nickname || payload.name || '').trim();
+        if (reqName) {
+          registerPlayer({ id: payload.playerId, name: reqName });
         }
         // Phản hồi trạng thái hiện tại của phòng cho học sinh
         try {
@@ -368,6 +390,8 @@ export default function ArenaHostPage() {
               question: currentQuestionRef.current,
               timeLeft,
               gameMode: roomSettingsRef.current.gameMode,
+              survivalInitialLives: roomSettingsRef.current.survivalInitialLives,
+              lives: reqName ? playerLivesMapRef.current[reqName] : undefined,
             },
           });
         } catch (err) {
@@ -385,9 +409,12 @@ export default function ArenaHostPage() {
 
         const optionId = payload.optionId;
         const isCorrect = optionId === currentQuestionRef.current.correctOptionId;
-        
+        const isArena100 = roomSettingsRef.current.gameMode === 'ARENA_100';
+        const curLives = playerLivesMapRef.current[payload.nickname] ?? roomSettingsRef.current.survivalInitialLives;
+        const isAlreadyEliminated = isArena100 && curLives <= 0;
+
         let score = 0;
-        if (isCorrect) {
+        if (isCorrect && !isAlreadyEliminated) {
           const isFinalQuestion = totalQuestions > 0 && questionIndex >= totalQuestions - 1;
           const isClassicMode = roomSettingsRef.current.gameMode === 'CLASSIC';
           const finalMultiplier = (isClassicMode && isFinalQuestion) ? 2 : 1;
@@ -494,21 +521,25 @@ export default function ArenaHostPage() {
     return () => clearInterval(interval);
   }, [state]);
 
-  // Định kỳ gửi danh sách người chơi và số vàng sang các học sinh để làm mục tiêu cướp vàng
+  // Định kỳ gửi danh sách người chơi, số vàng và số mạng sinh tồn sang các học sinh
   useEffect(() => {
     if (!channelRef.current || players.length === 0) return;
     const candidates = players.map((p) => ({
       name: p.name,
       gold: playerGoldMap[p.name] || 0,
+      lives: playerLivesMap[p.name] ?? roomSettings.survivalInitialLives,
+      maxLives: roomSettings.survivalInitialLives,
     }));
     channelRef.current.send({
       type: 'broadcast',
       event: 'players-sync',
-      payload: { players: candidates },
+      payload: {
+        players: candidates,
+        gameMode: roomSettings.gameMode,
+        survivalInitialLives: roomSettings.survivalInitialLives,
+      },
     });
-  }, [players, playerGoldMap]);
-
-
+  }, [players, playerGoldMap, playerLivesMap, roomSettings.gameMode, roomSettings.survivalInitialLives]);
 
   // Tính toán tỷ lệ phần trăm phân bố đáp án thực tế từ học sinh thật
   const distribution = useMemo(() => {
@@ -532,6 +563,26 @@ export default function ArenaHostPage() {
     };
   }, [answers]);
 
+  // Số người chơi còn trụ lại trong Đấu Trường 100
+  const survivingPlayersCount = useMemo(() => {
+    if (roomSettings.gameMode !== 'ARENA_100') return players.length;
+    return players.filter((p) => (playerLivesMap[p.name] ?? roomSettings.survivalInitialLives) > 0).length;
+  }, [players, playerLivesMap, roomSettings.gameMode, roomSettings.survivalInitialLives]);
+
+  // Điều kiện kết thúc sớm Đấu Trường 100: Khi đã có >= 2 người chơi mà chỉ còn <= 1 người trụ lại (hoặc đã ở vòng cuối)
+  const isSurvivalShowdownOver = useMemo(() => {
+    if (roomSettings.gameMode !== 'ARENA_100') return false;
+    if (players.length >= 2 && survivingPlayersCount <= 1 && questionIndex >= 0 && roundProcessedIndex === questionIndex) {
+      return true;
+    }
+    if (players.length === 1 && survivingPlayersCount === 0 && roundProcessedIndex === questionIndex) {
+      return true;
+    }
+    return false;
+  }, [roomSettings.gameMode, players.length, survivingPlayersCount, questionIndex, roundProcessedIndex]);
+
+  const effectiveIsLastRound = isLastRound || isSurvivalShowdownOver;
+
   // Bảng xếp hạng toàn diện tất cả người chơi
   const allRankings: PlayerPublicRank[] = useMemo(() => {
     if (roomSettings.gameMode === 'GOLD_QUEST') {
@@ -546,6 +597,45 @@ export default function ArenaHostPage() {
           avatarSeed: found?.avatarSeed !== undefined ? found.avatarSeed : name,
         };
       });
+    }
+
+    if (roomSettings.gameMode === 'ARENA_100') {
+      const maxLives = roomSettings.survivalInitialLives;
+      const list = players.map((p) => {
+        const lives = playerLivesMap[p.name] ?? maxLives;
+        const score = cumulativeScores[p.name] || 0;
+        const elimRound = eliminatedRoundMap[p.name] ?? -1;
+        return {
+          name: p.name,
+          lives,
+          maxLives,
+          isEliminated: lives <= 0,
+          elimRound,
+          score,
+          avatarSeed: p.avatarSeed !== undefined ? p.avatarSeed : p.name,
+        };
+      });
+
+      // Sắp xếp: 1. Còn sống trước -> 2. Nhiều mạng hơn -> 3. Nếu đã bị loại thì bị loại ở vòng muộn hơn xếp trên -> 4. Điểm tốc độ cao hơn
+      list.sort((a, b) => {
+        if (a.isEliminated !== b.isEliminated) return a.isEliminated ? 1 : -1;
+        if (b.lives !== a.lives) return b.lives - a.lives;
+        if (a.isEliminated && b.isEliminated && b.elimRound !== a.elimRound) {
+          return b.elimRound - a.elimRound;
+        }
+        return b.score - a.score;
+      });
+
+      return list.map((item, idx) => ({
+        rank: idx + 1,
+        playerId: item.name,
+        nickname: item.name,
+        totalScore: item.score,
+        avatarSeed: item.avatarSeed,
+        lives: item.lives,
+        maxLives: item.maxLives,
+        isEliminated: item.isEliminated,
+      }));
     }
 
     const scoreMap: Record<string, number> = { ...cumulativeScores };
@@ -566,7 +656,7 @@ export default function ArenaHostPage() {
         avatarSeed: found?.avatarSeed !== undefined ? found.avatarSeed : name,
       };
     });
-  }, [cumulativeScores, playerGoldMap, players, roomSettings.gameMode]);
+  }, [cumulativeScores, playerGoldMap, playerLivesMap, eliminatedRoundMap, players, roomSettings.gameMode, roomSettings.survivalInitialLives]);
 
 
   // Cho phép Host kick học viên ra khỏi sảnh chờ để họ có thể tự vào lại

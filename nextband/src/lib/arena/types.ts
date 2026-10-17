@@ -49,6 +49,9 @@ export interface PlayerPublicRank {
   totalScore: number;
   isClimber?: boolean;
   avatarSeed?: number | string;
+  lives?: number;
+  maxLives?: number;
+  isEliminated?: boolean;
 }
 
 export interface PlayerPersonalResult {

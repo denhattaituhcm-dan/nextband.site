@@ -3,16 +3,18 @@
  * Bổ sung tùy chọn Chế độ chơi:
  * - 'CLASSIC': Kahoot Cổ Điển (Đua điểm trắc nghiệm)
  * - 'GOLD_QUEST': Cướp Vàng (Mở rương, cướp vàng, lật kèo kịch tính)
+ * - 'ARENA_100': Đấu Trường 100 (Sinh tồn qua các vòng, trụ hạng tìm người sống sót cuối cùng)
  * Mặc định: Giữ nguyên 'CLASSIC' nếu giáo viên không chỉnh.
  */
 
 import React from 'react';
-import { X, Clock, Award, Users, Check, Gamepad2 } from 'lucide-react';
+import { X, Clock, Award, Users, Check, Gamepad2, Shield, Heart } from 'lucide-react';
 
-export type ArenaGameMode = 'CLASSIC' | 'GOLD_QUEST';
+export type ArenaGameMode = 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100';
 
 export interface RoomSettings {
-  gameMode: ArenaGameMode; // 'CLASSIC' hoặc 'GOLD_QUEST'
+  gameMode: ArenaGameMode; // 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100'
+  survivalInitialLives: 1 | 3; // 1 mạng (Loại trực tiếp) hoặc 3 mạng (Sinh tồn nhiều mạng) cho ARENA_100
   timeLimit: number;       // Thời gian tính bằng giây: 10, 15, 20, 30
   scoringMode: 'standard' | 'double' | 'no_points';
   maxSlots: number;        // Sĩ số: 10, 12, 16, 20
@@ -22,6 +24,7 @@ export interface RoomSettings {
 
 export const DEFAULT_ROOM_SETTINGS: RoomSettings = {
   gameMode: 'CLASSIC',
+  survivalInitialLives: 3,
   timeLimit: 15,
   scoringMode: 'standard',
   maxSlots: 24,
@@ -65,7 +68,7 @@ export const HostSettingsModal: React.FC<HostSettingsModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-[#1a0f3d] border-2 border-purple-400/40 rounded-3xl shadow-2xl max-w-lg w-full p-6 text-white space-y-5 relative"
+        className="bg-[#1a0f3d] border-2 border-purple-400/40 rounded-3xl shadow-2xl max-w-xl w-full p-6 text-white space-y-5 relative max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -88,15 +91,15 @@ export const HostSettingsModal: React.FC<HostSettingsModalProps> = ({
         </div>
 
         {/* Cài đặt 0: CHẾ ĐỘ CHƠI (GAME MODE) */}
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <span className="text-xs font-black text-purple-200 uppercase tracking-wider flex items-center gap-1.5">
             <Gamepad2 className="w-4 h-4 text-orange-400" /> Chọn chế độ thi đấu
           </span>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <button
               type="button"
               onClick={() => setLocalSettings((prev) => ({ ...prev, gameMode: 'CLASSIC' }))}
-              className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden ${
+              className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden ${
                 localSettings.gameMode === 'CLASSIC'
                   ? 'bg-purple-900/80 border-purple-400 text-white shadow-lg shadow-purple-900/50'
                   : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
@@ -110,14 +113,14 @@ export const HostSettingsModal: React.FC<HostSettingsModalProps> = ({
                   </span>
                 )}
               </div>
-              <div className="font-black text-sm text-white">Kahoot Cổ Điển</div>
-              <div className="text-[11px] text-purple-200/80 mt-0.5">Đua điểm trắc nghiệm xếp hạng</div>
+              <div className="font-black text-xs sm:text-sm text-white">Kahoot Cổ Điển</div>
+              <div className="text-[10px] text-purple-200/80 mt-0.5 leading-snug">Đua điểm tốc độ & bảng xếp hạng</div>
             </button>
 
             <button
               type="button"
               onClick={() => setLocalSettings((prev) => ({ ...prev, gameMode: 'GOLD_QUEST' }))}
-              className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden ${
+              className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden ${
                 localSettings.gameMode === 'GOLD_QUEST'
                   ? 'bg-amber-950/80 border-amber-400 text-white shadow-lg shadow-amber-900/50'
                   : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
@@ -131,10 +134,82 @@ export const HostSettingsModal: React.FC<HostSettingsModalProps> = ({
                   </span>
                 )}
               </div>
-              <div className="font-black text-sm text-amber-300">Cướp Vàng (Gold Quest)</div>
-              <div className="text-[11px] text-amber-200/80 mt-0.5">Mở rương, cướp vàng, lật kèo</div>
+              <div className="font-black text-xs sm:text-sm text-amber-300">Cướp Vàng</div>
+              <div className="text-[10px] text-amber-200/80 mt-0.5 leading-snug">Mở rương báu, cướp vàng lật kèo</div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setLocalSettings((prev) => ({ ...prev, gameMode: 'ARENA_100' }))}
+              className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden ${
+                localSettings.gameMode === 'ARENA_100'
+                  ? 'bg-rose-950/80 border-rose-400 text-white shadow-lg shadow-rose-900/50'
+                  : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-lg">🛡️</span>
+                {localSettings.gameMode === 'ARENA_100' && (
+                  <span className="text-[10px] px-2 py-0.5 bg-rose-500 text-white font-black rounded-full">
+                    Đang chọn
+                  </span>
+                )}
+              </div>
+              <div className="font-black text-xs sm:text-sm text-rose-300">Đấu Trường 100</div>
+              <div className="text-[10px] text-rose-200/80 mt-0.5 leading-snug">Sinh tồn trụ hạng qua từng vòng</div>
             </button>
           </div>
+
+          {/* Tùy chọn Luật Sinh Tồn khi chọn Đấu Trường 100 */}
+          {localSettings.gameMode === 'ARENA_100' && (
+            <div className="mt-3 p-3.5 rounded-2xl bg-rose-950/40 border border-rose-500/40 space-y-2.5 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between text-xs font-bold text-rose-200">
+                <span className="flex items-center gap-1.5 uppercase tracking-wider">
+                  <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400" /> Luật Sinh Tồn Đấu Trường 100
+                </span>
+                <span className="text-[11px] text-amber-300 font-semibold">
+                  🔥 Streak x3 câu đúng: Hồi +1 mạng
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setLocalSettings((prev) => ({ ...prev, survivalInitialLives: 3 }))}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    localSettings.survivalInitialLives === 3
+                      ? 'bg-rose-600/30 border-rose-400 text-white shadow-md'
+                      : 'bg-black/20 border-white/10 text-slate-300 hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-xs text-rose-200">❤️❤️❤️ 3 Mạng (Khuyên dùng)</span>
+                    {localSettings.survivalInitialLives === 3 && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+                  </div>
+                  <p className="text-[10px] text-slate-300 mt-1">
+                    Trả lời sai mất 1 mạng. Hạn chế bị loại sớm, phù hợp lớp học tiếng Anh.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setLocalSettings((prev) => ({ ...prev, survivalInitialLives: 1 }))}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                    localSettings.survivalInitialLives === 1
+                      ? 'bg-rose-600/30 border-rose-400 text-white shadow-md'
+                      : 'bg-black/20 border-white/10 text-slate-300 hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-xs text-amber-300">⚡ 1 Mạng (Loại trực tiếp)</span>
+                    {localSettings.survivalInitialLives === 1 && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+                  </div>
+                  <p className="text-[10px] text-slate-300 mt-1">
+                    Chuẩn format gameshow Đấu Trường 100: Sai hoặc hết giờ là bị loại ngay!
+                  </p>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Cài đặt 1: Giới hạn thời gian (Time Limit) */}

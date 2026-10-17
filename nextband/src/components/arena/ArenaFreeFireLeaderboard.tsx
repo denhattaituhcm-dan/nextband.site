@@ -20,7 +20,7 @@ interface ArenaFreeFireLeaderboardProps {
   players: LobbyPlayer[];
   questionIndex: number;
   totalQuestions: number;
-  gameMode?: 'CLASSIC' | 'GOLD_QUEST';
+  gameMode?: 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100';
 }
 
 export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> = React.memo(({
@@ -33,11 +33,11 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
 }) => {
   const top10 = rankings.slice(0, 10);
   const leader = rankings[0];
-  const leaderPlayer = players.find(
-    (p) => p.name.toLowerCase() === leader?.nickname.toLowerCase() || p.id === leader?.playerId
-  );
   const leaderAnswer = leader ? answers[leader.nickname] : undefined;
   const unitLabel = gameMode === 'GOLD_QUEST' ? '🪙' : 'pts';
+  const survivorsCount = gameMode === 'ARENA_100'
+    ? rankings.filter((r) => !r.isEliminated && (r.lives === undefined || r.lives > 0)).length
+    : players.length;
 
   // Helper tìm avatar seed cho mỗi học sinh
   const getPlayerSeed = (nickname: string, playerId: string) => {
@@ -45,6 +45,28 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
       (p) => p.name.toLowerCase() === nickname.toLowerCase() || p.id === playerId
     );
     return found?.avatarSeed !== undefined ? found.avatarSeed : nickname;
+  };
+
+  const renderLivesBadge = (rankItem: PlayerPublicRank) => {
+    if (gameMode !== 'ARENA_100') return null;
+    const maxL = rankItem.maxLives || 3;
+    const curL = rankItem.lives !== undefined ? rankItem.lives : maxL;
+    if (rankItem.isEliminated || curL <= 0) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-950/90 border border-rose-500/50 text-[10px] font-black text-rose-300">
+          💀 ĐÃ LOẠI
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-400/50 text-xs font-black text-rose-200">
+        {Array.from({ length: maxL }).map((_, i) => (
+          <span key={i} className={i < curL ? 'opacity-100' : 'opacity-25 grayscale'}>
+            ❤️
+          </span>
+        ))}
+      </span>
+    );
   };
 
   return (
@@ -56,12 +78,20 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
             CÂU {questionIndex + 1} / {totalQuestions}
           </div>
           <span className="text-xs md:text-sm font-black tracking-widest text-cyan-300 uppercase">
-            {gameMode === 'GOLD_QUEST' ? 'BẢNG VÀNG ĐẠI GIA · GOLD RUSH' : 'BẢNG XẾP HẠNG CHIẾN THẦN · BATTLE ROYALE'}
+            {gameMode === 'GOLD_QUEST'
+              ? 'BẢNG VÀNG ĐẠI GIA · GOLD RUSH'
+              : gameMode === 'ARENA_100'
+              ? 'ĐẤU TRƯỜNG 100 · BẢNG TRỤ HẠNG SINH TỒN 🛡️'
+              : 'BẢNG XẾP HẠNG CHIẾN THẦN · BATTLE ROYALE'}
           </span>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
           <Flame className="w-4 h-4 text-orange-400 animate-pulse" />
-          <span>{players.length} Chiến binh đang tham chiến</span>
+          <span>
+            {gameMode === 'ARENA_100'
+              ? `Còn ${survivorsCount} / ${players.length} chiến binh trụ lại`
+              : `${players.length} Chiến binh đang tham chiến`}
+          </span>
         </div>
       </div>
 
@@ -76,16 +106,16 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
           {/* Huy hiệu đỉnh */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-black uppercase tracking-wider mb-3">
             <Crown className="w-4 h-4 text-amber-400 animate-bounce" />
-            <span>NGƯỜI DẪN ĐẦU VÒNG {questionIndex + 1}</span>
+            <span>{gameMode === 'ARENA_100' ? `CHIẾN BINH TRỤ HẠNG #1` : `NGƯỜI DẪN ĐẦU VÒNG ${questionIndex + 1}`}</span>
           </div>
 
           {/* Typography BOOYAH / TOP 1 Thể thao điện tử */}
           <div className="relative my-2 transform -rotate-2 scale-105">
             <h2 className="text-5xl md:text-6xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 via-amber-400 to-orange-500 drop-shadow-[0_4px_10px_rgba(245,158,11,0.5)]">
-              BOOYAH!
+              {gameMode === 'ARENA_100' ? 'SURVIVOR!' : 'BOOYAH!'}
             </h2>
             <span className="block text-[11px] font-black uppercase tracking-widest text-cyan-300 drop-shadow">
-              CHẾ NGỰ ĐẤU TRƯỜNG
+              {gameMode === 'ARENA_100' ? 'KIÊN CƯỜNG TRỤ VỮNG' : 'CHẾ NGỰ ĐẤU TRƯỜNG'}
             </span>
           </div>
 
@@ -106,13 +136,16 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
               </div>
 
               {/* Tên & Chiến binh */}
-              <div className="w-full">
+              <div className="w-full space-y-1">
                 <h3 className="text-xl md:text-2xl font-black text-white tracking-wide uppercase truncate max-w-[240px] mx-auto drop-shadow-md">
                   {leader.nickname}
                 </h3>
-                <span className="text-xs font-bold text-amber-300/90 block mt-0.5">
+                <span className="text-xs font-bold text-amber-300/90 block">
                   {getCharacterBySeed(getPlayerSeed(leader.nickname, leader.playerId)).name}
                 </span>
+                {gameMode === 'ARENA_100' && (
+                  <div className="pt-1 flex justify-center">{renderLivesBadge(leader)}</div>
+                )}
               </div>
 
               {/* Thẻ chỉ số thành tích vòng này */}
@@ -142,10 +175,11 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
 
         {/* CỘT PHẢI: FREE FIRE STYLE SLANTED BANNERS (TOP 10) */}
         <div className="lg:col-span-8 space-y-2">
-          {/* Header Bảng chỉ số (Cột Hạng, Người Chơi, Câu Này, Tổng Điểm) */}
+          {/* Header Bảng chỉ số */}
           <div className="flex items-center justify-between px-4 py-1.5 text-xs font-black uppercase tracking-wider text-slate-400 border-b border-purple-800/40">
             <div className="w-14 text-center">Hạng</div>
             <div className="flex-1 text-left pl-3">Chiến binh</div>
+            {gameMode === 'ARENA_100' && <div className="w-28 text-center">Sinh tồn</div>}
             <div className="w-24 text-right pr-2">Câu này</div>
             <div className="w-28 text-right pr-2">Tổng điểm</div>
           </div>
@@ -163,9 +197,12 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
                 const isTop1 = p.rank === 1;
                 const isTop2 = p.rank === 2;
                 const isTop3 = p.rank === 3;
+                const isOut = gameMode === 'ARENA_100' && (p.isEliminated || (p.lives !== undefined && p.lives <= 0));
 
                 // Màu sắc thanh dải theo chuẩn Free Fire
-                const rowBg = isTop1
+                const rowBg = isOut
+                  ? 'bg-slate-950/70 border border-rose-900/40 opacity-60'
+                  : isTop1
                   ? 'bg-gradient-to-r from-[#0284c7] via-[#0369a1] to-[#075985] border-2 border-amber-400 shadow-lg shadow-amber-500/20'
                   : isTop2
                   ? 'bg-gradient-to-r from-[#0369a1] via-[#075985] to-[#0c4a6e] border border-slate-300/60 shadow-md'
@@ -182,7 +219,9 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
                     <div className="w-14 flex items-center justify-center shrink-0">
                       <div
                         className={`px-2 py-0.5 rounded font-black text-xs md:text-sm italic tracking-tight shadow-md flex items-center justify-center min-w-[36px] ${
-                          isTop1
+                          isOut
+                            ? 'bg-rose-950 text-rose-400 border border-rose-700/50'
+                            : isTop1
                             ? 'bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 font-black'
                             : isTop2
                             ? 'bg-gradient-to-r from-slate-200 to-slate-400 text-slate-950 font-black'
@@ -213,6 +252,13 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
                         </span>
                       </div>
                     </div>
+
+                    {/* TRẠNG THÁI SINH TỒN (NẾU LÀ ARENA_100) */}
+                    {gameMode === 'ARENA_100' && (
+                      <div className="w-28 flex items-center justify-center shrink-0">
+                        {renderLivesBadge(p)}
+                      </div>
+                    )}
 
                     {/* ĐIỂM CÂU NÀY (ROUND PTS) */}
                     <div className="w-24 text-right pr-2 shrink-0 font-mono">

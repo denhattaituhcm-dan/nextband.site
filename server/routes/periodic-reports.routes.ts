@@ -24,6 +24,16 @@ const periodicReportsRoutes: FastifyPluginAsync = async (fastify: any) => {
     async (request: any, reply: any) => {
       const { classId, studentId } = request.params;
       const user = request.user;
+      const callerId = user.userId || user.id;
+      const isSelf = callerId === studentId;
+      const isStaff = user.roles?.includes("admin") || user.roles?.includes("teacher") || user.role === "admin" || user.role === "teacher";
+
+      if (!isSelf && !isStaff) {
+        return reply.status(403).send({
+          error: "Forbidden",
+          message: "Bạn không có quyền xem báo cáo định kỳ của học viên này",
+        });
+      }
 
       try {
         const report = await prisma.studentPeriodicReport.findFirst({

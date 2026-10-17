@@ -23,10 +23,26 @@ const ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_AUDIO_TYPES];
 
 const BUCKET_NAME = "exam-assets";
 
-// Generate unique filename
+const ALLOWED_EXTENSIONS = new Set([
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".gif",
+  ".webp",
+  ".mp3",
+  ".wav",
+  ".ogg",
+  ".webm",
+  ".m4a",
+]);
+
+// Generate unique filename with extension allowlist
 function generateFileName(originalName: string): string {
-  const ext = extname(originalName) || ".bin";
-  return `${Date.now()}-${randomUUID()}${ext}`;
+  // Guard against path traversal characters
+  const sanitized = originalName.replace(/[/\\?%*:|"<>]/g, "");
+  const ext = (extname(sanitized) || ".bin").toLowerCase();
+  const safeExt = ALLOWED_EXTENSIONS.has(ext) ? ext : ".bin";
+  return `${Date.now()}-${randomUUID()}${safeExt}`;
 }
 
 const uploadsRoutes: FastifyPluginAsync = async (fastify) => {

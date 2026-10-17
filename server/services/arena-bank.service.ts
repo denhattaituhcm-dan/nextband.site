@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { ARENA_STANDARD_QUESTIONS, ArenaQuestion, ArenaQuestionOption } from "./arena-questions.data.js";
 import { DOER_ARENA_LESSON_QUESTIONS, matchDoerLessonKey, ArenaQuestionItem } from "./doer-questions-bank.data.js";
 import { BUILDER_ARENA_LESSON_QUESTIONS, matchBuilderLessonKey } from "./builder-questions-bank.data.js";
+import { GRADE8_ARENA_LESSON_QUESTIONS, matchGrade8LessonKey } from "./grade8-questions-bank.data.js";
 
 /**
  * Strips HTML tags and decodes common HTML entities for crisp text display in Arena HUD
@@ -208,11 +209,17 @@ export class ArenaBankService {
       });
       if (exam) {
         examTitle = exam.title;
-        const isBuilderCourse = (exam.course?.title || "").toLowerCase().includes("builder");
+        const courseTitle = (exam.course?.title || "").toLowerCase();
+        const isGrade8Course = courseTitle.includes("lớp 8") || courseTitle.includes("lop 8") || courseTitle.includes("grade 8");
+        const isBuilderCourse = courseTitle.includes("builder");
         if (!resolvedKey) {
-          resolvedKey = isBuilderCourse
-            ? (matchBuilderLessonKey(exam.title) || "")
-            : (matchDoerLessonKey(exam.title) || matchBuilderLessonKey(exam.title) || "");
+          if (isGrade8Course) {
+            resolvedKey = matchGrade8LessonKey(exam.title) || "";
+          } else if (isBuilderCourse) {
+            resolvedKey = matchBuilderLessonKey(exam.title) || "";
+          } else {
+            resolvedKey = matchGrade8LessonKey(exam.title) || matchDoerLessonKey(exam.title) || matchBuilderLessonKey(exam.title) || "";
+          }
         }
       }
     }
@@ -228,7 +235,17 @@ export class ArenaBankService {
       };
     }
 
-    // 2. Check BUILDER questions bank
+    // 2. Check GRADE 8 questions bank
+    if (resolvedKey && GRADE8_ARENA_LESSON_QUESTIONS[resolvedKey]) {
+      return {
+        lessonKey: resolvedKey,
+        examTitle,
+        isCustom: false,
+        questions: GRADE8_ARENA_LESSON_QUESTIONS[resolvedKey],
+      };
+    }
+
+    // 3. Check BUILDER questions bank
     if (resolvedKey && BUILDER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
       return {
         lessonKey: resolvedKey,
@@ -238,7 +255,7 @@ export class ArenaBankService {
       };
     }
 
-    // 3. Check DOER questions bank
+    // 4. Check DOER questions bank
     if (resolvedKey && DOER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
       return {
         lessonKey: resolvedKey,
@@ -301,12 +318,18 @@ export class ArenaBankService {
       });
 
       const courseTitle = (exam?.course?.title || "").toLowerCase();
+      const isGrade8 = courseTitle.includes("lớp 8") || courseTitle.includes("lop 8") || courseTitle.includes("grade 8");
       const isBuilder = courseTitle.includes("builder");
 
       let resolvedLessonKey: string | null = null;
       let resolvedBankQuestions: ArenaQuestionItem[] | null = null;
 
-      if (isBuilder && exam?.title) {
+      if (isGrade8 && exam?.title) {
+        resolvedLessonKey = matchGrade8LessonKey(exam.title);
+        if (resolvedLessonKey && GRADE8_ARENA_LESSON_QUESTIONS[resolvedLessonKey]) {
+          resolvedBankQuestions = GRADE8_ARENA_LESSON_QUESTIONS[resolvedLessonKey];
+        }
+      } else if (isBuilder && exam?.title) {
         resolvedLessonKey = matchBuilderLessonKey(exam.title);
         if (resolvedLessonKey && BUILDER_ARENA_LESSON_QUESTIONS[resolvedLessonKey]) {
           resolvedBankQuestions = BUILDER_ARENA_LESSON_QUESTIONS[resolvedLessonKey];
@@ -314,15 +337,21 @@ export class ArenaBankService {
       }
 
       if (!resolvedBankQuestions && exam?.title) {
-        const doerKey = matchDoerLessonKey(exam.title);
-        if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
-          resolvedLessonKey = doerKey;
-          resolvedBankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
+        const grade8Key = matchGrade8LessonKey(exam.title);
+        if (grade8Key && GRADE8_ARENA_LESSON_QUESTIONS[grade8Key]) {
+          resolvedLessonKey = grade8Key;
+          resolvedBankQuestions = GRADE8_ARENA_LESSON_QUESTIONS[grade8Key];
         } else {
-          const builderKey = matchBuilderLessonKey(exam.title);
-          if (builderKey && BUILDER_ARENA_LESSON_QUESTIONS[builderKey]) {
-            resolvedLessonKey = builderKey;
-            resolvedBankQuestions = BUILDER_ARENA_LESSON_QUESTIONS[builderKey];
+          const doerKey = matchDoerLessonKey(exam.title);
+          if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
+            resolvedLessonKey = doerKey;
+            resolvedBankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
+          } else {
+            const builderKey = matchBuilderLessonKey(exam.title);
+            if (builderKey && BUILDER_ARENA_LESSON_QUESTIONS[builderKey]) {
+              resolvedLessonKey = builderKey;
+              resolvedBankQuestions = BUILDER_ARENA_LESSON_QUESTIONS[builderKey];
+            }
           }
         }
       }

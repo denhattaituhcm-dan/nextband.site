@@ -123,6 +123,12 @@ export default function EnglishIdiomsHubPage() {
       if (p >= 1 && p <= 15 && p !== selectedUnitId) {
         setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15);
         setActiveModuleFilter("ALL");
+        reset13();
+        reset14();
+        reset15();
+        reset16();
+        reset17();
+        reset18();
         reset23();
         reset25();
         reset26();
@@ -132,6 +138,11 @@ export default function EnglishIdiomsHubPage() {
         resetAudioOrder();
         resetWordOrder();
         resetAudioPic();
+        reset152();
+        reset155();
+        reset96();
+        reset97();
+        reset98();
       }
     }
   }, [unitId]);
@@ -193,6 +204,31 @@ export default function EnglishIdiomsHubPage() {
   const [selectedAudioPic, setSelectedAudioPic] = useState<Record<number, string>>({});
   const [checkedAudioPic, setCheckedAudioPic] = useState<Record<number, boolean | null>>({});
   const [showRetryAudioPic, setShowRetryAudioPic] = useState(false);
+
+  // Exercise 15.2 State (Item Definition Matching - Unit 15)
+  const [selected152, setSelected152] = useState<Record<number, string>>({});
+  const [checked152, setChecked152] = useState<Record<number, boolean | null>>({});
+  const [showRetry152, setShowRetry152] = useState(false);
+
+  // Exercise 15.5 State (Item Definition Matching - Unit 15)
+  const [selected155, setSelected155] = useState<Record<number, string>>({});
+  const [checked155, setChecked155] = useState<Record<number, boolean | null>>({});
+  const [showRetry155, setShowRetry155] = useState(false);
+
+  // Exercise 9.6 State (Multiple Choice Letter - Unit 9)
+  const [selected96, setSelected96] = useState<Record<number, string>>({});
+  const [checked96, setChecked96] = useState<Record<number, boolean | null>>({});
+  const [showRetry96, setShowRetry96] = useState(false);
+
+  // Exercise 9.7 State (Match Pictures to Sentences - Unit 9)
+  const [selected97, setSelected97] = useState<Record<number, string>>({});
+  const [checked97, setChecked97] = useState<Record<number, boolean | null>>({});
+  const [showRetry97, setShowRetry97] = useState(false);
+
+  // Exercise 9.8 State (Definition Fill in Blanks - Unit 9)
+  const [answers98, setAnswers98] = useState<Record<number, string>>({});
+  const [checked98, setChecked98] = useState<Record<number, boolean | null>>({});
+  const [showRetry98, setShowRetry98] = useState(false);
 
   // Exercise 1.4 State (Listening Fill-in-the-blank)
   const [answers14, setAnswers14] = useState<Record<number, string>>({});
@@ -1002,9 +1038,211 @@ export default function EnglishIdiomsHubPage() {
     setShowRetryAudioPic(false);
   };
 
+  // EXERCISE 15.2 LOGIC (DEFINITION MATCHING ITEMS - UNIT 15)
+  const ex15_2 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_id === "15.2");
+  const check152 = () => {
+    if (!ex15_2?.items) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex15_2.items.forEach((item: any) => {
+      const isMatch = selected152[item.item_id] === item.right_text;
+      res[item.item_id] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked152(res);
+    setShowRetry152(hasFail);
+  };
+  const reset152 = () => {
+    setSelected152({});
+    setChecked152({});
+    setShowRetry152(false);
+  };
+  const retry152 = () => {
+    setSelected152((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked152).forEach((k) => {
+        const num = Number(k);
+        if (checked152[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked152((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry152(false);
+  };
+
+  // EXERCISE 15.5 LOGIC (DEFINITION MATCHING ITEMS - UNIT 15)
+  const ex15_5 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_id === "15.5");
+  const check155 = () => {
+    if (!ex15_5?.items) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex15_5.items.forEach((item: any) => {
+      const isMatch = selected155[item.item_id] === item.right_text;
+      res[item.item_id] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked155(res);
+    setShowRetry155(hasFail);
+  };
+  const reset155 = () => {
+    setSelected155({});
+    setChecked155({});
+    setShowRetry155(false);
+  };
+  const retry155 = () => {
+    setSelected155((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked155).forEach((k) => {
+        const num = Number(k);
+        if (checked155[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked155((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry155(false);
+  };
+
+  // EXERCISE 9.6 LOGIC (MULTIPLE CHOICE LETTER - UNIT 9)
+  const ex96 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_id === "9.6");
+  const check96 = () => {
+    if (!ex96?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex96.questions.forEach((q: any) => {
+      const isMatch = selected96[q.question_number] === q.correct_key;
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked96(res);
+    setShowRetry96(hasFail);
+  };
+  const reset96 = () => {
+    setSelected96({});
+    setChecked96({});
+    setShowRetry96(false);
+  };
+  const retry96 = () => {
+    setSelected96((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked96).forEach((k) => {
+        const num = Number(k);
+        if (checked96[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked96((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry96(false);
+  };
+
+  // EXERCISE 9.7 LOGIC (MATCH PICTURES TO SENTENCES - UNIT 9)
+  const ex97 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_id === "9.7");
+  const check97 = () => {
+    if (!ex97?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex97.questions.forEach((q: any) => {
+      const isMatch = selected97[q.question_number] === q.correct_sentence;
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked97(res);
+    setShowRetry97(hasFail);
+  };
+  const reset97 = () => {
+    setSelected97({});
+    setChecked97({});
+    setShowRetry97(false);
+  };
+  const retry97 = () => {
+    setSelected97((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked97).forEach((k) => {
+        const num = Number(k);
+        if (checked97[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked97((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry97(false);
+  };
+
+  // EXERCISE 9.8 LOGIC (DEFINITION FILL IN BLANKS - UNIT 9)
+  const ex98 = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_id === "9.8");
+  const check98 = () => {
+    if (!ex98?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex98.questions.forEach((q: any) => {
+      const val = (answers98[q.question_number] || "").trim().toLowerCase().replace(/[.,!]/g, "");
+      const isMatch = q.accepted_answers.some((ans: string) => ans.toLowerCase().replace(/[.,!]/g, "") === val);
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked98(res);
+    setShowRetry98(hasFail);
+  };
+  const reset98 = () => {
+    setAnswers98({});
+    setChecked98({});
+    setShowRetry98(false);
+  };
+  const retry98 = () => {
+    setAnswers98((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked98).forEach((k) => {
+        const num = Number(k);
+        if (checked98[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked98((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry98(false);
+  };
+
   const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
+    reset13();
+    reset14();
+    reset15();
+    reset16();
+    reset17();
+    reset18();
     reset23();
     reset25();
     reset26();
@@ -1014,6 +1252,11 @@ export default function EnglishIdiomsHubPage() {
     resetAudioOrder();
     resetWordOrder();
     resetAudioPic();
+    reset152();
+    reset155();
+    reset96();
+    reset97();
+    reset98();
     navigate(`/reading/idioms/${unitId}`);
   };
 
@@ -3421,6 +3664,530 @@ export default function EnglishIdiomsHubPage() {
                         <button
                           type="button"
                           onClick={retry28}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {/* EXERCISE 15.2: DEFINITION MATCHING (BEGINNINGS TO ENDINGS) */}
+                {ex15_2 && ex15_2.items && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-[#002147] text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập {ex15_2.exercise_id}
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex15_2.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {ex15_2.description || "Nối vế đầu của thành ngữ với vế kết thúc tương ứng"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {ex15_2.items.map((item: any) => {
+                        const status = checked152[item.item_id];
+                        return (
+                          <div
+                            key={item.item_id}
+                            className={`p-4 rounded-2xl border text-xs sm:text-sm space-y-3 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">
+                                {item.item_id}
+                              </span>
+                              <span className="font-extrabold text-slate-900 text-sm">
+                                {item.left_text}...
+                              </span>
+                              {item.vietnamese_meaning && (
+                                <span className="text-xs text-slate-500 font-normal italic">
+                                  ({item.vietnamese_meaning})
+                                </span>
+                              )}
+                            </div>
+
+                            <select
+                              value={selected152[item.item_id] || ""}
+                              onChange={(e) =>
+                                setSelected152((prev) => ({ ...prev, [item.item_id]: e.target.value }))
+                              }
+                              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-sky-500"
+                            >
+                              <option value="">-- Chọn vế kết thúc phù hợp --</option>
+                              {ex15_2.items.map((opt: any) => (
+                                <option key={opt.right_text} value={opt.right_text}>
+                                  ...{opt.right_text}
+                                </option>
+                              ))}
+                            </select>
+
+                            {status === true && (
+                              <div className="text-xs font-semibold text-emerald-800">
+                                ✓ Chính xác! Thành ngữ hoàn chỉnh: <strong>"{item.left_text} {item.right_text}"</strong>
+                              </div>
+                            )}
+                            {status === false && (
+                              <div className="text-xs text-red-800">
+                                ✗ Chưa chính xác. Vế đúng: <strong>"...{item.right_text}"</strong>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset152}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check152}
+                        className="px-4 py-2 rounded-xl bg-[#002147] hover:bg-[#0369a1] text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra nối vế thành ngữ
+                      </button>
+                      {showRetry152 && (
+                        <button
+                          type="button"
+                          onClick={retry152}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE 15.5: DEFINITION MATCHING (DEFINITIONS TO IDIOMS) */}
+                {ex15_5 && ex15_5.items && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-[#002147] text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập {ex15_5.exercise_id}
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex15_5.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {ex15_5.description || "Nối định nghĩa học thuật với thành ngữ tương ứng"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {ex15_5.items.map((item: any) => {
+                        const status = checked155[item.item_id];
+                        return (
+                          <div
+                            key={item.item_id}
+                            className={`p-4 rounded-2xl border text-xs sm:text-sm space-y-3 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-start gap-2">
+                              <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
+                                {item.item_id}
+                              </span>
+                              <div>
+                                <span className="font-semibold text-slate-900">
+                                  "{item.left_text}"
+                                </span>
+                                {item.vietnamese_meaning && (
+                                  <div className="text-xs text-slate-500 font-normal italic mt-0.5">
+                                    Nghĩa TV: {item.vietnamese_meaning}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <select
+                              value={selected155[item.item_id] || ""}
+                              onChange={(e) =>
+                                setSelected155((prev) => ({ ...prev, [item.item_id]: e.target.value }))
+                              }
+                              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-sky-500"
+                            >
+                              <option value="">-- Chọn thành ngữ tương ứng --</option>
+                              {ex15_5.items.map((opt: any) => (
+                                <option key={opt.right_text} value={opt.right_text}>
+                                  {opt.right_text}
+                                </option>
+                              ))}
+                            </select>
+
+                            {status === true && (
+                              <div className="text-xs font-semibold text-emerald-800">
+                                ✓ Chính xác! Thành ngữ chuẩn: <strong>{item.right_text}</strong>
+                              </div>
+                            )}
+                            {status === false && (
+                              <div className="text-xs text-red-800">
+                                ✗ Chưa chính xác. Đáp án đúng: <strong>{item.right_text}</strong>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset155}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check155}
+                        className="px-4 py-2 rounded-xl bg-[#002147] hover:bg-[#0369a1] text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra nối thành ngữ
+                      </button>
+                      {showRetry155 && (
+                        <button
+                          type="button"
+                          onClick={retry155}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE 9.6: MULTIPLE CHOICE LETTER (UNIT 9) */}
+                {ex96 && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-amber-600 text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập {ex96.exercise_id}
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex96.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {ex96.description || "Đọc bức thư và chọn từ ngữ thành ngữ chuẩn xác"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {(ex96 as any).letter_context && (
+                      <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200 text-xs text-slate-700 italic leading-relaxed">
+                        📬 Bối cảnh bức thư: {(ex96 as any).letter_context}
+                      </div>
+                    )}
+
+                    <div className="space-y-4">
+                      {ex96.questions?.map((q: any) => {
+                        const status = checked96[q.question_number];
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-4 sm:p-5 rounded-2xl border text-xs sm:text-sm space-y-3 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="font-semibold text-slate-900 flex items-start gap-2">
+                              <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
+                                {q.question_number}
+                              </span>
+                              <div>{q.sentence_lead} ...</div>
+                            </div>
+
+                            <div className="flex flex-wrap gap-3 pl-7">
+                              {q.options?.map((opt: { key: string; text: string }) => {
+                                const isSelected = selected96[q.question_number] === opt.key;
+                                return (
+                                  <label
+                                    key={opt.key}
+                                    className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border cursor-pointer transition text-xs font-semibold ${
+                                      isSelected
+                                        ? "bg-amber-100 border-amber-500 text-amber-950 shadow-2xs"
+                                        : "bg-white border-slate-200 hover:bg-slate-50 text-slate-800"
+                                    }`}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={`q96-${q.question_number}`}
+                                      value={opt.key}
+                                      checked={isSelected}
+                                      onChange={() =>
+                                        setSelected96((prev) => ({ ...prev, [q.question_number]: opt.key }))
+                                      }
+                                      className="text-amber-600 focus:ring-amber-500"
+                                    />
+                                    <span>
+                                      <strong>{opt.key}.</strong> {opt.text}
+                                    </span>
+                                  </label>
+                                );
+                              })}
+                            </div>
+
+                            {status !== undefined && (
+                              <div
+                                className={`p-3 rounded-xl text-xs leading-relaxed ${
+                                  status === true
+                                    ? "bg-emerald-100/70 text-emerald-900 border border-emerald-300 font-medium"
+                                    : "bg-red-100/70 text-red-900 border border-red-300 font-medium"
+                                }`}
+                              >
+                                <div className="font-bold">
+                                  {status === true ? "✓ Chính xác!" : "✗ Chưa chuẩn xác."} (Lựa chọn chuẩn: {q.correct_key})
+                                </div>
+                                {q.explanation && <div className="mt-1 font-normal text-slate-700">{q.explanation}</div>}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset96}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check96}
+                        className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra bài thư tín
+                      </button>
+                      {showRetry96 && (
+                        <button
+                          type="button"
+                          onClick={retry96}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE 9.7: MATCH PICTURES TO SENTENCES (UNIT 9) */}
+                {ex97 && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-emerald-600 text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập {ex97.exercise_id}
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex97.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {ex97.description || "Nối tình huống hình ảnh với câu thành ngữ tương ứng"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-5">
+                      {ex97.questions?.map((q: any) => {
+                        const status = checked97[q.question_number];
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-5 rounded-2xl border text-xs sm:text-sm space-y-3 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-start gap-2.5">
+                              <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-900 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">
+                                {q.picture_id || q.question_number}
+                              </span>
+                              <div>
+                                <span className="font-semibold text-slate-800">
+                                  Tình huống {q.picture_id}:
+                                </span>{" "}
+                                <span className="text-slate-700">{q.situation_description}</span>
+                              </div>
+                            </div>
+
+                            <select
+                              value={selected97[q.question_number] || ""}
+                              onChange={(e) =>
+                                setSelected97((prev) => ({ ...prev, [q.question_number]: e.target.value }))
+                              }
+                              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            >
+                              <option value="">-- Chọn câu thành ngữ tương ứng --</option>
+                              {ex97.questions.map((opt: any) => (
+                                <option key={opt.correct_sentence} value={opt.correct_sentence}>
+                                  {opt.correct_sentence}
+                                </option>
+                              ))}
+                            </select>
+
+                            {status === true && (
+                              <div className="text-xs font-semibold text-emerald-800 pl-8">
+                                ✓ Chính xác! Câu chuẩn: <strong>"{q.correct_sentence}"</strong>
+                                {q.target_idiom && (
+                                  <div className="text-emerald-700 font-normal mt-0.5">
+                                    Thành ngữ: <em>{q.target_idiom}</em>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            {status === false && (
+                              <div className="text-xs text-red-800 pl-8">
+                                ✗ Chưa chính xác. Câu chuẩn: <strong>"{q.correct_sentence}"</strong>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset97}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check97}
+                        className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra nối tình huống
+                      </button>
+                      {showRetry97 && (
+                        <button
+                          type="button"
+                          onClick={retry97}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE 9.8: DEFINITION FILL IN BLANKS (UNIT 9) */}
+                {ex98 && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-sky-600 text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập {ex98.exercise_id}
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex98.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {ex98.description || "Điền chữ cái còn thiếu để hoàn thành thành ngữ tương ứng với định nghĩa"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {ex98.questions?.map((q: any) => {
+                        const status = checked98[q.question_number];
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-4 sm:p-5 rounded-2xl border text-xs sm:text-sm space-y-2.5 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <span className="font-semibold text-slate-800">
+                                Câu {q.question_number}. Định nghĩa: <em>"{q.definition}"</em>
+                              </span>
+                              {q.scaffold && (
+                                <span className="font-mono bg-sky-50 border border-sky-200 text-sky-900 px-2 py-0.5 rounded text-xs font-bold tracking-widest">
+                                  {q.scaffold}
+                                </span>
+                              )}
+                            </div>
+
+                            <input
+                              type="text"
+                              value={answers98[q.question_number] || ""}
+                              onChange={(e) =>
+                                setAnswers98((prev) => ({ ...prev, [q.question_number]: e.target.value }))
+                              }
+                              placeholder="Điền thành ngữ hoàn chỉnh..."
+                              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-sky-500"
+                            />
+
+                            {status === true && (
+                              <div className="text-xs font-semibold text-emerald-800">
+                                ✓ Chính xác! Thành ngữ: <strong>{q.correct_answer}</strong>
+                              </div>
+                            )}
+                            {status === false && (
+                              <div className="text-xs text-red-800">
+                                ✗ Chưa chính xác. Đáp án đúng: <strong>{q.correct_answer}</strong>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset98}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check98}
+                        className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra điền chữ cái
+                      </button>
+                      {showRetry98 && (
+                        <button
+                          type="button"
+                          onClick={retry98}
                           className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />

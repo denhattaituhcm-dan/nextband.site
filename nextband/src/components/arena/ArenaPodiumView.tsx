@@ -18,7 +18,7 @@ import { LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
 interface ArenaPodiumViewProps {
   rankings: PlayerPublicRank[];
   players?: LobbyPlayer[];
-  gameMode?: 'CLASSIC' | 'GOLD_QUEST';
+  gameMode?: 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100';
   onRestart?: () => void;
 }
 

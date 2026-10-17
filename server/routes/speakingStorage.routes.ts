@@ -14,14 +14,24 @@ const registerDraftSchema = z.object({
 
 const confirmUploadSchema = z.object({
   id: z.string().uuid("ID phải là UUID hợp lệ"),
-  storagePath: z.string().min(1, "storagePath là bắt buộc"),
+  storagePath: z
+    .string()
+    .min(1, "storagePath là bắt buộc")
+    .refine((val) => !val.includes("..") && !val.includes(":\\"), {
+      message: "storagePath không được chứa ký tự path traversal",
+    }),
   mimeType: z.string().optional(),
   sizeBytes: z.number().int().optional(),
   durationMs: z.number().int().optional(),
 });
 
 const playbackUrlSchema = z.object({
-  storagePath: z.string().min(1, "storagePath là bắt buộc"),
+  storagePath: z
+    .string()
+    .min(1, "storagePath là bắt buộc")
+    .refine((val) => !val.includes("..") && !val.includes(":\\"), {
+      message: "storagePath không được chứa ký tự path traversal",
+    }),
 });
 
 const transcribeSchema = z.object({

@@ -110,15 +110,6 @@ export function normalizeCourseData(course: any): any {
 // AUTH API
 // =============================================
 export const authApi = {
-  login: async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
-    return data;
-  },
-
   loginWithGoogle: async (redirectTo?: string) => {
     const targetRedirect = redirectTo || `${window.location.origin}/login`;
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -130,18 +121,6 @@ export const authApi = {
     if (error) {
       throw error;
     }
-    return data;
-  },
-
-  register: async (email: string, password: string, fullName?: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: fullName },
-      },
-    });
-    if (error) throw error;
     return data;
   },
 

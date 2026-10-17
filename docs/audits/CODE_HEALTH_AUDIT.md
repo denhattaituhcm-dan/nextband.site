@@ -211,15 +211,32 @@ Khi thực hiện cleanup hoặc trả nợ kỹ thuật ở các giai đoạn s
 - **Không xóa các module nền tảng `"HOLD"` của Academic Intelligence (`EvidenceLedgerService`, `OntologyService`, `AcademicDiagnosticService`, `competencyEvidence.ts`)** khi chưa có quyết định hủy tính năng từ Product Owner.
 - **Không bật `"strict": true` toàn cục trong `tsconfig.json` hoặc refactor đại trà `nextband/src/lib/api.ts` (5,461 dòng) trong cùng một PR với việc sửa lỗi bảo mật**, vì sẽ tạo ra hàng trăm file diff gây rủi ro regression không cần thiết.
 
-### 11.3. Đề xuất Đợt Cleanup Đầu Tiên (Batch 1 — Nhỏ nhất nhưng có giá trị thực tế cao nhất)
-- **Phạm vi (8 file, ~60 dòng code thay đổi, 0 thay đổi DB schema, 0 phá vỡ API contract):**
-  1. [`server/services/exam-submission.service.ts`](file:///d:/handover/ielts/server/services/exam-submission.service.ts#L1705-L1719) (`SEC-01` — thêm `submissionId: id` khi cập nhật `Answer`).
-  2. [`server/routes/arena.routes.ts`](file:///d:/handover/ielts/server/routes/arena.routes.ts#L16) (`SEC-02` — thêm `requireRoles("admin", "teacher")` cho 4 route quản trị phòng/câu hỏi Arena).
-  3. [`server/services/speakingStorage.service.ts`](file:///d:/handover/ielts/server/services/speakingStorage.service.ts#L231-L242) (`SEC-03` — kiểm tra hostname `SUPABASE_URL` trước khi `fetch` trong `downloadAudioBuffer`).
-  4. [`server/services/authorization.service.ts`](file:///d:/handover/ielts/server/services/authorization.service.ts#L246-L326) (`SEC-04` — chặn giáo viên sửa Section/Question của khóa học có `teacherId = null`).
-  5. [`server/services/diagnostic.service.ts`](file:///d:/handover/ielts/server/services/diagnostic.service.ts#L593) (`BUG-01` — bỏ `correctVal.includes(studentVal)`).
-  6. [`nextband/src/lib/evidenceStore.ts`](file:///d:/handover/ielts/nextband/src/lib/evidenceStore.ts#L531) & [`nextband/src/pages/public/ResultsPage.tsx`](file:///d:/handover/ielts/nextband/src/pages/public/ResultsPage.tsx#L44) (`BUG-02` — dùng `evidenceApi.getPublished()` cho trang công khai `/results`).
-  7. [`nextband/src/lib/api/domains/teacher-profile.api.ts`](file:///d:/handover/ielts/nextband/src/lib/api/domains/teacher-profile.api.ts#L52) (`BUG-03` — sửa đường dẫn `/api/v1/teacher-profile/${userId}` qua `authenticatedFetch`).
-  8. [`nextband/src/pages/admin/ClassWorkspace/components/ActivityChecklist.tsx`](file:///d:/handover/ielts/nextband/src/pages/admin/ClassWorkspace/components/ActivityChecklist.tsx), [`nextband/src/features/reading-challenge/data/units/index.ts`](file:///d:/handover/ielts/nextband/src/features/reading-challenge/data/units/index.ts), [`nextband/src/data/idioms/unit01.json`](file:///d:/handover/ielts/nextband/src/data/idioms/unit01.json) (`DC-01..03` — xóa 3 file dead code 100% không có bất kỳ tham chiếu nào).
-- **Thời gian thực hiện ước tính:** ~2 giờ.
-- **Giá trị mang lại:** Khắc phục ngay 4 lỗ hổng bảo mật P0/P1, sửa 3 lỗi nghiệp vụ đang làm sai kết quả chấm điểm / làm hỏng trang `/results` & hồ sơ giáo viên, và dọn sạch 3 file dead code rõ ràng nhất với rủi ro regression gần như bằng 0.
+### 11.3. Trạng thái Triển khai các Đợt Cleanup (Batch Execution Status)
+
+#### ✅ Đợt 1 (Batch 1 — Hoàn thành & Deployed `44ed8e7b`):
+- `SEC-01`: Đã khắc phục IDOR chấm điểm (`submissionId` invariant).
+- `SEC-02`: Đã bổ sung `requireRoles("admin", "teacher")` cho Arena routes.
+- `SEC-03`: Đã áp dụng SSRF whitelist domain Supabase trong `speakingStorage.service.ts`.
+- `SEC-04`: Đã sửa logic authorization khóa học mồ côi (`teacherId = null`).
+- `BUG-01`: Đã sửa thuật toán chấm điểm chuỗi con trong Diagnostic.
+- `BUG-02`: Đã phân tách API minh chứng Bảng vàng công khai (`getPublished`) vs quản trị viên.
+- `BUG-03`: Đã sửa domain client cho Teacher Profile API gateway.
+- `DC-01..03`: Đã xóa sạch 3 file dead code (`ActivityChecklist.tsx`, `units/index.ts`, `unit01.json`).
+
+#### ✅ Đợt 2 (Batch 2 — Hoàn thành):
+- `DC-04`: Đã xóa method alias thừa `removeStudentFromClass` trong `server/repositories/class.repository.ts`.
+- `DC-05`: Đã xóa file dead code `server/services/scoring/ResultBuilder.ts` và gỡ bỏ unreferenced method `getResultBuilder()` trong `CanonicalScoringService.ts`.
+- `DC-06`: Đã xóa `MOCK_QUESTION_PACKAGES` và interface `QuestionBankPackage` trong `nextband/src/lib/arena/gameCatalogue.ts`.
+- `DC-07`: Đã xóa `signedUrlCache`, `CACHE_TTL_MS`, `CachedSignedUrl` và `clearCache()` trong `nextband/src/lib/audioStorageService.ts`.
+- `DC-08`: Đã gỡ bỏ `authApi.login` và `authApi.register` không sử dụng trong `nextband/src/lib/api.ts`.
+- `SEC-05`: Đã bổ sung chốt chặn RBAC cho `GET /classes/:classId/students/:studentId/periodic-reports/latest` (học viên chỉ xem được báo cáo của chính mình; giáo viên/admin xem được của lớp) và `GET /teacher-profile/:userId` (giáo viên chỉ xem được hồ sơ năng lực của chính mình trừ khi là admin).
+- `SEC-06`: Đã bổ sung whitelist đuôi tệp tin nghiêm ngặt và bộ lọc chặn path traversal (`..`, `:\`) cho `uploads.routes.ts` và `speakingStorage.routes.ts`.
+- `BUG-04`: Đã khôi phục và render đầy đủ bài tập tương tác `15.2` (ghép vế), `15.5` (nối định nghĩa) cho Unit 15 và bài tập `9.6` (chọn từ thư tín), `9.7` (nối tranh tình huống), `9.8` (điền chữ cái vào ô) cho Unit 9 trong `EnglishIdiomsHubPage.tsx`, cùng việc gọi đầy đủ các hàm reset khi đổi bài.
+
+---
+
+### 11.4. Đề xuất Đợt Cleanup Tiếp Theo (Batch 3 — Sắp tới)
+- `DEP-01`: Dọn dẹp các thư viện trùng lặp / devDependencies bị đặt nhầm vào root `package.json` (`@tailwindcss/typography`, `@vitejs/plugin-react-swc`, `autoprefixer`, `postcss`, `tailwindcss`).
+- `DEP-02`: Chuyển `@types/qrcode` từ `dependencies` sang `devDependencies` trong `nextband/package.json`.
+- `SEC-07`: Bổ sung Zod validation cho `submissionId` và `answerId` tại `/speaking/transcribe`.
+- `DEBT-01`: Tách component monolithic `ClassWorkspace.tsx` và `EnglishIdiomsHubPage.tsx` thành các sub-components độc lập.

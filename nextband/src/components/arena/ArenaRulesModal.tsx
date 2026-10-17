@@ -19,13 +19,15 @@ import {
 interface ArenaRulesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  gameMode?: 'CLASSIC' | 'GOLD_QUEST';
+  gameMode?: 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100';
+  survivalInitialLives?: 1 | 3;
 }
 
 export const ArenaRulesModal: React.FC<ArenaRulesModalProps> = ({
   isOpen,
   onClose,
   gameMode = 'CLASSIC',
+  survivalInitialLives = 3,
 }) => {
   // Lắng nghe phím ESC hoặc Enter để đóng modal nhanh
   useEffect(() => {
@@ -126,7 +128,15 @@ export const ArenaRulesModal: React.FC<ArenaRulesModalProps> = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-amber-300 font-black text-xs uppercase tracking-wider">
               <Zap className="w-4 h-4 text-amber-400" />
-              <span>2. Cơ chế đặc biệt ({gameMode === 'GOLD_QUEST' ? 'Chế độ Cướp Vàng 💰' : 'Chế độ Cổ Điển 🎯'}):</span>
+              <span>
+                2. Cơ chế đặc biệt (
+                {gameMode === 'GOLD_QUEST'
+                  ? 'Chế độ Cướp Vàng 💰'
+                  : gameMode === 'ARENA_100'
+                  ? 'Chế độ Đấu Trường 100 🛡️'
+                  : 'Chế độ Cổ Điển 🎯'}
+                ):
+              </span>
             </div>
 
             {gameMode === 'GOLD_QUEST' ? (
@@ -138,6 +148,31 @@ export const ArenaRulesModal: React.FC<ArenaRulesModalProps> = ({
                 <p className="text-xs text-amber-100/90 leading-relaxed">
                   Mỗi câu trả lời đúng, học sinh được mở 1 trong 3 rương báu bí ẩn: nhận thêm vàng, nhân đôi số vàng hoặc được quyền chọn cướp vàng từ đối thủ top đầu để bứt phá bảng xếp hạng!
                 </p>
+              </div>
+            ) : gameMode === 'ARENA_100' ? (
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-rose-950/60 via-purple-950/50 to-rose-950/60 border-2 border-rose-400/60 space-y-2">
+                <div className="flex items-center gap-2 text-rose-300 font-black text-sm">
+                  <Flame className="w-5 h-5 text-rose-400 animate-bounce" />
+                  <span>
+                    ĐẤU TRƯỜNG 100 — THỬ THÁCH SINH TỒN ({survivalInitialLives === 1 ? '⚡ 1 MẠNG LOẠI TRỰC TIẾP' : '❤️❤️❤️ 3 MẠNG SINH TỒN'}):
+                  </span>
+                </div>
+                <ul className="text-xs text-rose-100/90 leading-relaxed space-y-1.5 list-disc pl-4">
+                  <li>
+                    Mỗi chiến binh bước vào đấu trường với <strong>{survivalInitialLives} mạng ❤️</strong>. Trả lời đúng thì trụ lại; trả lời sai hoặc hết giờ sẽ bị <strong>trừ 1 mạng</strong>.
+                  </li>
+                  {survivalInitialLives > 1 && (
+                    <li>
+                      <strong>Cơ chế Hồi Phục (Streak Heal):</strong> Đạt chuỗi <strong>3 câu trả lời đúng liên tiếp (Streak x3)</strong> sẽ được hồi phục ngay <strong>+1 mạng ❤️</strong> (tối đa {survivalInitialLives} mạng).
+                    </li>
+                  )}
+                  <li>
+                    <strong>Chế độ Thử Sức khi hết mạng:</strong> Học viên hết mạng sẽ rời sàn đấu chính nhưng vẫn được chọn đáp án trên điện thoại để tự ôn tập và lưu vào Sổ Tay Học Thuật!
+                  </li>
+                  <li>
+                    <strong>Điều kiện Chiến Thắng:</strong> Chiến binh cuối cùng trụ lại trên sàn đấu sẽ đăng quang Quán Quân ngay lập tức, hoặc xếp hạng theo số mạng & điểm tốc độ khi hết bộ câu hỏi.
+                  </li>
+                </ul>
               </div>
             ) : (
               <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/60 via-rose-950/40 to-amber-950/60 border-2 border-amber-400/60 space-y-2">

@@ -21,16 +21,6 @@ export interface GameMetadata {
   joinPath?: string;
 }
 
-export interface QuestionBankPackage {
-  id: string;
-  gameId: GameEngineId;
-  title: string;
-  category: string;
-  level: string; // e.g., 'IELTS 5.5 - 6.5', 'IELTS 6.5 - 7.5'
-  questionCount: number;
-  tags: string[];
-}
-
 export const REGISTERED_GAMES: GameMetadata[] = [
   {
     id: 'class_arena',
@@ -78,35 +68,5 @@ export const REGISTERED_GAMES: GameMetadata[] = [
     avgDuration: '5–10 phút',
     badgeColor: 'violet',
     launchPath: '/games/san-dau-speed-match.html',
-  },
-];
-
-export const MOCK_QUESTION_PACKAGES: QuestionBankPackage[] = [
-  {
-    id: 'colloc_general_01',
-    gameId: 'class_arena',
-    title: 'IELTS Business & Investment Collocations',
-    category: 'Collocation',
-    level: 'IELTS 6.0+',
-    questionCount: 5,
-    tags: ['make an investment', 'pay attention', 'take into account'],
-  },
-  {
-    id: 'colloc_academic_02',
-    gameId: 'class_arena',
-    title: 'Academic Writing Task 2 Cohesion & Verbs',
-    category: 'Writing Vocabulary',
-    level: 'IELTS 6.5+',
-    questionCount: 10,
-    tags: ['draw a conclusion', 'cast light on', 'raise awareness'],
-  },
-  {
-    id: 'tense_speaking_01',
-    gameId: 'class_arena',
-    title: 'Speaking Part 1 & 2 Fluency Traps',
-    category: 'Grammar Traps',
-    level: 'IELTS 5.5 - 6.5',
-    questionCount: 8,
-    tags: ['past perfect', 'used to', 'would rather'],
   },
 ];

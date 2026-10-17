@@ -3,19 +3,16 @@ import { defaultTextNormalizer } from "./TextNormalizer.js";
 import { AnswerResolver } from "./AnswerResolver.js";
 import { getEvaluatorForType } from "./evaluators/index.js";
 import { ScoreAggregator } from "./ScoreAggregator.js";
-import { ResultBuilder } from "./ResultBuilder.js";
 
 export class CanonicalScoringService {
   private normalizer: ITextNormalizer;
   private resolver: AnswerResolver;
   private aggregator: ScoreAggregator;
-  private resultBuilder: ResultBuilder;
 
   constructor(normalizer?: ITextNormalizer) {
     this.normalizer = normalizer || defaultTextNormalizer;
     this.resolver = new AnswerResolver();
     this.aggregator = new ScoreAggregator();
-    this.resultBuilder = new ResultBuilder();
   }
 
   /**
@@ -34,10 +31,6 @@ export class CanonicalScoringService {
     });
 
     return this.aggregator.aggregate(evaluations);
-  }
-
-  public getResultBuilder(): ResultBuilder {
-    return this.resultBuilder;
   }
 
   public getNormalizer(): ITextNormalizer {

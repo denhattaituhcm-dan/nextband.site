@@ -133,10 +133,6 @@ export class ClassRepository {
     });
   }
 
-  async removeStudentFromClass(classId: string, studentId: string) {
-    return this.removeStudent(classId, studentId);
-  }
-
   async getClassesForStudent(studentId: string) {
     return this.prisma.classStudent.findMany({
       where: {

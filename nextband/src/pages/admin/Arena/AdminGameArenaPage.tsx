@@ -97,6 +97,10 @@ export default function AdminGameArenaPage() {
       const day = parseInt(match[2], 10);
       return week * 10 + day;
     }
+    const unitMatch = title.match(/UNIT\s*(\d+)/i);
+    if (unitMatch) {
+      return parseInt(unitMatch[1], 10);
+    }
     return (exam.week || 99) * 10;
   };
 

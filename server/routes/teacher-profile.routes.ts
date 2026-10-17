@@ -13,7 +13,12 @@ const teacherProfileRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       const { userId } = request.params as { userId: string };
       const callerRoles: string[] = (request.user as any)?.roles ?? [];
-      const isAdmin = callerRoles.includes("admin");
+      const callerId = (request.user as any)?.id || (request.user as any)?.userId;
+      const isAdmin = callerRoles.includes("admin") || (request.user as any)?.role === "admin";
+
+      if (!isAdmin && callerId !== userId) {
+        return reply.status(403).send({ error: "Bạn chỉ có thể xem hồ sơ năng lực của chính mình." });
+      }
 
       const profile = await fastify.prisma.teacherProfile.findUnique({
         where: { userId },

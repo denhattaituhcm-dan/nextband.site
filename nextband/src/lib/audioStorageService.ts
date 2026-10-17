@@ -7,15 +7,6 @@ export interface AudioMetadata {
   rawUrl: string;
 }
 
-interface CachedSignedUrl {
-  signedUrl: string;
-  expiresAtMs: number;
-}
-
-// In-memory TTL Cache cho Signed URLs (Tránh spam API Supabase & giật lag trình phát)
-const signedUrlCache = new Map<string, CachedSignedUrl>();
-const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
-
 export class AudioStorageService {
   private static readonly AUDIO_EXTENSIONS = new Set([
     "webm",
@@ -161,12 +152,5 @@ export class AudioStorageService {
     }
 
     return meta.rawUrl;
-  }
-
-  /**
-   * Xóa cache URL để buộc tải lại
-   */
-  public static clearCache(): void {
-    signedUrlCache.clear();
   }
 }
