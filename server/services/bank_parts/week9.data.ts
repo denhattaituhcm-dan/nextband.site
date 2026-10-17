@@ -379,17 +379,17 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w9d3_q02",
       roundIndex: 1,
-      prompt: "Trong ví dụ bài học: 'I bought a nice new jacket / with a zip down the front / and a lot of pockets', cách ngắt cụm này thể hiện điều gì?",
+      prompt: "Trong kỹ thuật Chunking, câu nào sau đây được ngắt cụm ý (thought groups) TỰ NHIÊN và CHUẨN XÁC nhất khi nói?",
       options: [
-        { id: "opt_A", label: "A", text: "Ngắt thành 3 nhóm thông tin hợp lý về ngữ nghĩa: món đồ mua, chi tiết khoá kéo, và chi tiết nhiều túi" },
-        { id: "opt_B", label: "B", text: "Ngắt sai vì phải ngắt sau chữ 'nice'" },
-        { id: "opt_C", label: "C", text: "Ngắt ngẫu nhiên theo số lượng âm tiết chẵn lẻ" },
-        { id: "opt_D", label: "D", text: "Chỉ nên ngắt ở dấu chấm cuối câu" }
+        { id: "opt_A", label: "A", text: "I bought a nice new jacket / with a zip down the front / and a lot of pockets." },
+        { id: "opt_B", label: "B", text: "I bought / a nice new / jacket with / a zip down / the front and / a lot of pockets." },
+        { id: "opt_C", label: "C", text: "I bought a / nice new jacket with a zip / down the / front and a lot / of pockets." },
+        { id: "opt_D", label: "D", text: "I / bought a nice / new jacket / with a / zip down the front / and a lot of pockets." }
       ],
       correctOptionId: "opt_A",
       timeLimitSeconds: 20,
       points: 1000,
-      explanation: "Mỗi chunk mang một đơn vị ý nghĩa hoàn chỉnh (a meaningful grammatical unit): đối tượng mua, đặc điểm khoá kéo, đặc điểm túi áo."
+      explanation: "Câu A ngắt đúng 3 cụm ngữ nghĩa trọn vẹn (meaningful thought groups): món đồ mua [I bought a nice new jacket], chi tiết khoá kéo [with a zip down the front], và chi tiết nhiều túi [and a lot of pockets]. Các phương án còn lại ngắt vụn giữa mạo từ và danh từ gây cụt câu."
     },
     {
       id: "doer_w9d3_q03",
