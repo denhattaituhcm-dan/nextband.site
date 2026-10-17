@@ -170,14 +170,14 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       roundIndex: 8,
       prompt: "Chọn collocation chuẩn khi tiến hành làm khảo sát: \"Nhóm em sẽ ______ một khảo sát về thói quen đọc sách của giới trẻ.\"",
       options: [
-        { id: "opt_A", label: "A", text: "conduct / carry out a survey" },
+        { id: "opt_A", label: "A", text: "conduct a survey" },
         { id: "opt_B", label: "B", text: "make a survey" },
         { id: "opt_C", label: "C", text: "take a survey" },
         { id: "opt_D", label: "D", text: "create a survey" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. conduct / carry out a survey",
-      correctExplanation: "Collocation học thuật chuẩn đi với survey là \"conduct a survey\" hoặc \"carry out a survey\".",
+      correctAnswerText: "A. conduct a survey",
+      correctExplanation: "Collocation học thuật chuẩn đi với survey là \"conduct a survey\" (hoặc \"carry out a survey\").",
       misconception: {
         baitOptionId: "opt_B",
         baitOptionText: "B. make a survey",
