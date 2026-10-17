@@ -67,7 +67,10 @@ console.log("👉 [Gate 5] Enforcing Single Channel API Rule (No direct DB / Pri
 try {
   let criticalForbidden = "";
   try {
-    criticalForbidden = execSync("git grep -n -E \"supabase\\.(from|rpc)\\(\" nextband/src/pages/ nextband/src/components/ nextband/src/hooks/", { encoding: "utf8" }).trim();
+    criticalForbidden = execSync(
+      'git grep -n -E "supabase\\s*\\.\\s*(from|rpc)\\s*\\(" -- nextband/src/ ":!nextband/src/lib/api.ts" ":!nextband/src/lib/api/**" ":!nextband/src/lib/contactService.ts" ":!nextband/src/test/" ":!nextband/src/tests/"',
+      { encoding: "utf8" }
+    ).trim();
   } catch (grepErr) {
     criticalForbidden = "";
   }
@@ -81,11 +84,11 @@ try {
   }
 
   if (criticalForbidden.length > 0) {
-    console.error("❌ FAILED: Detected forbidden direct Supabase DB calls in UI Components/Pages/Hooks:\n", criticalForbidden);
+    console.error("❌ FAILED: Detected forbidden direct Supabase DB calls in Frontend:\n", criticalForbidden);
     console.error("👉 Rule: Frontend must ONLY communicate via Backend REST API (@/lib/api.ts)!\n");
     hasErrors = true;
   } else {
-    console.log("✅ PASSED: 0 forbidden direct DB calls in Pages, Components & Hooks.");
+    console.log("✅ PASSED: 0 forbidden direct DB calls in Frontend UI & Services (except API layer).");
   }
 
   if (prismaInFrontend.length > 0) {

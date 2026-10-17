@@ -103453,6 +103453,8 @@ var init_arena_engine_service = __esm({
             throw err;
           }
         }
+        const currentConfig = room.config && typeof room.config === "object" ? room.config : {};
+        const nextConfig = input.gameMode ? { ...currentConfig, gameMode: input.gameMode } : room.config;
         const updatedRoom = await this.prisma.arenaRoom.update({
           where: { id: room.id },
           data: {
@@ -103461,7 +103463,8 @@ var init_arena_engine_service = __esm({
             currentQuestionId: activeQuestionId,
             roundStartedAt: nextStatus === "QUESTION_LIVE" ? now : room.roundStartedAt,
             roundDeadlineAt: deadlineAt,
-            lastCommandId: commandId
+            lastCommandId: commandId,
+            config: nextConfig
           }
         });
         return {
@@ -103525,12 +103528,18 @@ var init_arena_engine_service = __esm({
           }
         }
         const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
+        const totalQuestions = questions.length;
         const question = questions[roundIndex];
         const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
         let scoreAwarded = 0;
         if (isCorrect) {
           const timeLeftSeconds = room.roundDeadlineAt ? Math.max(0, Math.ceil((room.roundDeadlineAt.getTime() - serverReceivedAt.getTime()) / 1e3)) : 1;
-          scoreAwarded = 100 + timeLeftSeconds * 10;
+          const baseScore = 100 + timeLeftSeconds * 10;
+          const isFinalQuestion = totalQuestions > 0 && roundIndex >= totalQuestions - 1;
+          const roomConfig = room.config && typeof room.config === "object" ? room.config : {};
+          const isClassicMode = roomConfig.gameMode !== "GOLD_QUEST";
+          const multiplier = isClassicMode && isFinalQuestion ? 2 : 1;
+          scoreAwarded = baseScore * multiplier;
         }
         try {
           const [answerRecord, updatedParticipant] = await this.prisma.$transaction([
@@ -123913,13 +123922,14 @@ async function arenaRoutes(fastify) {
     "/rooms/:id/command",
     async (request, reply) => {
       try {
-        const { commandId, action, pin, hostToken } = request.body || {};
+        const { commandId, action, pin, hostToken, gameMode } = request.body || {};
         const engineService = new (await Promise.resolve().then(() => (init_arena_engine_service(), arena_engine_service_exports))).ArenaEngineService(fastify.prisma);
         const result = await engineService.executeHostCommand({
           commandId,
           action,
           pin,
-          hostToken
+          hostToken,
+          gameMode
         });
         return reply.code(200).send({
           success: true,

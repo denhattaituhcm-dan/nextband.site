@@ -21,6 +21,8 @@ export function createMockPrisma() {
   const siteSettingsList: any[] = [];
   const answersEvidence: any[] = [];
   const studentErrorEpisodes: any[] = [];
+  const facultyProfiles: any[] = [];
+  const studentEvidences: any[] = [];
 
   const mock = {
     $connect: async () => {},
@@ -1089,6 +1091,84 @@ export function createMockPrisma() {
       },
     },
 
+    facultyProfile: {
+      findMany: async (args?: any) => {
+        let res = [...facultyProfiles];
+        if (args?.where?.isPublished !== undefined) {
+          res = res.filter((f) => f.isPublished === args.where.isPublished);
+        }
+        return res;
+      },
+      create: async ({ data }: any) => {
+        const item = { id: data.id || randomUUID(), ...data, createdAt: new Date(), updatedAt: new Date() };
+        facultyProfiles.push(item);
+        return item;
+      },
+      upsert: async ({ where, create, update }: any) => {
+        const idx = facultyProfiles.findIndex((f) => f.id === where.id);
+        if (idx >= 0) {
+          facultyProfiles[idx] = { ...facultyProfiles[idx], ...update, updatedAt: new Date() };
+          return facultyProfiles[idx];
+        }
+        const item = { id: where.id || randomUUID(), ...create, createdAt: new Date(), updatedAt: new Date() };
+        facultyProfiles.push(item);
+        return item;
+      },
+      update: async ({ where, data }: any) => {
+        const item = facultyProfiles.find((f) => f.id === where.id);
+        if (item) Object.assign(item, data, { updatedAt: new Date() });
+        return item;
+      },
+      delete: async ({ where }: any) => {
+        const idx = facultyProfiles.findIndex((f) => f.id === where.id);
+        if (idx >= 0) facultyProfiles.splice(idx, 1);
+        return { id: where.id };
+      },
+      deleteMany: async ({ where }: any) => {
+        let count = 0;
+        for (let i = facultyProfiles.length - 1; i >= 0; i--) {
+          if (!where || (where.name && facultyProfiles[i].name === where.name)) {
+            facultyProfiles.splice(i, 1);
+            count++;
+          }
+        }
+        return { count };
+      },
+    },
+
+    studentEvidence: {
+      findMany: async (args?: any) => {
+        let res = [...studentEvidences];
+        if (args?.where?.published !== undefined) {
+          res = res.filter((e) => e.published === args.where.published);
+        }
+        if (args?.where?.consentConfirmed !== undefined) {
+          res = res.filter((e) => e.consentConfirmed === args.where.consentConfirmed);
+        }
+        return res;
+      },
+      create: async ({ data }: any) => {
+        const item = { id: data.id || randomUUID(), ...data, createdAt: new Date(), updatedAt: new Date() };
+        studentEvidences.push(item);
+        return item;
+      },
+      upsert: async ({ where, create, update }: any) => {
+        const idx = studentEvidences.findIndex((e) => e.id === where.id);
+        if (idx >= 0) {
+          studentEvidences[idx] = { ...studentEvidences[idx], ...update, updatedAt: new Date() };
+          return studentEvidences[idx];
+        }
+        const item = { id: where.id || randomUUID(), ...create, createdAt: new Date(), updatedAt: new Date() };
+        studentEvidences.push(item);
+        return item;
+      },
+      delete: async ({ where }: any) => {
+        const idx = studentEvidences.findIndex((e) => e.id === where.id);
+        if (idx >= 0) studentEvidences.splice(idx, 1);
+        return { id: where.id };
+      },
+    },
+
     users,
     userRoles,
     courses,
@@ -1108,6 +1188,8 @@ export function createMockPrisma() {
     notifications,
     siteSettingsList,
     studentErrorEpisodes,
+    facultyProfiles,
+    studentEvidences,
   };
 
   return mock;

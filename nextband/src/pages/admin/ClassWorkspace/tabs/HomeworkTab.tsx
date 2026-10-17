@@ -20,6 +20,8 @@ import { useToast } from "@/hooks/use-toast";
 export const HomeworkTab: React.FC = () => {
   const { classData, setActiveTab, refetchClass } = useWorkspace();
   const [isDeadlineModalOpen, setIsDeadlineModalOpen] = useState(false);
+  const { toast } = useToast();
+  const [copiedReminder, setCopiedReminder] = useState(false);
 
   const lessons = classData?.lessons || [];
   const submissions = classData?.submissions || [];
@@ -178,9 +180,6 @@ export const HomeworkTab: React.FC = () => {
       </div>
     );
   }
-
-  const { toast } = useToast();
-  const [copiedReminder, setCopiedReminder] = useState(false);
 
   const handleCopyReminder = () => {
     if (!selectedHw) return;

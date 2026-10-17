@@ -47,14 +47,20 @@ for (const url of checkUrls) {
 
 export default defineConfig({
   test: {
-    environment: "jsdom",
+    // Default to node for backend tests (fast, low memory footprint)
+    environment: "node",
+    // Only spin up jsdom for frontend components/hooks/pages tests
+    environmentMatchGlobs: [
+      ["nextband/src/**/*.{test,spec}.{ts,tsx}", "jsdom"],
+    ],
     globals: true,
     setupFiles: [path.resolve(__dirname, "./nextband/src/test/setup.ts")],
     pool: "forks",
     poolOptions: {
       forks: {
         execArgv: ["--max-old-space-size=4096"],
-        singleFork: true,
+        singleFork: false,
+        isolate: true,
       },
     },
     fileParallelism: false,
@@ -66,7 +72,6 @@ export default defineConfig({
       "**/*.spec.ts",
       "server/tests/deadline_and_status.test.mjs",
     ],
-
   },
   resolve: {
     alias: {

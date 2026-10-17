@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { StepType, UnitProgressState } from '../types';
-import { supabase } from '@/lib/supabase';
 
 export const ORDERED_STEPS: StepType[] = [
   'pre_reading',
@@ -51,27 +50,6 @@ export function useUnitProgress(unitNumber: number) {
     }
   }, [storageKey, progress]);
 
-  // Attempt sync with Supabase when step or unit is finished
-  const syncWithSupabase = useCallback(async (stateToSave: UnitProgressState) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user?.id) return;
-
-      // Upsert into a generic student progress/metadata record if available
-      await supabase.from('reading_challenge_progress').upsert({
-        user_id: session.user.id,
-        unit_number: unitNumber,
-        completed_steps: stateToSave.completedSteps,
-        scores: stateToSave.scores,
-        is_completed: stateToSave.isUnitCompleted,
-        writing_draft: stateToSave.writingDraft,
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id,unit_number' });
-    } catch {
-      // Graceful fallback to local storage
-    }
-  }, [unitNumber]);
-
   const currentStep = ORDERED_STEPS[progress.currentStepIndex] || 'pre_reading';
 
   const goToStepIndex = useCallback((index: number) => {
@@ -120,11 +98,9 @@ export function useUnitProgress(unitNumber: number) {
         lastUpdated: new Date().toISOString(),
       };
 
-      // Non-blocking sync
-      syncWithSupabase(updatedState);
       return updatedState;
     });
-  }, [syncWithSupabase]);
+  }, []);
 
   const nextStep = useCallback(() => {
     setProgress((prev) => {

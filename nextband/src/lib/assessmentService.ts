@@ -1,4 +1,3 @@
-import { supabase } from "./supabase";
 import { IeltsBandCalculator, IeltsSectionType } from "./ieltsBandCalculator";
 import { submitContactLead } from "./contactService";
 

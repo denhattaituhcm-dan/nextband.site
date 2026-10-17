@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { facultyApi, uploadsApi } from "./api";
 
 export interface FacultyProfile {
   id: string;
@@ -58,14 +58,14 @@ function normalizeRow(row: any): FacultyProfile {
     id: row.id,
     name: row.name || "Giảng viên ARIS",
     role: row.role || "IELTS Instructor",
-    avatar_url: row.avatar_url || null,
-    ielts_badge: row.ielts_badge || "8.0",
-    ielts_badge_sub: row.ielts_badge_sub || null,
+    avatar_url: row.avatarUrl || row.avatar_url || null,
+    ielts_badge: row.ieltsBadge || row.ielts_badge || "8.0",
+    ielts_badge_sub: row.ieltsBadgeSub || row.ielts_badge_sub || null,
     achievements: achievements.length > 0 ? achievements : INITIAL_FACULTY_SEED.achievements,
-    trf_image_url: row.trf_image_url || null,
-    is_published: Boolean(row.is_published ?? true),
-    created_at: row.created_at || new Date().toISOString(),
-    updated_at: row.updated_at || new Date().toISOString(),
+    trf_image_url: row.trfImageUrl || row.trf_image_url || null,
+    is_published: Boolean(row.isPublished ?? row.is_published ?? true),
+    created_at: row.createdAt || row.created_at || new Date().toISOString(),
+    updated_at: row.updatedAt || row.updated_at || new Date().toISOString(),
   };
 }
 
@@ -75,24 +75,13 @@ export const facultyService = {
    */
   async getPublicFaculty(): Promise<FacultyProfile[]> {
     try {
-      const { data, error } = await supabase
-        .from("faculty_profiles")
-        .select("*")
-        .eq("is_published", true)
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.warn("[facultyService] Supabase query notice, using default seed:", error.message);
-        return [INITIAL_FACULTY_SEED];
-      }
-
+      const data = await facultyApi.getPublic();
       if (data && data.length > 0) {
         return data.map(normalizeRow);
       }
-
       return [INITIAL_FACULTY_SEED];
     } catch (err) {
-      console.warn("[facultyService] Network error, using default seed:", err);
+      console.warn("[facultyService] Backend query notice, using default seed:", err);
       return [INITIAL_FACULTY_SEED];
     }
   },
@@ -102,23 +91,13 @@ export const facultyService = {
    */
   async getAllFaculty(): Promise<FacultyProfile[]> {
     try {
-      const { data, error } = await supabase
-        .from("faculty_profiles")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.warn("[facultyService] Supabase admin query notice:", error.message);
-        return [INITIAL_FACULTY_SEED];
-      }
-
+      const data = await facultyApi.getAll();
       if (data && data.length > 0) {
         return data.map(normalizeRow);
       }
-
       return [INITIAL_FACULTY_SEED];
     } catch (err) {
-      console.warn("[facultyService] Network error:", err);
+      console.warn("[facultyService] Backend admin query notice:", err);
       return [INITIAL_FACULTY_SEED];
     }
   },
@@ -127,97 +106,42 @@ export const facultyService = {
    * Create or update a faculty profile
    */
   async saveFaculty(profile: Partial<FacultyProfile>): Promise<FacultyProfile> {
-    const payload: any = {
+    const payload = {
+      id: profile.id,
       name: profile.name,
       role: profile.role,
-      avatar_url: profile.avatar_url,
-      ielts_badge: profile.ielts_badge || "8.0",
-      ielts_badge_sub: profile.ielts_badge_sub || null,
+      avatarUrl: profile.avatar_url,
+      ieltsBadge: profile.ielts_badge || "8.0",
+      ieltsBadgeSub: profile.ielts_badge_sub || null,
       achievements: profile.achievements || [],
-      trf_image_url: profile.trf_image_url || null,
-      is_published: profile.is_published ?? true,
-      updated_at: new Date().toISOString(),
+      trfImageUrl: profile.trf_image_url || null,
+      isPublished: profile.is_published ?? true,
     };
 
-    if (profile.id && profile.id !== "luu-van-dang") {
-      const { data, error } = await supabase
-        .from("faculty_profiles")
-        .update(payload)
-        .eq("id", profile.id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return normalizeRow(data);
-    } else {
-      const { data, error } = await supabase
-        .from("faculty_profiles")
-        .insert([payload])
-        .select()
-        .single();
-
-      if (error) throw error;
-      return normalizeRow(data);
-    }
+    const data = await facultyApi.save(payload);
+    return normalizeRow(data);
   },
 
   /**
    * Delete a faculty profile
    */
   async deleteFaculty(id: string): Promise<boolean> {
-    if (id === "luu-van-dang") {
-      // If it's the synthetic seed ID, attempt delete by name
-      await supabase.from("faculty_profiles").delete().eq("name", "Lưu Văn Đang");
-      return true;
-    }
-    const { error } = await supabase.from("faculty_profiles").delete().eq("id", id);
-    if (error) throw error;
-    return true;
+    return facultyApi.delete(id);
   },
 
   /**
    * Quick toggle publish state
    */
   async togglePublished(id: string, is_published: boolean): Promise<boolean> {
-    const { error } = await supabase
-      .from("faculty_profiles")
-      .update({ is_published, updated_at: new Date().toISOString() })
-      .eq("id", id);
-
-    if (error) throw error;
+    await facultyApi.togglePublish(id, is_published);
     return true;
   },
 
   /**
-   * Upload image asset (avatar or TRF scan) to Supabase Storage
+   * Upload image asset (avatar or TRF scan) via Fastify REST uploads API
    */
-  async uploadAsset(file: File, folder: "avatars" | "trf"): Promise<string> {
-    const fileExt = file.name.split(".").pop() || "jpg";
-    const fileName = `faculty/${folder}/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-
-    // Use exam-assets bucket or public bucket
-    const bucketName = "exam-assets";
-    const { data, error } = await supabase.storage
-      .from(bucketName)
-      .upload(fileName, file, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-
-    if (error) {
-      // Try fallback to standard public bucket if exam-assets bucket policy fails
-      const fallbackBucket = "public-assets";
-      const { data: fbData, error: fbError } = await supabase.storage
-        .from(fallbackBucket)
-        .upload(fileName, file, { cacheControl: "3600", upsert: true });
-
-      if (fbError) throw new Error(error.message || fbError.message);
-
-      const { data: publicUrlData } = supabase.storage.from(fallbackBucket).getPublicUrl(fbData.path);
-      return publicUrlData.publicUrl;
-    }
-
-    const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(data.path);
-    return publicUrlData.publicUrl;
+  async uploadAsset(file: File, _folder: "avatars" | "trf"): Promise<string> {
+    const uploadRes = await uploadsApi.uploadImage(file);
+    return uploadRes.url;
   },
 };

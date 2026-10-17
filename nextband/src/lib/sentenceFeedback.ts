@@ -752,7 +752,7 @@ export function parseStructuredFeedback(rawFeedback: string | null | undefined):
   }
 
   try {
-    let parsed = JSON.parse(rawFeedback);
+    const parsed = JSON.parse(rawFeedback);
     if (parsed && typeof parsed === "object") {
       let candidateText = typeof parsed.text === "string" ? parsed.text : (typeof parsed.feedback === "string" ? parsed.feedback : "");
       

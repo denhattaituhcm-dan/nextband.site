@@ -255,8 +255,8 @@ export default function SubmissionDetail() {
     const allMilestones = evaluateAllAchievedMilestones({ courseId, lessons });
     
     // Check with backend DB claims
-    milestonesApi.getClaims().then((claimedList) => {
-      const claimedSet = new Set(claimedList);
+    milestonesApi.getClaims().then((claimedList: string[]) => {
+      const claimedSet = new Set<string>(claimedList);
       const pending = selectHighestPriorityPendingMilestone(allMilestones, claimedSet);
       if (pending) {
         // Atomic claim on server

@@ -24,6 +24,18 @@ export const ChallengeUnitPage: React.FC = () => {
   const parsedUnitNumber = parseInt(unitId || '1', 10);
   const unit = getUnitByNumber(parsedUnitNumber);
 
+  const {
+    currentStep,
+    currentStepIndex,
+    completedSteps,
+    progress,
+    goToStepIndex,
+    completeStep,
+    nextStep,
+    saveWritingDraft,
+    resetProgress,
+  } = useUnitProgress(unit ? unit.unitNumber : 0);
+
   if (!unit) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -42,18 +54,6 @@ export const ChallengeUnitPage: React.FC = () => {
       </div>
     );
   }
-
-  const {
-    currentStep,
-    currentStepIndex,
-    completedSteps,
-    progress,
-    goToStepIndex,
-    completeStep,
-    nextStep,
-    saveWritingDraft,
-    resetProgress,
-  } = useUnitProgress(unit.unitNumber);
 
   const renderActiveStep = () => {
     switch (currentStep) {

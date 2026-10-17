@@ -145,12 +145,3 @@ try {
 }
 
 export const env = envData;
-
-export function getRootAdminEmails(): Set<string> {
-  const raw = env.ROOT_ADMIN_EMAILS || "";
-  const emails = raw
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  return new Set(emails);
-}

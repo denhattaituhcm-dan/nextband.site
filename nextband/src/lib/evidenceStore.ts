@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { evidenceApi } from "./api";
 
 export interface EvidenceItem {
   id: string;
@@ -525,15 +525,12 @@ export function getEvidenceList(): EvidenceItem[] {
   }
 }
 
-// Fetch from Supabase with automatic cache sync
+// Fetch from Fastify API with automatic cache sync
 export async function fetchEvidenceListAsync(): Promise<EvidenceItem[]> {
   try {
-    const { data, error } = await supabase
-      .from("evidence")
-      .select("*")
-      .order("display_order", { ascending: true });
+    const data = await evidenceApi.getAll();
 
-    if (!error && data && data.length > 0) {
+    if (data && data.length > 0) {
       const mapped = data.map(mapSupabaseToEvidence);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
       return mapped;
@@ -553,43 +550,39 @@ export function getPublishedEvidence(): EvidenceItem[] {
     .sort((a, b) => a.displayOrder - b.displayOrder || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
-// Save or Update with Supabase sync
+// Save or Update with API sync
 export async function saveEvidenceItemAsync(itemData: Partial<EvidenceItem>): Promise<EvidenceItem> {
   const localItem = saveEvidenceItem(itemData);
 
   try {
     const payload = {
-      student_name: localItem.studentName,
-      student_school: localItem.studentSchool,
+      id: localItem.id,
+      studentName: localItem.studentName,
+      studentSchool: localItem.studentSchool,
       title: localItem.title,
-      image_url: localItem.imageUrl,
+      imageUrl: localItem.imageUrl,
       story: localItem.story,
-      score_before: localItem.scoreBefore,
-      overall_score: localItem.overallScore,
-      listening_score: localItem.listeningScore,
-      reading_score: localItem.readingScore,
-      writing_score: localItem.writingScore,
-      speaking_score: localItem.speakingScore,
-      study_duration: localItem.studyDuration,
-      course_name: localItem.courseName,
+      scoreBefore: localItem.scoreBefore,
+      overallScore: localItem.overallScore,
+      listeningScore: localItem.listeningScore,
+      readingScore: localItem.readingScore,
+      writingScore: localItem.writingScore,
+      speakingScore: localItem.speakingScore,
+      studyDuration: localItem.studyDuration,
+      courseName: localItem.courseName,
       featured: localItem.featured,
       published: localItem.published,
-      consent_confirmed: localItem.consentConfirmed,
-      display_order: localItem.displayOrder,
-      updated_at: new Date().toISOString(),
+      consentConfirmed: localItem.consentConfirmed,
+      displayOrder: localItem.displayOrder,
     };
 
-    if (itemData.id && !itemData.id.startsWith("evi-")) {
-      await supabase.from("evidence").update(payload).eq("id", itemData.id);
-    } else {
-      const { data } = await supabase.from("evidence").insert(payload).select().single();
-      if (data?.id) {
-        localItem.id = data.id;
-        saveEvidenceItem(localItem);
-      }
+    const saved = await evidenceApi.save(payload);
+    if (saved?.id && saved.id !== localItem.id) {
+      localItem.id = saved.id;
+      saveEvidenceItem(localItem);
     }
   } catch (err) {
-    console.warn("Supabase evidence sync notice:", err);
+    console.warn("API evidence sync notice:", err);
   }
 
   return localItem;
@@ -651,9 +644,9 @@ export function saveEvidenceItem(itemData: Partial<EvidenceItem>): EvidenceItem 
 export async function deleteEvidenceItemAsync(id: string): Promise<boolean> {
   deleteEvidenceItem(id);
   try {
-    await supabase.from("evidence").delete().eq("id", id);
+    await evidenceApi.delete(id);
   } catch (err) {
-    console.warn("Supabase delete notice:", err);
+    console.warn("API evidence delete notice:", err);
   }
   return true;
 }

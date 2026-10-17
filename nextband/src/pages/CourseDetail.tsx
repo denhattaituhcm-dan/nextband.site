@@ -40,9 +40,31 @@ export default function CourseDetail() {
     staleTime: 60 * 1000,
   });
 
+  const isEnrolledAndActive = !lifecycleLoading && hasEnrollments && enrollments.length > 0;
+
+  // 2. Fetch Exams in Course (called at top-level before early returns)
+  const { data: examsData, isLoading: examsLoading } = useQuery({
+    queryKey: ["course-exams", course?.id || slug],
+    queryFn: () =>
+      examsApi.list({
+        courseId: course?.id || slug,
+        limit: 100,
+      }),
+    enabled: !isEnrolledAndActive && (!!course?.id || !!slug),
+    staleTime: 60 * 1000,
+  });
+
+  // 3. Fetch Submissions for Progress & Status (called at top-level before early returns)
+  const { data: submissionsData } = useQuery({
+    queryKey: ["my-submissions-course", user?.id],
+    queryFn: () => submissionsApi.list({ limit: 100, studentId: user?.id }),
+    enabled: !isEnrolledAndActive && !!user?.id,
+    staleTime: 30 * 1000,
+  });
+
   // If the user is a student, automatically route them to their modern active class workspace
   // instead of the obsolete, empty legacy course view.
-  if (!lifecycleLoading && hasEnrollments && enrollments.length > 0) {
+  if (isEnrolledAndActive) {
     // Check if student is enrolled in a class matching this course (by courseId or slug)
     const matchedClass = enrollments.find(
       (e) => e.courseId === slug || e.courseId === course?.id
@@ -53,26 +75,6 @@ export default function CourseDetail() {
     // Otherwise route to the first active class lessons or my-courses
     return <Navigate to={`/app/class/${enrollments[0].classId}/lessons`} replace />;
   }
-
-  // 2. Fetch Exams in Course
-  const { data: examsData, isLoading: examsLoading } = useQuery({
-    queryKey: ["course-exams", course?.id || slug],
-    queryFn: () =>
-      examsApi.list({
-        courseId: course?.id || slug,
-        limit: 100,
-      }),
-    enabled: !!course?.id || !!slug,
-    staleTime: 60 * 1000,
-  });
-
-  // 3. Fetch Submissions for Progress & Status
-  const { data: submissionsData } = useQuery({
-    queryKey: ["my-submissions-course", user?.id],
-    queryFn: () => submissionsApi.list({ limit: 100, studentId: user?.id }),
-    enabled: !!user?.id,
-    staleTime: 30 * 1000,
-  });
 
   const rawExams = examsData?.data || [];
   const exams = [...rawExams].sort(compareHomeworkOrder);

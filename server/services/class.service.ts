@@ -5,6 +5,7 @@ import { AuthorizationService, AuthorizationError, NotFoundError } from "./autho
 import { NotificationService } from "./notification.service.js";
 import { RoomCollisionService } from "./room-collision.service.js";
 import { isHolidayDate, HolidayRange } from "../utils/holiday.helper.js";
+import { isManualGradingRequired } from "../utils/examSkillHelper.js";
 
 export class ClassService {
   private repo: ClassRepository;
@@ -172,7 +173,16 @@ export class ClassService {
             status: true,
             submittedAt: true,
             exam: {
-              select: { courseId: true },
+              select: {
+                title: true,
+                examType: true,
+                courseId: true,
+                sections: {
+                  select: {
+                    sectionType: true,
+                  },
+                },
+              },
             },
           },
         })
@@ -192,7 +202,7 @@ export class ClassService {
       );
 
       const pendingSubmissionsCount = classSubmissions.filter(
-        (s) => s.status === "SUBMITTED"
+        (s) => s.status === "SUBMITTED" && isManualGradingRequired(s)
       ).length;
 
       const completedSubmissions = classSubmissions.filter(

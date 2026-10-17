@@ -17,6 +17,8 @@ logs/
 
 # AI Skills & Local Agent Tools
 .agents/
+.gemini/
+__pycache__/
 
 # Slides, Engine & Offline Teaching System
 slides/

@@ -1596,4 +1596,47 @@ model ReadingDiscussion {
   @@map("reading_discussions")
 }
 
+model FacultyProfile {
+  id            String   @id @default(uuid())
+  name          String   @db.VarChar(255)
+  role          String   @db.VarChar(255)
+  avatarUrl     String?  @map("avatar_url") @db.Text
+  ieltsBadge    String   @default("8.0") @map("ielts_badge") @db.VarChar(50)
+  ieltsBadgeSub String?  @map("ielts_badge_sub") @db.VarChar(100)
+  achievements  Json     @default("[]")
+  trfImageUrl   String?  @map("trf_image_url") @db.Text
+  isPublished   Boolean  @default(true) @map("is_published")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("faculty_profiles")
+}
+
+model StudentEvidence {
+  id               String   @id @default(uuid())
+  studentName      String   @map("student_name") @db.VarChar(255)
+  studentSchool    String?  @map("student_school") @db.VarChar(255)
+  title            String   @db.VarChar(255)
+  imageUrl         String   @map("image_url") @db.Text
+  story            String   @db.Text
+  scoreBefore      String?  @map("score_before") @db.VarChar(50)
+  overallScore     String   @default("6.5") @map("overall_score") @db.VarChar(50)
+  listeningScore   String?  @map("listening_score") @db.VarChar(50)
+  readingScore     String?  @map("reading_score") @db.VarChar(50)
+  writingScore     String?  @map("writing_score") @db.VarChar(50)
+  speakingScore    String?  @map("speaking_score") @db.VarChar(50)
+  studyDuration    String?  @map("study_duration") @db.VarChar(100)
+  courseName       String?  @map("course_name") @db.VarChar(255)
+  featured         Boolean  @default(false)
+  published        Boolean  @default(false)
+  consentConfirmed Boolean  @default(false) @map("consent_confirmed")
+  displayOrder     Int      @default(0) @map("display_order")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@index([published, displayOrder])
+  @@map("evidence")
+}
+
+
 

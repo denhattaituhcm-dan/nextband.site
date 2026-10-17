@@ -394,8 +394,8 @@ export default function HomePage() {
       lessons,
     });
 
-    milestonesApi.getClaims().then((claimedList) => {
-      const claimedSet = new Set(claimedList);
+    milestonesApi.getClaims().then((claimedList: string[]) => {
+      const claimedSet = new Set<string>(claimedList);
       const pending = selectHighestPriorityPendingMilestone(allAchieved, claimedSet);
       if (pending) {
         milestonesApi.claim(pending.key).then((res) => {

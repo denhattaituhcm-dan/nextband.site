@@ -5547,12 +5547,14 @@ export function lookupWord(
   // 2. Fallback to GLOBAL_DICTIONARY
   const globalTerm = findInDictionary(rawWord, GLOBAL_DICTIONARY);
   if (globalTerm) {
+    if (!caseId) {
+      return enrichCognitiveTerm(globalTerm, currentSentence, false);
+    }
     // CRITICAL: When falling back to global dictionary across cases,
     // TUYỆT ĐỐI KHÔNG lấy context_note hay in_context_story của bài khác đắp vào!
     const sanitizedGlobalTerm: VocabularyTerm = {
       ...globalTerm,
       context_note: currentSentence ? currentSentence.trim() : "",
-      humanized: undefined, // ensure humanizeVocabularyTerm synthesizes in the current context
     };
     return enrichCognitiveTerm(sanitizedGlobalTerm, currentSentence, true);
   }
