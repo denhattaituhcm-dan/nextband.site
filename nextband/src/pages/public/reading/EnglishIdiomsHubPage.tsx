@@ -37,15 +37,17 @@ import unit08Data from "@/data/idioms/unit08";
 import { UNIT_08_ETYMOLOGY } from "@/data/idioms/unit08_etymology";
 import unit09Data from "@/data/idioms/unit09";
 import { UNIT_09_ETYMOLOGY } from "@/data/idioms/unit09_etymology";
+import unit10Data from "@/data/idioms/unit10";
+import { UNIT_10_ETYMOLOGY } from "@/data/idioms/unit10_etymology";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
 
   const parsedId = unitId ? parseInt(unitId, 10) : 1;
-  const initialUnitId = (parsedId >= 1 && parsedId <= 9 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+  const initialUnitId = (parsedId >= 1 && parsedId <= 10 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>(initialUnitId);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -108,8 +110,8 @@ export default function EnglishIdiomsHubPage() {
   useEffect(() => {
     if (unitId) {
       const p = parseInt(unitId, 10);
-      if (p >= 1 && p <= 9 && p !== selectedUnitId) {
-        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
+      if (p >= 1 && p <= 10 && p !== selectedUnitId) {
+        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10);
         setActiveModuleFilter("ALL");
         reset23();
         reset25();
@@ -254,7 +256,9 @@ export default function EnglishIdiomsHubPage() {
       ? unit07Data
       : selectedUnitId === 8
       ? unit08Data
-      : unit09Data;
+      : selectedUnitId === 9
+      ? unit09Data
+      : unit10Data;
 
   const currentEtymologyData =
     selectedUnitId === 1
@@ -273,7 +277,9 @@ export default function EnglishIdiomsHubPage() {
       ? UNIT_07_ETYMOLOGY
       : selectedUnitId === 8
       ? UNIT_08_ETYMOLOGY
-      : UNIT_09_ETYMOLOGY;
+      : selectedUnitId === 9
+      ? UNIT_09_ETYMOLOGY
+      : UNIT_10_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -774,7 +780,7 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry28(false);
   };
 
-  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) => {
+  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
     reset23();
@@ -813,19 +819,19 @@ export default function EnglishIdiomsHubPage() {
               {selectedUnitId > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)}
+                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
-                  ← Unit 0{selectedUnitId - 1}
+                  ← Unit {selectedUnitId - 1 < 10 ? `0${selectedUnitId - 1}` : selectedUnitId - 1}
                 </button>
               )}
-              {selectedUnitId < 9 && (
+              {selectedUnitId < 10 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)}
+                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
-                  Unit 0{selectedUnitId + 1} →
+                  Unit {selectedUnitId + 1 < 10 ? `0${selectedUnitId + 1}` : selectedUnitId + 1} →
                 </button>
               )}
             </div>
@@ -889,7 +895,9 @@ export default function EnglishIdiomsHubPage() {
                 ? "Khám phá 20 thành ngữ giàu hình ảnh ẩn dụ từ thế giới động vật, từ bản năng ranh mãnh, thói quen sinh học đến những câu chuyện ngụ ngôn bất hủ của Aesop và văn hào Shakespeare."
                 : selectedUnitId === 8
                 ? "Khám phá 20 thành ngữ đặc sắc mượn chất liệu ẩm thực, bánh trái, bơ sữa và thói quen ăn uống để khắc họa tâm lý, thế giới nghề nghiệp và các mối quan hệ xã hội."
-                : "Khám phá 20 thành ngữ then chốt diễn tả sự đồng thuận, bất đồng nảy lửa và nghệ thuật thương lượng, từ 'bury the hatchet', 'strike a deal' đến 'on the same wavelength'."}
+                : selectedUnitId === 9
+                ? "Khám phá 20 thành ngữ then chốt diễn tả sự đồng thuận, bất đồng nảy lửa và nghệ thuật thương lượng, từ 'bury the hatchet', 'strike a deal' đến 'on the same wavelength'."
+                : "Khám phá 20 thành ngữ then chốt diễn tả cách đối nhân xử thế, lòng nhân ái trắc ẩn, thái độ bóc lột tệ bạc, trò đùa tai quái và chuẩn mực hành vi con người."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
