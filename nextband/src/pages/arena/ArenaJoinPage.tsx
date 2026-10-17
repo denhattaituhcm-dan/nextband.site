@@ -7,8 +7,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { ArrowRight, Sparkles, Dices } from 'lucide-react';
+import { ArrowRight, Sparkles, Dices, LayoutGrid } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
+import { AvatarPickerModal } from '@/components/arena/AvatarPickerModal';
 import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
 import { arenaApi } from '@/lib/api';
 
@@ -18,19 +19,22 @@ export default function ArenaJoinPage() {
   const [pin, setPin] = useState('');
   const [nickname, setNickname] = useState('');
   const [avatarId, setAvatarId] = useState<number>(() => Math.floor(Math.random() * CHARACTER_AVATARS.length));
+  const [isCustomAvatarSelected, setIsCustomAvatarSelected] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Khi học sinh gõ tên, tự bốc nhân vật phù hợp
+  // Khi học sinh gõ tên, tự bốc nhân vật phù hợp nếu chưa tự chọn thủ công
   useEffect(() => {
-    if (nickname.trim()) {
+    if (!isCustomAvatarSelected && nickname.trim()) {
       const char = getCharacterBySeed(nickname.trim());
       setAvatarId(char.id);
     }
-  }, [nickname]);
+  }, [nickname, isCustomAvatarSelected]);
 
   // Nút đổi nhân vật ngẫu nhiên
   const handleRerollAvatar = () => {
+    setIsCustomAvatarSelected(true);
     setAvatarId((prev) => {
       let next = Math.floor(Math.random() * CHARACTER_AVATARS.length);
       while (next === prev && CHARACTER_AVATARS.length > 1) {
@@ -38,6 +42,11 @@ export default function ArenaJoinPage() {
       }
       return next;
     });
+  };
+
+  const handleSelectAvatar = (id: number) => {
+    setIsCustomAvatarSelected(true);
+    setAvatarId(id);
   };
 
   // Tự động nhận mã PIN nếu học viên quét mã QR
@@ -139,31 +148,53 @@ export default function ArenaJoinPage() {
             />
           </div>
 
-          {/* Avatar Preview & Reroll Button */}
-          <div className="p-4 bg-purple-950/50 border border-purple-700/60 rounded-2xl flex items-center justify-between gap-3 shadow-lg">
-            <div className="flex items-center gap-3.5 min-w-0">
-              <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="md" />
+          {/* Avatar Preview & Action Buttons */}
+          <div className="p-3.5 sm:p-4 bg-purple-950/50 border border-purple-700/60 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-lg">
+            <div
+              onClick={() => setIsPickerOpen(true)}
+              className="flex items-center gap-3.5 min-w-0 cursor-pointer group hover:opacity-90 transition-opacity"
+              title="Nhấn để mở danh sách toàn bộ 45 avatar"
+            >
+              <div className="relative flex-shrink-0">
+                <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="md" />
+                <span className="absolute -bottom-1 -right-1 px-1.5 py-0.5 bg-amber-500 text-purple-950 font-black text-[9px] rounded-md shadow uppercase tracking-wider">
+                  Đổi
+                </span>
+              </div>
               <div className="min-w-0">
                 <span className="text-[10px] sm:text-xs font-bold text-purple-300 uppercase tracking-wider block">
                   Linh vật của bạn
                 </span>
-                <span className="text-base font-black text-amber-300 truncate block">
+                <span className="text-base font-black text-amber-300 truncate block group-hover:text-amber-200 transition-colors">
                   {CHARACTER_AVATARS[avatarId]?.name}
                 </span>
                 <span className="text-[11px] text-slate-300 block capitalize truncate">
-                  Bộ sưu tập: {CHARACTER_AVATARS[avatarId]?.type}
+                  Bộ sưu tập: {CHARACTER_AVATARS[avatarId]?.type?.replace('_', ' ')}
                 </span>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleRerollAvatar}
-              className="px-3.5 py-2.5 bg-purple-900/80 hover:bg-purple-800 border border-purple-600/70 text-purple-100 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-md flex-shrink-0"
-              title="Đổi sang nhân vật khác ngẫu nhiên"
-            >
-              <Dices className="w-4 h-4 text-amber-400 animate-spin-once" /> Đổi avatar
-            </button>
+            <div className="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleRerollAvatar}
+                className="flex-1 sm:flex-none px-3 py-2.5 bg-purple-900/80 hover:bg-purple-800 border border-purple-600/70 text-purple-100 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-md"
+                title="Đổi sang nhân vật khác ngẫu nhiên"
+              >
+                <Dices className="w-4 h-4 text-amber-400" />
+                <span>Ngẫu nhiên</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsPickerOpen(true)}
+                className="flex-1 sm:flex-none px-3.5 py-2.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-400/60 text-amber-300 hover:text-amber-200 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-md shadow-amber-500/10"
+                title="Mở toàn bộ kho avatar để tự do chọn"
+              >
+                <LayoutGrid className="w-4 h-4 text-amber-400" />
+                <span>Chọn avatar</span>
+              </button>
+            </div>
           </div>
 
           {error && (
@@ -185,6 +216,14 @@ export default function ArenaJoinPage() {
           </button>
         </form>
       </div>
+
+      {/* Modal chọn avatar từ toàn bộ kho 45 linh vật */}
+      <AvatarPickerModal
+        isOpen={isPickerOpen}
+        onClose={() => setIsPickerOpen(false)}
+        selectedAvatarId={avatarId}
+        onSelectAvatar={handleSelectAvatar}
+      />
     </div>
   );
 }
