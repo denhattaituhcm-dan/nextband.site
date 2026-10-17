@@ -5,6 +5,7 @@
  */
 
 import { GRADE8_UNIT1_QUESTIONS } from "./grade8_bank_parts/unit1.data.js";
+import { GRADE8_UNIT2_QUESTIONS } from "./grade8_bank_parts/unit2.data.js";
 
 export interface ArenaQuestionOption {
   id: string;
@@ -46,6 +47,7 @@ function normalizeBankQuestions(bank: Record<string, any[]>): Record<string, Are
 
 export const GRADE8_ARENA_LESSON_QUESTIONS: Record<string, ArenaQuestionItem[]> = normalizeBankQuestions({
   ...GRADE8_UNIT1_QUESTIONS,
+  ...GRADE8_UNIT2_QUESTIONS,
 });
 
 /**

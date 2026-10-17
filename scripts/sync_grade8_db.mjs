@@ -1,6 +1,21 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+const GRADE8_EXAMS = [
+  {
+    unit: 1,
+    title: 'Unit 1: Leisure Time',
+    description: 'Đề kiểm tra trắc nghiệm Tiếng Anh 8 Unit 1: Leisure Time - Ngữ âm, từ vựng và cấu trúc diễn đạt sở thích.',
+    week: 1,
+  },
+  {
+    unit: 2,
+    title: 'Unit 2: Life in the Countryside',
+    description: 'Đề kiểm tra trắc nghiệm Tiếng Anh 8 Unit 2: Life in the Countryside - Ngữ âm /ə/ & /ɪ/, từ vựng nông thôn và so sánh hơn của trạng từ.',
+    week: 2,
+  },
+];
+
 async function syncGrade8Db() {
   console.log('Connecting to database to check/sync "Trắc nghiệm Lớp 8"...');
 
@@ -31,7 +46,6 @@ async function syncGrade8Db() {
     console.log(`Successfully created course: ${course.title} (ID: ${course.id})`);
   } else {
     console.log(`Found existing course: "${course.title}" (ID: ${course.id})`);
-    // Ensure course is active and published
     if (!course.isActive || !course.isPublished) {
       course = await prisma.course.update({
         where: { id: course.id },
@@ -41,46 +55,54 @@ async function syncGrade8Db() {
     }
   }
 
-  // 2. Check or create Exam "Unit 1: Leisure Time"
-  let exam = await prisma.exam.findFirst({
-    where: {
-      courseId: course.id,
-      title: { contains: 'Unit 1', mode: 'insensitive' }
-    }
-  });
-
-  if (!exam) {
-    console.log('Creating exam "Unit 1: Leisure Time"...');
-    exam = await prisma.exam.create({
-      data: {
+  // 2. Ensure each exam exists
+  for (const exDef of GRADE8_EXAMS) {
+    let exam = await prisma.exam.findFirst({
+      where: {
         courseId: course.id,
-        title: 'Unit 1: Leisure Time',
-        description: 'Đề kiểm tra trắc nghiệm Tiếng Anh 8 Unit 1: Leisure Time - Ngữ âm, từ vựng và cấu trúc diễn đạt sở thích.',
-        examType: 'ielts',
-        week: 1,
-        durationMinutes: 15,
-        isPublished: true,
-        isActive: true,
-        isOpen: true,
-        isLocked: false,
+        title: { contains: `Unit ${exDef.unit}`, mode: 'insensitive' }
       }
     });
-    console.log(`Successfully created exam: "${exam.title}" (ID: ${exam.id})`);
-  } else {
-    console.log(`Found existing exam: "${exam.title}" (ID: ${exam.id})`);
-    if (!exam.isActive || !exam.isPublished || !exam.isOpen) {
-      exam = await prisma.exam.update({
-        where: { id: exam.id },
-        data: { isActive: true, isPublished: true, isOpen: true }
+
+    if (!exam) {
+      console.log(`Creating exam "${exDef.title}"...`);
+      exam = await prisma.exam.create({
+        data: {
+          courseId: course.id,
+          title: exDef.title,
+          description: exDef.description,
+          examType: 'ielts',
+          week: exDef.week,
+          durationMinutes: 15,
+          isPublished: true,
+          isActive: true,
+          isOpen: true,
+          isLocked: false,
+        }
       });
-      console.log('Updated exam status to active, published, and open.');
+      console.log(`Successfully created exam: "${exam.title}" (ID: ${exam.id})`);
+    } else {
+      console.log(`Found existing exam: "${exam.title}" (ID: ${exam.id})`);
+      if (!exam.isActive || !exam.isPublished || !exam.isOpen) {
+        exam = await prisma.exam.update({
+          where: { id: exam.id },
+          data: { isActive: true, isPublished: true, isOpen: true }
+        });
+        console.log(`Updated exam "${exam.title}" status to active, published, and open.`);
+      }
     }
   }
 
+  const finalExams = await prisma.exam.findMany({
+    where: { courseId: course.id },
+    select: { id: true, title: true, week: true },
+    orderBy: { week: 'asc' }
+  });
+
   console.log('\n--- SUMMARY ---');
   console.log(`Course: ${course.title} [${course.id}]`);
-  console.log(`Exam:   ${exam.title} [${exam.id}]`);
-  console.log('Ready for Arena Game sessions!');
+  console.log(`Total Exams in DB: ${finalExams.length}`);
+  finalExams.forEach(e => console.log(` - [Week ${e.week}] ${e.title} (${e.id})`));
 }
 
 syncGrade8Db()

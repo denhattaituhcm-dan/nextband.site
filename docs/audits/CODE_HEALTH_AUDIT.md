@@ -235,8 +235,19 @@ Khi thực hiện cleanup hoặc trả nợ kỹ thuật ở các giai đoạn s
 
 ---
 
-### 11.4. Đề xuất Đợt Cleanup Tiếp Theo (Batch 3 — Sắp tới)
-- `DEP-01`: Dọn dẹp các thư viện trùng lặp / devDependencies bị đặt nhầm vào root `package.json` (`@tailwindcss/typography`, `@vitejs/plugin-react-swc`, `autoprefixer`, `postcss`, `tailwindcss`).
-- `DEP-02`: Chuyển `@types/qrcode` từ `dependencies` sang `devDependencies` trong `nextband/package.json`.
+#### ✅ Đợt 3 (Batch 3 — Hoàn thành Audit & Dependency Placement):
+- `DEP-01`: Đã kiểm toán 5 gói styling/tooling ở root `package.json` (`@tailwindcss/typography`, `@vitejs/plugin-react-swc`, `autoprefixer`, `postcss`, `tailwindcss`). Kết quả: **GIỮ NGUYÊN TẠI ROOT** vì script `npm run build` trên Vercel chạy `scripts/build.mjs` trực tiếp từ thư mục gốc và gọi `vite build` ở root context. Các gói này được `npm workspaces` dedupe an toàn, việc xóa ở root sẽ làm gãy pipeline build production của Vercel (`nextband.site`).
+- `DEP-02`: Đã chuyển `@types/qrcode` từ `dependencies` sang `devDependencies` trong [`nextband/package.json`](file:///d:/handover/ielts/nextband/package.json).
+- `API-AUDIT-01`: Đã kiểm toán các API export không có caller trực tiếp trong frontend:
+  - `courseApi.updateCourse`: Không tồn tại symbol này; frontend dùng `coursesApi.update()` và đã có 2 consumers trực tiếp ([`CourseForm.tsx:28`](file:///d:/handover/ielts/nextband/src/components/admin/CourseForm.tsx#L28), [`Courses.tsx:90`](file:///d:/handover/ielts/nextband/src/pages/admin/Courses.tsx#L90)).
+  - `authApi.updateProfile`: Đã có 2 callers trực tiếp tại [`Profile.tsx:109,139`](file:///d:/handover/ielts/nextband/src/pages/Profile.tsx#L109).
+  - `classesApi.getArchived`: Không tồn tại symbol này; hệ thống dùng `classesApi.list({ isActive: false })`.
+  - `branchesApi.getPrimary`, `branchesApi.update`, `branchesApi.getById`: **GIỮ NGUYÊN** vì là RESTful API contract hợp lệ tương ứng với các backend routes (`GET /branches/primary`, `PUT /branches/:id`, `GET /branches/:id`), sẵn sàng cho tính năng quản lý chi nhánh mở rộng.
+  - `invitationsApi.generate`: **GIỮ NGUYÊN** vì tương ứng trực tiếp với backend endpoint `POST /invitations/generate` dành cho giáo viên/admin tạo mã mời tham gia lớp.
+
+---
+
+### 11.4. Đề xuất Đợt Tiếp Theo (Phase 4 — Architectural Refactoring)
+- `DEBT-01`: Tách nhỏ component monolithic [`ClassWorkspace.tsx`](file:///d:/handover/ielts/nextband/src/pages/admin/ClassWorkspace.tsx) (~3,300 dòng) và [`EnglishIdiomsHubPage.tsx`](file:///d:/handover/ielts/nextband/src/pages/public/reading/EnglishIdiomsHubPage.tsx) (~3,700 dòng) thành các UI molecules/hooks chuyên biệt.
+- `DEBT-02`: Phân rã facade [`nextband/src/lib/api.ts`](file:///d:/handover/ielts/nextband/src/lib/api.ts) (~5,400 dòng) sang các domain files tương ứng trong `nextband/src/lib/api/domains/`.
 - `SEC-07`: Bổ sung Zod validation cho `submissionId` và `answerId` tại `/speaking/transcribe`.
-- `DEBT-01`: Tách component monolithic `ClassWorkspace.tsx` và `EnglishIdiomsHubPage.tsx` thành các sub-components độc lập.
