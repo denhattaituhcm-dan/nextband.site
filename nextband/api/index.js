@@ -95621,6 +95621,57 @@ var init_holiday_helper = __esm({
   }
 });
 
+// server/utils/examSkillHelper.ts
+function normalizeText(text) {
+  if (!text) return "";
+  return text.toLowerCase().trim();
+}
+function isSpeakingMatch(text) {
+  if (!text) return false;
+  const clean = text.toLowerCase();
+  return /\b(spk|speaking|talk|khẩu ngữ|nói)\b/i.test(clean) || /(?:^|[\s\-_])spk(?:[\s\-_]|$)/i.test(clean) || clean.includes("speaking") || clean.includes("n\xF3i");
+}
+function isWritingMatch(text) {
+  if (!text) return false;
+  const clean = text.toLowerCase();
+  return /\b(wri|wr|writing|essay|viết|tự luận)\b/i.test(clean) || /(?:^|[\s\-_])(wri|wr)(?:[\s\-_]|$)/i.test(clean) || /\btask\s*[12]\b/i.test(clean) || clean.includes("writing") || clean.includes("vi\u1EBFt") || clean.includes("essay");
+}
+function isAutoGradedExam(examOrItem) {
+  if (!examOrItem) return true;
+  const rawExamType = normalizeText(examOrItem.examType || examOrItem.exam_type || examOrItem.type);
+  const rawTitle = normalizeText(
+    examOrItem.title || examOrItem.homeworkTitle || examOrItem.homework_title || examOrItem.homework?.title || examOrItem.name
+  );
+  if (rawExamType === "speaking" || rawExamType === "spk") return false;
+  if (rawExamType === "writing" || rawExamType === "wri") return false;
+  if (isSpeakingMatch(rawTitle) || isWritingMatch(rawTitle)) {
+    return false;
+  }
+  const sections = examOrItem.sections || examOrItem.exam_sections || examOrItem.exam?.sections || [];
+  for (const sec of sections) {
+    const secType = normalizeText(sec.sectionType || sec.section_type);
+    if (secType === "speaking" || secType === "writing") {
+      return false;
+    }
+  }
+  return true;
+}
+function isManualGradingRequired(submission) {
+  if (!submission) return false;
+  const isAuto = isAutoGradedExam(
+    submission.exam || {
+      title: submission.title || submission.homework_title || submission.homework?.title,
+      examType: submission.examType || submission.exam_type || submission.type,
+      sections: submission.exam?.sections
+    }
+  );
+  return !isAuto;
+}
+var init_examSkillHelper = __esm({
+  "server/utils/examSkillHelper.ts"() {
+  }
+});
+
 // server/services/class.service.ts
 import crypto2 from "node:crypto";
 import { NotificationType as NotificationType2 } from "@prisma/client";
@@ -95632,6 +95683,7 @@ var init_class_service = __esm({
     init_notification_service();
     init_room_collision_service();
     init_holiday_helper();
+    init_examSkillHelper();
     ClassService = class {
       constructor(prisma) {
         this.prisma = prisma;
@@ -95772,7 +95824,16 @@ var init_class_service = __esm({
             status: true,
             submittedAt: true,
             exam: {
-              select: { courseId: true }
+              select: {
+                title: true,
+                examType: true,
+                courseId: true,
+                sections: {
+                  select: {
+                    sectionType: true
+                  }
+                }
+              }
             }
           }
         }) : [];
@@ -95786,7 +95847,7 @@ var init_class_service = __esm({
             (s) => classCanonicalUserIds.has(s.studentId) && (!c.courseId || s.exam?.courseId === c.courseId)
           );
           const pendingSubmissionsCount = classSubmissions.filter(
-            (s) => s.status === "SUBMITTED"
+            (s) => s.status === "SUBMITTED" && isManualGradingRequired(s)
           ).length;
           const completedSubmissions = classSubmissions.filter(
             (s) => s.status === "SUBMITTED" || s.status === "GRADED"
@@ -97676,15 +97737,5262 @@ var init_arena_questions_data = __esm({
   }
 });
 
+// server/services/bank_parts/week1.data.ts
+var WEEK_1_QUESTIONS;
+var init_week1_data = __esm({
+  "server/services/bank_parts/week1.data.ts"() {
+    WEEK_1_QUESTIONS = {
+      "WEEK 1 \u2013 DAY 1": [
+        {
+          id: "doer_w1d1_q01",
+          roundIndex: 0,
+          prompt: "Trong 4 c\u1EA5p \u0111\u1ED9 ng\xF4n ng\u1EEF (word, phrase, clause, sentence), th\xE0nh ph\u1EA7n n\xE0o b\u1EAFt bu\u1ED9c ph\u1EA3i c\xF3 c\u1EB7p Subject v\xE0 Finite Verb?",
+          options: [
+            { id: "opt_A", label: "A", text: "Clause (m\u1EC7nh \u0111\u1EC1)" },
+            { id: "opt_B", label: "B", text: "Phrase (c\u1EE5m t\u1EEB)" },
+            { id: "opt_C", label: "C", text: "Word (t\u1EEB \u0111\u01A1n)" },
+            { id: "opt_D", label: "D", text: "Modifier (th\xE0nh ph\u1EA7n b\u1ED5 ngh\u0129a)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Clause (m\u1EC7nh \u0111\u1EC1)",
+          correctExplanation: "M\u1EC7nh \u0111\u1EC1 (clause) lu\xF4n lu\xF4n ph\u1EA3i c\xF3 ch\u1EE7 ng\u1EEF (Subject) v\xE0 \u0111\u1ED9ng t\u1EEB ch\xEDnh c\xF3 chia th\xEC (Finite Verb).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Phrase (c\u1EE5m t\u1EEB)",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa Phrase v\xE0 Clause",
+            explanation: "Phrase (c\u1EE5m t\u1EEB) ch\u1EC9 l\xE0 m\u1ED9t t\u1EADp h\u1EE3p t\u1EEB li\xEAn k\u1EBFt nhau, kh\xF4ng ch\u1EE9a c\u1EB7p Subject - Finite Verb tr\u1ECDn v\u1EB9n."
+          }
+        },
+        {
+          id: "doer_w1d1_q02",
+          roundIndex: 1,
+          prompt: 'X\xE9t c\xE2u: "The room was filled with expensive ______." Ch\u1ECDn danh t\u1EEB ch\xEDnh x\xE1c:',
+          options: [
+            { id: "opt_A", label: "A", text: "equipment" },
+            { id: "opt_B", label: "B", text: "equipments" },
+            { id: "opt_C", label: "C", text: "an equipment" },
+            { id: "opt_D", label: "D", text: "many equipments" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. equipment",
+          correctExplanation: "Equipment l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c (uncountable noun), kh\xF4ng bao gi\u1EDD c\xF3 \u0111u\xF4i -s hay m\u1EA1o t\u1EEB an.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. equipments",
+            diagnosticTitle: "Th\xEAm -s v\xE0o danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c",
+            explanation: 'Ng\u01B0\u1EDDi h\u1ECDc th\u01B0\u1EDDng d\u1ECBch t\u1EEB "nhi\u1EC1u thi\u1EBFt b\u1ECB" v\xE0 t\u1EF1 \u0111\u1ED9ng th\xEAm s\u1ED1 nhi\u1EC1u -s v\xE0o equipment, \u0111\xE2y l\xE0 l\u1ED7i ph\u1ED5 bi\u1EBFn trong IELTS.'
+          }
+        },
+        {
+          id: "doer_w1d1_q03",
+          roundIndex: 2,
+          prompt: 'X\xE9t t\u1EEB "book" trong 2 c\xE2u: (1) "I will book a flight." v\xE0 (2) "The book is interesting." T\u1EEB lo\u1EA1i t\u01B0\u01A1ng \u1EE9ng l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "(1) Verb - (2) Noun" },
+            { id: "opt_B", label: "B", text: "(1) Noun - (2) Verb" },
+            { id: "opt_C", label: "C", text: "(1) Verb - (2) Adjective" },
+            { id: "opt_D", label: "D", text: "(1) Noun - (2) Noun" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. (1) Verb - (2) Noun",
+          correctExplanation: "Trong c\xE2u (1), book l\xE0 \u0111\u1ED9ng t\u1EEB (\u0111\u1EB7t v\xE9). Trong c\xE2u (2), book l\xE0 danh t\u1EEB (quy\u1EC3n s\xE1ch).",
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. (1) Noun - (2) Noun",
+            diagnosticTitle: "\u0110\u1ECBnh ki\u1EBFn t\u1EEB lo\u1EA1i c\u1ED1 \u0111\u1ECBnh",
+            explanation: "R\u1EA5t nhi\u1EC1u t\u1EEB trong ti\u1EBFng Anh v\u1EEBa c\xF3 th\u1EC3 l\xE0m danh t\u1EEB v\u1EEBa l\xE0m \u0111\u1ED9ng t\u1EEB tu\u1EF3 v\u1ECB tr\xED v\xE0 ch\u1EE9c n\u0103ng trong c\xE2u."
+          }
+        },
+        {
+          id: "doer_w1d1_q04",
+          roundIndex: 3,
+          prompt: 'X\xE1c \u0111\u1ECBnh l\u1ED7i sai trong c\xE2u: "My parents gave me many useful advices in life."',
+          options: [
+            { id: "opt_A", label: "A", text: "many useful advices -> much useful advice" },
+            { id: "opt_B", label: "B", text: "gave -> give" },
+            { id: "opt_C", label: "C", text: "in life -> on life" },
+            { id: "opt_D", label: "D", text: "parents -> parent" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. many useful advices -> much useful advice",
+          correctExplanation: "Advice l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c, kh\xF4ng d\xF9ng many v\xE0 kh\xF4ng c\xF3 \u0111u\xF4i -s. D\xF9ng much advice ho\u1EB7c pieces of advice.",
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. in life -> on life",
+            diagnosticTitle: "Ph\xE2n t\xE2m v\xE0o gi\u1EDBi t\u1EEB",
+            explanation: "Ng\u01B0\u1EDDi h\u1ECDc th\u01B0\u1EDDng s\u0103m soi gi\u1EDBi t\u1EEB m\xE0 b\u1ECF s\xF3t l\u1ED7i c\u1ED1t l\xF5i v\u1EC1 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c (advice)."
+          }
+        },
+        {
+          id: "doer_w1d1_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn d\u1EA1ng \u0111\u1ED9ng t\u1EEB \u0111\xFAng: "One of my sisters ______ going on a trip to France."',
+          options: [
+            { id: "opt_A", label: "A", text: "is" },
+            { id: "opt_B", label: "B", text: "are" },
+            { id: "opt_C", label: "C", text: "were" },
+            { id: "opt_D", label: "D", text: "have been" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. is",
+          correctExplanation: 'Ch\u1EE7 ng\u1EEF th\u1EADt c\u1EE7a c\xE2u l\xE0 \u0111\u1EA1i t\u1EEB s\u1ED1 \xEDt "One", kh\xF4ng ph\u1EA3i "sisters", do \u0111\xF3 \u0111\u1ED9ng t\u1EEB to be ph\u1EA3i chia s\u1ED1 \xEDt l\xE0 "is".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. are",
+            diagnosticTitle: "B\u1EABy danh t\u1EEB \u0111\u1EE9ng li\u1EC1n k\u1EC1 (Proximity Trap)",
+            explanation: 'H\u1ECDc vi\xEAn th\u1EA5y t\u1EEB "sisters" \u0111\u1EE9ng ngay tr\u01B0\u1EDBc ch\u1ED7 tr\u1ED1ng n\xEAn chia "are", qu\xEAn m\u1EA5t ch\u1EE7 ng\u1EEF ch\xEDnh l\xE0 "One of...".'
+          }
+        },
+        {
+          id: "doer_w1d1_q06",
+          roundIndex: 5,
+          prompt: "Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng ng\u1EEF ph\xE1p Subject - Finite Verb:",
+          options: [
+            { id: "opt_A", label: "A", text: "Reading books is beneficial to children's development." },
+            { id: "opt_B", label: "B", text: "Know English beneficial to students." },
+            { id: "opt_C", label: "C", text: "Handsome is important to become a hot Tiktoker." },
+            { id: "opt_D", label: "D", text: "He named his son is Tom." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Reading books is beneficial to children's development.",
+          correctExplanation: 'Danh \u0111\u1ED9ng t\u1EEB (Gerund) "Reading books" l\xE0m Subject s\u1ED1 \xEDt, Finite Verb l\xE0 "is", v\u1ECB ng\u1EEF l\xE0 t\xEDnh t\u1EEB "beneficial to".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Know English beneficial to students.",
+            diagnosticTitle: "Thi\u1EBFu Finite Verb ho\u1EB7c d\xF9ng Verb nguy\xEAn m\u1EABu l\xE0m S",
+            explanation: 'Know kh\xF4ng th\u1EC3 l\xE0m ch\u1EE7 ng\u1EEF (ph\u1EA3i l\xE0 Knowing), v\xE0 c\xE2u thi\u1EBFu \u0111\u1ED9ng t\u1EEB to be "is beneficial".'
+          }
+        },
+        {
+          id: "doer_w1d1_q07",
+          roundIndex: 6,
+          prompt: 'Ch\u1ECDn c\xE2u di\u1EC5n \u0111\u1EA1t \u0111\xFAng: "S\u1EBFp t\xF4i b\u1EAFt t\xF4i ph\u1EA3i ho\xE0n th\xE0nh c\xF4ng vi\u1EC7c tr\u01B0\u1EDBc 5 gi\u1EDD chi\u1EC1u."',
+          options: [
+            { id: "opt_A", label: "A", text: "My boss makes me complete the task before 5 PM." },
+            { id: "opt_B", label: "B", text: "My boss makes me to complete the task before 5 PM." },
+            { id: "opt_C", label: "C", text: "My boss forces me complete the task before 5 PM." },
+            { id: "opt_D", label: "D", text: "My boss make me completing the task before 5 PM." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. My boss makes me complete the task before 5 PM.",
+          correctExplanation: "C\u1EA5u tr\xFAc sai khi\u1EBFn: make someone DO something (\u0111\u1ED9ng t\u1EEB nguy\xEAn m\u1EABu kh\xF4ng to).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. My boss makes me to complete the task before 5 PM.",
+            diagnosticTitle: 'Th\xEAm "to" sau make sb',
+            explanation: 'Th\xF3i quen d\xF9ng "to-infinitive" sau m\u1ECDi t\xE2n ng\u1EEF l\xE0 sai l\u1EA7m ph\u1ED5 bi\u1EBFn; sau make sb ph\u1EA3i l\xE0 V nguy\xEAn th\u1EC3.'
+          }
+        },
+        {
+          id: "doer_w1d1_q08",
+          roundIndex: 7,
+          prompt: 'X\xE1c \u0111\u1ECBnh l\u1ED7i sai trong c\xE2u: "The teacher gave us too many homeworks to do at the weekend."',
+          options: [
+            { id: "opt_A", label: "A", text: "too many homeworks -> too much homework" },
+            { id: "opt_B", label: "B", text: "gave -> gives" },
+            { id: "opt_C", label: "C", text: "to do -> doing" },
+            { id: "opt_D", label: "D", text: "at the weekend -> on weekend" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. too many homeworks -> too much homework",
+          correctExplanation: "Homework l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c trong ti\u1EBFng Anh, lu\xF4n d\xF9ng too much homework ch\u1EE9 kh\xF4ng c\xF3 many homeworks.",
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. to do -> doing",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn m\u1EE5c \u0111\xEDch to-infinitive",
+            explanation: "Homework to do l\xE0 c\u1EA5u tr\xFAc ho\xE0n to\xE0n chu\u1EA9n ch\u1EC9 m\u1EE5c \u0111\xEDch, l\u1ED7i sai th\u1EF1c s\u1EF1 n\u1EB1m \u1EDF danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c."
+          }
+        },
+        {
+          id: "doer_w1d1_q09",
+          roundIndex: 8,
+          prompt: 'Ch\u1ECDn c\xE2u di\u1EC5n \u0111\u1EA1t \u0111\xFAng: "\u0110i du h\u1ECDc cho ph\xE9p sinh vi\xEAn hi\u1EC3u bi\u1EBFt th\xEAm v\u1EC1 c\xE1c n\u1EC1n v\u0103n h\xF3a kh\xE1c."',
+          options: [
+            { id: "opt_A", label: "A", text: "Studying abroad allows students to know more about different cultures." },
+            { id: "opt_B", label: "B", text: "Studying abroad allows students know more about different cultures." },
+            { id: "opt_C", label: "C", text: "Study abroad allow students to knowing more about different cultures." },
+            { id: "opt_D", label: "D", text: "Studying abroad allows that students knowing different cultures." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Studying abroad allows students to know more about different cultures.",
+          correctExplanation: "C\u1EA5u tr\xFAc chu\u1EA9n: allow someone TO DO something. Ch\u1EE7 ng\u1EEF Gerund Studying abroad chia \u0111\u1ED9ng t\u1EEB allows.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Studying abroad allows students know more about different cultures.",
+            diagnosticTitle: 'B\u1ECF qu\xEAn "to" sau allow sb',
+            explanation: "Kh\xE1c v\u1EDBi make sb do, \u0111\u1ED9ng t\u1EEB allow b\u1EAFt bu\u1ED9c ph\u1EA3i \u0111i v\u1EDBi to-V: allow sb TO do sth."
+          }
+        },
+        {
+          id: "doer_w1d1_q10",
+          roundIndex: 9,
+          prompt: 'Ch\u1ECDn c\xE2u c\xF3 d\u1EA1ng chia \u0111\u1ED9ng t\u1EEB \u0111\xFAng cho ch\u1EE7 ng\u1EEF "His advice on careers":',
+          options: [
+            { id: "opt_A", label: "A", text: "His advice on careers is very useful to me." },
+            { id: "opt_B", label: "B", text: "His advice on careers are very useful to me." },
+            { id: "opt_C", label: "C", text: "His advice on careers were very useful to me." },
+            { id: "opt_D", label: "D", text: "His advices on careers are very useful to me." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. His advice on careers is very useful to me.",
+          correctExplanation: 'Advice l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c (lu\xF4n s\u1ED1 \xEDt), c\u1EE5m gi\u1EDBi t\u1EEB "on careers" ch\u1EC9 l\xE0 b\u1ED5 ng\u1EEF, n\xEAn \u0111\u1ED9ng t\u1EEB to be chia l\xE0 "is".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. His advice on careers are very useful to me.",
+            diagnosticTitle: 'B\u1EABy h\xF2a h\u1EE3p v\u1EDBi danh t\u1EEB b\u1ED5 ng\u1EEF "careers"',
+            explanation: "H\u1ECDc vi\xEAn th\u1EA5y careers c\xF3 s \u0111\u1EE9ng g\u1EA7n to be n\xEAn ch\u1ECDn are, qu\xEAn m\u1EA5t ch\u1EE7 ng\u1EEF ch\xEDnh c\u1EE7a c\xE2u l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c advice."
+          }
+        }
+      ],
+      "WEEK 1 \u2013 DAY 2": [
+        {
+          id: "doer_w1d2_q01",
+          roundIndex: 0,
+          prompt: 'Trong ch\u1EE7 \u0111\u1EC1 Education, t\u1EEB \u0110\u1ED2NG NGH\u0128A chu\u1EA9n x\xE1c nh\u1EA5t v\u1EDBi "tuition fees" (h\u1ECDc ph\xED \u0111\u1EA1i h\u1ECDc) l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "education costs / college charges" },
+            { id: "opt_B", label: "B", text: "travel fares / ticket prices" },
+            { id: "opt_C", label: "C", text: "rental deposit / lease fees" },
+            { id: "opt_D", label: "D", text: "living expenses / allowances" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. education costs / college charges",
+          correctExplanation: '"Tuition fees" l\xE0 ti\u1EC1n h\u1ECDc ph\xED, \u0111\u1ED3ng ngh\u0129a v\u1EDBi education costs ho\u1EB7c college charges.',
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. living expenses / allowances",
+            diagnosticTitle: "Nh\u1EA7m h\u1ECDc ph\xED v\u1EDBi chi ph\xED sinh ho\u1EA1t",
+            explanation: "Living expenses l\xE0 ti\u1EC1n \u0103n \u1EDF, sinh ho\u1EA1t c\xE1 nh\xE2n, ho\xE0n to\xE0n t\xE1ch bi\u1EC7t v\u1EDBi ti\u1EC1n h\u1ECDc ph\xED (tuition fees)."
+          }
+        },
+        {
+          id: "doer_w1d2_q02",
+          roundIndex: 1,
+          prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "optimistic" trong c\xE2u mi\xEAu t\u1EA3 tinh th\u1EA7n ng\u01B0\u1EDDi l\xEDnh: "He was so optimistic and committed" l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "pessimistic (bi quan, lu\xF4n ngh\u0129 \u0111\u1EBFn \u0111i\u1EC1u ti\xEAu c\u1EF1c)" },
+            { id: "opt_B", label: "B", text: "enthusiastic (h\xE0o h\u1EE9ng, nhi\u1EC7t huy\u1EBFt)" },
+            { id: "opt_C", label: "C", text: "exhausted (ki\u1EC7t s\u1EE9c)" },
+            { id: "opt_D", label: "D", text: "committed (t\u1EADn t\xE2m, g\u1EAFn b\xF3)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. pessimistic (bi quan, lu\xF4n ngh\u0129 \u0111\u1EBFn \u0111i\u1EC1u ti\xEAu c\u1EF1c)",
+          correctExplanation: '"Optimistic" = l\u1EA1c quan, tin t\u01B0\u1EDFng v\xE0o t\u01B0\u01A1ng lai t\u1ED1t \u0111\u1EB9p. Tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "pessimistic" (bi quan).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. exhausted",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa tr\u1EA1ng th\xE1i th\u1EC3 l\u1EF1c ki\u1EC7t s\u1EE9c v\xE0 th\xE1i \u0111\u1ED9 bi quan",
+            explanation: "Exhausted l\xE0 ki\u1EC7t s\u1EE9c v\u1EC1 th\u1EC3 ch\u1EA5t, kh\xF4ng ph\u1EA3i t\u1EEB tr\xE1i ngh\u0129a v\u1EC1 m\u1EB7t th\xE1i \u0111\u1ED9 tinh th\u1EA7n c\u1EE7a optimistic."
+          }
+        },
+        {
+          id: "doer_w1d2_q03",
+          roundIndex: 2,
+          prompt: 'Trong c\xE2u: "The camp was really hard, but I passed first time \u2013 which was a big relief to me!", t\u1EEB "relief" mang ngh\u0129a g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "C\u1EA3m gi\xE1c nh\u1EB9 nh\xF5m, tr\xFAt b\u1ECF \u0111\u01B0\u1EE3c \xE2u lo, c\u0103ng th\u1EB3ng" },
+            { id: "opt_B", label: "B", text: "S\u1EF1 th\u1EA5t v\u1ECDng t\u1ED9t c\xF9ng khi g\u1EB7p th\u1EA5t b\u1EA1i" },
+            { id: "opt_C", label: "C", text: "S\u1EF1 t\u1EE9c gi\u1EADn v\xEC b\xE0i thi qu\xE1 kh\u1EAFt khe" },
+            { id: "opt_D", label: "D", text: "N\u1ED7i hoang mang lo s\u1EE3 \u0111i\u1EC1u nguy hi\u1EC3m s\u1EAFp t\u1EDBi" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. C\u1EA3m gi\xE1c nh\u1EB9 nh\xF5m, tr\xFAt b\u1ECF \u0111\u01B0\u1EE3c \xE2u lo, c\u0103ng th\u1EB3ng",
+          correctExplanation: '"Relief" (danh t\u1EEB) m\xF4 t\u1EA3 c\u1EA3m x\xFAc th\u01B0 th\xE1i, nh\u1EB9 nh\xF5m sau khi v\u01B0\u1EE3t qua m\u1ED9t \xE1p l\u1EF1c hay n\u1ED7i \xE2u lo l\u1EDBn.',
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. N\u1ED7i hoang mang lo s\u1EE3",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn c\u1EA3m x\xFAc t\xEDch c\u1EF1c sau thi v\u1EDBi \xE1p l\u1EF1c lo l\u1EAFng tr\u01B0\u1EDBc thi",
+            explanation: "Relief xu\u1EA5t hi\u1EC7n sau khi b\u1EA1n \u0111\xE3 v\u01B0\u1EE3t qua th\u1EED th\xE1ch th\xE0nh c\xF4ng, mang ngh\u0129a tr\xFAt b\u1ECF g\xE1nh n\u1EB7ng."
+          }
+        },
+        {
+          id: "doer_w1d2_q04",
+          roundIndex: 3,
+          prompt: 'Ch\u1ECDn t\u1EEB \u0111i\u1EC1n v\xE0o collocation chu\u1EA9n: "Students can learn more about the ______ application of their academic knowledge."',
+          options: [
+            { id: "opt_A", label: "A", text: "practical" },
+            { id: "opt_B", label: "B", text: "practice" },
+            { id: "opt_C", label: "C", text: "practically" },
+            { id: "opt_D", label: "D", text: "practitioner" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. practical",
+          correctExplanation: 'Collocation h\u1ECDc thu\u1EADt: "practical application" (s\u1EF1 \u1EE9ng d\u1EE5ng mang t\xEDnh th\u1EF1c ti\u1EC5n v\xE0o \u0111\u1EDDi s\u1ED1ng).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. practice",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn danh t\u1EEB practice v\u1EDBi t\xEDnh t\u1EEB practical \u0111\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB",
+            explanation: 'Tr\u01B0\u1EDBc danh t\u1EEB "application" c\u1EA7n m\u1ED9t t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a l\xE0 "practical".'
+          }
+        },
+        {
+          id: "doer_w1d2_q05",
+          roundIndex: 4,
+          prompt: 'Collocation n\xE0o trong b\xE0i \u0111\u1ECDc ch\u1EC9 vi\u1EC7c "b\u1ECF h\u1ECDc gi\u1EEFa ch\u1EEBng / th\xF4i h\u1ECDc tr\u01B0\u1EDBc khi t\u1ED1t nghi\u1EC7p"?',
+          options: [
+            { id: "opt_A", label: "A", text: "dropping out of school / university" },
+            { id: "opt_B", label: "B", text: "breaking up with school" },
+            { id: "opt_C", label: "C", text: "going on with university" },
+            { id: "opt_D", label: "D", text: "falling down the exam" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. dropping out of school / university",
+          correctExplanation: '"Drop out of school/university" l\xE0 phrasal verb chu\u1EA9n x\xE1c ch\u1EC9 h\xE0nh vi b\u1ECF h\u1ECDc gi\u1EEFa ch\u1EEBng.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. breaking up with school",
+            diagnosticTitle: "D\xF9ng phrasal verb quan h\u1EC7 t\xECnh c\u1EA3m cho tr\u01B0\u1EDDng h\u1ECDc",
+            explanation: "Break up d\xF9ng cho chia tay ng\u01B0\u1EDDi y\xEAu, kh\xF4ng d\xF9ng cho vi\u1EC7c th\xF4i h\u1ECDc."
+          }
+        },
+        {
+          id: "doer_w1d2_q06",
+          roundIndex: 5,
+          prompt: 'C\u1EE5m collocation "stay alert" trong h\u01B0\u1EDBng d\u1EABn ph\xF2ng ch\xE1y r\u1EEBng ("we always have to stay alert") c\xF3 ngh\u0129a l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "lu\xF4n t\u1EC9nh t\xE1o, c\u1EA3nh gi\xE1c v\xE0 ch\xFA \xFD cao \u0111\u1ED9 tr\u01B0\u1EDBc nguy hi\u1EC3m" },
+            { id: "opt_B", label: "B", text: "lu\xF4n ch\u1EA1y th\u1EADt nhanh v\u1EC1 ph\xEDa tr\u01B0\u1EDBc" },
+            { id: "opt_C", label: "C", text: "gi\u1EEF im l\u1EB7ng tuy\u1EC7t \u0111\u1ED1i kh\xF4ng ph\xE1t ra ti\u1EBFng \u0111\u1ED9ng" },
+            { id: "opt_D", label: "D", text: "\u1EDF y\xEAn trong l\u1EC1u kh\xF4ng \u0111\u01B0\u1EE3c b\u01B0\u1EDBc ra ngo\xE0i" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. lu\xF4n t\u1EC9nh t\xE1o, c\u1EA3nh gi\xE1c v\xE0 ch\xFA \xFD cao \u0111\u1ED9 tr\u01B0\u1EDBc nguy hi\u1EC3m",
+          correctExplanation: '"Stay alert" = duy tr\xEC s\u1EF1 t\u1EC9nh t\xE1o v\xE0 t\u1EADp trung c\u1EA3nh gi\xE1c cao \u0111\u1ED9.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. lu\xF4n ch\u1EA1y th\u1EADt nhanh",
+            diagnosticTitle: "Nh\u1EA7m tr\u1EA1ng th\xE1i nh\u1EADn th\u1EE9c tinh th\u1EA7n v\u1EDBi h\xE0nh \u0111\u1ED9ng th\u1EC3 ch\u1EA5t",
+            explanation: "Alert l\xE0 tr\u1EA1ng th\xE1i t\u1EADp trung nh\u1EADn th\u1EE9c c\u1EE7a n\xE3o b\u1ED9 tr\u01B0\u1EDBc r\u1EE7i ro, kh\xF4ng ph\u1EA3i h\xE0nh vi v\u1EADn \u0111\u1ED9ng."
+          }
+        },
+        {
+          id: "doer_w1d2_q07",
+          roundIndex: 6,
+          prompt: 'Ch\u1ECDn t\u1EEB lo\u1EA1i th\xEDch h\u1EE3p sau t\xEDnh t\u1EEB s\u1EDF h\u1EEFu: "Our university programs encourage students to explore their personal ______."',
+          options: [
+            { id: "opt_A", label: "A", text: "interests (s\u1EDF th\xEDch, m\u1ED1i quan t\xE2m)" },
+            { id: "opt_B", label: "B", text: "interesting" },
+            { id: "opt_C", label: "C", text: "interested" },
+            { id: "opt_D", label: "D", text: "interestingly" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. interests (s\u1EDF th\xEDch, m\u1ED1i quan t\xE2m)",
+          correctExplanation: 'Sau t\xEDnh t\u1EEB s\u1EDF h\u1EEFu "their personal" b\u1EAFt bu\u1ED9c ph\u1EA3i l\xE0 m\u1ED9t danh t\u1EEB s\u1ED1 nhi\u1EC1u: "interests" (c\xE1c m\u1ED1i quan t\xE2m / s\u1EDF th\xEDch).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. interested",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn t\xEDnh t\u1EEB c\u1EA3m x\xFAc \u0111u\xF4i -ed v\u1EDBi danh t\u1EEB",
+            explanation: "Interested l\xE0 t\xEDnh t\u1EEB ch\u1EC9 c\u1EA3m x\xFAc c\u1EE7a ng\u01B0\u1EDDi, kh\xF4ng th\u1EC3 l\xE0m t\xE2n ng\u1EEF tr\u1EF1c ti\u1EBFp sau explore their."
+          }
+        },
+        {
+          id: "doer_w1d2_q08",
+          roundIndex: 7,
+          prompt: 'T\u1EEB v\u1EF1ng c\u1EF1c \u0111\u1ED9 (extreme adjective): Thay v\xEC n\xF3i "very tired after five days of firefighting", t\xE1c gi\u1EA3 \u0111\xE3 d\xF9ng t\u1EEB n\xE0o?',
+          options: [
+            { id: "opt_A", label: "A", text: "exhausted" },
+            { id: "opt_B", label: "B", text: "bland" },
+            { id: "opt_C", label: "C", text: "relieved" },
+            { id: "opt_D", label: "D", text: "vast" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. exhausted",
+          correctExplanation: '"Exhausted" l\xE0 t\xEDnh t\u1EEB c\u1EF1c \u0111\u1ED9 t\u01B0\u01A1ng \u0111\u01B0\u01A1ng v\u1EDBi "extremely tired / completely worn out".',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. relieved",
+            diagnosticTitle: "Nh\u1EA7m c\u1EA3m gi\xE1c nh\u1EB9 nh\xF5m v\u1EDBi ki\u1EC7t s\u1EE9c",
+            explanation: "Relieved l\xE0 c\u1EA3m th\u1EA5y nh\u1EB9 nh\xF5m sau khi tr\xFAt \u0111\u01B0\u1EE3c g\xE1nh lo, kh\xF4ng ch\u1EC9 s\u1EF1 c\u1EA1n ki\u1EC7t n\u0103ng l\u01B0\u1EE3ng."
+          }
+        },
+        {
+          id: "doer_w1d2_q09",
+          roundIndex: 8,
+          prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o c\xE2u h\u1ECDc thu\u1EADt: "The new research lab was built in the center of the university ______ to facilitate collaboration."',
+          options: [
+            { id: "opt_A", label: "A", text: "campus" },
+            { id: "opt_B", label: "B", text: "yard" },
+            { id: "opt_C", label: "C", text: "corridor" },
+            { id: "opt_D", label: "D", text: "runway" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. campus",
+          correctExplanation: '"University campus" l\xE0 khu\xF4n vi\xEAn t\u1ED5ng th\u1EC3 c\u1EE7a m\u1ED9t tr\u01B0\u1EDDng \u0111\u1EA1i h\u1ECDc g\u1ED3m c\xE1c t\xF2a gi\u1EA3ng \u0111\u01B0\u1EDDng, vi\u1EC7n nghi\xEAn c\u1EE9u v\xE0 ti\u1EC7n \xEDch.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. yard",
+            diagnosticTitle: 'D\u1ECBch t\u1EEB "s\xE2n b\xE3i" thay v\xEC khu\xF4n vi\xEAn h\u1ECDc thu\u1EADt',
+            explanation: "Yard ch\u1EC9 kho\u1EA3nh s\xE2n nh\u1ECF tr\u01B0\u1EDBc/sau nh\xE0, kh\xF4ng d\xF9ng ch\u1EC9 to\xE0n b\u1ED9 khu\xF4n vi\xEAn tr\u01B0\u1EDDng \u0111\u1EA1i h\u1ECDc."
+          }
+        },
+        {
+          id: "doer_w1d2_q10",
+          roundIndex: 9,
+          prompt: 'PARAPHRASE: C\xE2u "Even experienced firefighters can find themselves in difficult situations, so they must follow safety procedures carefully" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i chu\u1EA9n x\xE1c nh\u1EA5t l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "Strict adherence to safety guidelines is essential, as even veteran workers are not immune to hazards." },
+            { id: "opt_B", label: "B", text: "Experienced firefighters never make mistakes because safety rules are completely unnecessary." },
+            { id: "opt_C", label: "C", text: "Firefighters are prohibited from entering dangerous zones without permission from instructors." },
+            { id: "opt_D", label: "D", text: "Following procedures guarantees that no wildfire will ever change its direction." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Strict adherence to safety guidelines is essential, as even veteran workers are not immune to hazards.",
+          correctExplanation: '"Strict adherence to safety guidelines" paraphrase cho "follow safety procedures carefully", v\xE0 "veteran workers are not immune to hazards" paraphrase cho "experienced firefighters can find themselves in difficult situations".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Experienced firefighters never make mistakes",
+            diagnosticTitle: "Hi\u1EC3u sai ngh\u0129a c\u1EA3nh b\xE1o th\xE0nh kh\u1EB3ng \u0111\u1ECBnh tuy\u1EC7t \u0111\u1ED1i",
+            explanation: "\u0110o\u1EA1n v\u0103n c\u1EA3nh b\xE1o ng\u01B0\u1EDDi c\xF3 kinh nghi\u1EC7m v\u1EABn g\u1EB7p nguy hi\u1EC3m, kh\xF4ng h\u1EC1 kh\u1EB3ng \u0111\u1ECBnh h\u1ECD kh\xF4ng bao gi\u1EDD m\u1EAFc l\u1ED7i."
+          }
+        }
+      ],
+      "WEEK 1 \u2013 DAY 3": [
+        {
+          id: "doer_w1d3_q01",
+          roundIndex: 0,
+          prompt: "C\u1EB7p nguy\xEAn \xE2m /i:/ v\xE0 /\u026A/ trong ti\u1EBFng Anh \u0111\u01B0\u1EE3c ph\xE2n bi\u1EC7t r\xF5 nh\u1EA5t qua c\u1EB7p t\u1EEB t\u1ED1i thi\u1EC3u (minimal pair) n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "sheep /\u0283i\u02D0p/ vs. ship /\u0283\u026Ap/" },
+            { id: "opt_B", label: "B", text: "bed /bed/ vs. bad /b\xE6d/" },
+            { id: "opt_C", label: "C", text: "duck /d\u028Ck/ vs. dark /d\u0251\u02D0k/" },
+            { id: "opt_D", label: "D", text: "pen /pen/ vs. pain /pe\u026An/" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. sheep /\u0283i\u02D0p/ vs. ship /\u0283\u026Ap/",
+          correctExplanation: "Sheep ch\u1EE9a nguy\xEAn \xE2m d\xE0i /i:/ c\u0103ng m\xE9p, trong khi ship ch\u1EE9a nguy\xEAn \xE2m ng\u1EAFn /\u026A/ th\u1EA3 l\u1ECFng.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. bed /bed/ vs. bad /b\xE6d/",
+            diagnosticTitle: "Nh\u1EA7m c\u1EB7p /e/ v\xE0 /\xE6/",
+            explanation: "Bed vs bad l\xE0 c\u1EB7p ph\xE2n bi\u1EC7t gi\u1EEFa \xE2m /e/ m\u1EDF v\u1EEBa v\xE0 \xE2m /\xE6/ h\u1EA1 h\xE0m b\u1EB9t."
+          }
+        },
+        {
+          id: "doer_w1d3_q02",
+          roundIndex: 1,
+          prompt: "C\u1EB7p t\u1EEB n\xE0o sau \u0111\xE2y minh h\u1ECDa cho s\u1EF1 \u0111\u1ED1i l\u1EADp gi\u1EEFa nguy\xEAn \xE2m /e/ v\xE0 /\xE6/?",
+          options: [
+            { id: "opt_A", label: "A", text: "bed /bed/ vs. bad /b\xE6d/" },
+            { id: "opt_B", label: "B", text: "leave /li\u02D0v/ vs. live /l\u026Av/" },
+            { id: "opt_C", label: "C", text: "food /fu\u02D0d/ vs. foot /f\u028At/" },
+            { id: "opt_D", label: "D", text: "hat /h\xE6t/ vs. hot /h\u0252t/" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. bed /bed/ vs. bad /b\xE6d/",
+          correctExplanation: "Bed c\xF3 nguy\xEAn \xE2m /e/ (m\u1EDF v\u1EEBa, l\u01B0\u1EE1i th\u1EA3 l\u1ECFng), bad c\xF3 nguy\xEAn \xE2m /\xE6/ (h\u1EA1 h\xE0m s\xE2u, kh\xF3e mi\u1EC7ng c\u0103ng).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. leave /li\u02D0v/ vs. live /l\u026Av/",
+            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m c\u1EB7p /i:/ v\xE0 /\u026A/",
+            explanation: "Leave vs live l\xE0 c\u1EB7p \u0111\u1ED1i l\u1EADp c\u1EE7a \xE2m i d\xE0i v\xE0 i ng\u1EAFn."
+          }
+        },
+        {
+          id: "doer_w1d3_q03",
+          roundIndex: 2,
+          prompt: 'Nguy\xEAn \xE2m trung t\xE2m ng\u1EAFn, ph\u1ED5 bi\u1EBFn nh\u1EA5t trong ti\u1EBFng Anh th\u01B0\u1EDDng xu\u1EA5t hi\u1EC7n trong t\u1EEB "today" /t\u0259\u02C8de\u026A/ l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "Schwa /\u0259/" },
+            { id: "opt_B", label: "B", text: "/\u028C/" },
+            { id: "opt_C", label: "C", text: "/\u0437:/" },
+            { id: "opt_D", label: "D", text: "/\xE6/" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Schwa /\u0259/",
+          correctExplanation: "\xC2m schwa /\u0259/ l\xE0 nguy\xEAn \xE2m l\u01B0\u1EDBt nh\u1EB9, kh\xF4ng bao gi\u1EDD mang tr\u1ECDng \xE2m, xu\u1EA5t hi\u1EC7n trong today, about, doctor.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. /\u028C/",
+            diagnosticTitle: "Nh\u1EA7m schwa v\u1EDBi \xE2m \xE1 /\u028C/",
+            explanation: "\xC2m /\u028C/ (trong cup, duck) c\xF3 th\u1EC3 mang tr\u1ECDng \xE2m, c\xF2n schwa /\u0259/ lu\xF4n \u1EDF \xE2m ti\u1EBFt kh\xF4ng nh\u1EA5n."
+          }
+        },
+        {
+          id: "doer_w1d3_q04",
+          roundIndex: 3,
+          prompt: `Trong cu\u1ED9c h\u1ED9i tho\u1EA1i l\xE0m quen c\xF4ng vi\u1EC7c, khi b\u1EA1n Khang n\xF3i "I'm a first-year student", c\xE2u ti\u1EBFp theo ph\xF9 h\u1EE3p v\u1EC1 th\xEC hi\u1EC7n t\u1EA1i l\xE0:`,
+          options: [
+            { id: "opt_A", label: "A", text: "I don't have a job yet." },
+            { id: "opt_B", label: "B", text: "I didn't have a job yet." },
+            { id: "opt_C", label: "C", text: "I'm not having a job yet." },
+            { id: "opt_D", label: "D", text: "I no have a job yet." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. I don't have a job yet.",
+          correctExplanation: `Di\u1EC5n t\u1EA3 th\u1EF1c t\u1EBF hi\u1EC7n t\u1EA1i v\u1EDBi \u0111\u1ED9ng t\u1EEB ch\u1EC9 tr\u1EA1ng th\xE1i s\u1EDF h\u1EEFu: d\xF9ng Simple Present ph\u1EE7 \u0111\u1ECBnh "don't have".`,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. I'm not having a job yet.",
+            diagnosticTitle: "D\xF9ng Present Continuous v\u1EDBi \u0111\u1ED9ng t\u1EEB s\u1EDF h\u1EEFu (Stative Verb)",
+            explanation: '"Have" mang ngh\u0129a s\u1EDF h\u1EEFu l\xE0 stative verb, kh\xF4ng chia th\xEC ti\u1EBFp di\u1EC5n trong ng\u1EEF c\u1EA3nh n\xE0y.'
+          }
+        },
+        {
+          id: "doer_w1d3_q05",
+          roundIndex: 4,
+          prompt: '\u0110\u1EC3 n\xF3i "T\xF4i \u0111ang ch\u1ECBu r\u1EA5t nhi\u1EC1u \xE1p l\u1EF1c trong c\xF4ng vi\u1EC7c", c\u1EE5m t\u1EEB t\u1EF1 nhi\xEAn chu\u1EA9n h\u1ECDc thu\u1EADt l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "I am under a lot of pressure" },
+            { id: "opt_B", label: "B", text: "I am in a lot of pressure" },
+            { id: "opt_C", label: "C", text: "I have a lot of pressured" },
+            { id: "opt_D", label: "D", text: "I take many pressure" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. I am under a lot of pressure",
+          correctExplanation: "Collocation chu\u1EA9n v\u1EDBi \xE1p l\u1EF1c l\xE0: to be UNDER pressure / under a lot of pressure.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. I am in a lot of pressure",
+            diagnosticTitle: "D\xF9ng sai gi\u1EDBi t\u1EEB (in thay v\xEC under)",
+            explanation: 'Ng\u01B0\u1EDDi h\u1ECDc ti\u1EBFng Vi\u1EC7t th\u01B0\u1EDDng d\u1ECBch "trong \xE1p l\u1EF1c" th\xE0nh "in pressure", nh\u01B0ng ti\u1EBFng Anh quy chu\u1EA9n l\xE0 "under pressure".'
+          }
+        },
+        {
+          id: "doer_w1d3_q06",
+          roundIndex: 5,
+          prompt: "Khi n\xF3i v\u1EC1 tri\u1EC3n v\u1ECDng ngh\u1EC1 nghi\u1EC7p sau khi t\u1ED1t nghi\u1EC7p \u0111\u1EA1i h\u1ECDc, c\u1EE5m t\u1EEB n\xE0o sau \u0111\xE2y l\xE0 chu\u1EA9n collocation?",
+          options: [
+            { id: "opt_A", label: "A", text: "job opportunities after graduation" },
+            { id: "opt_B", label: "B", text: "job chances after graduate" },
+            { id: "opt_C", label: "C", text: "working possibilities after graduate" },
+            { id: "opt_D", label: "D", text: "career occasions after graduating" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. job opportunities after graduation",
+          correctExplanation: '"Job opportunities after graduation" l\xE0 c\u1EE5m t\u1EEB h\u1ECDc thu\u1EADt chu\u1EA9n x\xE1c ch\u1EC9 c\u01A1 h\u1ED9i vi\u1EC7c l\xE0m sau t\u1ED1t nghi\u1EC7p.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. job chances after graduate",
+            diagnosticTitle: 'D\xF9ng t\u1EEB th\xE2n m\u1EADt "chance" v\xE0 sai t\u1EEB lo\u1EA1i sau "after"',
+            explanation: "Chance mang ngh\u0129a c\u01A1 h\u1ED9i may r\u1EE7i h\u01A1n l\xE0 c\u01A1 h\u1ED9i ngh\u1EC1 nghi\u1EC7p trang tr\u1ECDng, v\xE0 sau gi\u1EDBi t\u1EEB after ph\u1EA3i l\xE0 danh t\u1EEB graduation."
+          }
+        },
+        {
+          id: "doer_w1d3_q07",
+          roundIndex: 6,
+          prompt: '\u0110\u1EC3 di\u1EC5n \u0111\u1EA1t "C\xF4ng vi\u1EC7c c\u1EE7a t\xF4i c\xF3 l\u01B0\u01A1ng b\xE8o b\u1ECDt / th\u1EA5p", c\xE1ch n\xF3i t\u1EF1 nhi\xEAn v\xE0 ch\xEDnh x\xE1c l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "My job is low-paid / poorly-paid." },
+            { id: "opt_B", label: "B", text: "My job is cheap salary." },
+            { id: "opt_C", label: "C", text: "My job earns small money." },
+            { id: "opt_D", label: "D", text: "My salary is very short." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. My job is low-paid / poorly-paid.",
+          correctExplanation: 'T\xEDnh t\u1EEB mi\xEAu t\u1EA3 c\xF4ng vi\u1EC7c l\u01B0\u01A1ng th\u1EA5p l\xE0 "low-paid" ho\u1EB7c "poorly-paid" (ho\u1EB7c "a low salary").',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. My job is cheap salary.",
+            diagnosticTitle: 'D\u1ECBch "r\u1EBB" th\xE0nh "cheap salary"',
+            explanation: 'Tuy\u1EC7t \u0111\u1ED1i kh\xF4ng d\xF9ng "cheap" v\u1EDBi l\u01B0\u01A1ng b\u1ED5ng trong ti\u1EBFng Anh.'
+          }
+        },
+        {
+          id: "doer_w1d3_q08",
+          roundIndex: 7,
+          prompt: 'Ch\u1ECDn t\u1EEB \u0111i\u1EC1n v\xE0o ch\u1ED7 tr\u1ED1ng: "I like studying English ______ it helps me get promoted at work."',
+          options: [
+            { id: "opt_A", label: "A", text: "because" },
+            { id: "opt_B", label: "B", text: "although" },
+            { id: "opt_C", label: "C", text: "so" },
+            { id: "opt_D", label: "D", text: "however" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. because",
+          correctExplanation: 'V\u1EBF sau gi\u1EA3i th\xEDch nguy\xEAn nh\xE2n/l\xFD do cho v\u1EBF tr\u01B0\u1EDBc, do \u0111\xF3 s\u1EED d\u1EE5ng li\xEAn t\u1EEB "because".',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. so",
+            diagnosticTitle: "\u0110\u1EA3o l\u1ED9n nguy\xEAn nh\xE2n - k\u1EBFt qu\u1EA3",
+            explanation: '"So" ch\u1EC9 k\u1EBFt qu\u1EA3, n\u1EBFu d\xF9ng "so" th\xEC v\u1EBF "helps me get promoted" ph\u1EA3i \u1EDF tr\u01B0\u1EDBc.'
+          }
+        },
+        {
+          id: "doer_w1d3_q09",
+          roundIndex: 8,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng \u0111\u1EC3 ch\u1EC9 ph\u01B0\u01A1ng th\u1EE9c th\u1EF1c hi\u1EC7n h\xE0nh \u0111\u1ED9ng: "I improve my pronunciation ______ practicing with native speakers every day."',
+          options: [
+            { id: "opt_A", label: "A", text: "by" },
+            { id: "opt_B", label: "B", text: "with" },
+            { id: "opt_C", label: "C", text: "for" },
+            { id: "opt_D", label: "D", text: "at" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. by",
+          correctExplanation: "C\u1EA5u tr\xFAc ch\u1EC9 ph\u01B0\u01A1ng ti\u1EC7n / c\xE1ch th\u1EE9c: by + V-ing (b\u1EB1ng c\xE1ch l\xE0m g\xEC).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. with",
+            diagnosticTitle: 'D\u1ECBch "v\u1EDBi vi\u1EC7c luy\u1EC7n t\u1EADp" th\xE0nh "with V-ing"',
+            explanation: 'Ch\u1EC9 ph\u01B0\u01A1ng th\u1EE9c h\xE0nh \u0111\u1ED9ng \u0111\u1EC3 \u0111\u1EA1t k\u1EBFt qu\u1EA3 lu\xF4n d\xF9ng gi\u1EDBi t\u1EEB "by + V-ing", kh\xF4ng d\xF9ng "with".'
+          }
+        },
+        {
+          id: "doer_w1d3_q10",
+          roundIndex: 9,
+          prompt: 'C\u1EE5m t\u1EEB n\xE0o sau \u0111\xE2y di\u1EC5n \u0111\u1EA1t m\u1EE9c \u0111\u1ED9 y\xEAu th\xEDch cao h\u01A1n v\xE0 h\u1ECDc thu\u1EADt h\u01A1n "I like football"?',
+          options: [
+            { id: "opt_A", label: "A", text: "I am a big fan of football / I am really keen on football." },
+            { id: "opt_B", label: "B", text: "I very like football." },
+            { id: "opt_C", label: "C", text: "I like so much football." },
+            { id: "opt_D", label: "D", text: "Football is my favourite love." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. I am a big fan of football / I am really keen on football.",
+          correctExplanation: '"To be a big fan of" ho\u1EB7c "to be keen on / passionate about" l\xE0 c\xE1ch di\u1EC5n \u0111\u1EA1t t\u1EF1 nhi\xEAn, tr\xE1nh l\u1ED7i d\u1ECBch word-by-word.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. I very like football.",
+            diagnosticTitle: 'L\u1ED7i ng\u1EEF ph\xE1p s\u01A1 \u0111\u1EB3ng "very like"',
+            explanation: 'Ph\xF3 t\u1EEB "very" kh\xF4ng bao gi\u1EDD b\u1ED5 ngh\u0129a tr\u1EF1c ti\u1EBFp cho \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng (kh\xF4ng d\xF9ng very like, ph\u1EA3i l\xE0 like very much).'
+          }
+        }
+      ]
+    };
+  }
+});
+
+// server/services/bank_parts/week2.data.ts
+var WEEK_2_QUESTIONS;
+var init_week2_data = __esm({
+  "server/services/bank_parts/week2.data.ts"() {
+    WEEK_2_QUESTIONS = {
+      "WEEK 2 \u2013 DAY 1": [
+        {
+          id: "doer_w2d1_q01",
+          roundIndex: 0,
+          prompt: `X\xE1c \u0111\u1ECBnh l\u1ED7i sai trong c\xE2u: "Many parents do not satisfy with their children's results at school."`,
+          options: [
+            { id: "opt_A", label: "A", text: "do not satisfy with -> are not satisfied with" },
+            { id: "opt_B", label: "B", text: "parents -> parent" },
+            { id: "opt_C", label: "C", text: "children's -> childrens'" },
+            { id: "opt_D", label: "D", text: "results -> resulting" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. do not satisfy with -> are not satisfied with",
+          correctExplanation: '"Satisfy" l\xE0 ngo\u1EA1i \u0111\u1ED9ng t\u1EEB mang ngh\u0129a l\xE0m ai \u0111\xF3 th\u1ECFa m\xE3n. Mu\u1ED1n di\u1EC5n \u0111\u1EA1t ai \u0111\xF3 h\xE0i l\xF2ng/th\u1ECFa m\xE3n v\u1EDBi c\xE1i g\xEC ph\u1EA3i d\xF9ng c\u1EA5u tr\xFAc t\xEDnh t\u1EEB b\u1ECB \u0111\u1ED9ng: "be satisfied with".',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. childrens'",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn s\u1EDF h\u1EEFu c\xE1ch s\u1ED1 nhi\u1EC1u b\u1EA5t quy t\u1EAFc",
+            explanation: "Children b\u1EA3n th\xE2n \u0111\xE3 l\xE0 s\u1ED1 nhi\u1EC1u, n\xEAn s\u1EDF h\u1EEFu c\xE1ch vi\u1EBFt l\xE0 children's l\xE0 ho\xE0n to\xE0n ch\xEDnh x\xE1c."
+          }
+        },
+        {
+          id: "doer_w2d1_q02",
+          roundIndex: 1,
+          prompt: 'S\u1EEDa l\u1ED7i sai trong c\xE2u: "The board of directors is discussing about a pay rise for all employees."',
+          options: [
+            { id: "opt_A", label: "A", text: "discussing about -> discussing" },
+            { id: "opt_B", label: "B", text: "is -> are" },
+            { id: "opt_C", label: "C", text: "pay rise -> rise pay" },
+            { id: "opt_D", label: "D", text: "for all -> with all" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. discussing about -> discussing",
+          correctExplanation: '"Discuss" l\xE0 ngo\u1EA1i \u0111\u1ED9ng t\u1EEB tr\u1EF1c ti\u1EBFp (transitive verb), c\xF3 t\xE2n ng\u1EEF \u0111i li\u1EC1n ph\xEDa sau (discuss something), tuy\u1EC7t \u0111\u1ED1i kh\xF4ng th\xEAm gi\u1EDBi t\u1EEB "about".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. is -> are",
+            diagnosticTitle: "Nghi ng\u1EDD s\u1ED1 \xEDt/s\u1ED1 nhi\u1EC1u c\u1EE7a danh t\u1EEB t\u1EADp h\u1EE3p",
+            explanation: '"The board of directors" xem nh\u01B0 m\u1ED9t th\u1EC3 th\u1ED1ng nh\u1EA5t n\xEAn d\xF9ng "is" chu\u1EA9n ng\u1EEF ph\xE1p, l\u1ED7i c\u1ED1t l\xF5i l\xE0 th\u1EEBa gi\u1EDBi t\u1EEB "about" sau discuss.'
+          }
+        },
+        {
+          id: "doer_w2d1_q03",
+          roundIndex: 2,
+          prompt: 'Ph\xE2n bi\u1EC7t n\u1ED9i \u0111\u1ED9ng t\u1EEB v\xE0 ngo\u1EA1i \u0111\u1ED9ng t\u1EEB: Ch\u1ECDn \u0111\u1ED9ng t\u1EEB th\xEDch h\u1EE3p trong c\xE2u: "People can ______ their hands in online meetings on Google Meet."',
+          options: [
+            { id: "opt_A", label: "A", text: "raise" },
+            { id: "opt_B", label: "B", text: "rise" },
+            { id: "opt_C", label: "C", text: "arise" },
+            { id: "opt_D", label: "D", text: "lifting up" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. raise",
+          correctExplanation: '"Raise" l\xE0 ngo\u1EA1i \u0111\u1ED9ng t\u1EEB (transitive verb) c\u1EA7n c\xF3 t\xE2n ng\u1EEF theo sau: raise their hands (gi\u01A1 tay). Trong khi "rise" l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB (t\u1EF1 t\u0103ng l\xEAn, kh\xF4ng c\xF3 t\xE2n ng\u1EEF).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. rise",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn c\u1EB7p \u0111\u1ED9ng t\u1EEB Raise vs. Rise",
+            explanation: 'Rise l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB (The sun rises), kh\xF4ng th\u1EC3 \u0111i tr\u1EF1c ti\u1EBFp v\u1EDBi t\xE2n ng\u1EEF "their hands".'
+          }
+        },
+        {
+          id: "doer_w2d1_q04",
+          roundIndex: 3,
+          prompt: 'Ch\u1ECDn c\xE2u s\u1EEDa \u0111\xFAng ng\u1EEF ph\xE1p cho Linking Verb: "The dress looks beautifully. I decided to buy it."',
+          options: [
+            { id: "opt_A", label: "A", text: "looks beautifully -> looks beautiful" },
+            { id: "opt_B", label: "B", text: "looks -> is looking" },
+            { id: "opt_C", label: "C", text: "decided -> decide" },
+            { id: "opt_D", label: "D", text: "buy it -> buy" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. looks beautifully -> looks beautiful",
+          correctExplanation: '"Look" \u1EDF \u0111\xE2y l\xE0 linking verb (tr\xF4ng c\xF3 v\u1EBB), theo sau ph\u1EA3i l\xE0 m\u1ED9t t\xEDnh t\u1EEB (adjective) b\u1ED5 ngh\u0129a cho ch\u1EE7 ng\u1EEF, kh\xF4ng d\xF9ng tr\u1EA1ng t\u1EEB (beautifully).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. looks -> is looking",
+            diagnosticTitle: "Chuy\u1EC3n sang th\xEC ti\u1EBFp di\u1EC5n cho \u0111\u1ED9ng t\u1EEB tri gi\xE1c",
+            explanation: "Look th\u1EC3 hi\u1EC7n v\u1EBB b\u1EC1 ngo\xE0i l\xE0 linking verb mang t\xEDnh tr\u1EA1ng th\xE1i, kh\xF4ng d\xF9ng \u1EDF d\u1EA1ng ti\u1EBFp di\u1EC5n."
+          }
+        },
+        {
+          id: "doer_w2d1_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn c\u1EA5u tr\xFAc vi\u1EBFt \u0111\xFAng: "Nhi\u1EC1u tr\u1EBB em d\xE0nh qu\xE1 nhi\u1EC1u th\u1EDDi gian \u0111\u1EC3 ch\u01A1i games."',
+          options: [
+            { id: "opt_A", label: "A", text: "Many children spend too much time playing video games." },
+            { id: "opt_B", label: "B", text: "Many children spend too much time to play video games." },
+            { id: "opt_C", label: "C", text: "Many children take too much time for play video games." },
+            { id: "opt_D", label: "D", text: "Many children waste too many time playing video games." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Many children spend too much time playing video games.",
+          correctExplanation: "C\u1EA5u tr\xFAc chu\u1EA9n c\u1EE7a \u0111\u1ED9ng t\u1EEB spend: spend time/money DOING something (V-ing), kh\xF4ng d\xF9ng to-infinitive.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Many children spend too much time to play video games.",
+            diagnosticTitle: "D\xF9ng to-V sau spend time",
+            explanation: 'Th\xF3i quen d\u1ECBch "\u0111\u1EC3 l\xE0m g\xEC" sang "to-V" khi\u1EBFn h\u1ECDc vi\xEAn vi\u1EBFt "spend time to play", trong khi chu\u1EA9n ti\u1EBFng Anh l\xE0 spend time V-ing.'
+          }
+        },
+        {
+          id: "doer_w2d1_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng c\u1EA5u tr\xFAc: "Kh\xF3a h\u1ECDc \u0111\xE3 mang l\u1EA1i cho anh \u1EA5y nhi\u1EC1u ki\u1EBFn th\u1EE9c b\u1ED5 \xEDch."',
+          options: [
+            { id: "opt_A", label: "A", text: "The course provided him with a lot of useful knowledge." },
+            { id: "opt_B", label: "B", text: "The course provided him a lot of useful knowledges." },
+            { id: "opt_C", label: "C", text: "The course provides to him many useful knowledges." },
+            { id: "opt_D", label: "D", text: "The course offered for him much useful knowledge." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. The course provided him with a lot of useful knowledge.",
+          correctExplanation: "C\u1EA5u tr\xFAc: provide somebody WITH something (ho\u1EB7c provide something FOR somebody). Knowledge l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. The course provided him a lot of useful knowledges.",
+            diagnosticTitle: 'B\u1ECF qu\xEAn gi\u1EDBi t\u1EEB "with" v\xE0 th\xEAm "s" v\xE0o knowledge',
+            explanation: "Provide sb with sth c\u1EA7n c\xF3 with, v\xE0 knowledge kh\xF4ng bao gi\u1EDD c\xF3 s\u1ED1 nhi\u1EC1u knowledges."
+          }
+        },
+        {
+          id: "doer_w2d1_q07",
+          roundIndex: 6,
+          prompt: 'Ch\u1ECDn d\u1EA1ng \u0111\xFAng c\u1EE7a \u0111\u1ED9ng t\u1EEB sau "consider": "Chipu is considering ______ showbiz."',
+          options: [
+            { id: "opt_A", label: "A", text: "leaving" },
+            { id: "opt_B", label: "B", text: "to leave" },
+            { id: "opt_C", label: "C", text: "leave" },
+            { id: "opt_D", label: "D", text: "for leaving" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. leaving",
+          correctExplanation: "\u0110\u1ED9ng t\u1EEB consider \u0111\xF2i h\u1ECFi m\u1ED9t V-ing theo sau: consider DOING something (c\xE2n nh\u1EAFc l\xE0m g\xEC).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. to leave",
+            diagnosticTitle: "Ch\u1ECDn to-infinitive sau consider",
+            explanation: "R\u1EA5t nhi\u1EC1u ng\u01B0\u1EDDi h\u1ECDc nh\u1EA7m consider \u0111i v\u1EDBi to-V, nh\u01B0ng \u0111\xFAng quy t\u1EAFc ng\u1EEF ph\xE1p ph\u1EA3i l\xE0 consider + V-ing."
+          }
+        },
+        {
+          id: "doer_w2d1_q08",
+          roundIndex: 7,
+          prompt: 'Ch\u1ECDn c\xE2u di\u1EC5n \u0111\u1EA1t \u0111\xFAng: "T\xF4i th\u1EA5y cu\u1ED1n s\xE1ch n\xE0y r\u1EA5t th\xFA v\u1ECB."',
+          options: [
+            { id: "opt_A", label: "A", text: "I find this book very interesting." },
+            { id: "opt_B", label: "B", text: "I find this book is very interesting." },
+            { id: "opt_C", label: "C", text: "I find this book very interested." },
+            { id: "opt_D", label: "D", text: "I feel this book very interesting." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. I find this book very interesting.",
+          correctExplanation: 'C\u1EA5u tr\xFAc: find + Object + Adjective (nh\u1EADn th\u1EA5y c\xE1i g\xEC nh\u01B0 th\u1EBF n\xE0o). B\u1ED5 ng\u1EEF cho cu\u1ED1n s\xE1ch l\xE0 t\xEDnh t\u1EEB ch\u1EE7 \u0111\u1ED9ng "interesting".',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. I find this book very interested.",
+            diagnosticTitle: "Nh\u1EA7m \u0111u\xF4i -ed v\xE0 -ing c\u1EE7a t\xEDnh t\u1EEB",
+            explanation: '"Interested" ch\u1EC9 c\u1EA3m x\xFAc c\u1EE7a con ng\u01B0\u1EDDi; \u0111\u1EB7c t\xEDnh c\u1EE7a cu\u1ED1n s\xE1ch g\xE2y h\u1EE9ng th\xFA ph\u1EA3i d\xF9ng "interesting".'
+          }
+        },
+        {
+          id: "doer_w2d1_q09",
+          roundIndex: 8,
+          prompt: 'Ch\u1ECDn collocation chu\u1EA9n khi ti\u1EBFn h\xE0nh l\xE0m kh\u1EA3o s\xE1t: "Nh\xF3m em s\u1EBD ______ m\u1ED9t kh\u1EA3o s\xE1t v\u1EC1 th\xF3i quen \u0111\u1ECDc s\xE1ch c\u1EE7a gi\u1EDBi tr\u1EBB."',
+          options: [
+            { id: "opt_A", label: "A", text: "conduct / carry out a survey" },
+            { id: "opt_B", label: "B", text: "make a survey" },
+            { id: "opt_C", label: "C", text: "take a survey" },
+            { id: "opt_D", label: "D", text: "create a survey" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. conduct / carry out a survey",
+          correctExplanation: 'Collocation h\u1ECDc thu\u1EADt chu\u1EA9n \u0111i v\u1EDBi survey l\xE0 "conduct a survey" ho\u1EB7c "carry out a survey".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. make a survey",
+            diagnosticTitle: 'D\u1ECBch t\u1EEB "l\xE0m kh\u1EA3o s\xE1t" th\xE0nh "make a survey"',
+            explanation: "Ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 kh\xF4ng d\xF9ng make a survey; trong nghi\xEAn c\u1EE9u h\u1ECDc thu\u1EADt lu\xF4n d\xF9ng conduct / carry out."
+          }
+        },
+        {
+          id: "doer_w2d1_q10",
+          roundIndex: 9,
+          prompt: 'Ch\u1ECDn c\u1EE5m collocation chu\u1EA9n x\xE1c: "H\u1ECDc sinh n\xEAn tr\xE1nh ______ khi l\xE0m b\xE0i t\u1EADp v\u1EC1 nh\xE0."',
+          options: [
+            { id: "opt_A", label: "A", text: "making mistakes" },
+            { id: "opt_B", label: "B", text: "doing mistakes" },
+            { id: "opt_C", label: "C", text: "taking mistakes" },
+            { id: "opt_D", label: "D", text: "creating mistakes" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. making mistakes",
+          correctExplanation: "Collocation b\u1EA5t di b\u1EA5t d\u1ECBch trong ti\u1EBFng Anh: MAKE a mistake / make mistakes (ph\u1EA1m sai l\u1EA7m).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. doing mistakes",
+            diagnosticTitle: 'D\u1ECBch "l\xE0m l\u1ED7i" th\xE0nh "do mistakes"',
+            explanation: 'Th\xF3i quen li\xEAn h\u1EC7 t\u1EEB "l\xE0m" v\u1EDBi "do" khi\u1EBFn h\u1ECDc vi\xEAn ch\u1ECDn "do mistakes" thay v\xEC c\u1EE5m chu\u1EA9n "make mistakes".'
+          }
+        }
+      ],
+      "WEEK 2 \u2013 DAY 2": [
+        {
+          id: "doer_w2d2_q01",
+          roundIndex: 0,
+          prompt: 'Trong c\xE2u: "Employees are protesting what is infamous as 996", t\u1EEB "infamous" (adj) \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi t\u1EEB n\xE0o?',
+          options: [
+            { id: "opt_A", label: "A", text: "notorious (kh\xE9t ti\u1EBFng, tai ti\u1EBFng v\xEC \u0111i\u1EC1u x\u1EA5u)" },
+            { id: "opt_B", label: "B", text: "unpopular / unknown (v\xF4 danh, kh\xF4ng ai bi\u1EBFt)" },
+            { id: "opt_C", label: "C", text: "prestigious (uy t\xEDn, danh gi\xE1)" },
+            { id: "opt_D", label: "D", text: "admirable (\u0111\xE1ng kh\xE2m ph\u1EE5c, ng\u01B0\u1EE1ng m\u1ED9)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. notorious (kh\xE9t ti\u1EBFng, tai ti\u1EBFng v\xEC \u0111i\u1EC1u x\u1EA5u)",
+          correctExplanation: '"Infamous" \u0111\u1ED3ng ngh\u0129a v\u1EDBi "notorious": n\u1ED5i danh v\xEC tai ti\u1EBFng, g\u1EAFn v\u1EDBi \u0111i\u1EC1u t\u1ED3i t\u1EC7 ho\u1EB7c \u0111\u1ED9c h\u1EA1i.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. unpopular / unknown",
+            diagnosticTitle: 'Hi\u1EC3u nh\u1EA7m ti\u1EC1n t\u1ED1 in- l\xE0 ph\u1EE7 \u0111\u1ECBnh "kh\xF4ng n\u1ED5i ti\u1EBFng"',
+            explanation: "Nhi\u1EC1u ng\u01B0\u1EDDi l\u1EA7m t\u01B0\u1EDFng in- + famous = kh\xF4ng n\u1ED5i ti\u1EBFng, nh\u01B0ng infamous th\u1EF1c ch\u1EA5t mang ngh\u0129a kh\xE9t ti\u1EBFng v\xEC \u0111i\u1EC1u x\u1EA5u."
+          }
+        },
+        {
+          id: "doer_w2d2_q02",
+          roundIndex: 1,
+          prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "compulsory" trong c\u1EE5m "compulsory weekend overtime" (t\u0103ng ca b\u1EAFt bu\u1ED9c cu\u1ED1i tu\u1EA7n) l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "voluntary / optional (t\u1EF1 nguy\u1EC7n, t\xF9y ch\u1ECDn)" },
+            { id: "opt_B", label: "B", text: "mandatory (b\u1EAFt bu\u1ED9c theo lu\u1EADt)" },
+            { id: "opt_C", label: "C", text: "punitive (tr\u1EEBng ph\u1EA1t)" },
+            { id: "opt_D", label: "D", text: "relentless (kh\xF4ng ng\u1EEBng ngh\u1EC9)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. voluntary / optional (t\u1EF1 nguy\u1EC7n, t\xF9y ch\u1ECDn)",
+          correctExplanation: '"Compulsory" = b\u1EAFt bu\u1ED9c, c\u01B0\u1EE1ng ch\u1EBF. T\u1EEB tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "voluntary" ho\u1EB7c "optional" (t\u1EF1 nguy\u1EC7n/t\xF9y ch\u1ECDn).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. mandatory",
+            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
+            explanation: "Mandatory l\xE0 t\u1EEB \u0111\u1ED3ng ngh\u0129a v\u1EDBi compulsory. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
+          }
+        },
+        {
+          id: "doer_w2d2_q03",
+          roundIndex: 2,
+          prompt: 'Trong c\u1EE5m t\u1EEB "workplace burnout", t\u1EEB "burnout" m\xF4 t\u1EA3 ch\xEDnh x\xE1c tr\u1EA1ng th\xE1i n\xE0o c\u1EE7a ng\u01B0\u1EDDi lao \u0111\u1ED9ng?',
+          options: [
+            { id: "opt_A", label: "A", text: "T\xECnh tr\u1EA1ng ki\u1EC7t qu\u1EC7 ho\xE0n to\xE0n v\u1EC1 c\u1EA3 th\u1EC3 ch\u1EA5t l\u1EABn tinh th\u1EA7n do \xE1p l\u1EF1c c\xF4ng vi\u1EC7c k\xE9o d\xE0i" },
+            { id: "opt_B", label: "B", text: "S\u1EF1 nhi\u1EC7t t\xECnh h\u0103ng h\xE1i ch\xE1y h\u1EBFt m\xECnh v\xEC d\u1EF1 \xE1n" },
+            { id: "opt_C", label: "C", text: "C\u01A1n s\u1ED1t cao t\u1EA1m th\u1EDDi do th\u1EDDi ti\u1EBFt thay \u0111\u1ED5i" },
+            { id: "opt_D", label: "D", text: "S\u1EF1 t\u1EE9c gi\u1EADn nh\u1EA5t th\u1EDDi khi tranh lu\u1EADn v\u1EDBi \u0111\u1ED3ng nghi\u1EC7p" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. T\xECnh tr\u1EA1ng ki\u1EC7t qu\u1EC7 ho\xE0n to\xE0n v\u1EC1 c\u1EA3 th\u1EC3 ch\u1EA5t l\u1EABn tinh th\u1EA7n do \xE1p l\u1EF1c c\xF4ng vi\u1EC7c k\xE9o d\xE0i",
+          correctExplanation: '"Burnout" l\xE0 thu\u1EADt ng\u1EEF t\xE2m l\xFD h\u1ECDc lao \u0111\u1ED9ng ch\u1EC9 s\u1EF1 suy s\u1EE5p, c\u1EA1n ki\u1EC7t n\u0103ng l\u01B0\u1EE3ng th\u1EC3 x\xE1c v\xE0 c\u1EA3m x\xFAc v\xEC l\xE0m vi\u1EC7c qu\xE1 t\u1EA3i.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. S\u1EF1 nhi\u1EC7t t\xECnh h\u0103ng h\xE1i ch\xE1y h\u1EBFt m\xECnh",
+            diagnosticTitle: 'D\u1ECBch ngh\u0129a \u0111en t\u1EEB ch\u1EEF "burn" th\xE0nh ch\xE1y h\u1EBFt m\xECnh t\xEDch c\u1EF1c',
+            explanation: "Burnout lu\xF4n mang ngh\u0129a ti\xEAu c\u1EF1c ch\u1EC9 s\u1EF1 ki\u1EC7t qu\u1EC7, kh\xF4ng d\xF9ng cho s\u1EF1 h\xE0o h\u1EE9ng c\u1ED1ng hi\u1EBFn."
+          }
+        },
+        {
+          id: "doer_w2d2_q04",
+          roundIndex: 3,
+          prompt: 'Collocation chu\u1EA9n trong b\xE0i: "An online campaign was launched to ______ awareness about the harsh work culture."',
+          options: [
+            { id: "opt_A", label: "A", text: "raise" },
+            { id: "opt_B", label: "B", text: "rise" },
+            { id: "opt_C", label: "C", text: "make" },
+            { id: "opt_D", label: "D", text: "arise" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. raise",
+          correctExplanation: 'Collocation h\u1ECDc thu\u1EADt c\u1ED1 \u0111\u1ECBnh: "raise awareness about/of something" (n\xE2ng cao nh\u1EADn th\u1EE9c x\xE3 h\u1ED9i v\u1EC1 m\u1ED9t v\u1EA5n \u0111\u1EC1).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. rise",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa ngo\u1EA1i \u0111\u1ED9ng t\u1EEB raise (c\u1EA7n t\xE2n ng\u1EEF) v\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB rise",
+            explanation: '"Rise" l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB kh\xF4ng \u0111i k\xE8m t\xE2n ng\u1EEF. Mu\u1ED1n t\xE1c \u0111\u1ED9ng l\xEAn t\xE2n ng\u1EEF "awareness" b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng ngo\u1EA1i \u0111\u1ED9ng t\u1EEB "raise".'
+          }
+        },
+        {
+          id: "doer_w2d2_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn \u0111\u1ED9ng t\u1EEB ph\xF9 h\u1EE3p di\u1EC5n t\u1EA3 vi\u1EC7c "\xE1p \u0111\u1EB7t, b\u1EAFt bu\u1ED9c thi h\xE0nh quy \u0111\u1ECBnh gi\u1EDD gi\u1EA5c": "Many companies still ______ the 12-hour workday informally."',
+          options: [
+            { id: "opt_A", label: "A", text: "enforce" },
+            { id: "opt_B", label: "B", text: "reinforce" },
+            { id: "opt_C", label: "C", text: "comfort" },
+            { id: "opt_D", label: "D", text: "forgive" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. enforce",
+          correctExplanation: '"Enforce rules/hours" ngh\u0129a l\xE0 th\u1EF1c thi, b\u1EAFt bu\u1ED9c tu\xE2n th\u1EE7 quy ch\u1EBF ho\u1EB7c lu\u1EADt l\u1EC7.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. reinforce",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa enforce (th\u1EF1c thi) v\xE0 reinforce (c\u1EE7ng c\u1ED1, gia c\u1ED1)",
+            explanation: "Reinforce mang ngh\u0129a gia c\u1ED1 \u0111\u1ED9 b\u1EC1n ho\u1EB7c c\u1EE7ng c\u1ED1 l\u1EADp lu\u1EADn, kh\xF4ng d\xF9ng cho vi\u1EC7c b\u1EAFt bu\u1ED9c th\u1EF1c thi gi\u1EDD l\xE0m vi\u1EC7c."
+          }
+        },
+        {
+          id: "doer_w2d2_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn tr\u1EA1ng t\u1EEB ph\xF9 h\u1EE3p: "Though the schedule is technically prohibited by law, startups apply it formally or ______."',
+          options: [
+            { id: "opt_A", label: "A", text: "informally" },
+            { id: "opt_B", label: "B", text: "informal" },
+            { id: "opt_C", label: "C", text: "information" },
+            { id: "opt_D", label: "D", text: "informative" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. informally",
+          correctExplanation: 'C\u1EA5u tr\xFAc song h\xE0nh v\u1EDBi tr\u1EA1ng t\u1EEB "formally": "formally or informally" (m\u1ED9t c\xE1ch ch\xEDnh th\u1EE9c ho\u1EB7c ng\u1EA5m ng\u1EA7m phi ch\xEDnh th\u1EE9c).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. informal",
+            diagnosticTitle: "Vi ph\u1EA1m t\xEDnh song h\xE0nh t\u1EEB lo\u1EA1i (parallel structure)",
+            explanation: 'T\u1EEB k\u1EBFt n\u1ED1i b\u1EDFi li\xEAn t\u1EEB "or" v\u1EDBi tr\u1EA1ng t\u1EEB "formally" b\u1EAFt bu\u1ED9c c\u0169ng ph\u1EA3i l\xE0 m\u1ED9t tr\u1EA1ng t\u1EEB ("informally").'
+          }
+        },
+        {
+          id: "doer_w2d2_q07",
+          roundIndex: 6,
+          prompt: 'Trong c\u1EE5m "protest against 996 culture", \u0111\u1ED9ng t\u1EEB "protest" \u0111i v\u1EDBi gi\u1EDBi t\u1EEB n\xE0o khi mu\u1ED1n di\u1EC5n t\u1EA3 s\u1EF1 ph\u1EA3n kh\xE1ng ch\u1ED1ng l\u1EA1i m\u1ED9t \u0111i\u1EC1u b\u1EA5t c\xF4ng?',
+          options: [
+            { id: "opt_A", label: "A", text: "against" },
+            { id: "opt_B", label: "B", text: "with" },
+            { id: "opt_C", label: "C", text: "for" },
+            { id: "opt_D", label: "D", text: "at" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. against",
+          correctExplanation: 'C\u1EA5u tr\xFAc chu\u1EA9n: "protest against something" (ph\u1EA3n \u0111\u1ED1i, bi\u1EC3u t\xECnh ch\u1ED1ng l\u1EA1i ch\xEDnh s\xE1ch/h\xE0nh \u0111\u1ED9ng).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. for",
+            diagnosticTitle: "D\xF9ng gi\u1EDBi t\u1EEB ch\u1EC9 s\u1EF1 \u1EE7ng h\u1ED9 thay v\xEC ph\u1EA3n \u0111\u1ED1i",
+            explanation: 'Protest for l\xE0 \u0111\u1EA5u tranh \u0111\xF2i m\u1ED9t quy\u1EC1n l\u1EE3i, c\xF2n ph\u1EA3n \u0111\u1ED1i ch\u1ED1ng l\u1EA1i v\u0103n h\xF3a \u0111\u1ED9c h\u1EA1i ph\u1EA3i d\xF9ng "protest against".'
+          }
+        },
+        {
+          id: "doer_w2d2_q08",
+          roundIndex: 7,
+          prompt: 'Th\xE0nh ng\u1EEF / c\u1EA5u tr\xFAc: "Is it really worth it to exchange our lives for money?" mang c\u1EA5u tr\xFAc chu\u1EA9n n\xE0o?',
+          options: [
+            { id: "opt_A", label: "A", text: "exchange [A] for [B] (\u0111\xE1nh \u0111\u1ED5i c\xE1i n\xE0y l\u1EA5y c\xE1i kh\xE1c)" },
+            { id: "opt_B", label: "B", text: "exchange [A] into [B]" },
+            { id: "opt_C", label: "C", text: "exchange [A] with [B]" },
+            { id: "opt_D", label: "D", text: "exchange [A] at [B]" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. exchange [A] for [B] (\u0111\xE1nh \u0111\u1ED5i c\xE1i n\xE0y l\u1EA5y c\xE1i kh\xE1c)",
+          correctExplanation: '"Exchange something for something" l\xE0 c\u1EA5u tr\xFAc chu\u1EA9n \u0111\u1EC3 ch\u1EC9 s\u1EF1 \u0111\xE1nh \u0111\u1ED5i ho\u1EB7c trao \u0111\u1ED5i l\u1EA5y v\u1EADt ph\u1EA9m/ti\u1EC1n b\u1EA1c.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. exchange [A] into [B]",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi chuy\u1EC3n \u0111\u1ED5i ti\u1EC1n t\u1EC7",
+            explanation: '\u0110\u1ED5i ngo\u1EA1i t\u1EC7 th\xE0nh \u0111\u1ED3ng ti\u1EC1n kh\xE1c d\xF9ng exchange money into, c\xF2n \u0111\xE1nh \u0111\u1ED5i th\u1EE9 tr\u1EEBu t\u01B0\u1EE3ng (m\u1EA1ng s\u1ED1ng l\u1EA5y ti\u1EC1n) ph\u1EA3i d\xF9ng "for".'
+          }
+        },
+        {
+          id: "doer_w2d2_q09",
+          roundIndex: 8,
+          prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o c\xE2u: "The tech industry in the city is notorious for its ______ schedule, leaving employees with barely any personal time."',
+          options: [
+            { id: "opt_A", label: "A", text: "tight" },
+            { id: "opt_B", label: "B", text: "loose" },
+            { id: "opt_C", label: "C", text: "bland" },
+            { id: "opt_D", label: "D", text: "relief" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. tight",
+          correctExplanation: '"A tight schedule" l\xE0 collocation t\u1EF1 nhi\xEAn ch\u1EC9 l\u1ECBch tr\xECnh l\xE0m vi\u1EC7c k\xEDn \u0111\u1EB7c, d\xE0y \u0111\u1EB7c v\xE0 c\u0103ng th\u1EB3ng.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. loose",
+            diagnosticTitle: "Ch\u1ECDn t\u1EEB tr\xE1i ngh\u0129a (l\u1ECFng l\u1EBBo)",
+            explanation: 'Loose schedule l\xE0 l\u1ECBch r\u1EA3nh r\u1ED7i l\u1ECFng l\u1EBBo, m\xE2u thu\u1EABn tr\u1EF1c ti\u1EBFp v\u1EDBi v\u1EBF sau "barely any personal time".'
+          }
+        },
+        {
+          id: "doer_w2d2_q10",
+          roundIndex: 9,
+          prompt: 'PARAPHRASE: C\xE2u "Young tech workers suffer from burnout because the tight work schedule leaves little time for sleep or personal life" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i t\u01B0\u01A1ng \u0111\u01B0\u01A1ng nh\u1EA5t l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "Severe physical and mental exhaustion among tech staff stems from grueling hours that severely restrict rest." },
+            { id: "opt_B", label: "B", text: "Employees enjoy working late at night because it boosts their productivity and financial freedom." },
+            { id: "opt_C", label: "C", text: "Startups have officially outlawed overtime to ensure young workers maintain optimal physical health." },
+            { id: "opt_D", label: "D", text: "Lack of personal life is completely unrelated to the excessive working hours demanded by tech firms." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Severe physical and mental exhaustion among tech staff stems from grueling hours that severely restrict rest.",
+          correctExplanation: '"Severe physical and mental exhaustion" paraphrase cho "burnout", v\xE0 "grueling hours that severely restrict rest" paraphrase cho "tight schedule leaves little time for sleep".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Employees enjoy working late",
+            diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c th\xF4ng \u0111i\u1EC7p ch\u1EC9 tr\xEDch th\xE0nh s\u1EF1 th\xEDch th\xFA",
+            explanation: "B\xE0i \u0111\u1ECDc n\xEAu r\xF5 s\u1EF1 \u0111au kh\u1ED5 v\xE0 c\xE1i ch\u1EBFt v\xEC ki\u1EC7t s\u1EE9c, kh\xF4ng ph\u1EA3i s\u1EF1 th\xEDch th\xFA l\xE0m vi\u1EC7c \u0111\xEAm."
+          }
+        }
+      ],
+      "WEEK 2 \u2013 DAY 3": [
+        {
+          id: "doer_w2d3_q01",
+          roundIndex: 0,
+          prompt: "C\u1EB7p nguy\xEAn \xE2m sau /u:/ v\xE0 /\u028A/ ph\xE2n bi\u1EC7t r\xF5 nh\u1EA5t qua hai t\u1EEB n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "food /fu\u02D0d/ vs. foot /f\u028At/" },
+            { id: "opt_B", label: "B", text: "pen /pen/ vs. pain /pe\u026An/" },
+            { id: "opt_C", label: "C", text: "four /f\u0254\u02D0/ vs. far /f\u0251\u02D0/" },
+            { id: "opt_D", label: "D", text: "chain /t\u0283e\u026An/ vs. chance /t\u0283\u0251\u02D0ns/" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. food /fu\u02D0d/ vs. foot /f\u028At/",
+          correctExplanation: "Food c\xF3 \xE2m u d\xE0i /u:/ (chu m\xF4i tr\xF2n ch\u1EB7t), foot c\xF3 \xE2m u ng\u1EAFn /\u028A/ (m\xF4i h\u01A1i m\u1EDF, th\u1EA3 l\u1ECFng).",
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. four /f\u0254\u02D0/ vs. far /f\u0251\u02D0/",
+            diagnosticTitle: "Nh\u1EA7m sang c\u1EB7p /\u0254\u02D0/ v\xE0 /\u0251\u02D0/",
+            explanation: "Four vs far l\xE0 c\u1EB7p ph\xE2n bi\u1EC7t gi\u1EEFa \xE2m o d\xE0i tr\xF2n m\xF4i v\xE0 \xE2m a d\xE0i h\u1EA1 h\xE0m."
+          }
+        },
+        {
+          id: "doer_w2d3_q02",
+          roundIndex: 1,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng \u0111\u1EC3 n\xF3i v\u1EC1 t\u1EA7ng nh\xE0: "I live ______ the fifth floor of an apartment building near the Saigon River."',
+          options: [
+            { id: "opt_A", label: "A", text: "on" },
+            { id: "opt_B", label: "B", text: "in" },
+            { id: "opt_C", label: "C", text: "at" },
+            { id: "opt_D", label: "D", text: "inside" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. on",
+          correctExplanation: 'Quy t\u1EAFc kim t\u1EF1 th\xE1p gi\u1EDBi t\u1EEB kh\xF4ng gian: s\u1ED1ng \u1EDF t\u1EA7ng m\u1EA5y lu\xF4n \u0111i v\u1EDBi gi\u1EDBi t\u1EEB "ON": on the 1st/2nd/5th floor.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. in",
+            diagnosticTitle: 'D\u1ECBch "\u1EDF trong t\u1EA7ng 5" th\xE0nh "in the floor"',
+            explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "\u1EDF trong t\u1EA7ng 5" l\xE0m nhi\u1EC1u b\u1EA1n ch\u1ECDn "in", nh\u01B0ng ti\u1EBFng Anh m\u1EB7t s\xE0n b\u1EC1 m\u1EB7t ph\u1EB3ng b\u1EAFt bu\u1ED9c d\xF9ng "on".'
+          }
+        },
+        {
+          id: "doer_w2d3_q03",
+          roundIndex: 2,
+          prompt: 'Ch\u1ECDn c\u1EB7p gi\u1EDBi t\u1EEB \u0111\xFAng: "My parents live ______ Hanoi, while I live ______ Ho Chi Minh City."',
+          options: [
+            { id: "opt_A", label: "A", text: "in - in" },
+            { id: "opt_B", label: "B", text: "at - at" },
+            { id: "opt_C", label: "C", text: "on - in" },
+            { id: "opt_D", label: "D", text: "at - in" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. in - in",
+          correctExplanation: 'Th\xE0nh ph\u1ED1, qu\u1ED1c gia ho\u1EB7c khu v\u1EF1c \u0111\u1ECBa l\xFD l\u1EDBn lu\xF4n d\xF9ng gi\u1EDBi t\u1EEB "IN": in Hanoi, in Ho Chi Minh City.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. at - at",
+            diagnosticTitle: 'D\xF9ng "at" cho \u0111\u1ECBa b\xE0n th\xE0nh ph\u1ED1 l\u1EDBn',
+            explanation: 'Gi\u1EDBi t\u1EEB "at" d\xF9ng cho \u0111i\u1EC3m c\u1EE5 th\u1EC3 (at the bus stop, at 12 Ba Hat Street), kh\xF4ng d\xF9ng cho c\u1EA3 th\xE0nh ph\u1ED1 r\u1ED9ng l\u1EDBn.'
+          }
+        },
+        {
+          id: "doer_w2d3_q04",
+          roundIndex: 3,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng khi n\xF3i v\u1EC1 t\xEAn \u0111\u01B0\u1EDDng: "Currently, I rent a house ______ Ba Hat Street in District 10."',
+          options: [
+            { id: "opt_A", label: "A", text: "on" },
+            { id: "opt_B", label: "B", text: "at" },
+            { id: "opt_C", label: "C", text: "in" },
+            { id: "opt_D", label: "D", text: "to" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. on",
+          correctExplanation: 'Khi ch\u1EC9 c\xF3 t\xEAn \u0111\u01B0\u1EDDng ph\u1ED1 chung (ch\u01B0a c\xF3 s\u1ED1 nh\xE0 c\u1EE5 th\u1EC3), ta d\xF9ng gi\u1EDBi t\u1EEB "ON": on Ba Hat Street.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. at",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa t\xEAn \u0111\u01B0\u1EDDng v\xE0 s\u1ED1 nh\xE0 c\u1EE5 th\u1EC3",
+            explanation: 'Ch\u1EC9 khi c\xF3 s\u1ED1 nh\xE0 c\u1EE5 th\u1EC3 (v\xED d\u1EE5: at 12 Ba Hat Street) m\u1EDBi d\xF9ng "at"; n\u1EBFu ch\u1EC9 c\xF3 t\xEAn \u0111\u01B0\u1EDDng th\xEC d\xF9ng "on".'
+          }
+        },
+        {
+          id: "doer_w2d3_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn c\u1EA5u tr\xFAc di\u1EC5n \u0111\u1EA1t kho\u1EA3ng th\u1EDDi gian di chuy\u1EC3n: "M\u1ED7i ng\xE0y t\xF4i m\u1EA5t kho\u1EA3ng 30 ph\xFAt \u0111\u1EC3 l\xE1i xe \u0111\u1EBFn trung t\xE2m."',
+          options: [
+            { id: "opt_A", label: "A", text: "It takes me around 30 minutes to drive here." },
+            { id: "opt_B", label: "B", text: "I take 30 minutes for drive here." },
+            { id: "opt_C", label: "C", text: "It spends me around 30 minutes to drive here." },
+            { id: "opt_D", label: "D", text: "It takes around 30 minutes driving here." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. It takes me around 30 minutes to drive here.",
+          correctExplanation: "C\u1EA5u tr\xFAc chu\u1EA9n v\u1EC1 th\u1EDDi l\u01B0\u1EE3ng: It takes (somebody) + time + TO DO something.",
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. It spends me around 30 minutes to drive here.",
+            diagnosticTitle: 'D\xF9ng nh\u1EA7m "spend" v\u1EDBi ch\u1EE7 ng\u1EEF gi\u1EA3 It',
+            explanation: 'Spend ch\u1EC9 d\xF9ng v\u1EDBi ch\u1EE7 ng\u1EEF l\xE0 ng\u01B0\u1EDDi (I spend 30 minutes driving), c\xF2n ch\u1EE7 ng\u1EEF gi\u1EA3 It b\u1EAFt bu\u1ED9c d\xF9ng v\u1EDBi "takes".'
+          }
+        },
+        {
+          id: "doer_w2d3_q06",
+          roundIndex: 5,
+          prompt: "Ch\u1ECDn t\u1EEB \u0111\xFAng \u0111\u1EC3 mi\xEAu t\u1EA3 m\u1ED9t ng\xF4i nh\xE0 c\xF3 3 t\u1EA7ng:",
+          options: [
+            { id: "opt_A", label: "A", text: "a three-storey house" },
+            { id: "opt_B", label: "B", text: "a three-storeys house" },
+            { id: "opt_C", label: "C", text: "a third-floor house" },
+            { id: "opt_D", label: "D", text: "a three-stairs house" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. a three-storey house",
+          correctExplanation: 'T\xEDnh t\u1EEB gh\xE9p ch\u1EC9 s\u1ED1 t\u1EA7ng: number + singular noun gh\xE9p g\u1EA1ch n\u1ED1i "three-storey" (ho\u1EB7c three-story), danh t\u1EEB kh\xF4ng th\xEAm s.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. a three-storeys house",
+            diagnosticTitle: "Th\xEAm s\u1ED1 nhi\u1EC1u v\xE0o danh t\u1EEB trong t\xEDnh t\u1EEB gh\xE9p",
+            explanation: "Trong t\xEDnh t\u1EEB gh\xE9p \u0111\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB (compound adjective), danh t\u1EEB \u0111o l\u01B0\u1EDDng lu\xF4n \u1EDF d\u1EA1ng s\u1ED1 \xEDt."
+          }
+        },
+        {
+          id: "doer_w2d3_q07",
+          roundIndex: 6,
+          prompt: '\u0110\u1EC3 mi\xEAu t\u1EA3 v\u1ECB tr\xED c\u0103n ph\xF2ng "n\u1EB1m \u1EDF cu\u1ED1i h\xE0nh lang", c\u1EE5m t\u1EEB chu\u1EA9n l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "at the end of the hallway" },
+            { id: "opt_B", label: "B", text: "in the end of the hallway" },
+            { id: "opt_C", label: "C", text: "on the finish hallway" },
+            { id: "opt_D", label: "D", text: "to the end hallway" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. at the end of the hallway",
+          correctExplanation: 'Ch\u1EC9 v\u1ECB tr\xED v\u1EADt l\xFD \u1EDF \u0111i\u1EC3m cu\u1ED1i c\xF9ng: "at the end of...". Ng\u01B0\u1EE3c l\u1EA1i, "in the end" l\xE0 ph\xF3 t\u1EEB ch\u1EC9 th\u1EDDi gian mang ngh\u0129a r\u1ED1t cu\u1ED9c/cu\u1ED1i c\xF9ng.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. in the end of the hallway",
+            diagnosticTitle: 'Nh\u1EA7m l\u1EABn gi\u1EEFa "at the end of" v\xE0 "in the end"',
+            explanation: '"In the end" kh\xF4ng bao gi\u1EDD \u0111i v\u1EDBi "of something"; \u0111\u1EC3 ch\u1EC9 v\u1ECB tr\xED n\u01A1i ch\u1ED1n b\u1EAFt bu\u1ED9c d\xF9ng "at the end of".'
+          }
+        },
+        {
+          id: "doer_w2d3_q08",
+          roundIndex: 7,
+          prompt: 'T\xEDnh t\u1EEB n\xE0o sau \u0111\xE2y mang ngh\u0129a "\u1EA5m c\xFAng, tho\u1EA3i m\xE1i" th\u01B0\u1EDDng d\xF9ng nh\u1EA5t \u0111\u1EC3 mi\xEAu t\u1EA3 ph\xF2ng ng\u1EE7 gia \u0111\xECnh?',
+          options: [
+            { id: "opt_A", label: "A", text: "cozy" },
+            { id: "opt_B", label: "B", text: "crowded" },
+            { id: "opt_C", label: "C", text: "isolated" },
+            { id: "opt_D", label: "D", text: "narrow" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. cozy",
+          correctExplanation: '"Cozy" (ho\u1EB7c cosy) mi\xEAu t\u1EA3 m\u1ED9t kh\xF4ng gian nh\u1ECF g\u1ECDn, \u1EA5m c\xFAng v\xE0 \u0111em l\u1EA1i c\u1EA3m gi\xE1c b\xECnh y\xEAn th\u01B0 gi\xE3n.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. crowded",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn s\u1EF1 \u1EA5m c\xFAng v\u1EDBi s\u1EF1 \u0111\xF4ng \u0111\xFAc",
+            explanation: "Crowded mang ngh\u0129a ti\xEAu c\u1EF1c l\xE0 \u0111\xF4ng \u0111\xFAc, ch\u1EADt n\xEDch ng\u01B0\u1EDDi."
+          }
+        },
+        {
+          id: "doer_w2d3_q09",
+          roundIndex: 8,
+          prompt: 'Ch\u1ECDn c\xE2u di\u1EC5n \u0111\u1EA1t v\u1ECB tr\xED \u0111\u1ED1i di\u1EC7n ch\xEDnh x\xE1c trong m\xF4 t\u1EA3 ph\xF2ng \u1ED1c: "\u0110\u1ED1i di\u1EC7n b\xE0n l\xE0m vi\u1EC7c c\u1EE7a t\xF4i l\xE0 m\u1ED9t c\u1EEDa s\u1ED5 l\u1EDBn."',
+          options: [
+            { id: "opt_A", label: "A", text: "Opposite my desk is a large window." },
+            { id: "opt_B", label: "B", text: "Opposite to my desk has a large window." },
+            { id: "opt_C", label: "C", text: "In front of against my desk is a large window." },
+            { id: "opt_D", label: "D", text: "Across of my desk there a large window." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Opposite my desk is a large window.",
+          correctExplanation: '"Opposite something" \u0111\xF3ng vai tr\xF2 l\xE0 c\u1EE5m gi\u1EDBi t\u1EEB ch\u1EC9 v\u1ECB tr\xED, c\u1EA5u tr\xFAc \u0111\u1EA3o ng\u1EEF: Opposite + [N\u01A1i ch\u1ED1n] + is + [Ch\u1EE7 ng\u1EEF].',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Opposite to my desk has a large window.",
+            diagnosticTitle: 'D\xF9ng \u0111\u1ED9ng t\u1EEB "has" thay v\xEC to be ch\u1EC9 s\u1EF1 t\u1ED3n t\u1EA1i',
+            explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "\u0111\u1ED1i di\u1EC7n c\xF3 m\u1ED9t c\u1EEDa s\u1ED5" l\xE0m ng\u01B0\u1EDDi h\u1ECDc d\u1ECBch th\xE0nh "has a window", sai ng\u1EEF ph\xE1p ti\u1EBFng Anh.'
+          }
+        },
+        {
+          id: "doer_w2d3_q10",
+          roundIndex: 9,
+          prompt: "Ch\u1ECDn c\xE2u th\xE0nh ng\u1EEF/t\u1EEB v\u1EF1ng \u0111\xFAng th\u1EC3 hi\u1EC7n b\u1EA1n \u0111\u1EBFn r\u1EA5t s\u1EDBm:",
+          options: [
+            { id: "opt_A", label: "A", text: "You're here bright and early!" },
+            { id: "opt_B", label: "B", text: "You're here light and quick!" },
+            { id: "opt_C", label: "C", text: "You're here shiny and first!" },
+            { id: "opt_D", label: "D", text: "You're here fast and sharp!" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. You're here bright and early!",
+          correctExplanation: 'Th\xE0nh ng\u1EEF (idiom) ph\u1ED5 bi\u1EBFn trong giao ti\u1EBFp h\xE0ng ng\xE0y ch\u1EC9 vi\u1EC7c ai \u0111\xF3 c\xF3 m\u1EB7t t\u1EEB s\xE1ng s\u1EDBm tinh m\u01A1: "bright and early".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. You're here light and quick!",
+            diagnosticTitle: "Gh\xE9p t\u1EEB t\u1EF1 do kh\xF4ng theo th\xE0nh ng\u1EEF b\u1EA3n x\u1EE9",
+            explanation: "Th\xE0nh ng\u1EEF ti\u1EBFng Anh l\xE0 c\u1EE5m c\u1ED1 \u0111\u1ECBnh kh\xF4ng th\u1EC3 t\u1EF1 \xFD thay \u0111\u1ED5i t\u1EEB \u0111\u1ED3ng ngh\u0129a."
+          }
+        }
+      ]
+    };
+  }
+});
+
+// server/services/bank_parts/week3.data.ts
+var WEEK_3_QUESTIONS;
+var init_week3_data = __esm({
+  "server/services/bank_parts/week3.data.ts"() {
+    WEEK_3_QUESTIONS = {
+      "WEEK 3 \u2013 DAY 1": [
+        {
+          id: "doer_w3d1_q01",
+          roundIndex: 0,
+          prompt: 'Ch\u1ECDn th\xEC \u0111\xFAng \u0111\u1EC3 di\u1EC5n t\u1EA3 quy lu\u1EADt t\u1EF1 nhi\xEAn, s\u1EF1 th\u1EADt hi\u1EC3n nhi\xEAn: "Water ______ at zero degrees Celsius (0\xB0C)."',
+          options: [
+            { id: "opt_A", label: "A", text: "freezes" },
+            { id: "opt_B", label: "B", text: "is freezing" },
+            { id: "opt_C", label: "C", text: "froze" },
+            { id: "opt_D", label: "D", text: "will freeze" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. freezes",
+          correctExplanation: 'Ch\xE2n l\xFD khoa h\u1ECDc / s\u1EF1 th\u1EADt lu\xF4n lu\xF4n \u0111\xFAng trong t\u1EF1 nhi\xEAn b\u1EAFt bu\u1ED9c ph\u1EA3i chia \u1EDF th\xEC Hi\u1EC7n t\u1EA1i \u0111\u01A1n (Simple Present). Ch\u1EE7 ng\u1EEF kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c "Water" chia \u0111\u1ED9ng t\u1EEB th\xEAm -s/-es.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. is freezing",
+            diagnosticTitle: "D\xF9ng Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n cho quy lu\u1EADt v\u0129nh c\u1EEDu",
+            explanation: "Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n ch\u1EC9 h\xE0nh \u0111\u1ED9ng \u0111ang di\u1EC5n ra t\u1EA1m th\u1EDDi, kh\xF4ng d\xF9ng \u0111\u1EC3 n\xEAu \u0111\u1ECBnh lu\u1EADt v\u1EADt l\xFD."
+          }
+        },
+        {
+          id: "doer_w3d1_q02",
+          roundIndex: 1,
+          prompt: 'Ch\u1ECDn th\xEC \u0111\xFAng trong c\xE2u \u0111\u1ED1i chi\u1EBFu qu\xE1 kh\u1EE9 v\xE0 hi\u1EC7n t\u1EA1i: "Before going to university, many students ______ not aware of the importance of learning English."',
+          options: [
+            { id: "opt_A", label: "A", text: "were" },
+            { id: "opt_B", label: "B", text: "are" },
+            { id: "opt_C", label: "C", text: "have been" },
+            { id: "opt_D", label: "D", text: "will be" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. were",
+          correctExplanation: "Ng\u1EEF c\u1EA3nh x\u1EA3y ra tr\u01B0\u1EDBc m\u1ED9t m\u1ED1c th\u1EDDi gian trong qu\xE1 kh\u1EE9 (tr\u01B0\u1EDBc khi v\xE0o \u0111\u1EA1i h\u1ECDc, l\xFAc c\xF2n l\xE0 h\u1ECDc sinh c\u1EA5p 3), n\xEAn tr\u1EA1ng th\xE1i nh\u1EADn th\u1EE9c l\xFAc \u0111\xF3 chia \u1EDF Qu\xE1 kh\u1EE9 \u0111\u01A1n (were not aware).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. are",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn nh\u1EADn th\u1EE9c qu\xE1 kh\u1EE9 v\u1EDBi th\u1EF1c t\u1EA1i",
+            explanation: 'Tr\u1EA1ng ng\u1EEF ch\u1EC9 th\u1EDDi gian qu\xE1 kh\u1EE9 "Before going to university" quy \u0111\u1ECBnh m\u1EC7nh \u0111\u1EC1 n\xE0y ph\u1EA3i chia th\xEC qu\xE1 kh\u1EE9 \u0111\u01A1n.'
+          }
+        },
+        {
+          id: "doer_w3d1_q03",
+          roundIndex: 2,
+          prompt: 'Ch\u1ECDn d\u1EA1ng th\xEC th\xEDch h\u1EE3p: "Although the authorities severely ______ people who litter the streets, the city center is still dirty."',
+          options: [
+            { id: "opt_A", label: "A", text: "fine" },
+            { id: "opt_B", label: "B", text: "fined" },
+            { id: "opt_C", label: "C", text: "had fined" },
+            { id: "opt_D", label: "D", text: "were fining" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. fine",
+          correctExplanation: 'M\u1EC7nh \u0111\u1EC1 ch\xEDnh d\xF9ng "is still dirty" \u1EDF hi\u1EC7n t\u1EA1i, vi\u1EC7c ch\xEDnh quy\u1EC1n ph\u1EA1t h\xE0nh ch\xEDnh l\xE0 ch\xEDnh s\xE1ch li\xEAn t\u1EE5c \u0111ang \u0111\u01B0\u1EE3c th\u1EF1c thi \u1EDF hi\u1EC7n t\u1EA1i n\xEAn d\xF9ng th\xEC Hi\u1EC7n t\u1EA1i \u0111\u01A1n (fine).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. fined",
+            diagnosticTitle: "L\u1EC7ch th\xEC gi\u1EEFa hai m\u1EC7nh \u0111\u1EC1 t\u01B0\u01A1ng ph\u1EA3n",
+            explanation: 'D\xF9ng fined (qu\xE1 kh\u1EE9) s\u1EBD ng\u1EE5 \xFD hi\u1EC7n nay kh\xF4ng c\xF2n ph\u1EA1t n\u1EEFa, m\xE2u thu\u1EABn v\u1EDBi \xFD ngh\u0129a li\xEAn t\u1EE5c k\u1EBFt n\u1ED1i v\u1EDBi "is still dirty".'
+          }
+        },
+        {
+          id: "doer_w3d1_q04",
+          roundIndex: 3,
+          prompt: "X\xE1c \u0111\u1ECBnh c\xE2u d\xF9ng \u0111\xFAng th\xEC Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n ch\u1EC9 m\u1ED9t s\u1EF1 vi\u1EC7c \u0111ang ti\u1EBFn tri\u1EC3n quanh th\u1EDDi \u0111i\u1EC3m n\xF3i:",
+          options: [
+            { id: "opt_A", label: "A", text: "She is looking for a new job these days." },
+            { id: "opt_B", label: "B", text: "She looks for a new job these days." },
+            { id: "opt_C", label: "C", text: "She was looking for a new job these days." },
+            { id: "opt_D", label: "D", text: "She has looked for a new job these days." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. She is looking for a new job these days.",
+          correctExplanation: '"These days" l\xE0 d\u1EA5u hi\u1EC7u c\u1EE7a m\u1ED9t qu\xE1 tr\xECnh t\u1EA1m th\u1EDDi \u0111ang di\u1EC5n ra quanh hi\u1EC7n t\u1EA1i, th\xEC Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n (is looking) l\xE0 chu\u1EA9n x\xE1c nh\u1EA5t.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. She looks for a new job these days.",
+            diagnosticTitle: "D\xF9ng Hi\u1EC7n t\u1EA1i \u0111\u01A1n cho t\xECnh hu\u1ED1ng mang t\xEDnh t\u1EA1m th\u1EDDi",
+            explanation: "Hi\u1EC7n t\u1EA1i \u0111\u01A1n di\u1EC5n t\u1EA3 s\u1EF1 th\u1EADt l\xE2u d\xE0i/th\xF3i quen c\u1ED1 \u0111\u1ECBnh; vi\u1EC7c t\xECm vi\u1EC7c l\xE0 t\u1EA1m th\u1EDDi trong giai \u0111o\u1EA1n hi\u1EC7n nay."
+          }
+        },
+        {
+          id: "doer_w3d1_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt chu\u1EA9n ng\u1EEF ph\xE1p v\u1EDBi c\u1EE5m t\u1EEB "beneficial to":',
+          options: [
+            { id: "opt_A", label: "A", text: "Reading books is beneficial to children's cognitive development." },
+            { id: "opt_B", label: "B", text: "Reading books is beneficial for to develop children's brain." },
+            { id: "opt_C", label: "C", text: "Read books is beneficial with children's development." },
+            { id: "opt_D", label: "D", text: "Reading books beneficial to children's development." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Reading books is beneficial to children's cognitive development.",
+          correctExplanation: 'T\xEDnh t\u1EEB "beneficial" \u0111i v\u1EDBi gi\u1EDBi t\u1EEB "to" (c\xF3 l\u1EE3i cho ai/c\xE1i g\xEC). Ch\u1EE7 ng\u1EEF Gerund "Reading books" \u0111\xF2i h\u1ECFi to be "is".',
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Reading books beneficial...",
+            diagnosticTitle: "B\u1ECF qu\xEAn \u0111\u1ED9ng t\u1EEB to be li\xEAn k\u1EBFt t\xEDnh t\u1EEB",
+            explanation: 'T\xEDnh t\u1EEB beneficial kh\xF4ng th\u1EC3 t\u1EF1 l\xE0m v\u1ECB ng\u1EEF n\u1EBFu thi\u1EBFu \u0111\u1ED9ng t\u1EEB to be "is".'
+          }
+        },
+        {
+          id: "doer_w3d1_q06",
+          roundIndex: 5,
+          prompt: 'X\xE9t c\xE2u: "They travelled to Italy every summer and always stayed in small villages on the coast." C\xE2u n\xE0y di\u1EC5n t\u1EA3:',
+          options: [
+            { id: "opt_A", label: "A", text: "M\u1ED9t th\xF3i quen l\u1EB7p \u0111i l\u1EB7p l\u1EA1i trong qu\xE1 kh\u1EE9 nay kh\xF4ng c\xF2n n\u1EEFa" },
+            { id: "opt_B", label: "B", text: "M\u1ED9t k\u1EBF ho\u1EA1ch ch\u1EAFc ch\u1EAFn s\u1EBD x\u1EA3y ra v\xE0o m\xF9a h\xE8 t\u1EDBi" },
+            { id: "opt_C", label: "C", text: "M\u1ED9t h\xE0nh \u0111\u1ED9ng \u0111ang di\u1EC5n ra t\u1EA1i th\u1EDDi \u0111i\u1EC3m n\xF3i" },
+            { id: "opt_D", label: "D", text: "M\u1ED9t s\u1EF1 th\u1EADt lu\xF4n lu\xF4n \u0111\xFAng trong hi\u1EC7n t\u1EA1i" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. M\u1ED9t th\xF3i quen l\u1EB7p \u0111i l\u1EB7p l\u1EA1i trong qu\xE1 kh\u1EE9 nay kh\xF4ng c\xF2n n\u1EEFa",
+          correctExplanation: "\u0110\u1ED9ng t\u1EEB chia \u1EDF Qu\xE1 kh\u1EE9 \u0111\u01A1n (travelled, stayed) k\u1EBFt h\u1EE3p v\u1EDBi tr\u1EA1ng t\u1EEB t\u1EA7n su\u1EA5t (every summer, always) di\u1EC5n t\u1EA3 th\xF3i quen trong qu\xE1 kh\u1EE9.",
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. M\u1ED9t s\u1EF1 th\u1EADt lu\xF4n lu\xF4n \u0111\xFAng trong hi\u1EC7n t\u1EA1i",
+            diagnosticTitle: 'Nh\u1EA7m tr\u1EA1ng t\u1EEB "always" v\xE0 "every" ch\u1EC9 c\xF3 trong hi\u1EC7n t\u1EA1i \u0111\u01A1n',
+            explanation: "Tr\u1EA1ng t\u1EEB t\u1EA7n su\u1EA5t nh\u01B0 always/every ho\xE0n to\xE0n c\xF3 th\u1EC3 k\u1EBFt h\u1EE3p v\u1EDBi Qu\xE1 kh\u1EE9 \u0111\u01A1n \u0111\u1EC3 ch\u1EC9 th\xF3i quen c\u0169."
+          }
+        },
+        {
+          id: "doer_w3d1_q07",
+          roundIndex: 6,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng: "Tr\u01B0\u1EDBc khi b\u1ECB b\u1EC7nh n\u1EB7ng l\u1EA7n \u0111\u1EA7u ti\xEAn, \u0111a s\u1ED1 m\u1ECDi ng\u01B0\u1EDDi coi tr\u1ECDng ti\u1EC1n b\u1EA1c h\u01A1n s\u1EE9c kh\u1ECFe."',
+          options: [
+            { id: "opt_A", label: "A", text: "Before suffering from a serious illness, most people valued wealth over health." },
+            { id: "opt_B", label: "B", text: "Before suffer from a serious illness, most people value wealth over health." },
+            { id: "opt_C", label: "C", text: "Before suffering a serious illness, most people are valuing wealth than health." },
+            { id: "opt_D", label: "D", text: "Before suffered from a serious illness, most people have valued wealth to health." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Before suffering from a serious illness, most people valued wealth over health.",
+          correctExplanation: 'Sau gi\u1EDBi t\u1EEB before l\xE0 V-ing (suffering from). M\u1EC7nh \u0111\u1EC1 ch\xEDnh chia qu\xE1 kh\u1EE9 \u0111\u01A1n (valued) v\xE0 c\u1EA5u tr\xFAc so s\xE1nh "value X over Y" (coi tr\u1ECDng X h\u01A1n Y).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. are valuing wealth than health",
+            diagnosticTitle: "D\xF9ng than v\u1EDBi \u0111\u1ED9ng t\u1EEB value",
+            explanation: 'C\u1EA5u tr\xFAc chu\u1EA9n l\xE0 "value something OVER something else", kh\xF4ng d\xF9ng "than".'
+          }
+        },
+        {
+          id: "doer_w3d1_q08",
+          roundIndex: 7,
+          prompt: 'Ch\u1ECDn \u0111\u1ED9ng t\u1EEB \u0111\xFAng trong ng\u1EEF c\u1EA3nh l\u1ECBch tr\xECnh c\u1ED1 \u0111\u1ECBnh: "The train ______ every morning at 8 AM."',
+          options: [
+            { id: "opt_A", label: "A", text: "leaves" },
+            { id: "opt_B", label: "B", text: "is leaving" },
+            { id: "opt_C", label: "C", text: "left" },
+            { id: "opt_D", label: "D", text: "shall leave" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. leaves",
+          correctExplanation: "L\u1ECBch tr\xECnh t\xE0u xe, m\xE1y bay, th\u1EDDi kh\xF3a bi\u1EC3u c\u1ED1 \u0111\u1ECBnh lu\xF4n d\xF9ng th\xEC Hi\u1EC7n t\u1EA1i \u0111\u01A1n mang ngh\u0129a l\u1ECBch tr\xECnh c\xF4ng c\u1ED9ng.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. is leaving",
+            diagnosticTitle: "D\xF9ng th\xEC ti\u1EBFp di\u1EC5n cho l\u1ECBch tr\xECnh c\xF4ng c\u1ED9ng c\u1ED1 \u0111\u1ECBnh",
+            explanation: "Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n d\xF9ng cho k\u1EBF ho\u1EA1ch c\xE1 nh\xE2n \u0111\xE3 s\u1EAFp x\u1EBFp, v\u1EDBi t\xE0u xe c\xF4ng c\u1ED9ng theo gi\u1EDD chu\u1EA9n ph\u1EA3i d\xF9ng Hi\u1EC7n t\u1EA1i \u0111\u01A1n."
+          }
+        },
+        {
+          id: "doer_w3d1_q09",
+          roundIndex: 8,
+          prompt: 'Ch\u1ECDn d\u1EA1ng th\u1EE9c \u0111\xFAng c\u1EE7a \u0111\u1ED9ng t\u1EEB to be: "Please be quiet. The children ______ in the bedroom."',
+          options: [
+            { id: "opt_A", label: "A", text: "are sleeping" },
+            { id: "opt_B", label: "B", text: "sleep" },
+            { id: "opt_C", label: "C", text: "were sleeping" },
+            { id: "opt_D", label: "D", text: "have slept" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. are sleeping",
+          correctExplanation: 'M\u1EC7nh l\u1EC7nh th\u1EE9c g\xE2y ch\xFA \xFD "Please be quiet!" b\xE1o hi\u1EC7u m\u1ED9t h\xE0nh \u0111\u1ED9ng \u0111ang th\u1EF1c s\u1EF1 di\u1EC5n ra ngay t\u1EA1i th\u1EDDi \u0111i\u1EC3m n\xF3i.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. sleep",
+            diagnosticTitle: "D\xF9ng Hi\u1EC7n t\u1EA1i \u0111\u01A1n thay cho h\xE0nh \u0111\u1ED9ng \u0111ang x\u1EA3y ra tr\u01B0\u1EDBc m\u1EAFt",
+            explanation: 'N\u1EBFu d\xF9ng "sleep" th\xEC ch\u1EC9 n\xF3i v\u1EC1 th\xF3i quen n\xF3i chung, kh\xF4ng gi\u1EA3i th\xEDch l\xFD do ph\u1EA3i gi\u1EEF im l\u1EB7ng ngay l\xFAc n\xE0y.'
+          }
+        },
+        {
+          id: "doer_w3d1_q10",
+          roundIndex: 9,
+          prompt: 'Nh\u1EADn di\u1EC7n l\u1ED7i sai v\u1EC1 th\xEC: "Yesterday, I put my wallet on the bed, but this morning I forgot taking it with me."',
+          options: [
+            { id: "opt_A", label: "A", text: "forgot taking -> forgot to take" },
+            { id: "opt_B", label: "B", text: "put -> puts" },
+            { id: "opt_C", label: "C", text: "this morning -> at this morning" },
+            { id: "opt_D", label: "D", text: "on the bed -> at the bed" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. forgot taking -> forgot to take",
+          correctExplanation: "Forget to do sth = qu\xEAn ph\u1EA3i l\xE0m m\u1ED9t vi\u1EC7c g\xEC \u0111\xF3 (ch\u01B0a l\xE0m). Forget doing sth = qu\xEAn m\u1ED9t vi\u1EC7c \u0111\xE3 t\u1EEBng l\xE0m trong qu\xE1 kh\u1EE9.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. put -> puts",
+            diagnosticTitle: "T\u01B0\u1EDFng nh\u1EA7m \u0111\u1ED9ng t\u1EEB put ch\u01B0a chia th\xEC",
+            explanation: '\u0110\u1ED9ng t\u1EEB b\u1EA5t quy t\u1EAFc "put" c\xF3 c\u1EA3 3 c\u1ED9t gi\u1ED1ng nhau (put - put - put), trong c\xE2u qu\xE1 kh\u1EE9 yesterday d\xF9ng "put" l\xE0 ho\xE0n to\xE0n \u0111\xFAng.'
+          }
+        }
+      ],
+      "WEEK 3 \u2013 DAY 2": [
+        {
+          id: "doer_w3d2_q01",
+          roundIndex: 0,
+          prompt: 'Trong c\u1EE5m t\u1EEB "one of those standout destinations" (b\xE0i \u0111\u1ECDc H\u1ED9i An), t\u1EEB "standout" (adj) \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi t\u1EEB n\xE0o?',
+          options: [
+            { id: "opt_A", label: "A", text: "remarkable / extraordinary (n\u1ED5i b\u1EADt, xu\u1EA5t ch\xFAng)" },
+            { id: "opt_B", label: "B", text: "ordinary / average (b\xECnh th\u01B0\u1EDDng, ph\u1ED5 th\xF4ng)" },
+            { id: "opt_C", label: "C", text: "overcrowded (qu\xE1 \u0111\xF4ng \u0111\xFAc)" },
+            { id: "opt_D", label: "D", text: "isolated (xa x\xF4i, c\xF4 l\u1EADp)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. remarkable / extraordinary (n\u1ED5i b\u1EADt, xu\u1EA5t ch\xFAng)",
+          correctExplanation: '"Standout" (adj) m\xF4 t\u1EA3 m\u1ED9t ng\u01B0\u1EDDi/v\u1EADt/\u0111\u1ECBa \u0111i\u1EC3m v\u01B0\u1EE3t tr\u1ED9i, \u0111\u1EB7c bi\u1EC7t xu\u1EA5t s\u1EAFc v\xE0 \u0111\xE1ng nh\u1EDB h\u01A1n t\u1EA5t c\u1EA3 nh\u1EEFng th\u1EE9 xung quanh.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. overcrowded",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa n\u1ED5i ti\u1EBFng thu h\xFAt kh\xE1ch v\u1EDBi \u0111\xF4ng \u0111\xFAc ch\u1EADt ch\u1ED9i",
+            explanation: "Standout ch\u1EC9 ch\u1EA5t l\u01B0\u1EE3ng n\u1ED5i b\u1EADt v\u01B0\u1EE3t tr\u1ED9i c\u1EE7a \u0111\u1ECBa danh, kh\xF4ng mang ngh\u0129a ti\xEAu c\u1EF1c l\xE0 qu\xE1 t\u1EA3i hay ch\u1EADt ch\u1ED9i."
+          }
+        },
+        {
+          id: "doer_w3d2_q02",
+          roundIndex: 1,
+          prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "bland" trong c\xE2u: "I always thought pho was such a bland dish without very much flavour" l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "flavorful / tasty (\u0111\u1EADm \u0111\xE0, gi\xE0u h\u01B0\u01A1ng v\u1ECB)" },
+            { id: "opt_B", label: "B", text: "tasteless (nh\u1EA1t nh\u1EBDo, v\xF4 v\u1ECB)" },
+            { id: "opt_C", label: "C", text: "plain (\u0111\u01A1n \u0111i\u1EC7u, kh\xF4ng n\xEAm n\u1EBFm)" },
+            { id: "opt_D", label: "D", text: "mild (d\u1ECBu nh\u1EB9, kh\xF4ng cay)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. flavorful / tasty (\u0111\u1EADm \u0111\xE0, gi\xE0u h\u01B0\u01A1ng v\u1ECB)",
+          correctExplanation: '"Bland" = nh\u1EA1t nh\u1EBDo, thi\u1EBFu gia v\u1ECB. Do \u0111\xF3 t\u1EEB tr\xE1i ngh\u0129a ch\xEDnh x\xE1c nh\u1EA5t l\xE0 "flavorful" (\u0111\u1EA7y \u0111\u1EB7n h\u01B0\u01A1ng v\u1ECB).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. tasteless",
+            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
+            explanation: "Tasteless l\xE0 t\u1EEB \u0111\u1ED3ng ngh\u0129a v\u1EDBi bland. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
+          }
+        },
+        {
+          id: "doer_w3d2_q03",
+          roundIndex: 2,
+          prompt: 'Trong c\u1EE5m "a sobering look at the lasting effects of the Vietnam War", t\u1EEB "sobering" mang s\u1EAFc th\xE1i ngh\u0129a g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "serious and thought-provoking (l\u1EAFng \u0111\u1ECDng, khi\u1EBFn ng\u01B0\u1EDDi ta ph\u1EA3i suy ng\u1EABm s\xE2u s\u1EAFc)" },
+            { id: "opt_B", label: "B", text: "entertaining and humorous (mang t\xEDnh gi\u1EA3i tr\xED, h\xE0i h\u01B0\u1EDBc)" },
+            { id: "opt_C", label: "C", text: "boring and dull (nh\xE0m ch\xE1n, t\u1EBB nh\u1EA1t)" },
+            { id: "opt_D", label: "D", text: "terrifying and chaotic (kinh ho\xE0ng, h\u1ED7n lo\u1EA1n)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. serious and thought-provoking (l\u1EAFng \u0111\u1ECDng, khi\u1EBFn ng\u01B0\u1EDDi ta ph\u1EA3i suy ng\u1EABm s\xE2u s\u1EAFc)",
+          correctExplanation: '"Sobering" (adj) m\xF4 t\u1EA3 tr\u1EA3i nghi\u1EC7m trang nghi\xEAm khi\u1EBFn ng\u01B0\u1EDDi xem b\u1EEBng t\u1EC9nh, tr\u1EDF n\xEAn nghi\xEAm t\xFAc v\xE0 suy ng\u1EABm s\xE2u xa v\u1EC1 th\u1EF1c t\u1EBF.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. boring and dull",
+            diagnosticTitle: "\u0110\xE1nh \u0111\u1ED3ng c\u1EA3m gi\xE1c tr\u1EA7m l\u1EAFng v\u1EDBi s\u1EF1 nh\xE0m ch\xE1n",
+            explanation: "Sobering l\xE0 m\u1ED9t tr\u1EA3i nghi\u1EC7m g\xE2y \u1EA5n t\u01B0\u1EE3ng tinh th\u1EA7n m\u1EA1nh m\u1EBD v\xE0 s\xE2u s\u1EAFc, ho\xE0n to\xE0n kh\xF4ng ph\u1EA3i t\u1EBB nh\u1EA1t."
+          }
+        },
+        {
+          id: "doer_w3d2_q04",
+          roundIndex: 3,
+          prompt: 'Collocation n\xE0o trong b\xE0i \u0111\u1ECDc di\u1EC5n t\u1EA3 "l\u1ECBch tr\xECnh chi ti\u1EBFt c\xE1c \u0111\u1ECBa \u0111i\u1EC3m v\xE0 ho\u1EA1t \u0111\u1ED9ng c\u1EE7a m\u1ED9t chuy\u1EBFn \u0111i"?',
+          options: [
+            { id: "opt_A", label: "A", text: "Travel itinerary" },
+            { id: "opt_B", label: "B", text: "Travel receipt" },
+            { id: "opt_C", label: "C", text: "Travel certificate" },
+            { id: "opt_D", label: "D", text: "Travel coupon" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Travel itinerary",
+          correctExplanation: '"Travel itinerary" l\xE0 thu\u1EADt ng\u1EEF chu\u1EA9n x\xE1c ch\u1EC9 b\u1EA3n l\u1ECBch tr\xECnh chi ti\u1EBFt c\xE1c ch\u1EB7ng d\u1EEBng ch\xE2n trong m\u1ED9t chuy\u1EBFn du l\u1ECBch.',
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Travel coupon",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi v\xE9 gi\u1EA3m gi\xE1 / phi\u1EBFu tham quan",
+            explanation: "Coupon l\xE0 phi\u1EBFu d\u1ECBch v\u1EE5/gi\u1EA3m gi\xE1, kh\xF4ng mang ngh\u0129a l\u1ECBch tr\xECnh di chuy\u1EC3n."
+          }
+        },
+        {
+          id: "doer_w3d2_q05",
+          roundIndex: 4,
+          prompt: 'T\u1EEB "topography" trong c\xE2u "Halong Bay is home to some of the most fascinating topography in the world" mang ngh\u0129a l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "\u0110\u1ECBa h\xECnh v\xE0 \u0111\u1EB7c \u0111i\u1EC3m \u0111\u1ECBa m\u1EA1o t\u1EF1 nhi\xEAn c\u1EE7a m\u1ED9t v\xF9ng \u0111\u1EA5t/v\u1ECBnh" },
+            { id: "opt_B", label: "B", text: "Kh\xED h\u1EADu v\xE0 l\u01B0\u1EE3ng m\u01B0a h\xE0ng n\u0103m" },
+            { id: "opt_C", label: "C", text: "H\u1EC7 th\u1ED1ng truy\u1EC1n thuy\u1EBFt v\xE0 phong t\u1EE5c b\u1EA3n \u0111\u1ECBa" },
+            { id: "opt_D", label: "D", text: "M\u1EA1ng l\u01B0\u1EDBi \u0111\u01B0\u1EDDng b\u1ED9 v\xE0 ph\u01B0\u01A1ng ti\u1EC7n c\xF4ng c\u1ED9ng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. \u0110\u1ECBa h\xECnh v\xE0 \u0111\u1EB7c \u0111i\u1EC3m \u0111\u1ECBa m\u1EA1o t\u1EF1 nhi\xEAn c\u1EE7a m\u1ED9t v\xF9ng \u0111\u1EA5t/v\u1ECBnh",
+          correctExplanation: '"Topography" (danh t\u1EEB h\u1ECDc thu\u1EADt) ch\u1EC9 \u0111\u1EB7c t\xEDnh \u0111\u1ECBa h\xECnh, h\xECnh th\xE1i c\xE1c kh\u1ED1i n\xFAi \u0111\xE1, \u0111\u1EA3o n\u1ED5i v\xE0 b\u1EC1 m\u1EB7t \u0111\u1ECBa th\u1EBF t\u1EF1 nhi\xEAn.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. H\u1EC7 th\u1ED1ng truy\u1EC1n thuy\u1EBFt v\xE0 phong t\u1EE5c",
+            diagnosticTitle: "Nh\u1EA7m topography v\u1EDBi folklore / mythology",
+            explanation: "Topography thu\u1EA7n t\xFAy l\xE0 thu\u1EADt ng\u1EEF \u0111\u1ECBa l\xFD h\u1ECDc mi\xEAu t\u1EA3 h\xECnh th\u1EC3 \u0111\u1EA5t \u0111ai c\u1EA3nh quan."
+          }
+        },
+        {
+          id: "doer_w3d2_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn t\u1EEB \u0111i\u1EC1n v\xE0o collocation chu\u1EA9n: "This pace allowed me to ______ experience Vietnam as a whole." (tr\u1EA3i nghi\u1EC7m m\u1ED9t c\xE1ch th\u1EA5u \u0111\xE1o, tr\u1ECDn v\u1EB9n)',
+          options: [
+            { id: "opt_A", label: "A", text: "thoroughly" },
+            { id: "opt_B", label: "B", text: "shallowly" },
+            { id: "opt_C", label: "C", text: "partially" },
+            { id: "opt_D", label: "D", text: "roughly" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. thoroughly",
+          correctExplanation: '"Thoroughly experience something" l\xE0 collocation cao c\u1EA5p trong IELTS: tr\u1EA3i nghi\u1EC7m m\u1ED9t c\xE1ch t\u01B0\u1EDDng t\u1EADn, c\u1EB7n k\u1EBD v\xE0 tr\u1ECDn v\u1EB9n t\u1EEB \u0111\u1EA7u \u0111\u1EBFn cu\u1ED1i.',
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. roughly",
+            diagnosticTitle: "Nh\u1EA7m roughly (s\u01A1 s\xE0i/\u01B0\u1EDBc ch\u1EEBng) v\u1EDBi tr\u1EA3i nghi\u1EC7m s\xE2u s\u1EAFc",
+            explanation: "Roughly mang ngh\u0129a \xE1ng ch\u1EEBng ho\u1EB7c th\xF4 k\u1EC7ch, tr\xE1i ng\u01B0\u1EE3c ho\xE0n to\xE0n v\u1EDBi \xFD ngh\u0129a t\u01B0\u1EDDng t\u1EADn c\u1EE7a thoroughly."
+          }
+        },
+        {
+          id: "doer_w3d2_q07",
+          roundIndex: 6,
+          prompt: 'Th\xE0nh ng\u1EEF: "I cannot recommend this experience enough!" t\u01B0\u01A1ng \u0111\u01B0\u01A1ng v\u1EDBi c\xE2u n\xE0o d\u01B0\u1EDBi \u0111\xE2y?',
+          options: [
+            { id: "opt_A", label: "A", text: "I strongly / wholeheartedly encourage everyone to try this experience." },
+            { id: "opt_B", label: "B", text: "I do not think this experience is suitable for most tourists." },
+            { id: "opt_C", label: "C", text: "I have run out of time to describe the trip properly." },
+            { id: "opt_D", label: "D", text: "I refuse to provide any further recommendation about this tour." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. I strongly / wholeheartedly encourage everyone to try this experience.",
+          correctExplanation: '"Cannot recommend sth enough" l\xE0 c\u1EA5u tr\xFAc khen ng\u1EE3i tuy\u1EC7t \u0111\u1ED1i: khen bao nhi\xEAu c\u0169ng ch\u01B0a \u0111\u1EE7, nhi\u1EC7t li\u1EC7t khuy\u1EBFn kh\xEDch n\xEAn th\u1EED.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. I do not think this experience is suitable",
+            diagnosticTitle: 'B\u1EABy d\u1ECBch ngh\u0129a \u0111en t\u1EEB ph\u1EE7 \u0111\u1ECBnh "cannot"',
+            explanation: 'H\u1ECDc sinh th\u1EA5y ch\u1EEF "cannot" t\u01B0\u1EDFng l\xE0 l\u1EDDi ch\xEA ho\u1EB7c kh\xF4ng gi\u1EDBi thi\u1EC7u, trong khi \u0111\xE2y l\xE0 th\xE0nh ng\u1EEF b\xE0y t\u1ECF s\u1EF1 th\xE1n ph\u1EE5c cao nh\u1EA5t.'
+          }
+        },
+        {
+          id: "doer_w3d2_q08",
+          roundIndex: 7,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB ch\xEDnh x\xE1c \u0111i v\u1EDBi \u0111\u1ED9ng t\u1EEB "grant" trong ng\u1EEF c\u1EA3nh v\xE9 tham quan ph\u1ED1 c\u1ED5: "The ticket grants you admission ______ a number of temples."',
+          options: [
+            { id: "opt_A", label: "A", text: "to" },
+            { id: "opt_B", label: "B", text: "for" },
+            { id: "opt_C", label: "C", text: "with" },
+            { id: "opt_D", label: "D", text: "at" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. to",
+          correctExplanation: 'C\u1EA5u tr\xFAc chu\u1EA9n x\xE1c: "admission to a place/event" (quy\u1EC1n \u0111\u01B0\u1EE3c v\xE0o c\u1EEDa, c\u1EA5p ph\xE9p v\xE0o m\u1ED9t \u0111\u1ECBa \u0111i\u1EC3m n\xE0o \u0111\xF3).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. for",
+            diagnosticTitle: 'D\u1ECBch t\u1EEB "cho" trong ti\u1EBFng Vi\u1EC7t th\xE0nh gi\u1EDBi t\u1EEB "for"',
+            explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "v\xE9 v\xE0o c\u1EEDa cho c\xE1c ng\xF4i \u0111\u1EC1n", nh\u01B0ng ti\u1EBFng Anh b\u1EAFt bu\u1ED9c d\xF9ng "admission TO [place]".'
+          }
+        },
+        {
+          id: "doer_w3d2_q09",
+          roundIndex: 8,
+          prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111\u1EC3 ho\xE0n th\xE0nh c\xE2u h\u1ECDc thu\u1EADt: "The museum\u2019s exhibition on modern art was so ______ that it attracted international praise."',
+          options: [
+            { id: "opt_A", label: "A", text: "standout" },
+            { id: "opt_B", label: "B", text: "bland" },
+            { id: "opt_C", label: "C", text: "sober" },
+            { id: "opt_D", label: "D", text: "rough" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. standout",
+          correctExplanation: '"A standout exhibition" = m\u1ED9t bu\u1ED5i tri\u1EC3n l\xE3m n\u1ED5i b\u1EADt, xu\u1EA5t s\u1EAFc v\u01B0\u1EE3t tr\u1ED9i thu h\xFAt s\u1EF1 ca ng\u1EE3i qu\u1ED1c t\u1EBF. "Bland" (nh\u1EA1t nh\u1EBDo) m\xE2u thu\u1EABn v\u1EDBi v\u1EBF sau.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. bland",
+            diagnosticTitle: 'Kh\xF4ng li\xEAn k\u1EBFt v\u1EDBi k\u1EBFt qu\u1EA3 t\xEDch c\u1EF1c "attracted praise"',
+            explanation: 'N\u1EBFu tri\u1EC3n l\xE3m "bland" (nh\u1EA1t nh\u1EBDo) th\xEC kh\xF4ng th\u1EC3 nh\u1EADn \u0111\u01B0\u1EE3c s\u1EF1 t\xE1n d\u01B0\u01A1ng r\u1ED9ng r\xE3i c\u1EE7a qu\u1ED1c t\u1EBF.'
+          }
+        },
+        {
+          id: "doer_w3d2_q10",
+          roundIndex: 9,
+          prompt: `PARAPHRASE: C\xE2u "I didn't feel very inspired to go out and explore due to the mad traffic and constant honking" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i chu\u1EA9n x\xE1c nh\u1EA5t l\xE0:`,
+          options: [
+            { id: "opt_A", label: "A", text: "The relentless noise and chaotic traffic discouraged me from exploring the city." },
+            { id: "opt_B", label: "B", text: "I thoroughly enjoyed sightseeing because the traffic was full of vibrant energy." },
+            { id: "opt_C", label: "C", text: "The author was forbidden from going outdoors by local traffic regulations." },
+            { id: "opt_D", label: "D", text: "The quiet streets made the author feel isolated and bored." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. The relentless noise and chaotic traffic discouraged me from exploring the city.",
+          correctExplanation: `"Relentless noise" paraphrase cho "constant honking", "chaotic traffic" paraphrase cho "mad traffic", v\xE0 "discouraged me" paraphrase cho "didn't feel very inspired".`,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. The author was forbidden",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa m\u1EA5t c\u1EA3m h\u1EE9ng c\xE1 nh\xE2n v\u1EDBi b\u1ECB ph\xE1p lu\u1EADt c\u1EA5m \u0111o\xE1n",
+            explanation: "T\xE1c gi\u1EA3 ch\u1EC9 kh\xF4ng c\xF3 h\u1EE9ng th\xFA \u0111i d\u1EA1o (uninspired), kh\xF4ng h\u1EC1 b\u1ECB ai ng\u0103n c\u1EA5m (forbidden)."
+          }
+        }
+      ],
+      "WEEK 3 \u2013 DAY 3": [
+        {
+          id: "doer_w3d3_q01",
+          roundIndex: 0,
+          prompt: "Nh\xF3m ph\u1EE5 \xE2m ch\u1EB7n (Stop sounds / Plosives) n\xE0o sau \u0111\xE2y \u0111\u01B0\u1EE3c t\u1EA1o ra b\u1EB1ng c\xE1ch ch\u1EB7n lu\u1ED3ng h\u01A1i b\u1EB1ng HAI \u0110\xD4I M\xD4I?",
+          options: [
+            { id: "opt_A", label: "A", text: "/p/ v\xE0 /b/" },
+            { id: "opt_B", label: "B", text: "/t/ v\xE0 /d/" },
+            { id: "opt_C", label: "C", text: "/k/ v\xE0 /g/" },
+            { id: "opt_D", label: "D", text: "/f/ v\xE0 /v/" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. /p/ v\xE0 /b/",
+          correctExplanation: "\xC2m m\xF4i-m\xF4i (bilabial stop): Hai m\xF4i kh\xE9p ch\u1EB7t ch\u1EB7n lu\u1ED3ng h\u01A1i l\u1EA1i r\u1ED3i b\u1EADt ra \u0111\u1EC3 ph\xE1t \xE2m /p/ (v\xF4 thanh) v\xE0 /b/ (h\u1EEFu thanh).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. /t/ v\xE0 /d/",
+            diagnosticTitle: "Nh\u1EA7m v\u1ECB tr\xED ph\xE1t \xE2m \u0111\u1EA7u l\u01B0\u1EE1i v\u1EDBi m\xF4i",
+            explanation: "/t/ v\xE0 /d/ \u0111\u01B0\u1EE3c t\u1EA1o ra b\u1EB1ng \u0111\u1EA7u l\u01B0\u1EE1i ch\u1EA1m v\xE0o ph\u1EA7n l\u1EE3i h\xE0m tr\xEAn, kh\xF4ng d\xF9ng hai m\xF4i kh\xE9p."
+          }
+        },
+        {
+          id: "doer_w3d3_q02",
+          roundIndex: 1,
+          prompt: "\u0110\u1EC3 ph\xE1t \xE2m chu\u1EA9n c\u1EB7p ph\u1EE5 \xE2m x\xE1t /f/ v\xE0 /v/, kh\u1EA9u h\xECnh chu\u1EA9n x\xE1c l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "R\u0103ng c\u1EEDa h\xE0m tr\xEAn c\u1EAFn nh\u1EB9 v\xE0o m\xF4i d\u01B0\u1EDBi, \u0111\u1EA9y lu\u1ED3ng h\u01A1i t\u1EA1o ma s\xE1t qua k\u1EBD r\u0103ng" },
+            { id: "opt_B", label: "B", text: "M\xEDm ch\u1EB7t hai m\xF4i l\u1EA1i v\xE0 th\u1ED5i h\u01A1i th\u1EADt m\u1EA1nh" },
+            { id: "opt_C", label: "C", text: "\u0110\u1EB7t \u0111\u1EA7u l\u01B0\u1EE1i v\xE0o gi\u1EEFa hai h\xE0m r\u0103ng" },
+            { id: "opt_D", label: "D", text: "Tr\xF2n m\xF4i l\u1EA1i v\xE0 \u0111\u01B0a l\u01B0\u1EE1i th\u1EE5t v\u1EC1 ph\xEDa sau c\u1ED5 h\u1ECDng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. R\u0103ng c\u1EEDa h\xE0m tr\xEAn c\u1EAFn nh\u1EB9 v\xE0o m\xF4i d\u01B0\u1EDBi, \u0111\u1EA9y lu\u1ED3ng h\u01A1i t\u1EA1o ma s\xE1t qua k\u1EBD r\u0103ng",
+          correctExplanation: "\u0110\xE2y l\xE0 \xE2m r\u0103ng - m\xF4i (labiodental fricative): r\u0103ng tr\xEAn ch\u1EA1m nh\u1EB9 m\xF4i d\u01B0\u1EDBi, \u0111\u1EA9y lu\u1ED3ng h\u01A1i li\xEAn t\u1EE5c qua khe h\u1EDF.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. M\xEDm ch\u1EB7t hai m\xF4i",
+            diagnosticTitle: "Nh\u1EA7m sang c\xE1ch ph\xE1t \xE2m \xE2m m\xF4i-m\xF4i /p, b/",
+            explanation: "N\u1EBFu m\xEDm hai m\xF4i th\xEC s\u1EBD t\u1EA1o ra \xE2m /p/ ho\u1EB7c /b/, kh\xF4ng th\u1EC3 t\u1EA1o ra lu\u1ED3ng h\u01A1i ma s\xE1t c\u1EE7a /f, v/."
+          }
+        },
+        {
+          id: "doer_w3d3_q03",
+          roundIndex: 2,
+          prompt: 'Ch\u1ECDn c\u1EA5u tr\xFAc \u0111\xFAng di\u1EC5n \u0111\u1EA1t l\u1EE3i \xEDch c\u1EE7a c\xF4ng ngh\u1EC7: "______ Shopee, I can buy things online conveniently."',
+          options: [
+            { id: "opt_A", label: "A", text: "Thanks to" },
+            { id: "opt_B", label: "B", text: "Thank to" },
+            { id: "opt_C", label: "C", text: "Thanks for" },
+            { id: "opt_D", label: "D", text: "Thanking to" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Thanks to",
+          correctExplanation: 'C\u1EE5m c\u1ED1 \u0111\u1ECBnh mang ngh\u0129a "nh\u1EDD c\xF3 c\xE1i g\xEC": Thanks to + Noun/Pronoun. Ph\u1EA3i c\xF3 \u0111u\xF4i "s" \u1EDF Thanks.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Thank to",
+            diagnosticTitle: 'R\u01A1i r\u1EE5ng \u0111u\xF4i -s trong c\u1EE5m "Thanks to"',
+            explanation: "Th\xF3i quen vi\u1EBFt Thank to (thi\u1EBFu s) l\xE0 l\u1ED7i s\u01A1 \u0111\u1EB3ng th\u01B0\u1EDDng th\u1EA5y trong IELTS Writing."
+          }
+        },
+        {
+          id: "doer_w3d3_q04",
+          roundIndex: 3,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng c\u1EA5u tr\xFAc v\u1EDBi \u0111\u1ED9ng t\u1EEB "enable":',
+          options: [
+            { id: "opt_A", label: "A", text: "The app enables me to practice pronunciation every day." },
+            { id: "opt_B", label: "B", text: "The app enables me practice pronunciation every day." },
+            { id: "opt_C", label: "C", text: "The app enables that I practice pronunciation every day." },
+            { id: "opt_D", label: "D", text: "The app enable me to practicing pronunciation every day." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. The app enables me to practice pronunciation every day.",
+          correctExplanation: "C\u1EA5u tr\xFAc: enable somebody TO DO something (cho ph\xE9p/t\u1EA1o \u0111i\u1EC1u ki\u1EC7n cho ai l\xE0m g\xEC).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. enables me practice",
+            diagnosticTitle: 'B\u1ECF qu\xEAn "to" sau enable',
+            explanation: "Kh\xE1c v\u1EDBi \u0111\u1ED9ng t\u1EEB let/make, \u0111\u1ED9ng t\u1EEB enable b\u1EAFt bu\u1ED9c ph\u1EA3i \u0111i k\xE8m v\u1EDBi to-V."
+          }
+        },
+        {
+          id: "doer_w3d3_q05",
+          roundIndex: 4,
+          prompt: "Trong cu\u1ED9c \u0111\u1ED1i tho\u1EA1i v\u1EC1 \u1EE9ng d\u1EE5ng h\u1ECDc ti\u1EBFng Anh, khi h\u1ECFi v\u1EC1 m\u1EE9c ph\xED c\xF3 x\u1EE9ng \u0111\xE1ng kh\xF4ng, Lan d\xF9ng c\xE2u n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "Is it worth the fee?" },
+            { id: "opt_B", label: "B", text: "Is it worthy the price?" },
+            { id: "opt_C", label: "C", text: "Does it worth money?" },
+            { id: "opt_D", label: "D", text: "Is it cost-worthy?" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Is it worth the fee?",
+          correctExplanation: 'C\u1EA5u tr\xFAc to be worth something: "Is it worth the fee?" (N\xF3 c\xF3 \u0111\xE1ng \u0111\u1ED3ng ti\u1EC1n b\xE1t g\u1EA1o / kho\u1EA3n ph\xED b\u1ECF ra kh\xF4ng?).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Does it worth money?",
+            diagnosticTitle: "D\xF9ng tr\u1EE3 \u0111\u1ED9ng t\u1EEB does v\u1EDBi t\xEDnh t\u1EEB worth",
+            explanation: '"Worth" trong tr\u01B0\u1EDDng h\u1EE3p n\xE0y \u0111\xF3ng vai tr\xF2 t\xEDnh t\u1EEB/gi\u1EDBi t\u1EEB \u0111\xF2i h\u1ECFi to be, kh\xF4ng d\xF9ng tr\u1EE3 \u0111\u1ED9ng t\u1EEB Does.'
+          }
+        },
+        {
+          id: "doer_w3d3_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng \u0111i v\u1EDBi collocation "access": "It gives you access ______ more lessons on the platform."',
+          options: [
+            { id: "opt_A", label: "A", text: "to" },
+            { id: "opt_B", label: "B", text: "with" },
+            { id: "opt_C", label: "C", text: "for" },
+            { id: "opt_D", label: "D", text: "into" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. to",
+          correctExplanation: "Danh t\u1EEB access lu\xF4n \u0111i v\u1EDBi gi\u1EDBi t\u1EEB TO: have / give access TO something (quy\u1EC1n truy c\u1EADp v\xE0o c\xE1i g\xEC).",
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. for",
+            diagnosticTitle: 'D\u1ECBch "truy c\u1EADp cho nhi\u1EC1u b\xE0i h\u1ECDc"',
+            explanation: 'Gi\u1EDBi t\u1EEB h\u1ECDc thu\u1EADt b\u1EA5t di b\u1EA5t d\u1ECBch c\u1EE7a danh t\u1EEB access l\xE0 "to".'
+          }
+        },
+        {
+          id: "doer_w3d3_q07",
+          roundIndex: 6,
+          prompt: 'Theo b\xE0i n\xF3i "The misuse of smartphone", t\xE1c h\u1EA1i c\u1EE7a \xE1nh s\xE1ng xanh (blue light) t\u1EEB m\xE0n h\xECnh l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "L\xE0m t\u1ED5n th\u01B0\u01A1ng m\u1EAFt v\xE0 khi\u1EBFn ng\u01B0\u1EDDi d\xF9ng kh\xF3 \u0111i v\xE0o gi\u1EA5c ng\u1EE7" },
+            { id: "opt_B", label: "B", text: "L\xE0m hao pin \u0111i\u1EC7n tho\u1EA1i nhanh ch\xF3ng" },
+            { id: "opt_C", label: "C", text: "L\xE0m m\u1EA5t k\u1EBFt n\u1ED1i m\u1EA1ng internet" },
+            { id: "opt_D", label: "D", text: "Khi\u1EBFn ng\u01B0\u1EDDi d\xF9ng b\u1ECB t\u0103ng c\xE2n" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. L\xE0m t\u1ED5n th\u01B0\u01A1ng m\u1EAFt v\xE0 khi\u1EBFn ng\u01B0\u1EDDi d\xF9ng kh\xF3 \u0111i v\xE0o gi\u1EA5c ng\u1EE7",
+          correctExplanation: 'B\xE0i \u0111\u1ECDc n\xEAu: "hurt your eyes... the blue light from the screens can make it hard to sleep".',
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Khi\u1EBFn ng\u01B0\u1EDDi d\xF9ng b\u1ECB t\u0103ng c\xE2n",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn t\xE1c h\u1EA1i c\u1EE7a vi\u1EC7c l\u01B0\u1EDDi v\u1EADn \u0111\u1ED9ng v\u1EDBi \xE1nh s\xE1ng m\xE0n h\xECnh",
+            explanation: "\xC1nh s\xE1ng xanh t\xE1c \u0111\u1ED9ng tr\u1EF1c ti\u1EBFp \u0111\u1EBFn v\xF5ng m\u1EA1c v\xE0 hormone gi\u1EA5c ng\u1EE7 melatonin, g\xE2y kh\xF3 ng\u1EE7."
+          }
+        },
+        {
+          id: "doer_w3d3_q08",
+          roundIndex: 7,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng c\u1EA5u tr\xFAc: "Vi\u1EC7c l\u01B0\u1EDBt m\u1EA1ng x\xE3 h\u1ED9i qu\xE1 nhi\u1EC1u khi\u1EBFn t\xF4i kh\xF3 t\u1EADp trung v\xE0o c\xF4ng vi\u1EC7c."',
+          options: [
+            { id: "opt_A", label: "A", text: "This makes it hard for me to focus on working." },
+            { id: "opt_B", label: "B", text: "This makes me hard to focus in working." },
+            { id: "opt_C", label: "C", text: "This makes hard for me focusing on work." },
+            { id: "opt_D", label: "D", text: "This causes hard for me to focus work." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. This makes it hard for me to focus on working.",
+          correctExplanation: "C\u1EA5u tr\xFAc t\xE2n ng\u1EEF gi\u1EA3: make it + Adj + (for sb) + TO DO something. \u0110i v\u1EDBi focus ON something.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. makes me hard to focus",
+            diagnosticTitle: 'B\u1ECF qu\xEAn t\xE2n ng\u1EEF gi\u1EA3 "it"',
+            explanation: '"Make me hard" l\xE0 sai ho\xE0n to\xE0n v\u1EC1 ngh\u0129a v\xE0 ng\u1EEF ph\xE1p; b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng t\xE2n ng\u1EEF gi\u1EA3: make IT hard for me.'
+          }
+        },
+        {
+          id: "doer_w3d3_q09",
+          roundIndex: 8,
+          prompt: 'Trong \u0111o\u1EA1n h\u1ED9i tho\u1EA1i mua laptop, khi nh\u1EADn \u0111\u01B0\u1EE3c h\u1ECDc b\u1ED5ng 15 tri\u1EC7u, Sarah n\xF3i: "I have made up my mind. I ______ for a Mac."',
+          options: [
+            { id: "opt_A", label: "A", text: "go" },
+            { id: "opt_B", label: "B", text: "take" },
+            { id: "opt_C", label: "C", text: "buy" },
+            { id: "opt_D", label: "D", text: "pick" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. go",
+          correctExplanation: 'C\u1EE5m phrasal verb t\u1EF1 nhi\xEAn trong ch\u1ECDn l\u1EF1a: "go for something" (quy\u1EBFt \u0111\u1ECBnh ch\u1ECDn / mua m\xF3n \u0111\u1ED3 n\xE0o \u0111\xF3).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. take",
+            diagnosticTitle: "D\xF9ng t\u1EEB take kh\xF4ng \u0111i k\xE8m gi\u1EDBi t\u1EEB ph\xF9 h\u1EE3p",
+            explanation: `C\u1EE5m t\u1EEB t\u1EF1 nhi\xEAn m\xE0 ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 hay d\xF9ng khi ra quy\u1EBFt \u0111\u1ECBnh l\u1EF1a ch\u1ECDn l\xE0 "I'll go for...".`
+          }
+        },
+        {
+          id: "doer_w3d3_q10",
+          roundIndex: 9,
+          prompt: `Th\xE0nh ng\u1EEF "make up one's mind" c\xF3 ngh\u0129a t\u01B0\u01A1ng \u0111\u01B0\u01A1ng v\u1EDBi \u0111\u1ED9ng t\u1EEB n\xE0o?`,
+          options: [
+            { id: "opt_A", label: "A", text: "decide (\u0111\u01B0a ra quy\u1EBFt \u0111\u1ECBnh)" },
+            { id: "opt_B", label: "B", text: "remember (ghi nh\u1EDB)" },
+            { id: "opt_C", label: "C", text: "forget (qu\xEAn)" },
+            { id: "opt_D", label: "D", text: "hesitate (do d\u1EF1)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. decide (\u0111\u01B0a ra quy\u1EBFt \u0111\u1ECBnh)",
+          correctExplanation: `"Make up one's mind" l\xE0 th\xE0nh ng\u1EEF ph\u1ED5 bi\u1EBFn \u0111\u1ED3ng ngh\u0129a ho\xE0n to\xE0n v\u1EDBi "make a decision / decide".`,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. hesitate",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi giai \u0111o\u1EA1n suy ngh\u0129 do d\u1EF1",
+            explanation: "Make up mind l\xE0 \u0111\xE3 ch\u1ED1t h\u1EA1 quy\u1EBFt \u0111\u1ECBnh xong, ch\u1EA5m d\u1EE9t vi\u1EC7c do d\u1EF1."
+          }
+        }
+      ]
+    };
+  }
+});
+
+// server/services/bank_parts/week4.data.ts
+var WEEK_4_QUESTIONS;
+var init_week4_data = __esm({
+  "server/services/bank_parts/week4.data.ts"() {
+    WEEK_4_QUESTIONS = {
+      "WEEK 4 \u2013 DAY 1": [
+        {
+          id: "doer_w4d1_q01",
+          roundIndex: 0,
+          prompt: 'Ch\u1ECDn v\u1ECB tr\xED v\xE0 tr\u1EADt t\u1EF1 t\u1EEB \u0111\xFAng trong c\xE2u: "H\u1ECD v\u1EEBa mua m\u1ED9t ng\xF4i nh\xE0 hi\u1EC7n \u0111\u1EA1i, r\u1ED9ng r\xE3i \u1EDF ngo\u1EA1i \xF4."',
+          options: [
+            { id: "opt_A", label: "A", text: "They have just bought a spacious, modern house in the suburbs." },
+            { id: "opt_B", label: "B", text: "They have just bought a house spacious modern in the suburbs." },
+            { id: "opt_C", label: "C", text: "They just bought a modern spacious house suburbs in." },
+            { id: "opt_D", label: "D", text: "They have bought just modern a spacious house in suburbs." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. They have just bought a spacious, modern house in the suburbs.",
+          correctExplanation: 'T\xEDnh t\u1EEB b\u1ED5 ngh\u0129a (spacious: k\xEDch th\u01B0\u1EDBc/kh\xF4ng gian, modern: th\u1EDDi \u0111\u1EA1i/tu\u1ED5i th\u1ECD) \u0111\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB ch\xEDnh "house".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. a house spacious modern",
+            diagnosticTitle: "L\u1ED7i tr\u1EADt t\u1EF1 t\u1EEB ti\u1EBFng Vi\u1EC7t (Danh t\u1EEB tr\u01B0\u1EDBc T\xEDnh t\u1EEB)",
+            explanation: "Ng\u01B0\u1EDDi Vi\u1EC7t c\xF3 th\xF3i quen n\xF3i danh t\u1EEB r\u1ED3i m\u1EDBi \u0111\u1EBFn t\xEDnh t\u1EEB (ng\xF4i nh\xE0 r\u1ED9ng r\xE3i), trong khi ti\u1EBFng Anh t\xEDnh t\u1EEB \u0111\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB."
+          }
+        },
+        {
+          id: "doer_w4d1_q02",
+          roundIndex: 1,
+          prompt: 'Ch\u1ECDn t\u1EEB lo\u1EA1i \u0111\xFAng: "The government took ______ actions against tech companies that violated labor laws."',
+          options: [
+            { id: "opt_A", label: "A", text: "strict" },
+            { id: "opt_B", label: "B", text: "strictly" },
+            { id: "opt_C", label: "C", text: "strictness" },
+            { id: "opt_D", label: "D", text: "stricten" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. strict",
+          correctExplanation: 'Tr\u01B0\u1EDBc danh t\u1EEB "actions" c\u1EA7n m\u1ED9t t\xEDnh t\u1EEB (adjective) \u0111\u1EC3 b\u1ED5 ngh\u0129a: "strict actions" (nh\u1EEFng h\xE0nh \u0111\u1ED9ng/bi\u1EC7n ph\xE1p nghi\xEAm kh\u1EAFc).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. strictly",
+            diagnosticTitle: "Nh\u1EA7m v\u1ECB tr\xED t\xEDnh t\u1EEB v\xE0 tr\u1EA1ng t\u1EEB",
+            explanation: 'Th\u1EA5y \u0111\u1ED9ng t\u1EEB "took" n\xEAn t\u01B0\u1EDFng c\u1EA7n tr\u1EA1ng t\u1EEB "strictly", nh\u01B0ng th\u1EF1c ch\u1EA5t t\u1EEB n\xE0y b\u1ED5 ngh\u0129a tr\u1EF1c ti\u1EBFp cho danh t\u1EEB "actions".'
+          }
+        },
+        {
+          id: "doer_w4d1_q03",
+          roundIndex: 2,
+          prompt: 'Ch\u1ECDn tr\u1EA1ng t\u1EEB b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB h\xE0nh \u0111\u1ED9ng: "She explained the complicated grammar rule ______ so that everyone understood."',
+          options: [
+            { id: "opt_A", label: "A", text: "clearly" },
+            { id: "opt_B", label: "B", text: "clear" },
+            { id: "opt_C", label: "C", text: "clarity" },
+            { id: "opt_D", label: "D", text: "clearness" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. clearly",
+          correctExplanation: '\u0110\u1ED9ng t\u1EEB h\xE0nh \u0111\u1ED9ng "explained" c\u1EA7n m\u1ED9t tr\u1EA1ng t\u1EEB ch\u1EC9 c\xE1ch th\u1EE9c (Adverb of manner) b\u1ED5 ngh\u0129a: explained something clearly.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. clear",
+            diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB thay v\xEC tr\u1EA1ng t\u1EEB b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB",
+            explanation: "Clear l\xE0 t\xEDnh t\u1EEB, ch\u1EC9 \u0111i sau linking verb (The rule is clear); b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng explain ph\u1EA3i d\xF9ng ph\xF3 t\u1EEB clearly."
+          }
+        },
+        {
+          id: "doer_w4d1_q04",
+          roundIndex: 3,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng ng\u1EEF ph\xE1p v\u1EDBi tr\u1EA1ng t\u1EEB t\u1EA7n su\u1EA5t: "Anh \u1EA5y hi\u1EBFm khi th\u1EE9c khuya v\xE0o c\xE1c ng\xE0y trong tu\u1EA7n."',
+          options: [
+            { id: "opt_A", label: "A", text: "He rarely stays up late on weekdays." },
+            { id: "opt_B", label: "B", text: "He stays rarely up late on weekdays." },
+            { id: "opt_C", label: "C", text: "Rarely he stays up late on weekdays." },
+            { id: "opt_D", label: "D", text: "He stays up late rarely on weekdays." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. He rarely stays up late on weekdays.",
+          correctExplanation: "Tr\u1EA1ng t\u1EEB t\u1EA7n su\u1EA5t (rarely, always, usually, often) \u0111\u1EE9ng tr\u01B0\u1EDBc \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng (stays up) v\xE0 sau \u0111\u1ED9ng t\u1EEB to be.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. He stays rarely up late",
+            diagnosticTitle: "Ch\xE8n tr\u1EA1ng t\u1EEB v\xE0o gi\u1EEFa phrasal verb",
+            explanation: "Tr\u1EA1ng t\u1EEB t\u1EA7n su\u1EA5t \u0111\u1EE9ng tr\u01B0\u1EDBc to\xE0n b\u1ED9 c\u1EE5m \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng, kh\xF4ng ch\xE8n v\xE0o gi\u1EEFa verb v\xE0 particle."
+          }
+        },
+        {
+          id: "doer_w4d1_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng c\u1EA5u tr\xFAc: "Sau nhi\u1EC1u n\u0103m l\xE0m vi\u1EC7c ch\u0103m ch\u1EC9, anh \u1EA5y \u0111\xE3 c\xF3 \u0111\u01B0\u1EE3c c\xF4ng vi\u1EC7c trong m\u01A1 \u1EDF Google."',
+          options: [
+            { id: "opt_A", label: "A", text: "After years of hard work, he landed his dream job at Google." },
+            { id: "opt_B", label: "B", text: "After years of work hardly, he got dream job in Google." },
+            { id: "opt_C", label: "C", text: "After hard working years, he made dream job at Google." },
+            { id: "opt_D", label: "D", text: "After many hardly work years, he took his dream job on Google." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. After years of hard work, he landed his dream job at Google.",
+          correctExplanation: '"Hard work" (ch\u0103m ch\u1EC9), th\xE0nh ng\u1EEF "land a dream job" (\u0111\u1EA1t \u0111\u01B0\u1EE3c c\xF4ng vi\u1EC7c m\u01A1 \u01B0\u1EDBc). "Hardly" l\xE0 hi\u1EBFm khi/h\u1EA7u nh\u01B0 kh\xF4ng, kh\xF4ng mang ngh\u0129a ch\u0103m ch\u1EC9.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. work hardly",
+            diagnosticTitle: 'Nh\u1EA7m l\u1EABn gi\u1EEFa "hard" v\xE0 "hardly"',
+            explanation: '"Hard" v\u1EEBa l\xE0 t\xEDnh t\u1EEB v\u1EEBa l\xE0 tr\u1EA1ng t\u1EEB mang ngh\u0129a ch\u0103m ch\u1EC9; "hardly" l\xE0 tr\u1EA1ng t\u1EEB ph\u1EE7 \u0111\u1ECBnh ngh\u0129a l\xE0 h\u1EA7u nh\u01B0 kh\xF4ng.'
+          }
+        },
+        {
+          id: "doer_w4d1_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn t\xEDnh t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o c\xE2u: "Regular exercise reduces the risk of ______ diseases such as diabetes."',
+          options: [
+            { id: "opt_A", label: "A", text: "chronic" },
+            { id: "opt_B", label: "B", text: "chronically" },
+            { id: "opt_C", label: "C", text: "chronicle" },
+            { id: "opt_D", label: "D", text: "chronology" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. chronic",
+          correctExplanation: 'T\xEDnh t\u1EEB h\u1ECDc thu\u1EADt: "chronic diseases" (c\xE1c b\u1EC7nh m\xE3n t\xEDnh, b\u1EC7nh k\xE9o d\xE0i dai d\u1EB3ng nh\u01B0 ti\u1EC3u \u0111\u01B0\u1EDDng, tim m\u1EA1ch).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. chronically",
+            diagnosticTitle: "Ch\u1ECDn sai d\u1EA1ng t\u1EEB lo\u1EA1i",
+            explanation: 'Tr\u01B0\u1EDBc danh t\u1EEB "diseases" ph\u1EA3i l\xE0 m\u1ED9t t\xEDnh t\u1EEB, kh\xF4ng d\xF9ng tr\u1EA1ng t\u1EEB chronically.'
+          }
+        },
+        {
+          id: "doer_w4d1_q07",
+          roundIndex: 6,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng c\u1EA5u tr\xFAc tr\u1EA1ng t\u1EEB ch\u1EC9 m\u1EE9c \u0111\u1ED9: "B\xE0i thi IELTS t\u01B0\u01A1ng \u0111\u1ED1i kh\xF3 nh\u01B0ng c\xF4 \u1EA5y \u0111\xE3 v\u01B0\u1EE3t qua xu\u1EA5t s\u1EAFc."',
+          options: [
+            { id: "opt_A", label: "A", text: "The IELTS test was relatively difficult, but she passed with flying colors." },
+            { id: "opt_B", label: "B", text: "The IELTS test was relation difficult, but she passed great." },
+            { id: "opt_C", label: "C", text: "The IELTS test was relative difficult, but she passed brilliantly." },
+            { id: "opt_D", label: "D", text: "The IELTS test was relatively difficulty, but she passed." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. The IELTS test was relatively difficult, but she passed with flying colors.",
+          correctExplanation: 'Tr\u1EA1ng t\u1EEB m\u1EE9c \u0111\u1ED9 "relatively" (t\u01B0\u01A1ng \u0111\u1ED1i) b\u1ED5 ngh\u0129a cho t\xEDnh t\u1EEB "difficult". Th\xE0nh ng\u1EEF "pass with flying colors" ngh\u0129a l\xE0 \u0111\u1EA1t k\u1EBFt qu\u1EA3 r\u1EF1c r\u1EE1.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. relative difficult",
+            diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a cho t\xEDnh t\u1EEB",
+            explanation: "B\u1ED5 ngh\u0129a cho m\u1ED9t t\xEDnh t\u1EEB kh\xE1c (difficult) b\u1EAFt bu\u1ED9c ph\u1EA3i l\xE0 tr\u1EA1ng t\u1EEB (relatively), kh\xF4ng th\u1EC3 d\xF9ng t\xEDnh t\u1EEB relative."
+          }
+        },
+        {
+          id: "doer_w4d1_q08",
+          roundIndex: 7,
+          prompt: 'Ch\u1ECDn c\xE1ch di\u1EC5n \u0111\u1EA1t t\xEDnh t\u1EEB \u0111\xFAng trong mi\xEAu t\u1EA3 t\xEDnh c\xE1ch: "C\xF4 \u1EA5y l\xE0 m\u1ED9t ng\u01B0\u1EDDi r\u1EA5t chu \u0111\xE1o v\xE0 c\xF3 tr\xE1ch nhi\u1EC7m cao."',
+          options: [
+            { id: "opt_A", label: "A", text: "She is a highly responsible and considerate person." },
+            { id: "opt_B", label: "B", text: "She is a high responsible and consider person." },
+            { id: "opt_C", label: "C", text: "She is a responsibly high and considerable person." },
+            { id: "opt_D", label: "D", text: "She is a high-responsibly person." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. She is a highly responsible and considerate person.",
+          correctExplanation: "C\u1EE5m t\xEDnh t\u1EEB: highly responsible (r\u1EA5t c\xF3 tr\xE1ch nhi\u1EC7m) v\xE0 considerate (chu \u0111\xE1o).",
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. considerable person",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa considerate v\xE0 considerable",
+            explanation: '"Considerate" l\xE0 chu \u0111\xE1o, bi\u1EBFt ngh\u0129 cho ng\u01B0\u1EDDi kh\xE1c; c\xF2n "considerable" l\xE0 \u0111\xE1ng k\u1EC3/to l\u1EDBn (v\u1EC1 s\u1ED1 l\u01B0\u1EE3ng). \u0110\xE2y l\xE0 b\u1EABy t\u1EEB v\u1EF1ng kinh \u0111i\u1EC3n.'
+          }
+        },
+        {
+          id: "doer_w4d1_q09",
+          roundIndex: 8,
+          prompt: `Ch\u1ECDn t\u1EEB \u0111i\u1EC1n v\xE0o ch\u1ED7 tr\u1ED1ng: "The company's profits increased ______ during the last quarter."`,
+          options: [
+            { id: "opt_A", label: "A", text: "dramatically" },
+            { id: "opt_B", label: "B", text: "dramatic" },
+            { id: "opt_C", label: "C", text: "drama" },
+            { id: "opt_D", label: "D", text: "dramatize" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. dramatically",
+          correctExplanation: 'B\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB t\u0103ng "increased" trong IELTS Writing Task 1 ph\u1EA3i l\xE0 tr\u1EA1ng t\u1EEB ch\u1EC9 t\u1ED1c \u0111\u1ED9/m\u1EE9c \u0111\u1ED9: increased dramatically.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. dramatic",
+            diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB sau \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng",
+            explanation: 'Ch\u1EC9 khi d\xF9ng danh t\u1EEB ("saw a dramatic increase") m\u1EDBi d\xF9ng t\xEDnh t\u1EEB; sau \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng "increased" ph\u1EA3i l\xE0 ph\xF3 t\u1EEB dramatically.'
+          }
+        },
+        {
+          id: "doer_w4d1_q10",
+          roundIndex: 9,
+          prompt: 'Ch\u1ECDn c\xE2u d\xF9ng \u0111\xFAng t\xEDnh t\u1EEB v\xE0 tr\u1EA1ng t\u1EEB: "M\u1EB7c d\xF9 anh \u1EA5y l\xE1i xe c\u1EA9n th\u1EADn, \u0111\u01B0\u1EDDng tr\u01A1n tr\u01B0\u1EE3t v\u1EABn r\u1EA5t nguy hi\u1EC3m."',
+          options: [
+            { id: "opt_A", label: "A", text: "Although he drove carefully, the slippery road was still extremely dangerous." },
+            { id: "opt_B", label: "B", text: "Although he drove careful, the slippery road was still extreme dangerous." },
+            { id: "opt_C", label: "C", text: "Although he drove with carefully, the slipper road was dangerous extremely." },
+            { id: "opt_D", label: "D", text: "Although he drove carefully, the slip road was still danger." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Although he drove carefully, the slippery road was still extremely dangerous.",
+          correctExplanation: '"Drove carefully" (\u0111\u1ED9ng t\u1EEB + tr\u1EA1ng t\u1EEB), "slippery road" (t\xEDnh t\u1EEB + danh t\u1EEB), "extremely dangerous" (tr\u1EA1ng t\u1EEB + t\xEDnh t\u1EEB).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. drove careful... extreme dangerous",
+            diagnosticTitle: "Qu\xEAn \u0111u\xF4i -ly \u1EDF c\u1EA3 hai v\u1ECB tr\xED ph\xF3 t\u1EEB",
+            explanation: "Drove c\u1EA7n ph\xF3 t\u1EEB carefully, v\xE0 dangerous c\u1EA7n ph\xF3 t\u1EEB extremely b\u1ED5 ngh\u0129a."
+          }
+        }
+      ],
+      "WEEK 4 \u2013 DAY 2": [
+        {
+          id: "doer_w4d2_q01",
+          roundIndex: 0,
+          prompt: 'Trong ch\u1EE7 \u0111\u1EC1 Health, t\u1EEB \u0110\u1ED2NG NGH\u0128A chu\u1EA9n x\xE1c nh\u1EA5t v\u1EDBi "intake" trong c\xE2u "a higher intake of red meat" l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "consumption (s\u1EF1 ti\xEAu th\u1EE5, l\u01B0\u1EE3ng n\u1EA1p v\xE0o c\u01A1 th\u1EC3)" },
+            { id: "opt_B", label: "B", text: "exercise (s\u1EF1 v\u1EADn \u0111\u1ED9ng)" },
+            { id: "opt_C", label: "C", text: "release (s\u1EF1 th\u1EA3i ra)" },
+            { id: "opt_D", label: "D", text: "prevention (s\u1EF1 ph\xF2ng ng\u1EEBa)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. consumption (s\u1EF1 ti\xEAu th\u1EE5, l\u01B0\u1EE3ng n\u1EA1p v\xE0o c\u01A1 th\u1EC3)",
+          correctExplanation: '"Intake" trong dinh d\u01B0\u1EE1ng h\u1ECDc \u0111\u1ED3ng ngh\u0129a v\u1EDBi "consumption" (l\u01B0\u1EE3ng th\u1EE9c \u0103n/n\u01B0\u1EDBc u\u1ED1ng dung n\u1EA1p v\xE0o c\u01A1 th\u1EC3).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. release",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa n\u1EA1p v\xE0o v\xE0 th\u1EA3i ra",
+            explanation: '"Release" mang ngh\u0129a th\u1EA3i ra/ph\xE1t t\xE1n, tr\xE1i ng\u01B0\u1EE3c ho\xE0n to\xE0n v\u1EDBi "intake" (dung n\u1EA1p v\xE0o).'
+          }
+        },
+        {
+          id: "doer_w4d2_q02",
+          roundIndex: 1,
+          prompt: "C\u1EB7p t\u1EEB TR\xC1I NGH\u0128A c\u1ED1t l\xF5i trong \u0111o\u1EA1n ph\xE2n t\xEDch th\u1ECBt \u0111\u1ECF c\u1EE7a b\xE0i \u0111\u1ECDc l\xE0:",
+          options: [
+            { id: "opt_A", label: "A", text: "processed meat (th\u1ECBt ch\u1EBF bi\u1EBFn s\u1EB5n) vs. unprocessed meat (th\u1ECBt t\u01B0\u01A1i ch\u01B0a ch\u1EBF bi\u1EBFn)" },
+            { id: "opt_B", label: "B", text: "red meat vs. white meat" },
+            { id: "opt_C", label: "C", text: "fresh meat vs. cooked meat" },
+            { id: "opt_D", label: "D", text: "healthy meat vs. harmful meat" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. processed meat (th\u1ECBt ch\u1EBF bi\u1EBFn s\u1EB5n) vs. unprocessed meat (th\u1ECBt t\u01B0\u01A1i ch\u01B0a ch\u1EBF bi\u1EBFn)",
+          correctExplanation: "Ti\u1EC1n t\u1ED1 un- t\u1EA1o n\xEAn c\u1EB7p \u0111\u1ED1i l\u1EADp kinh \u0111i\u1EC3n trong dinh d\u01B0\u1EE1ng h\u1ECDc: processed (ch\u1EBF bi\u1EBFn c\xF4ng nghi\u1EC7p nhi\u1EC1u ph\u1EE5 gia) vs. unprocessed (th\u1ECBt nguy\xEAn b\u1EA3n ch\u01B0a ch\u1EBF bi\u1EBFn).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. red meat vs. white meat",
+            diagnosticTitle: "Ch\u1ECDn c\u1EB7p \u0111\u1ED1i l\u1EADp m\xE0u s\u1EAFc th\xF4ng th\u01B0\u1EDDng ngo\xE0i b\xE0i",
+            explanation: "B\xE0i \u0111\u1ECDc nh\u1EA5n m\u1EA1nh s\u1EF1 sai l\u1EC7ch nghi\xEAn c\u1EE9u do kh\xF4ng ph\xE2n bi\u1EC7t gi\u1EEFa processed v\xE0 unprocessed, ch\u1EE9 kh\xF4ng so s\xE1nh th\u1ECBt \u0111\u1ECF v\u1EDBi th\u1ECBt tr\u1EAFng."
+          }
+        },
+        {
+          id: "doer_w4d2_q03",
+          roundIndex: 2,
+          prompt: 'Thu\u1EADt ng\u1EEF y khoa "cardiovascular disease" ch\u1EC9 nh\xF3m b\u1EC7nh l\xFD li\xEAn quan \u0111\u1EBFn h\u1EC7 c\u01A1 quan n\xE0o?',
+          options: [
+            { id: "opt_A", label: "A", text: "Tim v\xE0 h\u1EC7 th\u1ED1ng m\u1EA1ch m\xE1u tu\u1EA7n ho\xE0n" },
+            { id: "opt_B", label: "B", text: "Ph\u1ED5i v\xE0 \u0111\u01B0\u1EDDng h\xF4 h\u1EA5p" },
+            { id: "opt_C", label: "C", text: "D\u1EA1 d\xE0y v\xE0 h\u1EC7 ti\xEAu h\xF3a" },
+            { id: "opt_D", label: "D", text: "Th\u1EA7n kinh n\xE3o b\u1ED9" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Tim v\xE0 h\u1EC7 th\u1ED1ng m\u1EA1ch m\xE1u tu\u1EA7n ho\xE0n",
+          correctExplanation: '"Cardiovascular" b\u1EAFt ngu\u1ED3n t\u1EEB g\u1ED1c Hy L\u1EA1p: cardio- (tim) v\xE0 vascular (m\u1EA1ch m\xE1u). C\u1EE5m n\xE0y ch\u1EC9 b\u1EC7nh tim m\u1EA1ch.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ph\u1ED5i v\xE0 \u0111\u01B0\u1EDDng h\xF4 h\u1EA5p",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi b\u1EC7nh h\xF4 h\u1EA5p (respiratory disease)",
+            explanation: "H\xF4 h\u1EA5p l\xE0 respiratory, c\xF2n cardiovascular lu\xF4n chuy\xEAn bi\u1EC7t cho tim v\xE0 m\u1EA1ch m\xE1u."
+          }
+        },
+        {
+          id: "doer_w4d2_q04",
+          roundIndex: 3,
+          prompt: 'Collocation chu\u1EA9n trong b\xE0i: "Skipping breakfast leads to increased hunger levels and results in people ______." (\u0103n b\xF9 qu\xE1 \u0111\u1ED9)',
+          options: [
+            { id: "opt_A", label: "A", text: "overeating" },
+            { id: "opt_B", label: "B", text: "fasting" },
+            { id: "opt_C", label: "C", text: "dieting" },
+            { id: "opt_D", label: "D", text: "exercising" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. overeating",
+          correctExplanation: 'Ti\u1EC1n t\u1ED1 over- mang ngh\u0129a qu\xE1 m\u1EE9c: "overeating" l\xE0 h\xE0nh vi \u0103n qu\xE1 nhi\u1EC1u, m\u1EA5t ki\u1EC3m so\xE1t do c\u01A1n \u0111\xF3i d\u1ED3n l\u1EA1i.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. fasting",
+            diagnosticTitle: "Ch\u1ECDn t\u1EEB tr\xE1i ngh\u0129a (nh\u1ECBn \u0103n)",
+            explanation: "Fasting l\xE0 ch\u1EE7 \u0111\u1ED9ng nh\u1ECBn \u0103n, tr\xE1i ng\u01B0\u1EE3c v\u1EDBi overeating (\u0103n v\xF4 \u0111\u1ED9)."
+          }
+        },
+        {
+          id: "doer_w4d2_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn t\u1EEB ph\xF9 h\u1EE3p: "People who eat a nutritious breakfast are able to stabilize their blood ______ levels throughout the morning."',
+          options: [
+            { id: "opt_A", label: "A", text: "sugar" },
+            { id: "opt_B", label: "B", text: "sweet" },
+            { id: "opt_C", label: "C", text: "salt" },
+            { id: "opt_D", label: "D", text: "spice" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. sugar",
+          correctExplanation: 'Collocation y khoa th\xF4ng d\u1EE5ng: "blood sugar levels" (ch\u1EC9 s\u1ED1 \u0111\u01B0\u1EDDng huy\u1EBFt trong m\xE1u).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. sweet",
+            diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB sweet thay v\xEC danh t\u1EEB sugar",
+            explanation: 'Trong danh t\u1EEB gh\xE9p y khoa ch\u1EC9 ch\u1EC9 s\u1ED1 \u0111\u01B0\u1EDDng huy\u1EBFt, t\u1EEB chu\u1EA9n b\u1EAFt bu\u1ED9c l\xE0 "blood sugar", kh\xF4ng d\xF9ng t\xEDnh t\u1EEB sweet.'
+          }
+        },
+        {
+          id: "doer_w4d2_q06",
+          roundIndex: 5,
+          prompt: 'Collocation bi\u1EC3u \u0111\u1EA1t ch\u1EBF \u0111\u1ED9 \u0103n u\u1ED1ng khoa h\u1ECDc: "Breakfast helps you maintain a ______ diet."',
+          options: [
+            { id: "opt_A", label: "A", text: "well-balanced" },
+            { id: "opt_B", label: "B", text: "heavily-sweetened" },
+            { id: "opt_C", label: "C", text: "poorly-managed" },
+            { id: "opt_D", label: "D", text: "strictly-forbidden" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. well-balanced",
+          correctExplanation: '"A well-balanced diet" l\xE0 collocation ti\xEAu chu\u1EA9n trong IELTS: m\u1ED9t ch\u1EBF \u0111\u1ED9 \u0103n c\xE2n b\u1EB1ng \u0111\u1EA7y \u0111\u1EE7 dinh d\u01B0\u1EE1ng.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. heavily-sweetened",
+            diagnosticTitle: "Ch\u1ECDn ch\u1EBF \u0111\u1ED9 \u0103n nhi\u1EC1u \u0111\u01B0\u1EDDng c\xF3 h\u1EA1i",
+            explanation: "Heavily-sweetened l\xE0 nhi\u1EC1u \u0111\u01B0\u1EDDng ng\u1ECDt g\xE2y h\u1EA1i s\u1EE9c kh\u1ECFe, m\xE2u thu\u1EABn v\u1EDBi l\u1EDDi khuy\xEAn \u0103n u\u1ED1ng l\xE0nh m\u1EA1nh."
+          }
+        },
+        {
+          id: "doer_w4d2_q07",
+          roundIndex: 6,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng \u0111i v\u1EDBi \u0111\u1ED9ng t\u1EEB ph\xE2n bi\u1EC7t: "Many earlier nutritional studies failed to distinguish ______ processed and unprocessed meat."',
+          options: [
+            { id: "opt_A", label: "A", text: "between" },
+            { id: "opt_B", label: "B", text: "with" },
+            { id: "opt_C", label: "C", text: "against" },
+            { id: "opt_D", label: "D", text: "at" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. between",
+          correctExplanation: 'C\u1EA5u tr\xFAc h\u1ECDc thu\u1EADt c\u1ED1 \u0111\u1ECBnh: "distinguish BETWEEN [A] AND [B]" (ph\xE2n bi\u1EC7t r\u1EA1ch r\xF2i gi\u1EEFa \u0111\u1ED1i t\u01B0\u1EE3ng A v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng B).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. with",
+            diagnosticTitle: 'D\u1ECBch t\u1EEB "v\u1EDBi" trong ti\u1EBFng Vi\u1EC7t th\xE0nh gi\u1EDBi t\u1EEB "with"',
+            explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "ph\xE2n bi\u1EC7t A v\u1EDBi B", nh\u01B0ng ti\u1EBFng Anh b\u1EAFt bu\u1ED9c d\xF9ng "distinguish between A and B".'
+          }
+        },
+        {
+          id: "doer_w4d2_q08",
+          roundIndex: 7,
+          prompt: 'C\u1EE5m th\xE0nh ng\u1EEF trong b\xE0i: "Science is constantly changing its mind" mang ngh\u0129a b\xF3ng l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "C\xE1c k\u1EBFt lu\u1EADn khoa h\u1ECDc li\xEAn t\u1EE5c \u0111\u01B0\u1EE3c c\u1EADp nh\u1EADt, \u0111i\u1EC1u ch\u1EC9nh khi c\xF3 b\u1EB1ng ch\u1EE9ng m\u1EDBi" },
+            { id: "opt_B", label: "B", text: "C\xE1c nh\xE0 khoa h\u1ECDc th\u01B0\u1EDDng xuy\xEAn hay qu\xEAn nh\u1EEFng g\xEC m\xECnh \u0111\xE3 n\xF3i" },
+            { id: "opt_C", label: "C", text: "Khoa h\u1ECDc ho\xE0n to\xE0n l\xE0 s\u1EF1 l\u1EEBa d\u1ED1i kh\xF4ng \u0111\xE1ng tin c\u1EADy" },
+            { id: "opt_D", label: "D", text: "T\u1EA5t c\u1EA3 c\xE1c \u0111\u1ECBnh lu\u1EADt v\u1EADt l\xFD \u0111\u1EC1u b\u1ECB b\xE1c b\u1ECF h\xE0ng n\u0103m" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. C\xE1c k\u1EBFt lu\u1EADn khoa h\u1ECDc li\xEAn t\u1EE5c \u0111\u01B0\u1EE3c c\u1EADp nh\u1EADt, \u0111i\u1EC1u ch\u1EC9nh khi c\xF3 b\u1EB1ng ch\u1EE9ng m\u1EDBi",
+          correctExplanation: `"Change one's mind" d\xF9ng ph\xE9p nh\xE2n h\xF3a \u0111\u1EC3 mi\xEAu t\u1EA3 qu\xE1 tr\xECnh khoa h\u1ECDc ti\u1EBFn b\u1ED9: li\xEAn t\u1EE5c s\u1EEDa \u0111\u1ED5i nh\u1EADn th\u1EE9c c\u0169 \u0111\u1EC3 ti\u1EC7m c\u1EADn ch\xE2n l\xFD.`,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Khoa h\u1ECDc l\xE0 s\u1EF1 l\u1EEBa d\u1ED1i",
+            diagnosticTitle: "Hi\u1EC3u sai gi\u1ECDng v\u0103n khoa h\u1ECDc th\u01B0\u1EDDng th\u1EE9c",
+            explanation: "T\xE1c gi\u1EA3 ch\u1EC9 n\xEAu ra c\u1EA3m nh\u1EADn ban \u0111\u1EA7u c\u1EE7a c\xF4ng ch\xFAng tr\u01B0\u1EDBc khi gi\u1EA3i th\xEDch r\u1EB1ng c\xE1c nghi\xEAn c\u1EE9u \u0111ang gi\xFAp ta \u0111\u1EBFn g\u1EA7n s\u1EF1 th\u1EADt h\u01A1n."
+          }
+        },
+        {
+          id: "doer_w4d2_q09",
+          roundIndex: 8,
+          prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o c\xE2u y t\u1EBF: "Clinical trials revealed that maintaining a brisk walking ______ significantly reduces the risk of dementia."',
+          options: [
+            { id: "opt_A", label: "A", text: "pace (nh\u1ECBp \u0111\u1ED9, t\u1ED1c \u0111\u1ED9 b\u01B0\u1EDBc \u0111i)" },
+            { id: "opt_B", label: "B", text: "cost" },
+            { id: "opt_C", label: "C", text: "bland" },
+            { id: "opt_D", label: "D", text: "burnout" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. pace (nh\u1ECBp \u0111\u1ED9, t\u1ED1c \u0111\u1ED9 b\u01B0\u1EDBc \u0111i)",
+          correctExplanation: '"Walking pace" = t\u1ED1c \u0111\u1ED9, nh\u1ECBp b\u01B0\u1EDBc ch\xE2n \u0111i b\u1ED9. "Brisk walking pace" l\xE0 nh\u1ECBp \u0111i b\u1ED9 nhanh mang l\u1EA1i l\u1EE3i \xEDch tim m\u1EA1ch v\xE0 n\xE3o b\u1ED9.',
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. burnout",
+            diagnosticTitle: "Nh\u1EA7m thu\u1EADt ng\u1EEF ki\u1EC7t s\u1EE9c",
+            explanation: 'Burnout l\xE0 tr\u1EA1ng th\xE1i ki\u1EC7t qu\u1EC7, ho\xE0n to\xE0n v\xF4 ngh\u0129a khi gh\xE9p v\xE0o c\u1EE5m "walking ______".'
+          }
+        },
+        {
+          id: "doer_w4d2_q10",
+          roundIndex: 9,
+          prompt: 'PARAPHRASE: C\xE2u "Skipping breakfast leads to increased hunger later in the day, which results in overeating and weight gain" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i t\u01B0\u01A1ng \u0111\u01B0\u01A1ng nh\u1EA5t l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "Omitting the morning meal triggers intense cravings later on, prompting excessive food intake that hampers weight control." },
+            { id: "opt_B", label: "B", text: "Avoiding morning nourishment is guaranteed to accelerate fat burning and cure cardiovascular ailments." },
+            { id: "opt_C", label: "C", text: "Breakfast should be eliminated by all individuals who wish to regulate their blood glucose effectively." },
+            { id: "opt_D", label: "D", text: "Hunger levels remain completely identical regardless of whether one consumes breakfast or fasts." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Omitting the morning meal triggers intense cravings later on, prompting excessive food intake that hampers weight control.",
+          correctExplanation: '"Omitting the morning meal" paraphrase cho "skipping breakfast", "intense cravings" paraphrase cho "increased hunger", v\xE0 "excessive food intake" paraphrase cho "overeating".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Avoiding morning nourishment is guaranteed to accelerate fat burning",
+            diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c quan h\u1EC7 nh\xE2n qu\u1EA3 y h\u1ECDc",
+            explanation: "B\xE0i \u0111\u1ECDc ch\u1EC9 r\xF5 b\u1ECF \u0103n s\xE1ng l\xE0m t\u0103ng nguy c\u01A1 \u0103n b\xF9 v\xE0 b\xE9o ph\xEC, kh\xF4ng h\u1EC1 k\xEDch th\xEDch \u0111\u1ED1t m\u1EE1 hay ch\u1EEFa b\u1EC7nh."
+          }
+        }
+      ],
+      "WEEK 4 \u2013 DAY 3": [
+        {
+          id: "doer_w4d3_q01",
+          roundIndex: 0,
+          prompt: '\u0110\u1EC3 ph\xE1t \xE2m chu\u1EA9n ph\u1EE5 \xE2m kh\xF3 /\u03B8/ (nh\u01B0 trong "think", "math"), k\u1EF9 thu\u1EADt quan tr\u1ECDng nh\u1EA5t c\u1EE7a l\u01B0\u1EE1i l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "\u0110\u01B0a \u0111\u1EA7u l\u01B0\u1EE1i ra ngo\xE0i, \u0111\u1EB7t gi\u1EEFa hai h\xE0m r\u0103ng c\u1EEDa v\xE0 \u0111\u1EA9y lu\u1ED3ng h\u01A1i t\u1EA1o ma s\xE1t nh\u1EB9" },
+            { id: "opt_B", label: "B", text: "U\u1ED1n cong \u0111\u1EA7u l\u01B0\u1EE1i ch\u1EA1m v\xE0o ng\u1EA1c m\u1EC1m ph\xEDa sau" },
+            { id: "opt_C", label: "C", text: "C\u1EAFn ch\u1EB7t hai m\xF4i l\u1EA1i v\xE0 b\u1EADt h\u01A1i nh\u01B0 \xE2m /t/" },
+            { id: "opt_D", label: "D", text: "R\xFAt s\xE2u l\u01B0\u1EE1i v\xE0o trong cu\u1ED1ng h\u1ECDng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. \u0110\u01B0a \u0111\u1EA7u l\u01B0\u1EE1i ra ngo\xE0i, \u0111\u1EB7t gi\u1EEFa hai h\xE0m r\u0103ng c\u1EEDa v\xE0 \u0111\u1EA9y lu\u1ED3ng h\u01A1i t\u1EA1o ma s\xE1t nh\u1EB9",
+          correctExplanation: "\xC2m r\u0103ng (dental fricative /\u03B8/): \u0111\u1EA7u l\u01B0\u1EE1i b\u1EAFt bu\u1ED9c ph\u1EA3i th\xE8 nh\u1EB9 ra gi\u1EEFa hai h\xE0ng r\u0103ng, lu\u1ED3ng h\u01A1i ma s\xE1t th\u1ED5i qua k\u1EBD r\u0103ng.",
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. B\u1EADt h\u01A1i nh\u01B0 \xE2m /t/",
+            diagnosticTitle: "Ph\xE1t \xE2m /\u03B8/ th\xE0nh \xE2m /t/ (l\u1ED7i ph\u1ED5 bi\u1EBFn c\u1EE7a ng\u01B0\u1EDDi Vi\u1EC7t)",
+            explanation: 'Ng\u01B0\u1EDDi Vi\u1EC7t th\u01B0\u1EDDng ph\xE1t \xE2m "think" th\xE0nh "tink" ho\u1EB7c "thinh" theo ti\u1EBFng Vi\u1EC7t do kh\xF4ng \u0111\u01B0a \u0111\u1EA7u l\u01B0\u1EE1i ra gi\u1EEFa hai r\u0103ng.'
+          }
+        },
+        {
+          id: "doer_w4d3_q02",
+          roundIndex: 1,
+          prompt: 'Kh\xE1c bi\u1EC7t c\u1ED1t l\xF5i gi\u1EEFa c\u1EB7p ph\u1EE5 \xE2m /\u03B8/ (trong "thanks") v\xE0 /\xF0/ (trong "this", "breathe") l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "/\u03B8/ l\xE0 \xE2m v\xF4 thanh (d\xE2y thanh kh\xF4ng rung), /\xF0/ l\xE0 \xE2m h\u1EEFu thanh (d\xE2y thanh rung)" },
+            { id: "opt_B", label: "B", text: "/\u03B8/ l\xE0 \xE2m b\u1EADt ch\u1EB7n, /\xF0/ l\xE0 \xE2m m\u0169i" },
+            { id: "opt_C", label: "C", text: "/\u03B8/ c\u1EAFn m\xF4i d\u01B0\u1EDBi, /\xF0/ m\xEDm hai m\xF4i" },
+            { id: "opt_D", label: "D", text: "Kh\u1EA9u h\xECnh mi\u1EC7ng ho\xE0n to\xE0n kh\xE1c nhau v\u1EC1 v\u1ECB tr\xED c\u1EE7a r\u0103ng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. /\u03B8/ l\xE0 \xE2m v\xF4 thanh (d\xE2y thanh kh\xF4ng rung), /\xF0/ l\xE0 \xE2m h\u1EEFu thanh (d\xE2y thanh rung)",
+          correctExplanation: "C\u1EA3 hai \u0111\u1EC1u c\xF3 c\xF9ng v\u1ECB tr\xED r\u0103ng-l\u01B0\u1EE1i, nh\u01B0ng /\u03B8/ ch\u1EC9 c\xF3 lu\u1ED3ng gi\xF3 (voiceless), c\xF2n /\xF0/ k\xE8m theo \u0111\u1ED9 rung thanh qu\u1EA3n (voiced).",
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Kh\u1EA9u h\xECnh mi\u1EC7ng ho\xE0n to\xE0n kh\xE1c nhau",
+            diagnosticTitle: "T\u01B0\u1EDFng hai \xE2m c\xF3 kh\u1EA9u h\xECnh kh\xE1c nhau",
+            explanation: "Kh\u1EA9u h\xECnh gi\u1ED1ng h\u1EC7t nhau, ch\u1EC9 kh\xE1c nhau duy nh\u1EA5t \u1EDF s\u1EF1 rung c\u1EE7a d\xE2y thanh \u0111\u1EDBi."
+          }
+        },
+        {
+          id: "doer_w4d3_q03",
+          roundIndex: 2,
+          prompt: 'Trong c\xE2u luy\u1EC7n n\xF3i xo\u1EAFn l\u01B0\u1EE1i (tongue twister): "She sells seashells by the seashore", ta \u0111ang luy\u1EC7n t\u1EADp s\u1EF1 t\u01B0\u01A1ng ph\u1EA3n gi\u1EEFa hai \xE2m n\xE0o?',
+          options: [
+            { id: "opt_A", label: "A", text: "/s/ v\xE0 /\u0283/" },
+            { id: "opt_B", label: "B", text: "/t\u0283/ v\xE0 /d\u0292/" },
+            { id: "opt_C", label: "C", text: "/\u03B8/ v\xE0 /s/" },
+            { id: "opt_D", label: "D", text: "/f/ v\xE0 /v/" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. /s/ v\xE0 /\u0283/",
+          correctExplanation: "Sells, seashells (/s/ vs /\u0283/), seashore k\u1EBFt h\u1EE3p \u0111an xen gi\u1EEFa \xE2m /s/ (r\u0103ng s\xE1t, kh\xF4ng chu m\xF4i) v\xE0 /\u0283/ (tr\xF2n m\xF4i, chu ra ph\xEDa tr\u01B0\u1EDBc).",
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. /\u03B8/ v\xE0 /s/",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn c\xE1c c\u1EB7p \xE2m x\xE1t",
+            explanation: "C\xE2u v\u0103n kinh \u0111i\u1EC3n n\xE0y t\u1EADp trung 100% v\xE0o s\u1EF1 \u0111\u1ED1i l\u1EADp gi\u1EEFa s nh\u1EB9 (/s/) v\xE0 s n\u1EB7ng (/\u0283/)."
+          }
+        },
+        {
+          id: "doer_w4d3_q04",
+          roundIndex: 3,
+          prompt: 'Ch\u1ECDn t\u1EEB ch\xEDnh x\xE1c \u0111\u1EC3 n\xF3i v\u1EC1 th\u1EC3 tr\u1EA1ng s\u1EE9c kh\u1ECFe t\u1ED5ng th\u1EC3: "It is important for my overall health and ______."',
+          options: [
+            { id: "opt_A", label: "A", text: "well-being" },
+            { id: "opt_B", label: "B", text: "well-doing" },
+            { id: "opt_C", label: "C", text: "well-living" },
+            { id: "opt_D", label: "D", text: "good-health" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. well-being",
+          correctExplanation: 'C\u1EE5m danh t\u1EEB c\u1ED1 \u0111\u1ECBnh trong IELTS: "health and well-being" (s\u1EE9c kh\u1ECFe v\xE0 th\u1EC3 tr\u1EA1ng h\u1EA1nh ph\xFAc t\u1ED5ng th\u1EC3).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. well-doing",
+            diagnosticTitle: 'D\u1ECBch t\u1EEB "s\u1ED1ng t\u1ED1t" th\xE0nh well-doing',
+            explanation: 'Trong ti\u1EBFng Anh danh t\u1EEB chu\u1EA9n y khoa v\xE0 \u0111\u1EDDi s\u1ED1ng l\xE0 "well-being", kh\xF4ng d\xF9ng "well-doing".'
+          }
+        },
+        {
+          id: "doer_w4d3_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn \u0111\u1ED9ng t\u1EEB \u0111i k\xE8m \u0111\u1EC3 n\xF3i v\u1EC1 vi\u1EC7c t\u1EEB b\u1ECF m\u1ED9t th\xF3i quen x\u1EA5u: "I want to ______ this bad habit of staying up late."',
+          options: [
+            { id: "opt_A", label: "A", text: "break" },
+            { id: "opt_B", label: "B", text: "destroy" },
+            { id: "opt_C", label: "C", text: "cancel" },
+            { id: "opt_D", label: "D", text: "smash" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. break",
+          correctExplanation: 'Collocation chu\u1EA9n x\xE1c: "break a bad habit" (t\u1EEB b\u1ECF m\u1ED9t th\xF3i quen x\u1EA5u) >< "form/build a good habit".',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. cancel",
+            diagnosticTitle: 'D\u1ECBch "h\u1EE7y th\xF3i quen" th\xE0nh cancel',
+            explanation: 'Cancel d\xF9ng cho l\u1ECBch h\u1EB9n/chuy\u1EBFn bay; th\xF3i quen d\xF9ng "break a habit".'
+          }
+        },
+        {
+          id: "doer_w4d3_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn c\u1EE5m t\u1EEB chu\u1EA9n \u0111\u1EC3 n\xF3i v\u1EC1 vi\u1EC7c gi\u1EEF g\xECn v\xF3c d\xE1ng thon g\u1ECDn, kh\u1ECFe m\u1EA1nh: "To ______ in shape, I work out at the gym 3 times a week."',
+          options: [
+            { id: "opt_A", label: "A", text: "stay / keep" },
+            { id: "opt_B", label: "B", text: "make" },
+            { id: "opt_C", label: "C", text: "have" },
+            { id: "opt_D", label: "D", text: "take" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. stay / keep",
+          correctExplanation: 'Collocation quen thu\u1ED9c: "stay in shape" ho\u1EB7c "keep in shape" (gi\u1EEF g\xECn v\xF3c d\xE1ng c\xE2n \u0111\u1ED1i).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. make",
+            diagnosticTitle: 'D\u1ECBch "t\u1EA1o d\xE1ng" th\xE0nh make in shape',
+            explanation: 'Gi\u1EEF v\xF3c d\xE1ng c\xE2n \u0111\u1ED1i quy chu\u1EA9n lu\xF4n d\xF9ng \u0111\u1ED9ng t\u1EEB "stay / keep in shape".'
+          }
+        },
+        {
+          id: "doer_w4d3_q07",
+          roundIndex: 6,
+          prompt: "Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng c\u1EA5u tr\xFAc th\xF3i quen trong qu\xE1 kh\u1EE9 \u0111\xE3 ch\u1EA5m d\u1EE9t (used to):",
+          options: [
+            { id: "opt_A", label: "A", text: "I used to eat a lot of junk food, but now I stick to a balanced diet." },
+            { id: "opt_B", label: "B", text: "I am used to eat a lot of junk food in the past." },
+            { id: "opt_C", label: "C", text: "I used to eating a lot of junk food before." },
+            { id: "opt_D", label: "D", text: "I use to ate a lot of junk food." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. I used to eat a lot of junk food, but now I stick to a balanced diet.",
+          correctExplanation: "C\u1EA5u tr\xFAc ch\u1EC9 th\xF3i quen qu\xE1 kh\u1EE9: used to + Bare Verb (\u0111\xE3 t\u1EEBng l\xE0m g\xEC v\xE0 nay kh\xF4ng l\xE0m n\u1EEFa).",
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. used to eating",
+            diagnosticTitle: 'Nh\u1EA7m l\u1EABn v\u1EDBi c\u1EA5u tr\xFAc "be/get used to + V-ing"',
+            explanation: '"Be used to + V-ing" mang ngh\u0129a quen v\u1EDBi vi\u1EC7c g\xEC \u1EDF hi\u1EC7n t\u1EA1i, c\xF2n th\xF3i quen qu\xE1 kh\u1EE9 \u0111\xE3 b\u1ECF l\xE0 "used to + V nguy\xEAn m\u1EABu".'
+          }
+        },
+        {
+          id: "doer_w4d3_q08",
+          roundIndex: 7,
+          prompt: 'Ch\u1ECDn t\u1EEB \u0111i\u1EC1n v\xE0o ch\u1ED7 tr\u1ED1ng: "Having a balanced diet allows you to ______ weight effectively and supplies essential nutrients."',
+          options: [
+            { id: "opt_A", label: "A", text: "lose" },
+            { id: "opt_B", label: "B", text: "loose" },
+            { id: "opt_C", label: "C", text: "loss" },
+            { id: "opt_D", label: "D", text: "lost" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. lose",
+          correctExplanation: '\u0110\u1ED9ng t\u1EEB gi\u1EA3m c\xE2n l\xE0 "lose weight". "Loose" l\xE0 t\xEDnh t\u1EEB (l\u1ECFng l\u1EBBo, r\u1ED9ng th\xF9ng th\xECnh), "loss" l\xE0 danh t\u1EEB (s\u1EF1 m\u1EA5t m\xE1t).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. loose",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn ch\xEDnh t\u1EA3 tai h\u1EA1i gi\u1EEFa Lose v\xE0 Loose",
+            explanation: "\u0110\xE2y l\xE0 m\u1ED9t trong nh\u1EEFng l\u1ED7i ch\xEDnh t\u1EA3 b\u1ECB tr\u1EEB \u0111i\u1EC3m n\u1EB7ng nh\u1EA5t trong k\u1EF3 thi IELTS Writing/Listening."
+          }
+        },
+        {
+          id: "doer_w4d3_q09",
+          roundIndex: 8,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng c\u1EA5u tr\xFAc gi\xFAp c\u01A1 th\u1EC3 d\u1EBBo dai h\u01A1n: "T\u1EADp yoga 15 ph\xFAt m\u1ED7i ng\xE0y gi\xFAp t\xF4i tr\u1EDF n\xEAn d\u1EBBo dai h\u01A1n."',
+          options: [
+            { id: "opt_A", label: "A", text: "Doing yoga for 15 minutes daily enables me to be more flexible." },
+            { id: "opt_B", label: "B", text: "Do yoga 15 minutes day makes me more flexibility." },
+            { id: "opt_C", label: "C", text: "Doing yoga 15 minutes allows me more flexible." },
+            { id: "opt_D", label: "D", text: "Doing yoga enables me being flexible." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Doing yoga for 15 minutes daily enables me to be more flexible.",
+          correctExplanation: 'Gerund "Doing yoga" l\xE0m ch\u1EE7 ng\u1EEF, "enables me to be more flexible" (enable sb to-V, t\xEDnh t\u1EEB flexible: linh ho\u1EA1t/d\u1EBBo dai).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. allows me more flexible",
+            diagnosticTitle: "B\u1ECF qu\xEAn \u0111\u1ED9ng t\u1EEB to be sau allow sb",
+            explanation: 'Sau allow sb ph\u1EA3i l\xE0 m\u1ED9t to-V ("to be flexible"), kh\xF4ng th\u1EC3 gh\xE9p tr\u1EF1c ti\u1EBFp t\xEDnh t\u1EEB flexible m\xE0 thi\u1EBFu be.'
+          }
+        },
+        {
+          id: "doer_w4d3_q10",
+          roundIndex: 9,
+          prompt: "Khi m\u1ED9t ng\u01B0\u1EDDi lu\xF4n c\xF3 \xFD th\u1EE9c ch\u0103m lo c\u1EA9n th\u1EADn cho s\u1EE9c kh\u1ECFe c\u1EE7a m\xECnh, ta d\xF9ng t\xEDnh t\u1EEB gh\xE9p n\xE0o \u0111\u1EC3 mi\xEAu t\u1EA3?",
+          options: [
+            { id: "opt_A", label: "A", text: "health-conscious" },
+            { id: "opt_B", label: "B", text: "health-caring" },
+            { id: "opt_C", label: "C", text: "health-focusedly" },
+            { id: "opt_D", label: "D", text: "health-awarely" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. health-conscious",
+          correctExplanation: 'T\xEDnh t\u1EEB chu\u1EA9n x\xE1c trong IELTS Speaking & Writing: "health-conscious" (c\xF3 \xFD th\u1EE9c cao v\u1EC1 s\u1EE9c kh\u1ECFe).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. health-caring",
+            diagnosticTitle: "T\u1EF1 s\xE1ng t\u1EA1o t\xEDnh t\u1EEB gh\xE9p kh\xF4ng chu\u1EA9n ng\u1EEF c\u1EA3m",
+            explanation: 'Trong ti\u1EBFng Anh t\u1EEB chu\u1EA9n cho ng\u01B0\u1EDDi ch\xFA tr\u1ECDng \u0103n u\u1ED1ng r\xE8n luy\u1EC7n v\xEC s\u1EE9c kh\u1ECFe l\xE0 "health-conscious".'
+          }
+        }
+      ]
+    };
+  }
+});
+
+// server/services/bank_parts/week5.data.ts
+var WEEK_5_QUESTIONS;
+var init_week5_data = __esm({
+  "server/services/bank_parts/week5.data.ts"() {
+    WEEK_5_QUESTIONS = {
+      "WEEK 5 \u2013 DAY 1": [
+        {
+          id: "doer_w5d1_q01",
+          roundIndex: 0,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng khi d\xF9ng C\u1EE5m gi\u1EDBi t\u1EEB (Prepositional Phrase) l\xE0m th\xE0nh ph\u1EA7n b\u1ED5 ngh\u0129a cho danh t\u1EEB: "Tr\u01B0\u1EDDng y ch\u1EC9 nh\u1EADn nh\u1EEFng h\u1ECDc sinh c\xF3 th\xE0nh t\xEDch xu\u1EA5t s\u1EAFc trong h\u1ECDc t\u1EADp."',
+          options: [
+            { id: "opt_A", label: "A", text: "Medical schools only accept students with outstanding academic performance." },
+            { id: "opt_B", label: "B", text: "Medical schools only accept students have outstanding academic performance." },
+            { id: "opt_C", label: "C", text: "Medical schools only accept students about outstanding academic performance." },
+            { id: "opt_D", label: "D", text: "Medical schools only accept students of outstanding academic performance." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Medical schools only accept students with outstanding academic performance.",
+          correctExplanation: 'C\u1EE5m gi\u1EDBi t\u1EEB "with + noun phrase" (v\u1EDBi/s\u1EDF h\u1EEFu \u0111\u1EB7c \u0111i\u1EC3m g\xEC) \u0111\u1EE9ng ngay sau danh t\u1EEB "students" \u0111\u1EC3 l\xE0m modifier r\xFAt g\u1ECDn.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. accept students have",
+            diagnosticTitle: "L\u1ED7i hai \u0111\u1ED9ng t\u1EEB v\u1ECB ng\u1EEF \u0111\u1EE9ng li\u1EC1n k\u1EC1 kh\xF4ng li\xEAn t\u1EEB (Run-on/Double Verb)",
+            explanation: "Students have t\u1EA1o ra 2 finite verb (accept v\xE0 have) trong c\xF9ng m\u1ED9t clause \u0111\u01A1n m\xE0 kh\xF4ng c\xF3 li\xEAn t\u1EEB ho\u1EB7c \u0111\u1EA1i t\u1EEB quan h\u1EC7."
+          }
+        },
+        {
+          id: "doer_w5d1_q02",
+          roundIndex: 1,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng trong c\u1EE5m gi\u1EDBi t\u1EEB ch\u1EC9 \u0111\u1ECBa \u0111i\u1EC3m/t\u1ED5 ch\u1EE9c: "H\u1ECD \u0111ang l\xE0m vi\u1EC7c cho m\u1ED9t t\u1ED5 ch\u1EE9c phi l\u1EE3i nhu\u1EADn t\u1EA1i Th\u1EE5y S\u0129."',
+          options: [
+            { id: "opt_A", label: "A", text: "They work for a non-profit organization in Switzerland." },
+            { id: "opt_B", label: "B", text: "They work at a non-profit organization into Switzerland." },
+            { id: "opt_C", label: "C", text: "They work to a non-profit organization on Switzerland." },
+            { id: "opt_D", label: "D", text: "They work of a non-profit organization at Switzerland." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. They work for a non-profit organization in Switzerland.",
+          correctExplanation: '"Work for an organization" (l\xE0m vi\u1EC7c cho t\u1ED5 ch\u1EE9c n\xE0o) v\xE0 "in Switzerland" (\u1EDF qu\u1ED1c gia n\xE0o d\xF9ng in).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. into Switzerland",
+            diagnosticTitle: 'D\xF9ng gi\u1EDBi t\u1EEB ch\u1EC9 chuy\u1EC3n \u0111\u1ED9ng "into" thay v\xEC tr\u1EA1ng th\xE1i v\u1ECB tr\xED "in"',
+            explanation: 'Into th\u1EC3 hi\u1EC7n h\u01B0\u1EDBng chuy\u1EC3n \u0111\u1ED9ng \u0111i v\xE0o trong, c\xF2n v\u1ECB tr\xED \u1EDF m\u1ED9t \u0111\u1EA5t n\u01B0\u1EDBc ph\u1EA3i l\xE0 "in".'
+          }
+        },
+        {
+          id: "doer_w5d1_q03",
+          roundIndex: 2,
+          prompt: 'Ch\u1ECDn c\xE2u c\xF3 c\u1EE5m gi\u1EDBi t\u1EEB l\xE0m r\xF5 nguy\xEAn nh\xE2n/ngu\u1ED3n g\u1ED1c: "Nhi\u1EC1u lo\xE0i \u0111\u1ED9ng v\u1EADt \u0111ang \u0111\u1EE9ng tr\u01B0\u1EDBc nguy c\u01A1 tuy\u1EC7t ch\u1EE7ng do s\u1EF1 t\xE0n ph\xE1 m\xF4i tr\u01B0\u1EDDng s\u1ED1ng."',
+          options: [
+            { id: "opt_A", label: "A", text: "Many animals are on the verge of extinction due to habitat destruction." },
+            { id: "opt_B", label: "B", text: "Many animals are on the verge of extinction because habitat destruction." },
+            { id: "opt_C", label: "C", text: "Many animals are at the verge of extinction for habitat destruction." },
+            { id: "opt_D", label: "D", text: "Many animals are in the verge of extinction despite habitat destruction." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Many animals are on the verge of extinction due to habitat destruction.",
+          correctExplanation: 'C\u1EE5m th\xE0nh ng\u1EEF "on the verge of extinction" (tr\xEAn b\u1EDD v\u1EF1c tuy\u1EC7t ch\u1EE7ng), sau \u0111\xF3 l\xE0 c\u1EE5m gi\u1EDBi t\u1EEB ch\u1EC9 nguy\xEAn nh\xE2n "due to + noun phrase".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. because habitat destruction",
+            diagnosticTitle: "D\xF9ng li\xEAn t\u1EEB because tr\u1EF1c ti\u1EBFp v\u1EDBi c\u1EE5m danh t\u1EEB",
+            explanation: '"Because" ph\u1EA3i \u0111i k\xE8m v\u1EDBi m\u1ED9t m\u1EC7nh \u0111\u1EC1 (clause S+V); \u0111i v\u1EDBi c\u1EE5m danh t\u1EEB b\u1EAFt bu\u1ED9c d\xF9ng "due to / because of".'
+          }
+        },
+        {
+          id: "doer_w5d1_q04",
+          roundIndex: 3,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng v\u1EDBi c\u1EE5m gi\u1EDBi t\u1EEB ch\u1EC9 s\u1EF1 t\u01B0\u01A1ng ph\u1EA3n: "B\u1EA5t ch\u1EA5p nh\u1EEFng kh\xF3 kh\u0103n v\u1EC1 t\xE0i ch\xEDnh, c\xF4 \u1EA5y v\u1EABn ti\u1EBFp t\u1EE5c theo \u0111u\u1ED5i con \u0111\u01B0\u1EDDng h\u1ECDc v\u1EA5n."',
+          options: [
+            { id: "opt_A", label: "A", text: "In spite of financial difficulties, she continued to pursue higher education." },
+            { id: "opt_B", label: "B", text: "Despite of financial difficulties, she continued to pursue higher education." },
+            { id: "opt_C", label: "C", text: "Although financial difficulties, she continued to pursue higher education." },
+            { id: "opt_D", label: "D", text: "In spite financial difficulties, she continued to pursue higher education." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. In spite of financial difficulties, she continued to pursue higher education.",
+          correctExplanation: '"In spite of" lu\xF4n c\xF3 "of". Ng\u01B0\u1EE3c l\u1EA1i, t\u1EEB \u0111\u1ED3ng ngh\u0129a "Despite" th\xEC KH\xD4NG BAO GI\u1EDC c\xF3 "of".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Despite of",
+            diagnosticTitle: 'L\u1ED7i kinh \u0111i\u1EC3n th\xEAm "of" sau Despite',
+            explanation: 'Th\xED sinh c\u1EF1c k\u1EF3 hay nh\u1EA7m l\u1EABn vi\u1EBFt "Despite of" do b\u1ECB \u1EA3nh h\u01B0\u1EDFng b\u1EDFi c\u1EE5m "In spite of".'
+          }
+        },
+        {
+          id: "doer_w5d1_q05",
+          roundIndex: 4,
+          prompt: 'X\xE1c \u0111\u1ECBnh vai tr\xF2 ng\u1EEF ph\xE1p c\u1EE7a c\u1EE5m gi\u1EDBi t\u1EEB in \u0111\u1EADm trong c\xE2u: "The young girl **with curly hair** is my niece."',
+          options: [
+            { id: "opt_A", label: "A", text: "Adjective phrase (c\u1EE5m t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a cho danh t\u1EEB The young girl)" },
+            { id: "opt_B", label: "B", text: "Adverb phrase (c\u1EE5m tr\u1EA1ng t\u1EEB b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB is)" },
+            { id: "opt_C", label: "C", text: "Subject ch\xEDnh c\u1EE7a c\xE2u" },
+            { id: "opt_D", label: "D", text: "Finite Verb c\u1EE7a c\xE2u" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Adjective phrase (c\u1EE5m t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a cho danh t\u1EEB The young girl)",
+          correctExplanation: 'C\u1EE5m gi\u1EDBi t\u1EEB \u0111\u1EE9ng ngay sau danh t\u1EEB v\xE0 tr\u1EA3 l\u1EDDi cho c\xE2u h\u1ECFi "Which girl?" (C\xF4 g\xE1i n\xE0o?), do \u0111\xF3 \u0111\xF3ng vai tr\xF2 l\xE0 m\u1ED9t Adjective phrase.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Adverb phrase",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa Adjective phrase v\xE0 Adverb phrase",
+            explanation: "N\u1EBFu c\u1EE5m gi\u1EDBi t\u1EEB b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB ho\u1EB7c c\u1EA3 c\xE2u (v\u1EC1 th\u1EDDi gian, n\u01A1i ch\u1ED1n, c\xE1ch th\u1EE9c) th\xEC m\u1EDBi l\xE0 tr\u1EA1ng t\u1EEB; b\u1ED5 ngh\u0129a cho danh t\u1EEB l\xE0 t\xEDnh t\u1EEB."
+          }
+        },
+        {
+          id: "doer_w5d1_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn c\xE2u di\u1EC5n \u0111\u1EA1t chu\u1EA9n: "Cu\u1ED1n s\xE1ch tr\xEAn b\xE0n thu\u1ED9c v\u1EC1 gi\xE1o vi\xEAn c\u1EE7a ch\xFAng t\xF4i."',
+          options: [
+            { id: "opt_A", label: "A", text: "The book on the table belongs to our teacher." },
+            { id: "opt_B", label: "B", text: "The book on the table is belongs to our teacher." },
+            { id: "opt_C", label: "C", text: "The book is on the table belongs to our teacher." },
+            { id: "opt_D", label: "D", text: "The book on table belong to our teacher." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. The book on the table belongs to our teacher.",
+          correctExplanation: 'Subject l\xE0 "The book on the table" (v\u1EDBi "on the table" l\xE0 c\u1EE5m gi\u1EDBi t\u1EEB b\u1ED5 ngh\u0129a), Finite Verb l\xE0 "belongs to" (thu\u1ED9c v\u1EC1 ai).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. is belongs to",
+            diagnosticTitle: "Th\xEAm to be tr\u01B0\u1EDBc \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng belong",
+            explanation: 'Belong l\xE0 \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng c\xF3 ngh\u0129a l\xE0 thu\u1ED9c v\u1EC1, kh\xF4ng bao gi\u1EDD d\xF9ng d\u1EA1ng b\u1ECB \u0111\u1ED9ng "is belonged" hay th\u1EEBa to be "is belongs".'
+          }
+        },
+        {
+          id: "doer_w5d1_q07",
+          roundIndex: 6,
+          prompt: `Ch\u1ECDn c\u1EE5m gi\u1EDBi t\u1EEB ph\xF9 h\u1EE3p: "She succeeded in the IELTS examination ______ her teacher's constant guidance."`,
+          options: [
+            { id: "opt_A", label: "A", text: "under" },
+            { id: "opt_B", label: "B", text: "below" },
+            { id: "opt_C", label: "C", text: "beneath" },
+            { id: "opt_D", label: "D", text: "down" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. under",
+          correctExplanation: `C\u1EE5m c\u1ED1 \u0111\u1ECBnh: "under someone's guidance / supervision" (d\u01B0\u1EDBi s\u1EF1 ch\u1EC9 d\u1EABn / gi\xE1m s\xE1t c\u1EE7a ai).`,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. below",
+            diagnosticTitle: 'D\u1ECBch "d\u01B0\u1EDBi s\u1EF1 ch\u1EC9 d\u1EABn" th\xE0nh below',
+            explanation: 'Below d\xF9ng cho v\u1ECB tr\xED th\u1EA5p h\u01A1n v\u1EC1 \u0111\u1ED9 cao ho\u1EB7c m\u1EE9c \u0111\u1ED9 s\u1ED1 li\u1EC7u; s\u1EF1 che ch\u1EDF/ch\u1EC9 d\u1EABn quy\u1EC1n h\u1EA1n quy \u01B0\u1EDBc d\xF9ng "under".'
+          }
+        },
+        {
+          id: "doer_w5d1_q08",
+          roundIndex: 7,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng khi d\xF9ng c\u1EE5m gi\u1EDBi t\u1EEB ch\u1EC9 m\u1EE5c \u0111\xEDch/ch\u1EE9c n\u0103ng: "C\xF4ng c\u1EE5 n\xE0y \u0111\u01B0\u1EE3c thi\u1EBFt k\u1EBF \u0111\u1EC3 ph\xE2n t\xEDch d\u1EEF li\u1EC7u hi\u1EC7u qu\u1EA3."',
+          options: [
+            { id: "opt_A", label: "A", text: "This tool is designed for analyzing data efficiently." },
+            { id: "opt_B", label: "B", text: "This tool is designed to analyze data efficient." },
+            { id: "opt_C", label: "C", text: "This tool designed for data analyze efficient." },
+            { id: "opt_D", label: "D", text: "This tool is designing for analyze data." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. This tool is designed for analyzing data efficiently.",
+          correctExplanation: 'C\u1EA5u tr\xFAc b\u1ECB \u0111\u1ED9ng "is designed for + V-ing / noun phrase" ho\u1EB7c "is designed to analyze data efficiently" (efficiently l\xE0 tr\u1EA1ng t\u1EEB).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. analyze data efficient",
+            diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB efficient b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB analyze",
+            explanation: "Sau \u0111\u1ED9ng t\u1EEB h\xE0nh \u0111\u1ED9ng analyze c\u1EA7n ph\xF3 t\u1EEB efficiently, ph\u01B0\u01A1ng \xE1n B d\xF9ng t\xEDnh t\u1EEB efficient n\xEAn sai."
+          }
+        },
+        {
+          id: "doer_w5d1_q09",
+          roundIndex: 8,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng \u0111i k\xE8m c\u1EE5m: "Students should focus on their studies ______ social media distractions."',
+          options: [
+            { id: "opt_A", label: "A", text: "instead of" },
+            { id: "opt_B", label: "B", text: "instead" },
+            { id: "opt_C", label: "C", text: "in place" },
+            { id: "opt_D", label: "D", text: "rather" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. instead of",
+          correctExplanation: 'Gi\u1EDBi t\u1EEB ph\u1EE9c h\u1EE3p: "instead of + noun/V-ing" (thay v\xEC c\xE1i g\xEC). N\u1EBFu ch\u1EC9 d\xF9ng "instead" th\xEC n\xF3 l\xE0 tr\u1EA1ng t\u1EEB \u0111\u1EE9ng cu\u1ED1i c\xE2u.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. instead",
+            diagnosticTitle: 'R\u01A1i r\u1EE5ng gi\u1EDBi t\u1EEB "of" sau instead',
+            explanation: '\u0110\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB ho\u1EB7c V-ing b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng "instead of"; kh\xF4ng \u0111\u01B0\u1EE3c d\xF9ng "instead" tr\u01A1 tr\u1ECDi.'
+          }
+        },
+        {
+          id: "doer_w5d1_q10",
+          roundIndex: 9,
+          prompt: 'Ph\xE2n bi\u1EC7t c\u1EE5m gi\u1EDBi t\u1EEB ch\u1EC9 \u0111\u1ECBa \u0111i\u1EC3m: Khi n\xE0o ta d\xF9ng "at the corner" thay v\xEC "in the corner"?',
+          options: [
+            { id: "opt_A", label: "A", text: '"at the corner" d\xF9ng cho g\xF3c ng\xE3 t\u01B0 \u0111\u01B0\u1EDDng ph\u1ED1 b\xEAn ngo\xE0i, c\xF2n "in the corner" d\xF9ng cho g\xF3c b\xEAn trong m\u1ED9t c\u0103n ph\xF2ng' },
+            { id: "opt_B", label: "B", text: "C\u1EA3 hai ho\xE0n to\xE0n gi\u1ED1ng nhau kh\xF4ng c\xF3 b\u1EA5t k\u1EF3 quy t\u1EAFc n\xE0o" },
+            { id: "opt_C", label: "C", text: '"in the corner" d\xF9ng cho g\xF3c ng\xE3 t\u01B0 \u0111\u01B0\u1EDDng l\u1EDBn' },
+            { id: "opt_D", label: "D", text: '"at the corner" ch\u1EC9 d\xF9ng cho g\xF3c t\u1EE7 qu\u1EA7n \xE1o' }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: 'A. "at the corner" d\xF9ng cho g\xF3c ng\xE3 t\u01B0 \u0111\u01B0\u1EDDng ph\u1ED1 b\xEAn ngo\xE0i, c\xF2n "in the corner" d\xF9ng cho g\xF3c b\xEAn trong m\u1ED9t c\u0103n ph\xF2ng',
+          correctExplanation: "Quy t\u1EAFc kh\xF4ng gian: in the corner of a room (g\xF3c trong ph\xF2ng kh\xE9p k\xEDn), at the corner of the street (g\xF3c ngo\xE0i \u0111\u01B0\u1EDDng ph\u1ED1 m\u1EDF).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. C\u1EA3 hai ho\xE0n to\xE0n gi\u1ED1ng nhau",
+            diagnosticTitle: "Coi nh\u1EB9 s\u1EF1 ph\xE2n bi\u1EC7t gi\u1EDBi t\u1EEB kh\xF4ng gian",
+            explanation: "S\u1EF1 ph\xE2n bi\u1EC7t gi\u1EEFa g\xF3c trong (in) v\xE0 g\xF3c ngo\xE0i giao l\u1ED9 (at/on) l\xE0 \u0111i\u1EC3m ki\u1EC3m tra ng\u1EEF ph\xE1p kh\xF4ng gian r\u1EA5t chu\u1EA9n x\xE1c."
+          }
+        }
+      ],
+      "WEEK 5 \u2013 DAY 2": [
+        {
+          id: "doer_w5d2_q01",
+          roundIndex: 0,
+          prompt: 'Trong b\xE0i \u0111\u1ECDc Karaoke in Vietnam, t\u1EEB "communal" trong c\u1EE5m "one of its great communal joys" \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi t\u1EEB n\xE0o?',
+          options: [
+            { id: "opt_A", label: "A", text: "shared / collective (thu\u1ED9c v\u1EC1 t\u1EADp th\u1EC3, c\u1ED9ng \u0111\u1ED3ng c\xF9ng chia s\u1EBB)" },
+            { id: "opt_B", label: "B", text: "private / solitary (ri\xEAng t\u01B0, \u0111\u01A1n \u0111\u1ED9c)" },
+            { id: "opt_C", label: "C", text: "commercial (mang t\xEDnh th\u01B0\u01A1ng m\u1EA1i)" },
+            { id: "opt_D", label: "D", text: "competitive (c\xF3 t\xEDnh c\u1EA1nh tranh gay g\u1EAFt)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. shared / collective (thu\u1ED9c v\u1EC1 t\u1EADp th\u1EC3, c\u1ED9ng \u0111\u1ED3ng c\xF9ng chia s\u1EBB)",
+          correctExplanation: '"Communal" = mang t\xEDnh c\u1ED9ng \u0111\u1ED3ng, t\u1EADp th\u1EC3 c\xF9ng chung vui, \u0111\u1ED3ng ngh\u0129a v\u1EDBi shared/collective.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. private / solitary",
+            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB tr\xE1i ngh\u0129a",
+            explanation: "Private/solitary l\xE0 ri\xEAng t\u01B0 c\xE1 nh\xE2n, tr\xE1i ng\u01B0\u1EE3c ho\xE0n to\xE0n v\u1EDBi \xFD ngh\u0129a c\u1ED9ng \u0111\u1ED3ng c\u1EE7a communal."
+          }
+        },
+        {
+          id: "doer_w5d2_q02",
+          roundIndex: 1,
+          prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "inappropriate" trong c\xE2u "a karaoke machine pops up at completely inappropriate moments" l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "suitable / fitting (th\xEDch h\u1EE3p, \u0111\xFAng l\xFAc, ph\xF9 h\u1EE3p ho\xE0n c\u1EA3nh)" },
+            { id: "opt_B", label: "B", text: "hilarious (vui nh\u1ED9n, bu\u1ED3n c\u01B0\u1EDDi)" },
+            { id: "opt_C", label: "C", text: "bizarre (k\u1EF3 d\u1ECB, qu\xE1i \u0111\u1EA3n)" },
+            { id: "opt_D", label: "D", text: "awkward (ng\u01B0\u1EE3ng ng\xF9ng)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. suitable / fitting (th\xEDch h\u1EE3p, \u0111\xFAng l\xFAc, ph\xF9 h\u1EE3p ho\xE0n c\u1EA3nh)",
+          correctExplanation: 'Ti\u1EC1n t\u1ED1 in- mang ngh\u0129a ph\u1EE7 \u0111\u1ECBnh: inappropriate = kh\xF4ng th\xEDch h\u1EE3p, v\xF4 duy\xEAn. T\u1EEB tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "suitable" ho\u1EB7c "fitting".',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. bizarre",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa t\u1EEB \u0111\u1ED3ng ngh\u0129a v\xE0 tr\xE1i ngh\u0129a",
+            explanation: "Bizarre (k\u1EF3 l\u1EA1) mang t\xEDnh ch\u1EA5t t\u01B0\u01A1ng t\u1EF1 v\u1EDBi inappropriate trong ng\u1EEF c\u1EA3nh b\u1EA5t th\u01B0\u1EDDng. \u0110\u1EC1 b\xE0i y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
+          }
+        },
+        {
+          id: "doer_w5d2_q03",
+          roundIndex: 2,
+          prompt: 'Trong c\xE2u: "Vietnamese folk songs are a bit of a nightmare for the untrained tongue", c\u1EE5m \u1EA9n d\u1EE5 "the untrained tongue" \xE1m ch\u1EC9 \u0111i\u1EC1u g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "Ng\u01B0\u1EDDi n\u01B0\u1EDBc ngo\xE0i ch\u01B0a \u0111\u01B0\u1EE3c luy\u1EC7n t\u1EADp ph\xE1t \xE2m h\u1EC7 th\u1ED1ng thanh \u0111i\u1EC7u ti\u1EBFng Vi\u1EC7t ph\u1EE9c t\u1EA1p" },
+            { id: "opt_B", label: "B", text: "Ng\u01B0\u1EDDi b\u1ECB m\u1EA5t gi\u1ECDng sau khi h\xE1t qu\xE1 nhi\u1EC1u b\xE0i" },
+            { id: "opt_C", label: "C", text: "Thi\u1EBFt b\u1ECB micro kh\xF4ng thu \u0111\u01B0\u1EE3c \xE2m thanh ch\u1EA5t l\u01B0\u1EE3ng cao" },
+            { id: "opt_D", label: "D", text: "Ca s\u0129 chuy\xEAn nghi\u1EC7p t\u1EEB ch\u1ED1i h\xE1t nh\u1EA1c d\xE2n gian" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Ng\u01B0\u1EDDi n\u01B0\u1EDBc ngo\xE0i ch\u01B0a \u0111\u01B0\u1EE3c luy\u1EC7n t\u1EADp ph\xE1t \xE2m h\u1EC7 th\u1ED1ng thanh \u0111i\u1EC7u ti\u1EBFng Vi\u1EC7t ph\u1EE9c t\u1EA1p",
+          correctExplanation: '"Untrained tongue" l\xE0 l\u1ED1i n\xF3i \u1EA9n d\u1EE5 ch\u1EC9 chi\u1EBFc l\u01B0\u1EE1i ch\u01B0a \u0111\u01B0\u1EE3c t\u1EADp luy\u1EC7n \u0111\u1EC3 u\u1ED1n \xE2m v\xE0 ph\xE1t \xE2m c\xE1c thanh s\u1EAFc, h\u1ECFi, ng\xE3, n\u1EB7ng trong ti\u1EBFng Vi\u1EC7t.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ng\u01B0\u1EDDi b\u1ECB m\u1EA5t gi\u1ECDng",
+            diagnosticTitle: 'D\u1ECBch ngh\u0129a \u0111en t\u1EEB "tongue" th\xE0nh v\u1EA5n \u0111\u1EC1 c\u1ED5 h\u1ECDng',
+            explanation: "\u0110\xE2y l\xE0 c\xE1ch n\xF3i tu t\u1EEB v\u1EC1 k\u1EF9 n\u0103ng ph\xE1t \xE2m ngo\u1EA1i ng\u1EEF, kh\xF4ng ph\u1EA3i b\u1EC7nh l\xFD m\u1EA5t gi\u1ECDng."
+          }
+        },
+        {
+          id: "doer_w5d2_q04",
+          roundIndex: 3,
+          prompt: 'Collocation chu\u1EA9n trong b\xE0i: "Singing some traditional songs helps foreigners leave a favorable ______ on the local residents."',
+          options: [
+            { id: "opt_A", label: "A", text: "impression" },
+            { id: "opt_B", label: "B", text: "imprint" },
+            { id: "opt_C", label: "C", text: "pressure" },
+            { id: "opt_D", label: "D", text: "oppression" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. impression",
+          correctExplanation: 'Collocation h\u1ECDc thu\u1EADt: "leave a favorable/good impression on somebody" (\u0111\u1EC3 l\u1EA1i \u1EA5n t\u01B0\u1EE3ng t\u1ED1t \u0111\u1EB9p trong l\xF2ng ai).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. imprint",
+            diagnosticTitle: "D\xF9ng t\u1EEB d\u1EA5u \u1EA5n v\u1EADt l\xFD thay v\xEC \u1EA5n t\u01B0\u1EE3ng t\xE2m l\xFD",
+            explanation: 'Imprint l\xE0 d\u1EA5u v\u1EBFt in h\u1EB1n c\u01A1 h\u1ECDc, c\xF2n t\u1EA1o \u1EA5n t\u01B0\u1EE3ng c\u1EA3m x\xFAc v\u1EDBi ng\u01B0\u1EDDi kh\xE1c b\u1EAFt bu\u1ED9c d\xF9ng "impression".'
+          }
+        },
+        {
+          id: "doer_w5d2_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn \u0111\u1ED9ng t\u1EEB \u0111i v\u1EDBi gi\u1EDBi t\u1EEB FROM trong quy \u0111\u1ECBnh ph\xE1p lu\u1EADt: "Minors are strictly banned ______ engaging in online gaming for more than 3 hours weekly."',
+          options: [
+            { id: "opt_A", label: "A", text: "from" },
+            { id: "opt_B", label: "B", text: "to" },
+            { id: "opt_C", label: "C", text: "against" },
+            { id: "opt_D", label: "D", text: "with" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. from",
+          correctExplanation: 'C\u1EA5u tr\xFAc c\u1EA5m \u0111o\xE1n ph\xE1p l\xFD: "be banned / prohibited FROM doing something" (b\u1ECB nghi\xEAm c\u1EA5m l\xE0m vi\u1EC7c g\xEC).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. to",
+            diagnosticTitle: "D\xF9ng to-V sau \u0111\u1ED9ng t\u1EEB ban",
+            explanation: '\u0110\u1ED9ng t\u1EEB ban kh\xF4ng \u0111i v\u1EDBi to-V m\xE0 b\u1EAFt bu\u1ED9c d\xF9ng gi\u1EDBi t\u1EEB "from + V-ing".'
+          }
+        },
+        {
+          id: "doer_w5d2_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn t\u1EEB lo\u1EA1i \u0111\xFAng \u0111\u1EC3 ho\xE0n th\xE0nh c\u1EA5u tr\xFAc ph\u1EA3n th\xE2n: "Players love to ______ themselves in a fantasy virtual universe."',
+          options: [
+            { id: "opt_A", label: "A", text: "immerse" },
+            { id: "opt_B", label: "B", text: "immersion" },
+            { id: "opt_C", label: "C", text: "immersive" },
+            { id: "opt_D", label: "D", text: "immersely" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. immerse",
+          correctExplanation: 'C\u1EA5u tr\xFAc \u0111\u1ED9ng t\u1EEB nguy\xEAn th\u1EC3 sau to: "immerse oneself in sth" (\u0111\u1EAFm ch\xECm b\u1EA3n th\xE2n v\xE0o \u0111i\u1EC1u g\xEC).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. immersion",
+            diagnosticTitle: "D\xF9ng nh\u1EA7m danh t\u1EEB sau to",
+            explanation: 'Sau "love to" c\u1EA7n m\u1ED9t \u0111\u1ED9ng t\u1EEB nguy\xEAn m\u1EABu (immerse), kh\xF4ng d\xF9ng danh t\u1EEB immersion.'
+          }
+        },
+        {
+          id: "doer_w5d2_q07",
+          roundIndex: 6,
+          prompt: `T\u1EEB v\u1EF1ng ch\u1EC9 s\u1EF1 ki\u1EC7n k\u1EF7 ni\u1EC7m tr\xF2n 100 n\u0103m: Trong c\u1EE5m "celebrating Helen Tungate's centenary", t\u1EEB "centenary" c\xF3 ngh\u0129a l\xE0:`,
+          options: [
+            { id: "opt_A", label: "A", text: "L\u1EC5 k\u1EF7 ni\u1EC7m tr\xF2n 100 n\u0103m (the 100th anniversary)" },
+            { id: "opt_B", label: "B", text: "L\u1EC5 k\u1EF7 ni\u1EC7m 50 n\u0103m n\u1EEDa th\u1EBF k\u1EF7" },
+            { id: "opt_C", label: "C", text: "L\u1EC5 tang t\u01B0\u1EDFng ni\u1EC7m ng\u01B0\u1EDDi \u0111\xE3 khu\u1EA5t" },
+            { id: "opt_D", label: "D", text: "L\u1EC5 nh\u1EADm ch\u1EE9c th\u1ECB tr\u01B0\u1EDFng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. L\u1EC5 k\u1EF7 ni\u1EC7m tr\xF2n 100 n\u0103m (the 100th anniversary)",
+          correctExplanation: 'G\u1ED1c t\u1EEB Latin "cent-" = 100 (nh\u01B0 century: th\u1EBF k\u1EF7). "Centenary" l\xE0 l\u1EC5 k\u1EF7 ni\u1EC7m tr\xF2n \u0111\xFAng 100 n\u0103m.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. L\u1EC5 k\u1EF7 ni\u1EC7m 50 n\u0103m",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi golden jubilee (50 n\u0103m)",
+            explanation: "50 n\u0103m l\xE0 jubilee, 100 n\u0103m l\xE0 centenary / centennial."
+          }
+        },
+        {
+          id: "doer_w5d2_q08",
+          roundIndex: 7,
+          prompt: 'C\u1EE5m danh t\u1EEB "mixed reactions" trong c\xE2u "The gaming curfew caused mixed reactions among citizens" mang s\u1EAFc th\xE1i g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "C\xE1c ph\u1EA3n \u1EE9ng tr\xE1i chi\u1EC1u (ng\u01B0\u1EDDi khen ng\u01B0\u1EDDi ch\xEA, k\u1EBB \u0111\u1ED3ng t\xECnh k\u1EBB ph\u1EA3n \u0111\u1ED1i)" },
+            { id: "opt_B", label: "B", text: "100% ng\u01B0\u1EDDi d\xE2n \u0111\u1EC1u k\u1ECBch li\u1EC7t ph\u1EA3n \u0111\u1ED1i" },
+            { id: "opt_C", label: "C", text: "To\xE0n b\u1ED9 x\xE3 h\u1ED9i \u0111\u1ED3ng thu\u1EADn tuy\u1EC7t \u0111\u1ED1i kh\xF4ng \xFD ki\u1EBFn" },
+            { id: "opt_D", label: "D", text: "Ng\u01B0\u1EDDi d\xE2n ho\xE0n to\xE0n th\u1EDD \u01A1 kh\xF4ng ai quan t\xE2m" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. C\xE1c ph\u1EA3n \u1EE9ng tr\xE1i chi\u1EC1u (ng\u01B0\u1EDDi khen ng\u01B0\u1EDDi ch\xEA, k\u1EBB \u0111\u1ED3ng t\xECnh k\u1EBB ph\u1EA3n \u0111\u1ED1i)",
+          correctExplanation: '"Mixed reactions" mi\xEAu t\u1EA3 lu\u1ED3ng \xFD ki\u1EBFn ph\xE2n h\xF3a: ph\u1EE5 huynh th\xEC vui m\u1EEBng trong khi gi\u1EDBi tr\u1EBB coi \u0111\xF3 l\xE0 vi ph\u1EA1m quy\u1EC1n t\u1EF1 do.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. To\xE0n b\u1ED9 x\xE3 h\u1ED9i \u0111\u1ED3ng thu\u1EADn",
+            diagnosticTitle: "Hi\u1EC3u sai ch\u1EEF mixed th\xE0nh h\xF2a h\u1EE3p \u0111\u1ED3ng thu\u1EADn",
+            explanation: '"Mixed" l\xE0 pha tr\u1ED9n c\xE1c \xFD ki\u1EBFn m\xE2u thu\u1EABn tr\xE1i chi\u1EC1u nhau, kh\xF4ng ph\u1EA3i \u0111\u1ED3ng thu\u1EADn m\u1ED9t chi\u1EC1u.'
+          }
+        },
+        {
+          id: "doer_w5d2_q09",
+          roundIndex: 8,
+          prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o c\xE2u: "The interactive theatre play provided an exceptionally ______ experience for the audience, making them feel part of the story."',
+          options: [
+            { id: "opt_A", label: "A", text: "immersive (mang l\u1EA1i tr\u1EA3i nghi\u1EC7m \u0111\u1EAFm ch\xECm ch\xE2n th\u1EF1c)" },
+            { id: "opt_B", label: "B", text: "bland" },
+            { id: "opt_C", label: "C", text: "exhausted" },
+            { id: "opt_D", label: "D", text: "compulsory" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. immersive (mang l\u1EA1i tr\u1EA3i nghi\u1EC7m \u0111\u1EAFm ch\xECm ch\xE2n th\u1EF1c)",
+          correctExplanation: '"An immersive experience" l\xE0 t\xEDnh t\u1EEB cao c\u1EA5p ch\u1EC9 tr\u1EA3i nghi\u1EC7m cu\u1ED1n h\xFAt \u0111\u1EBFn m\u1EE9c ng\u01B0\u1EDDi tham gia nh\u01B0 h\xF2a m\xECnh ho\xE0n to\xE0n v\xE0o kh\xF4ng gian t\xE1c ph\u1EA9m.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. bland",
+            diagnosticTitle: "Ch\u1ECDn t\xEDnh t\u1EEB ti\xEAu c\u1EF1c m\xE2u thu\u1EABn ng\u1EEF c\u1EA3nh",
+            explanation: "Bland l\xE0 nh\u1EA1t nh\u1EBDo v\xF4 v\u1ECB, tr\xE1i ng\u01B0\u1EE3c v\u1EDBi s\u1EF1 cu\u1ED1n h\xFAt c\u1EE7a v\u1EDF k\u1ECBch t\u01B0\u01A1ng t\xE1c."
+          }
+        },
+        {
+          id: "doer_w5d2_q10",
+          roundIndex: 9,
+          prompt: 'PARAPHRASE: C\xE2u "Music has the capacity to connect us and serves as a means of human connection across cultures" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i t\u01B0\u01A1ng \u0111\u01B0\u01A1ng nh\u1EA5t l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "Musical expression possesses the unique power to bridge social divides and foster interpersonal bonds." },
+            { id: "opt_B", label: "B", text: "Foreigners are strictly prohibited from singing local folk songs without formal artistic certifications." },
+            { id: "opt_C", label: "C", text: "Music divides communities because people argue over who misses the high notes." },
+            { id: "opt_D", label: "D", text: "Only professional vocalists have the legal right to express themselves in communal gatherings." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Musical expression possesses the unique power to bridge social divides and foster interpersonal bonds.",
+          correctExplanation: '"Bridge social divides and foster interpersonal bonds" paraphrase tuy\u1EC7t v\u1EDDi cho "capacity to connect us and serves as a means of human connection".',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Music divides communities",
+            diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c th\xF4ng \u0111i\u1EC7p g\u1EAFn k\u1EBFt th\xE0nh chia r\u1EBD",
+            explanation: "\u0110o\u1EA1n v\u0103n ca ng\u1EE3i \xE2m nh\u1EA1c l\xE0 c\u1EA7u n\u1ED1i nh\xE2n v\u0103n, kh\xF4ng h\u1EC1 chia r\u1EBD ng\u01B0\u1EDDi nghe."
+          }
+        }
+      ],
+      "WEEK 5 \u2013 DAY 3": [
+        {
+          id: "doer_w5d3_q01",
+          roundIndex: 0,
+          prompt: "T\u1EEB n\xE0o sau \u0111\xE2y ch\u1EE9a c\u1EE5m ph\u1EE5 \xE2m (consonant cluster) g\u1ED3m 3 ph\u1EE5 \xE2m \u0111\u1EE9ng li\u1EC1n nhau \u1EDF \u0111\u1EA7u t\u1EEB?",
+          options: [
+            { id: "opt_A", label: "A", text: "street /str-/" },
+            { id: "opt_B", label: "B", text: "play /pl-/" },
+            { id: "opt_C", label: "C", text: "bread /br-/" },
+            { id: "opt_D", label: "D", text: "clean /kl-/" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. street /str-/",
+          correctExplanation: '"Street" b\u1EAFt \u0111\u1EA7u b\u1EB1ng c\u1EE5m 3 ph\u1EE5 \xE2m /s-t-r/ (street, spring, scream, splash). C\xE1c t\u1EEB c\xF2n l\u1EA1i ch\u1EC9 c\xF3 2 ph\u1EE5 \xE2m \u0111\u1EA7u.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. play",
+            diagnosticTitle: "Ch\u1ECDn c\u1EE5m ch\u1EC9 c\xF3 2 ph\u1EE5 \xE2m",
+            explanation: "/pl-/ ch\u1EC9 g\u1ED3m 2 ph\u1EE5 \xE2m p v\xE0 l."
+          }
+        },
+        {
+          id: "doer_w5d3_q02",
+          roundIndex: 1,
+          prompt: 'T\u1EEB "comfortable" /\u02C8k\u028Cm.f\u0259.t\u0259.bl/ th\u01B0\u1EDDng \u0111\u01B0\u1EE3c ph\xE1t \xE2m chu\u1EA9n t\u1EF1 nhi\xEAn v\u1EDBi bao nhi\xEAu \xE2m ti\u1EBFt (syllables)?',
+          options: [
+            { id: "opt_A", label: "A", text: "3 ho\u1EB7c 4 \xE2m ti\u1EBFt (th\xF4ng d\u1EE5ng nh\u1EA5t l\xE0 3 \xE2m ti\u1EBFt: /\u02C8k\u028Cmf.t\u0259.bl/)" },
+            { id: "opt_B", label: "B", text: "Ch\xEDnh x\xE1c 5 \xE2m ti\u1EBFt" },
+            { id: "opt_C", label: "C", text: "Ch\u1EC9 c\xF3 1 \xE2m ti\u1EBFt" },
+            { id: "opt_D", label: "D", text: "6 \xE2m ti\u1EBFt" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. 3 ho\u1EB7c 4 \xE2m ti\u1EBFt (th\xF4ng d\u1EE5ng nh\u1EA5t l\xE0 3 \xE2m ti\u1EBFt: /\u02C8k\u028Cmf.t\u0259.bl/)",
+          correctExplanation: 'Ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 th\u01B0\u1EDDng nu\u1ED1t \xE2m "or" \u0111\u1EC3 ph\xE1t \xE2m th\xE0nh 3 \xE2m ti\u1EBFt: /\u02C8k\u028Cmf.t\u0259.b\u0259l/ (comf-ta-ble).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. 5 \xE2m ti\u1EBFt",
+            diagnosticTitle: "\u0110\u1EBFm t\u1EEBng ch\u1EEF c\xE1i com-for-ta-b-le",
+            explanation: "Ng\u01B0\u1EDDi h\u1ECDc nh\xECn m\u1EB7t ch\u1EEF \u0111\u1EBFm \xE2m ti\u1EBFt r\u1EA5t d\u1EC5 ph\xE1t \xE2m th\u1EEBa \xE2m ti\u1EBFt l\xE0m m\u1EA5t t\u1EF1 nhi\xEAn."
+          }
+        },
+        {
+          id: "doer_w5d3_q03",
+          roundIndex: 2,
+          prompt: 'Tr\u1ECDng \xE2m ch\xEDnh (primary stress) c\u1EE7a t\u1EEB "competitive" n\u1EB1m \u1EDF \xE2m ti\u1EBFt th\u1EE9 m\u1EA5y?',
+          options: [
+            { id: "opt_A", label: "A", text: "\xC2m ti\u1EBFt th\u1EE9 2 (/k\u0259m\u02C8pet.\u026A.t\u026Av/)" },
+            { id: "opt_B", label: "B", text: "\xC2m ti\u1EBFt th\u1EE9 1 (/\u02C8k\u0252m.p\u0259.t\u026A.t\u026Av/)" },
+            { id: "opt_C", label: "C", text: "\xC2m ti\u1EBFt th\u1EE9 3" },
+            { id: "opt_D", label: "D", text: "\xC2m ti\u1EBFt th\u1EE9 4" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. \xC2m ti\u1EBFt th\u1EE9 2 (/k\u0259m\u02C8pet.\u026A.t\u026Av/)",
+          correctExplanation: 'Competitive c\xF3 tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 hai "pet". (L\u01B0u \xFD: danh t\u1EEB "competition" l\u1EA1i c\xF3 tr\u1ECDng \xE2m \u1EDF \xE2m ti\u1EBFt th\u1EE9 3).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. \xC2m ti\u1EBFt th\u1EE9 1",
+            diagnosticTitle: 'Nh\u1EA7m v\u1EDBi \u0111\u1ED9ng t\u1EEB g\u1ED1c "compete" ho\u1EB7c danh t\u1EEB "company"',
+            explanation: "\u0110\xE2y l\xE0 t\u1EEB r\u1EA5t hay b\u1ECB h\u1ECDc vi\xEAn ph\xE1t \xE2m sai tr\u1ECDng \xE2m v\xE0o \xE2m ti\u1EBFt \u0111\u1EA7u ti\xEAn."
+          }
+        },
+        {
+          id: "doer_w5d3_q04",
+          roundIndex: 3,
+          prompt: `Trong cu\u1ED9c h\u1ED9i tho\u1EA1i khi Khang g\u1EB7p kh\xF3 kh\u0103n trong qu\u1EA3n l\xFD kh\u1ED1i l\u01B0\u1EE3ng c\xF4ng vi\u1EC7c, anh \u1EA5y n\xF3i: "I'm having a hard time ______ my workload."`,
+          options: [
+            { id: "opt_A", label: "A", text: "managing" },
+            { id: "opt_B", label: "B", text: "to manage" },
+            { id: "opt_C", label: "C", text: "manage" },
+            { id: "opt_D", label: "D", text: "for manage" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. managing",
+          correctExplanation: "C\u1EA5u tr\xFAc chu\u1EA9n: have a hard time / difficulty / trouble DOING something (V-ing), kh\xF4ng d\xF9ng to-infinitive.",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. to manage",
+            diagnosticTitle: "D\xF9ng to-V sau have a hard time",
+            explanation: "Th\xF3i quen gh\xE9p to-V l\xE0m sai c\u1EA5u tr\xFAc c\u1ED1 \u0111\u1ECBnh have a hard time + V-ing."
+          }
+        },
+        {
+          id: "doer_w5d3_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn d\u1EA1ng \u0111\xFAng c\u1EE7a \u0111\u1ED9ng t\u1EEB sau "struggle": "I am struggling ______ my English pronunciation."',
+          options: [
+            { id: "opt_A", label: "A", text: "to improve" },
+            { id: "opt_B", label: "B", text: "improving" },
+            { id: "opt_C", label: "C", text: "for improve" },
+            { id: "opt_D", label: "D", text: "with to improve" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. to improve",
+          correctExplanation: "C\u1EA5u tr\xFAc: struggle TO DO something (ch\u1EADt v\u1EADt/g\u1EB7p kh\xF3 kh\u0103n \u0111\u1EC3 l\xE0m g\xEC). (L\u01B0u \xFD: struggle WITH + Noun).",
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. improving",
+            diagnosticTitle: "\u0110\u1ED3ng h\xF3a c\u1EA5u tr\xFAc struggle v\u1EDBi have a hard time V-ing",
+            explanation: "Have a hard time \u0111i v\u1EDBi V-ing, nh\u01B0ng \u0111\u1ED9ng t\u1EEB struggle l\u1EA1i \u0111i v\u1EDBi TO-infinitive."
+          }
+        },
+        {
+          id: "doer_w5d3_q06",
+          roundIndex: 5,
+          prompt: "Khi \u0111\u01B0a ra l\u1EDDi khuy\xEAn m\u1ED9t c\xE1ch l\u1ECBch s\u1EF1, tinh t\u1EBF cho b\u1EA1n b\xE8, m\u1EABu c\xE2u n\xE0o sau \u0111\xE2y ph\xF9 h\u1EE3p nh\u1EA5t?",
+          options: [
+            { id: "opt_A", label: "A", text: "My advice would be to stay calm and set clear goals." },
+            { id: "opt_B", label: "B", text: "You must immediately do whatever I say." },
+            { id: "opt_C", label: "C", text: "I order you to study 10 hours a day." },
+            { id: "opt_D", label: "D", text: "My advice is you have to not talk." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. My advice would be to stay calm and set clear goals.",
+          correctExplanation: 'C\u1EA5u tr\xFAc \u0111\u01B0a l\u1EDDi khuy\xEAn nh\xE3 nh\u1EB7n, t\u1EF1 nhi\xEAn: "My advice would be to + V" ho\u1EB7c "If I were you, I would...".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. You must immediately do...",
+            diagnosticTitle: "D\xF9ng m\u1EC7nh l\u1EC7nh th\xF4 b\u1EA1o (imperative/must)",
+            explanation: "Trong giao ti\u1EBFp Speaking, d\xF9ng must t\u1EA1o c\u1EA3m gi\xE1c \xE1p \u0111\u1EB7t, thi\u1EBFu \u0111i t\xEDnh t\u01B0\u01A1ng t\xE1c m\u1EC1m m\u1ECFng."
+          }
+        },
+        {
+          id: "doer_w5d3_q07",
+          roundIndex: 6,
+          prompt: "\u0110\u1EC3 t\u0103ng n\u0103ng su\u1EA5t l\xE0m vi\u1EC7c (productivity), l\u1EDDi khuy\xEAn n\xE0o sau \u0111\xE2y \u0111\u01B0\u1EE3c H\xE2n g\u1EE3i \xFD cho Khang?",
+          options: [
+            { id: "opt_A", label: "A", text: "D\xF9ng planner tr\xEAn Google Calendar, \u0111\u1EB7t m\u1EE5c ti\xEAu r\xF5 r\xE0ng v\xE0 t\u1EAFt c\xE1c th\xF4ng b\xE1o/tab g\xE2y xao nh\xE3ng" },
+            { id: "opt_B", label: "B", text: "Ngh\u1EC9 vi\u1EC7c ngay l\u1EADp t\u1EE9c \u0111\u1EC3 \u1EDF nh\xE0 ch\u01A1i game" },
+            { id: "opt_C", label: "C", text: "L\xE0m vi\u1EC7c th\xE2u \u0111\xEAm su\u1ED1t s\xE1ng kh\xF4ng c\u1EA7n ng\u1EE7" },
+            { id: "opt_D", label: "D", text: "M\u1EDF th\u1EADt nhi\u1EC1u tab m\u1EA1ng x\xE3 h\u1ED9i c\xF9ng l\xFAc" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. D\xF9ng planner tr\xEAn Google Calendar, \u0111\u1EB7t m\u1EE5c ti\xEAu r\xF5 r\xE0ng v\xE0 t\u1EAFt c\xE1c th\xF4ng b\xE1o/tab g\xE2y xao nh\xE3ng",
+          correctExplanation: 'H\xE2n khuy\xEAn: "start using a planner on Google Calendar and set clear goals... limit distractions by turning off your phone and closing unnecessary tabs".',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. L\xE0m vi\u1EC7c th\xE2u \u0111\xEAm",
+            diagnosticTitle: "Nh\u1EA7m th\xF3i quen x\u1EA5u v\u1EDBi gi\u1EA3i ph\xE1p n\u0103ng su\u1EA5t",
+            explanation: "L\xE0m vi\u1EC7c th\xE2u \u0111\xEAm ch\xEDnh l\xE0 nguy\xEAn nh\xE2n g\xE2y m\u1EC7t m\u1ECFi m\xE0 b\xE0i h\u1ECDc \u0111ang t\xECm c\xE1ch kh\u1EAFc ph\u1EE5c."
+          }
+        },
+        {
+          id: "doer_w5d3_q08",
+          roundIndex: 7,
+          prompt: 'Ch\u1ECDn c\xE2u vi\u1EBFt \u0111\xFAng v\u1EDBi li\xEAn t\u1EEB ch\u1EC9 s\u1EF1 t\u01B0\u01A1ng ph\u1EA3n \u0111\u1ED3ng th\u1EDDi "while":',
+          options: [
+            { id: "opt_A", label: "A", text: "While some people prefer working remotely, others thrive in an office environment." },
+            { id: "opt_B", label: "B", text: "While some people prefer working remotely, but others thrive in an office." },
+            { id: "opt_C", label: "C", text: "While some people prefer to work remote, while others work office." },
+            { id: "opt_D", label: "D", text: "Some people prefer remote, while that others office." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. While some people prefer working remotely, others thrive in an office environment.",
+          correctExplanation: 'C\u1EA5u tr\xFAc so s\xE1nh t\u01B0\u01A1ng ph\u1EA3n: "While + Clause 1, Clause 2". Kh\xF4ng d\xF9ng th\xEAm li\xEAn t\u1EEB "but" \u1EDF m\u1EC7nh \u0111\u1EC1 ch\xEDnh.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. While..., but others...",
+            diagnosticTitle: 'L\u1ED7i d\xF9ng c\u1EB7p li\xEAn t\u1EEB k\xE9p "Although/While... but..."',
+            explanation: 'Th\xF3i quen d\u1ECBch ti\u1EBFng Vi\u1EC7t "M\u1EB7c d\xF9... nh\u01B0ng..." khi\u1EBFn h\u1ECDc vi\xEAn vi\u1EBFt th\u1EEBa li\xEAn t\u1EEB "but".'
+          }
+        },
+        {
+          id: "doer_w5d3_q09",
+          roundIndex: 8,
+          prompt: "Khi g\u1EB7p m\u1ED9t d\u1EF1 \xE1n l\u1EDBn ph\u1EE9c t\u1EA1p, ph\u01B0\u01A1ng ph\xE1p chia nh\u1ECF th\xE0nh c\xE1c b\u01B0\u1EDBc d\u1EC5 qu\u1EA3n l\xFD h\u01A1n g\u1ECDi l\xE0:",
+          options: [
+            { id: "opt_A", label: "A", text: "break tasks into smaller steps" },
+            { id: "opt_B", label: "B", text: "cut jobs in pieces" },
+            { id: "opt_C", label: "C", text: "smash works to parts" },
+            { id: "opt_D", label: "D", text: "divide duties in slices" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. break tasks into smaller steps",
+          correctExplanation: 'Collocation chu\u1EA9n trong qu\u1EA3n tr\u1ECB th\u1EDDi gian: "break tasks/goals into smaller steps" (chia nh\u1ECF nhi\u1EC7m v\u1EE5 th\xE0nh c\xE1c b\u01B0\u1EDBc th\u1EF1c hi\u1EC7n).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. cut jobs in pieces",
+            diagnosticTitle: "D\u1ECBch t\u1EEB v\u1EF1ng theo ngh\u0129a \u0111en c\u1EE7a vi\u1EC7c c\u1EAFt g\u1ECDt",
+            explanation: "Cut jobs in pieces kh\xF4ng ph\u1EA3i l\xE0 c\u1EE5m t\u1EEB t\u1EF1 nhi\xEAn trong qu\u1EA3n l\xFD c\xF4ng vi\u1EC7c."
+          }
+        },
+        {
+          id: "doer_w5d3_q10",
+          roundIndex: 9,
+          prompt: 'Th\xE0nh ng\u1EEF m\xEA t\xEDn vui "touch wood" (ho\u1EB7c "knock on wood") m\xE0 ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 hay n\xF3i trong h\u1ED9i tho\u1EA1i mang \xFD ngh\u0129a l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "Tr\u1ED9m v\xEDa, c\u1EA7u may m\u1EAFn \u0111\u1EC3 \u0111i\u1EC1u xui x\u1EBBo kh\xF4ng x\u1EA3y ra" },
+            { id: "opt_B", label: "B", text: "Y\xEAu c\u1EA7u m\u1ECDi ng\u01B0\u1EDDi c\xF9ng im l\u1EB7ng" },
+            { id: "opt_C", label: "C", text: "Ch\xEA bai \u0111\u1ED3 n\u1ED9i th\u1EA5t b\u1EB1ng g\u1ED7" },
+            { id: "opt_D", label: "D", text: "B\xE1o hi\u1EC7u chu\u1EA9n b\u1ECB k\u1EBFt th\xFAc cu\u1ED9c tr\xF2 chuy\u1EC7n" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Tr\u1ED9m v\xEDa, c\u1EA7u may m\u1EAFn \u0111\u1EC3 \u0111i\u1EC1u xui x\u1EBBo kh\xF4ng x\u1EA3y ra",
+          correctExplanation: '"Touch wood" (g\xF5 v\xE0o \u0111\u1ED3 g\u1ED7) l\xE0 phong t\u1EE5c v\u0103n h\xF3a n\xF3i sau khi nh\u1EAFc \u0111\u1EBFn m\u1ED9t \u0111i\u1EC1u may m\u1EAFn \u0111\u1EC3 tr\xE1nh b\u1ECB v\u1EADn xui \u1EADp \u0111\u1EBFn (t\u01B0\u01A1ng \u0111\u01B0\u01A1ng ch\u1EEF "tr\u1ED9m v\xEDa" trong ti\u1EBFng Vi\u1EC7t).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Ch\xEA bai \u0111\u1ED3 n\u1ED9i th\u1EA5t g\u1ED7",
+            diagnosticTitle: "Hi\u1EC3u theo ngh\u0129a \u0111en c\u1EE7a t\u1EEB wood (g\u1ED7)",
+            explanation: "\u0110\xE2y l\xE0 m\u1ED9t th\xE0nh ng\u1EEF v\u0103n h\xF3a d\xE2n gian mang h\xE0m ngh\u0129a t\xE2m linh c\u1EA7u may, kh\xF4ng li\xEAn quan \u0111\u1EBFn ngh\u1EC1 m\u1ED9c."
+          }
+        }
+      ]
+    };
+  }
+});
+
+// server/services/bank_parts/week6.data.ts
+var WEEK_6_QUESTIONS;
+var init_week6_data = __esm({
+  "server/services/bank_parts/week6.data.ts"() {
+    WEEK_6_QUESTIONS = {
+      "WEEK 6 \u2013 DAY 1": [
+        {
+          id: "doer_w6d1_q01",
+          roundIndex: 0,
+          prompt: "Trong c\xE2u: 'They're the people which bought our house.', l\u1ED7i sai n\u1EB1m \u1EDF \u0111\xE2u v\xE0 s\u1EEDa l\u1EA1i nh\u01B0 th\u1EBF n\xE0o cho \u0111\xFAng?",
+          options: [
+            { id: "opt_A", label: "A", text: "Thay 'bought' th\xE0nh 'buy'" },
+            { id: "opt_B", label: "B", text: "Thay 'which' th\xE0nh 'who' ho\u1EB7c 'that'" },
+            { id: "opt_C", label: "C", text: "B\u1ECF 'the' tr\u01B0\u1EDBc 'people'" },
+            { id: "opt_D", label: "D", text: "Th\xEAm 'they' v\xE0o sau 'which'" }
+          ],
+          correctOptionId: "opt_B",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Trong Adjective clause, 'which' d\xF9ng \u0111\u1EC3 thay th\u1EBF cho danh t\u1EEB ch\u1EC9 v\u1EADt/s\u1EF1 vi\u1EC7c. Khi danh t\u1EEB \u0111\u1EE9ng tr\u01B0\u1EDBc l\xE0 'people' (ng\u01B0\u1EDDi), b\u1EAFt bu\u1ED9c d\xF9ng 'who' ho\u1EB7c 'that'."
+        },
+        {
+          id: "doer_w6d1_q02",
+          roundIndex: 1,
+          prompt: "X\xE1c \u0111\u1ECBnh l\u1ED7i sai trong c\xE2u: 'The boy who sits next to me he has a car.'",
+          options: [
+            { id: "opt_A", label: "A", text: "Th\u1EEBa \u0111\u1EA1i t\u1EEB 'he' v\xEC 'who' \u0111\xE3 \u0111\xF3ng vai tr\xF2 l\xE0m ch\u1EE7 ng\u1EEF b\u1ED5 ngh\u0129a cho 'The boy'" },
+            { id: "opt_B", label: "B", text: "'sits' ph\u1EA3i chia th\xE0nh 'sitting'" },
+            { id: "opt_C", label: "C", text: "'who' ph\u1EA3i \u0111\u1ED5i th\xE0nh 'whom'" },
+            { id: "opt_D", label: "D", text: "Sau 'car' ph\u1EA3i c\xF3 tr\u1EA1ng t\u1EEB ch\u1EC9 n\u01A1i ch\u1ED1n" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "L\u1ED7i l\u1EB7p ch\u1EE7 ng\u1EEF (redundant subject pronoun). 'The boy [who sits next to me] has a car' - 'The boy' l\xE0 ch\u1EE7 ng\u1EEF c\u1EE7a v\u1ECB ng\u1EEF ch\xEDnh 'has a car', kh\xF4ng l\u1EB7p l\u1EA1i 'he'."
+        },
+        {
+          id: "doer_w6d1_q03",
+          roundIndex: 2,
+          prompt: "C\xE2u n\xE0o d\u01B0\u1EDBi \u0111\xE2y s\u1EEDa \u0111\xFAng cho c\xE2u l\u1ED7i: 'We will go to the restaurant that he recommended it to us.'?",
+          options: [
+            { id: "opt_A", label: "A", text: "We will go to the restaurant that he recommended to us." },
+            { id: "opt_B", label: "B", text: "We will go to the restaurant which he recommended it." },
+            { id: "opt_C", label: "C", text: "We will go to the restaurant where he recommended it to us." },
+            { id: "opt_D", label: "D", text: "We will go to the restaurant what he recommended to us." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Khi \u0111\u1EA1i t\u1EEB quan h\u1EC7 (that/which) thay th\u1EBF cho t\xE2n ng\u1EEF c\u1EE7a \u0111\u1ED9ng t\u1EEB 'recommended', \u0111\u1EA1i t\u1EEB t\xE2n ng\u1EEF 'it' ph\u1EA3i \u0111\u01B0\u1EE3c l\u01B0\u1EE3c b\u1ECF, tr\xE1nh l\u1ED7i l\u1EB7p t\xE2n ng\u1EEF (redundant pronoun)."
+        },
+        {
+          id: "doer_w6d1_q04",
+          roundIndex: 3,
+          prompt: "Trong m\u1EC7nh \u0111\u1EC1 t\xEDnh t\u1EEB 'I hate the dog that bit me', \u0111\u1EA1i t\u1EEB quan h\u1EC7 'that' \u0111\xF3ng vai tr\xF2 ch\u1EE9c n\u0103ng g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Ch\u1EE7 ng\u1EEF (Subject) c\u1EE7a m\u1EC7nh \u0111\u1EC1 t\xEDnh t\u1EEB" },
+            { id: "opt_B", label: "B", text: "T\xE2n ng\u1EEF (Object) c\u1EE7a \u0111\u1ED9ng t\u1EEB 'hate'" },
+            { id: "opt_C", label: "C", text: "T\xE2n ng\u1EEF (Object) c\u1EE7a \u0111\u1ED9ng t\u1EEB 'bit'" },
+            { id: "opt_D", label: "D", text: "Li\xEAn t\u1EEB \u0111\u1EB3ng l\u1EADp (Coordinating Conjunction)" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Trong m\u1EC7nh \u0111\u1EC1 'that bit me', 'that' thay th\u1EBF cho 'the dog' v\xE0 \u0111\xF3ng vai tr\xF2 l\xE0m Subject (ch\u1EE7 ng\u1EEF) tr\u1EF1c ti\u1EBFp \u0111\u1EE9ng tr\u01B0\u1EDBc \u0111\u1ED9ng t\u1EEB 'bit'."
+        },
+        {
+          id: "doer_w6d1_q05",
+          roundIndex: 4,
+          prompt: "Kh\xE1c bi\u1EC7t v\u1EC1 ngh\u0129a gi\u1EEFa hai c\xE2u sau l\xE0 g\xEC?\n(1) He deleted the picture which upset me.\n(2) He deleted the picture, which upset me.",
+          options: [
+            { id: "opt_A", label: "A", text: "Hai c\xE2u ho\xE0n to\xE0n gi\u1ED1ng nhau, d\u1EA5u ph\u1EA9y ch\u1EC9 l\xE0 l\u1ED7i \u0111\xE1nh m\xE1y" },
+            { id: "opt_B", label: "B", text: "\u1EDE c\xE2u (1) b\u1EE9c \u1EA3nh l\xE0m t\xF4i bu\u1ED3n; \u1EDF c\xE2u (2) to\xE0n b\u1ED9 h\xE0nh \u0111\u1ED9ng 'anh ta x\xF3a b\u1EE9c \u1EA3nh' l\xE0m t\xF4i bu\u1ED3n" },
+            { id: "opt_C", label: "C", text: "\u1EDE c\xE2u (2) b\u1EE9c \u1EA3nh l\xE0m t\xF4i bu\u1ED3n; \u1EDF c\xE2u (1) h\xE0nh \u0111\u1ED9ng x\xF3a l\xE0m t\xF4i bu\u1ED3n" },
+            { id: "opt_D", label: "D", text: "C\xE2u (2) l\xE0 c\xE2u sai ng\u1EEF ph\xE1p ti\u1EBFng Anh" }
+          ],
+          correctOptionId: "opt_B",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\xE2u (1) 'which' thay th\u1EBF cho 'the picture' (ch\xEDnh b\u1EE9c \u1EA3nh khi\u1EBFn t\xF4i bu\u1ED3n). C\xE2u (2) c\xF3 d\u1EA5u ph\u1EA9y ', which' b\u1ED5 ngh\u0129a cho c\u1EA3 m\u1EC7nh \u0111\u1EC1 ph\xEDa tr\u01B0\u1EDBc (vi\u1EC7c anh ta xo\xE1 \u1EA3nh khi\u1EBFn t\xF4i bu\u1ED3n)."
+        },
+        {
+          id: "doer_w6d1_q06",
+          roundIndex: 5,
+          prompt: "K\u1EBFt h\u1EE3p 2 c\xE2u sau th\xE0nh 1 c\xE2u c\xF3 m\u1EC7nh \u0111\u1EC1 t\xEDnh t\u1EEB: 'The bike was stolen. My father gave me the bike.'",
+          options: [
+            { id: "opt_A", label: "A", text: "The bike which my father gave me was stolen." },
+            { id: "opt_B", label: "B", text: "The bike was stolen which my father gave it to me." },
+            { id: "opt_C", label: "C", text: "My father gave me the bike who was stolen." },
+            { id: "opt_D", label: "D", text: "The bike that my father gave it was stolen." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'The bike [which/that my father gave me] was stolen.' - 'which' thay th\u1EBF cho t\xE2n ng\u1EEF 'the bike', b\u1ECF 'it'."
+        },
+        {
+          id: "doer_w6d1_q07",
+          roundIndex: 6,
+          prompt: "D\u1ECBch sang ti\u1EBFng Anh d\xF9ng Adjective Clause: '\u1EE8ng d\u1EE5ng m\xE0 t\xF4i t\u1EA3i v\u1EC1 h\xF4m qua r\u1EA5t h\u1EEFu \xEDch cho vi\u1EC7c qu\u1EA3n l\xFD c\xF4ng vi\u1EC7c h\xE0ng ng\xE0y.'",
+          options: [
+            { id: "opt_A", label: "A", text: "The application which I downloaded yesterday is very useful for managing daily tasks." },
+            { id: "opt_B", label: "B", text: "The application where I download yesterday is very useful to manage daily tasks." },
+            { id: "opt_C", label: "C", text: "The application what I downloaded yesterday very useful for daily tasks." },
+            { id: "opt_D", label: "D", text: "The application downloaded it yesterday is useful for managing work." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'The application [which/that I downloaded yesterday] is very useful for managing daily tasks.' - M\u1EC7nh \u0111\u1EC1 t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a cho 'The application'."
+        },
+        {
+          id: "doer_w6d1_q08",
+          roundIndex: 7,
+          prompt: "T\xECm l\u1ED7i sai trong c\xE2u: 'Bankers are scared of talking with strangers will find it hard to build their network.'",
+          options: [
+            { id: "opt_A", label: "A", text: "Thi\u1EBFu \u0111\u1EA1i t\u1EEB quan h\u1EC7 'who' tr\u01B0\u1EDBc 'are scared of' khi\u1EBFn c\xE2u c\xF3 2 Finite Verbs kh\xF4ng li\xEAn k\u1EBFt" },
+            { id: "opt_B", label: "B", text: "Sai gi\u1EDBi t\u1EEB 'of', ph\u1EA3i d\xF9ng 'about'" },
+            { id: "opt_C", label: "C", text: "'talking' ph\u1EA3i \u0111\u1ED5i th\xE0nh 'talk'" },
+            { id: "opt_D", label: "D", text: "'build' ph\u1EA3i \u0111\u1ED5i th\xE0nh 'building'" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\xE2u c\xF3 2 finite verbs: 'are scared of' v\xE0 'will find'. Ph\u1EA3i th\xEAm 'who' th\xE0nh 'Bankers [who are scared of talking with strangers] will find it hard to build their network.'"
+        },
+        {
+          id: "doer_w6d1_q09",
+          roundIndex: 8,
+          prompt: "D\u1ECBch sang ti\u1EBFng Anh: 'Ch\xEDnh s\xE1ch nh\xE0 \u1EDF m\xE0 ch\xEDnh ph\u1EE7 ban h\xE0nh n\u0103m ngo\xE1i \u0111\xE3 gi\xFAp h\xE0ng tri\u1EC7u ng\u01B0\u1EDDi c\xF3 thu nh\u1EADp th\u1EA5p mua \u0111\u01B0\u1EE3c nh\xE0.'",
+          options: [
+            { id: "opt_A", label: "A", text: "The housing policy which the government introduced last year helped millions of low-income people buy homes." },
+            { id: "opt_B", label: "B", text: "The housing policy where the government issued it last year helped low-income people buy house." },
+            { id: "opt_C", label: "C", text: "The housing policy who the state announced last year has helped millions low-income families." },
+            { id: "opt_D", label: "D", text: "The housing policy that government introduced it last year helping millions of people." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'housing policy' (ch\xEDnh s\xE1ch nh\xE0 \u1EDF), 'introduce/issue a policy' (ban h\xE0nh ch\xEDnh s\xE1ch), 'low-income people' (ng\u01B0\u1EDDi thu nh\u1EADp th\u1EA5p)."
+        },
+        {
+          id: "doer_w6d1_q10",
+          roundIndex: 9,
+          prompt: "Ph\xE1t bi\u1EC3u n\xE0o sau \u0111\xE2y l\xE0 \u0110\xDANG v\u1EC1 b\u1EA3n ch\u1EA5t c\u1EE7a M\u1EC7nh \u0111\u1EC1 t\xEDnh t\u1EEB (Adjective Clause)?",
+          options: [
+            { id: "opt_A", label: "A", text: "N\xF3 l\xE0 m\u1ED9t m\u1EC7nh \u0111\u1EC1 ph\u1EE5, kh\xF4ng th\u1EC3 \u0111\u1EE9ng \u0111\u1ED9c l\u1EADp m\u1ED9t m\xECnh, c\xF3 ch\u1EE9c n\u0103ng b\u1ED5 ngh\u0129a cho danh t\u1EEB \u0111\u1EE9ng tr\u01B0\u1EDBc n\xF3" },
+            { id: "opt_B", label: "B", text: "N\xF3 l\xE0 m\u1ED9t m\u1EC7nh \u0111\u1EC1 \u0111\u1ED9c l\u1EADp c\xF3 th\u1EC3 t\xE1ch ri\xEAng th\xE0nh c\xE2u ho\xE0n ch\u1EC9nh" },
+            { id: "opt_C", label: "C", text: "N\xF3 lu\xF4n lu\xF4n \u0111\u1EE9ng \u1EDF \u0111\u1EA7u c\xE2u l\xE0m ch\u1EE7 ng\u1EEF" },
+            { id: "opt_D", label: "D", text: "N\xF3 b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng d\u1EA5u ph\u1EA9y trong m\u1ECDi tr\u01B0\u1EDDng h\u1EE3p" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "M\u1EC7nh \u0111\u1EC1 t\xEDnh t\u1EEB (Adjective Clause / Relative Clause) l\xE0 subordinate clause b\u1ED5 ngh\u0129a cho noun/pronoun v\xE0 kh\xF4ng th\u1EC3 \u0111\u1EE9ng \u0111\u1ED9c l\u1EADp m\u1ED9t m\xECnh nh\u01B0 m\u1ED9t c\xE2u ho\xE0n ch\u1EC9nh."
+        }
+      ],
+      "WEEK 6 \u2013 DAY 2": [
+        {
+          id: "doer_w6d2_q01",
+          roundIndex: 0,
+          prompt: 'Trong ch\u1EE7 \u0111\u1EC1 Technology & Business, t\u1EEB "settlement" trong v\u1EE5 ki\u1EC7n b\u1EA3n quy\u1EC1n \xFD t\u01B0\u1EDFng c\u1EE7a Facebook \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi:',
+          options: [
+            { id: "opt_A", label: "A", text: "legal agreement / compromise (s\u1EF1 h\xF2a gi\u1EA3i, th\u1ECFa thu\u1EADn d\xE0n x\u1EBFp ph\xE1p l\xFD)" },
+            { id: "opt_B", label: "B", text: "court battle / confrontation (cu\u1ED9c chi\u1EBFn tranh t\u1EE5ng gay g\u1EAFt)" },
+            { id: "opt_C", label: "C", text: "bankruptcy declaration (tuy\xEAn b\u1ED1 ph\xE1 s\u1EA3n)" },
+            { id: "opt_D", label: "D", text: "residential colony (khu t\xE1i \u0111\u1ECBnh c\u01B0)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. legal agreement / compromise (s\u1EF1 h\xF2a gi\u1EA3i, th\u1ECFa thu\u1EADn d\xE0n x\u1EBFp ph\xE1p l\xFD)",
+          correctExplanation: '"Settlement" trong lu\u1EADt th\u01B0\u01A1ng m\u1EA1i l\xE0 s\u1EF1 d\xE0n x\u1EBFp, th\u1ECFa thu\u1EADn h\xF2a gi\u1EA3i ngo\xE0i t\xF2a \u0111\u1EC3 ch\u1EA5m d\u1EE9t ki\u1EC7n t\u1EE5ng (th\u01B0\u1EDDng k\xE8m b\u1ED3i th\u01B0\u1EDDng c\u1ED5 ph\u1EA7n/ti\u1EC1n).',
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. residential colony",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn ngh\u0129a \u0111\u1ECBa l\xFD \u0111\u1ECBnh c\u01B0 v\u1EDBi thu\u1EADt ng\u1EEF lu\u1EADt h\u1ECDc",
+            explanation: "Trong b\u1ED1i c\u1EA3nh tranh ch\u1EA5p b\u1EA3n quy\u1EC1n (lawsuit), settlement l\xE0 th\u1ECFa thu\u1EADn h\xF2a gi\u1EA3i b\u1ED3i th\u01B0\u1EDDng, kh\xF4ng ph\u1EA3i khu \u0111\u1ECBnh c\u01B0 d\xE2n c\u01B0."
+          }
+        },
+        {
+          id: "doer_w6d2_q02",
+          roundIndex: 1,
+          prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "expulsion" trong c\xE2u "Though he faced expulsion from Harvard for his actions" l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "admission / enrollment (s\u1EF1 thu nh\u1EADn, nh\u1EADp h\u1ECDc ch\xEDnh th\u1EE9c)" },
+            { id: "opt_B", label: "B", text: "dismissal (s\u1EF1 sa th\u1EA3i, \u0111u\u1ED5i h\u1ECDc)" },
+            { id: "opt_C", label: "C", text: "suspension (\u0111\xECnh ch\u1EC9 h\u1ECDc t\u1EA1m th\u1EDDi)" },
+            { id: "opt_D", label: "D", text: "punishment (s\u1EF1 tr\u1EEBng ph\u1EA1t)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. admission / enrollment (s\u1EF1 thu nh\u1EADn, nh\u1EADp h\u1ECDc ch\xEDnh th\u1EE9c)",
+          correctExplanation: '"Expulsion" = s\u1EF1 tr\u1EE5c xu\u1EA5t, bu\u1ED9c th\xF4i h\u1ECDc v\u0129nh vi\u1EC5n. T\u1EEB tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "admission" ho\u1EB7c "enrollment" (nh\u1EADn v\xE0o tr\u01B0\u1EDDng).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. dismissal",
+            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
+            explanation: "Dismissal l\xE0 t\u1EEB \u0111\u1ED3ng ngh\u0129a mang ngh\u0129a \u0111u\u1ED5i h\u1ECDc. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
+          }
+        },
+        {
+          id: "doer_w6d2_q03",
+          roundIndex: 2,
+          prompt: 'Thu\u1EADt ng\u1EEF t\xE0i ch\xEDnh kh\u1EDFi nghi\u1EC7p "angel investor" (nh\u01B0 Sean Parker \u0111\u1ED1i v\u1EDBi Facebook) d\xF9ng \u0111\u1EC3 ch\u1EC9 ai?',
+          options: [
+            { id: "opt_A", label: "A", text: "Nh\xE0 \u0111\u1EA7u t\u01B0 thi\xEAn th\u1EA7n (c\xE1 nh\xE2n gi\xE0u c\xF3 r\xF3t v\u1ED1n ban \u0111\u1EA7u h\u1ED7 tr\u1EE3 c\xE1c startup non tr\u1EBB)" },
+            { id: "opt_B", label: "B", text: "T\u1ED5 ch\u1EE9c t\u1EEB thi\u1EC7n t\xF4n gi\xE1o ph\xE1t ti\u1EC1n mi\u1EC5n ph\xED" },
+            { id: "opt_C", label: "C", text: "Ng\xE2n h\xE0ng nh\xE0 n\u01B0\u1EDBc b\u1EA3o l\xE3nh t\xEDn d\u1EE5ng" },
+            { id: "opt_D", label: "D", text: "Lu\u1EADt s\u01B0 \u0111\u1EA1i di\u1EC7n cho c\xE1c c\u1ED5 \u0111\xF4ng thi\u1EC3u s\u1ED1" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Nh\xE0 \u0111\u1EA7u t\u01B0 thi\xEAn th\u1EA7n (c\xE1 nh\xE2n gi\xE0u c\xF3 r\xF3t v\u1ED1n ban \u0111\u1EA7u h\u1ED7 tr\u1EE3 c\xE1c startup non tr\u1EBB)",
+          correctExplanation: '"Angel investor" l\xE0 thu\u1EADt ng\u1EEF qu\u1ED1c t\u1EBF ch\u1EC9 c\xE1c c\xE1 nh\xE2n \u0111\u1EA7u t\u01B0 thi\xEAn th\u1EA7n, ch\u1EA5p nh\u1EADn r\u1EE7i ro cao \u0111\u1EC3 r\xF3t v\u1ED1n h\u1EA1t gi\u1ED1ng cho c\xE1c c\xF4ng ty kh\u1EDFi nghi\u1EC7p.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. T\u1ED5 ch\u1EE9c t\u1EEB thi\u1EC7n t\xF4n gi\xE1o",
+            diagnosticTitle: 'D\u1ECBch ngh\u0129a \u0111en t\u1EEB ch\u1EEF "angel" th\xE0nh t\u1ED5 ch\u1EE9c t\xF4n gi\xE1o',
+            explanation: "\u0110\xE2y l\xE0 thu\u1EADt ng\u1EEF t\xE0i ch\xEDnh m\u1EA1o hi\u1EC3m, ho\xE0n to\xE0n kh\xF4ng li\xEAn quan \u0111\u1EBFn t\xF4n gi\xE1o hay t\u1EEB thi\u1EC7n \u0111\u01A1n thu\u1EA7n."
+          }
+        },
+        {
+          id: "doer_w6d2_q04",
+          roundIndex: 3,
+          prompt: 'Collocation chu\u1EA9n trong b\xE0i: "Mark was on the ______ of expulsion from university due to serious security breaches."',
+          options: [
+            { id: "opt_A", label: "A", text: "brink" },
+            { id: "opt_B", label: "B", text: "side" },
+            { id: "opt_C", label: "C", text: "corner" },
+            { id: "opt_D", label: "D", text: "limit" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. brink",
+          correctExplanation: 'Th\xE0nh ng\u1EEF h\u1ECDc thu\u1EADt c\u1ED1 \u0111\u1ECBnh: "on the brink of something / doing something" (\u0111ang tr\xEAn b\u1EDD v\u1EF1c g\u1EB7p ph\u1EA3i m\u1ED9t nguy hi\u1EC3m hay bi\u1EBFn c\u1ED1 l\u1EDBn).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. side",
+            diagnosticTitle: 'D\u1ECBch t\u1EEB "b\xEAn c\u1EA1nh" th\xE0nh side',
+            explanation: 'Th\xE0nh ng\u1EEF ch\u1EC9 b\u1EDD v\u1EF1c nguy nan b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng "on the brink of", kh\xF4ng d\xF9ng "on the side of".'
+          }
+        },
+        {
+          id: "doer_w6d2_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn t\xEDnh t\u1EEB ph\xF9 h\u1EE3p di\u1EC5n t\u1EA3 \u0111\u1EB7c t\xEDnh g\xE2y nghi\u1EC7n c\u1EE7a m\u1EA1ng x\xE3 h\u1ED9i: "Short video apps are highly ______ to young audiences, making it hard to stop watching."',
+          options: [
+            { id: "opt_A", label: "A", text: "addictive" },
+            { id: "opt_B", label: "B", text: "addicted" },
+            { id: "opt_C", label: "C", text: "addict" },
+            { id: "opt_D", label: "D", text: "addiction" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. addictive",
+          correctExplanation: 'T\xEDnh t\u1EEB \u0111u\xF4i -ive ch\u1EC9 t\xEDnh ch\u1EA5t g\xE2y nghi\u1EC7n c\u1EE7a s\u1EF1 v\u1EADt/\u1EE9ng d\u1EE5ng: "highly addictive". C\xF2n ng\u01B0\u1EDDi b\u1ECB nghi\u1EC7n m\u1EDBi d\xF9ng "addicted to".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. addicted",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa t\xEDnh t\u1EEB b\u1ECB \u0111\u1ED9ng (ng\u01B0\u1EDDi b\u1ECB nghi\u1EC7n) v\xE0 ch\u1EE7 \u0111\u1ED9ng (v\u1EADt g\xE2y nghi\u1EC7n)",
+            explanation: '\u1EE8ng d\u1EE5ng ph\u1EA7n m\u1EC1m c\xF3 t\xEDnh ch\u1EA5t g\xE2y nghi\u1EC7n cho ng\u01B0\u1EDDi kh\xE1c th\xEC ph\u1EA3i d\xF9ng "addictive", kh\xF4ng d\xF9ng "addicted".'
+          }
+        },
+        {
+          id: "doer_w6d2_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn d\u1EA1ng b\u1ECB \u0111\u1ED9ng chu\u1EA9n cho s\u1EF1 ki\u1EC7n th\xE0nh l\u1EADp: "The social networking platform ______ in 2016 by a Chinese tech entrepreneur."',
+          options: [
+            { id: "opt_A", label: "A", text: "was founded" },
+            { id: "opt_B", label: "B", text: "was found" },
+            { id: "opt_C", label: "C", text: "is found" },
+            { id: "opt_D", label: "D", text: "has founded" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. was founded",
+          correctExplanation: '\u0110\u1ED9ng t\u1EEB "found" (th\xE0nh l\u1EADp) c\xF3 qu\xE1 kh\u1EE9 ph\xE2n t\u1EEB l\xE0 "founded". C\xE2u b\u1ECB \u0111\u1ED9ng ch\u1EC9 s\u1EF1 ki\u1EC7n l\u1ECBch s\u1EED trong qu\xE1 kh\u1EE9: "was founded".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. was found",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa \u0111\u1ED9ng t\u1EEB find (t\xECm th\u1EA5y) v\xE0 found (th\xE0nh l\u1EADp)",
+            explanation: '"Find - found - found" l\xE0 t\xECm th\u1EA5y, c\xF2n "found - founded - founded" l\xE0 th\xE0nh l\u1EADp, s\xE1ng l\u1EADp.'
+          }
+        },
+        {
+          id: "doer_w6d2_q07",
+          roundIndex: 6,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng \u0111i k\xE8m n\u1EC1n t\u1EA3ng k\u1EF9 thu\u1EADt s\u1ED1: "Over 1 billion users share memorable videos ______ the platform every month."',
+          options: [
+            { id: "opt_A", label: "A", text: "on" },
+            { id: "opt_B", label: "B", text: "in" },
+            { id: "opt_C", label: "C", text: "at" },
+            { id: "opt_D", label: "D", text: "by" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. on",
+          correctExplanation: 'Quy t\u1EAFc gi\u1EDBi t\u1EEB cho c\xE1c n\u1EC1n t\u1EA3ng c\xF4ng ngh\u1EC7, website, \u1EE9ng d\u1EE5ng s\u1ED1: lu\xF4n d\xF9ng gi\u1EDBi t\u1EEB "ON the platform / on the internet / on Facebook".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. in",
+            diagnosticTitle: 'D\u1ECBch t\u1EEB "trong n\u1EC1n t\u1EA3ng" th\xE0nh gi\u1EDBi t\u1EEB "in"',
+            explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "trong n\u1EC1n t\u1EA3ng m\u1EA1ng x\xE3 h\u1ED9i", nh\u01B0ng ti\u1EBFng Anh b\u1EAFt bu\u1ED9c d\xF9ng "ON the platform".'
+          }
+        },
+        {
+          id: "doer_w6d2_q08",
+          roundIndex: 7,
+          prompt: 'Trong c\u1EE5m "Zuckerberg signed a pledge along with other philanthropists", t\u1EEB "pledge" mang ngh\u0129a g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "L\u1EDDi cam k\u1EBFt ch\xEDnh th\u1EE9c / v\u0103n b\u1EA3n th\u1EC1 nguy\u1EC7n hi\u1EBFn t\u1EB7ng t\xE0i s\u1EA3n" },
+            { id: "opt_B", label: "B", text: "H\u1EE3p \u0111\u1ED3ng vay th\u1EBF ch\u1EA5p ng\xE2n h\xE0ng" },
+            { id: "opt_C", label: "C", text: "\u0110\u01A1n khi\u1EBFu n\u1EA1i b\u1EA3n quy\u1EC1n t\u1EA1i t\xF2a \xE1n" },
+            { id: "opt_D", label: "D", text: "B\u1EA3n b\xE1o c\xE1o doanh thu t\xE0i ch\xEDnh qu\xFD" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. L\u1EDDi cam k\u1EBFt ch\xEDnh th\u1EE9c / v\u0103n b\u1EA3n th\u1EC1 nguy\u1EC7n hi\u1EBFn t\u1EB7ng t\xE0i s\u1EA3n",
+          correctExplanation: '"A pledge" l\xE0 m\u1ED9t l\u1EDDi h\u1EE9a danh d\u1EF1, b\u1EA3n cam k\u1EBFt c\xF4ng khai \u0111\xF3ng g\xF3p t\xE0i s\u1EA3n v\xEC m\u1EE5c ti\xEAu nh\xE2n \u0111\u1EA1o.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. H\u1EE3p \u0111\u1ED3ng vay th\u1EBF ch\u1EA5p",
+            diagnosticTitle: "Nh\u1EA7m thu\u1EADt ng\u1EEF cam k\u1EBFt v\u1EDBi h\u1EE3p \u0111\u1ED3ng n\u1EE3",
+            explanation: 'Trong b\u1ED1i c\u1EA3nh hi\u1EBFn t\u1EB7ng t\xE0i s\u1EA3n (philanthropy), "pledge" l\xE0 l\u1EDDi cam k\u1EBFt t\u1EEB thi\u1EC7n c\u1EE7a c\xE1c t\u1EF7 ph\xFA.'
+          }
+        },
+        {
+          id: "doer_w6d2_q09",
+          roundIndex: 8,
+          prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o c\xE2u: "The tech startup agreed to pay substantial ______ fees to protect its proprietary domain name from counterfeiters."',
+          options: [
+            { id: "opt_A", label: "A", text: "registration" },
+            { id: "opt_B", label: "B", text: "bland" },
+            { id: "opt_C", label: "C", text: "burnout" },
+            { id: "opt_D", label: "D", text: "pack" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. registration",
+          correctExplanation: '"Registration fees" = ph\xED \u0111\u0103ng k\xFD (\u0111\u0103ng k\xFD t\xEAn mi\u1EC1n ho\u1EB7c s\u1EDF h\u1EEFu tr\xED tu\u1EC7 \u0111\u1EC3 ch\u1ED1ng h\xE0ng gi\u1EA3 m\u1EA1o).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. burnout",
+            diagnosticTitle: "Gh\xE9p t\u1EEB kh\xF4ng li\xEAn quan ng\u1EEF ngh\u0129a kinh doanh",
+            explanation: "Burnout l\xE0 ki\u1EC7t s\u1EE9c lao \u0111\u1ED9ng, ho\xE0n to\xE0n kh\xF4ng t\u01B0\u01A1ng th\xEDch v\u1EDBi kh\xE1i ni\u1EC7m b\u1EA3o v\u1EC7 t\xEAn mi\u1EC1n."
+          }
+        },
+        {
+          id: "doer_w6d2_q10",
+          roundIndex: 9,
+          prompt: 'PARAPHRASE: C\xE2u "The rise of social platforms enabled ordinary individuals to set trends and drive public opinions without traditional media gatekeepers" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i t\u01B0\u01A1ng \u0111\u01B0\u01A1ng nh\u1EA5t l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "Digital networks empowered regular users to spearhead viral movements and influence viewpoints independently of legacy broadcast outlets." },
+            { id: "opt_B", label: "B", text: "Traditional television channels still retain total authoritarian monopoly over youth cultural perceptions." },
+            { id: "opt_C", label: "C", text: "Every user is legally prohibited from producing content on video sharing applications." },
+            { id: "opt_D", label: "D", text: "Tech corporations mandate that only celebrities can express viewpoints on digital forums." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Digital networks empowered regular users to spearhead viral movements and influence viewpoints independently of legacy broadcast outlets.",
+          correctExplanation: '"Digital networks empowered regular users" paraphrase cho "platforms enabled ordinary individuals", "spearhead viral movements" paraphrase cho "set trends", v\xE0 "independently of legacy broadcast outlets" paraphrase cho "without traditional media gatekeepers".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Traditional television retains monopoly",
+            diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c ho\xE0n to\xE0n th\u1EF1c t\u1EBF thay \u0111\u1ED5i c\u1EE7a truy\u1EC1n th\xF4ng",
+            explanation: "B\xE0i \u0111\u1ECDc n\xEAu r\xF5 truy\u1EC1n h\xECnh \u0111ang suy gi\u1EA3m v\xE0 nh\u01B0\u1EDDng quy\u1EC1n \u0111\u1ECBnh h\xECnh xu h\u01B0\u1EDBng cho ng\u01B0\u1EDDi s\xE1ng t\u1EA1o s\u1ED1."
+          }
+        }
+      ],
+      "WEEK 6 \u2013 DAY 3": [
+        {
+          id: "doer_w6d3_q01",
+          roundIndex: 0,
+          prompt: "Quy t\u1EAFc c\u1ED1t l\xF5i khi ph\xE1t \xE2m \u0111u\xF4i '-ed' th\xE0nh /id/ l\xE0 \u0111\u1ED9ng t\u1EEB nguy\xEAn m\u1EABu c\xF3 \xE2m t\u1EADn c\xF9ng b\u1EB1ng \xE2m n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "/t/ ho\u1EB7c /d/" },
+            { id: "opt_B", label: "B", text: "/p/ ho\u1EB7c /k/" },
+            { id: "opt_C", label: "C", text: "/s/ ho\u1EB7c /\u0283/" },
+            { id: "opt_D", label: "D", text: "T\u1EA5t c\u1EA3 c\xE1c nguy\xEAn \xE2m" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Quy t\u1EAFc quan tr\u1ECDng nh\u1EA5t c\u1EE7a \xE2m \u0111u\xF4i -ed: N\u1EBFu \xE2m cu\u1ED1i c\u1EE7a \u0111\u1ED9ng t\u1EEB nguy\xEAn m\u1EABu l\xE0 /t/ ho\u1EB7c /d/ (nh\u01B0 decided, visited, wanted), \u0111u\xF4i -ed \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 /id/."
+        },
+        {
+          id: "doer_w6d3_q02",
+          roundIndex: 1,
+          prompt: "T\u1EEB n\xE0o d\u01B0\u1EDBi \u0111\xE2y c\xF3 \u0111u\xF4i '-ed' \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 /t/?",
+          options: [
+            { id: "opt_A", label: "A", text: "watched" },
+            { id: "opt_B", label: "B", text: "played" },
+            { id: "opt_C", label: "C", text: "waited" },
+            { id: "opt_D", label: "D", text: "called" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "\u0110\u1ED9ng t\u1EEB 'watch' k\u1EBFt th\xFAc b\u1EB1ng \xE2m v\xF4 thanh /t\u0283/ (kh\xF4ng rung), n\xEAn -ed n\u1ED1i ti\u1EBFp \xE2m v\xF4 thanh l\xE0 /t/ -> /w\u0252t\u0283t/."
+        },
+        {
+          id: "doer_w6d3_q03",
+          roundIndex: 2,
+          prompt: "T\u1EEB n\xE0o d\u01B0\u1EDBi \u0111\xE2y c\xF3 \u0111u\xF4i '-ed' \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 /d/?",
+          options: [
+            { id: "opt_A", label: "A", text: "played" },
+            { id: "opt_B", label: "B", text: "worked" },
+            { id: "opt_C", label: "C", text: "laughed" },
+            { id: "opt_D", label: "D", text: "stopped" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'play' k\u1EBFt th\xFAc b\u1EB1ng nguy\xEAn \xE2m \u0111\xF4i /e\u026A/ (\xE2m h\u1EEFu thanh/rung), n\xEAn -ed \u0111\u01B0\u1EE3c \u0111\u1ECDc l\xE0 \xE2m rung /d/ -> /ple\u026Ad/."
+        },
+        {
+          id: "doer_w6d3_q04",
+          roundIndex: 3,
+          prompt: "\u0110u\xF4i '-ed' trong t\u1EEB 'exhausted' \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "/\u026Ad/" },
+            { id: "opt_B", label: "B", text: "/t/" },
+            { id: "opt_C", label: "C", text: "/d/" },
+            { id: "opt_D", label: "D", text: "C\xE2m (kh\xF4ng ph\xE1t \xE2m)" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'exhaust' k\u1EBFt th\xFAc b\u1EB1ng \xE2m /t/, do \u0111\xF3 khi th\xEAm -ed \u0111\u1ECDc l\xE0 /\u026Ad/ -> /\u026A\u0261\u02C8z\u0254\u02D0.st\u026Ad/."
+        },
+        {
+          id: "doer_w6d3_q05",
+          roundIndex: 4,
+          prompt: "Trong \u0111o\u1EA1n \u0111\u1ED1i tho\u1EA1i v\u1EC1 Travel (Day 3), b\u1EA1n An n\xF3i b\u1EA1n kh\xF4ng th\xEDch 'tourist attractions' m\xE0 th\xEDch \u0111i \u0111\xE2u?",
+          options: [
+            { id: "opt_A", label: "A", text: "Lesser-known destinations with natural landscapes" },
+            { id: "opt_B", label: "B", text: "Luxury shopping malls and resorts" },
+            { id: "opt_C", label: "C", text: "Crowded five-star hotels in big cities" },
+            { id: "opt_D", label: "D", text: "Amusement parks with water games" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "An n\xF3i: 'I prefer to explore lesser-known destinations with natural landscapes, while on vacation. You know, I hate crowded places.'"
+        },
+        {
+          id: "doer_w6d3_q06",
+          roundIndex: 5,
+          prompt: "C\u1EE5m t\u1EEB ti\u1EBFng Anh n\xE0o mang ngh\u0129a '\u0111i\u1EC3m tham quan du l\u1ECBch n\u1ED5i ti\u1EBFng'?",
+          options: [
+            { id: "opt_A", label: "A", text: "Tourist attractions" },
+            { id: "opt_B", label: "B", text: "Travel agencies" },
+            { id: "opt_C", label: "C", text: "Natural landscapes" },
+            { id: "opt_D", label: "D", text: "Public transportations" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'tourist attraction' ngh\u0129a l\xE0 \u0111\u1ECBa \u0111i\u1EC3m thu h\xFAt/tham quan du l\u1ECBch."
+        },
+        {
+          id: "doer_w6d3_q07",
+          roundIndex: 6,
+          prompt: "L\xFD do v\xEC sao b\u1EA1n An l\u1EA1i ch\u1ECDn \u0111i du l\u1ECBch b\u1EB1ng t\xE0u ho\u1EA3 (train) thay v\xEC m\xE1y bay (plane)?",
+          options: [
+            { id: "opt_A", label: "A", text: "V\xEC v\xE9 m\xE1y bay kh\xE1 \u0111\u1EAFt (plane tickets are quite expensive)" },
+            { id: "opt_B", label: "B", text: "V\xEC b\u1EA1n An b\u1ECB say m\xE1y bay n\u1EB7ng" },
+            { id: "opt_C", label: "C", text: "V\xEC t\xE0u ho\u1EA3 \u0111i nhanh h\u01A1n m\xE1y bay" },
+            { id: "opt_D", label: "D", text: "V\xEC tr\xEAn t\xE0u ho\u1EA3 ph\u1EE5c v\u1EE5 m\xF3n Cao L\u1EA7u" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Trong \u0111o\u1EA1n h\u1ED9i tho\u1EA1i: 'For me, plane tickets are quite expensive, so I prefer to travel by train.'"
+        },
+        {
+          id: "doer_w6d3_q08",
+          roundIndex: 7,
+          prompt: "Th\xEC ng\u1EEF ph\xE1p ph\xF9 h\u1EE3p nh\u1EA5t \u0111\u1EC3 tr\u1EA3 l\u1EDDi c\xE2u h\u1ECFi: 'Have you ever traveled to a foreign country?' l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Hi\u1EC7n t\u1EA1i ho\xE0n th\xE0nh (Present Perfect) \u0111\u1EC3 n\xEAu tr\u1EA3i nghi\u1EC7m, sau \u0111\xF3 d\xF9ng Qu\xE1 kh\u1EE9 \u0111\u01A1n (Past Simple) \u0111\u1EC3 k\u1EC3 chi ti\u1EBFt chuy\u1EBFn \u0111i" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 \u0111\u01B0\u1EE3c d\xF9ng th\xEC T\u01B0\u01A1ng lai \u0111\u01A1n (Future Simple)" },
+            { id: "opt_C", label: "C", text: "Ch\u1EC9 \u0111\u01B0\u1EE3c d\xF9ng th\xEC Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n (Present Continuous)" },
+            { id: "opt_D", label: "D", text: "Qu\xE1 kh\u1EE9 ho\xE0n th\xE0nh ti\u1EBFp di\u1EC5n cho to\xE0n b\u1ED9 c\xE2u tr\u1EA3 l\u1EDDi" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\u1EA5u tr\xFAc tr\u1EA3 l\u1EDDi kinh \u0111i\u1EC3n trong IELTS Speaking Part 1: B\u1EAFt \u0111\u1EA7u b\u1EB1ng Present Perfect ('Yes, I have been to...'), sau \u0111\xF3 d\xF9ng Past Simple \u0111\u1EC3 k\u1EC3 chi ti\u1EBFt s\u1EF1 vi\u1EC7c c\u1EE5 th\u1EC3 ('Two years ago, I went to...')."
+        },
+        {
+          id: "doer_w6d3_q09",
+          roundIndex: 8,
+          prompt: "C\u1EE5m di\u1EC5n \u0111\u1EA1t n\xE0o di\u1EC5n t\u1EA3 'th\u01B0\u1EDFng ngo\u1EA1n phong c\u1EA3nh theo t\u1ED1c \u0111\u1ED9/nh\u1ECBp \u0111\u1ED9 c\u1EE7a ri\xEAng m\xECnh'?",
+          options: [
+            { id: "opt_A", label: "A", text: "Enjoy beautiful views at my own pace" },
+            { id: "opt_B", label: "B", text: "Make a run for it at high speed" },
+            { id: "opt_C", label: "C", text: "Get away from work immediately" },
+            { id: "opt_D", label: "D", text: "Connect with foreign cultures" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Trong b\xE0i h\u1ECDc: 'so I can really enjoy beautiful views at my own pace' (ng\u1EAFm c\u1EA3nh theo nh\u1ECBp \u0111\u1ED9 ri\xEAng c\u1EE7a m\xECnh)."
+        },
+        {
+          id: "doer_w6d3_q10",
+          roundIndex: 9,
+          prompt: "Trong 3 t\u1EEB sau: 'worked', 'laughed', 'focused', \u0111i\u1EC3m chung v\u1EC1 ph\xE1t \xE2m c\u1EE7a \u0111u\xF4i '-ed' l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "C\u1EA3 3 \u0111\u1EC1u \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 /t/ v\xEC c\xE1c \xE2m cu\u1ED1i /k/, /f/, /s/ \u0111\u1EC1u l\xE0 \xE2m v\xF4 thanh" },
+            { id: "opt_B", label: "B", text: "C\u1EA3 3 \u0111\u1EC1u ph\xE1t \xE2m l\xE0 /id/" },
+            { id: "opt_C", label: "C", text: "C\u1EA3 3 \u0111\u1EC1u ph\xE1t \xE2m l\xE0 /d/" },
+            { id: "opt_D", label: "D", text: "\u0110u\xF4i -ed b\u1ECB nu\u1ED1t \xE2m ho\xE0n to\xE0n" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Work (/k/), laugh (/f/), focus (/s/) \u0111\u1EC1u k\u1EBFt th\xFAc b\u1EB1ng unvoiced consonants (\xE2m v\xF4 thanh), n\xEAn -ed \u0111\u01B0\u1EE3c \u0111\u1ECDc l\xE0 /t/."
+        }
+      ]
+    };
+  }
+});
+
+// server/services/bank_parts/week7.data.ts
+var WEEK_7_QUESTIONS;
+var init_week7_data = __esm({
+  "server/services/bank_parts/week7.data.ts"() {
+    WEEK_7_QUESTIONS = {
+      "WEEK 7 \u2013 DAY 1": [
+        {
+          id: "doer_w7d1_q01",
+          roundIndex: 0,
+          prompt: "Trong m\u1EC7nh \u0111\u1EC1 quan h\u1EC7 b\u1ED5 ngh\u0129a cho danh t\u1EEB ch\u1EC9 n\u01A1i ch\u1ED1n, c\u1EE5m 'in which / at which' c\xF3 th\u1EC3 \u0111\u01B0\u1EE3c thay th\u1EBF b\u1EB1ng li\xEAn t\u1EEB/\u0111\u1EA1i t\u1EEB n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "where" },
+            { id: "opt_B", label: "B", text: "when" },
+            { id: "opt_C", label: "C", text: "why" },
+            { id: "opt_D", label: "D", text: "which" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Trong Adjective clause: prep + which ch\u1EC9 n\u01A1i ch\u1ED1n (in which, at which) \u0111\u01B0\u1EE3c thay b\u1EB1ng 'where'. Ch\u1EC9 th\u1EDDi gian (on which, at which) thay b\u1EB1ng 'when', v\xE0 l\xFD do (for which) thay b\u1EB1ng 'why'."
+        },
+        {
+          id: "doer_w7d1_q02",
+          roundIndex: 1,
+          prompt: "X\xE1c \u0111\u1ECBnh l\u1ED7i sai trong c\xE2u sau: 'Would you lend me the book, which you recommended last week?'",
+          options: [
+            { id: "opt_A", label: "A", text: "D\u1EA5u ph\u1EA9y kh\xF4ng \u0111\xFAng v\xEC 'the book' \u1EDF \u0111\xE2y c\u1EA7n m\u1EC7nh \u0111\u1EC1 x\xE1c \u0111\u1ECBnh (defining clause) \u0111\u1EC3 ng\u01B0\u1EDDi nghe bi\u1EBFt \u0111\xF3 l\xE0 cu\u1ED1n s\xE1ch n\xE0o" },
+            { id: "opt_B", label: "B", text: "Sai \u0111\u1ED9ng t\u1EEB 'lend', ph\u1EA3i d\xF9ng 'borrow'" },
+            { id: "opt_C", label: "C", text: "'which' ph\u1EA3i \u0111\u1ED5i th\xE0nh 'where'" },
+            { id: "opt_D", label: "D", text: "Ph\u1EA3i th\xEAm 'it' sau 'recommended'" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "\u0110\xE2y l\xE0 Defining Adjective Clause (m\u1EC7nh \u0111\u1EC1 quan h\u1EC7 x\xE1c \u0111\u1ECBnh) ch\u1EC9 r\xF5 cu\u1ED1n s\xE1ch n\xE0o, do \u0111\xF3 KH\xD4NG \u0111\u01B0\u1EE3c d\xF9ng d\u1EA5u ph\u1EA9y ng\u0103n c\xE1ch."
+        },
+        {
+          id: "doer_w7d1_q03",
+          roundIndex: 2,
+          prompt: "X\xE1c \u0111\u1ECBnh l\u1ED7i sai trong c\xE2u: 'People, which were invited to the party, didn't turn up.'",
+          options: [
+            { id: "opt_A", label: "A", text: "D\xF9ng sai 'which' \u0111\u1EC3 ch\u1EC9 ng\u01B0\u1EDDi v\xE0 \u0111\u1EB7t d\u1EA5u ph\u1EA9y sai cho m\u1EC7nh \u0111\u1EC1 x\xE1c \u0111\u1ECBnh" },
+            { id: "opt_B", label: "B", text: "Sai th\xEC c\u1EE7a \u0111\u1ED9ng t\u1EEB 'didn't turn up'" },
+            { id: "opt_C", label: "C", text: "'invited' ph\u1EA3i chuy\u1EC3n th\xE0nh 'inviting'" },
+            { id: "opt_D", label: "D", text: "Ph\u1EA3i d\xF9ng 'person' thay v\xEC 'people'" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'People' l\xE0 danh t\u1EEB ch\u1EC9 ng\u01B0\u1EDDi ph\u1EA3i d\xF9ng 'who'. \u0110\u1ED3ng th\u1EDDi \u0111\xE2y l\xE0 defining clause x\xE1c \u0111\u1ECBnh r\xF5 nh\xF3m ng\u01B0\u1EDDi n\xE0o \u0111\u01B0\u1EE3c m\u1EDDi, n\xEAn kh\xF4ng c\xF3 d\u1EA5u ph\u1EA9y -> 'People who were invited to the party didn't turn up.'"
+        },
+        {
+          id: "doer_w7d1_q04",
+          roundIndex: 3,
+          prompt: "Quy t\u1EAFc d\xF9ng \u0111\u1EA1i t\u1EEB quan h\u1EC7 trong Non-defining adjective clause (m\u1EC7nh \u0111\u1EC1 quan h\u1EC7 kh\xF4ng x\xE1c \u0111\u1ECBnh, c\xF3 d\u1EA5u ph\u1EA9y) l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Tuy\u1EC7t \u0111\u1ED1i kh\xF4ng \u0111\u01B0\u1EE3c d\xF9ng 'that', b\u1EAFt bu\u1ED9c d\xF9ng 'which' (ch\u1EC9 v\u1EADt) ho\u1EB7c 'who' (ch\u1EC9 ng\u01B0\u1EDDi)" },
+            { id: "opt_B", label: "B", text: "B\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng 'that' thay cho 'which'" },
+            { id: "opt_C", label: "C", text: "Ch\u1EC9 \u0111\u01B0\u1EE3c d\xF9ng 'what'" },
+            { id: "opt_D", label: "D", text: "C\xF3 th\u1EC3 d\xF9ng t\u1EF1 do 'that' hay 'which' \u0111\u1EC1u \u0111\u01B0\u1EE3c" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Trong Non-defining clause (\u0111\u1EB7t gi\u1EEFa hai d\u1EA5u ph\u1EA9y b\u1ED5 sung th\xF4ng tin), quy t\u1EAFc ng\u1EEF ph\xE1p c\u1EA5m d\xF9ng 'that', ph\u1EA3i d\xF9ng 'which' ho\u1EB7c 'who'."
+        },
+        {
+          id: "doer_w7d1_q05",
+          roundIndex: 4,
+          prompt: "R\xFAt g\u1ECDn m\u1EC7nh \u0111\u1EC1 t\xEDnh t\u1EEB ch\u1EE7 \u0111\u1ED9ng (Active voice) trong c\xE2u: 'Children who learn English at a young age can speak fluently.'",
+          options: [
+            { id: "opt_A", label: "A", text: "Children learning English at a young age can speak fluently." },
+            { id: "opt_B", label: "B", text: "Children learned English at a young age can speak fluently." },
+            { id: "opt_C", label: "C", text: "Children to learn English at a young age can speak fluently." },
+            { id: "opt_D", label: "D", text: "Children learn English at a young age can speak fluently." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Khi relative pronoun l\xE0m Subject \u1EDF th\u1EC3 ch\u1EE7 \u0111\u1ED9ng (active voice), ta b\u1ECF relative pronoun v\xE0 chuy\u1EC3n \u0111\u1ED9ng t\u1EEB ch\xEDnh sang d\u1EA1ng V-ing (learning)."
+        },
+        {
+          id: "doer_w7d1_q06",
+          roundIndex: 5,
+          prompt: "R\xFAt g\u1ECDn m\u1EC7nh \u0111\u1EC1 t\xEDnh t\u1EEB b\u1ECB \u0111\u1ED9ng (Passive voice) trong c\xE2u: 'The books that were written by J.K. Rowling are very popular.'",
+          options: [
+            { id: "opt_A", label: "A", text: "The books written by J.K. Rowling are very popular." },
+            { id: "opt_B", label: "B", text: "The books writing by J.K. Rowling are very popular." },
+            { id: "opt_C", label: "C", text: "The books were written by J.K. Rowling are very popular." },
+            { id: "opt_D", label: "D", text: "The books that written by J.K. Rowling are very popular." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "\u1EDE th\u1EC3 b\u1ECB \u0111\u1ED9ng (passive voice), khi r\xFAt g\u1ECDn m\u1EC7nh \u0111\u1EC1 quan h\u1EC7 ta l\u01B0\u1EE3c b\u1ECF relative pronoun (that) v\xE0 tr\u1EE3 \u0111\u1ED9ng t\u1EEB be (were), gi\u1EEF l\u1EA1i Past Participle (V3 - written)."
+        },
+        {
+          id: "doer_w7d1_q07",
+          roundIndex: 6,
+          prompt: "R\xFAt g\u1ECDn m\u1EC7nh \u0111\u1EC1 t\xEDnh t\u1EEB khi relative pronoun \u0111\xF3ng vai tr\xF2 t\xE2n ng\u1EEF (Object): 'This song reminded him of the woman that he used to love.'",
+          options: [
+            { id: "opt_A", label: "A", text: "This song reminded him of the woman he used to love." },
+            { id: "opt_B", label: "B", text: "This song reminded him of the woman loving he used to." },
+            { id: "opt_C", label: "C", text: "This song reminded him of the woman loved he used to." },
+            { id: "opt_D", label: "D", text: "This song reminded him of the woman was loved by him." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Khi relative pronoun \u0111\xF3ng vai tr\xF2 l\xE0 t\xE2n ng\u1EEF (object pronoun), ta c\xF3 th\u1EC3 l\u01B0\u1EE3c b\u1ECF tr\u1EF1c ti\u1EBFp \u0111\u1EA1i t\u1EEB \u0111\xF3 (omission of relative pronoun) m\xE0 gi\u1EEF nguy\xEAn ph\u1EA7n c\xF2n l\u1EA1i."
+        },
+        {
+          id: "doer_w7d1_q08",
+          roundIndex: 7,
+          prompt: "D\u1ECBch sang ti\u1EBFng Anh c\xF3 s\u1EED d\u1EE5ng Non-defining clause: 'Bi\u1EBFn \u0111\u1ED5i kh\xED h\u1EADu, m\u1ED9t v\u1EA5n \u0111\u1EC1 m\xF4i tr\u01B0\u1EDDng nghi\xEAm tr\u1ECDng, s\u1EBD \u0111\u01B0\u1EE3c th\u1EA3o lu\u1EADn t\u1EA1i h\u1ED9i th\u1EA3o.'",
+          options: [
+            { id: "opt_A", label: "A", text: "Climate change, which is a serious environmental problem, will be discussed at the upcoming conference." },
+            { id: "opt_B", label: "B", text: "Climate change that is a serious environmental problem will be discussed at the conference." },
+            { id: "opt_C", label: "C", text: "Climate change, where is a serious environmental problem, will discuss at conference." },
+            { id: "opt_D", label: "D", text: "Climate change which a serious problem will be discussed in conference." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'Climate change' l\xE0 danh t\u1EEB ri\xEAng/kh\xE1i ni\u1EC7m duy nh\u1EA5t \u0111\xE3 x\xE1c \u0111\u1ECBnh, n\xEAn m\u1EC7nh \u0111\u1EC1 gi\u1EA3i th\xEDch ph\u1EA3i \u0111\u1EB7t trong hai d\u1EA5u ph\u1EA9y v\xE0 d\xF9ng 'which'."
+        },
+        {
+          id: "doer_w7d1_q09",
+          roundIndex: 8,
+          prompt: "R\xFAt g\u1ECDn c\xE2u c\xF3 to be + adj/noun: 'My dad, who is old and sick, never goes out of the house.'",
+          options: [
+            { id: "opt_A", label: "A", text: "My dad, old and sick, never goes out of the house." },
+            { id: "opt_B", label: "B", text: "My dad being old and sick never goes out of the house." },
+            { id: "opt_C", label: "C", text: "My dad is old and sick never goes out of the house." },
+            { id: "opt_D", label: "D", text: "My dad who old and sick never goes out of the house." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "N\u1EBFu Finite verb c\u1EE7a adjective clause l\xE0 'be', khi r\xFAt g\u1ECDn ta b\u1ECF c\u1EA3 relative pronoun v\xE0 'be', gi\u1EEF l\u1EA1i t\xEDnh t\u1EEB ho\u1EB7c c\u1EE5m danh t\u1EEB ph\xEDa sau \u0111\u1EB7t gi\u1EEFa hai d\u1EA5u ph\u1EA9y."
+        },
+        {
+          id: "doer_w7d1_q10",
+          roundIndex: 9,
+          prompt: "D\u1ECBch sang ti\u1EBFng Anh d\xF9ng Reduced clause b\u1ECB \u0111\u1ED9ng: '\u0110\u1EC3 ti\u1EBFt ki\u1EC7m chi ph\xED, nh\xE0 m\xE1y \u0111\xE3 x\u1EA3 ch\u1EA5t th\u1EA3i ch\u01B0a qua x\u1EED l\xFD ra bi\u1EC3n.'",
+          options: [
+            { id: "opt_A", label: "A", text: "To save operating costs, the plant discharged untreated waste into the sea." },
+            { id: "opt_B", label: "B", text: "To save operating costs, the plant discharged un-treating waste to sea." },
+            { id: "opt_C", label: "C", text: "Saving operating cost, the plant has discharge waste not treat into ocean." },
+            { id: "opt_D", label: "D", text: "To save costs, the plant discharge which is not treated waste into sea." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'untreated waste' l\xE0 d\u1EA1ng r\xFAt g\u1ECDn c\u1EE7a 'waste which has not been treated' (ch\u1EA5t th\u1EA3i ch\u01B0a qua x\u1EED l\xFD)."
+        }
+      ],
+      "WEEK 7 \u2013 DAY 2": [
+        {
+          id: "doer_w7d2_q01",
+          roundIndex: 0,
+          prompt: 'Trong ch\u1EE7 \u0111\u1EC1 Environment, \u0111\u1ED9ng t\u1EEB "discharge" trong c\u1EE5m "discharged toxic waste into the ocean" \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi:',
+          options: [
+            { id: "opt_A", label: "A", text: "release / dump (th\u1EA3i ra, x\u1EA3 th\u1EA3i b\u1EEBa b\xE3i)" },
+            { id: "opt_B", label: "B", text: "recycle (t\xE1i ch\u1EBF)" },
+            { id: "opt_C", label: "C", text: "purify (thanh l\u1ECDc, l\u1ECDc s\u1EA1ch)" },
+            { id: "opt_D", label: "D", text: "contain (ng\u0103n ch\u1EB7n, k\xECm h\xE3m)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. release / dump (th\u1EA3i ra, x\u1EA3 th\u1EA3i b\u1EEBa b\xE3i)",
+          correctExplanation: '"Discharge" ch\u1EA5t th\u1EA3i c\xF4ng nghi\u1EC7p c\xF3 ngh\u0129a l\xE0 x\u1EA3 ra m\xF4i tr\u01B0\u1EDDng b\xEAn ngo\xE0i, \u0111\u1ED3ng ngh\u0129a v\u1EDBi release ho\u1EB7c dump.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. purify",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa h\xE0nh vi g\xE2y \xF4 nhi\u1EC5m v\xE0 gi\u1EA3i ph\xE1p x\u1EED l\xFD",
+            explanation: "Discharge ch\u1EA5t th\u1EA3i l\xE0 ngu\u1ED3n c\u01A1n th\u1EA3m h\u1ECDa \xF4 nhi\u1EC5m, ho\xE0n to\xE0n tr\xE1i ng\u01B0\u1EE3c v\u1EDBi purify (l\xE0m s\u1EA1ch)."
+          }
+        },
+        {
+          id: "doer_w7d2_q02",
+          roundIndex: 1,
+          prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "toxic" trong c\u1EE5m "toxic chemical waste" (ch\u1EA5t th\u1EA3i h\xF3a h\u1ECDc \u0111\u1ED9c h\u1EA1i) l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "harmless / non-hazardous (v\xF4 h\u1EA1i, an to\xE0n)" },
+            { id: "opt_B", label: "B", text: "poisonous (c\xF3 \u0111\u1ED9c t\xEDnh cao)" },
+            { id: "opt_C", label: "C", text: "fatal (g\xE2y ch\u1EBFt ng\u01B0\u1EDDi)" },
+            { id: "opt_D", label: "D", text: "lethal (nguy hi\u1EC3m ch\u1EBFt ch\xF3c)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. harmless / non-hazardous (v\xF4 h\u1EA1i, an to\xE0n)",
+          correctExplanation: '"Toxic" = \u0111\u1ED9c h\u1EA1i. T\u1EEB tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "harmless" (v\xF4 h\u1EA1i) ho\u1EB7c "non-hazardous" (kh\xF4ng nguy h\u1EA1i).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. poisonous",
+            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
+            explanation: "Poisonous l\xE0 t\u1EEB \u0111\u1ED3ng ngh\u0129a tr\u1EF1c ti\u1EBFp v\u1EDBi toxic. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
+          }
+        },
+        {
+          id: "doer_w7d2_q03",
+          roundIndex: 2,
+          prompt: 'Thu\u1EADt ng\u1EEF "livelihood" trong c\xE2u "The disaster negatively affected the livelihood of coastal fishermen" mang ngh\u0129a g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "K\u1EBF sinh nhai, ngu\u1ED3n thu nh\u1EADp v\xE0 ph\u01B0\u01A1ng ti\u1EC7n ki\u1EBFm s\u1ED1ng h\xE0ng ng\xE0y" },
+            { id: "opt_B", label: "B", text: "Chi\u1EBFc thuy\u1EC1n bu\u1ED3m v\xE0 ng\u01B0 c\u1EE5 \u0111\xE1nh c\xE1" },
+            { id: "opt_C", label: "C", text: "Gi\u1EA5y ph\xE9p \u0111\u0103ng k\xFD c\u01B0 tr\xFA h\u1ED9 kh\u1EA9u" },
+            { id: "opt_D", label: "D", text: "B\u1EC7nh truy\u1EC1n nhi\u1EC5m t\u1EEB c\xE1 ch\u1EBFt" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. K\u1EBF sinh nhai, ngu\u1ED3n thu nh\u1EADp v\xE0 ph\u01B0\u01A1ng ti\u1EC7n ki\u1EBFm s\u1ED1ng h\xE0ng ng\xE0y",
+          correctExplanation: '"Livelihood" l\xE0 k\u1EBF sinh nhai (a means of securing the necessities of life), ngu\u1ED3n nu\xF4i s\u1ED1ng b\u1EA3n th\xE2n v\xE0 gia \u0111\xECnh.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Thuy\u1EC1n bu\u1ED3m v\xE0 ng\u01B0 c\u1EE5",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn t\xE0i s\u1EA3n v\u1EADt ch\u1EA5t v\u1EDBi k\u1EBF sinh nhai",
+            explanation: "Thuy\u1EC1n b\xE8 ch\u1EC9 l\xE0 c\xF4ng c\u1EE5 (gear/vessel), c\xF2n livelihood l\xE0 ph\u01B0\u01A1ng k\u1EBF ki\u1EBFm s\u1ED1ng to\xE0n di\u1EC7n c\u1EE7a con ng\u01B0\u1EDDi."
+          }
+        },
+        {
+          id: "doer_w7d2_q04",
+          roundIndex: 3,
+          prompt: 'Collocation chu\u1EA9n trong b\xE0i: "The industrial plant discharged waste which contained toxins that ______ the permitted safety level."',
+          options: [
+            { id: "opt_A", label: "A", text: "exceeded (v\u01B0\u1EE3t qu\xE1 ng\u01B0\u1EE1ng cho ph\xE9p)" },
+            { id: "opt_B", label: "B", text: "succeeded" },
+            { id: "opt_C", label: "C", text: "receded" },
+            { id: "opt_D", label: "D", text: "proceeded" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. exceeded (v\u01B0\u1EE3t qu\xE1 ng\u01B0\u1EE1ng cho ph\xE9p)",
+          correctExplanation: 'Collocation m\xF4i tr\u01B0\u1EDDng ph\xE1p l\xFD: "exceed the permitted level / standard" (v\u01B0\u1EE3t qu\xE1 ng\u01B0\u1EE1ng quy chu\u1EA9n an to\xE0n cho ph\xE9p).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. succeeded",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn h\xECnh th\xE1i t\u1EEB do c\xF9ng \u0111u\xF4i -ceed",
+            explanation: "Succeed l\xE0 th\xE0nh c\xF4ng ho\u1EB7c k\u1EBF nhi\u1EC7m, kh\xF4ng mang ngh\u0129a v\u01B0\u1EE3t qu\xE1 ng\u01B0\u1EE1ng ch\u1EC9 s\u1ED1 s\u1ED1 l\u01B0\u1EE3ng."
+          }
+        },
+        {
+          id: "doer_w7d2_q05",
+          roundIndex: 4,
+          prompt: 'Collocation ch\u1EC9 to\xE0n b\u1ED9 h\u1EC7 \u0111\u1ED9ng th\u1EF1c v\u1EADt d\u01B0\u1EDBi \u0111\u1EA1i d\u01B0\u01A1ng: "The chemical spill caused catastrophic destruction to ______."',
+          options: [
+            { id: "opt_A", label: "A", text: "marine life" },
+            { id: "opt_B", label: "B", text: "navy life" },
+            { id: "opt_C", label: "C", text: "sailor life" },
+            { id: "opt_D", label: "D", text: "boat life" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. marine life",
+          correctExplanation: '"Marine life" l\xE0 thu\u1EADt ng\u1EEF chu\u1EA9n x\xE1c trong sinh th\xE1i h\u1ECDc ch\u1EC9 c\xE1c lo\xE0i sinh v\u1EADt bi\u1EC3n v\xE0 h\u1EC7 sinh th\xE1i \u0111\u1EA1i d\u01B0\u01A1ng.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. navy life",
+            diagnosticTitle: "D\xF9ng t\u1EEB l\u1EF1c l\u01B0\u1EE3ng qu\xE2n s\u1EF1 h\u1EA3i qu\xE2n",
+            explanation: "Navy l\xE0 l\u1EF1c l\u01B0\u1EE3ng qu\xE2n \u0111\u1ED9i h\u1EA3i qu\xE2n, kh\xF4ng li\xEAn quan \u0111\u1EBFn sinh v\u1EADt sinh th\xE1i bi\u1EC3n (marine)."
+          }
+        },
+        {
+          id: "doer_w7d2_q06",
+          roundIndex: 5,
+          prompt: 'Ph\xE2n t\u1EEB r\xFAt g\u1ECDn: C\u1EE5m "ch\u1EA5t th\u1EA3i ch\u01B0a qua x\u1EED l\xFD b\u1ECB x\u1EA3 tr\u1EF1c ti\u1EBFp ra bi\u1EC3n" \u0111\u01B0\u1EE3c vi\u1EBFt chu\u1EA9n ng\u1EEF ph\xE1p ti\u1EBFng Anh l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "untreated waste" },
+            { id: "opt_B", label: "B", text: "uncleanable waste" },
+            { id: "opt_C", label: "C", text: "not-treating waste" },
+            { id: "opt_D", label: "D", text: "unprocessed water" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. untreated waste",
+          correctExplanation: '"Untreated waste" l\xE0 qu\xE1 kh\u1EE9 ph\xE2n t\u1EEB l\xE0m t\xEDnh t\u1EEB mang ngh\u0129a b\u1ECB \u0111\u1ED9ng: ch\u1EA5t th\u1EA3i ch\u01B0a t\u1EEBng \u0111\u01B0\u1EE3c qua h\u1EC7 th\u1ED1ng x\u1EED l\xFD h\xF3a ch\u1EA5t.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. not-treating waste",
+            diagnosticTitle: "D\xF9ng hi\u1EC7n t\u1EA1i ph\xE2n t\u1EEB ch\u1EE7 \u0111\u1ED9ng sai ng\u1EEF ph\xE1p",
+            explanation: 'Ch\u1EA5t th\u1EA3i l\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng \u0111\u01B0\u1EE3c x\u1EED l\xFD (b\u1ECB \u0111\u1ED9ng), n\xEAn ph\u1EA3i d\xF9ng past participle c\xF3 ti\u1EC1n t\u1ED1 ph\u1EE7 \u0111\u1ECBnh "untreated".'
+          }
+        },
+        {
+          id: "doer_w7d2_q07",
+          roundIndex: 6,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng \u0111i k\xE8m tr\xE1ch nhi\u1EC7m ph\xE1p l\xFD: "The steel corporation finally accepted full responsibility ______ the devastating fish deaths."',
+          options: [
+            { id: "opt_A", label: "A", text: "for" },
+            { id: "opt_B", label: "B", text: "with" },
+            { id: "opt_C", label: "C", text: "to" },
+            { id: "opt_D", label: "D", text: "at" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. for",
+          correctExplanation: 'C\u1EA5u tr\xFAc c\u1ED1 \u0111\u1ECBnh: "accept / take responsibility FOR something" (ch\u1ECBu tr\xE1ch nhi\u1EC7m v\u1EC1 h\xE0nh vi ho\u1EB7c h\u1EADu qu\u1EA3 n\xE0o \u0111\xF3).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. with",
+            diagnosticTitle: 'D\xF9ng gi\u1EDBi t\u1EEB "with" do \u1EA3nh h\u01B0\u1EDFng ti\u1EBFng Vi\u1EC7t',
+            explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "ch\u1ECBu tr\xE1ch nhi\u1EC7m v\u1EDBi ai/vi\u1EC7c g\xEC", nh\u01B0ng ti\u1EBFng Anh b\u1EAFt bu\u1ED9c d\xF9ng "responsibility FOR sth".'
+          }
+        },
+        {
+          id: "doer_w7d2_q08",
+          roundIndex: 7,
+          prompt: 'Hi\u1EC7n t\u01B0\u1EE3ng sinh h\u1ECDc "red tide" \u0111\u01B0\u1EE3c d\u1ECBch chu\u1EA9n x\xE1c sang ti\u1EBFng Vi\u1EC7t l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "Hi\u1EC7n t\u01B0\u1EE3ng th\u1EE7y tri\u1EC1u \u0111\u1ECF (s\u1EF1 b\xF9ng ph\xE1t t\u1EA3o bi\u1EC3n n\u1EDF hoa ph\xE1t sinh \u0111\u1ED9c t\u1ED1)" },
+            { id: "opt_B", label: "B", text: "Hi\u1EC7n t\u01B0\u1EE3ng s\xF3ng th\u1EA7n do \u0111\u1ED9ng \u0111\u1EA5t ng\u1EA7m" },
+            { id: "opt_C", label: "C", text: "S\u1EF1 c\u1ED1 tr\xE0n d\u1EA7u th\xF4 nhu\u1ED9m m\xE0u n\u01B0\u1EDBc bi\u1EC3n" },
+            { id: "opt_D", label: "D", text: "N\u01B0\u1EDBc bi\u1EC3n d\xE2ng cao v\xE0o m\xF9a l\u0169 l\u1EE5t" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Hi\u1EC7n t\u01B0\u1EE3ng th\u1EE7y tri\u1EC1u \u0111\u1ECF (s\u1EF1 b\xF9ng ph\xE1t t\u1EA3o bi\u1EC3n n\u1EDF hoa ph\xE1t sinh \u0111\u1ED9c t\u1ED1)",
+          correctExplanation: '"Red tide" l\xE0 thu\u1EADt ng\u1EEF h\u1EA3i d\u01B0\u01A1ng h\u1ECDc ch\u1EC9 hi\u1EC7n t\u01B0\u1EE3ng th\u1EE7y tri\u1EC1u \u0111\u1ECF khi vi t\u1EA3o n\u1EDF hoa l\xE0m \u0111\u1ED5i m\xE0u n\u01B0\u1EDBc v\xE0 ti\xEAu hao d\u01B0\u1EE1ng kh\xED.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. S\u1EF1 c\u1ED1 tr\xE0n d\u1EA7u th\xF4",
+            diagnosticTitle: "Nh\u1EA7m hi\u1EC7n t\u01B0\u1EE3ng sinh h\u1ECDc v\u1EDBi s\u1EF1 c\u1ED1 d\u1EA7u loang",
+            explanation: "D\u1EA7u tr\xE0n l\xE0 oil spill, c\xF2n red tide l\xE0 hi\u1EC7n t\u01B0\u1EE3ng b\xF9ng n\u1ED5 t\u1EA3o bi\u1EC3n."
+          }
+        },
+        {
+          id: "doer_w7d2_q09",
+          roundIndex: 8,
+          prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o b\xE1o c\xE1o sinh th\xE1i: "The environmental agency placed an immediate ______ on fishing in polluted coastal zones."',
+          options: [
+            { id: "opt_A", label: "A", text: "ban (l\u1EC7nh c\u1EA5m ch\xEDnh th\u1EE9c)" },
+            { id: "opt_B", label: "B", text: "campus" },
+            { id: "opt_C", label: "C", text: "burnout" },
+            { id: "opt_D", label: "D", text: "itinerary" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. ban (l\u1EC7nh c\u1EA5m ch\xEDnh th\u1EE9c)",
+          correctExplanation: 'Collocation: "place a ban on something" (\xE1p \u0111\u1EB7t l\u1EC7nh c\u1EA5m \u0111\u1ED1i v\u1EDBi ho\u1EA1t \u0111\u1ED9ng \u0111\xE1nh b\u1EAFt/mua b\xE1n n\xE0o \u0111\xF3).',
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. itinerary",
+            diagnosticTitle: "Gh\xE9p t\u1EEB l\u1ECBch tr\xECnh chuy\u1EBFn \u0111i kh\xF4ng t\u01B0\u01A1ng th\xEDch",
+            explanation: "Itinerary l\xE0 l\u1ECBch tr\xECnh du l\u1ECBch, kh\xF4ng th\u1EC3 \u0111i v\u1EDBi h\xE0nh \u0111\u1ED9ng qu\u1EA3n l\xFD kh\u1EA9n c\u1EA5p c\u1EE7a c\u01A1 quan m\xF4i tr\u01B0\u1EDDng."
+          }
+        },
+        {
+          id: "doer_w7d2_q10",
+          roundIndex: 9,
+          prompt: `PARAPHRASE: C\xE2u "The factory unlawfully discharged untreated chemical toxins into the ocean, decimating local marine ecosystems and ruining fishermen's livelihoods" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i t\u01B0\u01A1ng \u0111\u01B0\u01A1ng nh\u1EA5t l\xE0:`,
+          options: [
+            { id: "opt_A", label: "A", text: "Illicit industrial waste disposal wiped out aquatic habitats and severely compromised the economic survival of coastal communities." },
+            { id: "opt_B", label: "B", text: "Marine species flourished because the manufacturing facility installed world-class water purification pipelines." },
+            { id: "opt_C", label: "C", text: "Fishermen were fully compensated prior to the scheduled cleaning of underwater drainage pipes." },
+            { id: "opt_D", label: "D", text: "Red tide algae blooms were conclusively verified as the exclusive cause of central coastal fish mortality." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Illicit industrial waste disposal wiped out aquatic habitats and severely compromised the economic survival of coastal communities.",
+          correctExplanation: `"Illicit industrial waste disposal" paraphrase cho "unlawfully discharged untreated chemical toxins", "wiped out aquatic habitats" paraphrase cho "decimating marine ecosystems", v\xE0 "compromised economic survival" paraphrase cho "ruining fishermen's livelihoods".`,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Red tide algae blooms were verified as the cause",
+            diagnosticTitle: "Ch\u1ECDn gi\u1EA3 thuy\u1EBFt \u0111\xE3 b\u1ECB b\xE1c b\u1ECF trong \u0111i\u1EC1u tra",
+            explanation: "Gi\u1EA3 thuy\u1EBFt th\u1EE7y tri\u1EC1u \u0111\u1ECF \u0111\xE3 b\u1ECB H\u1ED9i ngh\u1EC1 c\xE1 v\xE0 k\u1EBFt lu\u1EADn ch\xEDnh ph\u1EE7 b\xE1c b\u1ECF; nguy\xEAn nh\xE2n th\u1EADt s\u1EF1 l\xE0 do ch\u1EA5t \u0111\u1ED9c x\u1EA3 t\u1EEB nh\xE0 m\xE1y."
+          }
+        }
+      ],
+      "WEEK 7 \u2013 DAY 3": [
+        {
+          id: "doer_w7d3_q01",
+          roundIndex: 0,
+          prompt: "\u0110u\xF4i '-s/-es' trong ti\u1EBFng Anh c\xF3 bao nhi\xEAu c\xE1ch ph\xE1t \xE2m chu\u1EA9n?",
+          options: [
+            { id: "opt_A", label: "A", text: "3 c\xE1ch: /s/, /z/, v\xE0 /\u026Az/" },
+            { id: "opt_B", label: "B", text: "2 c\xE1ch: /s/ v\xE0 /z/" },
+            { id: "opt_C", label: "C", text: "4 c\xE1ch: /s/, /z/, /\u0283/, /t\u0283/" },
+            { id: "opt_D", label: "D", text: "1 c\xE1ch duy nh\u1EA5t: /s/" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "\u0110u\xF4i -s/-es c\xF3 3 c\xE1ch \u0111\u1ECDc: /\u026Az/ (sau c\xE1c \xE2m x\xEC/\xE2m gi\xF3), /s/ (sau \xE2m v\xF4 thanh), v\xE0 /z/ (sau \xE2m h\u1EEFu thanh v\xE0 nguy\xEAn \xE2m)."
+        },
+        {
+          id: "doer_w7d3_q02",
+          roundIndex: 1,
+          prompt: "C\xE1c t\u1EEB c\xF3 \xE2m t\u1EADn c\xF9ng l\xE0 /s/, /z/, /\u0283/, /\u0292/, /t\u0283/, /d\u0292/ khi th\xEAm \u0111u\xF4i '-es' s\u1EBD \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "/\u026Az/" },
+            { id: "opt_B", label: "B", text: "/s/" },
+            { id: "opt_C", label: "C", text: "/z/" },
+            { id: "opt_D", label: "D", text: "C\xE2m kh\xF4ng ph\xE1t \xE2m" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\xE1c \xE2m xu\xFDt/gi\xF3 sibilants (/s, z, \u0283, \u0292, t\u0283, d\u0292/) khi th\xEAm -es \u0111\u1EC1u \u0111\u01B0\u1EE3c ph\xE1t \xE2m th\xE0nh /\u026Az/ (v\xED d\u1EE5: washes, brushes, watches, boxes)."
+        },
+        {
+          id: "doer_w7d3_q03",
+          roundIndex: 2,
+          prompt: "Kh\u1EA9u quy\u1EBFt 'th\xE8m c\xE0 ph\xEA ph\u1EDF t\xE1i' \u1EE9ng v\u1EDBi c\xE1c \xE2m v\xF4 thanh n\xE0o \u0111\u1EC3 nh\u1EADn bi\u1EBFt \u0111u\xF4i '-s' \u0111\u1ECDc l\xE0 /s/?",
+          options: [
+            { id: "opt_A", label: "A", text: "/\u03B8/, /k/, /p/, /f/, /t/" },
+            { id: "opt_B", label: "B", text: "/s/, /\u0283/, /t\u0283/, /d\u0292/, /z/" },
+            { id: "opt_C", label: "C", text: "/b/, /d/, /g/, /v/, /m/" },
+            { id: "opt_D", label: "D", text: "/l/, /r/, /n/, /\u014B/, /w/" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "M\u1EB9o nh\u1EDB c\xE1c \xE2m v\xF4 thanh (unvoiced consonants): /\u03B8/ (th\xE8m), /k/ (c\xE0), /p/ (ph\xEA), /f/ (ph\u1EDF), /t/ (t\xE1i). Khi k\u1EBFt th\xFAc b\u1EB1ng c\xE1c \xE2m n\xE0y, -s \u0111\u1ECDc l\xE0 /s/."
+        },
+        {
+          id: "doer_w7d3_q04",
+          roundIndex: 3,
+          prompt: "T\u1EEB n\xE0o d\u01B0\u1EDBi \u0111\xE2y c\xF3 \u0111u\xF4i '-s/-es' \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 /\u026Az/?",
+          options: [
+            { id: "opt_A", label: "A", text: "washes" },
+            { id: "opt_B", label: "B", text: "gets" },
+            { id: "opt_C", label: "C", text: "books" },
+            { id: "opt_D", label: "D", text: "plays" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'wash' k\u1EBFt th\xFAc b\u1EB1ng \xE2m /\u0283/ n\xEAn khi th\xEAm -es \u0111\u1ECDc l\xE0 /w\u0252\u0283\u026Az/ (/\u026Az/)."
+        },
+        {
+          id: "doer_w7d3_q05",
+          roundIndex: 4,
+          prompt: "T\u1EEB n\xE0o d\u01B0\u1EDBi \u0111\xE2y c\xF3 \u0111u\xF4i '-s' \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 /s/?",
+          options: [
+            { id: "opt_A", label: "A", text: "gets" },
+            { id: "opt_B", label: "B", text: "goes" },
+            { id: "opt_C", label: "C", text: "cleans" },
+            { id: "opt_D", label: "D", text: "runs" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'get' t\u1EADn c\xF9ng l\xE0 \xE2m v\xF4 thanh /t/ ('t\xE1i'), n\xEAn \u0111u\xF4i -s ph\xE1t \xE2m l\xE0 /s/ -> /\u0261ets/."
+        },
+        {
+          id: "doer_w7d3_q06",
+          roundIndex: 5,
+          prompt: "T\u1EEB n\xE0o d\u01B0\u1EDBi \u0111\xE2y c\xF3 \u0111u\xF4i '-es' \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 /z/?",
+          options: [
+            { id: "opt_A", label: "A", text: "goes" },
+            { id: "opt_B", label: "B", text: "watches" },
+            { id: "opt_C", label: "C", text: "catches" },
+            { id: "opt_D", label: "D", text: "kisses" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'go' k\u1EBFt th\xFAc b\u1EB1ng nguy\xEAn \xE2m /o\u028A/ (\xE2m h\u1EEFu thanh/rung), n\xEAn \u0111u\xF4i -es \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 /z/ -> /\u0261o\u028Az/."
+        },
+        {
+          id: "doer_w7d3_q07",
+          roundIndex: 6,
+          prompt: "Trong \u0111o\u1EA1n v\u0103n th\u1EF1c h\xE0nh: 'He gets up at 6 am, washes his face, brushes his teeth, and exercises for 15 minutes', c\xF3 bao nhi\xEAu t\u1EEB ch\u1EE9a \u0111u\xF4i \u0111\u1ECDc l\xE0 /\u026Az/?",
+          options: [
+            { id: "opt_A", label: "A", text: "3 t\u1EEB: washes, brushes, exercises" },
+            { id: "opt_B", label: "B", text: "1 t\u1EEB: washes" },
+            { id: "opt_C", label: "C", text: "2 t\u1EEB: gets, washes" },
+            { id: "opt_D", label: "D", text: "4 t\u1EEB: gets, washes, brushes, exercises" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Washes (/\u0283\u026Az/), brushes (/\u0283\u026Az/), exercises (/sa\u026Az\u026Az/) \u0111\u1EC1u t\u1EADn c\xF9ng b\u1EB1ng \xE2m gi\xF3 v\xE0 ph\xE1t \xE2m /\u026Az/. Ri\xEAng 'gets' \u0111\u1ECDc l\xE0 /s/."
+        },
+        {
+          id: "doer_w7d3_q08",
+          roundIndex: 7,
+          prompt: "Trong ch\u1EE7 \u0111\u1EC1 Friendship (T\xECnh b\u1EA1n), c\u1EE5m t\u1EEB 'have a lot in common with someone' mang \xFD ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "C\xF3 nhi\u1EC1u \u0111i\u1EC3m chung, c\xF9ng s\u1EDF th\xEDch v\xE0 quan \u0111i\u1EC3m v\u1EDBi ai \u0111\xF3" },
+            { id: "opt_B", label: "B", text: "C\xF3 chung nhi\u1EC1u m\xF3n n\u1EE3 t\xE0i ch\xEDnh v\u1EDBi nhau" },
+            { id: "opt_C", label: "C", text: "S\u1ED1ng c\xF9ng trong m\u1ED9t khu ph\u1ED1 t\u1EADp th\u1EC3" },
+            { id: "opt_D", label: "D", text: "R\u1EA5t hay c\xE3i v\xE3 v\xEC b\u1EA5t \u0111\u1ED3ng t\xEDnh c\xE1ch" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'have a lot in common' l\xE0 collocation quen thu\u1ED9c trong Speaking topic Friendship: c\xF3 r\u1EA5t nhi\u1EC1u \u0111i\u1EC3m chung s\u1EDF th\xEDch, th\xF3i quen."
+        },
+        {
+          id: "doer_w7d3_q09",
+          roundIndex: 8,
+          prompt: "C\u1EE5m t\u1EEB n\xE0o di\u1EC5n t\u1EA3 m\u1ED9t 'ng\u01B0\u1EDDi b\u1EA1n th\xE2n thi\u1EBFt tri k\u1EF7 c\xF3 th\u1EC3 t\xE2m s\u1EF1 m\u1ECDi \u0111i\u1EC1u'?",
+          options: [
+            { id: "opt_A", label: "A", text: "A close confidant / intimate friend" },
+            { id: "opt_B", label: "B", text: "A casual acquaintance" },
+            { id: "opt_C", label: "C", text: "A fair-weather friend" },
+            { id: "opt_D", label: "D", text: "A stranger on the street" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'close confidant' (ng\u01B0\u1EDDi b\u1EA1n t\xE2m t\xECnh, tri k\u1EF7). Tr\xE1i ng\u01B0\u1EE3c v\u1EDBi 'casual acquaintance' (ng\u01B0\u1EDDi quen s\u01A1 giao) hay 'fair-weather friend' (b\u1EA1n c\u01A1 h\u1ED9i, ch\u1EC9 \u1EDF b\xEAn l\xFAc vui)."
+        },
+        {
+          id: "doer_w7d3_q10",
+          roundIndex: 9,
+          prompt: "Th\xE0nh ng\u1EEF 'keep in touch with someone' c\xF3 ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Gi\u1EEF li\xEAn l\u1EA1c th\u01B0\u1EDDng xuy\xEAn v\u1EDBi ai \u0111\xF3" },
+            { id: "opt_B", label: "B", text: "Ch\u1EA1m tay v\xE0o vai ai \u0111\xF3 khi g\u1EB7p m\u1EB7t" },
+            { id: "opt_C", label: "C", text: "C\u1EAFt \u0111\u1EE9t m\u1ECDi li\xEAn l\u1EA1c v\xEC hi\u1EC3u l\u1EA7m" },
+            { id: "opt_D", label: "D", text: "Theo d\xF5i v\u1ECB tr\xED c\u1EE7a ai \u0111\xF3 tr\xEAn m\u1EA1ng x\xE3 h\u1ED9i" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'keep in touch with sb' (ho\u1EB7c stay in touch) = duy tr\xEC li\xEAn l\u1EA1c v\u1EDBi ai \u0111\xF3."
+        }
+      ]
+    };
+  }
+});
+
+// server/services/bank_parts/week8.data.ts
+var WEEK_8_QUESTIONS;
+var init_week8_data = __esm({
+  "server/services/bank_parts/week8.data.ts"() {
+    WEEK_8_QUESTIONS = {
+      "WEEK 8 \u2013 DAY 1": [
+        {
+          id: "doer_w8d1_q01",
+          roundIndex: 0,
+          prompt: "Trong v\u0103n phong h\u1ECDc thu\u1EADt IELTS Writing, c\xE2u b\u1ECB \u0111\u1ED9ng (Passive voice) th\u01B0\u1EDDng \u0111\u01B0\u1EE3c s\u1EED d\u1EE5ng nhi\u1EC1u nh\u1EA5t trong tr\u01B0\u1EDDng h\u1EE3p n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "Khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n nh\u1EA5n m\u1EA1nh v\xE0o h\xE0nh \u0111\u1ED9ng/\u0111\u1ED1i t\u01B0\u1EE3ng ch\u1ECBu t\xE1c \u0111\u1ED9ng ho\u1EB7c khi ch\u1EE7 th\u1EC3 th\u1EF1c hi\u1EC7n h\xE0nh \u0111\u1ED9ng kh\xF4ng quan tr\u1ECDng/ch\u01B0a r\xF5" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n c\xE2u v\u0103n d\xE0i th\xEAm nhi\u1EC1u t\u1EEB \u0111\u1EC3 \u0111\u1EA1t \u0111\u1ED9 d\xE0i t\u1ED1i thi\u1EC3u" },
+            { id: "opt_C", label: "C", text: "Trong t\u1EA5t c\u1EA3 m\u1ECDi c\xE2u v\u0103n mi\xEAu t\u1EA3 quan \u0111i\u1EC3m c\xE1 nh\xE2n" },
+            { id: "opt_D", label: "D", text: "Ch\u1EC9 khi ch\u1EE7 ng\u1EEF l\xE0 t\xEAn m\u1ED9t c\xE1 nh\xE2n c\u1EE5 th\u1EC3" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Passive voice \u0111\u01B0\u1EE3c d\xF9ng khi tr\u1ECDng t\xE2m th\xF4ng tin \u0111\u1EB7t v\xE0o h\xE0nh \u0111\u1ED9ng ho\u1EB7c t\xE2n ng\u1EEF ch\u1ECBu t\xE1c \u0111\u1ED9ng, ho\u1EB7c khi agent (ch\u1EE7 th\u1EC3 g\xE2y ra h\xE0nh \u0111\u1ED9ng) kh\xF4ng quan tr\u1ECDng, hi\u1EC3n nhi\xEAn, ho\u1EB7c kh\xF4ng r\xF5 danh t\xEDnh."
+        },
+        {
+          id: "doer_w8d1_q02",
+          roundIndex: 1,
+          prompt: "Chuy\u1EC3n c\xE2u sau sang th\u1EC3 b\u1ECB \u0111\u1ED9ng (Passive Voice): 'US companies have recently recruited 500,000 workers in August alone.'",
+          options: [
+            { id: "opt_A", label: "A", text: "500,000 workers have recently been recruited in August alone." },
+            { id: "opt_B", label: "B", text: "500,000 workers were recently recruited in August alone." },
+            { id: "opt_C", label: "C", text: "500,000 workers have recently recruited by US companies." },
+            { id: "opt_D", label: "D", text: "500,000 workers are recently been recruited in August alone." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\xE2u g\u1ED1c \u1EDF th\xEC Hi\u1EC7n t\u1EA1i ho\xE0n th\xE0nh (have recruited) -> Th\u1EC3 b\u1ECB \u0111\u1ED9ng t\u01B0\u01A1ng \u1EE9ng: have/has been + V3/ed -> 'have recently been recruited'."
+        },
+        {
+          id: "doer_w8d1_q03",
+          roundIndex: 2,
+          prompt: "Chuy\u1EC3n c\xE2u sau sang th\u1EC3 b\u1ECB \u0111\u1ED9ng: 'The company required all employees to attend the meeting.'",
+          options: [
+            { id: "opt_A", label: "A", text: "All employees were required to attend the meeting." },
+            { id: "opt_B", label: "B", text: "All employees had required to attend the meeting." },
+            { id: "opt_C", label: "C", text: "All employees are required to attended the meeting." },
+            { id: "opt_D", label: "D", text: "All employees were requiring to attend the meeting." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Th\xEC Qu\xE1 kh\u1EE9 \u0111\u01A1n 'required' -> b\u1ECB \u0111\u1ED9ng l\xE0 'were required to attend'."
+        },
+        {
+          id: "doer_w8d1_q04",
+          roundIndex: 3,
+          prompt: "\u0110\u1ED1i v\u1EDBi ngo\u1EA1i \u0111\u1ED9ng t\u1EEB c\xF3 2 t\xE2n ng\u1EEF (Vt + O1 + O2) nh\u01B0 'give sb sth': 'Her boyfriend gave her a Rolex on her birthday', c\xE2u b\u1ECB \u0111\u1ED9ng \u01B0u ti\xEAn ph\u1ED5 bi\u1EBFn nh\u1EA5t l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "She was given a Rolex (by her boyfriend) on her birthday." },
+            { id: "opt_B", label: "B", text: "A Rolex gave her on her birthday by boyfriend." },
+            { id: "opt_C", label: "C", text: "She gave a Rolex by her boyfriend on birthday." },
+            { id: "opt_D", label: "D", text: "Her was given a Rolex on her birthday." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "\u01AFu ti\xEAn \u0111\u01B0a t\xE2n ng\u1EEF gi\xE1n ti\u1EBFp ch\u1EC9 ng\u01B0\u1EDDi (her -> She) l\xEAn l\xE0m ch\u1EE7 ng\u1EEF: 'She was given a Rolex on her birthday'."
+        },
+        {
+          id: "doer_w8d1_q05",
+          roundIndex: 4,
+          prompt: "Chuy\u1EC3n sang b\u1ECB \u0111\u1ED9ng v\u1EDBi \u0111\u1ED9ng t\u1EEB c\xF3 c\u1EA5u tr\xFAc 'expect to do sth': 'C\xF4 \u1EA5y k\u1EF3 v\u1ECDng s\u1EBD \u0111\u01B0\u1EE3c th\u0103ng ch\u1EE9c v\xE0o th\xE1ng sau.'",
+          options: [
+            { id: "opt_A", label: "A", text: "She expects to be promoted next month." },
+            { id: "opt_B", label: "B", text: "She expects to promote next month." },
+            { id: "opt_C", label: "C", text: "She is expected promoting next month." },
+            { id: "opt_D", label: "D", text: "She was expected to promote next month." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\u1EA5u tr\xFAc ch\u1EE7 \u0111\u1ED9ng: expect to do sth -> B\u1ECB \u0111\u1ED9ng cho non-finite verb to-infinitive: expect to BE + V3/ed -> 'expects to be promoted'."
+        },
+        {
+          id: "doer_w8d1_q06",
+          roundIndex: 5,
+          prompt: "Chuy\u1EC3n sang b\u1ECB \u0111\u1ED9ng v\u1EDBi gi\u1EDBi t\u1EEB 'dream of doing sth': 'Anh \u1EA5y m\u01A1 v\u1EC1 vi\u1EC7c \u0111\u01B0\u1EE3c Google tuy\u1EC3n d\u1EE5ng.'",
+          options: [
+            { id: "opt_A", label: "A", text: "He dreams of being recruited by Google." },
+            { id: "opt_B", label: "B", text: "He dreams of recruiting by Google." },
+            { id: "opt_C", label: "C", text: "He is dreamed of recruit by Google." },
+            { id: "opt_D", label: "D", text: "He dreams of to be recruited by Google." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Sau gi\u1EDBi t\u1EEB 'of' l\xE0 gerund (V-ing). D\u1EA1ng b\u1ECB \u0111\u1ED9ng c\u1EE7a gerund l\xE0 'being + V3' -> 'dreams of being recruited'."
+        },
+        {
+          id: "doer_w8d1_q07",
+          roundIndex: 6,
+          prompt: "\u0110\u1ED9ng t\u1EEB n\xE0o sau \u0111\xE2y l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB (Intransitive verb) KH\xD4NG TH\u1EC2 chia \u1EDF th\u1EC3 b\u1ECB \u0111\u1ED9ng?",
+          options: [
+            { id: "opt_A", label: "A", text: "happen / occur" },
+            { id: "opt_B", label: "B", text: "build" },
+            { id: "opt_C", label: "C", text: "destroy" },
+            { id: "opt_D", label: "D", text: "publish" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "N\u1ED9i \u0111\u1ED9ng t\u1EEB (intransitive verbs) nh\u01B0 happen, occur, arrive, disappear kh\xF4ng nh\u1EADn t\xE2n ng\u1EEF n\xEAn KH\xD4NG BAO GI\u1EDC c\xF3 d\u1EA1ng b\u1ECB \u0111\u1ED9ng."
+        },
+        {
+          id: "doer_w8d1_q08",
+          roundIndex: 7,
+          prompt: "D\xF9ng Past Participle (V3/ed) l\xE0m t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a: 'T\xF4i \u0111\xE3 quy\xEAn g\xF3p ti\u1EC1n \u0111\u1EC3 h\u1ED7 tr\u1EE3 c\xE1c n\u1EA1n nh\xE2n b\u1ECB \u1EA3nh h\u01B0\u1EDFng b\u1EDFi b\xE3o l\u0169.'",
+          options: [
+            { id: "opt_A", label: "A", text: "I donated money to support the victims affected by the flood." },
+            { id: "opt_B", label: "B", text: "I donated money to support the victims affecting by the flood." },
+            { id: "opt_C", label: "C", text: "I donated money to support the victims are affected by the flood." },
+            { id: "opt_D", label: "D", text: "I donated money to support the flood affected victims." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'the victims affected by the flood' l\xE0 d\u1EA1ng r\xFAt g\u1ECDn c\u1EE7a 'victims who were affected by the flood' (Past participle mang ngh\u0129a b\u1ECB t\xE1c \u0111\u1ED9ng)."
+        },
+        {
+          id: "doer_w8d1_q09",
+          roundIndex: 8,
+          prompt: "Chuy\u1EC3n c\xE2u sau sang b\u1ECB \u0111\u1ED9ng th\xEC Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n: 'He is carrying a chair upstairs.'",
+          options: [
+            { id: "opt_A", label: "A", text: "A chair is being carried upstairs." },
+            { id: "opt_B", label: "B", text: "A chair is carried upstairs." },
+            { id: "opt_C", label: "C", text: "A chair has been carried upstairs." },
+            { id: "opt_D", label: "D", text: "A chair was being carried upstairs." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Th\xEC Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n \u1EDF th\u1EC3 b\u1ECB \u0111\u1ED9ng: is/am/are + BEING + V3 -> 'is being carried'."
+        },
+        {
+          id: "doer_w8d1_q10",
+          roundIndex: 9,
+          prompt: "Kh\xE1c bi\u1EC7t b\u1EA3n ch\u1EA5t gi\u1EEFa Present Participle (V-ing) v\xE0 Past Participle (V3/ed) khi \u0111\u1EE9ng b\u1ED5 ngh\u0129a cho danh t\u1EEB l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "V-ing mang \xFD ngh\u0129a ch\u1EE7 \u0111\u1ED9ng th\u1EF1c hi\u1EC7n h\xE0nh \u0111\u1ED9ng; V-ed mang \xFD ngh\u0129a b\u1ECB t\xE1c \u0111\u1ED9ng b\u1EDFi h\xE0nh \u0111\u1ED9ng" },
+            { id: "opt_B", label: "B", text: "V-ing d\xF9ng cho \u0111\u1ED3 v\u1EADt; V-ed d\xF9ng cho con ng\u01B0\u1EDDi" },
+            { id: "opt_C", label: "C", text: "V-ing d\xF9ng trong qu\xE1 kh\u1EE9; V-ed d\xF9ng trong t\u01B0\u01A1ng lai" },
+            { id: "opt_D", label: "D", text: "Kh\xF4ng c\xF3 s\u1EF1 kh\xE1c bi\u1EC7t, d\xF9ng thay th\u1EBF nhau \u0111\u01B0\u1EE3c" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "V-ing l\xE0 ph\xE2n t\u1EEB ch\u1EE7 \u0111\u1ED9ng (active: e.g. sleeping baby, disappointing result); V-ed l\xE0 ph\xE2n t\u1EEB b\u1ECB \u0111\u1ED9ng (passive: e.g. affected victims, imported goods)."
+        }
+      ],
+      "WEEK 8 \u2013 DAY 2": [
+        {
+          id: "doer_w8d2_q01",
+          roundIndex: 0,
+          prompt: `Trong ch\u1EE7 \u0111\u1EC1 Crime & Law, t\u1EEB "lucrative" trong ti\xEAu \u0111\u1EC1 "Britain's lucrative marijuana trade" \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi:`,
+          options: [
+            { id: "opt_A", label: "A", text: "highly profitable / moneymaking (si\xEAu l\u1EE3i nhu\u1EADn, ki\u1EBFm \u0111\u01B0\u1EE3c r\u1EA5t nhi\u1EC1u ti\u1EC1n)" },
+            { id: "opt_B", label: "B", text: "unprofitable / loss-making (thua l\u1ED7)" },
+            { id: "opt_C", label: "C", text: "legal / lawful (h\u1EE3p ph\xE1p)" },
+            { id: "opt_D", label: "D", text: "perilous (nguy hi\u1EC3m)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. highly profitable / moneymaking (si\xEAu l\u1EE3i nhu\u1EADn, ki\u1EBFm \u0111\u01B0\u1EE3c r\u1EA5t nhi\u1EC1u ti\u1EC1n)",
+          correctExplanation: '"Lucrative" (t\xEDnh t\u1EEB h\u1ECDc thu\u1EADt) m\xF4 t\u1EA3 m\u1ED9t ho\u1EA1t \u0111\u1ED9ng ho\u1EB7c th\u01B0\u01A1ng v\u1EE5 \u0111em l\u1EA1i ngu\u1ED3n l\u1EE3i nhu\u1EADn k\u1EBFch x\xF9 (profitable).',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. legal / lawful",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa t\xEDnh sinh l\u1EDDi v\u1EDBi t\xEDnh h\u1EE3p ph\xE1p",
+            explanation: "Bu\xF4n b\xE1n ma t\xFAy l\xE0 ph\u1EA1m ph\xE1p (illegal) nh\u01B0ng mang l\u1EA1i l\u1EE3i nhu\u1EADn kh\u1ED5ng l\u1ED3 n\xEAn g\u1ECDi l\xE0 lucrative trade."
+          }
+        },
+        {
+          id: "doer_w8d2_q02",
+          roundIndex: 1,
+          prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "broke" trong c\xE2u mi\xEAu t\u1EA3 t\xECnh c\u1EA3nh khi h\u1ED3i h\u01B0\u01A1ng: "Cuong returned broke and now lives in a modest house" l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "wealthy / affluent (gi\xE0u c\xF3, d\u01B0 d\u1EA3 ti\u1EC1n b\u1EA1c)" },
+            { id: "opt_B", label: "B", text: "penniless / bankrupt (ch\xE1y t\xFAi, kh\xE1nh ki\u1EC7t)" },
+            { id: "opt_C", label: "C", text: "reformed (ho\xE0n l\u01B0\u01A1ng)" },
+            { id: "opt_D", label: "D", text: "imprisoned (b\u1ECB t\u1ED1ng giam)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. wealthy / affluent (gi\xE0u c\xF3, d\u01B0 d\u1EA3 ti\u1EC1n b\u1EA1c)",
+          correctExplanation: '"Broke" (t\xEDnh t\u1EEB kh\u1EA9u ng\u1EEF th\xF4ng d\u1EE5ng) = ho\xE0n to\xE0n r\u1ED7ng t\xFAi, kh\xE1nh ki\u1EC7t t\xE0i ch\xEDnh. T\u1EEB tr\xE1i ngh\u0129a l\xE0 "wealthy" ho\u1EB7c "affluent".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. penniless / bankrupt",
+            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
+            explanation: "Penniless/bankrupt \u0111\u1ED3ng ngh\u0129a v\u1EDBi broke. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
+          }
+        },
+        {
+          id: "doer_w8d2_q03",
+          roundIndex: 2,
+          prompt: 'Thu\u1EADt ng\u1EEF t\u1ED9i ph\u1EA1m "human trafficker" trong b\xE0i \u0111\u1ECDc d\xF9ng \u0111\u1EC3 ch\u1EC9 ai?',
+          options: [
+            { id: "opt_A", label: "A", text: "K\u1EBB bu\xF4n ng\u01B0\u1EDDi / t\u1ED9i ph\u1EA1m bu\xF4n b\xE1n, v\u1EADn chuy\u1EC3n ng\u01B0\u1EDDi v\u01B0\u1EE3t bi\xEAn tr\xE1i ph\xE9p" },
+            { id: "opt_B", label: "B", text: "C\u1EA3nh s\xE1t \u0111i\u1EC1u ph\u1ED1i giao th\xF4ng \u0111\u01B0\u1EDDng b\u1ED9" },
+            { id: "opt_C", label: "C", text: "C\xE1n b\u1ED9 qu\u1EA3n l\xFD xu\u1EA5t nh\u1EADp c\u1EA3nh t\u1EA1i s\xE2n bay" },
+            { id: "opt_D", label: "D", text: "T\xE0i x\u1EBF l\xE1i xe bu\xFDt du l\u1ECBch ch\xE2u \xC2u" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. K\u1EBB bu\xF4n ng\u01B0\u1EDDi / t\u1ED9i ph\u1EA1m bu\xF4n b\xE1n, v\u1EADn chuy\u1EC3n ng\u01B0\u1EDDi v\u01B0\u1EE3t bi\xEAn tr\xE1i ph\xE9p",
+          correctExplanation: '"Human trafficker" l\xE0 t\u1ED9i ph\u1EA1m bu\xF4n b\xE1n ng\u01B0\u1EDDi xuy\xEAn qu\u1ED1c gia (trafficking: bu\xF4n l\u1EADu b\u1EA5t h\u1EE3p ph\xE1p h\xE0ng c\u1EA5m ho\u1EB7c con ng\u01B0\u1EDDi).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. C\u1EA3nh s\xE1t \u0111i\u1EC1u ph\u1ED1i giao th\xF4ng",
+            diagnosticTitle: "D\u1ECBch nh\u1EA7m t\u1EEB g\u1ED1c traffic (giao th\xF4ng)",
+            explanation: "Trong h\xECnh s\u1EF1, trafficking l\xE0 t\u1ED9i ph\u1EA1m bu\xF4n l\u1EADu/bu\xF4n ng\u01B0\u1EDDi, kh\xF4ng li\xEAn quan \u0111\u1EBFn tr\u1EADt t\u1EF1 giao th\xF4ng \u0111\u01B0\u1EDDng b\u1ED9."
+          }
+        },
+        {
+          id: "doer_w8d2_q04",
+          roundIndex: 3,
+          prompt: 'Collocation t\u1ED1 t\u1EE5ng h\xECnh s\u1EF1: "The defendant was convicted of cultivating illicit plants and ______ to 10 months in prison."',
+          options: [
+            { id: "opt_A", label: "A", text: "sentenced (b\u1ECB t\xF2a tuy\xEAn \xE1n ph\u1EA1t t\xF9)" },
+            { id: "opt_B", label: "B", text: "worded" },
+            { id: "opt_C", label: "C", text: "phrased" },
+            { id: "opt_D", label: "D", text: "scripted" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. sentenced (b\u1ECB t\xF2a tuy\xEAn \xE1n ph\u1EA1t t\xF9)",
+          correctExplanation: 'C\u1EA5u tr\xFAc ph\xE1p l\xFD chu\u1EA9n: "be sentenced to [time] in prison/jail" (b\u1ECB to\xE0 tuy\xEAn ph\u1EA1t m\u1EE9c \xE1n bao l\xE2u).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. worded",
+            diagnosticTitle: "D\u1ECBch nh\u1EA7m t\u1EEB ngh\u0129a ng\u1EEF ph\xE1p c\u1EE7a sentence (c\xE2u v\u0103n)",
+            explanation: 'Trong lu\u1EADt ph\xE1p, "sentence" l\xE0 b\u1EA3n \xE1n/tuy\xEAn \xE1n c\u1EE7a th\u1EA9m ph\xE1n, kh\xF4ng li\xEAn quan \u0111\u1EBFn c\xE2u c\xFA ng\u1EEF ph\xE1p.'
+          }
+        },
+        {
+          id: "doer_w8d2_q05",
+          roundIndex: 4,
+          prompt: 'Ch\u1ECDn \u0111\u1ED9ng t\u1EEB \u0111\xFAng ch\u1EC9 bi\u1EC7n ph\xE1p h\xE0nh ch\xEDnh c\u01B0\u1EE1ng ch\u1EBF tr\u1EE5c xu\u1EA5t ng\u01B0\u1EDDi nh\u1EADp c\u01B0 tr\xE1i ph\xE9p: "The immigration authorities ______ him back to his home country."',
+          options: [
+            { id: "opt_A", label: "A", text: "deported" },
+            { id: "opt_B", label: "B", text: "imported" },
+            { id: "opt_C", label: "C", text: "supported" },
+            { id: "opt_D", label: "D", text: "transported" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. deported",
+          correctExplanation: '"Deport somebody (back to...)" l\xE0 thu\u1EADt ng\u1EEF xu\u1EA5t nh\u1EADp c\u1EA3nh ch\u1EC9 h\xE0nh vi c\u01B0\u1EE1ng ch\u1EBF tr\u1EE5c xu\u1EA5t ng\u01B0\u1EDDi nh\u1EADp c\u01B0 kh\xF4ng h\u1EE3p l\u1EC7 v\u1EC1 n\u01B0\u1EDBc.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. imported",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi h\xE0nh vi nh\u1EADp kh\u1EA9u h\xE0ng h\xF3a",
+            explanation: "Import l\xE0 nh\u1EADp kh\u1EA9u h\xE0ng h\xF3a, deport m\u1EDBi l\xE0 tr\u1EE5c xu\u1EA5t con ng\u01B0\u1EDDi vi ph\u1EA1m visa/nh\u1EADp c\u1EA3nh."
+          }
+        },
+        {
+          id: "doer_w8d2_q06",
+          roundIndex: 5,
+          prompt: 'Ch\u1ECDn t\xEDnh t\u1EEB ph\xF9 h\u1EE3p di\u1EC5n t\u1EA3 n\u1ED7 l\u1EF1c l\xE0m l\u1EA1i cu\u1ED9c \u0111\u1EDDi: "Now he claims he is fully ______ and hopes to start clean with an honest livelihood."',
+          options: [
+            { id: "opt_A", label: "A", text: "reformed (\u0111\xE3 ho\xE0n l\u01B0\u01A1ng, c\u1EA3i t\xE0 quy ch\xEDnh)" },
+            { id: "opt_B", label: "B", text: "deformed" },
+            { id: "opt_C", label: "C", text: "uninformed" },
+            { id: "opt_D", label: "D", text: "misinformed" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. reformed (\u0111\xE3 ho\xE0n l\u01B0\u01A1ng, c\u1EA3i t\xE0 quy ch\xEDnh)",
+          correctExplanation: '"A reformed criminal/character" ch\u1EC9 ng\u01B0\u1EDDi t\u1EEBng ph\u1EA1m ph\xE1p nay \u0111\xE3 \u0103n n\u0103n h\u1ED1i c\u1EA3i v\xE0 ho\xE0n l\u01B0\u01A1ng s\u1ED1ng l\u01B0\u01A1ng thi\u1EC7n.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. deformed",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn t\u1EEB bi\u1EBFn d\u1EA1ng th\u1EC3 x\xE1c v\u1EDBi c\u1EA3i t\u1EA1o nh\xE2n c\xE1ch",
+            explanation: "Deformed l\xE0 b\u1ECB bi\u1EBFn d\u1EA1ng h\xECnh th\u1EC3 d\u1ECB t\u1EADt, ho\xE0n to\xE0n kh\xE1c v\u1EDBi reformed (ho\xE0n l\u01B0\u01A1ng)."
+          }
+        },
+        {
+          id: "doer_w8d2_q07",
+          roundIndex: 6,
+          prompt: 'Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng mi\xEAu t\u1EA3 ph\u01B0\u01A1ng th\u1EE9c tr\u1ED1n nguy hi\u1EC3m c\u1EE7a ng\u01B0\u1EDDi v\u01B0\u1EE3t bi\xEAn: "Migrants risked their lives hiding ______ a lorry to cross the English Channel."',
+          options: [
+            { id: "opt_A", label: "A", text: "underneath" },
+            { id: "opt_B", label: "B", text: "above" },
+            { id: "opt_C", label: "C", text: "along" },
+            { id: "opt_D", label: "D", text: "between" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. underneath",
+          correctExplanation: '"Underneath a lorry" (d\u01B0\u1EDBi g\u1EA7m xe t\u1EA3i): Gi\u1EDBi t\u1EEB ch\u1EC9 v\u1ECB tr\xED \u1EA9n n\u1EA5p nguy hi\u1EC3m ch\u1EBFt ng\u01B0\u1EDDi c\u1EE7a ng\u01B0\u1EDDi t\u1ECB n\u1EA1n/di c\u01B0 chui.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. above",
+            diagnosticTitle: "Ch\u1ECDn v\u1ECB tr\xED tr\xEAn n\xF3c xe sai s\u1EF1 th\u1EADt b\xE0i \u0111\u1ECDc",
+            explanation: "H\u1ECD \u0111u b\xE1m d\u01B0\u1EDBi tr\u1EE5c g\u1EA7m xe (underneath/under), tr\xE8o l\xEAn n\xF3c xe (above) s\u1EBD b\u1ECB camera qu\xE9t nhi\u1EC7t ph\xE1t hi\u1EC7n ngay l\u1EADp t\u1EE9c."
+          }
+        },
+        {
+          id: "doer_w8d2_q08",
+          roundIndex: 7,
+          prompt: 'C\u1EE5m danh t\u1EEB "fake passport" trong b\xE0i \u0111\u1ECDc thu\u1ED9c ch\u1EE7 \u0111\u1EC1 gi\u1EA5y t\u1EDD gi\u1EA3 m\u1EA1o \u0111\u01B0\u1EE3c vi\u1EBFt chu\u1EA9n ng\u1EEF ph\xE1p l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "fake passport / fraudulent passport" },
+            { id: "opt_B", label: "B", text: "untrue passport" },
+            { id: "opt_C", label: "C", text: "wrong passport" },
+            { id: "opt_D", label: "D", text: "error passport" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. fake passport / fraudulent passport",
+          correctExplanation: 'Collocation b\u1EA5t di b\u1EA5t d\u1ECBch trong t\u1ED9i ph\u1EA1m gi\u1EA5y t\u1EDD: "fake passport" ho\u1EB7c thu\u1EADt ng\u1EEF ph\xE1p l\xFD "fraudulent passport" (h\u1ED9 chi\u1EBFu gi\u1EA3 m\u1EA1o).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. untrue passport",
+            diagnosticTitle: 'D\u1ECBch t\u1EEB "h\u1ED9 chi\u1EBFu kh\xF4ng th\u1EADt"',
+            explanation: "Ti\u1EBFng Anh kh\xF4ng d\xF9ng untrue hay wrong cho gi\u1EA5y t\u1EDD gi\u1EA3, b\u1EAFt bu\u1ED9c d\xF9ng fake/fraudulent/counterfeit."
+          }
+        },
+        {
+          id: "doer_w8d2_q09",
+          roundIndex: 8,
+          prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p ho\xE0n th\xE0nh c\xE2u: "International syndicates exploit vulnerable individuals to operate an extensive ______ drug network across borders."',
+          options: [
+            { id: "opt_A", label: "A", text: "illicit (b\u1EA5t h\u1EE3p ph\xE1p, phi ph\xE1p)" },
+            { id: "opt_B", label: "B", text: "campus" },
+            { id: "opt_C", label: "C", text: "bland" },
+            { id: "opt_D", label: "D", text: "relief" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. illicit (b\u1EA5t h\u1EE3p ph\xE1p, phi ph\xE1p)",
+          correctExplanation: '"Illicit drug network" l\xE0 collocation h\u1ECDc thu\u1EADt band cao trong IELTS: m\u1EA1ng l\u01B0\u1EDBi bu\xF4n b\xE1n ch\u1EA5t c\u1EA5m phi ph\xE1p.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. bland",
+            diagnosticTitle: "Ch\u1ECDn t\xEDnh t\u1EEB nh\u1EA1t nh\u1EBDo c\u1EE7a th\u1EE9c \u0103n",
+            explanation: "Bland l\xE0 h\u01B0\u01A1ng v\u1ECB th\u1EE9c \u0103n nh\u1EA1t, ho\xE0n to\xE0n v\xF4 ngh\u0129a trong v\u0103n c\u1EA3nh t\u1ED9i ph\u1EA1m ma t\xFAy."
+          }
+        },
+        {
+          id: "doer_w8d2_q10",
+          roundIndex: 9,
+          prompt: 'PARAPHRASE: C\xE2u "Impoverished migrants were coerced by organized gangs into cultivating illegal cannabis in suburban stash houses" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i t\u01B0\u01A1ng \u0111\u01B0\u01A1ng nh\u1EA5t l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "Criminal cartels exploited desperate laborers from underprivileged backgrounds to maintain clandestine marijuana farms." },
+            { id: "opt_B", label: "B", text: "All migrants voluntarily invested millions of dollars into lawful agricultural greenhouses." },
+            { id: "opt_C", label: "C", text: "British suburban homeowners regularly hire international botanists to cultivate rare ornamental flowers." },
+            { id: "opt_D", label: "D", text: "Immigration authorities offered handsome subsidies to encourage underground cannabis distribution." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Criminal cartels exploited desperate laborers from underprivileged backgrounds to maintain clandestine marijuana farms.",
+          correctExplanation: '"Criminal cartels" paraphrase cho "organized gangs", "desperate laborers from underprivileged backgrounds" paraphrase cho "impoverished migrants coerced", v\xE0 "clandestine marijuana farms" paraphrase cho "illegal cannabis in suburban stash houses".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Migrants voluntarily invested in lawful greenhouses",
+            diagnosticTitle: "T\u1EA9y tr\u1EAFng ho\u1EA1t \u0111\u1ED9ng t\u1ED9i ph\u1EA1m th\xE0nh \u0111\u1EA7u t\u01B0 n\xF4ng nghi\u1EC7p h\u1EE3p ph\xE1p",
+            explanation: "B\xE0i \u0111\u1ECDc n\xEAu r\xF5 \u0111\xE2y l\xE0 chu\u1ED7i t\u1ED9i ph\u1EA1m ng\u1EA7m b\u1EA5t h\u1EE3p ph\xE1p v\u1EDBi nh\u1EEFng lao \u0111\u1ED9ng ngh\xE8o kh\xF3 b\u1ECB b\xF3c l\u1ED9t."
+          }
+        }
+      ],
+      "WEEK 8 \u2013 DAY 3": [
+        {
+          id: "doer_w8d3_q01",
+          roundIndex: 0,
+          prompt: "Ph\xE1t bi\u1EC3u n\xE0o sau \u0111\xE2y l\xE0 \u0110\xDANG v\u1EC1 Tr\u1ECDng \xE2m c\xE2u (Sentence Stress) trong ti\u1EBFng Anh giao ti\u1EBFp?",
+          options: [
+            { id: "opt_A", label: "A", text: "Sentence stress kh\xF4ng c\u1ED1 \u0111\u1ECBnh m\xE0 linh ho\u1EA1t ph\u1EE5 thu\u1ED9c v\xE0o t\u1EEB mang th\xF4ng tin (content words) m\xE0 ng\u01B0\u1EDDi n\xF3i mu\u1ED1n nh\u1EA5n m\u1EA1nh" },
+            { id: "opt_B", label: "B", text: "M\u1ECDi t\u1EEB trong c\xE2u \u0111\u1EC1u ph\u1EA3i \u0111\u01B0\u1EE3c n\xF3i v\u1EDBi cao \u0111\u1ED9 v\xE0 \u0111\u1ED9 l\u1EDBn ho\xE0n to\xE0n ngang b\u1EB1ng nhau" },
+            { id: "opt_C", label: "C", text: "Ch\u1EC9 c\xF3 t\u1EEB \u0111\u1EA7u ti\xEAn v\xE0 t\u1EEB cu\u1ED1i c\xF9ng c\u1EE7a c\xE2u m\u1EDBi \u0111\u01B0\u1EE3c nh\u1EA5n tr\u1ECDng \xE2m" },
+            { id: "opt_D", label: "D", text: "C\xE1c m\u1EA1o t\u1EEB v\xE0 gi\u1EDBi t\u1EEB lu\xF4n lu\xF4n l\xE0 t\u1EEB \u0111\u01B0\u1EE3c nh\u1EA5n m\u1EA1nh nh\u1EA5t" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Sentence stress linh ho\u1EA1t: Ng\u01B0\u1EDDi n\xF3i nh\u1EA5n m\u1EA1nh v\xE0o Content Words (nouns, main verbs, adjectives) ho\u1EB7c t\u1EEB h\u1ECD mu\u1ED1n l\xE0m n\u1ED5i b\u1EADt \xFD \u0111\u1ECBnh th\xF4ng b\xE1o."
+        },
+        {
+          id: "doer_w8d3_q02",
+          roundIndex: 1,
+          prompt: "Khi n\xF3i 'I gave her a BOX of chocolates for her birthday' (nh\u1EA5n m\u1EA1nh v\xE0o t\u1EEB BOX), ng\u01B0\u1EDDi n\xF3i mu\u1ED1n truy\u1EC1n t\u1EA3i \xFD g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Nh\u1EA5n m\u1EA1nh v\xE0o s\u1ED1 l\u01B0\u1EE3ng/h\xECnh th\u1EE9c g\xF3i qu\xE0 l\xE0 c\u1EA3 m\u1ED9t c\xE1i H\u1ED8P to ch\u1EE9 kh\xF4ng ph\u1EA3i ch\u1EC9 m\u1ED9t thanh k\u1EB9o nh\u1ECF" },
+            { id: "opt_B", label: "B", text: "Nh\u1EA5n m\u1EA1nh m\xF3n qu\xE0 l\xE0 s\xF4-c\xF4-la ch\u1EE9 kh\xF4ng ph\u1EA3i m\xF3n kh\xE1c" },
+            { id: "opt_C", label: "C", text: "Nh\u1EA5n m\u1EA1nh t\u1EB7ng v\xE0o d\u1ECBp sinh nh\u1EADt ch\u1EE9 kh\xF4ng ph\u1EA3i ng\xE0y l\u1EC5 kh\xE1c" },
+            { id: "opt_D", label: "D", text: "Nh\u1EA5n m\u1EA1nh ch\xEDnh t\xF4i l\xE0 ng\u01B0\u1EDDi t\u1EB7ng ch\u1EE9 kh\xF4ng ph\u1EA3i ng\u01B0\u1EDDi kh\xE1c" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Nh\u1EA5n m\u1EA1nh t\u1EEB 'BOX' \u0111\u1EC3 l\xE0m n\u1ED5i b\u1EADt quy c\xE1ch \u0111\xF3ng g\xF3i (c\u1EA3 1 h\u1ED9p l\u1EDBn)."
+        },
+        {
+          id: "doer_w8d3_q03",
+          roundIndex: 2,
+          prompt: "Khi n\xF3i 'I gave her a box of chocolates for her BIRTHDAY', \xFD \u0111\u1ECBnh ng\u01B0\u1EDDi n\xF3i nh\u1EA5n m\u1EA1nh \u0111i\u1EC1u g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Nh\u1EA5n m\u1EA1nh v\xE0o d\u1ECBp t\u1EB7ng l\xE0 ng\xE0y sinh nh\u1EADt c\u1EE7a c\xF4 \u1EA5y" },
+            { id: "opt_B", label: "B", text: "Nh\u1EA5n m\u1EA1nh lo\u1EA1i k\u1EB9o \u0111\u01B0\u1EE3c t\u1EB7ng" },
+            { id: "opt_C", label: "C", text: "Nh\u1EA5n m\u1EA1nh ng\u01B0\u1EDDi nh\u1EADn qu\xE0 l\xE0 c\xF4 \u1EA5y ch\u1EE9 kh\xF4ng ph\u1EA3i ai kh\xE1c" },
+            { id: "opt_D", label: "D", text: "Nh\u1EA5n m\u1EA1nh h\u1ED9p qu\xE0 c\xF3 k\xEDch th\u01B0\u1EDBc l\u1EDBn" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Nh\u1EA5n m\u1EA1nh 'BIRTHDAY' \u0111\u1EC3 kh\u1EB3ng \u0111\u1ECBnh \u0111\xE2y l\xE0 m\xF3n qu\xE0 nh\xE2n d\u1ECBp sinh nh\u1EADt."
+        },
+        {
+          id: "doer_w8d3_q04",
+          roundIndex: 3,
+          prompt: "D\u1ECBch sang ti\u1EBFng Anh d\xF9ng t\u1EEB 'originates': 'M\xF3n B\xFAn B\xF2 c\xF3 ngu\u1ED3n g\u1ED1c t\u1EEB Hu\u1EBF, m\u1ED9t th\xE0nh ph\u1ED1 \u1EDF mi\u1EC1n Trung Vi\u1EC7t Nam.'",
+          options: [
+            { id: "opt_A", label: "A", text: "Bun Bo originates from Hue, a city in the central part of Vietnam." },
+            { id: "opt_B", label: "B", text: "Bun Bo is originated by Hue city where in central Vietnam." },
+            { id: "opt_C", label: "C", text: "Bun Bo originates at Hue city located at central part." },
+            { id: "opt_D", label: "D", text: "Bun Bo originate to Hue city, central Vietnam." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "\u0110\u1ED9ng t\u1EEB 'originate from [place]' = c\xF3 ngu\u1ED3n g\u1ED1c xu\u1EA5t x\u1EE9 t\u1EEB \u0111\xE2u."
+        },
+        {
+          id: "doer_w8d3_q05",
+          roundIndex: 4,
+          prompt: "Collocation n\xE0o trong b\xE0i mi\xEAu t\u1EA3 m\xF3n \u0103n \u0111\u1EC3 ch\u1EC9 'n\u01B0\u1EDBc d\xF9ng \u0111\u1EADm \u0111\xE0 h\u01B0\u01A1ng v\u1ECB'?",
+          options: [
+            { id: "opt_A", label: "A", text: "A rich / flavorful broth" },
+            { id: "opt_B", label: "B", text: "A sweet sauce water" },
+            { id: "opt_C", label: "C", text: "A tasteless soup liquid" },
+            { id: "opt_D", label: "D", text: "A salty mineral drink" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'broth' l\xE0 n\u01B0\u1EDBc h\u1EA7m th\u1ECBt/x\u01B0\u01A1ng, n\u01B0\u1EDBc d\xF9ng. 'rich broth' ho\u1EB7c 'flavorful broth' l\xE0 n\u01B0\u1EDBc d\xF9ng \u0111\u1EADm \u0111\xE0."
+        },
+        {
+          id: "doer_w8d3_q06",
+          roundIndex: 5,
+          prompt: "D\u1ECBch sang ti\u1EBFng Anh: 'M\xF3n \u0103n n\xE0y c\xF3 gi\xE1 c\u1EA3 r\u1EA5t ph\u1EA3i ch\u0103ng \u0111\u1ED1i v\u1EDBi m\u1ECDi ng\u01B0\u1EDDi.'",
+          options: [
+            { id: "opt_A", label: "A", text: "This dish is very affordable for everyone." },
+            { id: "opt_B", label: "B", text: "This dish is too priceless for people." },
+            { id: "opt_C", label: "C", text: "This dish costs cheap money with everybody." },
+            { id: "opt_D", label: "D", text: "This dish is exorbitant to anyone." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'affordable' l\xE0 t\xEDnh t\u1EEB h\u1ECDc thu\u1EADt ch\u1EC9 gi\xE1 c\u1EA3 v\u1EEBa ph\u1EA3i, h\u1EE3p t\xFAi ti\u1EC1n."
+        },
+        {
+          id: "doer_w8d3_q07",
+          roundIndex: 6,
+          prompt: "Trong c\xE2u: 'Nh\xE0 h\xE0ng n\xE0y ph\u1EE5c v\u1EE5 m\xF3n \u0103n r\u1EA5t ngon n\xEAn t\xF4i l\xE0 kh\xE1ch quen \u1EDF \u0111\xE2y.' C\u1EE5m t\u1EEB 'kh\xE1ch quen' ti\u1EBFng Anh l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "A regular / a regular customer" },
+            { id: "opt_B", label: "B", text: "A first-time visitor" },
+            { id: "opt_C", label: "C", text: "A passenger" },
+            { id: "opt_D", label: "D", text: "A casual pedestrian" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Trong v\u0103n n\xF3i, 'a regular' (ho\u1EB7c regular customer) l\xE0 kh\xE1ch h\xE0ng quen thu\u1ED9c th\u01B0\u1EDDng xuy\xEAn lui t\u1EDBi qu\xE1n."
+        },
+        {
+          id: "doer_w8d3_q08",
+          roundIndex: 7,
+          prompt: "Collocation 'thinly sliced beef' trong b\xE0i mi\xEAu t\u1EA3 m\xF3n B\xFAn B\xF2 c\xF3 ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Th\u1ECBt b\xF2 th\xE1i l\xE1t m\u1ECFng" },
+            { id: "opt_B", label: "B", text: "Th\u1ECBt b\xF2 xay nhuy\u1EC5n" },
+            { id: "opt_C", label: "C", text: "Th\u1ECBt b\xF2 n\u01B0\u1EDBng nguy\xEAn t\u1EA3ng" },
+            { id: "opt_D", label: "D", text: "X\u01B0\u01A1ng b\xF2 h\u1EA7m nh\u1EEB" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'thinly sliced beef' = th\u1ECBt b\xF2 \u0111\u01B0\u1EE3c th\xE1i m\u1ECFng (tr\u1EA1ng t\u1EEB thinly b\u1ED5 ngh\u0129a cho t\xEDnh t\u1EEB sliced)."
+        },
+        {
+          id: "doer_w8d3_q09",
+          roundIndex: 8,
+          prompt: "C\u1EA5u tr\xFAc ch\u1ECDn l\u1EF1a: 'N\u1EBFu ph\u1EA3i ch\u1ECDn m\u1ED9t m\xF3n \u0103n y\xEAu th\xEDch, t\xF4i s\u1EBD ch\u1ECDn B\xFAn B\xF2.' Trong ti\u1EBFng Anh n\xF3i th\u1EBF n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "If I had to choose one, I would go for Bun Bo." },
+            { id: "opt_B", label: "B", text: "If I have to choose one, I go to Bun Bo." },
+            { id: "opt_C", label: "C", text: "Supposing I choose one, I will pick up Bun Bo." },
+            { id: "opt_D", label: "D", text: "When I had choose one, I must take Bun Bo." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\xE2u \u0111i\u1EC1u ki\u1EC7n lo\u1EA1i 2 gi\u1EA3 \u0111\u1ECBnh l\u1ECBch s\u1EF1 trong Speaking: 'If I had to choose one, I would go for [dish]...' (go for = ch\u1ECDn/th\xEDch)."
+        },
+        {
+          id: "doer_w8d3_q10",
+          roundIndex: 9,
+          prompt: "Trong c\xE2u 'I'd rather drink coffee than boba tea', c\u1EA5u tr\xFAc 'would rather... than...' di\u1EC5n t\u1EA3 \u0111i\u1EC1u g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Di\u1EC5n t\u1EA3 s\u1EDF th\xEDch mu\u1ED1n l\xE0m vi\u1EC7c n\xE0y h\u01A1n l\xE0 l\xE0m vi\u1EC7c kia (prefer)" },
+            { id: "opt_B", label: "B", text: "Di\u1EC5n t\u1EA3 s\u1EF1 b\u1EAFt bu\u1ED9c ph\u1EA3i u\u1ED1ng c\u1EA3 hai" },
+            { id: "opt_C", label: "C", text: "Di\u1EC5n t\u1EA3 m\u1ED9t \u0111i\u1EC1u h\u1ED1i ti\u1EBFc trong qu\xE1 kh\u1EE9" },
+            { id: "opt_D", label: "D", text: "Di\u1EC5n t\u1EA3 vi\u1EC7c t\u1EEB ch\u1ED1i kh\xF4ng u\u1ED1ng b\u1EA5t k\u1EF3 th\u1EE9 g\xEC" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'would rather do sth than do sth else' mang ngh\u0129a th\xEDch l\xE0m vi\u1EC7c A h\u01A1n l\xE0 l\xE0m vi\u1EC7c B."
+        }
+      ]
+    };
+  }
+});
+
+// server/services/bank_parts/week9.data.ts
+var WEEK_9_QUESTIONS;
+var init_week9_data = __esm({
+  "server/services/bank_parts/week9.data.ts"() {
+    WEEK_9_QUESTIONS = {
+      "WEEK 9 \u2013 DAY 1": [
+        {
+          id: "doer_w9d1_q01",
+          roundIndex: 0,
+          prompt: "L\u1ED7i ng\u1EEF ph\xE1p 'Comma Splice' l\xE0 g\xEC trong c\xE2u ti\u1EBFng Anh?",
+          options: [
+            { id: "opt_A", label: "A", text: "N\u1ED1i 2 m\u1EC7nh \u0111\u1EC1 \u0111\u1ED9c l\u1EADp (main clauses) ch\u1EC9 b\u1EB1ng m\u1ED9t d\u1EA5u ph\u1EA9y m\xE0 kh\xF4ng c\xF3 li\xEAn t\u1EEB ph\xF9 h\u1EE3p" },
+            { id: "opt_B", label: "B", text: "\u0110\u1EB7t d\u1EA5u ph\u1EA9y sau li\xEAn t\u1EEB 'because' \u1EDF \u0111\u1EA7u c\xE2u" },
+            { id: "opt_C", label: "C", text: "Qu\xEAn kh\xF4ng \u0111\u1EB7t d\u1EA5u ph\u1EA9y tr\u01B0\u1EDBc li\xEAn t\u1EEB 'and' li\u1EC7t k\xEA 3 danh t\u1EEB" },
+            { id: "opt_D", label: "D", text: "S\u1EED d\u1EE5ng d\u1EA5u ch\u1EA5m ph\u1EA9y thay cho d\u1EA5u ch\u1EA5m h\u1EBFt c\xE2u" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Comma Splice l\xE0 l\u1ED7i nghi\xEAm tr\u1ECDng trong IELTS Writing: d\xF9ng d\u1EA5u ph\u1EA9y \u0111\u1EC3 n\u1ED1i 2 m\u1EC7nh \u0111\u1EC1 \u0111\u1ED9c l\u1EADp (v\xED d\u1EE5: 'He got 6.5, now he can apply...' - ph\u1EA3i d\xF9ng li\xEAn t\u1EEB ho\u1EB7c d\u1EA5u ch\u1EA5m)."
+        },
+        {
+          id: "doer_w9d1_q02",
+          roundIndex: 1,
+          prompt: "X\xE1c \u0111\u1ECBnh l\u1ED7i sai trong c\xE2u: 'Because I have an important meeting tomorrow, so I asked my teacher for a day off.'",
+          options: [
+            { id: "opt_A", label: "A", text: "D\xF9ng th\u1EEBa li\xEAn t\u1EEB 'so' do \u1EA3nh h\u01B0\u1EDFng d\u1ECBch t\u1EEB ti\u1EBFng Vi\u1EC7t 'B\u1EDFi v\xEC... n\xEAn...'" },
+            { id: "opt_B", label: "B", text: "\u0110\u1ED9ng t\u1EEB 'asked' ph\u1EA3i chuy\u1EC3n th\xE0nh 'asking'" },
+            { id: "opt_C", label: "C", text: "'tomorrow' kh\xF4ng \u0111\u01B0\u1EE3c \u0111i v\u1EDBi th\xEC hi\u1EC7n t\u1EA1i" },
+            { id: "opt_D", label: "D", text: "Sau 'Because' ph\u1EA3i d\xF9ng danh t\u1EEB ch\u1EE9 kh\xF4ng \u0111\u01B0\u1EE3c d\xF9ng clause" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Trong ti\u1EBFng Anh ch\u1EC9 \u0111\u01B0\u1EE3c d\xF9ng 1 li\xEAn t\u1EEB n\u1ED1i 2 clause: Ho\u1EB7c d\xF9ng 'Because...', ho\u1EB7c d\xF9ng '..., so...'. Kh\xF4ng bao gi\u1EDD d\xF9ng c\u1EA3 hai 'Because... so...' trong 1 c\xE2u."
+        },
+        {
+          id: "doer_w9d1_q03",
+          roundIndex: 2,
+          prompt: "X\xE1c \u0111\u1ECBnh l\u1ED7i sai trong c\xE2u: 'I got a good result on the final test because my efforts during the course.'",
+          options: [
+            { id: "opt_A", label: "A", text: "D\xF9ng 'because' tr\u01B0\u1EDBc m\u1ED9t noun phrase, ph\u1EA3i s\u1EEDa th\xE0nh 'because of' (ho\u1EB7c thanks to)" },
+            { id: "opt_B", label: "B", text: "Sai gi\u1EDBi t\u1EEB 'on', ph\u1EA3i d\xF9ng 'in'" },
+            { id: "opt_C", label: "C", text: "'got' ph\u1EA3i chuy\u1EC3n th\xE0nh 'have got'" },
+            { id: "opt_D", label: "D", text: "'efforts' kh\xF4ng \u0111\u01B0\u1EE3c th\xEAm 's'" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'Because' \u0111i v\u1EDBi m\u1ED9t m\u1EC7nh \u0111\u1EC1 (clause c\xF3 S + V). C\xF2n tr\u01B0\u1EDBc c\u1EE5m danh t\u1EEB 'my efforts during the course' b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng gi\u1EDBi t\u1EEB 'because of' ho\u1EB7c 'due to/thanks to'."
+        },
+        {
+          id: "doer_w9d1_q04",
+          roundIndex: 3,
+          prompt: "\u0110i\u1EC1n li\xEAn t\u1EEB th\xEDch h\u1EE3p: 'Many girls want to become beauty vloggers, ____________ boys usually dream of becoming game streamers.'",
+          options: [
+            { id: "opt_A", label: "A", text: "whereas / while" },
+            { id: "opt_B", label: "B", text: "because" },
+            { id: "opt_C", label: "C", text: "so that" },
+            { id: "opt_D", label: "D", text: "therefore" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "\u0110\u1EC3 th\u1EC3 hi\u1EC7n s\u1EF1 \u0111\u1ED1i l\u1EADp, t\u01B0\u01A1ng ph\u1EA3n gi\u1EEFa 2 v\u1EBF c\xE2u (con g\xE1i th\xEDch vlogger trong khi con trai th\xEDch streamer), ta d\xF9ng li\xEAn t\u1EEB 'whereas' ho\u1EB7c 'while'."
+        },
+        {
+          id: "doer_w9d1_q05",
+          roundIndex: 4,
+          prompt: "\u0110i\u1EC1n li\xEAn t\u1EEB th\xEDch h\u1EE3p: 'He failed the test, ____________ he spent a lot of time revising.'",
+          options: [
+            { id: "opt_A", label: "A", text: "although / even though" },
+            { id: "opt_B", label: "B", text: "because" },
+            { id: "opt_C", label: "C", text: "so" },
+            { id: "opt_D", label: "D", text: "as long as" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "V\u1EBF 1 (r\u1EDBt b\xE0i thi) tr\xE1i ng\u01B0\u1EE3c v\u1EDBi v\u1EBF 2 (d\xE0nh nhi\u1EC1u th\u1EDDi gian \xF4n t\u1EADp), do \u0111\xF3 ph\u1EA3i d\xF9ng li\xEAn t\u1EEB nh\u01B0\u1EE3ng b\u1ED9 'although / even though' (m\u1EB7c d\xF9)."
+        },
+        {
+          id: "doer_w9d1_q06",
+          roundIndex: 5,
+          prompt: "\u0110i\u1EC1n li\xEAn t\u1EEB th\xEDch h\u1EE3p: 'You can easily get a 6.5 in the IELTS test, ____________ you spend at least 2 hours each day studying English.'",
+          options: [
+            { id: "opt_A", label: "A", text: "provided that / as long as" },
+            { id: "opt_B", label: "B", text: "unless" },
+            { id: "opt_C", label: "C", text: "although" },
+            { id: "opt_D", label: "D", text: "whereas" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'as long as' / 'provided that' mang ngh\u0129a l\xE0 'mi\u1EC5n l\xE0 / v\u1EDBi \u0111i\u1EC1u ki\u1EC7n l\xE0'."
+        },
+        {
+          id: "doer_w9d1_q07",
+          roundIndex: 6,
+          prompt: "X\xE1c \u0111\u1ECBnh l\u1ED7i c\xE2u r\u1EDDi r\u1EA1c (Sentence Fragment): 'Having a 6.0 IELTS is beneficial. Because it helps them to apply to international companies.'",
+          options: [
+            { id: "opt_A", label: "A", text: "C\xE2u th\u1EE9 hai ch\u1EC9 l\xE0 m\u1ED9t m\u1EC7nh \u0111\u1EC1 ph\u1EE5 (subordinating clause) b\u1EAFt \u0111\u1EA7u b\u1EB1ng 'Because', kh\xF4ng th\u1EC3 \u0111\u1EE9ng \u0111\u1ED9c l\u1EADp th\xE0nh c\xE2u ri\xEAng" },
+            { id: "opt_B", label: "B", text: "'beneficial' ph\u1EA3i \u0111i v\u1EDBi gi\u1EDBi t\u1EEB 'for' thay v\xEC d\u1EA5u ch\u1EA5m" },
+            { id: "opt_C", label: "C", text: "'apply' ph\u1EA3i chuy\u1EC3n th\xE0nh 'applying'" },
+            { id: "opt_D", label: "D", text: "C\xE2u ho\xE0n to\xE0n \u0111\xFAng ng\u1EEF ph\xE1p kh\xF4ng c\xF3 l\u1ED7i" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "M\u1EC7nh \u0111\u1EC1 ph\u1EE5 thu\u1ED9c 'Because it helps...' kh\xF4ng th\u1EC3 t\xE1ch l\xE0m 1 c\xE2u ri\xEAng bi\u1EC7t. C\u1EA7n n\u1ED1i li\u1EC1n v\xE0o c\xE2u tr\u01B0\u1EDBc: '...is beneficial because it helps...'"
+        },
+        {
+          id: "doer_w9d1_q08",
+          roundIndex: 7,
+          prompt: "D\u1ECBch sang ti\u1EBFng Anh d\xF9ng c\u1EA5u tr\xFAc m\u1EC7nh \u0111\u1EC1 \u0111i\u1EC1u ki\u1EC7n: 'N\u1EBFu ng\u01B0\u1EDDi tr\u1EBB \u0103n \xEDt th\u1EE9c \u0103n nhanh h\u01A1n, s\u1EBD c\xF3 \xEDt ca b\xE9o ph\xEC, l\xE0m gi\u1EA3m \xE1p l\u1EF1c l\xEAn h\u1EC7 th\u1ED1ng y t\u1EBF.'",
+          options: [
+            { id: "opt_A", label: "A", text: "If young people consumed less fast food, there would be fewer obesity cases, which would reduce pressure on the healthcare system." },
+            { id: "opt_B", label: "B", text: "If young people eat less fast food so there will be fewer obesity case to reduce pressure on healthcare." },
+            { id: "opt_C", label: "C", text: "If young people eating less fast food, fewer obesity cases happens, reduce healthcare." },
+            { id: "opt_D", label: "D", text: "Young people eat less fast food if fewer obesity cases reduce on healthcare system." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\xE2u \u0111i\u1EC1u ki\u1EC7n k\u1EBFt h\u1EE3p \u0111\u1EA1i t\u1EEB quan h\u1EC7 thay th\u1EBF c\u1EA3 m\u1EC7nh \u0111\u1EC1: '..., which would reduce pressure on the healthcare system'."
+        },
+        {
+          id: "doer_w9d1_q09",
+          roundIndex: 8,
+          prompt: "N\u1ED1i 2 v\u1EBF c\xE2u di\u1EC5n t\u1EA3 nguy\xEAn nh\xE2n - k\u1EBFt qu\u1EA3: 'Fast food is extremely convenient. Many people eat it daily despite knowing it is harmful.'",
+          options: [
+            { id: "opt_A", label: "A", text: "Fast food is so convenient that many people eat it daily even though they know it is harmful." },
+            { id: "opt_B", label: "B", text: "Because fast food is convenient, but many people eat it daily." },
+            { id: "opt_C", label: "C", text: "Although fast food is convenient so people eat it daily." },
+            { id: "opt_D", label: "D", text: "Fast food is convenient, so that people eating it despite harmful." }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\u1EA5u tr\xFAc 'so + adj + that...' (qu\xE1... \u0111\u1EBFn n\u1ED7i m\xE0...) k\u1EBFt h\u1EE3p v\u1EDBi li\xEAn t\u1EEB nh\u01B0\u1EE3ng b\u1ED9 'even though' th\u1EC3 hi\u1EC7n tr\u1ECDn v\u1EB9n ng\u1EEF ngh\u0129a."
+        },
+        {
+          id: "doer_w9d1_q10",
+          roundIndex: 9,
+          prompt: "Trong c\xE2u ph\u1EE9c (Complex sentence), quy t\u1EAFc b\u1EAFt bu\u1ED9c v\u1EC1 s\u1ED1 l\u01B0\u1EE3ng m\u1EC7nh \u0111\u1EC1 ch\xEDnh (Main clause) l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "B\u1EA5t k\u1EC3 c\xE2u d\xE0i hay ng\u1EAFn, trong c\xE2u lu\xF4n c\u1EA7n c\xF3 \xEDt nh\u1EA5t 1 Main Clause c\xF3 th\u1EC3 \u0111\u1EE9ng \u0111\u1ED9c l\u1EADp mang th\xF4ng tin ch\xEDnh" },
+            { id: "opt_B", label: "B", text: "C\xE2u ph\u1EE9c kh\xF4ng \u0111\u01B0\u1EE3c ph\xE9p c\xF3 b\u1EA5t k\u1EF3 Main Clause n\xE0o" },
+            { id: "opt_C", label: "C", text: "B\u1EAFt bu\u1ED9c ph\u1EA3i c\xF3 \u0111\xFAng 3 Main Clauses" },
+            { id: "opt_D", label: "D", text: "Main Clause lu\xF4n lu\xF4n ph\u1EA3i \u0111\u1EB7t \u1EDF cu\u1ED1i c\xE2u sau t\u1EA5t c\u1EA3 c\xE1c Subordinating Clauses" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Quy t\u1EAFc ng\u1EEF ph\xE1p c\u0103n b\u1EA3n: M\u1ED7i c\xE2u v\u0103n ho\xE0n ch\u1EC9nh lu\xF4n ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 1 m\u1EC7nh \u0111\u1EC1 \u0111\u1ED9c l\u1EADp (Main Clause) mang \xFD ngh\u0129a tr\u1ECDn v\u1EB9n."
+        }
+      ],
+      "WEEK 9 \u2013 DAY 2": [
+        {
+          id: "doer_w9d2_q01",
+          roundIndex: 0,
+          prompt: `Trong ch\u1EE7 \u0111\u1EC1 Media & Influencers, t\u1EEB "authenticity" trong c\xE2u "Khoai Lang Thang's success lies in his authenticity" \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi:`,
+          options: [
+            { id: "opt_A", label: "A", text: "genuineness / truthfulness (s\u1EF1 ch\xE2n th\u1EF1c, t\xEDnh ch\xE2n th\xE0nh t\u1EF1 nhi\xEAn)" },
+            { id: "opt_B", label: "B", text: "artificiality / fakery (s\u1EF1 gi\u1EA3 t\u1EA1o, d\xE0n d\u1EF1ng)" },
+            { id: "opt_C", label: "C", text: "extravagance (s\u1EF1 xa hoa l\xE3ng ph\xED)" },
+            { id: "opt_D", label: "D", text: "popularity (s\u1EF1 n\u1ED5i ti\u1EBFng b\u1EC1 n\u1ED5i)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. genuineness / truthfulness (s\u1EF1 ch\xE2n th\u1EF1c, t\xEDnh ch\xE2n th\xE0nh t\u1EF1 nhi\xEAn)",
+          correctExplanation: '"Authenticity" (danh t\u1EEB) = t\xEDnh ch\xE2n th\u1EF1c, kh\xF4ng di\u1EC5n xu\u1EA5t gi\u1EA3 t\u1EA1o, \u0111\u1ED3ng ngh\u0129a v\u1EDBi genuineness.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. artificiality / fakery",
+            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB tr\xE1i ngh\u0129a",
+            explanation: "Fakery/artificiality l\xE0 s\u1EF1 gi\u1EA3 t\u1EA1o d\xE0n d\u1EF1ng PR, tr\xE1i ng\u01B0\u1EE3c ho\xE0n to\xE0n v\u1EDBi ph\u1EA9m ch\u1EA5t authenticity c\u1EE7a vlogger."
+          }
+        },
+        {
+          id: "doer_w9d2_q02",
+          roundIndex: 1,
+          prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "approachable" trong c\xE2u "YouTube stars connect better with people by being approachable" l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "distant / unapproachable (xa c\xE1ch, kh\xF3 g\u1EA7n, l\u1EA1nh l\xF9ng)" },
+            { id: "opt_B", label: "B", text: "friendly / accessible (th\xE2n thi\u1EC7n, d\u1EC5 ti\u1EBFp c\u1EADn)" },
+            { id: "opt_C", label: "C", text: "humorous (h\xE0i h\u01B0\u1EDBc)" },
+            { id: "opt_D", label: "D", text: "weird (k\u1EF3 l\u1EA1)" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. distant / unapproachable (xa c\xE1ch, kh\xF3 g\u1EA7n, l\u1EA1nh l\xF9ng)",
+          correctExplanation: '"Approachable" = th\xE2n thi\u1EC7n, d\u1EC5 g\u1EA7n, t\u1EA1o c\u1EA3m gi\xE1c chan h\xF2a. T\u1EEB tr\xE1i ngh\u0129a l\xE0 "distant" (xa c\xE1ch, ki\xEAu k\u1EF3 nh\u01B0 ng\xF4i sao truy\u1EC1n h\xECnh).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. friendly / accessible",
+            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
+            explanation: "Friendly v\xE0 accessible l\xE0 t\u1EEB \u0111\u1ED3ng ngh\u0129a v\u1EDBi approachable. \u0110\u1EC1 b\xE0i y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
+          }
+        },
+        {
+          id: "doer_w9d2_q03",
+          roundIndex: 2,
+          prompt: 'C\u1EE5m danh t\u1EEB "peer-to-peer advice" trong nghi\xEAn c\u1EE9u th\u1ECB hi\u1EBFu th\u1EBF h\u1EC7 tr\u1EBB c\xF3 ngh\u0129a l\xE0 g\xEC?',
+          options: [
+            { id: "opt_A", label: "A", text: "L\u1EDDi khuy\xEAn, s\u1EF1 t\u01B0 v\u1EA5n t\u1EEB b\u1EA1n b\xE8 \u0111\u1ED3ng trang l\u1EE9a v\xE0 c\u1ED9ng \u0111\u1ED3ng ngang h\xE0ng" },
+            { id: "opt_B", label: "B", text: "Th\xF4ng \u0111i\u1EC7p qu\u1EA3ng c\xE1o tr\xEAn s\xF3ng truy\u1EC1n h\xECnh qu\u1ED1c gia" },
+            { id: "opt_C", label: "C", text: "Ch\u1EC9 th\u1ECB h\xE0nh ch\xEDnh t\u1EEB c\u01A1 quan qu\u1EA3n l\xFD nh\xE0 n\u01B0\u1EDBc" },
+            { id: "opt_D", label: "D", text: "L\u1EDDi ph\xE1t bi\u1EC3u c\u1EE7a c\xE1c ng\xF4i sao m\xE0n b\u1EA1c Hollywood" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. L\u1EDDi khuy\xEAn, s\u1EF1 t\u01B0 v\u1EA5n t\u1EEB b\u1EA1n b\xE8 \u0111\u1ED3ng trang l\u1EE9a v\xE0 c\u1ED9ng \u0111\u1ED3ng ngang h\xE0ng",
+          correctExplanation: '"Peer" l\xE0 b\u1EA1n \u0111\u1ED3ng l\u1EE9a/ng\u01B0\u1EDDi ngang h\xE0ng. "Peer-to-peer advice" l\xE0 l\u1EDDi khuy\xEAn truy\u1EC1n mi\u1EC7ng gi\u1EEFa nh\u1EEFng ng\u01B0\u1EDDi c\xF3 c\xF9ng ho\xE0n c\u1EA3nh s\u1ED1ng.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Th\xF4ng \u0111i\u1EC7p qu\u1EA3ng c\xE1o truy\u1EC1n h\xECnh",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn ti\u1EBFp th\u1ECB truy\u1EC1n th\xF4ng v\u1EDBi chia s\u1EBB ngang h\xE0ng",
+            explanation: "Qu\u1EA3ng c\xE1o truy\u1EC1n h\xECnh l\xE0 ti\u1EBFp th\u1ECB \xE1p \u0111\u1EB7t m\u1ED9t chi\u1EC1u (top-down), \u0111\u1ED1i l\u1EADp v\u1EDBi s\u1EF1 tin t\u01B0\u1EDFng t\u1EF1 nhi\xEAn c\u1EE7a l\u1EDDi khuy\xEAn \u0111\u1ED3ng trang l\u1EE9a (peer-to-peer)."
+          }
+        },
+        {
+          id: "doer_w9d2_q04",
+          roundIndex: 3,
+          prompt: 'Collocation chu\u1EA9n trong b\xE0i: "Unlike traditional celebrities, ordinary influencers are now setting trends and driving ______ on social platforms."',
+          options: [
+            { id: "opt_A", label: "A", text: "opinions" },
+            { id: "opt_B", label: "B", text: "cars" },
+            { id: "opt_C", label: "C", text: "lorries" },
+            { id: "opt_D", label: "D", text: "roads" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. opinions",
+          correctExplanation: 'Collocation truy\u1EC1n th\xF4ng h\u1ECDc: "drive opinions" = \u0111\u1ECBnh h\u01B0\u1EDBng d\u01B0 lu\u1EADn, d\u1EABn d\u1EAFt quan \u0111i\u1EC3m c\xF4ng ch\xFAng.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. cars",
+            diagnosticTitle: "D\u1ECBch ngh\u0129a \u0111en c\u1EE7a \u0111\u1ED9ng t\u1EEB drive th\xE0nh l\xE1i xe",
+            explanation: 'Trong l\u0129nh v\u1EF1c x\xE3 h\u1ED9i h\u1ECDc truy\u1EC1n th\xF4ng, "drive opinions" mang ngh\u0129a b\xF3ng l\xE0 d\u1EABn d\u1EAFt \xFD ki\u1EBFn s\u1ED1 \u0111\xF4ng.'
+          }
+        },
+        {
+          id: "doer_w9d2_q05",
+          roundIndex: 4,
+          prompt: 'Collocation kinh t\u1EBF h\u1ECDc ch\u1EC9 kh\u1EA3 n\u0103ng chi tr\u1EA3 c\u1EE7a ng\u01B0\u1EDDi ti\xEAu d\xF9ng: "Millennials represent over $1.3 trillion in ______."',
+          options: [
+            { id: "opt_A", label: "A", text: "buying power (ho\u1EB7c purchasing power: s\u1EE9c mua)" },
+            { id: "opt_B", label: "B", text: "buying energy" },
+            { id: "opt_C", label: "C", text: "buying muscle" },
+            { id: "opt_D", label: "D", text: "buying effort" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. buying power (ho\u1EB7c purchasing power: s\u1EE9c mua)",
+          correctExplanation: '"Buying power" (ho\u1EB7c purchasing power) l\xE0 thu\u1EADt ng\u1EEF t\xE0i ch\xEDnh ti\xEAu chu\u1EA9n ch\u1EC9 t\u1ED5ng n\u0103ng l\u1EF1c t\xE0i ch\xEDnh v\xE0 s\u1EE9c mua s\u1EAFm h\xE0ng h\xF3a.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. buying energy",
+            diagnosticTitle: "D\xF9ng t\u1EEB n\u0103ng l\u01B0\u1EE3ng thay v\xEC thu\u1EADt ng\u1EEF s\u1EE9c mua",
+            explanation: 'N\u0103ng l\u1EF1c mua s\u1EAFm trong kinh t\u1EBF b\u1EAFt bu\u1ED9c d\xF9ng danh t\u1EEB "power", kh\xF4ng d\xF9ng "energy" hay "muscle".'
+          }
+        },
+        {
+          id: "doer_w9d2_q06",
+          roundIndex: 5,
+          prompt: 'C\u1EE5m th\xE0nh ng\u1EEF trong b\xE0i: "The influence of young YouTubers may fall ______ with older generations who prefer traditional media."',
+          options: [
+            { id: "opt_A", label: "A", text: "flat" },
+            { id: "opt_B", label: "B", text: "down" },
+            { id: "opt_C", label: "C", text: "deep" },
+            { id: "opt_D", label: "D", text: "low" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. flat",
+          correctExplanation: 'Idiom chu\u1EA9n: "fall flat" = th\u1EA5t b\u1EA1i, kh\xF4ng t\u1EA1o \u0111\u01B0\u1EE3c hi\u1EC7u \u1EE9ng hay s\u1EE9c h\xFAt \u0111\u1ED1i v\u1EDBi m\u1ED9t nh\xF3m kh\xE1n gi\u1EA3 c\u1EE5 th\u1EC3.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. down",
+            diagnosticTitle: "D\u1ECBch th\xE0nh ng\u1EEF r\u01A1i xu\u1ED1ng (fall down)",
+            explanation: 'Fall down l\xE0 ng\xE3 s\u1EA5p c\u01A1 h\u1ECDc, c\xF2n th\xF4ng \u0111i\u1EC7p/s\u1EE9c \u1EA3nh h\u01B0\u1EDFng kh\xF4ng c\xF3 t\xE1c d\u1EE5ng v\u1EDBi ai ph\u1EA3i d\xF9ng th\xE0nh ng\u1EEF "fall flat".'
+          }
+        },
+        {
+          id: "doer_w9d2_q07",
+          roundIndex: 6,
+          prompt: `Ch\u1ECDn gi\u1EDBi t\u1EEB \u0111\xFAng \u0111i k\xE8m \u0111\u1ED9ng t\u1EEB \u0111\u1ED3ng c\u1EA3m: "Audiences can easily relate ______ the vlogger's humble background and sincere journey."`,
+          options: [
+            { id: "opt_A", label: "A", text: "to" },
+            { id: "opt_B", label: "B", text: "with" },
+            { id: "opt_C", label: "C", text: "for" },
+            { id: "opt_D", label: "D", text: "about" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. to",
+          correctExplanation: 'C\u1EA5u tr\xFAc c\u1EA3m x\xFAc giao ti\u1EBFp: "relate TO somebody/something" (th\u1EA5u hi\u1EC3u, t\xECm th\u1EA5y s\u1EF1 \u0111\u1ED3ng c\u1EA3m s\xE2u s\u1EAFc v\u1EDBi c\xE2u chuy\u1EC7n c\u1EE7a ai).',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. with",
+            diagnosticTitle: 'D\xF9ng gi\u1EDBi t\u1EEB "with" do th\xF3i quen li\xEAn k\u1EBFt ngh\u0129a',
+            explanation: 'M\u1EB7c d\xF9 communicate with c\xF3 with, c\u1EA5u tr\xFAc \u0111\u1ED3ng c\u1EA3m t\xE2m l\xFD b\u1EAFt bu\u1ED9c l\xE0 "relate TO somebody".'
+          }
+        },
+        {
+          id: "doer_w9d2_q08",
+          roundIndex: 7,
+          prompt: `C\u1EE5m danh t\u1EEB "distaste for advertising" trong c\xE2u "people's distaste for advertising has redefined celebrity" c\xF3 ngh\u0129a l\xE0:`,
+          options: [
+            { id: "opt_A", label: "A", text: "S\u1EF1 \xE1c c\u1EA3m, ch\xE1n gh\xE9t nh\u1EEFng m\u1EA9u qu\u1EA3ng c\xE1o ph\xF4 tr\u01B0\u01A1ng thi\u1EBFu trung th\u1EF1c" },
+            { id: "opt_B", label: "B", text: "V\u1ECB \u0111\u1EAFng ch\xE1t khi n\u1EBFm th\u1EED th\u1EE9c \u0103n qu\u1EA3ng c\xE1o" },
+            { id: "opt_C", label: "C", text: "Ni\u1EC1m \u0111am m\xEA xem l\u1EA1i c\xE1c clip qu\u1EA3ng c\xE1o c\u0169" },
+            { id: "opt_D", label: "D", text: "Th\xF3i quen t\u1EAFt \xE2m thanh tivi" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. S\u1EF1 \xE1c c\u1EA3m, ch\xE1n gh\xE9t nh\u1EEFng m\u1EA9u qu\u1EA3ng c\xE1o ph\xF4 tr\u01B0\u01A1ng thi\u1EBFu trung th\u1EF1c",
+          correctExplanation: '"Distaste for something" = c\u1EA3m gi\xE1c kh\xF4ng \u01B0a, \xE1c c\u1EA3m ho\u1EB7c ph\u1EA3n \u0111\u1ED1i \u0111i\u1EC1u g\xEC m\u1ED9t c\xE1ch s\xE2u s\u1EAFc.',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. V\u1ECB \u0111\u1EAFng ch\xE1t th\u1EE9c \u0103n",
+            diagnosticTitle: "Hi\u1EC3u nh\u1EA7m ti\u1EC1n t\u1ED1 dis-taste theo v\u1ECB gi\xE1c sinh h\u1ECDc",
+            explanation: "Trong ng\u1EEF c\u1EA3nh truy\u1EC1n th\xF4ng, distaste l\xE0 th\xE1i \u0111\u1ED9 \xE1c c\u1EA3m v\u1EC1 m\u1EB7t t\xE2m l\xFD, kh\xF4ng li\xEAn quan \u0111\u1EBFn v\u1ECB gi\xE1c tr\xEAn l\u01B0\u1EE1i."
+          }
+        },
+        {
+          id: "doer_w9d2_q09",
+          roundIndex: 8,
+          prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o c\xE2u ph\xE2n t\xEDch ti\u1EBFp th\u1ECB: "Brands now recruit digital content ______ to forge genuine, transparent dialogues with modern consumers."',
+          options: [
+            { id: "opt_A", label: "A", text: "creators (nh\xE0 s\xE1ng t\u1EA1o n\u1ED9i dung s\u1ED1)" },
+            { id: "opt_B", label: "B", text: "campuses" },
+            { id: "opt_C", label: "C", text: "burnouts" },
+            { id: "opt_D", label: "D", text: "blands" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. creators (nh\xE0 s\xE1ng t\u1EA1o n\u1ED9i dung s\u1ED1)",
+          correctExplanation: '"Content creators" l\xE0 danh t\u1EEB chu\u1EA9n ngh\u1EC1 nghi\u1EC7p ch\u1EC9 c\xE1c nh\xE0 s\xE1ng t\u1EA1o n\u1ED9i dung tr\xEAn m\u1EA1ng x\xE3 h\u1ED9i hi\u1EC7n \u0111\u1EA1i.',
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. burnouts",
+            diagnosticTitle: "Ch\u1ECDn sai ch\u1EE7 th\u1EC3 nh\xE2n s\u1EF1",
+            explanation: "Burnout l\xE0 t\xECnh tr\u1EA1ng ki\u1EC7t s\u1EE9c lao \u0111\u1ED9ng, kh\xF4ng ph\u1EA3i ch\u1EE9c danh ngh\u1EC1 nghi\u1EC7p truy\u1EC1n th\xF4ng."
+          }
+        },
+        {
+          id: "doer_w9d2_q10",
+          roundIndex: 9,
+          prompt: 'PARAPHRASE: C\xE2u "Millennials disdain scripted promotional endorsements by mainstream celebrities, placing their confidence instead in authentic peer-to-peer recommendations" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i t\u01B0\u01A1ng \u0111\u01B0\u01A1ng nh\u1EA5t l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "Younger demographics reject staged commercial ads by traditional stars, trusting candid guidance from relatable online personalities instead." },
+            { id: "opt_B", label: "B", text: "Television commercials have completely regained total trust among teenagers who refuse to open mobile applications." },
+            { id: "opt_C", label: "C", text: "Movie stars are officially prohibited from partnering with consumer product manufacturers." },
+            { id: "opt_D", label: "D", text: "Consumers make purchases strictly when celebrities refuse to disclose sponsored agreements." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Younger demographics reject staged commercial ads by traditional stars, trusting candid guidance from relatable online personalities instead.",
+          correctExplanation: '"Younger demographics reject staged commercial ads" paraphrase cho "disdain scripted promotional endorsements", v\xE0 "trusting candid guidance from relatable personalities" paraphrase cho "confidence in authentic peer-to-peer recommendations".',
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Television commercials regained total trust",
+            diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c xu h\u01B0\u1EDBng ti\xEAu d\xF9ng c\u1EE7a gi\u1EDBi tr\u1EBB",
+            explanation: "Gi\u1EDBi tr\u1EBB ng\xE0y nay n\xE9 tr\xE1nh qu\u1EA3ng c\xE1o tivi truy\u1EC1n th\u1ED1ng v\xE0 t\xECm ki\u1EBFm s\u1EF1 ch\xE2n th\u1EF1c t\u1EEB nh\u1EEFng ng\u01B0\u1EDDi c\xF3 ho\xE0n c\u1EA3nh t\u01B0\u01A1ng \u0111\u1ED3ng."
+          }
+        }
+      ],
+      "WEEK 9 \u2013 DAY 3": [
+        {
+          id: "doer_w9d3_q01",
+          roundIndex: 0,
+          prompt: "K\u1EF9 thu\u1EADt 'Grouping words' (hay Chunking) trong IELTS Speaking c\xF3 vai tr\xF2 g\xEC quan tr\u1ECDng nh\u1EA5t?",
+          options: [
+            { id: "opt_A", label: "A", text: "Ng\u1EAFt ngh\u1EC9 v\xE0 ph\xE1t \xE2m c\xE1c c\u1EE5m t\u1EEB c\xF3 ngh\u0129a li\u1EC1n m\u1EA1ch v\u1EDBi nhau, gi\xFAp c\xE2u n\xF3i t\u1EF1 nhi\xEAn v\xE0 ng\u01B0\u1EDDi nghe d\u1EC5 n\u1EAFm b\u1EAFt th\xF4ng tin" },
+            { id: "opt_B", label: "B", text: "N\xF3i t\u1EEBng t\u1EEB m\u1ED9t ng\u1EAFt qu\xE3ng \u0111\u1EC1u \u0111\u1EB7n \u0111\u1EC3 k\xE9o d\xE0i th\u1EDDi gian thi" },
+            { id: "opt_C", label: "C", text: "Ph\xE1t \xE2m d\xEDnh t\u1EA5t c\u1EA3 c\xE1c t\u1EEB trong c\u1EA3 m\u1ED9t \u0111o\u1EA1n v\u0103n kh\xF4ng th\u1EDF" },
+            { id: "opt_D", label: "D", text: "Ch\u1EC9 ng\u1EAFt h\u01A1i duy nh\u1EA5t \u1EDF c\xE1c li\xEAn t\u1EEB 'and' v\xE0 'or'" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Grouping words (Chunking): Nh\xF3m c\xE1c t\u1EEB li\xEAn quan ng\u1EEF ngh\u0129a th\xE0nh m\u1ED9t c\u1EE5m ph\xE1t \xE2m li\u1EC1n m\u1EA1ch (thought groups) gi\xFAp b\xE0i n\xF3i t\u1EF1 nhi\xEAn v\xE0 m\u1EA1ch l\u1EA1c."
+        },
+        {
+          id: "doer_w9d3_q02",
+          roundIndex: 1,
+          prompt: "Trong v\xED d\u1EE5 b\xE0i h\u1ECDc: 'I bought a nice new jacket / with a zip down the front / and a lot of pockets', c\xE1ch ng\u1EAFt c\u1EE5m n\xE0y th\u1EC3 hi\u1EC7n \u0111i\u1EC1u g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Ng\u1EAFt th\xE0nh 3 nh\xF3m th\xF4ng tin h\u1EE3p l\xFD v\u1EC1 ng\u1EEF ngh\u0129a: m\xF3n \u0111\u1ED3 mua, chi ti\u1EBFt kho\xE1 k\xE9o, v\xE0 chi ti\u1EBFt nhi\u1EC1u t\xFAi" },
+            { id: "opt_B", label: "B", text: "Ng\u1EAFt sai v\xEC ph\u1EA3i ng\u1EAFt sau ch\u1EEF 'nice'" },
+            { id: "opt_C", label: "C", text: "Ng\u1EAFt ng\u1EABu nhi\xEAn theo s\u1ED1 l\u01B0\u1EE3ng \xE2m ti\u1EBFt ch\u1EB5n l\u1EBB" },
+            { id: "opt_D", label: "D", text: "Ch\u1EC9 n\xEAn ng\u1EAFt \u1EDF d\u1EA5u ch\u1EA5m cu\u1ED1i c\xE2u" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "M\u1ED7i chunk mang m\u1ED9t \u0111\u01A1n v\u1ECB \xFD ngh\u0129a ho\xE0n ch\u1EC9nh (a meaningful grammatical unit): \u0111\u1ED1i t\u01B0\u1EE3ng mua, \u0111\u1EB7c \u0111i\u1EC3m kho\xE1 k\xE9o, \u0111\u1EB7c \u0111i\u1EC3m t\xFAi \xE1o."
+        },
+        {
+          id: "doer_w9d3_q03",
+          roundIndex: 2,
+          prompt: "T\u1EEB 'refrigeration' c\xF3 bao nhi\xEAu \xE2m ti\u1EBFt (syllables) v\xE0 tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 m\u1EA5y?",
+          options: [
+            { id: "opt_A", label: "A", text: "5 \xE2m ti\u1EBFt, tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 4 (/re-fri-ge-RA-tion/)" },
+            { id: "opt_B", label: "B", text: "4 \xE2m ti\u1EBFt, tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 1" },
+            { id: "opt_C", label: "C", text: "5 \xE2m ti\u1EBFt, tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 2" },
+            { id: "opt_D", label: "D", text: "3 \xE2m ti\u1EBFt, tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 3" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Re-frig-er-a-tion c\xF3 5 \xE2m ti\u1EBFt: /r\u026A\u02CCfr\u026Ad\u0292.\u0259\u02C8re\u026A.\u0283\u0259n/, tr\u1ECDng \xE2m ch\xEDnh r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 4 (-ra-)."
+        },
+        {
+          id: "doer_w9d3_q04",
+          roundIndex: 3,
+          prompt: "T\u1EEB danh t\u1EEB 'access' (s\u1EF1 truy c\u1EADp, \u0111\u01B0\u1EDDng v\xE0o) c\xF3 tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 m\u1EA5y?",
+          options: [
+            { id: "opt_A", label: "A", text: "\xC2m ti\u1EBFt th\u1EE9 1 (/\u02C8\xE6k.ses/)" },
+            { id: "opt_B", label: "B", text: "\xC2m ti\u1EBFt th\u1EE9 2 (/\xE6k\u02C8ses/)" },
+            { id: "opt_C", label: "C", text: "Tr\u1ECDng \xE2m \u0111\u1EC1u c\u1EA3 2 \xE2m ti\u1EBFt" },
+            { id: "opt_D", label: "D", text: "Kh\xF4ng c\xF3 tr\u1ECDng \xE2m" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "H\u1EA7u h\u1EBFt danh t\u1EEB 2 \xE2m ti\u1EBFt c\xF3 tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt \u0111\u1EA7u ti\xEAn: 'access' -> /\u02C8\xE6k.ses/."
+        },
+        {
+          id: "doer_w9d3_q05",
+          roundIndex: 4,
+          prompt: "C\u1EE5m di\u1EC5n \u0111\u1EA1t n\xE0o sau \u0111\xE2y d\xF9ng \u0111\u1EC3 n\xF3i v\u1EC1 s\u1EDF th\xEDch c\xE1 nh\xE2n t\u01B0\u01A1ng \u0111\u01B0\u01A1ng v\u1EDBi 'I like/love'?",
+          options: [
+            { id: "opt_A", label: "A", text: "I'm really into / I'm keen on / I have a passion for" },
+            { id: "opt_B", label: "B", text: "I'm bored with / I can't stand" },
+            { id: "opt_C", label: "C", text: "I doubt that / I disagree with" },
+            { id: "opt_D", label: "D", text: "I am obliged to / I am forced to" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "C\xE1c c\xE1ch di\u1EC5n \u0111\u1EA1t t\u1EF1 nhi\xEAn thay cho 'I like': be into sth, be keen on sth, have a passion for sth."
+        },
+        {
+          id: "doer_w9d3_q06",
+          roundIndex: 5,
+          prompt: "\u0110i\u1EC1n t\u1EEB th\xEDch h\u1EE3p v\xE0o c\xE2u tr\u1EA3 l\u1EDDi Speaking: 'Reading books helps me ____________ my knowledge and ____________ my mind.'",
+          options: [
+            { id: "opt_A", label: "A", text: "expand / refresh" },
+            { id: "opt_B", label: "B", text: "destroy / erase" },
+            { id: "opt_C", label: "C", text: "shorten / narrow" },
+            { id: "opt_D", label: "D", text: "forget / close" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Collocation quen thu\u1ED9c: 'expand one's knowledge' (m\u1EDF r\u1ED9ng ki\u1EBFn th\u1EE9c) v\xE0 'refresh one's mind' (th\u01B0 gi\xE3n, n\u1EA1p l\u1EA1i n\u0103ng l\u01B0\u1EE3ng cho t\xE2m tr\xED)."
+        },
+        {
+          id: "doer_w9d3_q07",
+          roundIndex: 6,
+          prompt: "Khi tr\u1EA3 l\u1EDDi c\xE2u h\u1ECFi Speaking: 'How have your hobbies changed over time?', th\xED sinh c\u1EA7n ph\u1ED1i h\u1EE3p c\xE1c th\xEC n\xE0o \u0111\u1EC3 th\u1EC3 hi\u1EC7n s\u1EF1 bi\u1EBFn \u0111\u1ED5i?",
+          options: [
+            { id: "opt_A", label: "A", text: "Qu\xE1 kh\u1EE9 (used to do) \u0111\u1EC3 n\xF3i s\u1EDF th\xEDch c\u0169, Hi\u1EC7n t\u1EA1i \u0111\u01A1n (nowadays) cho s\u1EDF th\xEDch hi\u1EC7n t\u1EA1i, v\xE0 T\u01B0\u01A1ng lai/K\u1EBF ho\u1EA1ch (thinking about taking up) cho t\u01B0\u01A1ng lai" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 d\xF9ng m\u1ED9t th\xEC Qu\xE1 kh\u1EE9 \u0111\u01A1n cho to\xE0n b\u1ED9 c\xE2u tr\u1EA3 l\u1EDDi" },
+            { id: "opt_C", label: "C", text: "Ch\u1EC9 d\xF9ng Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n" },
+            { id: "opt_D", label: "D", text: "Ch\u1EC9 d\xF9ng T\u01B0\u01A1ng lai \u0111\u01A1n v\u1EDBi 'will'" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Chi\u1EBFn thu\u1EADt ghi \u0111i\u1EC3m ng\u1EEF ph\xE1p Range & Accuracy: K\u1EBFt h\u1EE3p Past (When I was young, I used to...), Present (Nowadays, I'm into...), v\xE0 Future (In the future, I plan to...)."
+        },
+        {
+          id: "doer_w9d3_q08",
+          roundIndex: 7,
+          prompt: "C\u1EE5m phrasal verb n\xE0o mang ngh\u0129a 'b\u1EAFt \u0111\u1EA7u m\u1ED9t s\u1EDF th\xEDch m\u1EDBi' (start a new hobby)?",
+          options: [
+            { id: "opt_A", label: "A", text: "Take up a new hobby" },
+            { id: "opt_B", label: "B", text: "Give up a new hobby" },
+            { id: "opt_C", label: "C", text: "Put off a new hobby" },
+            { id: "opt_D", label: "D", text: "Look down on a new hobby" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "'take up a hobby/sport' l\xE0 phrasal verb kinh \u0111i\u1EC3n: b\u1EAFt \u0111\u1EA7u m\u1ED9t s\u1EDF th\xEDch ho\u1EB7c m\xF4n th\u1EC3 thao m\u1EDBi."
+        },
+        {
+          id: "doer_w9d3_q09",
+          roundIndex: 8,
+          prompt: "C\u1EE5m t\u1EEB n\xE0o mang ngh\u0129a 'd\u1EA7n m\u1EA5t \u0111i s\u1EF1 h\u1EE9ng th\xFA \u0111\u1ED1i v\u1EDBi m\u1ED9t vi\u1EC7c g\xEC \u0111\xF3'?",
+          options: [
+            { id: "opt_A", label: "A", text: "Lose interest in something" },
+            { id: "opt_B", label: "B", text: "Gain enthusiasm for something" },
+            { id: "opt_C", label: "C", text: "Show curiosity toward something" },
+            { id: "opt_D", label: "D", text: "Become obsessed with something" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "Trong b\xE0i: 'as I got older, I lost interest in this hobby and rarely do so anymore' (lose interest in = m\u1EA5t h\u1EE9ng th\xFA)."
+        },
+        {
+          id: "doer_w9d3_q10",
+          roundIndex: 9,
+          prompt: "\u0110\u1EC3 \u0111\u1EA1t m\u1EE5c ti\xEAu Target 4.0 - 5.0 v\u1EC1 ph\xE1t \xE2m (Pronunciation) trong b\xE0i h\u1ECDc n\xE0y, ti\xEAu ch\xED c\u1ED1t l\xF5i c\u1EA7n \u0111\u1EA1t \u0111\u01B0\u1EE3c l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Ph\xE1t \xE2m \u0111\u1EE7 s\u1ED1 \xE2m ti\u1EBFt, \u0111\u1EB7t \u0111\xFAng tr\u1ECDng \xE2m t\u1EEB, ph\xE1t \xE2m r\xF5 nguy\xEAn \xE2m/ph\u1EE5 \xE2m, v\xE0 ph\xE1t \xE2m \u0111\xFAng c\xE1c \xE2m \u0111u\xF4i (-ed, -s/es)" },
+            { id: "opt_B", label: "B", text: "Ph\u1EA3i n\xF3i \u0111\u01B0\u1EE3c gi\u1ECDng Anh - Anh chu\u1EA9n c\u1EE7a Ho\xE0ng gia Anh" },
+            { id: "opt_C", label: "C", text: "N\xF3i th\u1EADt nhanh b\u1EA5t ch\u1EA5p sai \xE2m cu\u1ED1i" },
+            { id: "opt_D", label: "D", text: "S\u1EED d\u1EE5ng t\u1EEB v\u1EF1ng c\u1ED5 \u0111i\u1EC3n kh\xF3 hi\u1EC3u" }
+          ],
+          correctOptionId: "opt_A",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          explanation: "M\u1EE5c ti\xEAu b\xE0i h\u1ECDc n\xEAu r\xF5 5 tr\u1EE5 c\u1ED9t: (1) \u0110\u1EE7 \xE2m ti\u1EBFt, (2) Tr\u1ECDng \xE2m t\u1EEB, (3) Ph\xE1t \xE2m \u0111\xFAng IPA nguy\xEAn \xE2m/ph\u1EE5 \xE2m, (4) \xC2m cu\u1ED1i th\xEC v\xE0 s\u1ED1 nhi\u1EC1u (-ed, -s/es), (5) Tr\u1ECDng \xE2m c\xE2u v\xE0 chunking."
+        }
+      ]
+    };
+  }
+});
+
+// server/services/doer-questions-bank.data.ts
+function matchDoerLessonKey(title) {
+  if (!title) return null;
+  const upper = title.toUpperCase().trim();
+  const wMatch = upper.match(/W(\d{1,2})\s*[-_–—\s]?\s*D(?:AY)?\s*(\d)/);
+  if (wMatch) {
+    const w = parseInt(wMatch[1], 10);
+    const d = parseInt(wMatch[2], 10);
+    const key = `WEEK ${w} \u2013 DAY ${d}`;
+    if (DOER_ARENA_LESSON_QUESTIONS[key]) return key;
+  }
+  const weekDayMatch = upper.match(/WEEK\s*(\d{1,2}).*?DAY\s*(\d)/);
+  if (weekDayMatch) {
+    const w = parseInt(weekDayMatch[1], 10);
+    const d = parseInt(weekDayMatch[2], 10);
+    const key = `WEEK ${w} \u2013 DAY ${d}`;
+    if (DOER_ARENA_LESSON_QUESTIONS[key]) return key;
+  }
+  const sessionMatch = upper.match(/(?:BUỔI|BUOI)\s*(\d{1,2})/);
+  if (sessionMatch) {
+    const sessionNum = parseInt(sessionMatch[1], 10);
+    if (sessionNum >= 1 && sessionNum <= 27) {
+      const w = Math.floor((sessionNum - 1) / 3) + 1;
+      const d = (sessionNum - 1) % 3 + 1;
+      const key = `WEEK ${w} \u2013 DAY ${d}`;
+      if (DOER_ARENA_LESSON_QUESTIONS[key]) return key;
+    }
+  }
+  for (const key of Object.keys(DOER_ARENA_LESSON_QUESTIONS)) {
+    if (upper.includes(key)) return key;
+  }
+  return null;
+}
+var DOER_ARENA_LESSON_QUESTIONS;
+var init_doer_questions_bank_data = __esm({
+  "server/services/doer-questions-bank.data.ts"() {
+    init_week1_data();
+    init_week2_data();
+    init_week3_data();
+    init_week4_data();
+    init_week5_data();
+    init_week6_data();
+    init_week7_data();
+    init_week8_data();
+    init_week9_data();
+    DOER_ARENA_LESSON_QUESTIONS = {
+      ...WEEK_1_QUESTIONS,
+      ...WEEK_2_QUESTIONS,
+      ...WEEK_3_QUESTIONS,
+      ...WEEK_4_QUESTIONS,
+      ...WEEK_5_QUESTIONS,
+      ...WEEK_6_QUESTIONS,
+      ...WEEK_7_QUESTIONS,
+      ...WEEK_8_QUESTIONS,
+      ...WEEK_9_QUESTIONS
+    };
+  }
+});
+
 // server/services/arena-bank.service.ts
 function cleanHtml(raw) {
   if (!raw) return "";
   return raw.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, " ").trim();
 }
+function hashSeed(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i) | 0;
+  }
+  return Math.abs(hash);
+}
+function shuffleQuestionOptions(question, seedStr) {
+  if (!question.options || question.options.length < 2) {
+    return question;
+  }
+  const originalCorrect = question.options.find((o) => o.id === question.correctOptionId) || question.options[0];
+  const originalBait = question.misconception ? question.options.find((o) => o.id === question.misconception?.baitOptionId) : null;
+  const seedNum = hashSeed(seedStr || question.id || "arena_shuffle");
+  const shuffled = [...question.options];
+  let curSeed = seedNum;
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    curSeed = (curSeed * 1664525 + 1013904223) % 4294967296;
+    const j = Math.floor(curSeed / 4294967296 * (i + 1));
+    const temp = shuffled[i];
+    shuffled[i] = shuffled[j];
+    shuffled[j] = temp;
+  }
+  const labels = ["A", "B", "C", "D"];
+  const newOptions = shuffled.map((opt, idx) => ({
+    id: `opt_${labels[idx]}`,
+    label: labels[idx],
+    text: opt.text
+  }));
+  const newCorrectIdx = shuffled.findIndex((opt) => opt.text === originalCorrect.text);
+  const correctIdxSafe = newCorrectIdx >= 0 ? newCorrectIdx : 0;
+  const newCorrectOptionId = newOptions[correctIdxSafe].id;
+  const newCorrectAnswerText = `${newOptions[correctIdxSafe].label}. ${newOptions[correctIdxSafe].text}`;
+  let newMisconception = question.misconception;
+  if (originalBait && question.misconception) {
+    const newBaitIdx = shuffled.findIndex((opt) => opt.text === originalBait.text);
+    if (newBaitIdx >= 0) {
+      newMisconception = {
+        ...question.misconception,
+        baitOptionId: newOptions[newBaitIdx].id,
+        baitOptionText: `${newOptions[newBaitIdx].label}. ${newOptions[newBaitIdx].text}`
+      };
+    }
+  }
+  return {
+    ...question,
+    options: newOptions,
+    correctOptionId: newCorrectOptionId,
+    correctAnswerText: newCorrectAnswerText,
+    misconception: newMisconception
+  };
+}
 var ArenaBankService;
 var init_arena_bank_service = __esm({
   "server/services/arena-bank.service.ts"() {
     init_arena_questions_data();
+    init_doer_questions_bank_data();
     ArenaBankService = class {
       constructor(prisma) {
         this.prisma = prisma;
@@ -97692,8 +103000,9 @@ var init_arena_bank_service = __esm({
       /**
        * Loads and normalizes playable Arena questions from a specific Exam in DB.
        * If exam has no multiple choice questions or examId is null, fallbacks to ARENA_STANDARD_QUESTIONS.
+       * Options are shuffled deterministically per room/seed so correct answers are not predictably 'A'.
        */
-      async getQuestionsForRoom(examId) {
+      async getQuestionsForRoom(examId, seed) {
         if (!examId) {
           return ARENA_STANDARD_QUESTIONS;
         }
@@ -97797,6 +103106,26 @@ var init_arena_bank_service = __esm({
           if (playableQuestions.length > 0) {
             return playableQuestions;
           }
+          if (exam && exam.title) {
+            const doerKey = matchDoerLessonKey(exam.title);
+            if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
+              const bankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
+              return bankQuestions.map((bq, idx) => {
+                const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
+                const rawQ = {
+                  id: bq.id,
+                  roundIndex: idx,
+                  prompt: bq.prompt,
+                  options: bq.options,
+                  correctOptionId: bq.correctOptionId,
+                  correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
+                  correctExplanation: bq.explanation,
+                  misconception: bq.misconception
+                };
+                return shuffleQuestionOptions(rawQ, seed ? `${seed}_${bq.id}` : bq.id);
+              });
+            }
+          }
           return ARENA_STANDARD_QUESTIONS;
         } catch (err) {
           console.warn("[ArenaBankService] L\u1ED7i n\u1EA1p c\xE2u h\u1ECFi t\u1EEB examId:", examId, err);
@@ -97855,7 +103184,7 @@ var init_arena_engine_service = __esm({
           err.code = "INVALID_HOST_TOKEN";
           throw err;
         }
-        const questions = await this.bankService.getQuestionsForRoom(room.examId);
+        const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
         const totalQuestions = questions.length;
         if (room.lastCommandId === commandId) {
           return {
@@ -97885,7 +103214,7 @@ var init_arena_engine_service = __esm({
             nextStatus = "QUESTION_LIVE";
             nextRound = 0;
             activeQuestionId = questions[0]?.id || "q_0";
-            deadlineAt = new Date(now.getTime() + 15 * 1e3);
+            deadlineAt = new Date(now.getTime() + (15 + 3) * 1e3);
             break;
           }
           case "LOCK_ROUND": {
@@ -98016,7 +103345,7 @@ var init_arena_engine_service = __esm({
             throw err;
           }
         }
-        const questions = await this.bankService.getQuestionsForRoom(room.examId);
+        const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
         const question = questions[roundIndex];
         const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
         let scoreAwarded = 0;
@@ -98130,7 +103459,7 @@ var init_arena_engine_service = __esm({
             score: ans.scoreAwarded
           };
         }
-        const questions = await this.bankService.getQuestionsForRoom(room.examId);
+        const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
         return {
           roomId: room.id,
           pin: room.pin,
@@ -100807,7 +106136,7 @@ var AssessmentService = class {
     let readingTotal = 0;
     let grammarCorrect = 0;
     let grammarTotal = 0;
-    const normalizeText = (s) => String(s || "").trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ");
+    const normalizeText2 = (s) => String(s || "").trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ");
     let dbExamQuestions = [];
     const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
     try {
@@ -100862,8 +106191,8 @@ var AssessmentService = class {
               sVal = studentAns;
             }
             if (sVal != null && String(sVal).trim() !== "") {
-              const normStudent = normalizeText(sVal);
-              const alternatives = String(keyVal).split("|").map((s) => normalizeText(s));
+              const normStudent = normalizeText2(sVal);
+              const alternatives = String(keyVal).split("|").map((s) => normalizeText2(s));
               const isMatch = alternatives.some((alt) => alt === normStudent);
               if (isMatch) {
                 if (isListening) listeningCorrect++;
@@ -100877,8 +106206,8 @@ var AssessmentService = class {
           else if (isReading) readingTotal++;
           else if (isGrammar) grammarTotal++;
           if (studentAns != null && String(studentAns).trim() !== "") {
-            const normStudent = normalizeText(studentAns);
-            const alternatives = String(rawCorrect2).split("|").map((s) => normalizeText(s));
+            const normStudent = normalizeText2(studentAns);
+            const alternatives = String(rawCorrect2).split("|").map((s) => normalizeText2(s));
             const isMatch = alternatives.some((alt) => alt === normStudent);
             if (isMatch) {
               if (isListening) listeningCorrect++;
@@ -100917,8 +106246,8 @@ var AssessmentService = class {
               sVal = studentAns;
             }
             if (sVal != null && String(sVal).trim() !== "") {
-              const normStudent = normalizeText(sVal);
-              const alternatives = String(keyVal).split("|").map((s) => normalizeText(s));
+              const normStudent = normalizeText2(sVal);
+              const alternatives = String(keyVal).split("|").map((s) => normalizeText2(s));
               const isMatch = alternatives.some((alt) => alt === normStudent);
               if (isMatch) {
                 if (isListening) listeningCorrect++;
@@ -100937,11 +106266,11 @@ var AssessmentService = class {
               const values = Object.values(studentAns).filter(Boolean);
               if (values.length > 0) rawAns = values.join(" ");
             }
-            const normStudent = normalizeText(rawAns);
-            const normCorrect = normalizeText(key.correctAnswer);
+            const normStudent = normalizeText2(rawAns);
+            const normCorrect = normalizeText2(key.correctAnswer);
             let isMatch = normStudent === normCorrect;
             if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
-              isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+              isMatch = key.acceptedAnswers.some((acc) => normalizeText2(acc) === normStudent);
             }
             if (!isMatch) {
               const stripAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -100950,7 +106279,7 @@ var AssessmentService = class {
               isMatch = studentStripped === correctStripped;
               if (!isMatch && key.acceptedAnswers) {
                 isMatch = key.acceptedAnswers.some(
-                  (acc) => stripAccents(normalizeText(acc)) === studentStripped
+                  (acc) => stripAccents(normalizeText2(acc)) === studentStripped
                 );
               }
             }
@@ -101373,7 +106702,7 @@ var AssessmentService = class {
     const answers = session.answers || {};
     const res = session.result || {};
     const teacherReview = res.teacherReview || {};
-    const normalizeText = (s) => String(s || "").trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ");
+    const normalizeText2 = (s) => String(s || "").trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ");
     const questionBreakdown = [];
     if (testPayload) {
       const allObjectiveQuestions = [
@@ -101405,8 +106734,8 @@ var AssessmentService = class {
             }
             let isCorrect = false;
             if (sVal != null && String(sVal).trim() !== "") {
-              const normStudent = normalizeText(sVal);
-              const alternatives = String(keyVal).split("|").map((s) => normalizeText(s));
+              const normStudent = normalizeText2(sVal);
+              const alternatives = String(keyVal).split("|").map((s) => normalizeText2(s));
               isCorrect = alternatives.some((alt) => alt === normStudent);
             }
             questionBreakdown.push({
@@ -101433,11 +106762,11 @@ var AssessmentService = class {
           }
           let isCorrect = false;
           if (formattedStudentAns != null && formattedStudentAns !== "" && key) {
-            const normStudent = normalizeText(formattedStudentAns);
-            const alternatives = String(key.correctAnswer).split("|").map((s) => normalizeText(s));
+            const normStudent = normalizeText2(formattedStudentAns);
+            const alternatives = String(key.correctAnswer).split("|").map((s) => normalizeText2(s));
             isCorrect = alternatives.some((alt) => alt === normStudent);
             if (!isCorrect && key.acceptedAnswers) {
-              isCorrect = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+              isCorrect = key.acceptedAnswers.some((acc) => normalizeText2(acc) === normStudent);
             }
           }
           questionBreakdown.push({
@@ -122158,6 +127487,242 @@ var cambridgeRoutes = async (fastify) => {
 };
 var cambridge_routes_default = cambridgeRoutes;
 
+// server/routes/faculty.routes.ts
+var facultyRoutes = async (fastify) => {
+  fastify.get("/", async (_request, reply) => {
+    try {
+      const items = await fastify.prisma.facultyProfile.findMany({
+        where: { isPublished: true },
+        orderBy: { createdAt: "asc" }
+      });
+      return reply.send({ success: true, data: items });
+    } catch (err) {
+      fastify.log.error(err, "Failed to get faculty profiles");
+      return reply.status(500).send({ error: "Failed to get faculty profiles" });
+    }
+  });
+  fastify.get(
+    "/all",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (_request, reply) => {
+      try {
+        const items = await fastify.prisma.facultyProfile.findMany({
+          orderBy: { createdAt: "asc" }
+        });
+        return reply.send({ success: true, data: items });
+      } catch (err) {
+        fastify.log.error(err, "Failed to get all faculty profiles");
+        return reply.status(500).send({ error: "Failed to get faculty profiles" });
+      }
+    }
+  );
+  fastify.post(
+    "/",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      try {
+        const body = request.body;
+        const {
+          id,
+          name,
+          role,
+          avatar_url,
+          avatarUrl,
+          ielts_badge,
+          ieltsBadge,
+          ielts_badge_sub,
+          ieltsBadgeSub,
+          achievements,
+          trf_image_url,
+          trfImageUrl,
+          is_published,
+          isPublished
+        } = body;
+        const data = {
+          name: name || "Gi\u1EA3ng vi\xEAn ARIS",
+          role: role || "IELTS Instructor",
+          avatarUrl: avatarUrl !== void 0 ? avatarUrl : avatar_url !== void 0 ? avatar_url : null,
+          ieltsBadge: ieltsBadge !== void 0 ? ieltsBadge : ielts_badge || "8.0",
+          ieltsBadgeSub: ieltsBadgeSub !== void 0 ? ieltsBadgeSub : ielts_badge_sub || null,
+          achievements: Array.isArray(achievements) ? achievements : [],
+          trfImageUrl: trfImageUrl !== void 0 ? trfImageUrl : trf_image_url !== void 0 ? trf_image_url : null,
+          isPublished: isPublished !== void 0 ? Boolean(isPublished) : is_published !== void 0 ? Boolean(is_published) : true
+        };
+        let result;
+        if (id && id !== "luu-van-dang") {
+          result = await fastify.prisma.facultyProfile.upsert({
+            where: { id },
+            create: { id, ...data },
+            update: data
+          });
+        } else {
+          result = await fastify.prisma.facultyProfile.create({
+            data
+          });
+        }
+        return reply.status(200).send({ success: true, data: result });
+      } catch (err) {
+        fastify.log.error(err, "Failed to save faculty profile");
+        return reply.status(500).send({ error: "Failed to save faculty profile" });
+      }
+    }
+  );
+  fastify.patch(
+    "/:id/toggle-publish",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const { isPublished, is_published } = request.body;
+        const targetState = isPublished !== void 0 ? Boolean(isPublished) : Boolean(is_published);
+        const updated = await fastify.prisma.facultyProfile.update({
+          where: { id },
+          data: { isPublished: targetState }
+        });
+        return reply.send({ success: true, data: updated });
+      } catch (err) {
+        fastify.log.error(err, "Failed to toggle faculty publish state");
+        return reply.status(500).send({ error: "Failed to toggle publish status" });
+      }
+    }
+  );
+  fastify.delete(
+    "/:id",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        if (id === "luu-van-dang") {
+          await fastify.prisma.facultyProfile.deleteMany({
+            where: { name: "L\u01B0u V\u0103n \u0110ang" }
+          });
+          return reply.send({ success: true, message: "Faculty deleted successfully" });
+        }
+        await fastify.prisma.facultyProfile.delete({
+          where: { id }
+        });
+        return reply.send({ success: true, message: "Faculty deleted successfully" });
+      } catch (err) {
+        fastify.log.error(err, "Failed to delete faculty profile");
+        return reply.status(500).send({ error: "Failed to delete faculty profile" });
+      }
+    }
+  );
+};
+var faculty_routes_default = facultyRoutes;
+
+// server/routes/evidence.routes.ts
+var evidenceRoutes = async (fastify) => {
+  fastify.get("/", async (_request, reply) => {
+    try {
+      const items = await fastify.prisma.studentEvidence.findMany({
+        where: { published: true, consentConfirmed: true },
+        orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }]
+      });
+      return reply.send({ success: true, data: items });
+    } catch (err) {
+      fastify.log.error(err, "Failed to get evidence items");
+      return reply.status(500).send({ error: "Failed to get evidence items" });
+    }
+  });
+  fastify.get(
+    "/all",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (_request, reply) => {
+      try {
+        const items = await fastify.prisma.studentEvidence.findMany({
+          orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }]
+        });
+        return reply.send({ success: true, data: items });
+      } catch (err) {
+        fastify.log.error(err, "Failed to get all evidence items");
+        return reply.status(500).send({ error: "Failed to get evidence items" });
+      }
+    }
+  );
+  fastify.post(
+    "/",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      try {
+        const body = request.body;
+        const {
+          id,
+          studentName,
+          studentSchool,
+          title,
+          imageUrl,
+          story,
+          scoreBefore,
+          overallScore,
+          listeningScore,
+          readingScore,
+          writingScore,
+          speakingScore,
+          studyDuration,
+          courseName,
+          featured,
+          published,
+          consentConfirmed,
+          displayOrder
+        } = body;
+        const data = {
+          studentName: studentName || "H\u1ECDc vi\xEAn ARIS",
+          studentSchool: studentSchool || null,
+          title: title || "Ti\u1EBFn b\u1ED9 n\u0103ng l\u1EF1c IELTS c\xF9ng ARIS",
+          imageUrl: imageUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
+          story: story || "",
+          scoreBefore: scoreBefore || null,
+          overallScore: overallScore || "6.5",
+          listeningScore: listeningScore || null,
+          readingScore: readingScore || null,
+          writingScore: writingScore || null,
+          speakingScore: speakingScore || null,
+          studyDuration: studyDuration || "12 tu\u1EA7n",
+          courseName: courseName || "Kh\xF3a MASTER",
+          featured: Boolean(featured),
+          published: Boolean(published && consentConfirmed),
+          consentConfirmed: Boolean(consentConfirmed),
+          displayOrder: typeof displayOrder === "number" ? displayOrder : 0
+        };
+        let result;
+        if (id && !id.startsWith("evi-")) {
+          result = await fastify.prisma.studentEvidence.upsert({
+            where: { id },
+            create: { id, ...data },
+            update: data
+          });
+        } else {
+          result = await fastify.prisma.studentEvidence.create({
+            data
+          });
+        }
+        return reply.status(200).send({ success: true, data: result });
+      } catch (err) {
+        fastify.log.error(err, "Failed to save evidence item");
+        return reply.status(500).send({ error: "Failed to save evidence item" });
+      }
+    }
+  );
+  fastify.delete(
+    "/:id",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        await fastify.prisma.studentEvidence.delete({
+          where: { id }
+        });
+        return reply.send({ success: true, message: "Evidence item deleted successfully" });
+      } catch (err) {
+        fastify.log.error(err, "Failed to delete evidence item");
+        return reply.status(500).send({ error: "Failed to delete evidence item" });
+      }
+    }
+  );
+};
+var evidence_routes_default = evidenceRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -122209,6 +127774,8 @@ var routes = async (fastify) => {
   await fastify.register(arenaRoutes, { prefix: "/arena" });
   await fastify.register(reading_discussion_routes_default, { prefix: "/reading-discussions" });
   await fastify.register(cambridge_routes_default, { prefix: "/cambridge" });
+  await fastify.register(faculty_routes_default, { prefix: "/faculty" });
+  await fastify.register(evidence_routes_default, { prefix: "/evidence" });
 };
 var routes_default = routes;
 

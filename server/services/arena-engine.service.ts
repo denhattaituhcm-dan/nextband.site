@@ -75,7 +75,7 @@ export class ArenaEngineService {
     }
 
     // 2. Idempotency Check: Nếu lệnh này đã được xử lý thành công trước đó (do mạng retry)
-    const questions = await this.bankService.getQuestionsForRoom(room.examId);
+    const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
     const totalQuestions = questions.length;
 
     if (room.lastCommandId === commandId) {
@@ -109,7 +109,8 @@ export class ArenaEngineService {
         nextStatus = "QUESTION_LIVE";
         nextRound = 0;
         activeQuestionId = questions[0]?.id || "q_0";
-        deadlineAt = new Date(now.getTime() + 15 * 1000); // 15 giây chuẩn
+        // 15 giây làm bài chuẩn + 3 giây đếm lùi khởi động câu đầu cho học sinh chuẩn bị
+        deadlineAt = new Date(now.getTime() + (15 + 3) * 1000);
         break;
       }
 
@@ -264,7 +265,7 @@ export class ArenaEngineService {
     }
 
     // 3. Server tính điểm: Tuyệt đối không dùng điểm số do Client gửi lên
-    const questions = await this.bankService.getQuestionsForRoom(room.examId);
+    const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
     const question = questions[roundIndex];
     const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
 
@@ -397,7 +398,7 @@ export class ArenaEngineService {
       };
     }
 
-    const questions = await this.bankService.getQuestionsForRoom(room.examId);
+    const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
 
     return {
       roomId: room.id,

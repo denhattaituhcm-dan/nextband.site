@@ -19,14 +19,89 @@ function cleanHtml(raw: string): string {
     .trim();
 }
 
+/**
+ * Deterministic string hash for seeded shuffling
+ */
+export function hashSeed(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
+/**
+ * Shuffles question options evenly across A, B, C, D using a seeded pseudo-random shuffle.
+ * Guarantees correct answer and misconception bait options are correctly updated.
+ */
+export function shuffleQuestionOptions(question: ArenaQuestion, seedStr?: string): ArenaQuestion {
+  if (!question.options || question.options.length < 2) {
+    return question;
+  }
+
+  // Find original correct option and original bait option
+  const originalCorrect = question.options.find((o) => o.id === question.correctOptionId) || question.options[0];
+  const originalBait = question.misconception
+    ? question.options.find((o) => o.id === question.misconception?.baitOptionId)
+    : null;
+
+  // Pseudo-random seeded Fisher-Yates shuffle
+  const seedNum = hashSeed(seedStr || question.id || "arena_shuffle");
+  const shuffled = [...question.options];
+  let curSeed = seedNum;
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    curSeed = (curSeed * 1664525 + 1013904223) % 4294967296;
+    const j = Math.floor((curSeed / 4294967296) * (i + 1));
+    const temp = shuffled[i];
+    shuffled[i] = shuffled[j];
+    shuffled[j] = temp;
+  }
+
+  const labels: Array<"A" | "B" | "C" | "D"> = ["A", "B", "C", "D"];
+  const newOptions: ArenaQuestionOption[] = shuffled.map((opt, idx) => ({
+    id: `opt_${labels[idx]}`,
+    label: labels[idx],
+    text: opt.text,
+  }));
+
+  // Identify new correct option
+  const newCorrectIdx = shuffled.findIndex((opt) => opt.text === originalCorrect.text);
+  const correctIdxSafe = newCorrectIdx >= 0 ? newCorrectIdx : 0;
+  const newCorrectOptionId = newOptions[correctIdxSafe].id;
+  const newCorrectAnswerText = `${newOptions[correctIdxSafe].label}. ${newOptions[correctIdxSafe].text}`;
+
+  // Identify new bait option if misconception is defined
+  let newMisconception = question.misconception;
+  if (originalBait && question.misconception) {
+    const newBaitIdx = shuffled.findIndex((opt) => opt.text === originalBait.text);
+    if (newBaitIdx >= 0) {
+      newMisconception = {
+        ...question.misconception,
+        baitOptionId: newOptions[newBaitIdx].id,
+        baitOptionText: `${newOptions[newBaitIdx].label}. ${newOptions[newBaitIdx].text}`,
+      };
+    }
+  }
+
+  return {
+    ...question,
+    options: newOptions,
+    correctOptionId: newCorrectOptionId,
+    correctAnswerText: newCorrectAnswerText,
+    misconception: newMisconception,
+  };
+}
+
 export class ArenaBankService {
   constructor(private prisma: PrismaClient) {}
 
   /**
    * Loads and normalizes playable Arena questions from a specific Exam in DB.
    * If exam has no multiple choice questions or examId is null, fallbacks to ARENA_STANDARD_QUESTIONS.
+   * Options are shuffled deterministically per room/seed so correct answers are not predictably 'A'.
    */
-  public async getQuestionsForRoom(examId?: string | null): Promise<ArenaQuestion[]> {
+  public async getQuestionsForRoom(examId?: string | null, seed?: string): Promise<ArenaQuestion[]> {
     if (!examId) {
       return ARENA_STANDARD_QUESTIONS;
     }
@@ -161,7 +236,7 @@ export class ArenaBankService {
           const bankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
           return bankQuestions.map((bq, idx) => {
             const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
-            return {
+            const rawQ: ArenaQuestion = {
               id: bq.id,
               roundIndex: idx,
               prompt: bq.prompt,
@@ -169,7 +244,9 @@ export class ArenaBankService {
               correctOptionId: bq.correctOptionId,
               correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
               correctExplanation: bq.explanation,
+              misconception: bq.misconception,
             };
+            return shuffleQuestionOptions(rawQ, seed ? `${seed}_${bq.id}` : bq.id);
           });
         }
       }

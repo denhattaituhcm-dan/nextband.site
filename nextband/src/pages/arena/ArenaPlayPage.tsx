@@ -79,6 +79,7 @@ export default function ArenaPlayPage() {
   const [isLocked, setIsLocked] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<boolean>(false);
   const [isJoinedAcknowledged, setIsJoinedAcknowledged] = useState<boolean>(false);
+  const [startCountdown, setStartCountdown] = useState<number | null>(null);
 
   // State theo dõi các câu làm sai để phục vụ Sổ tay học thuật sau trận
   const [wrongQuestions, setWrongQuestions] = useState<RevengeQuestionItem[]>([]);
@@ -189,9 +190,24 @@ export default function ArenaPlayPage() {
         recordHeartbeat('lobby-ping');
         setIsJoinedAcknowledged(true);
       })
+      .on('broadcast', { event: 'arena-countdown' }, ({ payload }) => {
+        setIsJoinedAcknowledged(true);
+        if (typeof payload?.countdown === 'number') {
+          setStartCountdown(payload.countdown);
+          if (payload.countdown === 0) {
+            setTimeout(() => setStartCountdown(null), 800);
+          }
+        }
+        if (payload?.question) setCurrentQuestion(payload.question);
+        if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
+        if (typeof payload?.totalQuestions === 'number') setTotalQuestions(payload.totalQuestions);
+        if (payload?.gameMode) setGameMode(payload.gameMode);
+        if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
+      })
       .on('broadcast', { event: 'question-live' }, ({ payload }) => {
         recordHeartbeat('question-live');
         setIsJoinedAcknowledged(true);
+        setStartCountdown(null);
         if (payload?.gameMode) setGameMode(payload.gameMode);
         if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
         else setTimeLeft(15);
@@ -210,6 +226,7 @@ export default function ArenaPlayPage() {
       })
       .on('broadcast', { event: 'arena-started' }, ({ payload }) => {
         setIsJoinedAcknowledged(true);
+        setStartCountdown(null);
         if (payload?.gameMode) setGameMode(payload.gameMode);
         if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
         else setTimeLeft(15);
@@ -472,7 +489,32 @@ export default function ArenaPlayPage() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col justify-center my-4 space-y-4">
-        {gameState === 'LOBBY_WAITING' ? (
+        {startCountdown !== null ? (
+          /* MÀN HÌNH ĐẾM LÙI KHỞI ĐỘNG CÂU 1 (3... 2... 1... BẮT ĐẦU!) */
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 py-6 animate-in zoom-in-95 duration-200">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-bold tracking-wide uppercase shadow-lg">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Chuẩn Bị Bắt Đầu!
+            </div>
+
+            <div className="relative">
+              <div className="absolute -inset-6 rounded-full bg-purple-600/30 blur-xl animate-pulse" />
+              <div className="relative flex items-center justify-center w-36 h-36 rounded-full bg-gradient-to-br from-purple-600 to-indigo-800 border-4 border-purple-300/60 shadow-2xl shadow-purple-600/50">
+                <span className="text-6xl font-black text-white tracking-wider" key={startCountdown}>
+                  {startCountdown > 0 ? startCountdown : 'GO!'}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <h2 className="text-xl font-black text-white">
+                {startCountdown > 0 ? 'Sẵn sàng chọn đáp án!' : 'BẮT ĐẦU!'}
+              </h2>
+              <p className="text-xs text-purple-200/80 max-w-xs mx-auto">
+                Nhìn lên màn chiếu để đọc câu hỏi và bấm nút màu tương ứng!
+              </p>
+            </div>
+          </div>
+        ) : gameState === 'LOBBY_WAITING' ? (
           /* SẢNH CHỜ HỌC VIÊN - CHUẨN KAHOOT ZERO-FLUFF & PVZ AVATAR */
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-5 py-4 animate-fadeIn">
             <div className="relative">

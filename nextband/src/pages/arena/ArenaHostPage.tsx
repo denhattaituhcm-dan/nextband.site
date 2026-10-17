@@ -19,7 +19,7 @@ import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/compon
 import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy } from 'lucide-react';
+import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize } from 'lucide-react';
 
 interface PlayerAnswerRecord {
   playerId: string;
@@ -76,12 +76,51 @@ export default function ArenaHostPage() {
     stopLobbyBgm,
     startQuestionSuspense,
     stopQuestionSuspense,
+    playCountdownBeep,
     toggleBgm,
     playCorrectSound,
     playClimberSound,
     playPodiumSound,
     playClickSound,
   } = useArenaAudio();
+
+  // Chế độ toàn màn hình cho Giáo viên trình chiếu
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const toggleFullScreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.warn('Lỗi bật toàn màn hình:', err);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch((err) => {
+          console.warn('Lỗi tắt toàn màn hình:', err);
+        });
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  // Đếm ngược 3 giây khởi động kịch tính trước Câu 1
+  const [startCountdown, setStartCountdown] = useState<number | null>(null);
+  const countdownTimerRef = useRef<any>(null);
+
+  useEffect(() => {
+    return () => {
+      if (countdownTimerRef.current) {
+        clearInterval(countdownTimerRef.current);
+      }
+    };
+  }, []);
 
   const channelRef = useRef<any>(null);
   const stateRef = useRef<ArenaState>(state);
@@ -569,30 +608,76 @@ export default function ArenaHostPage() {
           setQuestionIndex(0);
           setAnswers({});
           setCumulativeScores({});
-          setState('QUESTION_LIVE');
-          setTimeLeft(roomSettings.timeLimit);
-          startQuestionSuspense(roomSettings.timeLimit);
+          stopLobbyBgm();
+
           const qToBroadcast = serverQuestion || currentQuestion;
+          const payload = {
+            pin: pinCode,
+            timeLimit: roomSettings.timeLimit,
+            gameMode: roomSettings.gameMode,
+            questionIndex: 0,
+            totalQuestions: serverTotal,
+            question: qToBroadcast,
+          };
+
+          // Đếm ngược 3 giây khởi động kịch tính trước Câu 1 (3... 2... 1... BẮT ĐẦU!)
+          if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+          setStartCountdown(3);
+          playCountdownBeep(3);
+
           if (channelRef.current) {
-            const payload = {
-              pin: pinCode,
-              timeLimit: roomSettings.timeLimit,
-              gameMode: roomSettings.gameMode,
-              questionIndex: 0,
-              totalQuestions: serverTotal,
-              question: qToBroadcast,
-            };
             channelRef.current.send({
               type: 'broadcast',
-              event: 'question-live',
-              payload,
-            });
-            channelRef.current.send({
-              type: 'broadcast',
-              event: 'arena-started',
-              payload,
+              event: 'arena-countdown',
+              payload: { ...payload, countdown: 3 },
             });
           }
+
+          let currentCount = 3;
+          countdownTimerRef.current = setInterval(() => {
+            currentCount -= 1;
+            if (currentCount > 0) {
+              setStartCountdown(currentCount);
+              playCountdownBeep(currentCount);
+              if (channelRef.current) {
+                channelRef.current.send({
+                  type: 'broadcast',
+                  event: 'arena-countdown',
+                  payload: { ...payload, countdown: currentCount },
+                });
+              }
+            } else if (currentCount === 0) {
+              setStartCountdown(0);
+              playCountdownBeep(0);
+              if (channelRef.current) {
+                channelRef.current.send({
+                  type: 'broadcast',
+                  event: 'arena-countdown',
+                  payload: { ...payload, countdown: 0 },
+                });
+              }
+            } else {
+              clearInterval(countdownTimerRef.current);
+              countdownTimerRef.current = null;
+              setStartCountdown(null);
+              setState('QUESTION_LIVE');
+              setTimeLeft(roomSettings.timeLimit);
+              startQuestionSuspense(roomSettings.timeLimit);
+
+              if (channelRef.current) {
+                channelRef.current.send({
+                  type: 'broadcast',
+                  event: 'question-live',
+                  payload,
+                });
+                channelRef.current.send({
+                  type: 'broadcast',
+                  event: 'arena-started',
+                  payload,
+                });
+              }
+            }
+          }, 1000);
           break;
         }
         case 'LOCK_ROUND':
@@ -763,11 +848,59 @@ export default function ArenaHostPage() {
               </>
             )}
           </button>
+
+          {/* Nút Toàn màn hình cho Máy chiếu lớp học */}
+          <button
+            onClick={toggleFullScreen}
+            className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-950/60 hover:bg-purple-900/60 border border-purple-800/60 text-xs font-bold rounded-full transition-all cursor-pointer text-slate-300 hover:text-white"
+            title={isFullscreen ? 'Thu nhỏ màn hình (ESC)' : 'Trình chiếu Toàn màn hình (F11)'}
+          >
+            {isFullscreen ? (
+              <>
+                <Minimize className="w-4 h-4 text-amber-400" />
+                <span>Thu nhỏ</span>
+              </>
+            ) : (
+              <>
+                <Maximize className="w-4 h-4 text-purple-300" />
+                <span>Toàn màn hình</span>
+              </>
+            )}
+          </button>
         </div>
       </header>
 
       {/* Main Classroom Projection Display */}
       <main className="flex-1 flex flex-col items-center justify-center my-6 text-center max-w-6xl mx-auto w-full">
+        {/* Animated Countdown Overlay before Question 1 (3... 2... 1... BẮT ĐẦU!) */}
+        {startCountdown !== null && (
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="relative flex flex-col items-center justify-center space-y-6">
+              <div className="px-5 py-1.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 font-bold text-xs uppercase tracking-widest shadow-lg shadow-purple-950/50">
+                Trận Đấu Bắt Đầu · NextQuiz Arena
+              </div>
+              
+              <div className="relative">
+                <div className="absolute -inset-8 rounded-full bg-purple-600/30 blur-2xl animate-pulse" />
+                <div className="relative flex items-center justify-center w-48 h-48 rounded-full bg-gradient-to-br from-purple-600 to-indigo-800 border-4 border-purple-300/60 shadow-2xl shadow-purple-600/50">
+                  <span className="text-7xl md:text-8xl font-black text-white tracking-wider animate-in zoom-in-50 duration-300" key={startCountdown}>
+                    {startCountdown > 0 ? startCountdown : 'GO!'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-center space-y-1">
+                <h3 className="text-xl md:text-2xl font-black text-white">
+                  {startCountdown > 0 ? 'Chuẩn bị bước vào Câu 1!' : 'BẮT ĐẦU!'}
+                </h3>
+                <p className="text-sm text-purple-300/80 font-medium">
+                  Tập trung quan sát và chọn đáp án chính xác nhất
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {state === 'LOBBY' && (
           <ArenaLobbyKahoot
             players={players}

@@ -88,6 +88,43 @@ export function useArenaAudio() {
     }, 1000);
   }, [playSuspenseBeep]);
 
+  // Phát tiếng đếm ngược 3, 2, 1 kịch tính (Ascending tones) và tiếng Bắt đầu (High chime)
+  const playCountdownBeep = useCallback((count: number) => {
+    if (!isBgmEnabled) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+
+      if (count > 0) {
+        // 3 -> 440Hz (A4), 2 -> 554Hz (C#5), 1 -> 659Hz (E5)
+        const freqs: Record<number, number> = { 3: 440, 2: 554, 1: 659 };
+        const freq = freqs[count] || 520;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.22);
+      } else {
+        // 0 / BẮT ĐẦU: High celebratory chime 880Hz (A5)
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.45);
+      }
+    } catch {
+      // Ignore
+    }
+  }, [getAudioContext, isBgmEnabled]);
+
   // Dừng nhạc đếm lùi
   const stopQuestionSuspense = useCallback(() => {
     if (suspenseTimerRef.current) {
@@ -249,6 +286,7 @@ export function useArenaAudio() {
     stopLobbyBgm,
     startQuestionSuspense,
     stopQuestionSuspense,
+    playCountdownBeep,
     toggleBgm,
     playClickSound,
     playCorrectSound,

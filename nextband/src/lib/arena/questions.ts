@@ -26,7 +26,68 @@ export interface ArenaQuestion {
   };
 }
 
-export const ARENA_COLLOCATION_QUESTIONS: ArenaQuestion[] = [
+function hashSeed(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
+export function shuffleQuestionOptions(question: ArenaQuestion, seedStr?: string): ArenaQuestion {
+  if (!question.options || question.options.length < 2) return question;
+
+  const originalCorrect = question.options.find((o) => o.id === question.correctOptionId) || question.options[0];
+  const originalBait = question.misconception
+    ? question.options.find((o) => o.id === question.misconception.baitOptionId)
+    : null;
+
+  const seedNum = hashSeed(seedStr || question.id || 'arena_fallback');
+  const shuffled = [...question.options];
+  let curSeed = seedNum;
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    curSeed = (curSeed * 1664525 + 1013904223) % 4294967296;
+    const j = Math.floor((curSeed / 4294967296) * (i + 1));
+    const temp = shuffled[i];
+    shuffled[i] = shuffled[j];
+    shuffled[j] = temp;
+  }
+
+  const labels: Array<'A' | 'B' | 'C' | 'D'> = ['A', 'B', 'C', 'D'];
+  const newOptions: ArenaQuestionOption[] = shuffled.map((opt, idx) => ({
+    id: `opt_${labels[idx]}`,
+    label: labels[idx],
+    text: opt.text,
+  }));
+
+  const newCorrectIdx = shuffled.findIndex((opt) => opt.text === originalCorrect.text);
+  const correctIdxSafe = newCorrectIdx >= 0 ? newCorrectIdx : 0;
+  const newCorrectOptionId = newOptions[correctIdxSafe].id;
+  const newCorrectAnswerText = `${newOptions[correctIdxSafe].label}. ${newOptions[correctIdxSafe].text}`;
+
+  let newMisconception = question.misconception;
+  if (originalBait && question.misconception) {
+    const newBaitIdx = shuffled.findIndex((opt) => opt.text === originalBait.text);
+    if (newBaitIdx >= 0) {
+      newMisconception = {
+        ...question.misconception,
+        baitOptionId: newOptions[newBaitIdx].id,
+        baitOptionText: `${newOptions[newBaitIdx].label}. ${newOptions[newBaitIdx].text}`,
+      };
+    }
+  }
+
+  return {
+    ...question,
+    options: newOptions,
+    correctOptionId: newCorrectOptionId,
+    correctAnswerText: newCorrectAnswerText,
+    misconception: newMisconception,
+  };
+}
+
+const RAW_ARENA_COLLOCATION_QUESTIONS: ArenaQuestion[] = [
   {
     id: 'q_colloc_01',
     roundIndex: 0,
@@ -128,3 +189,8 @@ export const ARENA_COLLOCATION_QUESTIONS: ArenaQuestion[] = [
     },
   },
 ];
+
+export const ARENA_COLLOCATION_QUESTIONS: ArenaQuestion[] = RAW_ARENA_COLLOCATION_QUESTIONS.map((q, idx) =>
+  shuffleQuestionOptions({ ...q, roundIndex: idx }, `client_init_${q.id}`)
+);
+
