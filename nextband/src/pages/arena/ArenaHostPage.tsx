@@ -17,6 +17,7 @@ import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { TeacherContextualButton } from '@/components/arena/TeacherContextualButton';
 import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/components/arena/HostSettingsModal';
 import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
+import { ArenaFreeFireLeaderboard } from '@/components/arena/ArenaFreeFireLeaderboard';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
 import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap } from 'lucide-react';
@@ -557,7 +558,6 @@ export default function ArenaHostPage() {
     }));
   }, [cumulativeScores, playerGoldMap, players, roomSettings.gameMode]);
 
-  const topFive: PlayerPublicRank[] = useMemo(() => allRankings.slice(0, 5), [allRankings]);
 
   // Cho phép Host kick học viên ra khỏi sảnh chờ để họ có thể tự vào lại
   const handleKickPlayer = useCallback(
@@ -1255,45 +1255,14 @@ export default function ArenaHostPage() {
         )}
 
         {state === 'LEADERBOARD' && (
-          <div className="w-full max-w-md mx-auto space-y-4 animate-fadeIn">
-            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-1.5">
-              {roomSettings.gameMode === 'GOLD_QUEST' ? (
-                <>💰 BẢNG VÀNG ĐẠI GIA LỚP HỌC</>
-              ) : (
-                <>🎯 BẢNG XẾP HẠNG TOP 5 CỦA LỚP</>
-              )}
-            </div>
-            {topFive.length === 0 ? (
-              <p className="text-sm text-purple-300/70">Chưa có học sinh nào nộp câu trả lời</p>
-            ) : (
-              topFive.map((p) => (
-                <div
-                  key={p.playerId}
-                  className="flex items-center justify-between p-3.5 bg-purple-950/50 border border-purple-800/50 rounded-2xl shadow-md"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black ${
-                        p.rank === 1
-                          ? 'bg-amber-400 text-slate-950'
-                          : p.rank === 2
-                          ? 'bg-slate-300 text-slate-950'
-                          : p.rank === 3
-                          ? 'bg-amber-700 text-white'
-                          : 'bg-purple-900 text-purple-300'
-                      }`}
-                    >
-                      {p.rank}
-                    </div>
-                    <span className="font-extrabold text-white text-sm">{p.nickname}</span>
-                  </div>
-                  <span className="text-sm font-black text-amber-400 font-mono flex items-center gap-1">
-                    {p.totalScore} {roomSettings.gameMode === 'GOLD_QUEST' ? '🪙' : 'pts'}
-                  </span>
-                </div>
-              ))
-            )}
-          </div>
+          <ArenaFreeFireLeaderboard
+            rankings={allRankings}
+            answers={answers}
+            players={players}
+            questionIndex={questionIndex}
+            totalQuestions={totalQuestions}
+            gameMode={roomSettings.gameMode}
+          />
         )}
 
         {state === 'PODIUM' && (
