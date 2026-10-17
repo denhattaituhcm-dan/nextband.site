@@ -10,13 +10,14 @@ import { supabase } from '@/lib/supabase';
 import { ArrowRight, Sparkles, Dices, LayoutGrid } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { AvatarPickerModal } from '@/components/arena/AvatarPickerModal';
-import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
+import { CHARACTER_AVATARS, getCharacterBySeed, getCharacterCategoryLabel } from '@/lib/arena/characterCatalog';
 import { arenaApi } from '@/lib/api';
 
 export default function ArenaJoinPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [pin, setPin] = useState('');
+  const [isQrPin, setIsQrPin] = useState(false);
   const [nickname, setNickname] = useState('');
   const [avatarId, setAvatarId] = useState<number>(() => Math.floor(Math.random() * CHARACTER_AVATARS.length));
   const [isCustomAvatarSelected, setIsCustomAvatarSelected] = useState(false);
@@ -54,8 +55,10 @@ export default function ArenaJoinPage() {
     const urlPin = searchParams.get('pin');
     if (urlPin && urlPin.trim().length === 6) {
       setPin(urlPin.trim());
+      setIsQrPin(true);
     } else {
       setPin('');
+      setIsQrPin(false);
     }
   }, [searchParams]);
 
@@ -108,31 +111,55 @@ export default function ArenaJoinPage() {
 
   return (
     <div className="min-h-screen min-h-[100dvh] bg-[#150a33] text-white flex flex-col items-center justify-center p-4 sm:p-6 font-sans select-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
-      <div className="w-full max-w-md mx-auto space-y-6 sm:space-y-8 my-auto py-4">
+      <div className="w-full max-w-md mx-auto space-y-5 sm:space-y-6 my-auto py-2">
         {/* Title & Brand */}
-        <div className="text-center space-y-2.5">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-orange-500/10 border border-orange-500/30 rounded-full text-orange-400 text-xs sm:text-sm font-bold shadow-sm">
-            <Sparkles className="w-4 h-4" /> NextQuiz
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-orange-500/15 border border-orange-500/40 rounded-full text-orange-400 text-xs sm:text-sm font-bold shadow-sm">
+            <Sparkles className="w-4 h-4 text-orange-400" /> NextQuiz
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">VÀO PHÒNG ĐẤU</h1>
-          <p className="text-xs sm:text-sm text-slate-300">Nhập mã PIN hiển thị trên màn chiếu hoặc quét mã QR</p>
+          <p className="text-xs sm:text-sm text-slate-300">
+            {isQrPin ? 'Đã nhận phòng đấu qua mã QR. Nhập tên để sẵn sàng!' : 'Nhập mã PIN hiển thị trên màn chiếu hoặc quét mã QR'}
+          </p>
         </div>
 
         {/* Input Form */}
-        <form onSubmit={handleJoin} className="space-y-4 sm:space-y-5">
-          <div>
-            <label className="text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
-              Mã PIN (6 số)
-            </label>
-            <input
-              type="text"
-              maxLength={6}
-              value={pin}
-              onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-              placeholder="000000"
-              className="w-full px-4 py-4 sm:py-4.5 bg-white/10 border border-white/20 backdrop-blur-md focus:border-orange-500 rounded-2xl text-center text-3xl sm:text-4xl font-black tracking-widest text-orange-400 font-mono outline-none transition-all placeholder:text-slate-500 placeholder:text-base placeholder:tracking-normal placeholder:font-sans shadow-inner"
-            />
-          </div>
+        <form onSubmit={handleJoin} className="space-y-3.5 sm:space-y-4">
+          {isQrPin ? (
+            <div className="flex items-center justify-between p-3.5 bg-orange-500/15 border-2 border-orange-500/40 rounded-2xl shadow-inner">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-bold text-slate-300 uppercase">Phòng thi:</span>
+                <span className="text-2xl font-black font-mono tracking-widest text-orange-400">#{pin}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsQrPin(false);
+                  setPin('');
+                }}
+                className="text-xs font-bold text-amber-300 hover:text-white underline cursor-pointer p-1"
+              >
+                Đổi mã khác
+              </button>
+            </div>
+          ) : (
+            <div>
+              <label className="text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+                Mã PIN (6 số)
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                autoComplete="one-time-code"
+                maxLength={6}
+                value={pin}
+                onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
+                placeholder="000000"
+                className="w-full px-4 py-3.5 sm:py-4 bg-white/10 border-2 border-white/20 backdrop-blur-md focus:border-orange-500 rounded-2xl text-center text-3xl sm:text-4xl font-black tracking-widest text-orange-400 font-mono outline-none transition-all placeholder:text-slate-500 placeholder:text-base placeholder:tracking-normal placeholder:font-sans shadow-inner"
+              />
+            </div>
+          )}
 
           <div>
             <label className="text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
@@ -142,9 +169,10 @@ export default function ArenaJoinPage() {
               type="text"
               maxLength={20}
               value={nickname}
+              autoFocus={isQrPin}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="VD: Bảo Nam"
-              className="w-full px-4 py-4 bg-white/10 border border-white/20 backdrop-blur-md focus:border-orange-500 rounded-2xl text-white font-bold text-base sm:text-lg outline-none transition-all placeholder:text-slate-500 shadow-inner"
+              className="w-full px-4 py-3.5 sm:py-4 bg-white/10 border-2 border-white/20 backdrop-blur-md focus:border-orange-500 rounded-2xl text-white font-bold text-base sm:text-lg outline-none transition-all placeholder:text-slate-500 shadow-inner"
             />
           </div>
 
@@ -153,7 +181,7 @@ export default function ArenaJoinPage() {
             <div
               onClick={() => setIsPickerOpen(true)}
               className="flex items-center gap-3.5 min-w-0 cursor-pointer group hover:opacity-90 transition-opacity"
-              title="Nhấn để mở danh sách toàn bộ 45 avatar"
+              title="Nhấn để mở danh sách toàn bộ avatar"
             >
               <div className="relative flex-shrink-0">
                 <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="md" />
@@ -168,8 +196,8 @@ export default function ArenaJoinPage() {
                 <span className="text-base font-black text-amber-300 truncate block group-hover:text-amber-200 transition-colors">
                   {CHARACTER_AVATARS[avatarId]?.name}
                 </span>
-                <span className="text-[11px] text-slate-300 block capitalize truncate">
-                  Bộ sưu tập: {CHARACTER_AVATARS[avatarId]?.type?.replace('_', ' ')}
+                <span className="text-[11px] text-slate-300 block truncate">
+                  Bộ sưu tập: {getCharacterCategoryLabel(CHARACTER_AVATARS[avatarId]?.type)}
                 </span>
               </div>
             </div>
@@ -206,11 +234,11 @@ export default function ArenaJoinPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 sm:py-4.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
+            className="w-full py-4 sm:py-4.5 bg-[#ea580c] hover:bg-[#c2410c] text-white font-black text-lg rounded-2xl border-2 border-orange-400 shadow-[0_5px_0_0_#9a3412] active:translate-y-1 active:shadow-[0_2px_0_0_#9a3412] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 select-none"
           >
             {isLoading ? 'Đang vào phòng...' : (
               <>
-                THAM GIA NGAY <ArrowRight className="w-5 h-5" />
+                THAM GIA NGAY <ArrowRight className="w-5 h-5 stroke-[2.5]" />
               </>
             )}
           </button>

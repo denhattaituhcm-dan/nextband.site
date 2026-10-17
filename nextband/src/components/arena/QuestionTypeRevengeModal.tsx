@@ -85,7 +85,8 @@ export const QuestionTypeRevengeModal: React.FC<QuestionTypeRevengeModalProps> =
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold text-sm transition"
+            className="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold text-base transition cursor-pointer"
+            aria-label="Đóng"
           >
             ✕
           </button>

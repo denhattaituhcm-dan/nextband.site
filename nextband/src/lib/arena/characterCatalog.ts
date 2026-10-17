@@ -392,3 +392,17 @@ export function getCharacterBySeed(seed?: number | string): CharacterAvatar {
   const idx = Math.abs(hash) % CHARACTER_AVATARS.length;
   return CHARACTER_AVATARS[idx];
 }
+
+export const CHARACTER_CATEGORY_MAP: Record<string, string> = {
+  all: 'Tất cả',
+  anime_fantasy: 'Yu-Gi-Oh! & Anime',
+  pop_heroes: 'Siêu Anh Hùng',
+  cute_chibi: 'Đáng Yêu & Chibi',
+  space_nature: 'Vũ Trụ & Tự Nhiên',
+  creative: 'Sáng Tạo',
+};
+
+export function getCharacterCategoryLabel(type?: string): string {
+  if (!type) return 'Linh vật';
+  return CHARACTER_CATEGORY_MAP[type] || type.replace(/_/g, ' ');
+}

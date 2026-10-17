@@ -1,11 +1,14 @@
 /**
- * STUDENT ANSWER CARD (ZERO-FLUFF MOBILE RESPONSE)
- * Tuân thủ Hiến pháp Điều 12 & Điều 41 (Zero-Fluff UI)
- * Hiển thị rõ ràng nội dung phương án + Phản xạ tức thì khi bấm (< 50ms)
+ * STUDENT ANSWER CARD (ZERO-FLUFF & ZERO-LAYOUT-SHIFT MOBILE RESPONSE)
+ * Tuân thủ Hiến pháp Điều 12 & Điều 41 (Zero-Fluff UI) và NextBand Design System (Hard Shadow)
+ * - Cố định indicator bên phải, triệt tiêu 100% Layout Shift khi bấm
+ * - Tối ưu chiều cao gọn gàng vừa khít màn hình di động (< 60px/thẻ)
+ * - Phản xạ tức thì (< 50ms) với xúc giác cơ học lún nhẹ
  */
 
 import React from 'react';
 import { ArenaQuestionOption } from '@/lib/arena/types';
+import { Check } from 'lucide-react';
 
 interface StudentAnswerCardProps {
   option: ArenaQuestionOption;
@@ -15,29 +18,37 @@ interface StudentAnswerCardProps {
   onSelect: (optionId: string) => void;
 }
 
-const OPTION_THEMES: Record<string, { bg: string; border: string; text: string; labelBg: string }> = {
+const OPTION_THEMES: Record<
+  string,
+  {
+    bg: string;
+    border: string;
+    shadow: string;
+    labelBg: string;
+  }
+> = {
   A: {
-    bg: 'bg-red-950/40 hover:bg-red-900/50 active:bg-red-900/70',
-    border: 'border-red-500/40',
-    text: 'text-red-300',
-    labelBg: 'bg-red-500 text-white',
+    bg: 'bg-rose-950/50 hover:bg-rose-900/60',
+    border: 'border-rose-500/50',
+    shadow: 'shadow-[0_3px_0_0_#4c0519]',
+    labelBg: 'bg-rose-500 text-white',
   },
   B: {
-    bg: 'bg-blue-950/40 hover:bg-blue-900/50 active:bg-blue-900/70',
-    border: 'border-blue-500/40',
-    text: 'text-blue-300',
+    bg: 'bg-blue-950/50 hover:bg-blue-900/60',
+    border: 'border-blue-500/50',
+    shadow: 'shadow-[0_3px_0_0_#172554]',
     labelBg: 'bg-blue-500 text-white',
   },
   C: {
-    bg: 'bg-amber-950/40 hover:bg-amber-900/50 active:bg-amber-900/70',
-    border: 'border-amber-500/40',
-    text: 'text-amber-300',
+    bg: 'bg-amber-950/50 hover:bg-amber-900/60',
+    border: 'border-amber-500/50',
+    shadow: 'shadow-[0_3px_0_0_#451a03]',
     labelBg: 'bg-amber-500 text-white',
   },
   D: {
-    bg: 'bg-emerald-950/40 hover:bg-emerald-900/50 active:bg-emerald-900/70',
-    border: 'border-emerald-500/40',
-    text: 'text-emerald-300',
+    bg: 'bg-emerald-950/50 hover:bg-emerald-900/60',
+    border: 'border-emerald-500/50',
+    shadow: 'shadow-[0_3px_0_0_#022c22]',
     labelBg: 'bg-emerald-500 text-white',
   },
 };
@@ -51,49 +62,58 @@ export const StudentAnswerCard: React.FC<StudentAnswerCardProps> = React.memo(
         type="button"
         onClick={() => !isLocked && onSelect(option.id)}
         disabled={isLocked}
-        className={`w-full p-4 md:p-5 rounded-2xl border text-left flex items-center gap-4 transition-all duration-150 cursor-pointer ${
+        className={`w-full p-2.5 sm:p-3.5 rounded-2xl border-2 text-left flex items-center gap-3 transition-all duration-100 cursor-pointer select-none ${
           isSelected
             ? isConfirmed
-              ? 'ring-4 ring-emerald-400 border-emerald-300 bg-emerald-500/25 scale-[1.02] shadow-2xl'
-              : 'ring-4 ring-amber-400 border-amber-300 bg-amber-500/20 scale-[1.02] shadow-xl'
-            : `${theme.bg} ${theme.border}`
-        } ${isLocked ? 'cursor-not-allowed opacity-80' : 'active:scale-95'}`}
+              ? 'border-emerald-400 bg-emerald-950/80 shadow-[0_3px_0_0_#064e3b]'
+              : 'border-amber-400 bg-amber-950/80 shadow-[0_3px_0_0_#78350f]'
+            : `${theme.bg} ${theme.border} ${theme.shadow}`
+        } ${isLocked ? 'cursor-not-allowed opacity-80' : 'active:translate-y-0.5 active:shadow-none'}`}
       >
         {/* Option Letter Label (A/B/C/D) */}
         <div
-          className={`w-11 h-11 rounded-xl flex items-center justify-center font-black text-lg shadow-md shrink-0 ${theme.labelBg}`}
+          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-black text-base sm:text-lg shadow shrink-0 ${theme.labelBg}`}
         >
           {option.label}
         </div>
 
         {/* Option Text Content */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 pr-1">
           <span
             className={`font-bold text-white leading-snug block break-words ${
               option.text.length > 80
-                ? 'text-xs sm:text-sm'
+                ? 'text-xs'
                 : option.text.length > 50
-                ? 'text-sm sm:text-base'
-                : 'text-base md:text-lg'
+                ? 'text-xs sm:text-sm'
+                : 'text-sm sm:text-base'
             }`}
           >
             {option.text}
           </span>
         </div>
 
-        {/* Status Indicator */}
-        {isSelected && (
-          isConfirmed ? (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-400 text-slate-950 font-black text-xs shrink-0 shadow animate-in zoom-in-75">
-              <span>✓ ĐÃ CHỐT</span>
-            </div>
+        {/* Fixed Width Indicator Container: Triệt tiêu hoàn toàn Layout Shift */}
+        <div className="w-8 h-8 flex items-center justify-center shrink-0">
+          {isSelected ? (
+            isConfirmed ? (
+              <div
+                className="w-7 h-7 rounded-full bg-emerald-400 text-slate-950 flex items-center justify-center border-2 border-emerald-200 shadow animate-in zoom-in-75"
+                title="Đã chốt đáp án"
+              >
+                <Check className="w-4 h-4 stroke-[3]" />
+              </div>
+            ) : (
+              <div
+                className="w-7 h-7 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center border-2 border-amber-200 shadow animate-in zoom-in-75"
+                title="Đang chọn"
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-950 animate-pulse" />
+              </div>
+            )
           ) : (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400 text-slate-950 font-black text-xs shrink-0 shadow animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping" />
-              <span>ĐANG CHỌN</span>
-            </div>
-          )
-        )}
+            <div className="w-6 h-6 rounded-full border-2 border-white/20" />
+          )}
+        </div>
       </button>
     );
   }

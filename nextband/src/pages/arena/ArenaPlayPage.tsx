@@ -16,7 +16,7 @@ import { GoldQuestChestModal } from '@/components/arena/GoldQuestChestModal';
 import { QuestionTypeRevengeModal, RevengeQuestionItem } from '@/components/arena/QuestionTypeRevengeModal';
 import { ArenaQuestionOption, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { CheckCircle2, XCircle, Trophy, Sparkles, Medal, Crown, BookOpen, Flame, Zap } from 'lucide-react';
+import { CheckCircle2, XCircle, Trophy, Sparkles, Medal, Crown, BookOpen, Flame, Zap, Clock } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
 import { ArenaErrorBoundary } from '@/components/arena/ArenaErrorBoundary';
@@ -65,6 +65,8 @@ export default function ArenaPlayPage() {
   const [gold, setGold] = useState<number>(0);
   const [playersList, setPlayersList] = useState<PlayerCandidate[]>([]);
   const [isChestModalOpen, setIsChestModalOpen] = useState<boolean>(false);
+  const [isKicked, setIsKicked] = useState<boolean>(false);
+  const [streak, setStreak] = useState<number>(0);
 
   // Câu hỏi động nhận từ Host
   const [questionIndex, setQuestionIndex] = useState<number>(0);
@@ -152,8 +154,7 @@ export default function ArenaPlayPage() {
           if (payload?.participantId === playerId || (kickedName.length > 0 && kickedName === myName)) {
             sessionStorage.removeItem(`arena_session_${pin}`);
             sessionStorage.removeItem(`arena_player_${pin}`);
-            alert('Host đã mời bạn ra khỏi sảnh chờ để bạn có thể đặt lại tên hoặc đăng nhập lại.');
-            window.location.href = `/arena/join?pin=${pin}`;
+            setIsKicked(true);
           }
         }
       };
@@ -366,8 +367,7 @@ export default function ArenaPlayPage() {
             sessionStorage.removeItem(`arena_session_${pin}`);
             sessionStorage.removeItem(`arena_player_${pin}`);
           }
-          alert('Host đã mời bạn ra khỏi sảnh chờ để bạn có thể đặt lại tên hoặc đăng nhập lại.');
-          window.location.href = `/arena/join?pin=${pin}`;
+          setIsKicked(true);
         }
       });
 
@@ -409,7 +409,8 @@ export default function ArenaPlayPage() {
     return () => clearInterval(timer);
   }, [gameState, isLocked]);
 
-  const isCorrect = selectedOptionId === currentQuestion.correctOptionId;
+  const isCorrect = hasSubmitted && selectedOptionId === currentQuestion.correctOptionId;
+  const isUnanswered = !hasSubmitted;
 
   // Xử lý khi học sinh chọn một phương án (cho phép đổi trước khi bấm Xác nhận)
   const handleSelectOption = useCallback(
@@ -567,13 +568,15 @@ export default function ArenaPlayPage() {
 
   useEffect(() => {
     if (showResult && gameMode === 'CLASSIC') {
-      if (isCorrect) {
+      if (hasSubmitted && isCorrect) {
+        setStreak((prev) => prev + 1);
         playCorrectSound();
       } else {
+        setStreak(0);
         playWrongSound();
       }
     }
-  }, [showResult, isCorrect, playCorrectSound, playWrongSound, gameMode]);
+  }, [showResult, hasSubmitted, isCorrect, playCorrectSound, playWrongSound, gameMode]);
 
   return (
     <div className="min-h-screen min-h-[100dvh] bg-[#150a33] text-white flex flex-col justify-between p-4 font-sans select-none max-w-lg mx-auto w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
@@ -604,7 +607,7 @@ export default function ArenaPlayPage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col justify-center my-4 space-y-4">
+      <main className="flex-1 flex flex-col justify-center my-2 space-y-2">
         {startCountdown !== null ? (
           /* MÀN HÌNH ĐẾM LÙI TRƯỚC CÂU HỎI (KÈM CÂU QUYẾT ĐỊNH CHO CÂU CUỐI) */
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 py-6 animate-in zoom-in-95 duration-200">
@@ -643,7 +646,7 @@ export default function ArenaPlayPage() {
               <>
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-200 text-xs font-bold tracking-wide uppercase shadow-lg">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>CÂU {questionIndex + 1} / {totalQuestions}</span>
+                  <span>CÂU {questionIndex + 1} / ${totalQuestions}</span>
                 </div>
 
                 <div className="relative">
@@ -710,62 +713,100 @@ export default function ArenaPlayPage() {
           </div>
         ) : gameState === 'LEADERBOARD' ? (
           /* MÀN HÌNH BẢNG XẾP HẠNG TRÊN ĐIỆN THOẠI */
-          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 py-6 animate-fadeIn">
-            <div className="p-6 bg-gradient-to-br from-purple-900/60 to-purple-950/80 border border-purple-700/50 rounded-3xl w-full max-w-xs space-y-4 shadow-2xl">
-              <span className="text-xs uppercase font-black text-purple-300 tracking-wider flex items-center justify-center gap-1.5">
-                <Trophy className="w-4 h-4 text-amber-400" /> VỊ TRÍ CỦA BẠN
-              </span>
-              <div className="w-20 h-20 rounded-2xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center mx-auto text-3xl font-black text-amber-300 shadow-lg shadow-amber-500/20">
-                #{myRanking?.rank ?? 1}
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 py-2 animate-fadeIn w-full max-w-sm mx-auto">
+            <div className="p-4 sm:p-5 bg-gradient-to-br from-purple-900/60 to-purple-950/80 border-2 border-purple-500/40 rounded-3xl w-full space-y-3 shadow-xl">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase font-black text-purple-300 tracking-wider flex items-center gap-1.5">
+                  <Trophy className="w-4 h-4 text-amber-400" /> VỊ TRÍ CỦA BẠN
+                </span>
+                <span className="text-xs font-mono font-bold text-amber-400">
+                  {myRanking ? (myRanking.rank === 1 ? '👑 DẪN ĐẦU' : `Cách Top 1: ${Math.max(0, (topRankings[0]?.totalScore || 0) - (myRanking.totalScore || 0))}đ`) : ''}
+                </span>
               </div>
-              <div className="space-y-1">
-                <h3 className="text-2xl font-black text-white">{nickname}</h3>
-                <p className="text-amber-400 font-mono font-black text-base">
-                  {myRanking?.totalScore ?? (gameMode === 'GOLD_QUEST' ? gold : 0)}{' '}
-                  {gameMode === 'GOLD_QUEST' ? '🪙 Vàng' : 'Điểm'}
-                </p>
+
+              <div className="flex items-center gap-4 bg-purple-950/60 p-3 rounded-2xl border border-purple-700/50">
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-2xl font-black text-amber-300 shadow shrink-0">
+                  #{myRanking?.rank ?? '--'}
+                </div>
+                <div className="text-left flex-1 min-w-0">
+                  <h3 className="text-lg font-black text-white truncate">{nickname}</h3>
+                  <p className="text-amber-400 font-mono font-black text-sm">
+                    {myRanking?.totalScore ?? (gameMode === 'GOLD_QUEST' ? gold : 0)}{' '}
+                    {gameMode === 'GOLD_QUEST' ? '🪙 Vàng' : 'Điểm'}
+                  </p>
+                </div>
+                <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="sm" />
               </div>
+
+              {/* Top 3 Leadboard Preview */}
+              {topRankings.length > 0 && (
+                <div className="pt-2 border-t border-purple-800/40 space-y-1.5 text-left">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    Top dẫn đầu hiện tại:
+                  </span>
+                  <div className="space-y-1">
+                    {topRankings.slice(0, 3).map((r) => (
+                      <div
+                        key={r.playerId}
+                        className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-bold ${
+                          r.playerId === playerId || r.nickname?.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase()
+                            ? 'bg-amber-500/20 text-amber-300 border border-amber-400/40'
+                            : 'bg-white/5 text-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 truncate">
+                          <span className="font-mono font-black text-amber-400 w-4">#{r.rank}</span>
+                          <span className="truncate">{r.nickname}</span>
+                        </div>
+                        <span className="font-mono text-amber-300 ml-2">{r.totalScore}đ</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="text-xs text-purple-300/80 flex items-center gap-2">
+            <div className="text-xs text-purple-300/80 flex items-center justify-center gap-2 pt-1">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              Đang đợi giáo viên chuyển sang câu hỏi tiếp theo...
+              Đang đợi giáo viên chuyển câu tiếp theo...
             </div>
           </div>
         ) : gameState === 'PODIUM' ? (
           /* MÀN HÌNH KẾT THÚC / PODIUM TRÊN ĐIỆN THOẠI */
-          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 py-6 animate-fadeIn">
-            <div className="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center mx-auto text-4xl text-amber-300 animate-bounce">
-              👑
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 py-4 animate-fadeIn">
+            <div className="relative">
+              <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="lg" />
+              <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-amber-400 text-purple-950 flex items-center justify-center font-black text-lg border-2 border-amber-200 shadow-lg">
+                {(myRanking?.rank ?? 1) === 1 ? '👑' : (myRanking?.rank ?? 1) === 2 ? '🥈' : (myRanking?.rank ?? 1) === 3 ? '🥉' : `#${myRanking?.rank ?? 1}`}
+              </div>
             </div>
-            <div className="space-y-2">
-              <h2 className="text-3xl font-black text-white">TRẬN ĐẤU HOÀN TẤT!</h2>
-              <p className="text-amber-300 font-bold text-lg">
-                Thứ hạng chung cuộc: #{myRanking?.rank ?? 1}
+
+            <div className="space-y-1">
+              <h2 className="text-2xl sm:text-3xl font-black text-white">TRẬN ĐẤU HOÀN TẤT!</h2>
+              <p className="text-amber-300 font-black text-lg sm:text-xl">
+                Hạng #{myRanking?.rank ?? 1} · {myRanking?.totalScore ?? (gameMode === 'GOLD_QUEST' ? gold : 0)}{' '}
+                {gameMode === 'GOLD_QUEST' ? '🪙 Vàng' : 'Điểm'}
               </p>
               <p className="text-xs text-purple-200/80 max-w-xs mx-auto">
-                Chúc mừng bạn đã hoàn thành xuất sắc tất cả các vòng đấu hôm nay!
+                Chúc mừng {nickname} ({currentCharacter.name}) đã hoàn thành tất cả các câu hỏi!
               </p>
 
               {/* Nút Mở Sổ Tay Học Thuật & Luyện Lại Câu Sai */}
-              <div className="pt-4 max-w-xs mx-auto">
+              <div className="pt-3 max-w-xs mx-auto">
                 <button
                   onClick={() => setIsRevengeModalOpen(true)}
-                  className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-xl shadow-purple-900/50 border border-purple-400/40 flex items-center justify-center gap-2.5 transition active:scale-95"
+                  className="w-full py-3.5 px-5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-sm border-2 border-purple-400 shadow-[0_4px_0_0_#3b0764] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2.5 transition select-none cursor-pointer"
                 >
                   <BookOpen className="w-5 h-5 text-purple-200" />
-                  <span>Sổ Tay Học Thuật ({wrongQuestions.length} câu cần củng cố)</span>
+                  <span>Sổ Tay Học Thuật ({wrongQuestions.length} câu)</span>
                 </button>
-                <p className="text-[11px] text-purple-300/70 mt-1.5 font-medium">
-                  Chạm để xem giải thích bẫy kiến thức & luyện lại ngay
-                </p>
               </div>
             </div>
           </div>
         ) : !showResult ? (
           <>
             {/* Round info & prompt */}
-            <div className="text-center space-y-1">
+            <div className="text-center space-y-0.5">
               <span className="text-[11px] font-mono font-bold text-purple-300 uppercase tracking-widest flex items-center justify-center gap-1">
                 {gameMode === 'GOLD_QUEST'
                   ? `💰 CƯỚP VÀNG · CÂU ${questionIndex + 1}/${totalQuestions}`
@@ -773,7 +814,7 @@ export default function ArenaPlayPage() {
                   ? `⚡ CÂU CUỐI CÙNG (X2 ĐIỂM) · CÂU ${questionIndex + 1}/${totalQuestions}`
                   : `🎯 CÂU HỎI ${questionIndex + 1}/${totalQuestions} · ${roundTimeLimit} GIÂY`}
               </span>
-              <h2 className="text-lg md:text-xl font-bold text-white leading-snug">
+              <h2 className="text-base sm:text-lg font-bold text-white leading-snug px-2">
                 "{currentQuestion.prompt}"
               </h2>
             </div>
@@ -782,7 +823,7 @@ export default function ArenaPlayPage() {
             <ArenaIncenseTimer timeLeftSeconds={timeLeft} totalTimeSeconds={roundTimeLimit} />
 
             {/* 4 Interactive Answer Cards */}
-            <div className="grid grid-cols-1 gap-2.5 pt-2">
+            <div className="grid grid-cols-1 gap-2 pt-1">
               {currentQuestion.options.map((opt) => (
                 <StudentAnswerCard
                   key={opt.id}
@@ -797,17 +838,17 @@ export default function ArenaPlayPage() {
 
             {/* Action Bar: Nút Xác Nhận Đáp Án ghim cố định ở đáy (Sticky Bottom) chống trôi/khuất màn hình mobile */}
             {!hasSubmitted && !isLocked ? (
-              <div className="sticky bottom-0 z-30 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-[#150a33] via-[#150a33]/95 to-transparent backdrop-blur-sm space-y-1.5 animate-fadeIn">
+              <div className="sticky bottom-0 z-30 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-[#150a33] via-[#150a33]/95 to-transparent backdrop-blur-sm animate-fadeIn">
                 <button
                   type="button"
                   onClick={() => handleConfirmAnswer()}
                   disabled={!selectedOptionId || isSubmitting}
-                  className={`w-full py-3.5 sm:py-4 px-6 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-2.5 transition-all shadow-2xl cursor-pointer ${
+                  className={`w-full py-3.5 sm:py-4 px-6 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-2.5 transition-all select-none cursor-pointer ${
                     selectedOptionId && !isSubmitting
-                      ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/30 active:scale-95 animate-pulse'
+                      ? 'bg-emerald-500 hover:bg-emerald-400 text-white border-2 border-emerald-300 shadow-[0_4px_0_0_#064e3b] active:translate-y-1 active:shadow-[0_1px_0_0_#064e3b]'
                       : isSubmitting
-                      ? 'bg-emerald-600/60 text-white/90 border border-emerald-400/30 cursor-wait'
-                      : 'bg-white/10 text-white/40 border border-white/10 cursor-not-allowed opacity-60'
+                      ? 'bg-emerald-700/80 text-white/90 border-2 border-emerald-500/50 cursor-wait'
+                      : 'bg-white/10 text-white/40 border-2 border-white/10 cursor-not-allowed opacity-60'
                   }`}
                 >
                   <CheckCircle2 className={`w-5 h-5 sm:w-6 sm:h-6 ${isSubmitting ? 'animate-spin' : ''}`} />
@@ -819,17 +860,12 @@ export default function ArenaPlayPage() {
                       : 'CHỌN 1 ĐÁP ÁN ĐỂ XÁC NHẬN'}
                   </span>
                 </button>
-                <p className="text-[11px] text-purple-300/80 text-center font-medium">
-                  {selectedOptionId
-                    ? '💡 Bạn có thể chạm đáp án khác để đổi ý trước khi bấm Xác nhận'
-                    : 'Chạm vào 1 đáp án ở trên, sau đó bấm Xác nhận'}
-                </p>
               </div>
             ) : (
               /* Status notice when submitted or locked: Ghim cố định rõ ràng */
-              <div className="sticky bottom-0 z-30 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-[#150a33] via-[#150a33]/95 to-transparent text-center backdrop-blur-sm">
+              <div className="sticky bottom-0 z-30 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-[#150a33] via-[#150a33]/95 to-transparent text-center backdrop-blur-sm">
                 {hasSubmitted ? (
-                  <div className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400/50 text-emerald-200 font-extrabold text-xs sm:text-sm shadow-xl shadow-emerald-950/60 animate-pulse">
+                  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400/50 text-emerald-200 font-extrabold text-xs sm:text-sm shadow-xl shadow-emerald-950/60">
                     <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
                     <span>
                       {gameMode === 'GOLD_QUEST' && isCorrect
@@ -838,8 +874,8 @@ export default function ArenaPlayPage() {
                     </span>
                   </div>
                 ) : (
-                  <span className="text-xs text-slate-400 font-semibold inline-block py-2">
-                    Đã hết thời gian trả lời
+                  <span className="text-xs text-amber-300 font-semibold inline-block py-2">
+                    ⏱ Đã hết thời gian trả lời câu này
                   </span>
                 )}
               </div>
@@ -847,36 +883,44 @@ export default function ArenaPlayPage() {
           </>
         ) : (
           /* Personal Micro-feedback Screen */
-          <div className="space-y-6 text-center animate-fadeIn py-4">
+          <div className="space-y-4 text-center animate-fadeIn py-2">
             <div className="flex justify-center">
-              {isCorrect ? (
-                <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 animate-bounce">
-                  <CheckCircle2 className="w-10 h-10" />
+              {isUnanswered ? (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-500/20 border-2 border-amber-500 flex items-center justify-center text-amber-400 animate-pulse">
+                  <Clock className="w-8 h-8 sm:w-10 sm:h-10" />
+                </div>
+              ) : isCorrect ? (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 animate-bounce">
+                  <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10" />
                 </div>
               ) : (
-                <div className="w-20 h-20 rounded-full bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center text-rose-400">
-                  <XCircle className="w-10 h-10" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center text-rose-400">
+                  <XCircle className="w-8 h-8 sm:w-10 sm:h-10" />
                 </div>
               )}
             </div>
 
             <div className="space-y-1">
-              <h2 className="text-3xl font-black text-white">
-                {isCorrect ? 'CHÍNH XÁC!' : 'CHƯA CHÍNH XÁC'}
+              <h2 className="text-2xl sm:text-3xl font-black text-white">
+                {isUnanswered ? 'HẾT GIỜ CHƯA CHỐT!' : isCorrect ? 'CHÍNH XÁC!' : 'CHƯA CHÍNH XÁC'}
               </h2>
-              <p className="text-sm font-semibold text-purple-200">
-                {isCorrect
+              <p className="text-xs sm:text-sm font-bold text-purple-200">
+                {isUnanswered
+                  ? 'Bạn chưa kịp bấm Xác nhận trước khi hết giờ (0 điểm)'
+                  : isCorrect
                   ? gameMode === 'GOLD_QUEST'
                     ? `Kho vàng: ${gold} 🪙`
                     : totalQuestions > 0 && questionIndex >= totalQuestions - 1
                     ? '⚡ ĐÃ NHÂN ĐÔI ĐIỂM CÂU CUỐI (X2)!'
+                    : streak > 1
+                    ? `🔥 Chuỗi ${streak} câu đúng liên tiếp! (+100 Điểm Tốc Độ)`
                     : '+100 Điểm Tốc Độ'
                   : 'Đừng nản lòng, chú ý collocation tiếp theo'}
               </p>
             </div>
 
             {/* Individual Diagnostic Card */}
-            <div className="p-4 bg-purple-950/40 border border-purple-800/60 rounded-2xl text-left space-y-2">
+            <div className="p-3 sm:p-4 bg-purple-950/40 border border-purple-800/60 rounded-2xl text-left space-y-1.5 max-w-sm mx-auto w-full">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-purple-300 uppercase">Đáp án chuẩn:</span>
                 <span className="font-black text-emerald-400">{currentQuestion.correctAnswerText}</span>
@@ -886,11 +930,11 @@ export default function ArenaPlayPage() {
               </p>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-1">
               <span className="text-xs text-purple-300/80 font-medium">
                 {questionIndex >= totalQuestions - 1 ? (
                   <span className="text-amber-300 font-bold block bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl animate-pulse">
-                    🏁 Câu hỏi cuối cùng đã kết thúc! Điểm số chung cuộc đang được giữ bí mật. Hãy ngẩng đầu nhìn lên màn chiếu lớn để theo dõi BỤC VINH DANH QUÁN QUÂN!
+                    🏁 Câu hỏi cuối cùng đã kết thúc! Hãy ngẩng đầu nhìn lên màn chiếu lớn để theo dõi BỤC VINH DANH QUÁN QUÂN!
                   </span>
                 ) : (
                   'Nhìn lên màn hình của Thầy/Cô để xem phân tích chi tiết.'
@@ -901,10 +945,31 @@ export default function ArenaPlayPage() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="text-center py-2 border-t border-purple-900/40 text-[11px] text-purple-300/60 font-medium">
-        NextQuiz
-      </footer>
+      {/* Modal Thông Báo Khi Host Mời Ra Khỏi Phòng */}
+      {isKicked && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-[#180c38] border-2 border-purple-500/50 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div className="w-16 h-16 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-3xl mx-auto">
+              👋
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-xl font-black text-white">Bạn Đã Rời Sảnh Chờ</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Host đã mời bạn ra khỏi sảnh chờ để bạn có thể đổi tên hoặc chọn lại linh vật.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = `/arena/join?pin=${pin}`;
+              }}
+              className="w-full py-3.5 bg-[#ea580c] hover:bg-[#c2410c] text-white font-black text-sm rounded-2xl border-2 border-orange-400 shadow-[0_4px_0_0_#9a3412] active:translate-y-1 active:shadow-none transition-all cursor-pointer"
+            >
+              Vào lại phòng đấu
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modal Sổ Tay Học Thuật & Phục Thù Câu Sai */}
       <QuestionTypeRevengeModal

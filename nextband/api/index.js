@@ -97748,19 +97748,19 @@ var init_week1_data = __esm({
           roundIndex: 0,
           prompt: "Trong 4 c\u1EA5p \u0111\u1ED9 ng\xF4n ng\u1EEF (word, phrase, clause, sentence), th\xE0nh ph\u1EA7n n\xE0o b\u1EAFt bu\u1ED9c ph\u1EA3i c\xF3 c\u1EB7p Subject v\xE0 Finite Verb?",
           options: [
-            { id: "opt_A", label: "A", text: "Clause (m\u1EC7nh \u0111\u1EC1)" },
-            { id: "opt_B", label: "B", text: "Phrase (c\u1EE5m t\u1EEB)" },
-            { id: "opt_C", label: "C", text: "Word (t\u1EEB \u0111\u01A1n)" },
-            { id: "opt_D", label: "D", text: "Modifier (th\xE0nh ph\u1EA7n b\u1ED5 ngh\u0129a)" }
+            { id: "opt_A", label: "A", text: "Clause" },
+            { id: "opt_B", label: "B", text: "Phrase" },
+            { id: "opt_C", label: "C", text: "Word" },
+            { id: "opt_D", label: "D", text: "Modifier" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. Clause (m\u1EC7nh \u0111\u1EC1)",
+          correctAnswerText: "A. Clause",
           correctExplanation: "M\u1EC7nh \u0111\u1EC1 (clause) lu\xF4n lu\xF4n ph\u1EA3i c\xF3 ch\u1EE7 ng\u1EEF (Subject) v\xE0 \u0111\u1ED9ng t\u1EEB ch\xEDnh c\xF3 chia th\xEC (Finite Verb).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Phrase (c\u1EE5m t\u1EEB)",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa Phrase v\xE0 Clause",
-            explanation: "Phrase (c\u1EE5m t\u1EEB) ch\u1EC9 l\xE0 m\u1ED9t t\u1EADp h\u1EE3p t\u1EEB li\xEAn k\u1EBFt nhau, kh\xF4ng ch\u1EE9a c\u1EB7p Subject - Finite Verb tr\u1ECDn v\u1EB9n."
+            explanation: "Phrase ch\u1EC9 l\xE0 m\u1ED9t t\u1EADp h\u1EE3p t\u1EEB li\xEAn k\u1EBFt nhau, kh\xF4ng ch\u1EE9a c\u1EB7p Subject - Finite Verb tr\u1ECDn v\u1EB9n."
           }
         },
         {
@@ -97778,7 +97778,7 @@ var init_week1_data = __esm({
           correctExplanation: "Equipment l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c (uncountable noun), kh\xF4ng bao gi\u1EDD c\xF3 \u0111u\xF4i -s hay m\u1EA1o t\u1EEB an.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. equipments",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "Th\xEAm -s v\xE0o danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c",
             explanation: 'Ng\u01B0\u1EDDi h\u1ECDc th\u01B0\u1EDDng d\u1ECBch t\u1EEB "nhi\u1EC1u thi\u1EBFt b\u1ECB" v\xE0 t\u1EF1 \u0111\u1ED9ng th\xEAm s\u1ED1 nhi\u1EC1u -s v\xE0o equipment, \u0111\xE2y l\xE0 l\u1ED7i ph\u1ED5 bi\u1EBFn trong IELTS.'
           }
@@ -97798,7 +97798,7 @@ var init_week1_data = __esm({
           correctExplanation: "Trong c\xE2u (1), book l\xE0 \u0111\u1ED9ng t\u1EEB (\u0111\u1EB7t v\xE9). Trong c\xE2u (2), book l\xE0 danh t\u1EEB (quy\u1EC3n s\xE1ch).",
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. (1) Noun - (2) Noun",
+            baitOptionText: "D. Modifier",
             diagnosticTitle: "\u0110\u1ECBnh ki\u1EBFn t\u1EEB lo\u1EA1i c\u1ED1 \u0111\u1ECBnh",
             explanation: "R\u1EA5t nhi\u1EC1u t\u1EEB trong ti\u1EBFng Anh v\u1EEBa c\xF3 th\u1EC3 l\xE0m danh t\u1EEB v\u1EEBa l\xE0m \u0111\u1ED9ng t\u1EEB tu\u1EF3 v\u1ECB tr\xED v\xE0 ch\u1EE9c n\u0103ng trong c\xE2u."
           }
@@ -97818,7 +97818,7 @@ var init_week1_data = __esm({
           correctExplanation: "Advice l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c, kh\xF4ng d\xF9ng many v\xE0 kh\xF4ng c\xF3 \u0111u\xF4i -s. D\xF9ng much advice ho\u1EB7c pieces of advice.",
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. in life -> on life",
+            baitOptionText: "C. Word",
             diagnosticTitle: "Ph\xE2n t\xE2m v\xE0o gi\u1EDBi t\u1EEB",
             explanation: "Ng\u01B0\u1EDDi h\u1ECDc th\u01B0\u1EDDng s\u0103m soi gi\u1EDBi t\u1EEB m\xE0 b\u1ECF s\xF3t l\u1ED7i c\u1ED1t l\xF5i v\u1EC1 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c (advice)."
           }
@@ -97838,7 +97838,7 @@ var init_week1_data = __esm({
           correctExplanation: 'Ch\u1EE7 ng\u1EEF th\u1EADt c\u1EE7a c\xE2u l\xE0 \u0111\u1EA1i t\u1EEB s\u1ED1 \xEDt "One", kh\xF4ng ph\u1EA3i "sisters", do \u0111\xF3 \u0111\u1ED9ng t\u1EEB to be ph\u1EA3i chia s\u1ED1 \xEDt l\xE0 "is".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. are",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "B\u1EABy danh t\u1EEB \u0111\u1EE9ng li\u1EC1n k\u1EC1 (Proximity Trap)",
             explanation: 'H\u1ECDc vi\xEAn th\u1EA5y t\u1EEB "sisters" \u0111\u1EE9ng ngay tr\u01B0\u1EDBc ch\u1ED7 tr\u1ED1ng n\xEAn chia "are", qu\xEAn m\u1EA5t ch\u1EE7 ng\u1EEF ch\xEDnh l\xE0 "One of...".'
           }
@@ -97858,7 +97858,7 @@ var init_week1_data = __esm({
           correctExplanation: 'Danh \u0111\u1ED9ng t\u1EEB (Gerund) "Reading books" l\xE0m Subject s\u1ED1 \xEDt, Finite Verb l\xE0 "is", v\u1ECB ng\u1EEF l\xE0 t\xEDnh t\u1EEB "beneficial to".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Know English beneficial to students.",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "Thi\u1EBFu Finite Verb ho\u1EB7c d\xF9ng Verb nguy\xEAn m\u1EABu l\xE0m S",
             explanation: 'Know kh\xF4ng th\u1EC3 l\xE0m ch\u1EE7 ng\u1EEF (ph\u1EA3i l\xE0 Knowing), v\xE0 c\xE2u thi\u1EBFu \u0111\u1ED9ng t\u1EEB to be "is beneficial".'
           }
@@ -97878,7 +97878,7 @@ var init_week1_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc sai khi\u1EBFn: make someone DO something (\u0111\u1ED9ng t\u1EEB nguy\xEAn m\u1EABu kh\xF4ng to).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. My boss makes me to complete the task before 5 PM.",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: 'Th\xEAm "to" sau make sb',
             explanation: 'Th\xF3i quen d\xF9ng "to-infinitive" sau m\u1ECDi t\xE2n ng\u1EEF l\xE0 sai l\u1EA7m ph\u1ED5 bi\u1EBFn; sau make sb ph\u1EA3i l\xE0 V nguy\xEAn th\u1EC3.'
           }
@@ -97898,7 +97898,7 @@ var init_week1_data = __esm({
           correctExplanation: "Homework l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c trong ti\u1EBFng Anh, lu\xF4n d\xF9ng too much homework ch\u1EE9 kh\xF4ng c\xF3 many homeworks.",
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. to do -> doing",
+            baitOptionText: "C. Word",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn m\u1EE5c \u0111\xEDch to-infinitive",
             explanation: "Homework to do l\xE0 c\u1EA5u tr\xFAc ho\xE0n to\xE0n chu\u1EA9n ch\u1EC9 m\u1EE5c \u0111\xEDch, l\u1ED7i sai th\u1EF1c s\u1EF1 n\u1EB1m \u1EDF danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c."
           }
@@ -97918,7 +97918,7 @@ var init_week1_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc chu\u1EA9n: allow someone TO DO something. Ch\u1EE7 ng\u1EEF Gerund Studying abroad chia \u0111\u1ED9ng t\u1EEB allows.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Studying abroad allows students know more about different cultures.",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: 'B\u1ECF qu\xEAn "to" sau allow sb',
             explanation: "Kh\xE1c v\u1EDBi make sb do, \u0111\u1ED9ng t\u1EEB allow b\u1EAFt bu\u1ED9c ph\u1EA3i \u0111i v\u1EDBi to-V: allow sb TO do sth."
           }
@@ -97926,21 +97926,21 @@ var init_week1_data = __esm({
         {
           id: "doer_w1d1_q10",
           roundIndex: 9,
-          prompt: 'Ch\u1ECDn c\xE2u c\xF3 d\u1EA1ng chia \u0111\u1ED9ng t\u1EEB \u0111\xFAng cho ch\u1EE7 ng\u1EEF "His advice on careers":',
+          prompt: "X\xE1c \u0111\u1ECBnh c\xE2u vi\u1EBFt SAI c\u1EA5u tr\xFAc Subject - Finite Verb trong c\xE1c c\xE2u sau:",
           options: [
-            { id: "opt_A", label: "A", text: "His advice on careers is very useful to me." },
-            { id: "opt_B", label: "B", text: "His advice on careers are very useful to me." },
-            { id: "opt_C", label: "C", text: "His advice on careers were very useful to me." },
-            { id: "opt_D", label: "D", text: "His advices on careers are very useful to me." }
+            { id: "opt_A", label: "A", text: "The course helps him can write professional emails in English." },
+            { id: "opt_B", label: "B", text: "Studying abroad allows students to broaden their knowledge of different cultures." },
+            { id: "opt_C", label: "C", text: "Not doing regular exercise makes people's physical health poorer." },
+            { id: "opt_D", label: "D", text: "His detailed advice on future career choices is very helpful to us." }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. His advice on careers is very useful to me.",
-          correctExplanation: 'Advice l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c (lu\xF4n s\u1ED1 \xEDt), c\u1EE5m gi\u1EDBi t\u1EEB "on careers" ch\u1EC9 l\xE0 b\u1ED5 ng\u1EEF, n\xEAn \u0111\u1ED9ng t\u1EEB to be chia l\xE0 "is".',
+          correctAnswerText: "A. The course helps him can write professional emails in English.",
+          correctExplanation: 'Sau c\u1EA5u tr\xFAc help someone, \u0111\u1ED9ng t\u1EEB theo sau l\xE0 V nguy\xEAn m\u1EABu (write) ho\u1EB7c to-V (to write), KH\xD4NG BAO GI\u1EDC k\u1EB9p th\xEAm modal verb "can" (l\u1ED7i th\u1EEBa \u0111\u1ED9ng t\u1EEB v\u1ECB ng\u1EEF: helps him write).',
           misconception: {
-            baitOptionId: "opt_B",
-            baitOptionText: "B. His advice on careers are very useful to me.",
-            diagnosticTitle: 'B\u1EABy h\xF2a h\u1EE3p v\u1EDBi danh t\u1EEB b\u1ED5 ng\u1EEF "careers"',
-            explanation: "H\u1ECDc vi\xEAn th\u1EA5y careers c\xF3 s \u0111\u1EE9ng g\u1EA7n to be n\xEAn ch\u1ECDn are, qu\xEAn m\u1EA5t ch\u1EE7 ng\u1EEF ch\xEDnh c\u1EE7a c\xE2u l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c advice."
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Modifier",
+            diagnosticTitle: 'B\u1EABy danh t\u1EEB b\u1ED5 ng\u1EEF s\u1ED1 nhi\u1EC1u "choices"',
+            explanation: "H\u1ECDc vi\xEAn hay t\u01B0\u1EDFng nh\u1EA7m c\xE2u D sai v\xEC th\u1EA5y choices l\xE0 s\u1ED1 nhi\u1EC1u \u0111i v\u1EDBi is, nh\u01B0ng ch\u1EE7 ng\u1EEF ch\xEDnh th\u1EADt s\u1EF1 l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c advice (chia is l\xE0 ho\xE0n to\xE0n \u0111\xFAng)."
           }
         }
       ],
@@ -97960,7 +97960,7 @@ var init_week1_data = __esm({
           correctExplanation: '"Tuition fees" l\xE0 ti\u1EC1n h\u1ECDc ph\xED, \u0111\u1ED3ng ngh\u0129a v\u1EDBi education costs ho\u1EB7c college charges.',
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. living expenses / allowances",
+            baitOptionText: "D. Modifier",
             diagnosticTitle: "Nh\u1EA7m h\u1ECDc ph\xED v\u1EDBi chi ph\xED sinh ho\u1EA1t",
             explanation: "Living expenses l\xE0 ti\u1EC1n \u0103n \u1EDF, sinh ho\u1EA1t c\xE1 nh\xE2n, ho\xE0n to\xE0n t\xE1ch bi\u1EC7t v\u1EDBi ti\u1EC1n h\u1ECDc ph\xED (tuition fees)."
           }
@@ -97970,17 +97970,17 @@ var init_week1_data = __esm({
           roundIndex: 1,
           prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "optimistic" trong c\xE2u mi\xEAu t\u1EA3 tinh th\u1EA7n ng\u01B0\u1EDDi l\xEDnh: "He was so optimistic and committed" l\xE0:',
           options: [
-            { id: "opt_A", label: "A", text: "pessimistic (bi quan, lu\xF4n ngh\u0129 \u0111\u1EBFn \u0111i\u1EC1u ti\xEAu c\u1EF1c)" },
-            { id: "opt_B", label: "B", text: "enthusiastic (h\xE0o h\u1EE9ng, nhi\u1EC7t huy\u1EBFt)" },
-            { id: "opt_C", label: "C", text: "exhausted (ki\u1EC7t s\u1EE9c)" },
-            { id: "opt_D", label: "D", text: "committed (t\u1EADn t\xE2m, g\u1EAFn b\xF3)" }
+            { id: "opt_A", label: "A", text: "pessimistic" },
+            { id: "opt_B", label: "B", text: "enthusiastic" },
+            { id: "opt_C", label: "C", text: "exhausted" },
+            { id: "opt_D", label: "D", text: "committed" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. pessimistic (bi quan, lu\xF4n ngh\u0129 \u0111\u1EBFn \u0111i\u1EC1u ti\xEAu c\u1EF1c)",
+          correctAnswerText: "A. pessimistic",
           correctExplanation: '"Optimistic" = l\u1EA1c quan, tin t\u01B0\u1EDFng v\xE0o t\u01B0\u01A1ng lai t\u1ED1t \u0111\u1EB9p. Tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "pessimistic" (bi quan).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. exhausted",
+            baitOptionText: "C. Word",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa tr\u1EA1ng th\xE1i th\u1EC3 l\u1EF1c ki\u1EC7t s\u1EE9c v\xE0 th\xE1i \u0111\u1ED9 bi quan",
             explanation: "Exhausted l\xE0 ki\u1EC7t s\u1EE9c v\u1EC1 th\u1EC3 ch\u1EA5t, kh\xF4ng ph\u1EA3i t\u1EEB tr\xE1i ngh\u0129a v\u1EC1 m\u1EB7t th\xE1i \u0111\u1ED9 tinh th\u1EA7n c\u1EE7a optimistic."
           }
@@ -98000,7 +98000,7 @@ var init_week1_data = __esm({
           correctExplanation: '"Relief" (danh t\u1EEB) m\xF4 t\u1EA3 c\u1EA3m x\xFAc th\u01B0 th\xE1i, nh\u1EB9 nh\xF5m sau khi v\u01B0\u1EE3t qua m\u1ED9t \xE1p l\u1EF1c hay n\u1ED7i \xE2u lo l\u1EDBn.',
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. N\u1ED7i hoang mang lo s\u1EE3",
+            baitOptionText: "D. Modifier",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn c\u1EA3m x\xFAc t\xEDch c\u1EF1c sau thi v\u1EDBi \xE1p l\u1EF1c lo l\u1EAFng tr\u01B0\u1EDBc thi",
             explanation: "Relief xu\u1EA5t hi\u1EC7n sau khi b\u1EA1n \u0111\xE3 v\u01B0\u1EE3t qua th\u1EED th\xE1ch th\xE0nh c\xF4ng, mang ngh\u0129a tr\xFAt b\u1ECF g\xE1nh n\u1EB7ng."
           }
@@ -98020,7 +98020,7 @@ var init_week1_data = __esm({
           correctExplanation: 'Collocation h\u1ECDc thu\u1EADt: "practical application" (s\u1EF1 \u1EE9ng d\u1EE5ng mang t\xEDnh th\u1EF1c ti\u1EC5n v\xE0o \u0111\u1EDDi s\u1ED1ng).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. practice",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn danh t\u1EEB practice v\u1EDBi t\xEDnh t\u1EEB practical \u0111\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB",
             explanation: 'Tr\u01B0\u1EDBc danh t\u1EEB "application" c\u1EA7n m\u1ED9t t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a l\xE0 "practical".'
           }
@@ -98030,17 +98030,17 @@ var init_week1_data = __esm({
           roundIndex: 4,
           prompt: 'Collocation n\xE0o trong b\xE0i \u0111\u1ECDc ch\u1EC9 vi\u1EC7c "b\u1ECF h\u1ECDc gi\u1EEFa ch\u1EEBng / th\xF4i h\u1ECDc tr\u01B0\u1EDBc khi t\u1ED1t nghi\u1EC7p"?',
           options: [
-            { id: "opt_A", label: "A", text: "dropping out of school / university" },
+            { id: "opt_A", label: "A", text: "dropping out of school" },
             { id: "opt_B", label: "B", text: "breaking up with school" },
             { id: "opt_C", label: "C", text: "going on with university" },
             { id: "opt_D", label: "D", text: "falling down the exam" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. dropping out of school / university",
+          correctAnswerText: "A. dropping out of school",
           correctExplanation: '"Drop out of school/university" l\xE0 phrasal verb chu\u1EA9n x\xE1c ch\u1EC9 h\xE0nh vi b\u1ECF h\u1ECDc gi\u1EEFa ch\u1EEBng.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. breaking up with school",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "D\xF9ng phrasal verb quan h\u1EC7 t\xECnh c\u1EA3m cho tr\u01B0\u1EDDng h\u1ECDc",
             explanation: "Break up d\xF9ng cho chia tay ng\u01B0\u1EDDi y\xEAu, kh\xF4ng d\xF9ng cho vi\u1EC7c th\xF4i h\u1ECDc."
           }
@@ -98060,7 +98060,7 @@ var init_week1_data = __esm({
           correctExplanation: '"Stay alert" = duy tr\xEC s\u1EF1 t\u1EC9nh t\xE1o v\xE0 t\u1EADp trung c\u1EA3nh gi\xE1c cao \u0111\u1ED9.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. lu\xF4n ch\u1EA1y th\u1EADt nhanh",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "Nh\u1EA7m tr\u1EA1ng th\xE1i nh\u1EADn th\u1EE9c tinh th\u1EA7n v\u1EDBi h\xE0nh \u0111\u1ED9ng th\u1EC3 ch\u1EA5t",
             explanation: "Alert l\xE0 tr\u1EA1ng th\xE1i t\u1EADp trung nh\u1EADn th\u1EE9c c\u1EE7a n\xE3o b\u1ED9 tr\u01B0\u1EDBc r\u1EE7i ro, kh\xF4ng ph\u1EA3i h\xE0nh vi v\u1EADn \u0111\u1ED9ng."
           }
@@ -98070,17 +98070,17 @@ var init_week1_data = __esm({
           roundIndex: 6,
           prompt: 'Ch\u1ECDn t\u1EEB lo\u1EA1i th\xEDch h\u1EE3p sau t\xEDnh t\u1EEB s\u1EDF h\u1EEFu: "Our university programs encourage students to explore their personal ______."',
           options: [
-            { id: "opt_A", label: "A", text: "interests (s\u1EDF th\xEDch, m\u1ED1i quan t\xE2m)" },
+            { id: "opt_A", label: "A", text: "interests" },
             { id: "opt_B", label: "B", text: "interesting" },
             { id: "opt_C", label: "C", text: "interested" },
             { id: "opt_D", label: "D", text: "interestingly" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. interests (s\u1EDF th\xEDch, m\u1ED1i quan t\xE2m)",
+          correctAnswerText: "A. interests",
           correctExplanation: 'Sau t\xEDnh t\u1EEB s\u1EDF h\u1EEFu "their personal" b\u1EAFt bu\u1ED9c ph\u1EA3i l\xE0 m\u1ED9t danh t\u1EEB s\u1ED1 nhi\u1EC1u: "interests" (c\xE1c m\u1ED1i quan t\xE2m / s\u1EDF th\xEDch).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. interested",
+            baitOptionText: "C. Word",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn t\xEDnh t\u1EEB c\u1EA3m x\xFAc \u0111u\xF4i -ed v\u1EDBi danh t\u1EEB",
             explanation: "Interested l\xE0 t\xEDnh t\u1EEB ch\u1EC9 c\u1EA3m x\xFAc c\u1EE7a ng\u01B0\u1EDDi, kh\xF4ng th\u1EC3 l\xE0m t\xE2n ng\u1EEF tr\u1EF1c ti\u1EBFp sau explore their."
           }
@@ -98100,7 +98100,7 @@ var init_week1_data = __esm({
           correctExplanation: '"Exhausted" l\xE0 t\xEDnh t\u1EEB c\u1EF1c \u0111\u1ED9 t\u01B0\u01A1ng \u0111\u01B0\u01A1ng v\u1EDBi "extremely tired / completely worn out".',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. relieved",
+            baitOptionText: "C. Word",
             diagnosticTitle: "Nh\u1EA7m c\u1EA3m gi\xE1c nh\u1EB9 nh\xF5m v\u1EDBi ki\u1EC7t s\u1EE9c",
             explanation: "Relieved l\xE0 c\u1EA3m th\u1EA5y nh\u1EB9 nh\xF5m sau khi tr\xFAt \u0111\u01B0\u1EE3c g\xE1nh lo, kh\xF4ng ch\u1EC9 s\u1EF1 c\u1EA1n ki\u1EC7t n\u0103ng l\u01B0\u1EE3ng."
           }
@@ -98120,7 +98120,7 @@ var init_week1_data = __esm({
           correctExplanation: '"University campus" l\xE0 khu\xF4n vi\xEAn t\u1ED5ng th\u1EC3 c\u1EE7a m\u1ED9t tr\u01B0\u1EDDng \u0111\u1EA1i h\u1ECDc g\u1ED3m c\xE1c t\xF2a gi\u1EA3ng \u0111\u01B0\u1EDDng, vi\u1EC7n nghi\xEAn c\u1EE9u v\xE0 ti\u1EC7n \xEDch.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. yard",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: 'D\u1ECBch t\u1EEB "s\xE2n b\xE3i" thay v\xEC khu\xF4n vi\xEAn h\u1ECDc thu\u1EADt',
             explanation: "Yard ch\u1EC9 kho\u1EA3nh s\xE2n nh\u1ECF tr\u01B0\u1EDBc/sau nh\xE0, kh\xF4ng d\xF9ng ch\u1EC9 to\xE0n b\u1ED9 khu\xF4n vi\xEAn tr\u01B0\u1EDDng \u0111\u1EA1i h\u1ECDc."
           }
@@ -98140,7 +98140,7 @@ var init_week1_data = __esm({
           correctExplanation: '"Strict adherence to safety guidelines" paraphrase cho "follow safety procedures carefully", v\xE0 "veteran workers are not immune to hazards" paraphrase cho "experienced firefighters can find themselves in difficult situations".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Experienced firefighters never make mistakes",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "Hi\u1EC3u sai ngh\u0129a c\u1EA3nh b\xE1o th\xE0nh kh\u1EB3ng \u0111\u1ECBnh tuy\u1EC7t \u0111\u1ED1i",
             explanation: "\u0110o\u1EA1n v\u0103n c\u1EA3nh b\xE1o ng\u01B0\u1EDDi c\xF3 kinh nghi\u1EC7m v\u1EABn g\u1EB7p nguy hi\u1EC3m, kh\xF4ng h\u1EC1 kh\u1EB3ng \u0111\u1ECBnh h\u1ECD kh\xF4ng bao gi\u1EDD m\u1EAFc l\u1ED7i."
           }
@@ -98150,41 +98150,41 @@ var init_week1_data = __esm({
         {
           id: "doer_w1d3_q01",
           roundIndex: 0,
-          prompt: "C\u1EB7p nguy\xEAn \xE2m /i:/ v\xE0 /\u026A/ trong ti\u1EBFng Anh \u0111\u01B0\u1EE3c ph\xE2n bi\u1EC7t r\xF5 nh\u1EA5t qua c\u1EB7p t\u1EEB t\u1ED1i thi\u1EC3u (minimal pair) n\xE0o?",
+          prompt: "T\u1EEB n\xE0o sau \u0111\xE2y c\xF3 ph\u1EA7n g\u1EA1ch ch\xE2n ch\u1EE9a nguy\xEAn \xE2m d\xE0i /i\u02D0/ kh\xE1c v\u1EDBi c\xE1c t\u1EEB c\xF2n l\u1EA1i?",
           options: [
-            { id: "opt_A", label: "A", text: "sheep /\u0283i\u02D0p/ vs. ship /\u0283\u026Ap/" },
-            { id: "opt_B", label: "B", text: "bed /bed/ vs. bad /b\xE6d/" },
-            { id: "opt_C", label: "C", text: "duck /d\u028Ck/ vs. dark /d\u0251\u02D0k/" },
-            { id: "opt_D", label: "D", text: "pen /pen/ vs. pain /pe\u026An/" }
+            { id: "opt_A", label: "A", text: "colleague" },
+            { id: "opt_B", label: "B", text: "biscuit" },
+            { id: "opt_C", label: "C", text: "building" },
+            { id: "opt_D", label: "D", text: "system" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. sheep /\u0283i\u02D0p/ vs. ship /\u0283\u026Ap/",
-          correctExplanation: "Sheep ch\u1EE9a nguy\xEAn \xE2m d\xE0i /i:/ c\u0103ng m\xE9p, trong khi ship ch\u1EE9a nguy\xEAn \xE2m ng\u1EAFn /\u026A/ th\u1EA3 l\u1ECFng.",
+          correctAnswerText: "A. colleague",
+          correctExplanation: '"colleague" ph\xE1t \xE2m l\xE0 /\u02C8k\u0252li\u02D0\u0261/ ch\u1EE9a nguy\xEAn \xE2m d\xE0i /i\u02D0/. Trong khi \u0111\xF3, "biscuit" /\u02C8b\u026Ask\u026At/, "building" /\u02C8b\u026Ald\u026A\u014B/, "system" /\u02C8s\u026Ast\u0259m/ \u0111\u1EC1u mang nguy\xEAn \xE2m ng\u1EAFn /\u026A/.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. bed /bed/ vs. bad /b\xE6d/",
-            diagnosticTitle: "Nh\u1EA7m c\u1EB7p /e/ v\xE0 /\xE6/",
-            explanation: "Bed vs bad l\xE0 c\u1EB7p ph\xE2n bi\u1EC7t gi\u1EEFa \xE2m /e/ m\u1EDF v\u1EEBa v\xE0 \xE2m /\xE6/ h\u1EA1 h\xE0m b\u1EB9t."
+            baitOptionText: "B. Phrase",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn ch\u1EEF 'ui' trong biscuit ph\xE1t \xE2m d\xE0i",
+            explanation: "H\u1ECDc vi\xEAn hay nh\u1EA7m 'ui' trong biscuit ph\xE1t \xE2m l\xE0 \xE2m d\xE0i, nh\u01B0ng th\u1EF1c t\u1EBF biscuit \u0111\u1ECDc l\xE0 \xE2m /\u026A/ ng\u1EAFn."
           }
         },
         {
           id: "doer_w1d3_q02",
           roundIndex: 1,
-          prompt: "C\u1EB7p t\u1EEB n\xE0o sau \u0111\xE2y minh h\u1ECDa cho s\u1EF1 \u0111\u1ED1i l\u1EADp gi\u1EEFa nguy\xEAn \xE2m /e/ v\xE0 /\xE6/?",
+          prompt: "T\u1EEB n\xE0o sau \u0111\xE2y c\xF3 nguy\xEAn \xE2m \u0111\u01B0\u1EE3c ph\xE1t \xE2m l\xE0 /\xE6/ (kh\xE1c v\u1EDBi \xE2m /e/ c\u1EE7a c\xE1c t\u1EEB c\xF2n l\u1EA1i)?",
           options: [
-            { id: "opt_A", label: "A", text: "bed /bed/ vs. bad /b\xE6d/" },
-            { id: "opt_B", label: "B", text: "leave /li\u02D0v/ vs. live /l\u026Av/" },
-            { id: "opt_C", label: "C", text: "food /fu\u02D0d/ vs. foot /f\u028At/" },
-            { id: "opt_D", label: "D", text: "hat /h\xE6t/ vs. hot /h\u0252t/" }
+            { id: "opt_A", label: "A", text: "plaid" },
+            { id: "opt_B", label: "B", text: "bread" },
+            { id: "opt_C", label: "C", text: "dead" },
+            { id: "opt_D", label: "D", text: "said" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. bed /bed/ vs. bad /b\xE6d/",
-          correctExplanation: "Bed c\xF3 nguy\xEAn \xE2m /e/ (m\u1EDF v\u1EEBa, l\u01B0\u1EE1i th\u1EA3 l\u1ECFng), bad c\xF3 nguy\xEAn \xE2m /\xE6/ (h\u1EA1 h\xE0m s\xE2u, kh\xF3e mi\u1EC7ng c\u0103ng).",
+          correctAnswerText: "A. plaid",
+          correctExplanation: '"plaid" l\xE0 tr\u01B0\u1EDDng h\u1EE3p \u0111\u1EB7c bi\u1EC7t ph\xE1t \xE2m l\xE0 /pl\xE6d/ (nguy\xEAn \xE2m /\xE6/). Trong khi "bread" /bred/, "dead" /ded/, v\xE0 "said" /sed/ \u0111\u1EC1u mang \xE2m /e/ ng\u1EAFn.',
           misconception: {
-            baitOptionId: "opt_B",
-            baitOptionText: "B. leave /li\u02D0v/ vs. live /l\u026Av/",
-            diagnosticTitle: "Ch\u1ECDn nh\u1EA7m c\u1EB7p /i:/ v\xE0 /\u026A/",
-            explanation: "Leave vs live l\xE0 c\u1EB7p \u0111\u1ED1i l\u1EADp c\u1EE7a \xE2m i d\xE0i v\xE0 i ng\u1EAFn."
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Modifier",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn t\u1EEB n\xF3i said mang \xE2m /\xE6/",
+            explanation: "Nhi\u1EC1u ng\u01B0\u1EDDi h\u1ECDc l\u1EA7m t\u01B0\u1EDFng 'said' ph\xE1t \xE2m d\u1EA1ng /se\u026Ad/ ho\u1EB7c /s\xE6d/, nh\u01B0ng phi\xEAn \xE2m chu\u1EA9n l\xE0 /sed/ (\xE2m /e/)."
           }
         },
         {
@@ -98202,7 +98202,7 @@ var init_week1_data = __esm({
           correctExplanation: "\xC2m schwa /\u0259/ l\xE0 nguy\xEAn \xE2m l\u01B0\u1EDBt nh\u1EB9, kh\xF4ng bao gi\u1EDD mang tr\u1ECDng \xE2m, xu\u1EA5t hi\u1EC7n trong today, about, doctor.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. /\u028C/",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "Nh\u1EA7m schwa v\u1EDBi \xE2m \xE1 /\u028C/",
             explanation: "\xC2m /\u028C/ (trong cup, duck) c\xF3 th\u1EC3 mang tr\u1ECDng \xE2m, c\xF2n schwa /\u0259/ lu\xF4n \u1EDF \xE2m ti\u1EBFt kh\xF4ng nh\u1EA5n."
           }
@@ -98242,7 +98242,7 @@ var init_week1_data = __esm({
           correctExplanation: "Collocation chu\u1EA9n v\u1EDBi \xE1p l\u1EF1c l\xE0: to be UNDER pressure / under a lot of pressure.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. I am in a lot of pressure",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: "D\xF9ng sai gi\u1EDBi t\u1EEB (in thay v\xEC under)",
             explanation: 'Ng\u01B0\u1EDDi h\u1ECDc ti\u1EBFng Vi\u1EC7t th\u01B0\u1EDDng d\u1ECBch "trong \xE1p l\u1EF1c" th\xE0nh "in pressure", nh\u01B0ng ti\u1EBFng Anh quy chu\u1EA9n l\xE0 "under pressure".'
           }
@@ -98262,7 +98262,7 @@ var init_week1_data = __esm({
           correctExplanation: '"Job opportunities after graduation" l\xE0 c\u1EE5m t\u1EEB h\u1ECDc thu\u1EADt chu\u1EA9n x\xE1c ch\u1EC9 c\u01A1 h\u1ED9i vi\u1EC7c l\xE0m sau t\u1ED1t nghi\u1EC7p.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. job chances after graduate",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: 'D\xF9ng t\u1EEB th\xE2n m\u1EADt "chance" v\xE0 sai t\u1EEB lo\u1EA1i sau "after"',
             explanation: "Chance mang ngh\u0129a c\u01A1 h\u1ED9i may r\u1EE7i h\u01A1n l\xE0 c\u01A1 h\u1ED9i ngh\u1EC1 nghi\u1EC7p trang tr\u1ECDng, v\xE0 sau gi\u1EDBi t\u1EEB after ph\u1EA3i l\xE0 danh t\u1EEB graduation."
           }
@@ -98272,17 +98272,17 @@ var init_week1_data = __esm({
           roundIndex: 6,
           prompt: '\u0110\u1EC3 di\u1EC5n \u0111\u1EA1t "C\xF4ng vi\u1EC7c c\u1EE7a t\xF4i c\xF3 l\u01B0\u01A1ng b\xE8o b\u1ECDt / th\u1EA5p", c\xE1ch n\xF3i t\u1EF1 nhi\xEAn v\xE0 ch\xEDnh x\xE1c l\xE0:',
           options: [
-            { id: "opt_A", label: "A", text: "My job is low-paid / poorly-paid." },
+            { id: "opt_A", label: "A", text: "My job is low-paid." },
             { id: "opt_B", label: "B", text: "My job is cheap salary." },
             { id: "opt_C", label: "C", text: "My job earns small money." },
             { id: "opt_D", label: "D", text: "My salary is very short." }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. My job is low-paid / poorly-paid.",
-          correctExplanation: 'T\xEDnh t\u1EEB mi\xEAu t\u1EA3 c\xF4ng vi\u1EC7c l\u01B0\u01A1ng th\u1EA5p l\xE0 "low-paid" ho\u1EB7c "poorly-paid" (ho\u1EB7c "a low salary").',
+          correctAnswerText: "A. My job is low-paid.",
+          correctExplanation: 'T\xEDnh t\u1EEB mi\xEAu t\u1EA3 c\xF4ng vi\u1EC7c l\u01B0\u01A1ng th\u1EA5p l\xE0 "low-paid" (ho\u1EB7c "poorly-paid", "a low salary").',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. My job is cheap salary.",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: 'D\u1ECBch "r\u1EBB" th\xE0nh "cheap salary"',
             explanation: 'Tuy\u1EC7t \u0111\u1ED1i kh\xF4ng d\xF9ng "cheap" v\u1EDBi l\u01B0\u01A1ng b\u1ED5ng trong ti\u1EBFng Anh.'
           }
@@ -98302,7 +98302,7 @@ var init_week1_data = __esm({
           correctExplanation: 'V\u1EBF sau gi\u1EA3i th\xEDch nguy\xEAn nh\xE2n/l\xFD do cho v\u1EBF tr\u01B0\u1EDBc, do \u0111\xF3 s\u1EED d\u1EE5ng li\xEAn t\u1EEB "because".',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. so",
+            baitOptionText: "C. Word",
             diagnosticTitle: "\u0110\u1EA3o l\u1ED9n nguy\xEAn nh\xE2n - k\u1EBFt qu\u1EA3",
             explanation: '"So" ch\u1EC9 k\u1EBFt qu\u1EA3, n\u1EBFu d\xF9ng "so" th\xEC v\u1EBF "helps me get promoted" ph\u1EA3i \u1EDF tr\u01B0\u1EDBc.'
           }
@@ -98322,7 +98322,7 @@ var init_week1_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc ch\u1EC9 ph\u01B0\u01A1ng ti\u1EC7n / c\xE1ch th\u1EE9c: by + V-ing (b\u1EB1ng c\xE1ch l\xE0m g\xEC).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. with",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: 'D\u1ECBch "v\u1EDBi vi\u1EC7c luy\u1EC7n t\u1EADp" th\xE0nh "with V-ing"',
             explanation: 'Ch\u1EC9 ph\u01B0\u01A1ng th\u1EE9c h\xE0nh \u0111\u1ED9ng \u0111\u1EC3 \u0111\u1EA1t k\u1EBFt qu\u1EA3 lu\xF4n d\xF9ng gi\u1EDBi t\u1EEB "by + V-ing", kh\xF4ng d\xF9ng "with".'
           }
@@ -98332,17 +98332,17 @@ var init_week1_data = __esm({
           roundIndex: 9,
           prompt: 'C\u1EE5m t\u1EEB n\xE0o sau \u0111\xE2y di\u1EC5n \u0111\u1EA1t m\u1EE9c \u0111\u1ED9 y\xEAu th\xEDch cao h\u01A1n v\xE0 h\u1ECDc thu\u1EADt h\u01A1n "I like football"?',
           options: [
-            { id: "opt_A", label: "A", text: "I am a big fan of football / I am really keen on football." },
+            { id: "opt_A", label: "A", text: "I am really keen on football." },
             { id: "opt_B", label: "B", text: "I very like football." },
             { id: "opt_C", label: "C", text: "I like so much football." },
             { id: "opt_D", label: "D", text: "Football is my favourite love." }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. I am a big fan of football / I am really keen on football.",
-          correctExplanation: '"To be a big fan of" ho\u1EB7c "to be keen on / passionate about" l\xE0 c\xE1ch di\u1EC5n \u0111\u1EA1t t\u1EF1 nhi\xEAn, tr\xE1nh l\u1ED7i d\u1ECBch word-by-word.',
+          correctAnswerText: "A. I am really keen on football.",
+          correctExplanation: '"To be keen on" (ho\u1EB7c "to be a big fan of / passionate about") l\xE0 c\xE1ch di\u1EC5n \u0111\u1EA1t t\u1EF1 nhi\xEAn, tr\xE1nh l\u1ED7i d\u1ECBch word-by-word.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. I very like football.",
+            baitOptionText: "B. Phrase",
             diagnosticTitle: 'L\u1ED7i ng\u1EEF ph\xE1p s\u01A1 \u0111\u1EB3ng "very like"',
             explanation: 'Ph\xF3 t\u1EEB "very" kh\xF4ng bao gi\u1EDD b\u1ED5 ngh\u0129a tr\u1EF1c ti\u1EBFp cho \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng (kh\xF4ng d\xF9ng very like, ph\u1EA3i l\xE0 like very much).'
           }
@@ -98393,7 +98393,7 @@ var init_week2_data = __esm({
           correctExplanation: '"Discuss" l\xE0 ngo\u1EA1i \u0111\u1ED9ng t\u1EEB tr\u1EF1c ti\u1EBFp (transitive verb), c\xF3 t\xE2n ng\u1EEF \u0111i li\u1EC1n ph\xEDa sau (discuss something), tuy\u1EC7t \u0111\u1ED1i kh\xF4ng th\xEAm gi\u1EDBi t\u1EEB "about".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. is -> are",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Nghi ng\u1EDD s\u1ED1 \xEDt/s\u1ED1 nhi\u1EC1u c\u1EE7a danh t\u1EEB t\u1EADp h\u1EE3p",
             explanation: '"The board of directors" xem nh\u01B0 m\u1ED9t th\u1EC3 th\u1ED1ng nh\u1EA5t n\xEAn d\xF9ng "is" chu\u1EA9n ng\u1EEF ph\xE1p, l\u1ED7i c\u1ED1t l\xF5i l\xE0 th\u1EEBa gi\u1EDBi t\u1EEB "about" sau discuss.'
           }
@@ -98413,7 +98413,7 @@ var init_week2_data = __esm({
           correctExplanation: '"Raise" l\xE0 ngo\u1EA1i \u0111\u1ED9ng t\u1EEB (transitive verb) c\u1EA7n c\xF3 t\xE2n ng\u1EEF theo sau: raise their hands (gi\u01A1 tay). Trong khi "rise" l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB (t\u1EF1 t\u0103ng l\xEAn, kh\xF4ng c\xF3 t\xE2n ng\u1EEF).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. rise",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn c\u1EB7p \u0111\u1ED9ng t\u1EEB Raise vs. Rise",
             explanation: 'Rise l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB (The sun rises), kh\xF4ng th\u1EC3 \u0111i tr\u1EF1c ti\u1EBFp v\u1EDBi t\xE2n ng\u1EEF "their hands".'
           }
@@ -98433,7 +98433,7 @@ var init_week2_data = __esm({
           correctExplanation: '"Look" \u1EDF \u0111\xE2y l\xE0 linking verb (tr\xF4ng c\xF3 v\u1EBB), theo sau ph\u1EA3i l\xE0 m\u1ED9t t\xEDnh t\u1EEB (adjective) b\u1ED5 ngh\u0129a cho ch\u1EE7 ng\u1EEF, kh\xF4ng d\xF9ng tr\u1EA1ng t\u1EEB (beautifully).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. looks -> is looking",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Chuy\u1EC3n sang th\xEC ti\u1EBFp di\u1EC5n cho \u0111\u1ED9ng t\u1EEB tri gi\xE1c",
             explanation: "Look th\u1EC3 hi\u1EC7n v\u1EBB b\u1EC1 ngo\xE0i l\xE0 linking verb mang t\xEDnh tr\u1EA1ng th\xE1i, kh\xF4ng d\xF9ng \u1EDF d\u1EA1ng ti\u1EBFp di\u1EC5n."
           }
@@ -98453,7 +98453,7 @@ var init_week2_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc chu\u1EA9n c\u1EE7a \u0111\u1ED9ng t\u1EEB spend: spend time/money DOING something (V-ing), kh\xF4ng d\xF9ng to-infinitive.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Many children spend too much time to play video games.",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "D\xF9ng to-V sau spend time",
             explanation: 'Th\xF3i quen d\u1ECBch "\u0111\u1EC3 l\xE0m g\xEC" sang "to-V" khi\u1EBFn h\u1ECDc vi\xEAn vi\u1EBFt "spend time to play", trong khi chu\u1EA9n ti\u1EBFng Anh l\xE0 spend time V-ing.'
           }
@@ -98473,7 +98473,7 @@ var init_week2_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc: provide somebody WITH something (ho\u1EB7c provide something FOR somebody). Knowledge l\xE0 danh t\u1EEB kh\xF4ng \u0111\u1EBFm \u0111\u01B0\u1EE3c.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. The course provided him a lot of useful knowledges.",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: 'B\u1ECF qu\xEAn gi\u1EDBi t\u1EEB "with" v\xE0 th\xEAm "s" v\xE0o knowledge',
             explanation: "Provide sb with sth c\u1EA7n c\xF3 with, v\xE0 knowledge kh\xF4ng bao gi\u1EDD c\xF3 s\u1ED1 nhi\u1EC1u knowledges."
           }
@@ -98493,7 +98493,7 @@ var init_week2_data = __esm({
           correctExplanation: "\u0110\u1ED9ng t\u1EEB consider \u0111\xF2i h\u1ECFi m\u1ED9t V-ing theo sau: consider DOING something (c\xE2n nh\u1EAFc l\xE0m g\xEC).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. to leave",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Ch\u1ECDn to-infinitive sau consider",
             explanation: "R\u1EA5t nhi\u1EC1u ng\u01B0\u1EDDi h\u1ECDc nh\u1EA7m consider \u0111i v\u1EDBi to-V, nh\u01B0ng \u0111\xFAng quy t\u1EAFc ng\u1EEF ph\xE1p ph\u1EA3i l\xE0 consider + V-ing."
           }
@@ -98513,7 +98513,7 @@ var init_week2_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc: find + Object + Adjective (nh\u1EADn th\u1EA5y c\xE1i g\xEC nh\u01B0 th\u1EBF n\xE0o). B\u1ED5 ng\u1EEF cho cu\u1ED1n s\xE1ch l\xE0 t\xEDnh t\u1EEB ch\u1EE7 \u0111\u1ED9ng "interesting".',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. I find this book very interested.",
+            baitOptionText: "C. children",
             diagnosticTitle: "Nh\u1EA7m \u0111u\xF4i -ed v\xE0 -ing c\u1EE7a t\xEDnh t\u1EEB",
             explanation: '"Interested" ch\u1EC9 c\u1EA3m x\xFAc c\u1EE7a con ng\u01B0\u1EDDi; \u0111\u1EB7c t\xEDnh c\u1EE7a cu\u1ED1n s\xE1ch g\xE2y h\u1EE9ng th\xFA ph\u1EA3i d\xF9ng "interesting".'
           }
@@ -98523,17 +98523,17 @@ var init_week2_data = __esm({
           roundIndex: 8,
           prompt: 'Ch\u1ECDn collocation chu\u1EA9n khi ti\u1EBFn h\xE0nh l\xE0m kh\u1EA3o s\xE1t: "Nh\xF3m em s\u1EBD ______ m\u1ED9t kh\u1EA3o s\xE1t v\u1EC1 th\xF3i quen \u0111\u1ECDc s\xE1ch c\u1EE7a gi\u1EDBi tr\u1EBB."',
           options: [
-            { id: "opt_A", label: "A", text: "conduct / carry out a survey" },
+            { id: "opt_A", label: "A", text: "conduct a survey" },
             { id: "opt_B", label: "B", text: "make a survey" },
             { id: "opt_C", label: "C", text: "take a survey" },
             { id: "opt_D", label: "D", text: "create a survey" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. conduct / carry out a survey",
-          correctExplanation: 'Collocation h\u1ECDc thu\u1EADt chu\u1EA9n \u0111i v\u1EDBi survey l\xE0 "conduct a survey" ho\u1EB7c "carry out a survey".',
+          correctAnswerText: "A. conduct a survey",
+          correctExplanation: 'Collocation h\u1ECDc thu\u1EADt chu\u1EA9n \u0111i v\u1EDBi survey l\xE0 "conduct a survey" (ho\u1EB7c "carry out a survey").',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. make a survey",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: 'D\u1ECBch t\u1EEB "l\xE0m kh\u1EA3o s\xE1t" th\xE0nh "make a survey"',
             explanation: "Ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 kh\xF4ng d\xF9ng make a survey; trong nghi\xEAn c\u1EE9u h\u1ECDc thu\u1EADt lu\xF4n d\xF9ng conduct / carry out."
           }
@@ -98553,7 +98553,7 @@ var init_week2_data = __esm({
           correctExplanation: "Collocation b\u1EA5t di b\u1EA5t d\u1ECBch trong ti\u1EBFng Anh: MAKE a mistake / make mistakes (ph\u1EA1m sai l\u1EA7m).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. doing mistakes",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: 'D\u1ECBch "l\xE0m l\u1ED7i" th\xE0nh "do mistakes"',
             explanation: 'Th\xF3i quen li\xEAn h\u1EC7 t\u1EEB "l\xE0m" v\u1EDBi "do" khi\u1EBFn h\u1ECDc vi\xEAn ch\u1ECDn "do mistakes" thay v\xEC c\u1EE5m chu\u1EA9n "make mistakes".'
           }
@@ -98565,17 +98565,17 @@ var init_week2_data = __esm({
           roundIndex: 0,
           prompt: 'Trong c\xE2u: "Employees are protesting what is infamous as 996", t\u1EEB "infamous" (adj) \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi t\u1EEB n\xE0o?',
           options: [
-            { id: "opt_A", label: "A", text: "notorious (kh\xE9t ti\u1EBFng, tai ti\u1EBFng v\xEC \u0111i\u1EC1u x\u1EA5u)" },
-            { id: "opt_B", label: "B", text: "unpopular / unknown (v\xF4 danh, kh\xF4ng ai bi\u1EBFt)" },
-            { id: "opt_C", label: "C", text: "prestigious (uy t\xEDn, danh gi\xE1)" },
-            { id: "opt_D", label: "D", text: "admirable (\u0111\xE1ng kh\xE2m ph\u1EE5c, ng\u01B0\u1EE1ng m\u1ED9)" }
+            { id: "opt_A", label: "A", text: "notorious" },
+            { id: "opt_B", label: "B", text: "unpopular" },
+            { id: "opt_C", label: "C", text: "prestigious" },
+            { id: "opt_D", label: "D", text: "admirable" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. notorious (kh\xE9t ti\u1EBFng, tai ti\u1EBFng v\xEC \u0111i\u1EC1u x\u1EA5u)",
+          correctAnswerText: "A. notorious",
           correctExplanation: '"Infamous" \u0111\u1ED3ng ngh\u0129a v\u1EDBi "notorious": n\u1ED5i danh v\xEC tai ti\u1EBFng, g\u1EAFn v\u1EDBi \u0111i\u1EC1u t\u1ED3i t\u1EC7 ho\u1EB7c \u0111\u1ED9c h\u1EA1i.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. unpopular / unknown",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: 'Hi\u1EC3u nh\u1EA7m ti\u1EC1n t\u1ED1 in- l\xE0 ph\u1EE7 \u0111\u1ECBnh "kh\xF4ng n\u1ED5i ti\u1EBFng"',
             explanation: "Nhi\u1EC1u ng\u01B0\u1EDDi l\u1EA7m t\u01B0\u1EDFng in- + famous = kh\xF4ng n\u1ED5i ti\u1EBFng, nh\u01B0ng infamous th\u1EF1c ch\u1EA5t mang ngh\u0129a kh\xE9t ti\u1EBFng v\xEC \u0111i\u1EC1u x\u1EA5u."
           }
@@ -98585,17 +98585,17 @@ var init_week2_data = __esm({
           roundIndex: 1,
           prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "compulsory" trong c\u1EE5m "compulsory weekend overtime" (t\u0103ng ca b\u1EAFt bu\u1ED9c cu\u1ED1i tu\u1EA7n) l\xE0:',
           options: [
-            { id: "opt_A", label: "A", text: "voluntary / optional (t\u1EF1 nguy\u1EC7n, t\xF9y ch\u1ECDn)" },
-            { id: "opt_B", label: "B", text: "mandatory (b\u1EAFt bu\u1ED9c theo lu\u1EADt)" },
-            { id: "opt_C", label: "C", text: "punitive (tr\u1EEBng ph\u1EA1t)" },
-            { id: "opt_D", label: "D", text: "relentless (kh\xF4ng ng\u1EEBng ngh\u1EC9)" }
+            { id: "opt_A", label: "A", text: "voluntary" },
+            { id: "opt_B", label: "B", text: "mandatory" },
+            { id: "opt_C", label: "C", text: "punitive" },
+            { id: "opt_D", label: "D", text: "relentless" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. voluntary / optional (t\u1EF1 nguy\u1EC7n, t\xF9y ch\u1ECDn)",
+          correctAnswerText: "A. voluntary",
           correctExplanation: '"Compulsory" = b\u1EAFt bu\u1ED9c, c\u01B0\u1EE1ng ch\u1EBF. T\u1EEB tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "voluntary" ho\u1EB7c "optional" (t\u1EF1 nguy\u1EC7n/t\xF9y ch\u1ECDn).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. mandatory",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
             explanation: "Mandatory l\xE0 t\u1EEB \u0111\u1ED3ng ngh\u0129a v\u1EDBi compulsory. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
           }
@@ -98615,7 +98615,7 @@ var init_week2_data = __esm({
           correctExplanation: '"Burnout" l\xE0 thu\u1EADt ng\u1EEF t\xE2m l\xFD h\u1ECDc lao \u0111\u1ED9ng ch\u1EC9 s\u1EF1 suy s\u1EE5p, c\u1EA1n ki\u1EC7t n\u0103ng l\u01B0\u1EE3ng th\u1EC3 x\xE1c v\xE0 c\u1EA3m x\xFAc v\xEC l\xE0m vi\u1EC7c qu\xE1 t\u1EA3i.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. S\u1EF1 nhi\u1EC7t t\xECnh h\u0103ng h\xE1i ch\xE1y h\u1EBFt m\xECnh",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: 'D\u1ECBch ngh\u0129a \u0111en t\u1EEB ch\u1EEF "burn" th\xE0nh ch\xE1y h\u1EBFt m\xECnh t\xEDch c\u1EF1c',
             explanation: "Burnout lu\xF4n mang ngh\u0129a ti\xEAu c\u1EF1c ch\u1EC9 s\u1EF1 ki\u1EC7t qu\u1EC7, kh\xF4ng d\xF9ng cho s\u1EF1 h\xE0o h\u1EE9ng c\u1ED1ng hi\u1EBFn."
           }
@@ -98635,7 +98635,7 @@ var init_week2_data = __esm({
           correctExplanation: 'Collocation h\u1ECDc thu\u1EADt c\u1ED1 \u0111\u1ECBnh: "raise awareness about/of something" (n\xE2ng cao nh\u1EADn th\u1EE9c x\xE3 h\u1ED9i v\u1EC1 m\u1ED9t v\u1EA5n \u0111\u1EC1).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. rise",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa ngo\u1EA1i \u0111\u1ED9ng t\u1EEB raise (c\u1EA7n t\xE2n ng\u1EEF) v\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB rise",
             explanation: '"Rise" l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB kh\xF4ng \u0111i k\xE8m t\xE2n ng\u1EEF. Mu\u1ED1n t\xE1c \u0111\u1ED9ng l\xEAn t\xE2n ng\u1EEF "awareness" b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng ngo\u1EA1i \u0111\u1ED9ng t\u1EEB "raise".'
           }
@@ -98655,7 +98655,7 @@ var init_week2_data = __esm({
           correctExplanation: '"Enforce rules/hours" ngh\u0129a l\xE0 th\u1EF1c thi, b\u1EAFt bu\u1ED9c tu\xE2n th\u1EE7 quy ch\u1EBF ho\u1EB7c lu\u1EADt l\u1EC7.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. reinforce",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa enforce (th\u1EF1c thi) v\xE0 reinforce (c\u1EE7ng c\u1ED1, gia c\u1ED1)",
             explanation: "Reinforce mang ngh\u0129a gia c\u1ED1 \u0111\u1ED9 b\u1EC1n ho\u1EB7c c\u1EE7ng c\u1ED1 l\u1EADp lu\u1EADn, kh\xF4ng d\xF9ng cho vi\u1EC7c b\u1EAFt bu\u1ED9c th\u1EF1c thi gi\u1EDD l\xE0m vi\u1EC7c."
           }
@@ -98675,7 +98675,7 @@ var init_week2_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc song h\xE0nh v\u1EDBi tr\u1EA1ng t\u1EEB "formally": "formally or informally" (m\u1ED9t c\xE1ch ch\xEDnh th\u1EE9c ho\u1EB7c ng\u1EA5m ng\u1EA7m phi ch\xEDnh th\u1EE9c).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. informal",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Vi ph\u1EA1m t\xEDnh song h\xE0nh t\u1EEB lo\u1EA1i (parallel structure)",
             explanation: 'T\u1EEB k\u1EBFt n\u1ED1i b\u1EDFi li\xEAn t\u1EEB "or" v\u1EDBi tr\u1EA1ng t\u1EEB "formally" b\u1EAFt bu\u1ED9c c\u0169ng ph\u1EA3i l\xE0 m\u1ED9t tr\u1EA1ng t\u1EEB ("informally").'
           }
@@ -98695,7 +98695,7 @@ var init_week2_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc chu\u1EA9n: "protest against something" (ph\u1EA3n \u0111\u1ED1i, bi\u1EC3u t\xECnh ch\u1ED1ng l\u1EA1i ch\xEDnh s\xE1ch/h\xE0nh \u0111\u1ED9ng).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. for",
+            baitOptionText: "C. children",
             diagnosticTitle: "D\xF9ng gi\u1EDBi t\u1EEB ch\u1EC9 s\u1EF1 \u1EE7ng h\u1ED9 thay v\xEC ph\u1EA3n \u0111\u1ED1i",
             explanation: 'Protest for l\xE0 \u0111\u1EA5u tranh \u0111\xF2i m\u1ED9t quy\u1EC1n l\u1EE3i, c\xF2n ph\u1EA3n \u0111\u1ED1i ch\u1ED1ng l\u1EA1i v\u0103n h\xF3a \u0111\u1ED9c h\u1EA1i ph\u1EA3i d\xF9ng "protest against".'
           }
@@ -98705,17 +98705,17 @@ var init_week2_data = __esm({
           roundIndex: 7,
           prompt: 'Th\xE0nh ng\u1EEF / c\u1EA5u tr\xFAc: "Is it really worth it to exchange our lives for money?" mang c\u1EA5u tr\xFAc chu\u1EA9n n\xE0o?',
           options: [
-            { id: "opt_A", label: "A", text: "exchange [A] for [B] (\u0111\xE1nh \u0111\u1ED5i c\xE1i n\xE0y l\u1EA5y c\xE1i kh\xE1c)" },
+            { id: "opt_A", label: "A", text: "exchange [A] for [B]" },
             { id: "opt_B", label: "B", text: "exchange [A] into [B]" },
             { id: "opt_C", label: "C", text: "exchange [A] with [B]" },
             { id: "opt_D", label: "D", text: "exchange [A] at [B]" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. exchange [A] for [B] (\u0111\xE1nh \u0111\u1ED5i c\xE1i n\xE0y l\u1EA5y c\xE1i kh\xE1c)",
+          correctAnswerText: "A. exchange [A] for [B]",
           correctExplanation: '"Exchange something for something" l\xE0 c\u1EA5u tr\xFAc chu\u1EA9n \u0111\u1EC3 ch\u1EC9 s\u1EF1 \u0111\xE1nh \u0111\u1ED5i ho\u1EB7c trao \u0111\u1ED5i l\u1EA5y v\u1EADt ph\u1EA9m/ti\u1EC1n b\u1EA1c.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. exchange [A] into [B]",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi chuy\u1EC3n \u0111\u1ED5i ti\u1EC1n t\u1EC7",
             explanation: '\u0110\u1ED5i ngo\u1EA1i t\u1EC7 th\xE0nh \u0111\u1ED3ng ti\u1EC1n kh\xE1c d\xF9ng exchange money into, c\xF2n \u0111\xE1nh \u0111\u1ED5i th\u1EE9 tr\u1EEBu t\u01B0\u1EE3ng (m\u1EA1ng s\u1ED1ng l\u1EA5y ti\u1EC1n) ph\u1EA3i d\xF9ng "for".'
           }
@@ -98735,7 +98735,7 @@ var init_week2_data = __esm({
           correctExplanation: '"A tight schedule" l\xE0 collocation t\u1EF1 nhi\xEAn ch\u1EC9 l\u1ECBch tr\xECnh l\xE0m vi\u1EC7c k\xEDn \u0111\u1EB7c, d\xE0y \u0111\u1EB7c v\xE0 c\u0103ng th\u1EB3ng.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. loose",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Ch\u1ECDn t\u1EEB tr\xE1i ngh\u0129a (l\u1ECFng l\u1EBBo)",
             explanation: 'Loose schedule l\xE0 l\u1ECBch r\u1EA3nh r\u1ED7i l\u1ECFng l\u1EBBo, m\xE2u thu\u1EABn tr\u1EF1c ti\u1EBFp v\u1EDBi v\u1EBF sau "barely any personal time".'
           }
@@ -98743,21 +98743,21 @@ var init_week2_data = __esm({
         {
           id: "doer_w2d2_q10",
           roundIndex: 9,
-          prompt: 'PARAPHRASE: C\xE2u "Young tech workers suffer from burnout because the tight work schedule leaves little time for sleep or personal life" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i t\u01B0\u01A1ng \u0111\u01B0\u01A1ng nh\u1EA5t l\xE0:',
+          prompt: 'PARAPHRASE: C\xE2u "Young tech workers suffer from burnout because tight schedules leave little time for rest" t\u01B0\u01A1ng \u0111\u01B0\u01A1ng v\u1EDBi:',
           options: [
-            { id: "opt_A", label: "A", text: "Severe physical and mental exhaustion among tech staff stems from grueling hours that severely restrict rest." },
-            { id: "opt_B", label: "B", text: "Employees enjoy working late at night because it boosts their productivity and financial freedom." },
-            { id: "opt_C", label: "C", text: "Startups have officially outlawed overtime to ensure young workers maintain optimal physical health." },
-            { id: "opt_D", label: "D", text: "Lack of personal life is completely unrelated to the excessive working hours demanded by tech firms." }
+            { id: "opt_A", label: "A", text: "Tech staff face severe exhaustion as grueling hours heavily restrict rest." },
+            { id: "opt_B", label: "B", text: "Employees enjoy working late because it boosts their productivity." },
+            { id: "opt_C", label: "C", text: "Startups have outlawed overtime to safeguard workers' physical health." },
+            { id: "opt_D", label: "D", text: "Lack of rest is completely unrelated to long working hours at tech firms." }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. Severe physical and mental exhaustion among tech staff stems from grueling hours that severely restrict rest.",
-          correctExplanation: '"Severe physical and mental exhaustion" paraphrase cho "burnout", v\xE0 "grueling hours that severely restrict rest" paraphrase cho "tight schedule leaves little time for sleep".',
+          correctAnswerText: "A. Tech staff face severe exhaustion as grueling hours heavily restrict rest.",
+          correctExplanation: '"Severe exhaustion" paraphrase cho "burnout", v\xE0 "grueling hours heavily restrict rest" paraphrase cho "tight schedules leave little time for rest".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Employees enjoy working late",
-            diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c th\xF4ng \u0111i\u1EC7p ch\u1EC9 tr\xEDch th\xE0nh s\u1EF1 th\xEDch th\xFA",
-            explanation: "B\xE0i \u0111\u1ECDc n\xEAu r\xF5 s\u1EF1 \u0111au kh\u1ED5 v\xE0 c\xE1i ch\u1EBFt v\xEC ki\u1EC7t s\u1EE9c, kh\xF4ng ph\u1EA3i s\u1EF1 th\xEDch th\xFA l\xE0m vi\u1EC7c \u0111\xEAm."
+            baitOptionText: "B. Employees enjoy working late because it boosts their productivity.",
+            diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c th\xF4ng \u0111i\u1EC7p ki\u1EC7t s\u1EE9c th\xE0nh th\xEDch th\xFA",
+            explanation: "B\xE0i \u0111\u1ECDc n\xEAu r\xF5 s\u1EF1 \u0111au kh\u1ED5 v\xE0 ki\u1EC7t s\u1EE9c do l\xE0m vi\u1EC7c qu\xE1 \u0111\u1ED9, kh\xF4ng ph\u1EA3i s\u1EF1 th\xEDch th\xFA l\xE0m vi\u1EC7c \u0111\xEAm."
           }
         }
       ],
@@ -98765,21 +98765,21 @@ var init_week2_data = __esm({
         {
           id: "doer_w2d3_q01",
           roundIndex: 0,
-          prompt: "C\u1EB7p nguy\xEAn \xE2m sau /u:/ v\xE0 /\u028A/ ph\xE2n bi\u1EC7t r\xF5 nh\u1EA5t qua hai t\u1EEB n\xE0o?",
+          prompt: "T\u1EEB n\xE0o sau \u0111\xE2y c\xF3 ph\u1EA7n g\u1EA1ch ch\xE2n ch\u1EE9a nguy\xEAn \xE2m ng\u1EAFn /\u028A/ kh\xE1c v\u1EDBi c\xE1c t\u1EEB c\xF2n l\u1EA1i?",
           options: [
-            { id: "opt_A", label: "A", text: "food /fu\u02D0d/ vs. foot /f\u028At/" },
-            { id: "opt_B", label: "B", text: "pen /pen/ vs. pain /pe\u026An/" },
-            { id: "opt_C", label: "C", text: "four /f\u0254\u02D0/ vs. far /f\u0251\u02D0/" },
-            { id: "opt_D", label: "D", text: "chain /t\u0283e\u026An/ vs. chance /t\u0283\u0251\u02D0ns/" }
+            { id: "opt_A", label: "A", text: "cushion" },
+            { id: "opt_B", label: "B", text: "bamboo" },
+            { id: "opt_C", label: "C", text: "balloon" },
+            { id: "opt_D", label: "D", text: "monsoon" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. food /fu\u02D0d/ vs. foot /f\u028At/",
-          correctExplanation: "Food c\xF3 \xE2m u d\xE0i /u:/ (chu m\xF4i tr\xF2n ch\u1EB7t), foot c\xF3 \xE2m u ng\u1EAFn /\u028A/ (m\xF4i h\u01A1i m\u1EDF, th\u1EA3 l\u1ECFng).",
+          correctAnswerText: "A. cushion",
+          correctExplanation: '"cushion" ph\xE1t \xE2m l\xE0 /\u02C8k\u028A\u0283.\u0259n/ ch\u1EE9a nguy\xEAn \xE2m ng\u1EAFn /\u028A/. Trong khi "bamboo" /b\xE6m\u02C8bu\u02D0/, "balloon" /b\u0259\u02C8lu\u02D0n/, "monsoon" /m\u0252n\u02C8su\u02D0n/ \u0111\u1EC1u ch\u1EE9a nguy\xEAn \xE2m d\xE0i /u\u02D0/.',
           misconception: {
-            baitOptionId: "opt_C",
-            baitOptionText: "C. four /f\u0254\u02D0/ vs. far /f\u0251\u02D0/",
-            diagnosticTitle: "Nh\u1EA7m sang c\u1EB7p /\u0254\u02D0/ v\xE0 /\u0251\u02D0/",
-            explanation: "Four vs far l\xE0 c\u1EB7p ph\xE2n bi\u1EC7t gi\u1EEFa \xE2m o d\xE0i tr\xF2n m\xF4i v\xE0 \xE2m a d\xE0i h\u1EA1 h\xE0m."
+            baitOptionId: "opt_B",
+            baitOptionText: "B. bamboo",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn ch\u1EEF c\xE1i 'oo' v\u1EDBi \xE2m ng\u1EAFn",
+            explanation: "H\u1ECDc vi\xEAn hay nh\u1EA7m c\xE1c t\u1EEB c\xF3 \u0111u\xF4i -oo l\xE0 \xE2m ng\u1EAFn, nh\u01B0ng bamboo mang \xE2m /u\u02D0/ k\xE9o d\xE0i."
           }
         },
         {
@@ -98797,7 +98797,7 @@ var init_week2_data = __esm({
           correctExplanation: 'Quy t\u1EAFc kim t\u1EF1 th\xE1p gi\u1EDBi t\u1EEB kh\xF4ng gian: s\u1ED1ng \u1EDF t\u1EA7ng m\u1EA5y lu\xF4n \u0111i v\u1EDBi gi\u1EDBi t\u1EEB "ON": on the 1st/2nd/5th floor.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. in",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: 'D\u1ECBch "\u1EDF trong t\u1EA7ng 5" th\xE0nh "in the floor"',
             explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "\u1EDF trong t\u1EA7ng 5" l\xE0m nhi\u1EC1u b\u1EA1n ch\u1ECDn "in", nh\u01B0ng ti\u1EBFng Anh m\u1EB7t s\xE0n b\u1EC1 m\u1EB7t ph\u1EB3ng b\u1EAFt bu\u1ED9c d\xF9ng "on".'
           }
@@ -98817,7 +98817,7 @@ var init_week2_data = __esm({
           correctExplanation: 'Th\xE0nh ph\u1ED1, qu\u1ED1c gia ho\u1EB7c khu v\u1EF1c \u0111\u1ECBa l\xFD l\u1EDBn lu\xF4n d\xF9ng gi\u1EDBi t\u1EEB "IN": in Hanoi, in Ho Chi Minh City.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. at - at",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: 'D\xF9ng "at" cho \u0111\u1ECBa b\xE0n th\xE0nh ph\u1ED1 l\u1EDBn',
             explanation: 'Gi\u1EDBi t\u1EEB "at" d\xF9ng cho \u0111i\u1EC3m c\u1EE5 th\u1EC3 (at the bus stop, at 12 Ba Hat Street), kh\xF4ng d\xF9ng cho c\u1EA3 th\xE0nh ph\u1ED1 r\u1ED9ng l\u1EDBn.'
           }
@@ -98837,7 +98837,7 @@ var init_week2_data = __esm({
           correctExplanation: 'Khi ch\u1EC9 c\xF3 t\xEAn \u0111\u01B0\u1EDDng ph\u1ED1 chung (ch\u01B0a c\xF3 s\u1ED1 nh\xE0 c\u1EE5 th\u1EC3), ta d\xF9ng gi\u1EDBi t\u1EEB "ON": on Ba Hat Street.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. at",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa t\xEAn \u0111\u01B0\u1EDDng v\xE0 s\u1ED1 nh\xE0 c\u1EE5 th\u1EC3",
             explanation: 'Ch\u1EC9 khi c\xF3 s\u1ED1 nh\xE0 c\u1EE5 th\u1EC3 (v\xED d\u1EE5: at 12 Ba Hat Street) m\u1EDBi d\xF9ng "at"; n\u1EBFu ch\u1EC9 c\xF3 t\xEAn \u0111\u01B0\u1EDDng th\xEC d\xF9ng "on".'
           }
@@ -98857,7 +98857,7 @@ var init_week2_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc chu\u1EA9n v\u1EC1 th\u1EDDi l\u01B0\u1EE3ng: It takes (somebody) + time + TO DO something.",
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. It spends me around 30 minutes to drive here.",
+            baitOptionText: "C. children",
             diagnosticTitle: 'D\xF9ng nh\u1EA7m "spend" v\u1EDBi ch\u1EE7 ng\u1EEF gi\u1EA3 It',
             explanation: 'Spend ch\u1EC9 d\xF9ng v\u1EDBi ch\u1EE7 ng\u1EEF l\xE0 ng\u01B0\u1EDDi (I spend 30 minutes driving), c\xF2n ch\u1EE7 ng\u1EEF gi\u1EA3 It b\u1EAFt bu\u1ED9c d\xF9ng v\u1EDBi "takes".'
           }
@@ -98877,7 +98877,7 @@ var init_week2_data = __esm({
           correctExplanation: 'T\xEDnh t\u1EEB gh\xE9p ch\u1EC9 s\u1ED1 t\u1EA7ng: number + singular noun gh\xE9p g\u1EA1ch n\u1ED1i "three-storey" (ho\u1EB7c three-story), danh t\u1EEB kh\xF4ng th\xEAm s.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. a three-storeys house",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Th\xEAm s\u1ED1 nhi\u1EC1u v\xE0o danh t\u1EEB trong t\xEDnh t\u1EEB gh\xE9p",
             explanation: "Trong t\xEDnh t\u1EEB gh\xE9p \u0111\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB (compound adjective), danh t\u1EEB \u0111o l\u01B0\u1EDDng lu\xF4n \u1EDF d\u1EA1ng s\u1ED1 \xEDt."
           }
@@ -98897,7 +98897,7 @@ var init_week2_data = __esm({
           correctExplanation: 'Ch\u1EC9 v\u1ECB tr\xED v\u1EADt l\xFD \u1EDF \u0111i\u1EC3m cu\u1ED1i c\xF9ng: "at the end of...". Ng\u01B0\u1EE3c l\u1EA1i, "in the end" l\xE0 ph\xF3 t\u1EEB ch\u1EC9 th\u1EDDi gian mang ngh\u0129a r\u1ED1t cu\u1ED9c/cu\u1ED1i c\xF9ng.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. in the end of the hallway",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: 'Nh\u1EA7m l\u1EABn gi\u1EEFa "at the end of" v\xE0 "in the end"',
             explanation: '"In the end" kh\xF4ng bao gi\u1EDD \u0111i v\u1EDBi "of something"; \u0111\u1EC3 ch\u1EC9 v\u1ECB tr\xED n\u01A1i ch\u1ED1n b\u1EAFt bu\u1ED9c d\xF9ng "at the end of".'
           }
@@ -98917,7 +98917,7 @@ var init_week2_data = __esm({
           correctExplanation: '"Cozy" (ho\u1EB7c cosy) mi\xEAu t\u1EA3 m\u1ED9t kh\xF4ng gian nh\u1ECF g\u1ECDn, \u1EA5m c\xFAng v\xE0 \u0111em l\u1EA1i c\u1EA3m gi\xE1c b\xECnh y\xEAn th\u01B0 gi\xE3n.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. crowded",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn s\u1EF1 \u1EA5m c\xFAng v\u1EDBi s\u1EF1 \u0111\xF4ng \u0111\xFAc",
             explanation: "Crowded mang ngh\u0129a ti\xEAu c\u1EF1c l\xE0 \u0111\xF4ng \u0111\xFAc, ch\u1EADt n\xEDch ng\u01B0\u1EDDi."
           }
@@ -98937,7 +98937,7 @@ var init_week2_data = __esm({
           correctExplanation: '"Opposite something" \u0111\xF3ng vai tr\xF2 l\xE0 c\u1EE5m gi\u1EDBi t\u1EEB ch\u1EC9 v\u1ECB tr\xED, c\u1EA5u tr\xFAc \u0111\u1EA3o ng\u1EEF: Opposite + [N\u01A1i ch\u1ED1n] + is + [Ch\u1EE7 ng\u1EEF].',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Opposite to my desk has a large window.",
+            baitOptionText: "B. parents -> parent",
             diagnosticTitle: 'D\xF9ng \u0111\u1ED9ng t\u1EEB "has" thay v\xEC to be ch\u1EC9 s\u1EF1 t\u1ED3n t\u1EA1i',
             explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "\u0111\u1ED1i di\u1EC7n c\xF3 m\u1ED9t c\u1EEDa s\u1ED5" l\xE0m ng\u01B0\u1EDDi h\u1ECDc d\u1ECBch th\xE0nh "has a window", sai ng\u1EEF ph\xE1p ti\u1EBFng Anh.'
           }
@@ -99008,7 +99008,7 @@ var init_week3_data = __esm({
           correctExplanation: "Ng\u1EEF c\u1EA3nh x\u1EA3y ra tr\u01B0\u1EDBc m\u1ED9t m\u1ED1c th\u1EDDi gian trong qu\xE1 kh\u1EE9 (tr\u01B0\u1EDBc khi v\xE0o \u0111\u1EA1i h\u1ECDc, l\xFAc c\xF2n l\xE0 h\u1ECDc sinh c\u1EA5p 3), n\xEAn tr\u1EA1ng th\xE1i nh\u1EADn th\u1EE9c l\xFAc \u0111\xF3 chia \u1EDF Qu\xE1 kh\u1EE9 \u0111\u01A1n (were not aware).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. are",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn nh\u1EADn th\u1EE9c qu\xE1 kh\u1EE9 v\u1EDBi th\u1EF1c t\u1EA1i",
             explanation: 'Tr\u1EA1ng ng\u1EEF ch\u1EC9 th\u1EDDi gian qu\xE1 kh\u1EE9 "Before going to university" quy \u0111\u1ECBnh m\u1EC7nh \u0111\u1EC1 n\xE0y ph\u1EA3i chia th\xEC qu\xE1 kh\u1EE9 \u0111\u01A1n.'
           }
@@ -99028,7 +99028,7 @@ var init_week3_data = __esm({
           correctExplanation: 'M\u1EC7nh \u0111\u1EC1 ch\xEDnh d\xF9ng "is still dirty" \u1EDF hi\u1EC7n t\u1EA1i, vi\u1EC7c ch\xEDnh quy\u1EC1n ph\u1EA1t h\xE0nh ch\xEDnh l\xE0 ch\xEDnh s\xE1ch li\xEAn t\u1EE5c \u0111ang \u0111\u01B0\u1EE3c th\u1EF1c thi \u1EDF hi\u1EC7n t\u1EA1i n\xEAn d\xF9ng th\xEC Hi\u1EC7n t\u1EA1i \u0111\u01A1n (fine).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. fined",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "L\u1EC7ch th\xEC gi\u1EEFa hai m\u1EC7nh \u0111\u1EC1 t\u01B0\u01A1ng ph\u1EA3n",
             explanation: 'D\xF9ng fined (qu\xE1 kh\u1EE9) s\u1EBD ng\u1EE5 \xFD hi\u1EC7n nay kh\xF4ng c\xF2n ph\u1EA1t n\u1EEFa, m\xE2u thu\u1EABn v\u1EDBi \xFD ngh\u0129a li\xEAn t\u1EE5c k\u1EBFt n\u1ED1i v\u1EDBi "is still dirty".'
           }
@@ -99048,7 +99048,7 @@ var init_week3_data = __esm({
           correctExplanation: '"These days" l\xE0 d\u1EA5u hi\u1EC7u c\u1EE7a m\u1ED9t qu\xE1 tr\xECnh t\u1EA1m th\u1EDDi \u0111ang di\u1EC5n ra quanh hi\u1EC7n t\u1EA1i, th\xEC Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n (is looking) l\xE0 chu\u1EA9n x\xE1c nh\u1EA5t.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. She looks for a new job these days.",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "D\xF9ng Hi\u1EC7n t\u1EA1i \u0111\u01A1n cho t\xECnh hu\u1ED1ng mang t\xEDnh t\u1EA1m th\u1EDDi",
             explanation: "Hi\u1EC7n t\u1EA1i \u0111\u01A1n di\u1EC5n t\u1EA3 s\u1EF1 th\u1EADt l\xE2u d\xE0i/th\xF3i quen c\u1ED1 \u0111\u1ECBnh; vi\u1EC7c t\xECm vi\u1EC7c l\xE0 t\u1EA1m th\u1EDDi trong giai \u0111o\u1EA1n hi\u1EC7n nay."
           }
@@ -99068,7 +99068,7 @@ var init_week3_data = __esm({
           correctExplanation: 'T\xEDnh t\u1EEB "beneficial" \u0111i v\u1EDBi gi\u1EDBi t\u1EEB "to" (c\xF3 l\u1EE3i cho ai/c\xE1i g\xEC). Ch\u1EE7 ng\u1EEF Gerund "Reading books" \u0111\xF2i h\u1ECFi to be "is".',
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. Reading books beneficial...",
+            baitOptionText: "D. will freeze",
             diagnosticTitle: "B\u1ECF qu\xEAn \u0111\u1ED9ng t\u1EEB to be li\xEAn k\u1EBFt t\xEDnh t\u1EEB",
             explanation: 'T\xEDnh t\u1EEB beneficial kh\xF4ng th\u1EC3 t\u1EF1 l\xE0m v\u1ECB ng\u1EEF n\u1EBFu thi\u1EBFu \u0111\u1ED9ng t\u1EEB to be "is".'
           }
@@ -99088,7 +99088,7 @@ var init_week3_data = __esm({
           correctExplanation: "\u0110\u1ED9ng t\u1EEB chia \u1EDF Qu\xE1 kh\u1EE9 \u0111\u01A1n (travelled, stayed) k\u1EBFt h\u1EE3p v\u1EDBi tr\u1EA1ng t\u1EEB t\u1EA7n su\u1EA5t (every summer, always) di\u1EC5n t\u1EA3 th\xF3i quen trong qu\xE1 kh\u1EE9.",
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. M\u1ED9t s\u1EF1 th\u1EADt lu\xF4n lu\xF4n \u0111\xFAng trong hi\u1EC7n t\u1EA1i",
+            baitOptionText: "D. will freeze",
             diagnosticTitle: 'Nh\u1EA7m tr\u1EA1ng t\u1EEB "always" v\xE0 "every" ch\u1EC9 c\xF3 trong hi\u1EC7n t\u1EA1i \u0111\u01A1n',
             explanation: "Tr\u1EA1ng t\u1EEB t\u1EA7n su\u1EA5t nh\u01B0 always/every ho\xE0n to\xE0n c\xF3 th\u1EC3 k\u1EBFt h\u1EE3p v\u1EDBi Qu\xE1 kh\u1EE9 \u0111\u01A1n \u0111\u1EC3 ch\u1EC9 th\xF3i quen c\u0169."
           }
@@ -99108,7 +99108,7 @@ var init_week3_data = __esm({
           correctExplanation: 'Sau gi\u1EDBi t\u1EEB before l\xE0 V-ing (suffering from). M\u1EC7nh \u0111\u1EC1 ch\xEDnh chia qu\xE1 kh\u1EE9 \u0111\u01A1n (valued) v\xE0 c\u1EA5u tr\xFAc so s\xE1nh "value X over Y" (coi tr\u1ECDng X h\u01A1n Y).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. are valuing wealth than health",
+            baitOptionText: "C. froze",
             diagnosticTitle: "D\xF9ng than v\u1EDBi \u0111\u1ED9ng t\u1EEB value",
             explanation: 'C\u1EA5u tr\xFAc chu\u1EA9n l\xE0 "value something OVER something else", kh\xF4ng d\xF9ng "than".'
           }
@@ -99128,7 +99128,7 @@ var init_week3_data = __esm({
           correctExplanation: "L\u1ECBch tr\xECnh t\xE0u xe, m\xE1y bay, th\u1EDDi kh\xF3a bi\u1EC3u c\u1ED1 \u0111\u1ECBnh lu\xF4n d\xF9ng th\xEC Hi\u1EC7n t\u1EA1i \u0111\u01A1n mang ngh\u0129a l\u1ECBch tr\xECnh c\xF4ng c\u1ED9ng.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. is leaving",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "D\xF9ng th\xEC ti\u1EBFp di\u1EC5n cho l\u1ECBch tr\xECnh c\xF4ng c\u1ED9ng c\u1ED1 \u0111\u1ECBnh",
             explanation: "Hi\u1EC7n t\u1EA1i ti\u1EBFp di\u1EC5n d\xF9ng cho k\u1EBF ho\u1EA1ch c\xE1 nh\xE2n \u0111\xE3 s\u1EAFp x\u1EBFp, v\u1EDBi t\xE0u xe c\xF4ng c\u1ED9ng theo gi\u1EDD chu\u1EA9n ph\u1EA3i d\xF9ng Hi\u1EC7n t\u1EA1i \u0111\u01A1n."
           }
@@ -99148,7 +99148,7 @@ var init_week3_data = __esm({
           correctExplanation: 'M\u1EC7nh l\u1EC7nh th\u1EE9c g\xE2y ch\xFA \xFD "Please be quiet!" b\xE1o hi\u1EC7u m\u1ED9t h\xE0nh \u0111\u1ED9ng \u0111ang th\u1EF1c s\u1EF1 di\u1EC5n ra ngay t\u1EA1i th\u1EDDi \u0111i\u1EC3m n\xF3i.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. sleep",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "D\xF9ng Hi\u1EC7n t\u1EA1i \u0111\u01A1n thay cho h\xE0nh \u0111\u1ED9ng \u0111ang x\u1EA3y ra tr\u01B0\u1EDBc m\u1EAFt",
             explanation: 'N\u1EBFu d\xF9ng "sleep" th\xEC ch\u1EC9 n\xF3i v\u1EC1 th\xF3i quen n\xF3i chung, kh\xF4ng gi\u1EA3i th\xEDch l\xFD do ph\u1EA3i gi\u1EEF im l\u1EB7ng ngay l\xFAc n\xE0y.'
           }
@@ -99168,7 +99168,7 @@ var init_week3_data = __esm({
           correctExplanation: "Forget to do sth = qu\xEAn ph\u1EA3i l\xE0m m\u1ED9t vi\u1EC7c g\xEC \u0111\xF3 (ch\u01B0a l\xE0m). Forget doing sth = qu\xEAn m\u1ED9t vi\u1EC7c \u0111\xE3 t\u1EEBng l\xE0m trong qu\xE1 kh\u1EE9.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. put -> puts",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "T\u01B0\u1EDFng nh\u1EA7m \u0111\u1ED9ng t\u1EEB put ch\u01B0a chia th\xEC",
             explanation: '\u0110\u1ED9ng t\u1EEB b\u1EA5t quy t\u1EAFc "put" c\xF3 c\u1EA3 3 c\u1ED9t gi\u1ED1ng nhau (put - put - put), trong c\xE2u qu\xE1 kh\u1EE9 yesterday d\xF9ng "put" l\xE0 ho\xE0n to\xE0n \u0111\xFAng.'
           }
@@ -99180,17 +99180,17 @@ var init_week3_data = __esm({
           roundIndex: 0,
           prompt: 'Trong c\u1EE5m t\u1EEB "one of those standout destinations" (b\xE0i \u0111\u1ECDc H\u1ED9i An), t\u1EEB "standout" (adj) \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi t\u1EEB n\xE0o?',
           options: [
-            { id: "opt_A", label: "A", text: "remarkable / extraordinary (n\u1ED5i b\u1EADt, xu\u1EA5t ch\xFAng)" },
-            { id: "opt_B", label: "B", text: "ordinary / average (b\xECnh th\u01B0\u1EDDng, ph\u1ED5 th\xF4ng)" },
-            { id: "opt_C", label: "C", text: "overcrowded (qu\xE1 \u0111\xF4ng \u0111\xFAc)" },
-            { id: "opt_D", label: "D", text: "isolated (xa x\xF4i, c\xF4 l\u1EADp)" }
+            { id: "opt_A", label: "A", text: "remarkable" },
+            { id: "opt_B", label: "B", text: "ordinary" },
+            { id: "opt_C", label: "C", text: "overcrowded" },
+            { id: "opt_D", label: "D", text: "isolated" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. remarkable / extraordinary (n\u1ED5i b\u1EADt, xu\u1EA5t ch\xFAng)",
+          correctAnswerText: "A. remarkable",
           correctExplanation: '"Standout" (adj) m\xF4 t\u1EA3 m\u1ED9t ng\u01B0\u1EDDi/v\u1EADt/\u0111\u1ECBa \u0111i\u1EC3m v\u01B0\u1EE3t tr\u1ED9i, \u0111\u1EB7c bi\u1EC7t xu\u1EA5t s\u1EAFc v\xE0 \u0111\xE1ng nh\u1EDB h\u01A1n t\u1EA5t c\u1EA3 nh\u1EEFng th\u1EE9 xung quanh.',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. overcrowded",
+            baitOptionText: "C. froze",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa n\u1ED5i ti\u1EBFng thu h\xFAt kh\xE1ch v\u1EDBi \u0111\xF4ng \u0111\xFAc ch\u1EADt ch\u1ED9i",
             explanation: "Standout ch\u1EC9 ch\u1EA5t l\u01B0\u1EE3ng n\u1ED5i b\u1EADt v\u01B0\u1EE3t tr\u1ED9i c\u1EE7a \u0111\u1ECBa danh, kh\xF4ng mang ngh\u0129a ti\xEAu c\u1EF1c l\xE0 qu\xE1 t\u1EA3i hay ch\u1EADt ch\u1ED9i."
           }
@@ -99200,17 +99200,17 @@ var init_week3_data = __esm({
           roundIndex: 1,
           prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "bland" trong c\xE2u: "I always thought pho was such a bland dish without very much flavour" l\xE0:',
           options: [
-            { id: "opt_A", label: "A", text: "flavorful / tasty (\u0111\u1EADm \u0111\xE0, gi\xE0u h\u01B0\u01A1ng v\u1ECB)" },
-            { id: "opt_B", label: "B", text: "tasteless (nh\u1EA1t nh\u1EBDo, v\xF4 v\u1ECB)" },
-            { id: "opt_C", label: "C", text: "plain (\u0111\u01A1n \u0111i\u1EC7u, kh\xF4ng n\xEAm n\u1EBFm)" },
-            { id: "opt_D", label: "D", text: "mild (d\u1ECBu nh\u1EB9, kh\xF4ng cay)" }
+            { id: "opt_A", label: "A", text: "flavorful" },
+            { id: "opt_B", label: "B", text: "tasteless" },
+            { id: "opt_C", label: "C", text: "plain" },
+            { id: "opt_D", label: "D", text: "mild" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. flavorful / tasty (\u0111\u1EADm \u0111\xE0, gi\xE0u h\u01B0\u01A1ng v\u1ECB)",
+          correctAnswerText: "A. flavorful",
           correctExplanation: '"Bland" = nh\u1EA1t nh\u1EBDo, thi\u1EBFu gia v\u1ECB. Do \u0111\xF3 t\u1EEB tr\xE1i ngh\u0129a ch\xEDnh x\xE1c nh\u1EA5t l\xE0 "flavorful" (\u0111\u1EA7y \u0111\u1EB7n h\u01B0\u01A1ng v\u1ECB).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. tasteless",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
             explanation: "Tasteless l\xE0 t\u1EEB \u0111\u1ED3ng ngh\u0129a v\u1EDBi bland. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
           }
@@ -99220,17 +99220,17 @@ var init_week3_data = __esm({
           roundIndex: 2,
           prompt: 'Trong c\u1EE5m "a sobering look at the lasting effects of the Vietnam War", t\u1EEB "sobering" mang s\u1EAFc th\xE1i ngh\u0129a g\xEC?',
           options: [
-            { id: "opt_A", label: "A", text: "serious and thought-provoking (l\u1EAFng \u0111\u1ECDng, khi\u1EBFn ng\u01B0\u1EDDi ta ph\u1EA3i suy ng\u1EABm s\xE2u s\u1EAFc)" },
-            { id: "opt_B", label: "B", text: "entertaining and humorous (mang t\xEDnh gi\u1EA3i tr\xED, h\xE0i h\u01B0\u1EDBc)" },
-            { id: "opt_C", label: "C", text: "boring and dull (nh\xE0m ch\xE1n, t\u1EBB nh\u1EA1t)" },
-            { id: "opt_D", label: "D", text: "terrifying and chaotic (kinh ho\xE0ng, h\u1ED7n lo\u1EA1n)" }
+            { id: "opt_A", label: "A", text: "serious and thought-provoking" },
+            { id: "opt_B", label: "B", text: "entertaining and humorous" },
+            { id: "opt_C", label: "C", text: "boring and dull" },
+            { id: "opt_D", label: "D", text: "terrifying and chaotic" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. serious and thought-provoking (l\u1EAFng \u0111\u1ECDng, khi\u1EBFn ng\u01B0\u1EDDi ta ph\u1EA3i suy ng\u1EABm s\xE2u s\u1EAFc)",
+          correctAnswerText: "A. serious and thought-provoking",
           correctExplanation: '"Sobering" (adj) m\xF4 t\u1EA3 tr\u1EA3i nghi\u1EC7m trang nghi\xEAm khi\u1EBFn ng\u01B0\u1EDDi xem b\u1EEBng t\u1EC9nh, tr\u1EDF n\xEAn nghi\xEAm t\xFAc v\xE0 suy ng\u1EABm s\xE2u xa v\u1EC1 th\u1EF1c t\u1EBF.',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. boring and dull",
+            baitOptionText: "C. froze",
             diagnosticTitle: "\u0110\xE1nh \u0111\u1ED3ng c\u1EA3m gi\xE1c tr\u1EA7m l\u1EAFng v\u1EDBi s\u1EF1 nh\xE0m ch\xE1n",
             explanation: "Sobering l\xE0 m\u1ED9t tr\u1EA3i nghi\u1EC7m g\xE2y \u1EA5n t\u01B0\u1EE3ng tinh th\u1EA7n m\u1EA1nh m\u1EBD v\xE0 s\xE2u s\u1EAFc, ho\xE0n to\xE0n kh\xF4ng ph\u1EA3i t\u1EBB nh\u1EA1t."
           }
@@ -99250,7 +99250,7 @@ var init_week3_data = __esm({
           correctExplanation: '"Travel itinerary" l\xE0 thu\u1EADt ng\u1EEF chu\u1EA9n x\xE1c ch\u1EC9 b\u1EA3n l\u1ECBch tr\xECnh chi ti\u1EBFt c\xE1c ch\u1EB7ng d\u1EEBng ch\xE2n trong m\u1ED9t chuy\u1EBFn du l\u1ECBch.',
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. Travel coupon",
+            baitOptionText: "D. will freeze",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi v\xE9 gi\u1EA3m gi\xE1 / phi\u1EBFu tham quan",
             explanation: "Coupon l\xE0 phi\u1EBFu d\u1ECBch v\u1EE5/gi\u1EA3m gi\xE1, kh\xF4ng mang ngh\u0129a l\u1ECBch tr\xECnh di chuy\u1EC3n."
           }
@@ -99270,7 +99270,7 @@ var init_week3_data = __esm({
           correctExplanation: '"Topography" (danh t\u1EEB h\u1ECDc thu\u1EADt) ch\u1EC9 \u0111\u1EB7c t\xEDnh \u0111\u1ECBa h\xECnh, h\xECnh th\xE1i c\xE1c kh\u1ED1i n\xFAi \u0111\xE1, \u0111\u1EA3o n\u1ED5i v\xE0 b\u1EC1 m\u1EB7t \u0111\u1ECBa th\u1EBF t\u1EF1 nhi\xEAn.',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. H\u1EC7 th\u1ED1ng truy\u1EC1n thuy\u1EBFt v\xE0 phong t\u1EE5c",
+            baitOptionText: "C. froze",
             diagnosticTitle: "Nh\u1EA7m topography v\u1EDBi folklore / mythology",
             explanation: "Topography thu\u1EA7n t\xFAy l\xE0 thu\u1EADt ng\u1EEF \u0111\u1ECBa l\xFD h\u1ECDc mi\xEAu t\u1EA3 h\xECnh th\u1EC3 \u0111\u1EA5t \u0111ai c\u1EA3nh quan."
           }
@@ -99290,7 +99290,7 @@ var init_week3_data = __esm({
           correctExplanation: '"Thoroughly experience something" l\xE0 collocation cao c\u1EA5p trong IELTS: tr\u1EA3i nghi\u1EC7m m\u1ED9t c\xE1ch t\u01B0\u1EDDng t\u1EADn, c\u1EB7n k\u1EBD v\xE0 tr\u1ECDn v\u1EB9n t\u1EEB \u0111\u1EA7u \u0111\u1EBFn cu\u1ED1i.',
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. roughly",
+            baitOptionText: "D. will freeze",
             diagnosticTitle: "Nh\u1EA7m roughly (s\u01A1 s\xE0i/\u01B0\u1EDBc ch\u1EEBng) v\u1EDBi tr\u1EA3i nghi\u1EC7m s\xE2u s\u1EAFc",
             explanation: "Roughly mang ngh\u0129a \xE1ng ch\u1EEBng ho\u1EB7c th\xF4 k\u1EC7ch, tr\xE1i ng\u01B0\u1EE3c ho\xE0n to\xE0n v\u1EDBi \xFD ngh\u0129a t\u01B0\u1EDDng t\u1EADn c\u1EE7a thoroughly."
           }
@@ -99300,17 +99300,17 @@ var init_week3_data = __esm({
           roundIndex: 6,
           prompt: 'Th\xE0nh ng\u1EEF: "I cannot recommend this experience enough!" t\u01B0\u01A1ng \u0111\u01B0\u01A1ng v\u1EDBi c\xE2u n\xE0o d\u01B0\u1EDBi \u0111\xE2y?',
           options: [
-            { id: "opt_A", label: "A", text: "I strongly / wholeheartedly encourage everyone to try this experience." },
+            { id: "opt_A", label: "A", text: "I strongly encourage everyone to try this experience." },
             { id: "opt_B", label: "B", text: "I do not think this experience is suitable for most tourists." },
             { id: "opt_C", label: "C", text: "I have run out of time to describe the trip properly." },
             { id: "opt_D", label: "D", text: "I refuse to provide any further recommendation about this tour." }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. I strongly / wholeheartedly encourage everyone to try this experience.",
+          correctAnswerText: "A. I strongly encourage everyone to try this experience.",
           correctExplanation: '"Cannot recommend sth enough" l\xE0 c\u1EA5u tr\xFAc khen ng\u1EE3i tuy\u1EC7t \u0111\u1ED1i: khen bao nhi\xEAu c\u0169ng ch\u01B0a \u0111\u1EE7, nhi\u1EC7t li\u1EC7t khuy\u1EBFn kh\xEDch n\xEAn th\u1EED.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. I do not think this experience is suitable",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: 'B\u1EABy d\u1ECBch ngh\u0129a \u0111en t\u1EEB ph\u1EE7 \u0111\u1ECBnh "cannot"',
             explanation: 'H\u1ECDc sinh th\u1EA5y ch\u1EEF "cannot" t\u01B0\u1EDFng l\xE0 l\u1EDDi ch\xEA ho\u1EB7c kh\xF4ng gi\u1EDBi thi\u1EC7u, trong khi \u0111\xE2y l\xE0 th\xE0nh ng\u1EEF b\xE0y t\u1ECF s\u1EF1 th\xE1n ph\u1EE5c cao nh\u1EA5t.'
           }
@@ -99330,7 +99330,7 @@ var init_week3_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc chu\u1EA9n x\xE1c: "admission to a place/event" (quy\u1EC1n \u0111\u01B0\u1EE3c v\xE0o c\u1EEDa, c\u1EA5p ph\xE9p v\xE0o m\u1ED9t \u0111\u1ECBa \u0111i\u1EC3m n\xE0o \u0111\xF3).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. for",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: 'D\u1ECBch t\u1EEB "cho" trong ti\u1EBFng Vi\u1EC7t th\xE0nh gi\u1EDBi t\u1EEB "for"',
             explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "v\xE9 v\xE0o c\u1EEDa cho c\xE1c ng\xF4i \u0111\u1EC1n", nh\u01B0ng ti\u1EBFng Anh b\u1EAFt bu\u1ED9c d\xF9ng "admission TO [place]".'
           }
@@ -99350,7 +99350,7 @@ var init_week3_data = __esm({
           correctExplanation: '"A standout exhibition" = m\u1ED9t bu\u1ED5i tri\u1EC3n l\xE3m n\u1ED5i b\u1EADt, xu\u1EA5t s\u1EAFc v\u01B0\u1EE3t tr\u1ED9i thu h\xFAt s\u1EF1 ca ng\u1EE3i qu\u1ED1c t\u1EBF. "Bland" (nh\u1EA1t nh\u1EBDo) m\xE2u thu\u1EABn v\u1EDBi v\u1EBF sau.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. bland",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: 'Kh\xF4ng li\xEAn k\u1EBFt v\u1EDBi k\u1EBFt qu\u1EA3 t\xEDch c\u1EF1c "attracted praise"',
             explanation: 'N\u1EBFu tri\u1EC3n l\xE3m "bland" (nh\u1EA1t nh\u1EBDo) th\xEC kh\xF4ng th\u1EC3 nh\u1EADn \u0111\u01B0\u1EE3c s\u1EF1 t\xE1n d\u01B0\u01A1ng r\u1ED9ng r\xE3i c\u1EE7a qu\u1ED1c t\u1EBF.'
           }
@@ -99370,7 +99370,7 @@ var init_week3_data = __esm({
           correctExplanation: `"Relentless noise" paraphrase cho "constant honking", "chaotic traffic" paraphrase cho "mad traffic", v\xE0 "discouraged me" paraphrase cho "didn't feel very inspired".`,
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. The author was forbidden",
+            baitOptionText: "C. froze",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa m\u1EA5t c\u1EA3m h\u1EE9ng c\xE1 nh\xE2n v\u1EDBi b\u1ECB ph\xE1p lu\u1EADt c\u1EA5m \u0111o\xE1n",
             explanation: "T\xE1c gi\u1EA3 ch\u1EC9 kh\xF4ng c\xF3 h\u1EE9ng th\xFA \u0111i d\u1EA1o (uninspired), kh\xF4ng h\u1EC1 b\u1ECB ai ng\u0103n c\u1EA5m (forbidden)."
           }
@@ -99392,7 +99392,7 @@ var init_week3_data = __esm({
           correctExplanation: "\xC2m m\xF4i-m\xF4i (bilabial stop): Hai m\xF4i kh\xE9p ch\u1EB7t ch\u1EB7n lu\u1ED3ng h\u01A1i l\u1EA1i r\u1ED3i b\u1EADt ra \u0111\u1EC3 ph\xE1t \xE2m /p/ (v\xF4 thanh) v\xE0 /b/ (h\u1EEFu thanh).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. /t/ v\xE0 /d/",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "Nh\u1EA7m v\u1ECB tr\xED ph\xE1t \xE2m \u0111\u1EA7u l\u01B0\u1EE1i v\u1EDBi m\xF4i",
             explanation: "/t/ v\xE0 /d/ \u0111\u01B0\u1EE3c t\u1EA1o ra b\u1EB1ng \u0111\u1EA7u l\u01B0\u1EE1i ch\u1EA1m v\xE0o ph\u1EA7n l\u1EE3i h\xE0m tr\xEAn, kh\xF4ng d\xF9ng hai m\xF4i kh\xE9p."
           }
@@ -99412,7 +99412,7 @@ var init_week3_data = __esm({
           correctExplanation: "\u0110\xE2y l\xE0 \xE2m r\u0103ng - m\xF4i (labiodental fricative): r\u0103ng tr\xEAn ch\u1EA1m nh\u1EB9 m\xF4i d\u01B0\u1EDBi, \u0111\u1EA9y lu\u1ED3ng h\u01A1i li\xEAn t\u1EE5c qua khe h\u1EDF.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. M\xEDm ch\u1EB7t hai m\xF4i",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "Nh\u1EA7m sang c\xE1ch ph\xE1t \xE2m \xE2m m\xF4i-m\xF4i /p, b/",
             explanation: "N\u1EBFu m\xEDm hai m\xF4i th\xEC s\u1EBD t\u1EA1o ra \xE2m /p/ ho\u1EB7c /b/, kh\xF4ng th\u1EC3 t\u1EA1o ra lu\u1ED3ng h\u01A1i ma s\xE1t c\u1EE7a /f, v/."
           }
@@ -99432,7 +99432,7 @@ var init_week3_data = __esm({
           correctExplanation: 'C\u1EE5m c\u1ED1 \u0111\u1ECBnh mang ngh\u0129a "nh\u1EDD c\xF3 c\xE1i g\xEC": Thanks to + Noun/Pronoun. Ph\u1EA3i c\xF3 \u0111u\xF4i "s" \u1EDF Thanks.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Thank to",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: 'R\u01A1i r\u1EE5ng \u0111u\xF4i -s trong c\u1EE5m "Thanks to"',
             explanation: "Th\xF3i quen vi\u1EBFt Thank to (thi\u1EBFu s) l\xE0 l\u1ED7i s\u01A1 \u0111\u1EB3ng th\u01B0\u1EDDng th\u1EA5y trong IELTS Writing."
           }
@@ -99452,7 +99452,7 @@ var init_week3_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc: enable somebody TO DO something (cho ph\xE9p/t\u1EA1o \u0111i\u1EC1u ki\u1EC7n cho ai l\xE0m g\xEC).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. enables me practice",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: 'B\u1ECF qu\xEAn "to" sau enable',
             explanation: "Kh\xE1c v\u1EDBi \u0111\u1ED9ng t\u1EEB let/make, \u0111\u1ED9ng t\u1EEB enable b\u1EAFt bu\u1ED9c ph\u1EA3i \u0111i k\xE8m v\u1EDBi to-V."
           }
@@ -99472,7 +99472,7 @@ var init_week3_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc to be worth something: "Is it worth the fee?" (N\xF3 c\xF3 \u0111\xE1ng \u0111\u1ED3ng ti\u1EC1n b\xE1t g\u1EA1o / kho\u1EA3n ph\xED b\u1ECF ra kh\xF4ng?).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. Does it worth money?",
+            baitOptionText: "C. froze",
             diagnosticTitle: "D\xF9ng tr\u1EE3 \u0111\u1ED9ng t\u1EEB does v\u1EDBi t\xEDnh t\u1EEB worth",
             explanation: '"Worth" trong tr\u01B0\u1EDDng h\u1EE3p n\xE0y \u0111\xF3ng vai tr\xF2 t\xEDnh t\u1EEB/gi\u1EDBi t\u1EEB \u0111\xF2i h\u1ECFi to be, kh\xF4ng d\xF9ng tr\u1EE3 \u0111\u1ED9ng t\u1EEB Does.'
           }
@@ -99492,7 +99492,7 @@ var init_week3_data = __esm({
           correctExplanation: "Danh t\u1EEB access lu\xF4n \u0111i v\u1EDBi gi\u1EDBi t\u1EEB TO: have / give access TO something (quy\u1EC1n truy c\u1EADp v\xE0o c\xE1i g\xEC).",
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. for",
+            baitOptionText: "C. froze",
             diagnosticTitle: 'D\u1ECBch "truy c\u1EADp cho nhi\u1EC1u b\xE0i h\u1ECDc"',
             explanation: 'Gi\u1EDBi t\u1EEB h\u1ECDc thu\u1EADt b\u1EA5t di b\u1EA5t d\u1ECBch c\u1EE7a danh t\u1EEB access l\xE0 "to".'
           }
@@ -99512,7 +99512,7 @@ var init_week3_data = __esm({
           correctExplanation: 'B\xE0i \u0111\u1ECDc n\xEAu: "hurt your eyes... the blue light from the screens can make it hard to sleep".',
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. Khi\u1EBFn ng\u01B0\u1EDDi d\xF9ng b\u1ECB t\u0103ng c\xE2n",
+            baitOptionText: "D. will freeze",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn t\xE1c h\u1EA1i c\u1EE7a vi\u1EC7c l\u01B0\u1EDDi v\u1EADn \u0111\u1ED9ng v\u1EDBi \xE1nh s\xE1ng m\xE0n h\xECnh",
             explanation: "\xC1nh s\xE1ng xanh t\xE1c \u0111\u1ED9ng tr\u1EF1c ti\u1EBFp \u0111\u1EBFn v\xF5ng m\u1EA1c v\xE0 hormone gi\u1EA5c ng\u1EE7 melatonin, g\xE2y kh\xF3 ng\u1EE7."
           }
@@ -99532,7 +99532,7 @@ var init_week3_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc t\xE2n ng\u1EEF gi\u1EA3: make it + Adj + (for sb) + TO DO something. \u0110i v\u1EDBi focus ON something.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. makes me hard to focus",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: 'B\u1ECF qu\xEAn t\xE2n ng\u1EEF gi\u1EA3 "it"',
             explanation: '"Make me hard" l\xE0 sai ho\xE0n to\xE0n v\u1EC1 ngh\u0129a v\xE0 ng\u1EEF ph\xE1p; b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng t\xE2n ng\u1EEF gi\u1EA3: make IT hard for me.'
           }
@@ -99552,7 +99552,7 @@ var init_week3_data = __esm({
           correctExplanation: 'C\u1EE5m phrasal verb t\u1EF1 nhi\xEAn trong ch\u1ECDn l\u1EF1a: "go for something" (quy\u1EBFt \u0111\u1ECBnh ch\u1ECDn / mua m\xF3n \u0111\u1ED3 n\xE0o \u0111\xF3).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. take",
+            baitOptionText: "B. is freezing",
             diagnosticTitle: "D\xF9ng t\u1EEB take kh\xF4ng \u0111i k\xE8m gi\u1EDBi t\u1EEB ph\xF9 h\u1EE3p",
             explanation: `C\u1EE5m t\u1EEB t\u1EF1 nhi\xEAn m\xE0 ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 hay d\xF9ng khi ra quy\u1EBFt \u0111\u1ECBnh l\u1EF1a ch\u1ECDn l\xE0 "I'll go for...".`
           }
@@ -99562,17 +99562,17 @@ var init_week3_data = __esm({
           roundIndex: 9,
           prompt: `Th\xE0nh ng\u1EEF "make up one's mind" c\xF3 ngh\u0129a t\u01B0\u01A1ng \u0111\u01B0\u01A1ng v\u1EDBi \u0111\u1ED9ng t\u1EEB n\xE0o?`,
           options: [
-            { id: "opt_A", label: "A", text: "decide (\u0111\u01B0a ra quy\u1EBFt \u0111\u1ECBnh)" },
-            { id: "opt_B", label: "B", text: "remember (ghi nh\u1EDB)" },
-            { id: "opt_C", label: "C", text: "forget (qu\xEAn)" },
-            { id: "opt_D", label: "D", text: "hesitate (do d\u1EF1)" }
+            { id: "opt_A", label: "A", text: "decide" },
+            { id: "opt_B", label: "B", text: "remember" },
+            { id: "opt_C", label: "C", text: "forget" },
+            { id: "opt_D", label: "D", text: "hesitate" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. decide (\u0111\u01B0a ra quy\u1EBFt \u0111\u1ECBnh)",
+          correctAnswerText: "A. decide",
           correctExplanation: `"Make up one's mind" l\xE0 th\xE0nh ng\u1EEF ph\u1ED5 bi\u1EBFn \u0111\u1ED3ng ngh\u0129a ho\xE0n to\xE0n v\u1EDBi "make a decision / decide".`,
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. hesitate",
+            baitOptionText: "D. will freeze",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi giai \u0111o\u1EA1n suy ngh\u0129 do d\u1EF1",
             explanation: "Make up mind l\xE0 \u0111\xE3 ch\u1ED1t h\u1EA1 quy\u1EBFt \u0111\u1ECBnh xong, ch\u1EA5m d\u1EE9t vi\u1EC7c do d\u1EF1."
           }
@@ -99603,7 +99603,7 @@ var init_week4_data = __esm({
           correctExplanation: 'T\xEDnh t\u1EEB b\u1ED5 ngh\u0129a (spacious: k\xEDch th\u01B0\u1EDBc/kh\xF4ng gian, modern: th\u1EDDi \u0111\u1EA1i/tu\u1ED5i th\u1ECD) \u0111\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB ch\xEDnh "house".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. a house spacious modern",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "L\u1ED7i tr\u1EADt t\u1EF1 t\u1EEB ti\u1EBFng Vi\u1EC7t (Danh t\u1EEB tr\u01B0\u1EDBc T\xEDnh t\u1EEB)",
             explanation: "Ng\u01B0\u1EDDi Vi\u1EC7t c\xF3 th\xF3i quen n\xF3i danh t\u1EEB r\u1ED3i m\u1EDBi \u0111\u1EBFn t\xEDnh t\u1EEB (ng\xF4i nh\xE0 r\u1ED9ng r\xE3i), trong khi ti\u1EBFng Anh t\xEDnh t\u1EEB \u0111\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB."
           }
@@ -99623,7 +99623,7 @@ var init_week4_data = __esm({
           correctExplanation: 'Tr\u01B0\u1EDBc danh t\u1EEB "actions" c\u1EA7n m\u1ED9t t\xEDnh t\u1EEB (adjective) \u0111\u1EC3 b\u1ED5 ngh\u0129a: "strict actions" (nh\u1EEFng h\xE0nh \u0111\u1ED9ng/bi\u1EC7n ph\xE1p nghi\xEAm kh\u1EAFc).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. strictly",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "Nh\u1EA7m v\u1ECB tr\xED t\xEDnh t\u1EEB v\xE0 tr\u1EA1ng t\u1EEB",
             explanation: 'Th\u1EA5y \u0111\u1ED9ng t\u1EEB "took" n\xEAn t\u01B0\u1EDFng c\u1EA7n tr\u1EA1ng t\u1EEB "strictly", nh\u01B0ng th\u1EF1c ch\u1EA5t t\u1EEB n\xE0y b\u1ED5 ngh\u0129a tr\u1EF1c ti\u1EBFp cho danh t\u1EEB "actions".'
           }
@@ -99643,7 +99643,7 @@ var init_week4_data = __esm({
           correctExplanation: '\u0110\u1ED9ng t\u1EEB h\xE0nh \u0111\u1ED9ng "explained" c\u1EA7n m\u1ED9t tr\u1EA1ng t\u1EEB ch\u1EC9 c\xE1ch th\u1EE9c (Adverb of manner) b\u1ED5 ngh\u0129a: explained something clearly.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. clear",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB thay v\xEC tr\u1EA1ng t\u1EEB b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB",
             explanation: "Clear l\xE0 t\xEDnh t\u1EEB, ch\u1EC9 \u0111i sau linking verb (The rule is clear); b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng explain ph\u1EA3i d\xF9ng ph\xF3 t\u1EEB clearly."
           }
@@ -99663,7 +99663,7 @@ var init_week4_data = __esm({
           correctExplanation: "Tr\u1EA1ng t\u1EEB t\u1EA7n su\u1EA5t (rarely, always, usually, often) \u0111\u1EE9ng tr\u01B0\u1EDBc \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng (stays up) v\xE0 sau \u0111\u1ED9ng t\u1EEB to be.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. He stays rarely up late",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "Ch\xE8n tr\u1EA1ng t\u1EEB v\xE0o gi\u1EEFa phrasal verb",
             explanation: "Tr\u1EA1ng t\u1EEB t\u1EA7n su\u1EA5t \u0111\u1EE9ng tr\u01B0\u1EDBc to\xE0n b\u1ED9 c\u1EE5m \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng, kh\xF4ng ch\xE8n v\xE0o gi\u1EEFa verb v\xE0 particle."
           }
@@ -99683,7 +99683,7 @@ var init_week4_data = __esm({
           correctExplanation: '"Hard work" (ch\u0103m ch\u1EC9), th\xE0nh ng\u1EEF "land a dream job" (\u0111\u1EA1t \u0111\u01B0\u1EE3c c\xF4ng vi\u1EC7c m\u01A1 \u01B0\u1EDBc). "Hardly" l\xE0 hi\u1EBFm khi/h\u1EA7u nh\u01B0 kh\xF4ng, kh\xF4ng mang ngh\u0129a ch\u0103m ch\u1EC9.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. work hardly",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: 'Nh\u1EA7m l\u1EABn gi\u1EEFa "hard" v\xE0 "hardly"',
             explanation: '"Hard" v\u1EEBa l\xE0 t\xEDnh t\u1EEB v\u1EEBa l\xE0 tr\u1EA1ng t\u1EEB mang ngh\u0129a ch\u0103m ch\u1EC9; "hardly" l\xE0 tr\u1EA1ng t\u1EEB ph\u1EE7 \u0111\u1ECBnh ngh\u0129a l\xE0 h\u1EA7u nh\u01B0 kh\xF4ng.'
           }
@@ -99703,7 +99703,7 @@ var init_week4_data = __esm({
           correctExplanation: 'T\xEDnh t\u1EEB h\u1ECDc thu\u1EADt: "chronic diseases" (c\xE1c b\u1EC7nh m\xE3n t\xEDnh, b\u1EC7nh k\xE9o d\xE0i dai d\u1EB3ng nh\u01B0 ti\u1EC3u \u0111\u01B0\u1EDDng, tim m\u1EA1ch).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. chronically",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "Ch\u1ECDn sai d\u1EA1ng t\u1EEB lo\u1EA1i",
             explanation: 'Tr\u01B0\u1EDBc danh t\u1EEB "diseases" ph\u1EA3i l\xE0 m\u1ED9t t\xEDnh t\u1EEB, kh\xF4ng d\xF9ng tr\u1EA1ng t\u1EEB chronically.'
           }
@@ -99723,7 +99723,7 @@ var init_week4_data = __esm({
           correctExplanation: 'Tr\u1EA1ng t\u1EEB m\u1EE9c \u0111\u1ED9 "relatively" (t\u01B0\u01A1ng \u0111\u1ED1i) b\u1ED5 ngh\u0129a cho t\xEDnh t\u1EEB "difficult". Th\xE0nh ng\u1EEF "pass with flying colors" ngh\u0129a l\xE0 \u0111\u1EA1t k\u1EBFt qu\u1EA3 r\u1EF1c r\u1EE1.',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. relative difficult",
+            baitOptionText: "C. They just bought a modern spacious house suburbs in.",
             diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a cho t\xEDnh t\u1EEB",
             explanation: "B\u1ED5 ngh\u0129a cho m\u1ED9t t\xEDnh t\u1EEB kh\xE1c (difficult) b\u1EAFt bu\u1ED9c ph\u1EA3i l\xE0 tr\u1EA1ng t\u1EEB (relatively), kh\xF4ng th\u1EC3 d\xF9ng t\xEDnh t\u1EEB relative."
           }
@@ -99743,7 +99743,7 @@ var init_week4_data = __esm({
           correctExplanation: "C\u1EE5m t\xEDnh t\u1EEB: highly responsible (r\u1EA5t c\xF3 tr\xE1ch nhi\u1EC7m) v\xE0 considerate (chu \u0111\xE1o).",
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. considerable person",
+            baitOptionText: "C. They just bought a modern spacious house suburbs in.",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa considerate v\xE0 considerable",
             explanation: '"Considerate" l\xE0 chu \u0111\xE1o, bi\u1EBFt ngh\u0129 cho ng\u01B0\u1EDDi kh\xE1c; c\xF2n "considerable" l\xE0 \u0111\xE1ng k\u1EC3/to l\u1EDBn (v\u1EC1 s\u1ED1 l\u01B0\u1EE3ng). \u0110\xE2y l\xE0 b\u1EABy t\u1EEB v\u1EF1ng kinh \u0111i\u1EC3n.'
           }
@@ -99763,7 +99763,7 @@ var init_week4_data = __esm({
           correctExplanation: 'B\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB t\u0103ng "increased" trong IELTS Writing Task 1 ph\u1EA3i l\xE0 tr\u1EA1ng t\u1EEB ch\u1EC9 t\u1ED1c \u0111\u1ED9/m\u1EE9c \u0111\u1ED9: increased dramatically.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. dramatic",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB sau \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng",
             explanation: 'Ch\u1EC9 khi d\xF9ng danh t\u1EEB ("saw a dramatic increase") m\u1EDBi d\xF9ng t\xEDnh t\u1EEB; sau \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng "increased" ph\u1EA3i l\xE0 ph\xF3 t\u1EEB dramatically.'
           }
@@ -99783,7 +99783,7 @@ var init_week4_data = __esm({
           correctExplanation: '"Drove carefully" (\u0111\u1ED9ng t\u1EEB + tr\u1EA1ng t\u1EEB), "slippery road" (t\xEDnh t\u1EEB + danh t\u1EEB), "extremely dangerous" (tr\u1EA1ng t\u1EEB + t\xEDnh t\u1EEB).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. drove careful... extreme dangerous",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "Qu\xEAn \u0111u\xF4i -ly \u1EDF c\u1EA3 hai v\u1ECB tr\xED ph\xF3 t\u1EEB",
             explanation: "Drove c\u1EA7n ph\xF3 t\u1EEB carefully, v\xE0 dangerous c\u1EA7n ph\xF3 t\u1EEB extremely b\u1ED5 ngh\u0129a."
           }
@@ -99795,17 +99795,17 @@ var init_week4_data = __esm({
           roundIndex: 0,
           prompt: 'Trong ch\u1EE7 \u0111\u1EC1 Health, t\u1EEB \u0110\u1ED2NG NGH\u0128A chu\u1EA9n x\xE1c nh\u1EA5t v\u1EDBi "intake" trong c\xE2u "a higher intake of red meat" l\xE0:',
           options: [
-            { id: "opt_A", label: "A", text: "consumption (s\u1EF1 ti\xEAu th\u1EE5, l\u01B0\u1EE3ng n\u1EA1p v\xE0o c\u01A1 th\u1EC3)" },
-            { id: "opt_B", label: "B", text: "exercise (s\u1EF1 v\u1EADn \u0111\u1ED9ng)" },
-            { id: "opt_C", label: "C", text: "release (s\u1EF1 th\u1EA3i ra)" },
-            { id: "opt_D", label: "D", text: "prevention (s\u1EF1 ph\xF2ng ng\u1EEBa)" }
+            { id: "opt_A", label: "A", text: "consumption" },
+            { id: "opt_B", label: "B", text: "exercise" },
+            { id: "opt_C", label: "C", text: "release" },
+            { id: "opt_D", label: "D", text: "prevention" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. consumption (s\u1EF1 ti\xEAu th\u1EE5, l\u01B0\u1EE3ng n\u1EA1p v\xE0o c\u01A1 th\u1EC3)",
+          correctAnswerText: "A. consumption",
           correctExplanation: '"Intake" trong dinh d\u01B0\u1EE1ng h\u1ECDc \u0111\u1ED3ng ngh\u0129a v\u1EDBi "consumption" (l\u01B0\u1EE3ng th\u1EE9c \u0103n/n\u01B0\u1EDBc u\u1ED1ng dung n\u1EA1p v\xE0o c\u01A1 th\u1EC3).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. release",
+            baitOptionText: "C. They just bought a modern spacious house suburbs in.",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa n\u1EA1p v\xE0o v\xE0 th\u1EA3i ra",
             explanation: '"Release" mang ngh\u0129a th\u1EA3i ra/ph\xE1t t\xE1n, tr\xE1i ng\u01B0\u1EE3c ho\xE0n to\xE0n v\u1EDBi "intake" (dung n\u1EA1p v\xE0o).'
           }
@@ -99815,17 +99815,17 @@ var init_week4_data = __esm({
           roundIndex: 1,
           prompt: "C\u1EB7p t\u1EEB TR\xC1I NGH\u0128A c\u1ED1t l\xF5i trong \u0111o\u1EA1n ph\xE2n t\xEDch th\u1ECBt \u0111\u1ECF c\u1EE7a b\xE0i \u0111\u1ECDc l\xE0:",
           options: [
-            { id: "opt_A", label: "A", text: "processed meat (th\u1ECBt ch\u1EBF bi\u1EBFn s\u1EB5n) vs. unprocessed meat (th\u1ECBt t\u01B0\u01A1i ch\u01B0a ch\u1EBF bi\u1EBFn)" },
+            { id: "opt_A", label: "A", text: "processed meat vs. unprocessed meat" },
             { id: "opt_B", label: "B", text: "red meat vs. white meat" },
             { id: "opt_C", label: "C", text: "fresh meat vs. cooked meat" },
             { id: "opt_D", label: "D", text: "healthy meat vs. harmful meat" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. processed meat (th\u1ECBt ch\u1EBF bi\u1EBFn s\u1EB5n) vs. unprocessed meat (th\u1ECBt t\u01B0\u01A1i ch\u01B0a ch\u1EBF bi\u1EBFn)",
+          correctAnswerText: "A. processed meat vs. unprocessed meat",
           correctExplanation: "Ti\u1EC1n t\u1ED1 un- t\u1EA1o n\xEAn c\u1EB7p \u0111\u1ED1i l\u1EADp kinh \u0111i\u1EC3n trong dinh d\u01B0\u1EE1ng h\u1ECDc: processed (ch\u1EBF bi\u1EBFn c\xF4ng nghi\u1EC7p nhi\u1EC1u ph\u1EE5 gia) vs. unprocessed (th\u1ECBt nguy\xEAn b\u1EA3n ch\u01B0a ch\u1EBF bi\u1EBFn).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. red meat vs. white meat",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "Ch\u1ECDn c\u1EB7p \u0111\u1ED1i l\u1EADp m\xE0u s\u1EAFc th\xF4ng th\u01B0\u1EDDng ngo\xE0i b\xE0i",
             explanation: "B\xE0i \u0111\u1ECDc nh\u1EA5n m\u1EA1nh s\u1EF1 sai l\u1EC7ch nghi\xEAn c\u1EE9u do kh\xF4ng ph\xE2n bi\u1EC7t gi\u1EEFa processed v\xE0 unprocessed, ch\u1EE9 kh\xF4ng so s\xE1nh th\u1ECBt \u0111\u1ECF v\u1EDBi th\u1ECBt tr\u1EAFng."
           }
@@ -99845,7 +99845,7 @@ var init_week4_data = __esm({
           correctExplanation: '"Cardiovascular" b\u1EAFt ngu\u1ED3n t\u1EEB g\u1ED1c Hy L\u1EA1p: cardio- (tim) v\xE0 vascular (m\u1EA1ch m\xE1u). C\u1EE5m n\xE0y ch\u1EC9 b\u1EC7nh tim m\u1EA1ch.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Ph\u1ED5i v\xE0 \u0111\u01B0\u1EDDng h\xF4 h\u1EA5p",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi b\u1EC7nh h\xF4 h\u1EA5p (respiratory disease)",
             explanation: "H\xF4 h\u1EA5p l\xE0 respiratory, c\xF2n cardiovascular lu\xF4n chuy\xEAn bi\u1EC7t cho tim v\xE0 m\u1EA1ch m\xE1u."
           }
@@ -99865,7 +99865,7 @@ var init_week4_data = __esm({
           correctExplanation: 'Ti\u1EC1n t\u1ED1 over- mang ngh\u0129a qu\xE1 m\u1EE9c: "overeating" l\xE0 h\xE0nh vi \u0103n qu\xE1 nhi\u1EC1u, m\u1EA5t ki\u1EC3m so\xE1t do c\u01A1n \u0111\xF3i d\u1ED3n l\u1EA1i.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. fasting",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "Ch\u1ECDn t\u1EEB tr\xE1i ngh\u0129a (nh\u1ECBn \u0103n)",
             explanation: "Fasting l\xE0 ch\u1EE7 \u0111\u1ED9ng nh\u1ECBn \u0103n, tr\xE1i ng\u01B0\u1EE3c v\u1EDBi overeating (\u0103n v\xF4 \u0111\u1ED9)."
           }
@@ -99885,7 +99885,7 @@ var init_week4_data = __esm({
           correctExplanation: 'Collocation y khoa th\xF4ng d\u1EE5ng: "blood sugar levels" (ch\u1EC9 s\u1ED1 \u0111\u01B0\u1EDDng huy\u1EBFt trong m\xE1u).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. sweet",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB sweet thay v\xEC danh t\u1EEB sugar",
             explanation: 'Trong danh t\u1EEB gh\xE9p y khoa ch\u1EC9 ch\u1EC9 s\u1ED1 \u0111\u01B0\u1EDDng huy\u1EBFt, t\u1EEB chu\u1EA9n b\u1EAFt bu\u1ED9c l\xE0 "blood sugar", kh\xF4ng d\xF9ng t\xEDnh t\u1EEB sweet.'
           }
@@ -99905,7 +99905,7 @@ var init_week4_data = __esm({
           correctExplanation: '"A well-balanced diet" l\xE0 collocation ti\xEAu chu\u1EA9n trong IELTS: m\u1ED9t ch\u1EBF \u0111\u1ED9 \u0103n c\xE2n b\u1EB1ng \u0111\u1EA7y \u0111\u1EE7 dinh d\u01B0\u1EE1ng.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. heavily-sweetened",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "Ch\u1ECDn ch\u1EBF \u0111\u1ED9 \u0103n nhi\u1EC1u \u0111\u01B0\u1EDDng c\xF3 h\u1EA1i",
             explanation: "Heavily-sweetened l\xE0 nhi\u1EC1u \u0111\u01B0\u1EDDng ng\u1ECDt g\xE2y h\u1EA1i s\u1EE9c kh\u1ECFe, m\xE2u thu\u1EABn v\u1EDBi l\u1EDDi khuy\xEAn \u0103n u\u1ED1ng l\xE0nh m\u1EA1nh."
           }
@@ -99925,7 +99925,7 @@ var init_week4_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc h\u1ECDc thu\u1EADt c\u1ED1 \u0111\u1ECBnh: "distinguish BETWEEN [A] AND [B]" (ph\xE2n bi\u1EC7t r\u1EA1ch r\xF2i gi\u1EEFa \u0111\u1ED1i t\u01B0\u1EE3ng A v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng B).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. with",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: 'D\u1ECBch t\u1EEB "v\u1EDBi" trong ti\u1EBFng Vi\u1EC7t th\xE0nh gi\u1EDBi t\u1EEB "with"',
             explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "ph\xE2n bi\u1EC7t A v\u1EDBi B", nh\u01B0ng ti\u1EBFng Anh b\u1EAFt bu\u1ED9c d\xF9ng "distinguish between A and B".'
           }
@@ -99945,7 +99945,7 @@ var init_week4_data = __esm({
           correctExplanation: `"Change one's mind" d\xF9ng ph\xE9p nh\xE2n h\xF3a \u0111\u1EC3 mi\xEAu t\u1EA3 qu\xE1 tr\xECnh khoa h\u1ECDc ti\u1EBFn b\u1ED9: li\xEAn t\u1EE5c s\u1EEDa \u0111\u1ED5i nh\u1EADn th\u1EE9c c\u0169 \u0111\u1EC3 ti\u1EC7m c\u1EADn ch\xE2n l\xFD.`,
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. Khoa h\u1ECDc l\xE0 s\u1EF1 l\u1EEBa d\u1ED1i",
+            baitOptionText: "C. They just bought a modern spacious house suburbs in.",
             diagnosticTitle: "Hi\u1EC3u sai gi\u1ECDng v\u0103n khoa h\u1ECDc th\u01B0\u1EDDng th\u1EE9c",
             explanation: "T\xE1c gi\u1EA3 ch\u1EC9 n\xEAu ra c\u1EA3m nh\u1EADn ban \u0111\u1EA7u c\u1EE7a c\xF4ng ch\xFAng tr\u01B0\u1EDBc khi gi\u1EA3i th\xEDch r\u1EB1ng c\xE1c nghi\xEAn c\u1EE9u \u0111ang gi\xFAp ta \u0111\u1EBFn g\u1EA7n s\u1EF1 th\u1EADt h\u01A1n."
           }
@@ -99955,17 +99955,17 @@ var init_week4_data = __esm({
           roundIndex: 8,
           prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o c\xE2u y t\u1EBF: "Clinical trials revealed that maintaining a brisk walking ______ significantly reduces the risk of dementia."',
           options: [
-            { id: "opt_A", label: "A", text: "pace (nh\u1ECBp \u0111\u1ED9, t\u1ED1c \u0111\u1ED9 b\u01B0\u1EDBc \u0111i)" },
+            { id: "opt_A", label: "A", text: "pace" },
             { id: "opt_B", label: "B", text: "cost" },
             { id: "opt_C", label: "C", text: "bland" },
             { id: "opt_D", label: "D", text: "burnout" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. pace (nh\u1ECBp \u0111\u1ED9, t\u1ED1c \u0111\u1ED9 b\u01B0\u1EDBc \u0111i)",
+          correctAnswerText: "A. pace",
           correctExplanation: '"Walking pace" = t\u1ED1c \u0111\u1ED9, nh\u1ECBp b\u01B0\u1EDBc ch\xE2n \u0111i b\u1ED9. "Brisk walking pace" l\xE0 nh\u1ECBp \u0111i b\u1ED9 nhanh mang l\u1EA1i l\u1EE3i \xEDch tim m\u1EA1ch v\xE0 n\xE3o b\u1ED9.',
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. burnout",
+            baitOptionText: "D. They have bought just modern a spacious house in suburbs.",
             diagnosticTitle: "Nh\u1EA7m thu\u1EADt ng\u1EEF ki\u1EC7t s\u1EE9c",
             explanation: 'Burnout l\xE0 tr\u1EA1ng th\xE1i ki\u1EC7t qu\u1EC7, ho\xE0n to\xE0n v\xF4 ngh\u0129a khi gh\xE9p v\xE0o c\u1EE5m "walking ______".'
           }
@@ -99985,7 +99985,7 @@ var init_week4_data = __esm({
           correctExplanation: '"Omitting the morning meal" paraphrase cho "skipping breakfast", "intense cravings" paraphrase cho "increased hunger", v\xE0 "excessive food intake" paraphrase cho "overeating".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Avoiding morning nourishment is guaranteed to accelerate fat burning",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c quan h\u1EC7 nh\xE2n qu\u1EA3 y h\u1ECDc",
             explanation: "B\xE0i \u0111\u1ECDc ch\u1EC9 r\xF5 b\u1ECF \u0103n s\xE1ng l\xE0m t\u0103ng nguy c\u01A1 \u0103n b\xF9 v\xE0 b\xE9o ph\xEC, kh\xF4ng h\u1EC1 k\xEDch th\xEDch \u0111\u1ED1t m\u1EE1 hay ch\u1EEFa b\u1EC7nh."
           }
@@ -100007,7 +100007,7 @@ var init_week4_data = __esm({
           correctExplanation: "\xC2m r\u0103ng (dental fricative /\u03B8/): \u0111\u1EA7u l\u01B0\u1EE1i b\u1EAFt bu\u1ED9c ph\u1EA3i th\xE8 nh\u1EB9 ra gi\u1EEFa hai h\xE0ng r\u0103ng, lu\u1ED3ng h\u01A1i ma s\xE1t th\u1ED5i qua k\u1EBD r\u0103ng.",
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. B\u1EADt h\u01A1i nh\u01B0 \xE2m /t/",
+            baitOptionText: "C. They just bought a modern spacious house suburbs in.",
             diagnosticTitle: "Ph\xE1t \xE2m /\u03B8/ th\xE0nh \xE2m /t/ (l\u1ED7i ph\u1ED5 bi\u1EBFn c\u1EE7a ng\u01B0\u1EDDi Vi\u1EC7t)",
             explanation: 'Ng\u01B0\u1EDDi Vi\u1EC7t th\u01B0\u1EDDng ph\xE1t \xE2m "think" th\xE0nh "tink" ho\u1EB7c "thinh" theo ti\u1EBFng Vi\u1EC7t do kh\xF4ng \u0111\u01B0a \u0111\u1EA7u l\u01B0\u1EE1i ra gi\u1EEFa hai r\u0103ng.'
           }
@@ -100017,17 +100017,17 @@ var init_week4_data = __esm({
           roundIndex: 1,
           prompt: 'Kh\xE1c bi\u1EC7t c\u1ED1t l\xF5i gi\u1EEFa c\u1EB7p ph\u1EE5 \xE2m /\u03B8/ (trong "thanks") v\xE0 /\xF0/ (trong "this", "breathe") l\xE0 g\xEC?',
           options: [
-            { id: "opt_A", label: "A", text: "/\u03B8/ l\xE0 \xE2m v\xF4 thanh (d\xE2y thanh kh\xF4ng rung), /\xF0/ l\xE0 \xE2m h\u1EEFu thanh (d\xE2y thanh rung)" },
+            { id: "opt_A", label: "A", text: "/\u03B8/ l\xE0 \xE2m v\xF4 thanh, /\xF0/ l\xE0 \xE2m h\u1EEFu thanh" },
             { id: "opt_B", label: "B", text: "/\u03B8/ l\xE0 \xE2m b\u1EADt ch\u1EB7n, /\xF0/ l\xE0 \xE2m m\u0169i" },
             { id: "opt_C", label: "C", text: "/\u03B8/ c\u1EAFn m\xF4i d\u01B0\u1EDBi, /\xF0/ m\xEDm hai m\xF4i" },
             { id: "opt_D", label: "D", text: "Kh\u1EA9u h\xECnh mi\u1EC7ng ho\xE0n to\xE0n kh\xE1c nhau v\u1EC1 v\u1ECB tr\xED c\u1EE7a r\u0103ng" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. /\u03B8/ l\xE0 \xE2m v\xF4 thanh (d\xE2y thanh kh\xF4ng rung), /\xF0/ l\xE0 \xE2m h\u1EEFu thanh (d\xE2y thanh rung)",
+          correctAnswerText: "A. /\u03B8/ l\xE0 \xE2m v\xF4 thanh, /\xF0/ l\xE0 \xE2m h\u1EEFu thanh",
           correctExplanation: "C\u1EA3 hai \u0111\u1EC1u c\xF3 c\xF9ng v\u1ECB tr\xED r\u0103ng-l\u01B0\u1EE1i, nh\u01B0ng /\u03B8/ ch\u1EC9 c\xF3 lu\u1ED3ng gi\xF3 (voiceless), c\xF2n /\xF0/ k\xE8m theo \u0111\u1ED9 rung thanh qu\u1EA3n (voiced).",
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. Kh\u1EA9u h\xECnh mi\u1EC7ng ho\xE0n to\xE0n kh\xE1c nhau",
+            baitOptionText: "D. They have bought just modern a spacious house in suburbs.",
             diagnosticTitle: "T\u01B0\u1EDFng hai \xE2m c\xF3 kh\u1EA9u h\xECnh kh\xE1c nhau",
             explanation: "Kh\u1EA9u h\xECnh gi\u1ED1ng h\u1EC7t nhau, ch\u1EC9 kh\xE1c nhau duy nh\u1EA5t \u1EDF s\u1EF1 rung c\u1EE7a d\xE2y thanh \u0111\u1EDBi."
           }
@@ -100047,7 +100047,7 @@ var init_week4_data = __esm({
           correctExplanation: "Sells, seashells (/s/ vs /\u0283/), seashore k\u1EBFt h\u1EE3p \u0111an xen gi\u1EEFa \xE2m /s/ (r\u0103ng s\xE1t, kh\xF4ng chu m\xF4i) v\xE0 /\u0283/ (tr\xF2n m\xF4i, chu ra ph\xEDa tr\u01B0\u1EDBc).",
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. /\u03B8/ v\xE0 /s/",
+            baitOptionText: "C. They just bought a modern spacious house suburbs in.",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn c\xE1c c\u1EB7p \xE2m x\xE1t",
             explanation: "C\xE2u v\u0103n kinh \u0111i\u1EC3n n\xE0y t\u1EADp trung 100% v\xE0o s\u1EF1 \u0111\u1ED1i l\u1EADp gi\u1EEFa s nh\u1EB9 (/s/) v\xE0 s n\u1EB7ng (/\u0283/)."
           }
@@ -100067,7 +100067,7 @@ var init_week4_data = __esm({
           correctExplanation: 'C\u1EE5m danh t\u1EEB c\u1ED1 \u0111\u1ECBnh trong IELTS: "health and well-being" (s\u1EE9c kh\u1ECFe v\xE0 th\u1EC3 tr\u1EA1ng h\u1EA1nh ph\xFAc t\u1ED5ng th\u1EC3).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. well-doing",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: 'D\u1ECBch t\u1EEB "s\u1ED1ng t\u1ED1t" th\xE0nh well-doing',
             explanation: 'Trong ti\u1EBFng Anh danh t\u1EEB chu\u1EA9n y khoa v\xE0 \u0111\u1EDDi s\u1ED1ng l\xE0 "well-being", kh\xF4ng d\xF9ng "well-doing".'
           }
@@ -100087,7 +100087,7 @@ var init_week4_data = __esm({
           correctExplanation: 'Collocation chu\u1EA9n x\xE1c: "break a bad habit" (t\u1EEB b\u1ECF m\u1ED9t th\xF3i quen x\u1EA5u) >< "form/build a good habit".',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. cancel",
+            baitOptionText: "C. They just bought a modern spacious house suburbs in.",
             diagnosticTitle: 'D\u1ECBch "h\u1EE7y th\xF3i quen" th\xE0nh cancel',
             explanation: 'Cancel d\xF9ng cho l\u1ECBch h\u1EB9n/chuy\u1EBFn bay; th\xF3i quen d\xF9ng "break a habit".'
           }
@@ -100097,19 +100097,19 @@ var init_week4_data = __esm({
           roundIndex: 5,
           prompt: 'Ch\u1ECDn c\u1EE5m t\u1EEB chu\u1EA9n \u0111\u1EC3 n\xF3i v\u1EC1 vi\u1EC7c gi\u1EEF g\xECn v\xF3c d\xE1ng thon g\u1ECDn, kh\u1ECFe m\u1EA1nh: "To ______ in shape, I work out at the gym 3 times a week."',
           options: [
-            { id: "opt_A", label: "A", text: "stay / keep" },
+            { id: "opt_A", label: "A", text: "stay" },
             { id: "opt_B", label: "B", text: "make" },
             { id: "opt_C", label: "C", text: "have" },
             { id: "opt_D", label: "D", text: "take" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. stay / keep",
+          correctAnswerText: "A. stay",
           correctExplanation: 'Collocation quen thu\u1ED9c: "stay in shape" ho\u1EB7c "keep in shape" (gi\u1EEF g\xECn v\xF3c d\xE1ng c\xE2n \u0111\u1ED1i).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. make",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: 'D\u1ECBch "t\u1EA1o d\xE1ng" th\xE0nh make in shape',
-            explanation: 'Gi\u1EEF v\xF3c d\xE1ng c\xE2n \u0111\u1ED1i quy chu\u1EA9n lu\xF4n d\xF9ng \u0111\u1ED9ng t\u1EEB "stay / keep in shape".'
+            explanation: 'Gi\u1EEF v\xF3c d\xE1ng c\xE2n \u0111\u1ED1i quy chu\u1EA9n lu\xF4n d\xF9ng \u0111\u1ED9ng t\u1EEB "stay in shape".'
           }
         },
         {
@@ -100127,7 +100127,7 @@ var init_week4_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc ch\u1EC9 th\xF3i quen qu\xE1 kh\u1EE9: used to + Bare Verb (\u0111\xE3 t\u1EEBng l\xE0m g\xEC v\xE0 nay kh\xF4ng l\xE0m n\u1EEFa).",
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. used to eating",
+            baitOptionText: "C. They just bought a modern spacious house suburbs in.",
             diagnosticTitle: 'Nh\u1EA7m l\u1EABn v\u1EDBi c\u1EA5u tr\xFAc "be/get used to + V-ing"',
             explanation: '"Be used to + V-ing" mang ngh\u0129a quen v\u1EDBi vi\u1EC7c g\xEC \u1EDF hi\u1EC7n t\u1EA1i, c\xF2n th\xF3i quen qu\xE1 kh\u1EE9 \u0111\xE3 b\u1ECF l\xE0 "used to + V nguy\xEAn m\u1EABu".'
           }
@@ -100147,7 +100147,7 @@ var init_week4_data = __esm({
           correctExplanation: '\u0110\u1ED9ng t\u1EEB gi\u1EA3m c\xE2n l\xE0 "lose weight". "Loose" l\xE0 t\xEDnh t\u1EEB (l\u1ECFng l\u1EBBo, r\u1ED9ng th\xF9ng th\xECnh), "loss" l\xE0 danh t\u1EEB (s\u1EF1 m\u1EA5t m\xE1t).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. loose",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn ch\xEDnh t\u1EA3 tai h\u1EA1i gi\u1EEFa Lose v\xE0 Loose",
             explanation: "\u0110\xE2y l\xE0 m\u1ED9t trong nh\u1EEFng l\u1ED7i ch\xEDnh t\u1EA3 b\u1ECB tr\u1EEB \u0111i\u1EC3m n\u1EB7ng nh\u1EA5t trong k\u1EF3 thi IELTS Writing/Listening."
           }
@@ -100167,7 +100167,7 @@ var init_week4_data = __esm({
           correctExplanation: 'Gerund "Doing yoga" l\xE0m ch\u1EE7 ng\u1EEF, "enables me to be more flexible" (enable sb to-V, t\xEDnh t\u1EEB flexible: linh ho\u1EA1t/d\u1EBBo dai).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. allows me more flexible",
+            baitOptionText: "C. They just bought a modern spacious house suburbs in.",
             diagnosticTitle: "B\u1ECF qu\xEAn \u0111\u1ED9ng t\u1EEB to be sau allow sb",
             explanation: 'Sau allow sb ph\u1EA3i l\xE0 m\u1ED9t to-V ("to be flexible"), kh\xF4ng th\u1EC3 gh\xE9p tr\u1EF1c ti\u1EBFp t\xEDnh t\u1EEB flexible m\xE0 thi\u1EBFu be.'
           }
@@ -100187,7 +100187,7 @@ var init_week4_data = __esm({
           correctExplanation: 'T\xEDnh t\u1EEB chu\u1EA9n x\xE1c trong IELTS Speaking & Writing: "health-conscious" (c\xF3 \xFD th\u1EE9c cao v\u1EC1 s\u1EE9c kh\u1ECFe).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. health-caring",
+            baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
             diagnosticTitle: "T\u1EF1 s\xE1ng t\u1EA1o t\xEDnh t\u1EEB gh\xE9p kh\xF4ng chu\u1EA9n ng\u1EEF c\u1EA3m",
             explanation: 'Trong ti\u1EBFng Anh t\u1EEB chu\u1EA9n cho ng\u01B0\u1EDDi ch\xFA tr\u1ECDng \u0103n u\u1ED1ng r\xE8n luy\u1EC7n v\xEC s\u1EE9c kh\u1ECFe l\xE0 "health-conscious".'
           }
@@ -100218,7 +100218,7 @@ var init_week5_data = __esm({
           correctExplanation: 'C\u1EE5m gi\u1EDBi t\u1EEB "with + noun phrase" (v\u1EDBi/s\u1EDF h\u1EEFu \u0111\u1EB7c \u0111i\u1EC3m g\xEC) \u0111\u1EE9ng ngay sau danh t\u1EEB "students" \u0111\u1EC3 l\xE0m modifier r\xFAt g\u1ECDn.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. accept students have",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "L\u1ED7i hai \u0111\u1ED9ng t\u1EEB v\u1ECB ng\u1EEF \u0111\u1EE9ng li\u1EC1n k\u1EC1 kh\xF4ng li\xEAn t\u1EEB (Run-on/Double Verb)",
             explanation: "Students have t\u1EA1o ra 2 finite verb (accept v\xE0 have) trong c\xF9ng m\u1ED9t clause \u0111\u01A1n m\xE0 kh\xF4ng c\xF3 li\xEAn t\u1EEB ho\u1EB7c \u0111\u1EA1i t\u1EEB quan h\u1EC7."
           }
@@ -100238,7 +100238,7 @@ var init_week5_data = __esm({
           correctExplanation: '"Work for an organization" (l\xE0m vi\u1EC7c cho t\u1ED5 ch\u1EE9c n\xE0o) v\xE0 "in Switzerland" (\u1EDF qu\u1ED1c gia n\xE0o d\xF9ng in).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. into Switzerland",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: 'D\xF9ng gi\u1EDBi t\u1EEB ch\u1EC9 chuy\u1EC3n \u0111\u1ED9ng "into" thay v\xEC tr\u1EA1ng th\xE1i v\u1ECB tr\xED "in"',
             explanation: 'Into th\u1EC3 hi\u1EC7n h\u01B0\u1EDBng chuy\u1EC3n \u0111\u1ED9ng \u0111i v\xE0o trong, c\xF2n v\u1ECB tr\xED \u1EDF m\u1ED9t \u0111\u1EA5t n\u01B0\u1EDBc ph\u1EA3i l\xE0 "in".'
           }
@@ -100258,7 +100258,7 @@ var init_week5_data = __esm({
           correctExplanation: 'C\u1EE5m th\xE0nh ng\u1EEF "on the verge of extinction" (tr\xEAn b\u1EDD v\u1EF1c tuy\u1EC7t ch\u1EE7ng), sau \u0111\xF3 l\xE0 c\u1EE5m gi\u1EDBi t\u1EEB ch\u1EC9 nguy\xEAn nh\xE2n "due to + noun phrase".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. because habitat destruction",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "D\xF9ng li\xEAn t\u1EEB because tr\u1EF1c ti\u1EBFp v\u1EDBi c\u1EE5m danh t\u1EEB",
             explanation: '"Because" ph\u1EA3i \u0111i k\xE8m v\u1EDBi m\u1ED9t m\u1EC7nh \u0111\u1EC1 (clause S+V); \u0111i v\u1EDBi c\u1EE5m danh t\u1EEB b\u1EAFt bu\u1ED9c d\xF9ng "due to / because of".'
           }
@@ -100278,7 +100278,7 @@ var init_week5_data = __esm({
           correctExplanation: '"In spite of" lu\xF4n c\xF3 "of". Ng\u01B0\u1EE3c l\u1EA1i, t\u1EEB \u0111\u1ED3ng ngh\u0129a "Despite" th\xEC KH\xD4NG BAO GI\u1EDC c\xF3 "of".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Despite of",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: 'L\u1ED7i kinh \u0111i\u1EC3n th\xEAm "of" sau Despite',
             explanation: 'Th\xED sinh c\u1EF1c k\u1EF3 hay nh\u1EA7m l\u1EABn vi\u1EBFt "Despite of" do b\u1ECB \u1EA3nh h\u01B0\u1EDFng b\u1EDFi c\u1EE5m "In spite of".'
           }
@@ -100288,17 +100288,17 @@ var init_week5_data = __esm({
           roundIndex: 4,
           prompt: 'X\xE1c \u0111\u1ECBnh vai tr\xF2 ng\u1EEF ph\xE1p c\u1EE7a c\u1EE5m gi\u1EDBi t\u1EEB in \u0111\u1EADm trong c\xE2u: "The young girl **with curly hair** is my niece."',
           options: [
-            { id: "opt_A", label: "A", text: "Adjective phrase (c\u1EE5m t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a cho danh t\u1EEB The young girl)" },
-            { id: "opt_B", label: "B", text: "Adverb phrase (c\u1EE5m tr\u1EA1ng t\u1EEB b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB is)" },
+            { id: "opt_A", label: "A", text: "Adjective phrase" },
+            { id: "opt_B", label: "B", text: "Adverb phrase" },
             { id: "opt_C", label: "C", text: "Subject ch\xEDnh c\u1EE7a c\xE2u" },
             { id: "opt_D", label: "D", text: "Finite Verb c\u1EE7a c\xE2u" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. Adjective phrase (c\u1EE5m t\xEDnh t\u1EEB b\u1ED5 ngh\u0129a cho danh t\u1EEB The young girl)",
+          correctAnswerText: "A. Adjective phrase",
           correctExplanation: 'C\u1EE5m gi\u1EDBi t\u1EEB \u0111\u1EE9ng ngay sau danh t\u1EEB v\xE0 tr\u1EA3 l\u1EDDi cho c\xE2u h\u1ECFi "Which girl?" (C\xF4 g\xE1i n\xE0o?), do \u0111\xF3 \u0111\xF3ng vai tr\xF2 l\xE0 m\u1ED9t Adjective phrase.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Adverb phrase",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa Adjective phrase v\xE0 Adverb phrase",
             explanation: "N\u1EBFu c\u1EE5m gi\u1EDBi t\u1EEB b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB ho\u1EB7c c\u1EA3 c\xE2u (v\u1EC1 th\u1EDDi gian, n\u01A1i ch\u1ED1n, c\xE1ch th\u1EE9c) th\xEC m\u1EDBi l\xE0 tr\u1EA1ng t\u1EEB; b\u1ED5 ngh\u0129a cho danh t\u1EEB l\xE0 t\xEDnh t\u1EEB."
           }
@@ -100318,7 +100318,7 @@ var init_week5_data = __esm({
           correctExplanation: 'Subject l\xE0 "The book on the table" (v\u1EDBi "on the table" l\xE0 c\u1EE5m gi\u1EDBi t\u1EEB b\u1ED5 ngh\u0129a), Finite Verb l\xE0 "belongs to" (thu\u1ED9c v\u1EC1 ai).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. is belongs to",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "Th\xEAm to be tr\u01B0\u1EDBc \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng belong",
             explanation: 'Belong l\xE0 \u0111\u1ED9ng t\u1EEB th\u01B0\u1EDDng c\xF3 ngh\u0129a l\xE0 thu\u1ED9c v\u1EC1, kh\xF4ng bao gi\u1EDD d\xF9ng d\u1EA1ng b\u1ECB \u0111\u1ED9ng "is belonged" hay th\u1EEBa to be "is belongs".'
           }
@@ -100338,7 +100338,7 @@ var init_week5_data = __esm({
           correctExplanation: `C\u1EE5m c\u1ED1 \u0111\u1ECBnh: "under someone's guidance / supervision" (d\u01B0\u1EDBi s\u1EF1 ch\u1EC9 d\u1EABn / gi\xE1m s\xE1t c\u1EE7a ai).`,
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. below",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: 'D\u1ECBch "d\u01B0\u1EDBi s\u1EF1 ch\u1EC9 d\u1EABn" th\xE0nh below',
             explanation: 'Below d\xF9ng cho v\u1ECB tr\xED th\u1EA5p h\u01A1n v\u1EC1 \u0111\u1ED9 cao ho\u1EB7c m\u1EE9c \u0111\u1ED9 s\u1ED1 li\u1EC7u; s\u1EF1 che ch\u1EDF/ch\u1EC9 d\u1EABn quy\u1EC1n h\u1EA1n quy \u01B0\u1EDBc d\xF9ng "under".'
           }
@@ -100358,7 +100358,7 @@ var init_week5_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc b\u1ECB \u0111\u1ED9ng "is designed for + V-ing / noun phrase" ho\u1EB7c "is designed to analyze data efficiently" (efficiently l\xE0 tr\u1EA1ng t\u1EEB).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. analyze data efficient",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB efficient b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB analyze",
             explanation: "Sau \u0111\u1ED9ng t\u1EEB h\xE0nh \u0111\u1ED9ng analyze c\u1EA7n ph\xF3 t\u1EEB efficiently, ph\u01B0\u01A1ng \xE1n B d\xF9ng t\xEDnh t\u1EEB efficient n\xEAn sai."
           }
@@ -100378,7 +100378,7 @@ var init_week5_data = __esm({
           correctExplanation: 'Gi\u1EDBi t\u1EEB ph\u1EE9c h\u1EE3p: "instead of + noun/V-ing" (thay v\xEC c\xE1i g\xEC). N\u1EBFu ch\u1EC9 d\xF9ng "instead" th\xEC n\xF3 l\xE0 tr\u1EA1ng t\u1EEB \u0111\u1EE9ng cu\u1ED1i c\xE2u.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. instead",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: 'R\u01A1i r\u1EE5ng gi\u1EDBi t\u1EEB "of" sau instead',
             explanation: '\u0110\u1EE9ng tr\u01B0\u1EDBc danh t\u1EEB ho\u1EB7c V-ing b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng "instead of"; kh\xF4ng \u0111\u01B0\u1EE3c d\xF9ng "instead" tr\u01A1 tr\u1ECDi.'
           }
@@ -100398,7 +100398,7 @@ var init_week5_data = __esm({
           correctExplanation: "Quy t\u1EAFc kh\xF4ng gian: in the corner of a room (g\xF3c trong ph\xF2ng kh\xE9p k\xEDn), at the corner of the street (g\xF3c ngo\xE0i \u0111\u01B0\u1EDDng ph\u1ED1 m\u1EDF).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. C\u1EA3 hai ho\xE0n to\xE0n gi\u1ED1ng nhau",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "Coi nh\u1EB9 s\u1EF1 ph\xE2n bi\u1EC7t gi\u1EDBi t\u1EEB kh\xF4ng gian",
             explanation: "S\u1EF1 ph\xE2n bi\u1EC7t gi\u1EEFa g\xF3c trong (in) v\xE0 g\xF3c ngo\xE0i giao l\u1ED9 (at/on) l\xE0 \u0111i\u1EC3m ki\u1EC3m tra ng\u1EEF ph\xE1p kh\xF4ng gian r\u1EA5t chu\u1EA9n x\xE1c."
           }
@@ -100410,17 +100410,17 @@ var init_week5_data = __esm({
           roundIndex: 0,
           prompt: 'Trong b\xE0i \u0111\u1ECDc Karaoke in Vietnam, t\u1EEB "communal" trong c\u1EE5m "one of its great communal joys" \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi t\u1EEB n\xE0o?',
           options: [
-            { id: "opt_A", label: "A", text: "shared / collective (thu\u1ED9c v\u1EC1 t\u1EADp th\u1EC3, c\u1ED9ng \u0111\u1ED3ng c\xF9ng chia s\u1EBB)" },
-            { id: "opt_B", label: "B", text: "private / solitary (ri\xEAng t\u01B0, \u0111\u01A1n \u0111\u1ED9c)" },
-            { id: "opt_C", label: "C", text: "commercial (mang t\xEDnh th\u01B0\u01A1ng m\u1EA1i)" },
-            { id: "opt_D", label: "D", text: "competitive (c\xF3 t\xEDnh c\u1EA1nh tranh gay g\u1EAFt)" }
+            { id: "opt_A", label: "A", text: "shared" },
+            { id: "opt_B", label: "B", text: "private" },
+            { id: "opt_C", label: "C", text: "commercial" },
+            { id: "opt_D", label: "D", text: "competitive" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. shared / collective (thu\u1ED9c v\u1EC1 t\u1EADp th\u1EC3, c\u1ED9ng \u0111\u1ED3ng c\xF9ng chia s\u1EBB)",
+          correctAnswerText: "A. shared",
           correctExplanation: '"Communal" = mang t\xEDnh c\u1ED9ng \u0111\u1ED3ng, t\u1EADp th\u1EC3 c\xF9ng chung vui, \u0111\u1ED3ng ngh\u0129a v\u1EDBi shared/collective.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. private / solitary",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB tr\xE1i ngh\u0129a",
             explanation: "Private/solitary l\xE0 ri\xEAng t\u01B0 c\xE1 nh\xE2n, tr\xE1i ng\u01B0\u1EE3c ho\xE0n to\xE0n v\u1EDBi \xFD ngh\u0129a c\u1ED9ng \u0111\u1ED3ng c\u1EE7a communal."
           }
@@ -100430,17 +100430,17 @@ var init_week5_data = __esm({
           roundIndex: 1,
           prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "inappropriate" trong c\xE2u "a karaoke machine pops up at completely inappropriate moments" l\xE0:',
           options: [
-            { id: "opt_A", label: "A", text: "suitable / fitting (th\xEDch h\u1EE3p, \u0111\xFAng l\xFAc, ph\xF9 h\u1EE3p ho\xE0n c\u1EA3nh)" },
-            { id: "opt_B", label: "B", text: "hilarious (vui nh\u1ED9n, bu\u1ED3n c\u01B0\u1EDDi)" },
-            { id: "opt_C", label: "C", text: "bizarre (k\u1EF3 d\u1ECB, qu\xE1i \u0111\u1EA3n)" },
-            { id: "opt_D", label: "D", text: "awkward (ng\u01B0\u1EE3ng ng\xF9ng)" }
+            { id: "opt_A", label: "A", text: "suitable" },
+            { id: "opt_B", label: "B", text: "hilarious" },
+            { id: "opt_C", label: "C", text: "bizarre" },
+            { id: "opt_D", label: "D", text: "awkward" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. suitable / fitting (th\xEDch h\u1EE3p, \u0111\xFAng l\xFAc, ph\xF9 h\u1EE3p ho\xE0n c\u1EA3nh)",
+          correctAnswerText: "A. suitable",
           correctExplanation: 'Ti\u1EC1n t\u1ED1 in- mang ngh\u0129a ph\u1EE7 \u0111\u1ECBnh: inappropriate = kh\xF4ng th\xEDch h\u1EE3p, v\xF4 duy\xEAn. T\u1EEB tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "suitable" ho\u1EB7c "fitting".',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. bizarre",
+            baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa t\u1EEB \u0111\u1ED3ng ngh\u0129a v\xE0 tr\xE1i ngh\u0129a",
             explanation: "Bizarre (k\u1EF3 l\u1EA1) mang t\xEDnh ch\u1EA5t t\u01B0\u01A1ng t\u1EF1 v\u1EDBi inappropriate trong ng\u1EEF c\u1EA3nh b\u1EA5t th\u01B0\u1EDDng. \u0110\u1EC1 b\xE0i y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
           }
@@ -100460,7 +100460,7 @@ var init_week5_data = __esm({
           correctExplanation: '"Untrained tongue" l\xE0 l\u1ED1i n\xF3i \u1EA9n d\u1EE5 ch\u1EC9 chi\u1EBFc l\u01B0\u1EE1i ch\u01B0a \u0111\u01B0\u1EE3c t\u1EADp luy\u1EC7n \u0111\u1EC3 u\u1ED1n \xE2m v\xE0 ph\xE1t \xE2m c\xE1c thanh s\u1EAFc, h\u1ECFi, ng\xE3, n\u1EB7ng trong ti\u1EBFng Vi\u1EC7t.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Ng\u01B0\u1EDDi b\u1ECB m\u1EA5t gi\u1ECDng",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: 'D\u1ECBch ngh\u0129a \u0111en t\u1EEB "tongue" th\xE0nh v\u1EA5n \u0111\u1EC1 c\u1ED5 h\u1ECDng',
             explanation: "\u0110\xE2y l\xE0 c\xE1ch n\xF3i tu t\u1EEB v\u1EC1 k\u1EF9 n\u0103ng ph\xE1t \xE2m ngo\u1EA1i ng\u1EEF, kh\xF4ng ph\u1EA3i b\u1EC7nh l\xFD m\u1EA5t gi\u1ECDng."
           }
@@ -100480,7 +100480,7 @@ var init_week5_data = __esm({
           correctExplanation: 'Collocation h\u1ECDc thu\u1EADt: "leave a favorable/good impression on somebody" (\u0111\u1EC3 l\u1EA1i \u1EA5n t\u01B0\u1EE3ng t\u1ED1t \u0111\u1EB9p trong l\xF2ng ai).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. imprint",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "D\xF9ng t\u1EEB d\u1EA5u \u1EA5n v\u1EADt l\xFD thay v\xEC \u1EA5n t\u01B0\u1EE3ng t\xE2m l\xFD",
             explanation: 'Imprint l\xE0 d\u1EA5u v\u1EBFt in h\u1EB1n c\u01A1 h\u1ECDc, c\xF2n t\u1EA1o \u1EA5n t\u01B0\u1EE3ng c\u1EA3m x\xFAc v\u1EDBi ng\u01B0\u1EDDi kh\xE1c b\u1EAFt bu\u1ED9c d\xF9ng "impression".'
           }
@@ -100500,7 +100500,7 @@ var init_week5_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc c\u1EA5m \u0111o\xE1n ph\xE1p l\xFD: "be banned / prohibited FROM doing something" (b\u1ECB nghi\xEAm c\u1EA5m l\xE0m vi\u1EC7c g\xEC).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. to",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "D\xF9ng to-V sau \u0111\u1ED9ng t\u1EEB ban",
             explanation: '\u0110\u1ED9ng t\u1EEB ban kh\xF4ng \u0111i v\u1EDBi to-V m\xE0 b\u1EAFt bu\u1ED9c d\xF9ng gi\u1EDBi t\u1EEB "from + V-ing".'
           }
@@ -100520,7 +100520,7 @@ var init_week5_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc \u0111\u1ED9ng t\u1EEB nguy\xEAn th\u1EC3 sau to: "immerse oneself in sth" (\u0111\u1EAFm ch\xECm b\u1EA3n th\xE2n v\xE0o \u0111i\u1EC1u g\xEC).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. immersion",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "D\xF9ng nh\u1EA7m danh t\u1EEB sau to",
             explanation: 'Sau "love to" c\u1EA7n m\u1ED9t \u0111\u1ED9ng t\u1EEB nguy\xEAn m\u1EABu (immerse), kh\xF4ng d\xF9ng danh t\u1EEB immersion.'
           }
@@ -100540,7 +100540,7 @@ var init_week5_data = __esm({
           correctExplanation: 'G\u1ED1c t\u1EEB Latin "cent-" = 100 (nh\u01B0 century: th\u1EBF k\u1EF7). "Centenary" l\xE0 l\u1EC5 k\u1EF7 ni\u1EC7m tr\xF2n \u0111\xFAng 100 n\u0103m.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. L\u1EC5 k\u1EF7 ni\u1EC7m 50 n\u0103m",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi golden jubilee (50 n\u0103m)",
             explanation: "50 n\u0103m l\xE0 jubilee, 100 n\u0103m l\xE0 centenary / centennial."
           }
@@ -100550,17 +100550,17 @@ var init_week5_data = __esm({
           roundIndex: 7,
           prompt: 'C\u1EE5m danh t\u1EEB "mixed reactions" trong c\xE2u "The gaming curfew caused mixed reactions among citizens" mang s\u1EAFc th\xE1i g\xEC?',
           options: [
-            { id: "opt_A", label: "A", text: "C\xE1c ph\u1EA3n \u1EE9ng tr\xE1i chi\u1EC1u (ng\u01B0\u1EDDi khen ng\u01B0\u1EDDi ch\xEA, k\u1EBB \u0111\u1ED3ng t\xECnh k\u1EBB ph\u1EA3n \u0111\u1ED1i)" },
+            { id: "opt_A", label: "A", text: "C\xE1c ph\u1EA3n \u1EE9ng tr\xE1i chi\u1EC1u" },
             { id: "opt_B", label: "B", text: "100% ng\u01B0\u1EDDi d\xE2n \u0111\u1EC1u k\u1ECBch li\u1EC7t ph\u1EA3n \u0111\u1ED1i" },
             { id: "opt_C", label: "C", text: "To\xE0n b\u1ED9 x\xE3 h\u1ED9i \u0111\u1ED3ng thu\u1EADn tuy\u1EC7t \u0111\u1ED1i kh\xF4ng \xFD ki\u1EBFn" },
             { id: "opt_D", label: "D", text: "Ng\u01B0\u1EDDi d\xE2n ho\xE0n to\xE0n th\u1EDD \u01A1 kh\xF4ng ai quan t\xE2m" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. C\xE1c ph\u1EA3n \u1EE9ng tr\xE1i chi\u1EC1u (ng\u01B0\u1EDDi khen ng\u01B0\u1EDDi ch\xEA, k\u1EBB \u0111\u1ED3ng t\xECnh k\u1EBB ph\u1EA3n \u0111\u1ED1i)",
+          correctAnswerText: "A. C\xE1c ph\u1EA3n \u1EE9ng tr\xE1i chi\u1EC1u",
           correctExplanation: '"Mixed reactions" mi\xEAu t\u1EA3 lu\u1ED3ng \xFD ki\u1EBFn ph\xE2n h\xF3a: ph\u1EE5 huynh th\xEC vui m\u1EEBng trong khi gi\u1EDBi tr\u1EBB coi \u0111\xF3 l\xE0 vi ph\u1EA1m quy\u1EC1n t\u1EF1 do.',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. To\xE0n b\u1ED9 x\xE3 h\u1ED9i \u0111\u1ED3ng thu\u1EADn",
+            baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
             diagnosticTitle: "Hi\u1EC3u sai ch\u1EEF mixed th\xE0nh h\xF2a h\u1EE3p \u0111\u1ED3ng thu\u1EADn",
             explanation: '"Mixed" l\xE0 pha tr\u1ED9n c\xE1c \xFD ki\u1EBFn m\xE2u thu\u1EABn tr\xE1i chi\u1EC1u nhau, kh\xF4ng ph\u1EA3i \u0111\u1ED3ng thu\u1EADn m\u1ED9t chi\u1EC1u.'
           }
@@ -100570,17 +100570,17 @@ var init_week5_data = __esm({
           roundIndex: 8,
           prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o c\xE2u: "The interactive theatre play provided an exceptionally ______ experience for the audience, making them feel part of the story."',
           options: [
-            { id: "opt_A", label: "A", text: "immersive (mang l\u1EA1i tr\u1EA3i nghi\u1EC7m \u0111\u1EAFm ch\xECm ch\xE2n th\u1EF1c)" },
+            { id: "opt_A", label: "A", text: "immersive" },
             { id: "opt_B", label: "B", text: "bland" },
             { id: "opt_C", label: "C", text: "exhausted" },
             { id: "opt_D", label: "D", text: "compulsory" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. immersive (mang l\u1EA1i tr\u1EA3i nghi\u1EC7m \u0111\u1EAFm ch\xECm ch\xE2n th\u1EF1c)",
+          correctAnswerText: "A. immersive",
           correctExplanation: '"An immersive experience" l\xE0 t\xEDnh t\u1EEB cao c\u1EA5p ch\u1EC9 tr\u1EA3i nghi\u1EC7m cu\u1ED1n h\xFAt \u0111\u1EBFn m\u1EE9c ng\u01B0\u1EDDi tham gia nh\u01B0 h\xF2a m\xECnh ho\xE0n to\xE0n v\xE0o kh\xF4ng gian t\xE1c ph\u1EA9m.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. bland",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "Ch\u1ECDn t\xEDnh t\u1EEB ti\xEAu c\u1EF1c m\xE2u thu\u1EABn ng\u1EEF c\u1EA3nh",
             explanation: "Bland l\xE0 nh\u1EA1t nh\u1EBDo v\xF4 v\u1ECB, tr\xE1i ng\u01B0\u1EE3c v\u1EDBi s\u1EF1 cu\u1ED1n h\xFAt c\u1EE7a v\u1EDF k\u1ECBch t\u01B0\u01A1ng t\xE1c."
           }
@@ -100600,7 +100600,7 @@ var init_week5_data = __esm({
           correctExplanation: '"Bridge social divides and foster interpersonal bonds" paraphrase tuy\u1EC7t v\u1EDDi cho "capacity to connect us and serves as a means of human connection".',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. Music divides communities",
+            baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
             diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c th\xF4ng \u0111i\u1EC7p g\u1EAFn k\u1EBFt th\xE0nh chia r\u1EBD",
             explanation: "\u0110o\u1EA1n v\u0103n ca ng\u1EE3i \xE2m nh\u1EA1c l\xE0 c\u1EA7u n\u1ED1i nh\xE2n v\u0103n, kh\xF4ng h\u1EC1 chia r\u1EBD ng\u01B0\u1EDDi nghe."
           }
@@ -100612,19 +100612,19 @@ var init_week5_data = __esm({
           roundIndex: 0,
           prompt: "T\u1EEB n\xE0o sau \u0111\xE2y ch\u1EE9a c\u1EE5m ph\u1EE5 \xE2m (consonant cluster) g\u1ED3m 3 ph\u1EE5 \xE2m \u0111\u1EE9ng li\u1EC1n nhau \u1EDF \u0111\u1EA7u t\u1EEB?",
           options: [
-            { id: "opt_A", label: "A", text: "street /str-/" },
-            { id: "opt_B", label: "B", text: "play /pl-/" },
-            { id: "opt_C", label: "C", text: "bread /br-/" },
-            { id: "opt_D", label: "D", text: "clean /kl-/" }
+            { id: "opt_A", label: "A", text: "street" },
+            { id: "opt_B", label: "B", text: "play" },
+            { id: "opt_C", label: "C", text: "bread" },
+            { id: "opt_D", label: "D", text: "clean" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. street /str-/",
-          correctExplanation: '"Street" b\u1EAFt \u0111\u1EA7u b\u1EB1ng c\u1EE5m 3 ph\u1EE5 \xE2m /s-t-r/ (street, spring, scream, splash). C\xE1c t\u1EEB c\xF2n l\u1EA1i ch\u1EC9 c\xF3 2 ph\u1EE5 \xE2m \u0111\u1EA7u.',
+          correctAnswerText: "A. street",
+          correctExplanation: '"Street" b\u1EAFt \u0111\u1EA7u b\u1EB1ng c\u1EE5m 3 ph\u1EE5 \xE2m /s-t-r/ (street, spring, scream, splash). C\xE1c t\u1EEB c\xF2n l\u1EA1i ch\u1EC9 c\xF3 2 ph\u1EE5 \xE2m \u0111\u1EA7u (/pl-/, /br-/, /kl-/).',
           misconception: {
             baitOptionId: "opt_B",
             baitOptionText: "B. play",
             diagnosticTitle: "Ch\u1ECDn c\u1EE5m ch\u1EC9 c\xF3 2 ph\u1EE5 \xE2m",
-            explanation: "/pl-/ ch\u1EC9 g\u1ED3m 2 ph\u1EE5 \xE2m p v\xE0 l."
+            explanation: "Play ch\u1EC9 g\u1ED3m 2 ph\u1EE5 \xE2m /p/ v\xE0 /l/ \u0111\u1EE9ng \u0111\u1EA7u."
           }
         },
         {
@@ -100632,17 +100632,17 @@ var init_week5_data = __esm({
           roundIndex: 1,
           prompt: 'T\u1EEB "comfortable" /\u02C8k\u028Cm.f\u0259.t\u0259.bl/ th\u01B0\u1EDDng \u0111\u01B0\u1EE3c ph\xE1t \xE2m chu\u1EA9n t\u1EF1 nhi\xEAn v\u1EDBi bao nhi\xEAu \xE2m ti\u1EBFt (syllables)?',
           options: [
-            { id: "opt_A", label: "A", text: "3 ho\u1EB7c 4 \xE2m ti\u1EBFt (th\xF4ng d\u1EE5ng nh\u1EA5t l\xE0 3 \xE2m ti\u1EBFt: /\u02C8k\u028Cmf.t\u0259.bl/)" },
+            { id: "opt_A", label: "A", text: "3 \xE2m ti\u1EBFt" },
             { id: "opt_B", label: "B", text: "Ch\xEDnh x\xE1c 5 \xE2m ti\u1EBFt" },
             { id: "opt_C", label: "C", text: "Ch\u1EC9 c\xF3 1 \xE2m ti\u1EBFt" },
             { id: "opt_D", label: "D", text: "6 \xE2m ti\u1EBFt" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. 3 ho\u1EB7c 4 \xE2m ti\u1EBFt (th\xF4ng d\u1EE5ng nh\u1EA5t l\xE0 3 \xE2m ti\u1EBFt: /\u02C8k\u028Cmf.t\u0259.bl/)",
+          correctAnswerText: "A. 3 \xE2m ti\u1EBFt",
           correctExplanation: 'Ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 th\u01B0\u1EDDng nu\u1ED1t \xE2m "or" \u0111\u1EC3 ph\xE1t \xE2m th\xE0nh 3 \xE2m ti\u1EBFt: /\u02C8k\u028Cmf.t\u0259.b\u0259l/ (comf-ta-ble).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. 5 \xE2m ti\u1EBFt",
+            baitOptionText: "B. Ch\xEDnh x\xE1c 5 \xE2m ti\u1EBFt",
             diagnosticTitle: "\u0110\u1EBFm t\u1EEBng ch\u1EEF c\xE1i com-for-ta-b-le",
             explanation: "Ng\u01B0\u1EDDi h\u1ECDc nh\xECn m\u1EB7t ch\u1EEF \u0111\u1EBFm \xE2m ti\u1EBFt r\u1EA5t d\u1EC5 ph\xE1t \xE2m th\u1EEBa \xE2m ti\u1EBFt l\xE0m m\u1EA5t t\u1EF1 nhi\xEAn."
           }
@@ -100652,14 +100652,14 @@ var init_week5_data = __esm({
           roundIndex: 2,
           prompt: 'Tr\u1ECDng \xE2m ch\xEDnh (primary stress) c\u1EE7a t\u1EEB "competitive" n\u1EB1m \u1EDF \xE2m ti\u1EBFt th\u1EE9 m\u1EA5y?',
           options: [
-            { id: "opt_A", label: "A", text: "\xC2m ti\u1EBFt th\u1EE9 2 (/k\u0259m\u02C8pet.\u026A.t\u026Av/)" },
-            { id: "opt_B", label: "B", text: "\xC2m ti\u1EBFt th\u1EE9 1 (/\u02C8k\u0252m.p\u0259.t\u026A.t\u026Av/)" },
+            { id: "opt_A", label: "A", text: "\xC2m ti\u1EBFt th\u1EE9 2" },
+            { id: "opt_B", label: "B", text: "\xC2m ti\u1EBFt th\u1EE9 1" },
             { id: "opt_C", label: "C", text: "\xC2m ti\u1EBFt th\u1EE9 3" },
             { id: "opt_D", label: "D", text: "\xC2m ti\u1EBFt th\u1EE9 4" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. \xC2m ti\u1EBFt th\u1EE9 2 (/k\u0259m\u02C8pet.\u026A.t\u026Av/)",
-          correctExplanation: 'Competitive c\xF3 tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 hai "pet". (L\u01B0u \xFD: danh t\u1EEB "competition" l\u1EA1i c\xF3 tr\u1ECDng \xE2m \u1EDF \xE2m ti\u1EBFt th\u1EE9 3).',
+          correctAnswerText: "A. \xC2m ti\u1EBFt th\u1EE9 2",
+          correctExplanation: 'Competitive (/k\u0259m\u02C8pet.\u026A.t\u026Av/) c\xF3 tr\u1ECDng \xE2m r\u01A1i v\xE0o \xE2m ti\u1EBFt th\u1EE9 hai "pet". (L\u01B0u \xFD: danh t\u1EEB "competition" l\u1EA1i c\xF3 tr\u1ECDng \xE2m \u1EDF \xE2m ti\u1EBFt th\u1EE9 3).',
           misconception: {
             baitOptionId: "opt_B",
             baitOptionText: "B. \xC2m ti\u1EBFt th\u1EE9 1",
@@ -100682,7 +100682,7 @@ var init_week5_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc chu\u1EA9n: have a hard time / difficulty / trouble DOING something (V-ing), kh\xF4ng d\xF9ng to-infinitive.",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. to manage",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "D\xF9ng to-V sau have a hard time",
             explanation: "Th\xF3i quen gh\xE9p to-V l\xE0m sai c\u1EA5u tr\xFAc c\u1ED1 \u0111\u1ECBnh have a hard time + V-ing."
           }
@@ -100702,7 +100702,7 @@ var init_week5_data = __esm({
           correctExplanation: "C\u1EA5u tr\xFAc: struggle TO DO something (ch\u1EADt v\u1EADt/g\u1EB7p kh\xF3 kh\u0103n \u0111\u1EC3 l\xE0m g\xEC). (L\u01B0u \xFD: struggle WITH + Noun).",
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. improving",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "\u0110\u1ED3ng h\xF3a c\u1EA5u tr\xFAc struggle v\u1EDBi have a hard time V-ing",
             explanation: "Have a hard time \u0111i v\u1EDBi V-ing, nh\u01B0ng \u0111\u1ED9ng t\u1EEB struggle l\u1EA1i \u0111i v\u1EDBi TO-infinitive."
           }
@@ -100722,7 +100722,7 @@ var init_week5_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc \u0111\u01B0a l\u1EDDi khuy\xEAn nh\xE3 nh\u1EB7n, t\u1EF1 nhi\xEAn: "My advice would be to + V" ho\u1EB7c "If I were you, I would...".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. You must immediately do...",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "D\xF9ng m\u1EC7nh l\u1EC7nh th\xF4 b\u1EA1o (imperative/must)",
             explanation: "Trong giao ti\u1EBFp Speaking, d\xF9ng must t\u1EA1o c\u1EA3m gi\xE1c \xE1p \u0111\u1EB7t, thi\u1EBFu \u0111i t\xEDnh t\u01B0\u01A1ng t\xE1c m\u1EC1m m\u1ECFng."
           }
@@ -100742,7 +100742,7 @@ var init_week5_data = __esm({
           correctExplanation: 'H\xE2n khuy\xEAn: "start using a planner on Google Calendar and set clear goals... limit distractions by turning off your phone and closing unnecessary tabs".',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. L\xE0m vi\u1EC7c th\xE2u \u0111\xEAm",
+            baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
             diagnosticTitle: "Nh\u1EA7m th\xF3i quen x\u1EA5u v\u1EDBi gi\u1EA3i ph\xE1p n\u0103ng su\u1EA5t",
             explanation: "L\xE0m vi\u1EC7c th\xE2u \u0111\xEAm ch\xEDnh l\xE0 nguy\xEAn nh\xE2n g\xE2y m\u1EC7t m\u1ECFi m\xE0 b\xE0i h\u1ECDc \u0111ang t\xECm c\xE1ch kh\u1EAFc ph\u1EE5c."
           }
@@ -100762,7 +100762,7 @@ var init_week5_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc so s\xE1nh t\u01B0\u01A1ng ph\u1EA3n: "While + Clause 1, Clause 2". Kh\xF4ng d\xF9ng th\xEAm li\xEAn t\u1EEB "but" \u1EDF m\u1EC7nh \u0111\u1EC1 ch\xEDnh.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. While..., but others...",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: 'L\u1ED7i d\xF9ng c\u1EB7p li\xEAn t\u1EEB k\xE9p "Although/While... but..."',
             explanation: 'Th\xF3i quen d\u1ECBch ti\u1EBFng Vi\u1EC7t "M\u1EB7c d\xF9... nh\u01B0ng..." khi\u1EBFn h\u1ECDc vi\xEAn vi\u1EBFt th\u1EEBa li\xEAn t\u1EEB "but".'
           }
@@ -100782,7 +100782,7 @@ var init_week5_data = __esm({
           correctExplanation: 'Collocation chu\u1EA9n trong qu\u1EA3n tr\u1ECB th\u1EDDi gian: "break tasks/goals into smaller steps" (chia nh\u1ECF nhi\u1EC7m v\u1EE5 th\xE0nh c\xE1c b\u01B0\u1EDBc th\u1EF1c hi\u1EC7n).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. cut jobs in pieces",
+            baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
             diagnosticTitle: "D\u1ECBch t\u1EEB v\u1EF1ng theo ngh\u0129a \u0111en c\u1EE7a vi\u1EC7c c\u1EAFt g\u1ECDt",
             explanation: "Cut jobs in pieces kh\xF4ng ph\u1EA3i l\xE0 c\u1EE5m t\u1EEB t\u1EF1 nhi\xEAn trong qu\u1EA3n l\xFD c\xF4ng vi\u1EC7c."
           }
@@ -100802,7 +100802,7 @@ var init_week5_data = __esm({
           correctExplanation: '"Touch wood" (g\xF5 v\xE0o \u0111\u1ED3 g\u1ED7) l\xE0 phong t\u1EE5c v\u0103n h\xF3a n\xF3i sau khi nh\u1EAFc \u0111\u1EBFn m\u1ED9t \u0111i\u1EC1u may m\u1EAFn \u0111\u1EC3 tr\xE1nh b\u1ECB v\u1EADn xui \u1EADp \u0111\u1EBFn (t\u01B0\u01A1ng \u0111\u01B0\u01A1ng ch\u1EEF "tr\u1ED9m v\xEDa" trong ti\u1EBFng Vi\u1EC7t).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. Ch\xEA bai \u0111\u1ED3 n\u1ED9i th\u1EA5t g\u1ED7",
+            baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
             diagnosticTitle: "Hi\u1EC3u theo ngh\u0129a \u0111en c\u1EE7a t\u1EEB wood (g\u1ED7)",
             explanation: "\u0110\xE2y l\xE0 m\u1ED9t th\xE0nh ng\u1EEF v\u0103n h\xF3a d\xE2n gian mang h\xE0m ngh\u0129a t\xE2m linh c\u1EA7u may, kh\xF4ng li\xEAn quan \u0111\u1EBFn ngh\u1EC1 m\u1ED9c."
           }
@@ -100975,17 +100975,17 @@ var init_week6_data = __esm({
           roundIndex: 0,
           prompt: 'Trong ch\u1EE7 \u0111\u1EC1 Technology & Business, t\u1EEB "settlement" trong v\u1EE5 ki\u1EC7n b\u1EA3n quy\u1EC1n \xFD t\u01B0\u1EDFng c\u1EE7a Facebook \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi:',
           options: [
-            { id: "opt_A", label: "A", text: "legal agreement / compromise (s\u1EF1 h\xF2a gi\u1EA3i, th\u1ECFa thu\u1EADn d\xE0n x\u1EBFp ph\xE1p l\xFD)" },
-            { id: "opt_B", label: "B", text: "court battle / confrontation (cu\u1ED9c chi\u1EBFn tranh t\u1EE5ng gay g\u1EAFt)" },
-            { id: "opt_C", label: "C", text: "bankruptcy declaration (tuy\xEAn b\u1ED1 ph\xE1 s\u1EA3n)" },
-            { id: "opt_D", label: "D", text: "residential colony (khu t\xE1i \u0111\u1ECBnh c\u01B0)" }
+            { id: "opt_A", label: "A", text: "legal agreement" },
+            { id: "opt_B", label: "B", text: "court battle" },
+            { id: "opt_C", label: "C", text: "bankruptcy declaration" },
+            { id: "opt_D", label: "D", text: "residential colony" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. legal agreement / compromise (s\u1EF1 h\xF2a gi\u1EA3i, th\u1ECFa thu\u1EADn d\xE0n x\u1EBFp ph\xE1p l\xFD)",
+          correctAnswerText: "B. Thay ",
           correctExplanation: '"Settlement" trong lu\u1EADt th\u01B0\u01A1ng m\u1EA1i l\xE0 s\u1EF1 d\xE0n x\u1EBFp, th\u1ECFa thu\u1EADn h\xF2a gi\u1EA3i ngo\xE0i t\xF2a \u0111\u1EC3 ch\u1EA5m d\u1EE9t ki\u1EC7n t\u1EE5ng (th\u01B0\u1EDDng k\xE8m b\u1ED3i th\u01B0\u1EDDng c\u1ED5 ph\u1EA7n/ti\u1EC1n).',
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. residential colony",
+            baitOptionText: "D. Th\xEAm ",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn ngh\u0129a \u0111\u1ECBa l\xFD \u0111\u1ECBnh c\u01B0 v\u1EDBi thu\u1EADt ng\u1EEF lu\u1EADt h\u1ECDc",
             explanation: "Trong b\u1ED1i c\u1EA3nh tranh ch\u1EA5p b\u1EA3n quy\u1EC1n (lawsuit), settlement l\xE0 th\u1ECFa thu\u1EADn h\xF2a gi\u1EA3i b\u1ED3i th\u01B0\u1EDDng, kh\xF4ng ph\u1EA3i khu \u0111\u1ECBnh c\u01B0 d\xE2n c\u01B0."
           }
@@ -100995,17 +100995,17 @@ var init_week6_data = __esm({
           roundIndex: 1,
           prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "expulsion" trong c\xE2u "Though he faced expulsion from Harvard for his actions" l\xE0:',
           options: [
-            { id: "opt_A", label: "A", text: "admission / enrollment (s\u1EF1 thu nh\u1EADn, nh\u1EADp h\u1ECDc ch\xEDnh th\u1EE9c)" },
-            { id: "opt_B", label: "B", text: "dismissal (s\u1EF1 sa th\u1EA3i, \u0111u\u1ED5i h\u1ECDc)" },
-            { id: "opt_C", label: "C", text: "suspension (\u0111\xECnh ch\u1EC9 h\u1ECDc t\u1EA1m th\u1EDDi)" },
-            { id: "opt_D", label: "D", text: "punishment (s\u1EF1 tr\u1EEBng ph\u1EA1t)" }
+            { id: "opt_A", label: "A", text: "admission" },
+            { id: "opt_B", label: "B", text: "dismissal" },
+            { id: "opt_C", label: "C", text: "suspension" },
+            { id: "opt_D", label: "D", text: "punishment" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. admission / enrollment (s\u1EF1 thu nh\u1EADn, nh\u1EADp h\u1ECDc ch\xEDnh th\u1EE9c)",
+          correctAnswerText: "A. admission",
           correctExplanation: '"Expulsion" = s\u1EF1 tr\u1EE5c xu\u1EA5t, bu\u1ED9c th\xF4i h\u1ECDc v\u0129nh vi\u1EC5n. T\u1EEB tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "admission" ho\u1EB7c "enrollment" (nh\u1EADn v\xE0o tr\u01B0\u1EDDng).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. dismissal",
+            baitOptionText: "B. Thay ",
             diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
             explanation: "Dismissal l\xE0 t\u1EEB \u0111\u1ED3ng ngh\u0129a mang ngh\u0129a \u0111u\u1ED5i h\u1ECDc. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
           }
@@ -101015,17 +101015,17 @@ var init_week6_data = __esm({
           roundIndex: 2,
           prompt: 'Thu\u1EADt ng\u1EEF t\xE0i ch\xEDnh kh\u1EDFi nghi\u1EC7p "angel investor" (nh\u01B0 Sean Parker \u0111\u1ED1i v\u1EDBi Facebook) d\xF9ng \u0111\u1EC3 ch\u1EC9 ai?',
           options: [
-            { id: "opt_A", label: "A", text: "Nh\xE0 \u0111\u1EA7u t\u01B0 thi\xEAn th\u1EA7n (c\xE1 nh\xE2n gi\xE0u c\xF3 r\xF3t v\u1ED1n ban \u0111\u1EA7u h\u1ED7 tr\u1EE3 c\xE1c startup non tr\u1EBB)" },
+            { id: "opt_A", label: "A", text: "Nh\xE0 \u0111\u1EA7u t\u01B0 thi\xEAn th\u1EA7n" },
             { id: "opt_B", label: "B", text: "T\u1ED5 ch\u1EE9c t\u1EEB thi\u1EC7n t\xF4n gi\xE1o ph\xE1t ti\u1EC1n mi\u1EC5n ph\xED" },
             { id: "opt_C", label: "C", text: "Ng\xE2n h\xE0ng nh\xE0 n\u01B0\u1EDBc b\u1EA3o l\xE3nh t\xEDn d\u1EE5ng" },
             { id: "opt_D", label: "D", text: "Lu\u1EADt s\u01B0 \u0111\u1EA1i di\u1EC7n cho c\xE1c c\u1ED5 \u0111\xF4ng thi\u1EC3u s\u1ED1" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. Nh\xE0 \u0111\u1EA7u t\u01B0 thi\xEAn th\u1EA7n (c\xE1 nh\xE2n gi\xE0u c\xF3 r\xF3t v\u1ED1n ban \u0111\u1EA7u h\u1ED7 tr\u1EE3 c\xE1c startup non tr\u1EBB)",
+          correctAnswerText: "A. Nh\xE0 \u0111\u1EA7u t\u01B0 thi\xEAn th\u1EA7n",
           correctExplanation: '"Angel investor" l\xE0 thu\u1EADt ng\u1EEF qu\u1ED1c t\u1EBF ch\u1EC9 c\xE1c c\xE1 nh\xE2n \u0111\u1EA7u t\u01B0 thi\xEAn th\u1EA7n, ch\u1EA5p nh\u1EADn r\u1EE7i ro cao \u0111\u1EC3 r\xF3t v\u1ED1n h\u1EA1t gi\u1ED1ng cho c\xE1c c\xF4ng ty kh\u1EDFi nghi\u1EC7p.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. T\u1ED5 ch\u1EE9c t\u1EEB thi\u1EC7n t\xF4n gi\xE1o",
+            baitOptionText: "B. Thay ",
             diagnosticTitle: 'D\u1ECBch ngh\u0129a \u0111en t\u1EEB ch\u1EEF "angel" th\xE0nh t\u1ED5 ch\u1EE9c t\xF4n gi\xE1o',
             explanation: "\u0110\xE2y l\xE0 thu\u1EADt ng\u1EEF t\xE0i ch\xEDnh m\u1EA1o hi\u1EC3m, ho\xE0n to\xE0n kh\xF4ng li\xEAn quan \u0111\u1EBFn t\xF4n gi\xE1o hay t\u1EEB thi\u1EC7n \u0111\u01A1n thu\u1EA7n."
           }
@@ -101045,7 +101045,7 @@ var init_week6_data = __esm({
           correctExplanation: 'Th\xE0nh ng\u1EEF h\u1ECDc thu\u1EADt c\u1ED1 \u0111\u1ECBnh: "on the brink of something / doing something" (\u0111ang tr\xEAn b\u1EDD v\u1EF1c g\u1EB7p ph\u1EA3i m\u1ED9t nguy hi\u1EC3m hay bi\u1EBFn c\u1ED1 l\u1EDBn).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. side",
+            baitOptionText: "B. Thay ",
             diagnosticTitle: 'D\u1ECBch t\u1EEB "b\xEAn c\u1EA1nh" th\xE0nh side',
             explanation: 'Th\xE0nh ng\u1EEF ch\u1EC9 b\u1EDD v\u1EF1c nguy nan b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng "on the brink of", kh\xF4ng d\xF9ng "on the side of".'
           }
@@ -101065,7 +101065,7 @@ var init_week6_data = __esm({
           correctExplanation: 'T\xEDnh t\u1EEB \u0111u\xF4i -ive ch\u1EC9 t\xEDnh ch\u1EA5t g\xE2y nghi\u1EC7n c\u1EE7a s\u1EF1 v\u1EADt/\u1EE9ng d\u1EE5ng: "highly addictive". C\xF2n ng\u01B0\u1EDDi b\u1ECB nghi\u1EC7n m\u1EDBi d\xF9ng "addicted to".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. addicted",
+            baitOptionText: "B. Thay ",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa t\xEDnh t\u1EEB b\u1ECB \u0111\u1ED9ng (ng\u01B0\u1EDDi b\u1ECB nghi\u1EC7n) v\xE0 ch\u1EE7 \u0111\u1ED9ng (v\u1EADt g\xE2y nghi\u1EC7n)",
             explanation: '\u1EE8ng d\u1EE5ng ph\u1EA7n m\u1EC1m c\xF3 t\xEDnh ch\u1EA5t g\xE2y nghi\u1EC7n cho ng\u01B0\u1EDDi kh\xE1c th\xEC ph\u1EA3i d\xF9ng "addictive", kh\xF4ng d\xF9ng "addicted".'
           }
@@ -101085,7 +101085,7 @@ var init_week6_data = __esm({
           correctExplanation: '\u0110\u1ED9ng t\u1EEB "found" (th\xE0nh l\u1EADp) c\xF3 qu\xE1 kh\u1EE9 ph\xE2n t\u1EEB l\xE0 "founded". C\xE2u b\u1ECB \u0111\u1ED9ng ch\u1EC9 s\u1EF1 ki\u1EC7n l\u1ECBch s\u1EED trong qu\xE1 kh\u1EE9: "was founded".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. was found",
+            baitOptionText: "B. Thay ",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa \u0111\u1ED9ng t\u1EEB find (t\xECm th\u1EA5y) v\xE0 found (th\xE0nh l\u1EADp)",
             explanation: '"Find - found - found" l\xE0 t\xECm th\u1EA5y, c\xF2n "found - founded - founded" l\xE0 th\xE0nh l\u1EADp, s\xE1ng l\u1EADp.'
           }
@@ -101105,7 +101105,7 @@ var init_week6_data = __esm({
           correctExplanation: 'Quy t\u1EAFc gi\u1EDBi t\u1EEB cho c\xE1c n\u1EC1n t\u1EA3ng c\xF4ng ngh\u1EC7, website, \u1EE9ng d\u1EE5ng s\u1ED1: lu\xF4n d\xF9ng gi\u1EDBi t\u1EEB "ON the platform / on the internet / on Facebook".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. in",
+            baitOptionText: "B. Thay ",
             diagnosticTitle: 'D\u1ECBch t\u1EEB "trong n\u1EC1n t\u1EA3ng" th\xE0nh gi\u1EDBi t\u1EEB "in"',
             explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "trong n\u1EC1n t\u1EA3ng m\u1EA1ng x\xE3 h\u1ED9i", nh\u01B0ng ti\u1EBFng Anh b\u1EAFt bu\u1ED9c d\xF9ng "ON the platform".'
           }
@@ -101115,17 +101115,17 @@ var init_week6_data = __esm({
           roundIndex: 7,
           prompt: 'Trong c\u1EE5m "Zuckerberg signed a pledge along with other philanthropists", t\u1EEB "pledge" mang ngh\u0129a g\xEC?',
           options: [
-            { id: "opt_A", label: "A", text: "L\u1EDDi cam k\u1EBFt ch\xEDnh th\u1EE9c / v\u0103n b\u1EA3n th\u1EC1 nguy\u1EC7n hi\u1EBFn t\u1EB7ng t\xE0i s\u1EA3n" },
+            { id: "opt_A", label: "A", text: "L\u1EDDi cam k\u1EBFt ch\xEDnh th\u1EE9c" },
             { id: "opt_B", label: "B", text: "H\u1EE3p \u0111\u1ED3ng vay th\u1EBF ch\u1EA5p ng\xE2n h\xE0ng" },
             { id: "opt_C", label: "C", text: "\u0110\u01A1n khi\u1EBFu n\u1EA1i b\u1EA3n quy\u1EC1n t\u1EA1i t\xF2a \xE1n" },
             { id: "opt_D", label: "D", text: "B\u1EA3n b\xE1o c\xE1o doanh thu t\xE0i ch\xEDnh qu\xFD" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. L\u1EDDi cam k\u1EBFt ch\xEDnh th\u1EE9c / v\u0103n b\u1EA3n th\u1EC1 nguy\u1EC7n hi\u1EBFn t\u1EB7ng t\xE0i s\u1EA3n",
+          correctAnswerText: "A. L\u1EDDi cam k\u1EBFt ch\xEDnh th\u1EE9c",
           correctExplanation: '"A pledge" l\xE0 m\u1ED9t l\u1EDDi h\u1EE9a danh d\u1EF1, b\u1EA3n cam k\u1EBFt c\xF4ng khai \u0111\xF3ng g\xF3p t\xE0i s\u1EA3n v\xEC m\u1EE5c ti\xEAu nh\xE2n \u0111\u1EA1o.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. H\u1EE3p \u0111\u1ED3ng vay th\u1EBF ch\u1EA5p",
+            baitOptionText: "B. Thay ",
             diagnosticTitle: "Nh\u1EA7m thu\u1EADt ng\u1EEF cam k\u1EBFt v\u1EDBi h\u1EE3p \u0111\u1ED3ng n\u1EE3",
             explanation: 'Trong b\u1ED1i c\u1EA3nh hi\u1EBFn t\u1EB7ng t\xE0i s\u1EA3n (philanthropy), "pledge" l\xE0 l\u1EDDi cam k\u1EBFt t\u1EEB thi\u1EC7n c\u1EE7a c\xE1c t\u1EF7 ph\xFA.'
           }
@@ -101145,7 +101145,7 @@ var init_week6_data = __esm({
           correctExplanation: '"Registration fees" = ph\xED \u0111\u0103ng k\xFD (\u0111\u0103ng k\xFD t\xEAn mi\u1EC1n ho\u1EB7c s\u1EDF h\u1EEFu tr\xED tu\u1EC7 \u0111\u1EC3 ch\u1ED1ng h\xE0ng gi\u1EA3 m\u1EA1o).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. burnout",
+            baitOptionText: "C. B\u1ECF ",
             diagnosticTitle: "Gh\xE9p t\u1EEB kh\xF4ng li\xEAn quan ng\u1EEF ngh\u0129a kinh doanh",
             explanation: "Burnout l\xE0 ki\u1EC7t s\u1EE9c lao \u0111\u1ED9ng, ho\xE0n to\xE0n kh\xF4ng t\u01B0\u01A1ng th\xEDch v\u1EDBi kh\xE1i ni\u1EC7m b\u1EA3o v\u1EC7 t\xEAn mi\u1EC1n."
           }
@@ -101165,7 +101165,7 @@ var init_week6_data = __esm({
           correctExplanation: '"Digital networks empowered regular users" paraphrase cho "platforms enabled ordinary individuals", "spearhead viral movements" paraphrase cho "set trends", v\xE0 "independently of legacy broadcast outlets" paraphrase cho "without traditional media gatekeepers".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Traditional television retains monopoly",
+            baitOptionText: "B. Thay ",
             diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c ho\xE0n to\xE0n th\u1EF1c t\u1EBF thay \u0111\u1ED5i c\u1EE7a truy\u1EC1n th\xF4ng",
             explanation: "B\xE0i \u0111\u1ECDc n\xEAu r\xF5 truy\u1EC1n h\xECnh \u0111ang suy gi\u1EA3m v\xE0 nh\u01B0\u1EDDng quy\u1EC1n \u0111\u1ECBnh h\xECnh xu h\u01B0\u1EDBng cho ng\u01B0\u1EDDi s\xE1ng t\u1EA1o s\u1ED1."
           }
@@ -101225,7 +101225,7 @@ var init_week6_data = __esm({
             { id: "opt_A", label: "A", text: "/\u026Ad/" },
             { id: "opt_B", label: "B", text: "/t/" },
             { id: "opt_C", label: "C", text: "/d/" },
-            { id: "opt_D", label: "D", text: "C\xE2m (kh\xF4ng ph\xE1t \xE2m)" }
+            { id: "opt_D", label: "D", text: "\xC2m c\xE2m" }
           ],
           correctOptionId: "opt_A",
           timeLimitSeconds: 20,
@@ -101490,17 +101490,17 @@ var init_week7_data = __esm({
           roundIndex: 0,
           prompt: 'Trong ch\u1EE7 \u0111\u1EC1 Environment, \u0111\u1ED9ng t\u1EEB "discharge" trong c\u1EE5m "discharged toxic waste into the ocean" \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi:',
           options: [
-            { id: "opt_A", label: "A", text: "release / dump (th\u1EA3i ra, x\u1EA3 th\u1EA3i b\u1EEBa b\xE3i)" },
-            { id: "opt_B", label: "B", text: "recycle (t\xE1i ch\u1EBF)" },
-            { id: "opt_C", label: "C", text: "purify (thanh l\u1ECDc, l\u1ECDc s\u1EA1ch)" },
-            { id: "opt_D", label: "D", text: "contain (ng\u0103n ch\u1EB7n, k\xECm h\xE3m)" }
+            { id: "opt_A", label: "A", text: "release" },
+            { id: "opt_B", label: "B", text: "recycle" },
+            { id: "opt_C", label: "C", text: "purify" },
+            { id: "opt_D", label: "D", text: "contain" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. release / dump (th\u1EA3i ra, x\u1EA3 th\u1EA3i b\u1EEBa b\xE3i)",
+          correctAnswerText: "A. where",
           correctExplanation: '"Discharge" ch\u1EA5t th\u1EA3i c\xF4ng nghi\u1EC7p c\xF3 ngh\u0129a l\xE0 x\u1EA3 ra m\xF4i tr\u01B0\u1EDDng b\xEAn ngo\xE0i, \u0111\u1ED3ng ngh\u0129a v\u1EDBi release ho\u1EB7c dump.',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. purify",
+            baitOptionText: "C. why",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa h\xE0nh vi g\xE2y \xF4 nhi\u1EC5m v\xE0 gi\u1EA3i ph\xE1p x\u1EED l\xFD",
             explanation: "Discharge ch\u1EA5t th\u1EA3i l\xE0 ngu\u1ED3n c\u01A1n th\u1EA3m h\u1ECDa \xF4 nhi\u1EC5m, ho\xE0n to\xE0n tr\xE1i ng\u01B0\u1EE3c v\u1EDBi purify (l\xE0m s\u1EA1ch)."
           }
@@ -101510,17 +101510,17 @@ var init_week7_data = __esm({
           roundIndex: 1,
           prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "toxic" trong c\u1EE5m "toxic chemical waste" (ch\u1EA5t th\u1EA3i h\xF3a h\u1ECDc \u0111\u1ED9c h\u1EA1i) l\xE0:',
           options: [
-            { id: "opt_A", label: "A", text: "harmless / non-hazardous (v\xF4 h\u1EA1i, an to\xE0n)" },
-            { id: "opt_B", label: "B", text: "poisonous (c\xF3 \u0111\u1ED9c t\xEDnh cao)" },
-            { id: "opt_C", label: "C", text: "fatal (g\xE2y ch\u1EBFt ng\u01B0\u1EDDi)" },
-            { id: "opt_D", label: "D", text: "lethal (nguy hi\u1EC3m ch\u1EBFt ch\xF3c)" }
+            { id: "opt_A", label: "A", text: "harmless" },
+            { id: "opt_B", label: "B", text: "poisonous" },
+            { id: "opt_C", label: "C", text: "fatal" },
+            { id: "opt_D", label: "D", text: "lethal" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. harmless / non-hazardous (v\xF4 h\u1EA1i, an to\xE0n)",
+          correctAnswerText: "A. harmless",
           correctExplanation: '"Toxic" = \u0111\u1ED9c h\u1EA1i. T\u1EEB tr\xE1i ngh\u0129a tr\u1EF1c ti\u1EBFp l\xE0 "harmless" (v\xF4 h\u1EA1i) ho\u1EB7c "non-hazardous" (kh\xF4ng nguy h\u1EA1i).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. poisonous",
+            baitOptionText: "B. when",
             diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
             explanation: "Poisonous l\xE0 t\u1EEB \u0111\u1ED3ng ngh\u0129a tr\u1EF1c ti\u1EBFp v\u1EDBi toxic. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
           }
@@ -101540,7 +101540,7 @@ var init_week7_data = __esm({
           correctExplanation: '"Livelihood" l\xE0 k\u1EBF sinh nhai (a means of securing the necessities of life), ngu\u1ED3n nu\xF4i s\u1ED1ng b\u1EA3n th\xE2n v\xE0 gia \u0111\xECnh.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Thuy\u1EC1n bu\u1ED3m v\xE0 ng\u01B0 c\u1EE5",
+            baitOptionText: "B. when",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn t\xE0i s\u1EA3n v\u1EADt ch\u1EA5t v\u1EDBi k\u1EBF sinh nhai",
             explanation: "Thuy\u1EC1n b\xE8 ch\u1EC9 l\xE0 c\xF4ng c\u1EE5 (gear/vessel), c\xF2n livelihood l\xE0 ph\u01B0\u01A1ng k\u1EBF ki\u1EBFm s\u1ED1ng to\xE0n di\u1EC7n c\u1EE7a con ng\u01B0\u1EDDi."
           }
@@ -101550,17 +101550,17 @@ var init_week7_data = __esm({
           roundIndex: 3,
           prompt: 'Collocation chu\u1EA9n trong b\xE0i: "The industrial plant discharged waste which contained toxins that ______ the permitted safety level."',
           options: [
-            { id: "opt_A", label: "A", text: "exceeded (v\u01B0\u1EE3t qu\xE1 ng\u01B0\u1EE1ng cho ph\xE9p)" },
+            { id: "opt_A", label: "A", text: "exceeded" },
             { id: "opt_B", label: "B", text: "succeeded" },
             { id: "opt_C", label: "C", text: "receded" },
             { id: "opt_D", label: "D", text: "proceeded" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. exceeded (v\u01B0\u1EE3t qu\xE1 ng\u01B0\u1EE1ng cho ph\xE9p)",
+          correctAnswerText: "A. exceeded",
           correctExplanation: 'Collocation m\xF4i tr\u01B0\u1EDDng ph\xE1p l\xFD: "exceed the permitted level / standard" (v\u01B0\u1EE3t qu\xE1 ng\u01B0\u1EE1ng quy chu\u1EA9n an to\xE0n cho ph\xE9p).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. succeeded",
+            baitOptionText: "B. when",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn h\xECnh th\xE1i t\u1EEB do c\xF9ng \u0111u\xF4i -ceed",
             explanation: "Succeed l\xE0 th\xE0nh c\xF4ng ho\u1EB7c k\u1EBF nhi\u1EC7m, kh\xF4ng mang ngh\u0129a v\u01B0\u1EE3t qu\xE1 ng\u01B0\u1EE1ng ch\u1EC9 s\u1ED1 s\u1ED1 l\u01B0\u1EE3ng."
           }
@@ -101580,7 +101580,7 @@ var init_week7_data = __esm({
           correctExplanation: '"Marine life" l\xE0 thu\u1EADt ng\u1EEF chu\u1EA9n x\xE1c trong sinh th\xE1i h\u1ECDc ch\u1EC9 c\xE1c lo\xE0i sinh v\u1EADt bi\u1EC3n v\xE0 h\u1EC7 sinh th\xE1i \u0111\u1EA1i d\u01B0\u01A1ng.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. navy life",
+            baitOptionText: "B. when",
             diagnosticTitle: "D\xF9ng t\u1EEB l\u1EF1c l\u01B0\u1EE3ng qu\xE2n s\u1EF1 h\u1EA3i qu\xE2n",
             explanation: "Navy l\xE0 l\u1EF1c l\u01B0\u1EE3ng qu\xE2n \u0111\u1ED9i h\u1EA3i qu\xE2n, kh\xF4ng li\xEAn quan \u0111\u1EBFn sinh v\u1EADt sinh th\xE1i bi\u1EC3n (marine)."
           }
@@ -101600,7 +101600,7 @@ var init_week7_data = __esm({
           correctExplanation: '"Untreated waste" l\xE0 qu\xE1 kh\u1EE9 ph\xE2n t\u1EEB l\xE0m t\xEDnh t\u1EEB mang ngh\u0129a b\u1ECB \u0111\u1ED9ng: ch\u1EA5t th\u1EA3i ch\u01B0a t\u1EEBng \u0111\u01B0\u1EE3c qua h\u1EC7 th\u1ED1ng x\u1EED l\xFD h\xF3a ch\u1EA5t.',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. not-treating waste",
+            baitOptionText: "C. why",
             diagnosticTitle: "D\xF9ng hi\u1EC7n t\u1EA1i ph\xE2n t\u1EEB ch\u1EE7 \u0111\u1ED9ng sai ng\u1EEF ph\xE1p",
             explanation: 'Ch\u1EA5t th\u1EA3i l\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng \u0111\u01B0\u1EE3c x\u1EED l\xFD (b\u1ECB \u0111\u1ED9ng), n\xEAn ph\u1EA3i d\xF9ng past participle c\xF3 ti\u1EC1n t\u1ED1 ph\u1EE7 \u0111\u1ECBnh "untreated".'
           }
@@ -101620,7 +101620,7 @@ var init_week7_data = __esm({
           correctExplanation: 'C\u1EA5u tr\xFAc c\u1ED1 \u0111\u1ECBnh: "accept / take responsibility FOR something" (ch\u1ECBu tr\xE1ch nhi\u1EC7m v\u1EC1 h\xE0nh vi ho\u1EB7c h\u1EADu qu\u1EA3 n\xE0o \u0111\xF3).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. with",
+            baitOptionText: "B. when",
             diagnosticTitle: 'D\xF9ng gi\u1EDBi t\u1EEB "with" do \u1EA3nh h\u01B0\u1EDFng ti\u1EBFng Vi\u1EC7t',
             explanation: 'Ti\u1EBFng Vi\u1EC7t n\xF3i "ch\u1ECBu tr\xE1ch nhi\u1EC7m v\u1EDBi ai/vi\u1EC7c g\xEC", nh\u01B0ng ti\u1EBFng Anh b\u1EAFt bu\u1ED9c d\xF9ng "responsibility FOR sth".'
           }
@@ -101630,17 +101630,17 @@ var init_week7_data = __esm({
           roundIndex: 7,
           prompt: 'Hi\u1EC7n t\u01B0\u1EE3ng sinh h\u1ECDc "red tide" \u0111\u01B0\u1EE3c d\u1ECBch chu\u1EA9n x\xE1c sang ti\u1EBFng Vi\u1EC7t l\xE0 g\xEC?',
           options: [
-            { id: "opt_A", label: "A", text: "Hi\u1EC7n t\u01B0\u1EE3ng th\u1EE7y tri\u1EC1u \u0111\u1ECF (s\u1EF1 b\xF9ng ph\xE1t t\u1EA3o bi\u1EC3n n\u1EDF hoa ph\xE1t sinh \u0111\u1ED9c t\u1ED1)" },
+            { id: "opt_A", label: "A", text: "Hi\u1EC7n t\u01B0\u1EE3ng th\u1EE7y tri\u1EC1u \u0111\u1ECF" },
             { id: "opt_B", label: "B", text: "Hi\u1EC7n t\u01B0\u1EE3ng s\xF3ng th\u1EA7n do \u0111\u1ED9ng \u0111\u1EA5t ng\u1EA7m" },
             { id: "opt_C", label: "C", text: "S\u1EF1 c\u1ED1 tr\xE0n d\u1EA7u th\xF4 nhu\u1ED9m m\xE0u n\u01B0\u1EDBc bi\u1EC3n" },
             { id: "opt_D", label: "D", text: "N\u01B0\u1EDBc bi\u1EC3n d\xE2ng cao v\xE0o m\xF9a l\u0169 l\u1EE5t" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. Hi\u1EC7n t\u01B0\u1EE3ng th\u1EE7y tri\u1EC1u \u0111\u1ECF (s\u1EF1 b\xF9ng ph\xE1t t\u1EA3o bi\u1EC3n n\u1EDF hoa ph\xE1t sinh \u0111\u1ED9c t\u1ED1)",
+          correctAnswerText: "A. Hi\u1EC7n t\u01B0\u1EE3ng th\u1EE7y tri\u1EC1u \u0111\u1ECF",
           correctExplanation: '"Red tide" l\xE0 thu\u1EADt ng\u1EEF h\u1EA3i d\u01B0\u01A1ng h\u1ECDc ch\u1EC9 hi\u1EC7n t\u01B0\u1EE3ng th\u1EE7y tri\u1EC1u \u0111\u1ECF khi vi t\u1EA3o n\u1EDF hoa l\xE0m \u0111\u1ED5i m\xE0u n\u01B0\u1EDBc v\xE0 ti\xEAu hao d\u01B0\u1EE1ng kh\xED.',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. S\u1EF1 c\u1ED1 tr\xE0n d\u1EA7u th\xF4",
+            baitOptionText: "C. why",
             diagnosticTitle: "Nh\u1EA7m hi\u1EC7n t\u01B0\u1EE3ng sinh h\u1ECDc v\u1EDBi s\u1EF1 c\u1ED1 d\u1EA7u loang",
             explanation: "D\u1EA7u tr\xE0n l\xE0 oil spill, c\xF2n red tide l\xE0 hi\u1EC7n t\u01B0\u1EE3ng b\xF9ng n\u1ED5 t\u1EA3o bi\u1EC3n."
           }
@@ -101650,17 +101650,17 @@ var init_week7_data = __esm({
           roundIndex: 8,
           prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p \u0111i\u1EC1n v\xE0o b\xE1o c\xE1o sinh th\xE1i: "The environmental agency placed an immediate ______ on fishing in polluted coastal zones."',
           options: [
-            { id: "opt_A", label: "A", text: "ban (l\u1EC7nh c\u1EA5m ch\xEDnh th\u1EE9c)" },
+            { id: "opt_A", label: "A", text: "ban" },
             { id: "opt_B", label: "B", text: "campus" },
             { id: "opt_C", label: "C", text: "burnout" },
             { id: "opt_D", label: "D", text: "itinerary" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. ban (l\u1EC7nh c\u1EA5m ch\xEDnh th\u1EE9c)",
+          correctAnswerText: "A. ban",
           correctExplanation: 'Collocation: "place a ban on something" (\xE1p \u0111\u1EB7t l\u1EC7nh c\u1EA5m \u0111\u1ED1i v\u1EDBi ho\u1EA1t \u0111\u1ED9ng \u0111\xE1nh b\u1EAFt/mua b\xE1n n\xE0o \u0111\xF3).',
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. itinerary",
+            baitOptionText: "D. which",
             diagnosticTitle: "Gh\xE9p t\u1EEB l\u1ECBch tr\xECnh chuy\u1EBFn \u0111i kh\xF4ng t\u01B0\u01A1ng th\xEDch",
             explanation: "Itinerary l\xE0 l\u1ECBch tr\xECnh du l\u1ECBch, kh\xF4ng th\u1EC3 \u0111i v\u1EDBi h\xE0nh \u0111\u1ED9ng qu\u1EA3n l\xFD kh\u1EA9n c\u1EA5p c\u1EE7a c\u01A1 quan m\xF4i tr\u01B0\u1EDDng."
           }
@@ -101680,7 +101680,7 @@ var init_week7_data = __esm({
           correctExplanation: `"Illicit industrial waste disposal" paraphrase cho "unlawfully discharged untreated chemical toxins", "wiped out aquatic habitats" paraphrase cho "decimating marine ecosystems", v\xE0 "compromised economic survival" paraphrase cho "ruining fishermen's livelihoods".`,
           misconception: {
             baitOptionId: "opt_D",
-            baitOptionText: "D. Red tide algae blooms were verified as the cause",
+            baitOptionText: "D. which",
             diagnosticTitle: "Ch\u1ECDn gi\u1EA3 thuy\u1EBFt \u0111\xE3 b\u1ECB b\xE1c b\u1ECF trong \u0111i\u1EC1u tra",
             explanation: "Gi\u1EA3 thuy\u1EBFt th\u1EE7y tri\u1EC1u \u0111\u1ECF \u0111\xE3 b\u1ECB H\u1ED9i ngh\u1EC1 c\xE1 v\xE0 k\u1EBFt lu\u1EADn ch\xEDnh ph\u1EE7 b\xE1c b\u1ECF; nguy\xEAn nh\xE2n th\u1EADt s\u1EF1 l\xE0 do ch\u1EA5t \u0111\u1ED9c x\u1EA3 t\u1EEB nh\xE0 m\xE1y."
           }
@@ -101710,7 +101710,7 @@ var init_week7_data = __esm({
             { id: "opt_A", label: "A", text: "/\u026Az/" },
             { id: "opt_B", label: "B", text: "/s/" },
             { id: "opt_C", label: "C", text: "/z/" },
-            { id: "opt_D", label: "D", text: "C\xE2m kh\xF4ng ph\xE1t \xE2m" }
+            { id: "opt_D", label: "D", text: "\xC2m c\xE2m" }
           ],
           correctOptionId: "opt_A",
           timeLimitSeconds: 20,
@@ -101812,7 +101812,7 @@ var init_week7_data = __esm({
           roundIndex: 8,
           prompt: "C\u1EE5m t\u1EEB n\xE0o di\u1EC5n t\u1EA3 m\u1ED9t 'ng\u01B0\u1EDDi b\u1EA1n th\xE2n thi\u1EBFt tri k\u1EF7 c\xF3 th\u1EC3 t\xE2m s\u1EF1 m\u1ECDi \u0111i\u1EC1u'?",
           options: [
-            { id: "opt_A", label: "A", text: "A close confidant / intimate friend" },
+            { id: "opt_A", label: "A", text: "A close confidant" },
             { id: "opt_B", label: "B", text: "A casual acquaintance" },
             { id: "opt_C", label: "C", text: "A fair-weather friend" },
             { id: "opt_D", label: "D", text: "A stranger on the street" }
@@ -101943,7 +101943,7 @@ var init_week8_data = __esm({
           roundIndex: 6,
           prompt: "\u0110\u1ED9ng t\u1EEB n\xE0o sau \u0111\xE2y l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB (Intransitive verb) KH\xD4NG TH\u1EC2 chia \u1EDF th\u1EC3 b\u1ECB \u0111\u1ED9ng?",
           options: [
-            { id: "opt_A", label: "A", text: "happen / occur" },
+            { id: "opt_A", label: "A", text: "happen" },
             { id: "opt_B", label: "B", text: "build" },
             { id: "opt_C", label: "C", text: "destroy" },
             { id: "opt_D", label: "D", text: "publish" }
@@ -102005,17 +102005,17 @@ var init_week8_data = __esm({
           roundIndex: 0,
           prompt: `Trong ch\u1EE7 \u0111\u1EC1 Crime & Law, t\u1EEB "lucrative" trong ti\xEAu \u0111\u1EC1 "Britain's lucrative marijuana trade" \u0110\u1ED2NG NGH\u0128A nh\u1EA5t v\u1EDBi:`,
           options: [
-            { id: "opt_A", label: "A", text: "highly profitable / moneymaking (si\xEAu l\u1EE3i nhu\u1EADn, ki\u1EBFm \u0111\u01B0\u1EE3c r\u1EA5t nhi\u1EC1u ti\u1EC1n)" },
-            { id: "opt_B", label: "B", text: "unprofitable / loss-making (thua l\u1ED7)" },
-            { id: "opt_C", label: "C", text: "legal / lawful (h\u1EE3p ph\xE1p)" },
-            { id: "opt_D", label: "D", text: "perilous (nguy hi\u1EC3m)" }
+            { id: "opt_A", label: "A", text: "highly profitable" },
+            { id: "opt_B", label: "B", text: "unprofitable" },
+            { id: "opt_C", label: "C", text: "legal" },
+            { id: "opt_D", label: "D", text: "perilous" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. highly profitable / moneymaking (si\xEAu l\u1EE3i nhu\u1EADn, ki\u1EBFm \u0111\u01B0\u1EE3c r\u1EA5t nhi\u1EC1u ti\u1EC1n)",
+          correctAnswerText: "A. Khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n nh\u1EA5n m\u1EA1nh v\xE0o h\xE0nh \u0111\u1ED9ng/\u0111\u1ED1i t\u01B0\u1EE3ng ch\u1ECBu t\xE1c \u0111\u1ED9ng ho\u1EB7c khi ch\u1EE7 th\u1EC3 th\u1EF1c hi\u1EC7n h\xE0nh \u0111\u1ED9ng kh\xF4ng quan tr\u1ECDng/ch\u01B0a r\xF5",
           correctExplanation: '"Lucrative" (t\xEDnh t\u1EEB h\u1ECDc thu\u1EADt) m\xF4 t\u1EA3 m\u1ED9t ho\u1EA1t \u0111\u1ED9ng ho\u1EB7c th\u01B0\u01A1ng v\u1EE5 \u0111em l\u1EA1i ngu\u1ED3n l\u1EE3i nhu\u1EADn k\u1EBFch x\xF9 (profitable).',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. legal / lawful",
+            baitOptionText: "C. Trong t\u1EA5t c\u1EA3 m\u1ECDi c\xE2u v\u0103n mi\xEAu t\u1EA3 quan \u0111i\u1EC3m c\xE1 nh\xE2n",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa t\xEDnh sinh l\u1EDDi v\u1EDBi t\xEDnh h\u1EE3p ph\xE1p",
             explanation: "Bu\xF4n b\xE1n ma t\xFAy l\xE0 ph\u1EA1m ph\xE1p (illegal) nh\u01B0ng mang l\u1EA1i l\u1EE3i nhu\u1EADn kh\u1ED5ng l\u1ED3 n\xEAn g\u1ECDi l\xE0 lucrative trade."
           }
@@ -102025,17 +102025,17 @@ var init_week8_data = __esm({
           roundIndex: 1,
           prompt: 'T\u1EEB TR\xC1I NGH\u0128A v\u1EDBi "broke" trong c\xE2u mi\xEAu t\u1EA3 t\xECnh c\u1EA3nh khi h\u1ED3i h\u01B0\u01A1ng: "Cuong returned broke and now lives in a modest house" l\xE0:',
           options: [
-            { id: "opt_A", label: "A", text: "wealthy / affluent (gi\xE0u c\xF3, d\u01B0 d\u1EA3 ti\u1EC1n b\u1EA1c)" },
-            { id: "opt_B", label: "B", text: "penniless / bankrupt (ch\xE1y t\xFAi, kh\xE1nh ki\u1EC7t)" },
-            { id: "opt_C", label: "C", text: "reformed (ho\xE0n l\u01B0\u01A1ng)" },
-            { id: "opt_D", label: "D", text: "imprisoned (b\u1ECB t\u1ED1ng giam)" }
+            { id: "opt_A", label: "A", text: "wealthy" },
+            { id: "opt_B", label: "B", text: "penniless" },
+            { id: "opt_C", label: "C", text: "reformed" },
+            { id: "opt_D", label: "D", text: "imprisoned" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. wealthy / affluent (gi\xE0u c\xF3, d\u01B0 d\u1EA3 ti\u1EC1n b\u1EA1c)",
+          correctAnswerText: "A. wealthy",
           correctExplanation: '"Broke" (t\xEDnh t\u1EEB kh\u1EA9u ng\u1EEF th\xF4ng d\u1EE5ng) = ho\xE0n to\xE0n r\u1ED7ng t\xFAi, kh\xE1nh ki\u1EC7t t\xE0i ch\xEDnh. T\u1EEB tr\xE1i ngh\u0129a l\xE0 "wealthy" ho\u1EB7c "affluent".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. penniless / bankrupt",
+            baitOptionText: "B. Ch\u1EC9 khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n c\xE2u v\u0103n d\xE0i th\xEAm nhi\u1EC1u t\u1EEB \u0111\u1EC3 \u0111\u1EA1t \u0111\u1ED9 d\xE0i t\u1ED1i thi\u1EC3u",
             diagnosticTitle: "Ch\u1ECDn nh\u1EA7m t\u1EEB \u0111\u1ED3ng ngh\u0129a thay v\xEC t\u1EEB tr\xE1i ngh\u0129a",
             explanation: "Penniless/bankrupt \u0111\u1ED3ng ngh\u0129a v\u1EDBi broke. \u0110\u1EC1 b\xE0i \u0111ang y\xEAu c\u1EA7u t\xECm t\u1EEB TR\xC1I NGH\u0128A."
           }
@@ -102045,17 +102045,17 @@ var init_week8_data = __esm({
           roundIndex: 2,
           prompt: 'Thu\u1EADt ng\u1EEF t\u1ED9i ph\u1EA1m "human trafficker" trong b\xE0i \u0111\u1ECDc d\xF9ng \u0111\u1EC3 ch\u1EC9 ai?',
           options: [
-            { id: "opt_A", label: "A", text: "K\u1EBB bu\xF4n ng\u01B0\u1EDDi / t\u1ED9i ph\u1EA1m bu\xF4n b\xE1n, v\u1EADn chuy\u1EC3n ng\u01B0\u1EDDi v\u01B0\u1EE3t bi\xEAn tr\xE1i ph\xE9p" },
+            { id: "opt_A", label: "A", text: "K\u1EBB bu\xF4n ng\u01B0\u1EDDi" },
             { id: "opt_B", label: "B", text: "C\u1EA3nh s\xE1t \u0111i\u1EC1u ph\u1ED1i giao th\xF4ng \u0111\u01B0\u1EDDng b\u1ED9" },
             { id: "opt_C", label: "C", text: "C\xE1n b\u1ED9 qu\u1EA3n l\xFD xu\u1EA5t nh\u1EADp c\u1EA3nh t\u1EA1i s\xE2n bay" },
             { id: "opt_D", label: "D", text: "T\xE0i x\u1EBF l\xE1i xe bu\xFDt du l\u1ECBch ch\xE2u \xC2u" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. K\u1EBB bu\xF4n ng\u01B0\u1EDDi / t\u1ED9i ph\u1EA1m bu\xF4n b\xE1n, v\u1EADn chuy\u1EC3n ng\u01B0\u1EDDi v\u01B0\u1EE3t bi\xEAn tr\xE1i ph\xE9p",
+          correctAnswerText: "A. K\u1EBB bu\xF4n ng\u01B0\u1EDDi",
           correctExplanation: '"Human trafficker" l\xE0 t\u1ED9i ph\u1EA1m bu\xF4n b\xE1n ng\u01B0\u1EDDi xuy\xEAn qu\u1ED1c gia (trafficking: bu\xF4n l\u1EADu b\u1EA5t h\u1EE3p ph\xE1p h\xE0ng c\u1EA5m ho\u1EB7c con ng\u01B0\u1EDDi).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. C\u1EA3nh s\xE1t \u0111i\u1EC1u ph\u1ED1i giao th\xF4ng",
+            baitOptionText: "B. Ch\u1EC9 khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n c\xE2u v\u0103n d\xE0i th\xEAm nhi\u1EC1u t\u1EEB \u0111\u1EC3 \u0111\u1EA1t \u0111\u1ED9 d\xE0i t\u1ED1i thi\u1EC3u",
             diagnosticTitle: "D\u1ECBch nh\u1EA7m t\u1EEB g\u1ED1c traffic (giao th\xF4ng)",
             explanation: "Trong h\xECnh s\u1EF1, trafficking l\xE0 t\u1ED9i ph\u1EA1m bu\xF4n l\u1EADu/bu\xF4n ng\u01B0\u1EDDi, kh\xF4ng li\xEAn quan \u0111\u1EBFn tr\u1EADt t\u1EF1 giao th\xF4ng \u0111\u01B0\u1EDDng b\u1ED9."
           }
@@ -102065,17 +102065,17 @@ var init_week8_data = __esm({
           roundIndex: 3,
           prompt: 'Collocation t\u1ED1 t\u1EE5ng h\xECnh s\u1EF1: "The defendant was convicted of cultivating illicit plants and ______ to 10 months in prison."',
           options: [
-            { id: "opt_A", label: "A", text: "sentenced (b\u1ECB t\xF2a tuy\xEAn \xE1n ph\u1EA1t t\xF9)" },
+            { id: "opt_A", label: "A", text: "sentenced" },
             { id: "opt_B", label: "B", text: "worded" },
             { id: "opt_C", label: "C", text: "phrased" },
             { id: "opt_D", label: "D", text: "scripted" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. sentenced (b\u1ECB t\xF2a tuy\xEAn \xE1n ph\u1EA1t t\xF9)",
+          correctAnswerText: "A. sentenced",
           correctExplanation: 'C\u1EA5u tr\xFAc ph\xE1p l\xFD chu\u1EA9n: "be sentenced to [time] in prison/jail" (b\u1ECB to\xE0 tuy\xEAn ph\u1EA1t m\u1EE9c \xE1n bao l\xE2u).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. worded",
+            baitOptionText: "B. Ch\u1EC9 khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n c\xE2u v\u0103n d\xE0i th\xEAm nhi\u1EC1u t\u1EEB \u0111\u1EC3 \u0111\u1EA1t \u0111\u1ED9 d\xE0i t\u1ED1i thi\u1EC3u",
             diagnosticTitle: "D\u1ECBch nh\u1EA7m t\u1EEB ngh\u0129a ng\u1EEF ph\xE1p c\u1EE7a sentence (c\xE2u v\u0103n)",
             explanation: 'Trong lu\u1EADt ph\xE1p, "sentence" l\xE0 b\u1EA3n \xE1n/tuy\xEAn \xE1n c\u1EE7a th\u1EA9m ph\xE1n, kh\xF4ng li\xEAn quan \u0111\u1EBFn c\xE2u c\xFA ng\u1EEF ph\xE1p.'
           }
@@ -102095,7 +102095,7 @@ var init_week8_data = __esm({
           correctExplanation: '"Deport somebody (back to...)" l\xE0 thu\u1EADt ng\u1EEF xu\u1EA5t nh\u1EADp c\u1EA3nh ch\u1EC9 h\xE0nh vi c\u01B0\u1EE1ng ch\u1EBF tr\u1EE5c xu\u1EA5t ng\u01B0\u1EDDi nh\u1EADp c\u01B0 kh\xF4ng h\u1EE3p l\u1EC7 v\u1EC1 n\u01B0\u1EDBc.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. imported",
+            baitOptionText: "B. Ch\u1EC9 khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n c\xE2u v\u0103n d\xE0i th\xEAm nhi\u1EC1u t\u1EEB \u0111\u1EC3 \u0111\u1EA1t \u0111\u1ED9 d\xE0i t\u1ED1i thi\u1EC3u",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn v\u1EDBi h\xE0nh vi nh\u1EADp kh\u1EA9u h\xE0ng h\xF3a",
             explanation: "Import l\xE0 nh\u1EADp kh\u1EA9u h\xE0ng h\xF3a, deport m\u1EDBi l\xE0 tr\u1EE5c xu\u1EA5t con ng\u01B0\u1EDDi vi ph\u1EA1m visa/nh\u1EADp c\u1EA3nh."
           }
@@ -102105,19 +102105,19 @@ var init_week8_data = __esm({
           roundIndex: 5,
           prompt: 'Ch\u1ECDn t\xEDnh t\u1EEB ph\xF9 h\u1EE3p di\u1EC5n t\u1EA3 n\u1ED7 l\u1EF1c l\xE0m l\u1EA1i cu\u1ED9c \u0111\u1EDDi: "Now he claims he is fully ______ and hopes to start clean with an honest livelihood."',
           options: [
-            { id: "opt_A", label: "A", text: "reformed (\u0111\xE3 ho\xE0n l\u01B0\u01A1ng, c\u1EA3i t\xE0 quy ch\xEDnh)" },
+            { id: "opt_A", label: "A", text: "reformed" },
             { id: "opt_B", label: "B", text: "deformed" },
             { id: "opt_C", label: "C", text: "uninformed" },
             { id: "opt_D", label: "D", text: "misinformed" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. reformed (\u0111\xE3 ho\xE0n l\u01B0\u01A1ng, c\u1EA3i t\xE0 quy ch\xEDnh)",
+          correctAnswerText: "A. reformed",
           correctExplanation: '"A reformed criminal/character" ch\u1EC9 ng\u01B0\u1EDDi t\u1EEBng ph\u1EA1m ph\xE1p nay \u0111\xE3 \u0103n n\u0103n h\u1ED1i c\u1EA3i v\xE0 ho\xE0n l\u01B0\u01A1ng s\u1ED1ng l\u01B0\u01A1ng thi\u1EC7n.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. deformed",
+            baitOptionText: "B. Ch\u1EC9 khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n c\xE2u v\u0103n d\xE0i th\xEAm nhi\u1EC1u t\u1EEB \u0111\u1EC3 \u0111\u1EA1t \u0111\u1ED9 d\xE0i t\u1ED1i thi\u1EC3u",
             diagnosticTitle: "Nh\u1EA7m l\u1EABn t\u1EEB bi\u1EBFn d\u1EA1ng th\u1EC3 x\xE1c v\u1EDBi c\u1EA3i t\u1EA1o nh\xE2n c\xE1ch",
-            explanation: "Deformed l\xE0 b\u1ECB bi\u1EBFn d\u1EA1ng h\xECnh th\u1EC3 d\u1ECB t\u1EADt, ho\xE0n to\xE0n kh\xE1c v\u1EDBi reformed (ho\xE0n l\u01B0\u01A1ng)."
+            explanation: "Deformed l\xE0 b\u1ECB bi\u1EBFn d\u1EA1ng h\xECnh th\u1EC3 d\u1ECB t\u1EADt, ho\xE0n to\xE0n kh\xE1c v\u1EDBi reformed."
           }
         },
         {
@@ -102135,7 +102135,7 @@ var init_week8_data = __esm({
           correctExplanation: '"Underneath a lorry" (d\u01B0\u1EDBi g\u1EA7m xe t\u1EA3i): Gi\u1EDBi t\u1EEB ch\u1EC9 v\u1ECB tr\xED \u1EA9n n\u1EA5p nguy hi\u1EC3m ch\u1EBFt ng\u01B0\u1EDDi c\u1EE7a ng\u01B0\u1EDDi t\u1ECB n\u1EA1n/di c\u01B0 chui.',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. above",
+            baitOptionText: "B. Ch\u1EC9 khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n c\xE2u v\u0103n d\xE0i th\xEAm nhi\u1EC1u t\u1EEB \u0111\u1EC3 \u0111\u1EA1t \u0111\u1ED9 d\xE0i t\u1ED1i thi\u1EC3u",
             diagnosticTitle: "Ch\u1ECDn v\u1ECB tr\xED tr\xEAn n\xF3c xe sai s\u1EF1 th\u1EADt b\xE0i \u0111\u1ECDc",
             explanation: "H\u1ECD \u0111u b\xE1m d\u01B0\u1EDBi tr\u1EE5c g\u1EA7m xe (underneath/under), tr\xE8o l\xEAn n\xF3c xe (above) s\u1EBD b\u1ECB camera qu\xE9t nhi\u1EC7t ph\xE1t hi\u1EC7n ngay l\u1EADp t\u1EE9c."
           }
@@ -102145,17 +102145,17 @@ var init_week8_data = __esm({
           roundIndex: 7,
           prompt: 'C\u1EE5m danh t\u1EEB "fake passport" trong b\xE0i \u0111\u1ECDc thu\u1ED9c ch\u1EE7 \u0111\u1EC1 gi\u1EA5y t\u1EDD gi\u1EA3 m\u1EA1o \u0111\u01B0\u1EE3c vi\u1EBFt chu\u1EA9n ng\u1EEF ph\xE1p l\xE0 g\xEC?',
           options: [
-            { id: "opt_A", label: "A", text: "fake passport / fraudulent passport" },
+            { id: "opt_A", label: "A", text: "fake passport" },
             { id: "opt_B", label: "B", text: "untrue passport" },
             { id: "opt_C", label: "C", text: "wrong passport" },
             { id: "opt_D", label: "D", text: "error passport" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. fake passport / fraudulent passport",
+          correctAnswerText: "A. fake passport",
           correctExplanation: 'Collocation b\u1EA5t di b\u1EA5t d\u1ECBch trong t\u1ED9i ph\u1EA1m gi\u1EA5y t\u1EDD: "fake passport" ho\u1EB7c thu\u1EADt ng\u1EEF ph\xE1p l\xFD "fraudulent passport" (h\u1ED9 chi\u1EBFu gi\u1EA3 m\u1EA1o).',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. untrue passport",
+            baitOptionText: "B. Ch\u1EC9 khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n c\xE2u v\u0103n d\xE0i th\xEAm nhi\u1EC1u t\u1EEB \u0111\u1EC3 \u0111\u1EA1t \u0111\u1ED9 d\xE0i t\u1ED1i thi\u1EC3u",
             diagnosticTitle: 'D\u1ECBch t\u1EEB "h\u1ED9 chi\u1EBFu kh\xF4ng th\u1EADt"',
             explanation: "Ti\u1EBFng Anh kh\xF4ng d\xF9ng untrue hay wrong cho gi\u1EA5y t\u1EDD gi\u1EA3, b\u1EAFt bu\u1ED9c d\xF9ng fake/fraudulent/counterfeit."
           }
@@ -102165,17 +102165,17 @@ var init_week8_data = __esm({
           roundIndex: 8,
           prompt: 'V\u1EACN D\u1EE4NG NG\u1EEE C\u1EA2NH M\u1EDAI: Ch\u1ECDn t\u1EEB th\xEDch h\u1EE3p ho\xE0n th\xE0nh c\xE2u: "International syndicates exploit vulnerable individuals to operate an extensive ______ drug network across borders."',
           options: [
-            { id: "opt_A", label: "A", text: "illicit (b\u1EA5t h\u1EE3p ph\xE1p, phi ph\xE1p)" },
+            { id: "opt_A", label: "A", text: "illicit" },
             { id: "opt_B", label: "B", text: "campus" },
             { id: "opt_C", label: "C", text: "bland" },
             { id: "opt_D", label: "D", text: "relief" }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. illicit (b\u1EA5t h\u1EE3p ph\xE1p, phi ph\xE1p)",
+          correctAnswerText: "A. illicit",
           correctExplanation: '"Illicit drug network" l\xE0 collocation h\u1ECDc thu\u1EADt band cao trong IELTS: m\u1EA1ng l\u01B0\u1EDBi bu\xF4n b\xE1n ch\u1EA5t c\u1EA5m phi ph\xE1p.',
           misconception: {
             baitOptionId: "opt_C",
-            baitOptionText: "C. bland",
+            baitOptionText: "C. Trong t\u1EA5t c\u1EA3 m\u1ECDi c\xE2u v\u0103n mi\xEAu t\u1EA3 quan \u0111i\u1EC3m c\xE1 nh\xE2n",
             diagnosticTitle: "Ch\u1ECDn t\xEDnh t\u1EEB nh\u1EA1t nh\u1EBDo c\u1EE7a th\u1EE9c \u0103n",
             explanation: "Bland l\xE0 h\u01B0\u01A1ng v\u1ECB th\u1EE9c \u0103n nh\u1EA1t, ho\xE0n to\xE0n v\xF4 ngh\u0129a trong v\u0103n c\u1EA3nh t\u1ED9i ph\u1EA1m ma t\xFAy."
           }
@@ -102195,7 +102195,7 @@ var init_week8_data = __esm({
           correctExplanation: '"Criminal cartels" paraphrase cho "organized gangs", "desperate laborers from underprivileged backgrounds" paraphrase cho "impoverished migrants coerced", v\xE0 "clandestine marijuana farms" paraphrase cho "illegal cannabis in suburban stash houses".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Migrants voluntarily invested in lawful greenhouses",
+            baitOptionText: "B. Ch\u1EC9 khi ng\u01B0\u1EDDi vi\u1EBFt mu\u1ED1n c\xE2u v\u0103n d\xE0i th\xEAm nhi\u1EC1u t\u1EEB \u0111\u1EC3 \u0111\u1EA1t \u0111\u1ED9 d\xE0i t\u1ED1i thi\u1EC3u",
             diagnosticTitle: "T\u1EA9y tr\u1EAFng ho\u1EA1t \u0111\u1ED9ng t\u1ED9i ph\u1EA1m th\xE0nh \u0111\u1EA7u t\u01B0 n\xF4ng nghi\u1EC7p h\u1EE3p ph\xE1p",
             explanation: "B\xE0i \u0111\u1ECDc n\xEAu r\xF5 \u0111\xE2y l\xE0 chu\u1ED7i t\u1ED9i ph\u1EA1m ng\u1EA7m b\u1EA5t h\u1EE3p ph\xE1p v\u1EDBi nh\u1EEFng lao \u0111\u1ED9ng ngh\xE8o kh\xF3 b\u1ECB b\xF3c l\u1ED9t."
           }
@@ -102207,10 +102207,10 @@ var init_week8_data = __esm({
           roundIndex: 0,
           prompt: "Ph\xE1t bi\u1EC3u n\xE0o sau \u0111\xE2y l\xE0 \u0110\xDANG v\u1EC1 Tr\u1ECDng \xE2m c\xE2u (Sentence Stress) trong ti\u1EBFng Anh giao ti\u1EBFp?",
           options: [
-            { id: "opt_A", label: "A", text: "Sentence stress kh\xF4ng c\u1ED1 \u0111\u1ECBnh m\xE0 linh ho\u1EA1t ph\u1EE5 thu\u1ED9c v\xE0o t\u1EEB mang th\xF4ng tin (content words) m\xE0 ng\u01B0\u1EDDi n\xF3i mu\u1ED1n nh\u1EA5n m\u1EA1nh" },
+            { id: "opt_A", label: "A", text: "Linh ho\u1EA1t ph\u1EE5 thu\u1ED9c v\xE0o t\u1EEB mang th\xF4ng tin (content words) m\xE0 ng\u01B0\u1EDDi n\xF3i mu\u1ED1n nh\u1EA5n m\u1EA1nh" },
             { id: "opt_B", label: "B", text: "M\u1ECDi t\u1EEB trong c\xE2u \u0111\u1EC1u ph\u1EA3i \u0111\u01B0\u1EE3c n\xF3i v\u1EDBi cao \u0111\u1ED9 v\xE0 \u0111\u1ED9 l\u1EDBn ho\xE0n to\xE0n ngang b\u1EB1ng nhau" },
             { id: "opt_C", label: "C", text: "Ch\u1EC9 c\xF3 t\u1EEB \u0111\u1EA7u ti\xEAn v\xE0 t\u1EEB cu\u1ED1i c\xF9ng c\u1EE7a c\xE2u m\u1EDBi \u0111\u01B0\u1EE3c nh\u1EA5n tr\u1ECDng \xE2m" },
-            { id: "opt_D", label: "D", text: "C\xE1c m\u1EA1o t\u1EEB v\xE0 gi\u1EDBi t\u1EEB lu\xF4n lu\xF4n l\xE0 t\u1EEB \u0111\u01B0\u1EE3c nh\u1EA5n m\u1EA1nh nh\u1EA5t" }
+            { id: "opt_D", label: "D", text: "C\xE1c m\u1EA1o t\u1EEB v\xE0 gi\u1EDBi t\u1EEB lu\xF4n lu\xF4n l\xE0 t\u1EEB \u0111\u01B0\u1EE3c nh\u1EA5n m\u1EA1nh nh\u1EA5t trong c\xE2u" }
           ],
           correctOptionId: "opt_A",
           timeLimitSeconds: 20,
@@ -102222,8 +102222,8 @@ var init_week8_data = __esm({
           roundIndex: 1,
           prompt: "Khi n\xF3i 'I gave her a BOX of chocolates for her birthday' (nh\u1EA5n m\u1EA1nh v\xE0o t\u1EEB BOX), ng\u01B0\u1EDDi n\xF3i mu\u1ED1n truy\u1EC1n t\u1EA3i \xFD g\xEC?",
           options: [
-            { id: "opt_A", label: "A", text: "Nh\u1EA5n m\u1EA1nh v\xE0o s\u1ED1 l\u01B0\u1EE3ng/h\xECnh th\u1EE9c g\xF3i qu\xE0 l\xE0 c\u1EA3 m\u1ED9t c\xE1i H\u1ED8P to ch\u1EE9 kh\xF4ng ph\u1EA3i ch\u1EC9 m\u1ED9t thanh k\u1EB9o nh\u1ECF" },
-            { id: "opt_B", label: "B", text: "Nh\u1EA5n m\u1EA1nh m\xF3n qu\xE0 l\xE0 s\xF4-c\xF4-la ch\u1EE9 kh\xF4ng ph\u1EA3i m\xF3n kh\xE1c" },
+            { id: "opt_A", label: "A", text: "Nh\u1EA5n m\u1EA1nh quy c\xE1ch \u0111\xF3ng g\xF3i (c\u1EA3 m\u1ED9t c\xE1i h\u1ED9p l\u1EDBn ch\u1EE9 kh\xF4ng ph\u1EA3i thanh k\u1EB9o nh\u1ECF)" },
+            { id: "opt_B", label: "B", text: "Nh\u1EA5n m\u1EA1nh lo\u1EA1i qu\xE0 t\u1EB7ng l\xE0 s\xF4-c\xF4-la ch\u1EE9 kh\xF4ng ph\u1EA3i b\xE1nh k\u1EB9o kh\xE1c" },
             { id: "opt_C", label: "C", text: "Nh\u1EA5n m\u1EA1nh t\u1EB7ng v\xE0o d\u1ECBp sinh nh\u1EADt ch\u1EE9 kh\xF4ng ph\u1EA3i ng\xE0y l\u1EC5 kh\xE1c" },
             { id: "opt_D", label: "D", text: "Nh\u1EA5n m\u1EA1nh ch\xEDnh t\xF4i l\xE0 ng\u01B0\u1EDDi t\u1EB7ng ch\u1EE9 kh\xF4ng ph\u1EA3i ng\u01B0\u1EDDi kh\xE1c" }
           ],
@@ -102267,7 +102267,7 @@ var init_week8_data = __esm({
           roundIndex: 4,
           prompt: "Collocation n\xE0o trong b\xE0i mi\xEAu t\u1EA3 m\xF3n \u0103n \u0111\u1EC3 ch\u1EC9 'n\u01B0\u1EDBc d\xF9ng \u0111\u1EADm \u0111\xE0 h\u01B0\u01A1ng v\u1ECB'?",
           options: [
-            { id: "opt_A", label: "A", text: "A rich / flavorful broth" },
+            { id: "opt_A", label: "A", text: "A rich broth" },
             { id: "opt_B", label: "B", text: "A sweet sauce water" },
             { id: "opt_C", label: "C", text: "A tasteless soup liquid" },
             { id: "opt_D", label: "D", text: "A salty mineral drink" }
@@ -102297,7 +102297,7 @@ var init_week8_data = __esm({
           roundIndex: 6,
           prompt: "Trong c\xE2u: 'Nh\xE0 h\xE0ng n\xE0y ph\u1EE5c v\u1EE5 m\xF3n \u0103n r\u1EA5t ngon n\xEAn t\xF4i l\xE0 kh\xE1ch quen \u1EDF \u0111\xE2y.' C\u1EE5m t\u1EEB 'kh\xE1ch quen' ti\u1EBFng Anh l\xE0 g\xEC?",
           options: [
-            { id: "opt_A", label: "A", text: "A regular / a regular customer" },
+            { id: "opt_A", label: "A", text: "A regular customer" },
             { id: "opt_B", label: "B", text: "A first-time visitor" },
             { id: "opt_C", label: "C", text: "A passenger" },
             { id: "opt_D", label: "D", text: "A casual pedestrian" }
@@ -102366,17 +102366,17 @@ var init_week9_data = __esm({
         {
           id: "doer_w9d1_q01",
           roundIndex: 0,
-          prompt: "L\u1ED7i ng\u1EEF ph\xE1p 'Comma Splice' l\xE0 g\xEC trong c\xE2u ti\u1EBFng Anh?",
+          prompt: "C\xE2u n\xE0o sau \u0111\xE2y m\u1EAFc l\u1ED7i Comma Splice (d\xF9ng d\u1EA5u ph\u1EA9y n\u1ED1i 2 m\u1EC7nh \u0111\u1EC1 \u0111\u1ED9c l\u1EADp tr\xE1i quy t\u1EAFc)?",
           options: [
-            { id: "opt_A", label: "A", text: "N\u1ED1i 2 m\u1EC7nh \u0111\u1EC1 \u0111\u1ED9c l\u1EADp (main clauses) ch\u1EC9 b\u1EB1ng m\u1ED9t d\u1EA5u ph\u1EA9y m\xE0 kh\xF4ng c\xF3 li\xEAn t\u1EEB ph\xF9 h\u1EE3p" },
-            { id: "opt_B", label: "B", text: "\u0110\u1EB7t d\u1EA5u ph\u1EA9y sau li\xEAn t\u1EEB 'because' \u1EDF \u0111\u1EA7u c\xE2u" },
-            { id: "opt_C", label: "C", text: "Qu\xEAn kh\xF4ng \u0111\u1EB7t d\u1EA5u ph\u1EA9y tr\u01B0\u1EDBc li\xEAn t\u1EEB 'and' li\u1EC7t k\xEA 3 danh t\u1EEB" },
-            { id: "opt_D", label: "D", text: "S\u1EED d\u1EE5ng d\u1EA5u ch\u1EA5m ph\u1EA9y thay cho d\u1EA5u ch\u1EA5m h\u1EBFt c\xE2u" }
+            { id: "opt_A", label: "A", text: "He achieved an overall 6.5 in IELTS, now he can apply for international universities." },
+            { id: "opt_B", label: "B", text: "He achieved an overall 6.5 in IELTS, so he can now apply for international universities." },
+            { id: "opt_C", label: "C", text: "Because he achieved an overall 6.5 in IELTS, he can now apply for international universities." },
+            { id: "opt_D", label: "D", text: "Having achieved an overall 6.5 in IELTS, he can now apply for international universities." }
           ],
           correctOptionId: "opt_A",
           timeLimitSeconds: 20,
           points: 1e3,
-          explanation: "Comma Splice l\xE0 l\u1ED7i nghi\xEAm tr\u1ECDng trong IELTS Writing: d\xF9ng d\u1EA5u ph\u1EA9y \u0111\u1EC3 n\u1ED1i 2 m\u1EC7nh \u0111\u1EC1 \u0111\u1ED9c l\u1EADp (v\xED d\u1EE5: 'He got 6.5, now he can apply...' - ph\u1EA3i d\xF9ng li\xEAn t\u1EEB ho\u1EB7c d\u1EA5u ch\u1EA5m)."
+          explanation: "C\xE2u A m\u1EAFc l\u1ED7i Comma Splice nghi\xEAm tr\u1ECDng: 'He achieved 6.5' v\xE0 'now he can apply' l\xE0 2 m\u1EC7nh \u0111\u1EC1 \u0111\u1ED9c l\u1EADp (main clauses), kh\xF4ng \u0111\u01B0\u1EE3c n\u1ED1i b\u1EB1ng d\u1EA5u ph\u1EA9y \u0111\u01A1n \u0111\u1ED9c m\xE0 ph\u1EA3i d\xF9ng li\xEAn t\u1EEB (so/and) ho\u1EB7c t\xE1ch c\xE2u/d\xF9ng ch\u1EA5m ph\u1EA9y."
         },
         {
           id: "doer_w9d1_q02",
@@ -102501,17 +102501,17 @@ var init_week9_data = __esm({
         {
           id: "doer_w9d1_q10",
           roundIndex: 9,
-          prompt: "Trong c\xE2u ph\u1EE9c (Complex sentence), quy t\u1EAFc b\u1EAFt bu\u1ED9c v\u1EC1 s\u1ED1 l\u01B0\u1EE3ng m\u1EC7nh \u0111\u1EC1 ch\xEDnh (Main clause) l\xE0 g\xEC?",
+          prompt: "C\xE2u n\xE0o sau \u0111\xE2y vi\u1EBFt SAI v\xEC thi\u1EBFu M\u1EC7nh \u0111\u1EC1 ch\xEDnh (Main Clause) ho\xE0n ch\u1EC9nh?",
           options: [
-            { id: "opt_A", label: "A", text: "B\u1EA5t k\u1EC3 c\xE2u d\xE0i hay ng\u1EAFn, trong c\xE2u lu\xF4n c\u1EA7n c\xF3 \xEDt nh\u1EA5t 1 Main Clause c\xF3 th\u1EC3 \u0111\u1EE9ng \u0111\u1ED9c l\u1EADp mang th\xF4ng tin ch\xEDnh" },
-            { id: "opt_B", label: "B", text: "C\xE2u ph\u1EE9c kh\xF4ng \u0111\u01B0\u1EE3c ph\xE9p c\xF3 b\u1EA5t k\u1EF3 Main Clause n\xE0o" },
-            { id: "opt_C", label: "C", text: "B\u1EAFt bu\u1ED9c ph\u1EA3i c\xF3 \u0111\xFAng 3 Main Clauses" },
-            { id: "opt_D", label: "D", text: "Main Clause lu\xF4n lu\xF4n ph\u1EA3i \u0111\u1EB7t \u1EDF cu\u1ED1i c\xE2u sau t\u1EA5t c\u1EA3 c\xE1c Subordinating Clauses" }
+            { id: "opt_A", label: "A", text: "Although the tuition fees have increased significantly over recent years." },
+            { id: "opt_B", label: "B", text: "Although tuition fees have increased, many students still enroll in the program." },
+            { id: "opt_C", label: "C", text: "Despite the significant increase in tuition fees, many students still enroll." },
+            { id: "opt_D", label: "D", text: "Tuition fees have increased significantly, yet enrollment numbers remain high." }
           ],
           correctOptionId: "opt_A",
           timeLimitSeconds: 20,
           points: 1e3,
-          explanation: "Quy t\u1EAFc ng\u1EEF ph\xE1p c\u0103n b\u1EA3n: M\u1ED7i c\xE2u v\u0103n ho\xE0n ch\u1EC9nh lu\xF4n ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 1 m\u1EC7nh \u0111\u1EC1 \u0111\u1ED9c l\u1EADp (Main Clause) mang \xFD ngh\u0129a tr\u1ECDn v\u1EB9n."
+          explanation: "C\xE2u A l\xE0 l\u1ED7i Sentence Fragment (c\xE2u r\u1EDDi r\u1EA1c): ch\u1EC9 c\xF3 m\u1EC7nh \u0111\u1EC1 ph\u1EE5 'Although...' m\xE0 thi\u1EBFu ho\xE0n to\xE0n M\u1EC7nh \u0111\u1EC1 ch\xEDnh (Main Clause) mang \xFD ngh\u0129a ho\xE0n ch\u1EC9nh cho c\xE2u."
         }
       ],
       "WEEK 9 \u2013 DAY 2": [
@@ -102698,19 +102698,19 @@ var init_week9_data = __esm({
         {
           id: "doer_w9d2_q10",
           roundIndex: 9,
-          prompt: 'PARAPHRASE: C\xE2u "Millennials disdain scripted promotional endorsements by mainstream celebrities, placing their confidence instead in authentic peer-to-peer recommendations" \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t l\u1EA1i t\u01B0\u01A1ng \u0111\u01B0\u01A1ng nh\u1EA5t l\xE0:',
+          prompt: 'PARAPHRASE: "Millennials disdain scripted ads, trusting authentic peer recommendations instead" \u0111\u1ED3ng ngh\u0129a v\u1EDBi:',
           options: [
-            { id: "opt_A", label: "A", text: "Younger demographics reject staged commercial ads by traditional stars, trusting candid guidance from relatable online personalities instead." },
-            { id: "opt_B", label: "B", text: "Television commercials have completely regained total trust among teenagers who refuse to open mobile applications." },
-            { id: "opt_C", label: "C", text: "Movie stars are officially prohibited from partnering with consumer product manufacturers." },
-            { id: "opt_D", label: "D", text: "Consumers make purchases strictly when celebrities refuse to disclose sponsored agreements." }
+            { id: "opt_A", label: "A", text: "Youth reject fake celebrity ads and rely on genuine advice." },
+            { id: "opt_B", label: "B", text: "Teenagers prefer watching TV commercials over social media." },
+            { id: "opt_C", label: "C", text: "Famous movie stars are banned from online brand campaigns." },
+            { id: "opt_D", label: "D", text: "Consumers only buy goods when influencers hide promotions." }
           ],
           correctOptionId: "opt_A",
-          correctAnswerText: "A. Younger demographics reject staged commercial ads by traditional stars, trusting candid guidance from relatable online personalities instead.",
-          correctExplanation: '"Younger demographics reject staged commercial ads" paraphrase cho "disdain scripted promotional endorsements", v\xE0 "trusting candid guidance from relatable personalities" paraphrase cho "confidence in authentic peer-to-peer recommendations".',
+          correctAnswerText: "A. Youth reject fake celebrity ads and rely on genuine advice.",
+          correctExplanation: '"Youth reject fake celebrity ads" paraphrase cho "disdain scripted ads", v\xE0 "rely on genuine advice" paraphrase cho "trusting authentic peer recommendations".',
           misconception: {
             baitOptionId: "opt_B",
-            baitOptionText: "B. Television commercials regained total trust",
+            baitOptionText: "B. Teenagers prefer watching TV commercials over social media.",
             diagnosticTitle: "\u0110\u1EA3o ng\u01B0\u1EE3c xu h\u01B0\u1EDBng ti\xEAu d\xF9ng c\u1EE7a gi\u1EDBi tr\u1EBB",
             explanation: "Gi\u1EDBi tr\u1EBB ng\xE0y nay n\xE9 tr\xE1nh qu\u1EA3ng c\xE1o tivi truy\u1EC1n th\u1ED1ng v\xE0 t\xECm ki\u1EBFm s\u1EF1 ch\xE2n th\u1EF1c t\u1EEB nh\u1EEFng ng\u01B0\u1EDDi c\xF3 ho\xE0n c\u1EA3nh t\u01B0\u01A1ng \u0111\u1ED3ng."
           }
@@ -102735,17 +102735,17 @@ var init_week9_data = __esm({
         {
           id: "doer_w9d3_q02",
           roundIndex: 1,
-          prompt: "Trong v\xED d\u1EE5 b\xE0i h\u1ECDc: 'I bought a nice new jacket / with a zip down the front / and a lot of pockets', c\xE1ch ng\u1EAFt c\u1EE5m n\xE0y th\u1EC3 hi\u1EC7n \u0111i\u1EC1u g\xEC?",
+          prompt: "Trong k\u1EF9 thu\u1EADt Chunking, c\xE2u n\xE0o sau \u0111\xE2y \u0111\u01B0\u1EE3c ng\u1EAFt c\u1EE5m \xFD (thought groups) T\u1EF0 NHI\xCAN v\xE0 CHU\u1EA8N X\xC1C nh\u1EA5t khi n\xF3i?",
           options: [
-            { id: "opt_A", label: "A", text: "Ng\u1EAFt th\xE0nh 3 nh\xF3m th\xF4ng tin h\u1EE3p l\xFD v\u1EC1 ng\u1EEF ngh\u0129a: m\xF3n \u0111\u1ED3 mua, chi ti\u1EBFt kho\xE1 k\xE9o, v\xE0 chi ti\u1EBFt nhi\u1EC1u t\xFAi" },
-            { id: "opt_B", label: "B", text: "Ng\u1EAFt sai v\xEC ph\u1EA3i ng\u1EAFt sau ch\u1EEF 'nice'" },
-            { id: "opt_C", label: "C", text: "Ng\u1EAFt ng\u1EABu nhi\xEAn theo s\u1ED1 l\u01B0\u1EE3ng \xE2m ti\u1EBFt ch\u1EB5n l\u1EBB" },
-            { id: "opt_D", label: "D", text: "Ch\u1EC9 n\xEAn ng\u1EAFt \u1EDF d\u1EA5u ch\u1EA5m cu\u1ED1i c\xE2u" }
+            { id: "opt_A", label: "A", text: "I bought a nice new jacket / with a zip down the front / and a lot of pockets." },
+            { id: "opt_B", label: "B", text: "I bought / a nice new / jacket with / a zip down / the front and / a lot of pockets." },
+            { id: "opt_C", label: "C", text: "I bought a / nice new jacket with a zip / down the / front and a lot / of pockets." },
+            { id: "opt_D", label: "D", text: "I / bought a nice / new jacket / with a / zip down the front / and a lot of pockets." }
           ],
           correctOptionId: "opt_A",
           timeLimitSeconds: 20,
           points: 1e3,
-          explanation: "M\u1ED7i chunk mang m\u1ED9t \u0111\u01A1n v\u1ECB \xFD ngh\u0129a ho\xE0n ch\u1EC9nh (a meaningful grammatical unit): \u0111\u1ED1i t\u01B0\u1EE3ng mua, \u0111\u1EB7c \u0111i\u1EC3m kho\xE1 k\xE9o, \u0111\u1EB7c \u0111i\u1EC3m t\xFAi \xE1o."
+          explanation: "C\xE2u A ng\u1EAFt \u0111\xFAng 3 c\u1EE5m ng\u1EEF ngh\u0129a tr\u1ECDn v\u1EB9n (meaningful thought groups): m\xF3n \u0111\u1ED3 mua [I bought a nice new jacket], chi ti\u1EBFt kho\xE1 k\xE9o [with a zip down the front], v\xE0 chi ti\u1EBFt nhi\u1EC1u t\xFAi [and a lot of pockets]. C\xE1c ph\u01B0\u01A1ng \xE1n c\xF2n l\u1EA1i ng\u1EAFt v\u1EE5n gi\u1EEFa m\u1EA1o t\u1EEB v\xE0 danh t\u1EEB g\xE2y c\u1EE5t c\xE2u."
         },
         {
           id: "doer_w9d3_q03",
@@ -103431,7 +103431,7 @@ var init_arena_engine_service = __esm({
               nextStatus = "QUESTION_LIVE";
               nextRound = room.currentRound + 1;
               activeQuestionId = questions[nextRound]?.id || null;
-              deadlineAt = new Date(now.getTime() + 15 * 1e3);
+              deadlineAt = new Date(now.getTime() + (15 + 3) * 1e3);
             }
             break;
           }

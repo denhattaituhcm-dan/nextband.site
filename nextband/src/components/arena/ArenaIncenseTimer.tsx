@@ -18,7 +18,7 @@ export const ArenaIncenseTimer: React.FC<ArenaIncenseTimerProps> = React.memo(
     const isUrgent = timeLeftSeconds <= 3;
 
     return (
-      <div className="flex flex-col items-center justify-center w-full max-w-md mx-auto my-3">
+      <div className="flex flex-col items-center justify-center w-full max-w-md mx-auto my-1.5">
         {/* Track Container */}
         <div className="relative w-full h-3 bg-slate-950/80 rounded-full border border-slate-800 p-0.5 flex items-center shadow-inner">
           {/* Unburnt Coating (Phần nhang chưa cháy) */}

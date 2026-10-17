@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { ARENA_STANDARD_QUESTIONS, ArenaQuestion, ArenaQuestionOption } from "./arena-questions.data.js";
 import { DOER_ARENA_LESSON_QUESTIONS, matchDoerLessonKey, ArenaQuestionItem } from "./doer-questions-bank.data.js";
+import { BUILDER_ARENA_LESSON_QUESTIONS, matchBuilderLessonKey } from "./builder-questions-bank.data.js";
 
 /**
  * Strips HTML tags and decodes common HTML entities for crisp text display in Arena HUD
@@ -203,12 +204,15 @@ export class ArenaBankService {
     if (examId) {
       const exam = await this.prisma.exam.findUnique({
         where: { id: examId },
-        select: { id: true, title: true },
+        select: { id: true, title: true, course: { select: { title: true } } },
       });
       if (exam) {
         examTitle = exam.title;
+        const isBuilderCourse = (exam.course?.title || "").toLowerCase().includes("builder");
         if (!resolvedKey) {
-          resolvedKey = matchDoerLessonKey(exam.title) || "";
+          resolvedKey = isBuilderCourse
+            ? (matchBuilderLessonKey(exam.title) || "")
+            : (matchDoerLessonKey(exam.title) || matchBuilderLessonKey(exam.title) || "");
         }
       }
     }
@@ -224,7 +228,17 @@ export class ArenaBankService {
       };
     }
 
-    // 2. Check DOER questions bank
+    // 2. Check BUILDER questions bank
+    if (resolvedKey && BUILDER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
+      return {
+        lessonKey: resolvedKey,
+        examTitle,
+        isCustom: false,
+        questions: BUILDER_ARENA_LESSON_QUESTIONS[resolvedKey],
+      };
+    }
+
+    // 3. Check DOER questions bank
     if (resolvedKey && DOER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
       return {
         lessonKey: resolvedKey,
@@ -269,6 +283,7 @@ export class ArenaBankService {
       const exam = await this.prisma.exam.findUnique({
         where: { id: examId },
         include: {
+          course: { select: { title: true } },
           sections: {
             orderBy: { orderIndex: "asc" },
             include: {
@@ -285,10 +300,35 @@ export class ArenaBankService {
         },
       });
 
-      const doerKey = exam?.title ? matchDoerLessonKey(exam.title) : null;
+      const courseTitle = (exam?.course?.title || "").toLowerCase();
+      const isBuilder = courseTitle.includes("builder");
+
+      let resolvedLessonKey: string | null = null;
+      let resolvedBankQuestions: ArenaQuestionItem[] | null = null;
+
+      if (isBuilder && exam?.title) {
+        resolvedLessonKey = matchBuilderLessonKey(exam.title);
+        if (resolvedLessonKey && BUILDER_ARENA_LESSON_QUESTIONS[resolvedLessonKey]) {
+          resolvedBankQuestions = BUILDER_ARENA_LESSON_QUESTIONS[resolvedLessonKey];
+        }
+      }
+
+      if (!resolvedBankQuestions && exam?.title) {
+        const doerKey = matchDoerLessonKey(exam.title);
+        if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
+          resolvedLessonKey = doerKey;
+          resolvedBankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
+        } else {
+          const builderKey = matchBuilderLessonKey(exam.title);
+          if (builderKey && BUILDER_ARENA_LESSON_QUESTIONS[builderKey]) {
+            resolvedLessonKey = builderKey;
+            resolvedBankQuestions = BUILDER_ARENA_LESSON_QUESTIONS[builderKey];
+          }
+        }
+      }
 
       // 1. ƯU TIÊN HÀNG ĐẦU: Kiểm tra bộ câu hỏi tùy chỉnh do Admin đã sửa và lưu lại
-      const customQuestions = await this.getCustomOverride(doerKey, examId);
+      const customQuestions = await this.getCustomOverride(resolvedLessonKey, examId);
       if (customQuestions && customQuestions.length > 0) {
         return customQuestions.map((bq, idx) => {
           const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
@@ -307,10 +347,9 @@ export class ArenaBankService {
       }
 
       if (!exam || !exam.sections || exam.sections.length === 0) {
-        // Nếu không có sections trong DB nhưng có trong DOER Bank
-        if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
-          const bankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
-          return bankQuestions.map((bq, idx) => {
+        // Nếu không có sections trong DB nhưng có trong Bank
+        if (resolvedBankQuestions) {
+          return resolvedBankQuestions.map((bq, idx) => {
             const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
             const rawQ: ArenaQuestion = {
               id: bq.id,
@@ -427,26 +466,22 @@ export class ArenaBankService {
         return playableQuestions;
       }
 
-      // Check DOER Coursebook questions bank matching exam.title
-      if (exam && exam.title) {
-        const doerKey = matchDoerLessonKey(exam.title);
-        if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
-          const bankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
-          return bankQuestions.map((bq, idx) => {
-            const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
-            const rawQ: ArenaQuestion = {
-              id: bq.id,
-              roundIndex: idx,
-              prompt: bq.prompt,
-              options: bq.options as ArenaQuestionOption[],
-              correctOptionId: bq.correctOptionId,
-              correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
-              correctExplanation: bq.explanation,
-              misconception: normalizeMisconception(bq.misconception),
-            };
-            return shuffleQuestionOptions(rawQ, seed ? `${seed}_${bq.id}` : bq.id);
-          });
-        }
+      // Check Coursebook questions bank matching exam.title (BUILDER / DOER)
+      if (resolvedBankQuestions) {
+        return resolvedBankQuestions.map((bq, idx) => {
+          const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
+          const rawQ: ArenaQuestion = {
+            id: bq.id,
+            roundIndex: idx,
+            prompt: bq.prompt,
+            options: bq.options as ArenaQuestionOption[],
+            correctOptionId: bq.correctOptionId,
+            correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
+            correctExplanation: bq.explanation,
+            misconception: normalizeMisconception(bq.misconception),
+          };
+          return shuffleQuestionOptions(rawQ, seed ? `${seed}_${bq.id}` : bq.id);
+        });
       }
 
       // Fallback if exam has only open essay/recording questions and no DOER bank match

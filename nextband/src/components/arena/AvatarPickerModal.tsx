@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { X, Sparkles, Search, Check, Shield, Rocket, Heart, Smile, Palette } from 'lucide-react';
-import { CHARACTER_AVATARS, CharacterAvatar } from '@/lib/arena/characterCatalog';
+import { CHARACTER_AVATARS, CharacterAvatar, getCharacterCategoryLabel } from '@/lib/arena/characterCatalog';
 import { PvZCardAvatar } from './PvZCardAvatar';
 
 interface AvatarPickerModalProps {
@@ -85,7 +85,7 @@ export const AvatarPickerModal: React.FC<AvatarPickerModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-all cursor-pointer"
+            className="w-11 h-11 flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-all cursor-pointer"
             aria-label="Đóng"
           >
             <X className="w-5 h-5" />
@@ -168,8 +168,8 @@ export const AvatarPickerModal: React.FC<AvatarPickerModalProps> = ({
                     <span className={`text-[11px] font-bold block max-w-full truncate ${isSelected ? 'text-amber-300' : 'text-slate-200 group-hover:text-white'}`}>
                       {avatar.name}
                     </span>
-                    <span className="text-[9px] text-purple-300/70 capitalize block max-w-full truncate">
-                      {avatar.type.replace('_', ' ')}
+                    <span className="text-[9px] text-purple-300/80 block max-w-full truncate">
+                      {getCharacterCategoryLabel(avatar.type)}
                     </span>
                   </button>
                 );
@@ -196,14 +196,14 @@ export const AvatarPickerModal: React.FC<AvatarPickerModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-2 rounded-xl bg-purple-900/50 hover:bg-purple-900 border border-purple-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer"
+              className="px-4 py-2.5 rounded-xl bg-purple-900/50 hover:bg-purple-900 border border-purple-700/60 text-slate-300 hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="button"
               onClick={handleConfirm}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs sm:text-sm font-black shadow-lg shadow-orange-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs sm:text-sm font-black border-2 border-orange-400 shadow-[0_4px_0_0_#9a3412] active:translate-y-0.5 active:shadow-[0_2px_0_0_#9a3412] transition-all cursor-pointer flex items-center gap-1.5"
             >
               <Check className="w-4 h-4 stroke-[2.5]" /> Xác nhận
             </button>

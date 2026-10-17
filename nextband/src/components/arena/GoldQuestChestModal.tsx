@@ -46,6 +46,14 @@ export const GoldQuestChestModal: React.FC<GoldQuestChestModalProps> = ({
   const [step, setStep] = useState<'SELECT_CHEST' | 'SHOW_REWARD' | 'SELECT_VICTIM'>('SELECT_CHEST');
   const [selectedReward, setSelectedReward] = useState<ChestReward | null>(null);
 
+  // Tự động reset về màn hình chọn rương mỗi khi mở modal ở câu hỏi mới
+  React.useEffect(() => {
+    if (isOpen) {
+      setStep('SELECT_CHEST');
+      setSelectedReward(null);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   // Thuật toán quay rương ngẫu nhiên theo tỷ lệ xác suất
@@ -130,7 +138,7 @@ export const GoldQuestChestModal: React.FC<GoldQuestChestModalProps> = ({
                   key={num}
                   type="button"
                   onClick={handleOpenChest}
-                  className="p-4 bg-gradient-to-b from-amber-500/20 to-yellow-950/40 hover:from-amber-500/40 hover:to-yellow-900/60 border-2 border-amber-400/60 hover:border-amber-300 rounded-2xl flex flex-col items-center justify-center space-y-2 cursor-pointer shadow-lg transform hover:-translate-y-1 active:scale-95 transition-all"
+                  className="p-4 bg-gradient-to-b from-amber-500/20 to-yellow-950/40 hover:from-amber-500/40 hover:to-yellow-900/60 border-2 border-amber-400 rounded-2xl flex flex-col items-center justify-center space-y-2 cursor-pointer shadow-[0_4px_0_0_#78350f] active:translate-y-1 active:shadow-[0_1px_0_0_#78350f] transition-all"
                 >
                   <span className="text-4xl animate-bounce">🎁</span>
                   <span className="text-[11px] font-black text-amber-300 uppercase">Rương {num}</span>
@@ -161,7 +169,7 @@ export const GoldQuestChestModal: React.FC<GoldQuestChestModalProps> = ({
                   key={idx}
                   type="button"
                   onClick={() => handlePickVictim(vic)}
-                  className="w-full p-3 bg-red-950/40 hover:bg-red-900/60 border border-red-500/40 rounded-xl flex items-center justify-between transition-all cursor-pointer"
+                  className="w-full p-3 bg-red-950/40 hover:bg-red-900/60 border-2 border-red-500/60 rounded-xl flex items-center justify-between transition-all cursor-pointer shadow-[0_3px_0_0_#7f1d1d] active:translate-y-0.5 active:shadow-none"
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-lg">{idx === 0 ? '👑' : '⭐'}</span>
@@ -200,7 +208,7 @@ export const GoldQuestChestModal: React.FC<GoldQuestChestModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-slate-950 font-black text-sm rounded-xl shadow-lg shadow-amber-500/30 transition-all cursor-pointer"
+              className="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl border-2 border-amber-300 shadow-[0_4px_0_0_#78350f] active:translate-y-1 active:shadow-[0_1px_0_0_#78350f] transition-all cursor-pointer"
             >
               TIẾP TỤC TRẬN ĐẤU →
             </button>
