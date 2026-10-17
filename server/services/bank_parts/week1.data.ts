@@ -412,41 +412,41 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w1d3_q01",
       roundIndex: 0,
-      prompt: "Cặp nguyên âm /i:/ và /ɪ/ trong tiếng Anh được phân biệt rõ nhất qua cặp từ tối thiểu (minimal pair) nào?",
+      prompt: "Từ nào sau đây có phần gạch chân chứa nguyên âm dài /iː/ khác với các từ còn lại?",
       options: [
-        { id: "opt_A", label: "A", text: "sheep /ʃiːp/ vs. ship /ʃɪp/" },
-        { id: "opt_B", label: "B", text: "bed /bed/ vs. bad /bæd/" },
-        { id: "opt_C", label: "C", text: "duck /dʌk/ vs. dark /dɑːk/" },
-        { id: "opt_D", label: "D", text: "pen /pen/ vs. pain /peɪn/" }
+        { id: "opt_A", label: "A", text: "colleague" },
+        { id: "opt_B", label: "B", text: "biscuit" },
+        { id: "opt_C", label: "C", text: "building" },
+        { id: "opt_D", label: "D", text: "system" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. sheep /ʃiːp/ vs. ship /ʃɪp/",
-      correctExplanation: "Sheep chứa nguyên âm dài /i:/ căng mép, trong khi ship chứa nguyên âm ngắn /ɪ/ thả lỏng.",
+      correctAnswerText: "A. colleague",
+      correctExplanation: "\"colleague\" phát âm là /ˈkɒliːɡ/ chứa nguyên âm dài /iː/. Trong khi đó, \"biscuit\" /ˈbɪskɪt/, \"building\" /ˈbɪldɪŋ/, \"system\" /ˈsɪstəm/ đều mang nguyên âm ngắn /ɪ/.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. bed /bed/ vs. bad /bæd/",
-        diagnosticTitle: "Nhầm cặp /e/ và /æ/",
-        explanation: "Bed vs bad là cặp phân biệt giữa âm /e/ mở vừa và âm /æ/ hạ hàm bẹt."
+        baitOptionText: "B. biscuit",
+        diagnosticTitle: "Nhầm lẫn chữ 'ui' trong biscuit phát âm dài",
+        explanation: "Học viên hay nhầm 'ui' trong biscuit phát âm là âm dài, nhưng thực tế biscuit đọc là âm /ɪ/ ngắn."
       }
     },
     {
       id: "doer_w1d3_q02",
       roundIndex: 1,
-      prompt: "Cặp từ nào sau đây minh họa cho sự đối lập giữa nguyên âm /e/ và /æ/?",
+      prompt: "Từ nào sau đây có nguyên âm được phát âm là /æ/ (khác với âm /e/ của các từ còn lại)?",
       options: [
-        { id: "opt_A", label: "A", text: "bed /bed/ vs. bad /bæd/" },
-        { id: "opt_B", label: "B", text: "leave /liːv/ vs. live /lɪv/" },
-        { id: "opt_C", label: "C", text: "food /fuːd/ vs. foot /fʊt/" },
-        { id: "opt_D", label: "D", text: "hat /hæt/ vs. hot /hɒt/" }
+        { id: "opt_A", label: "A", text: "plaid" },
+        { id: "opt_B", label: "B", text: "bread" },
+        { id: "opt_C", label: "C", text: "dead" },
+        { id: "opt_D", label: "D", text: "said" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. bed /bed/ vs. bad /bæd/",
-      correctExplanation: "Bed có nguyên âm /e/ (mở vừa, lưỡi thả lỏng), bad có nguyên âm /æ/ (hạ hàm sâu, khóe miệng căng).",
+      correctAnswerText: "A. plaid",
+      correctExplanation: "\"plaid\" là trường hợp đặc biệt phát âm là /plæd/ (nguyên âm /æ/). Trong khi \"bread\" /bred/, \"dead\" /ded/, và \"said\" /sed/ đều mang âm /e/ ngắn.",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. leave /liːv/ vs. live /lɪv/",
-        diagnosticTitle: "Chọn nhầm cặp /i:/ và /ɪ/",
-        explanation: "Leave vs live là cặp đối lập của âm i dài và i ngắn."
+        baitOptionId: "opt_D",
+        baitOptionText: "D. said",
+        diagnosticTitle: "Nhầm lẫn từ nói said mang âm /æ/",
+        explanation: "Nhiều người học lầm tưởng 'said' phát âm dạng /seɪd/ hoặc /sæd/, nhưng phiên âm chuẩn là /sed/ (âm /e/)."
       }
     },
     {
