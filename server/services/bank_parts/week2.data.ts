@@ -390,21 +390,21 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w2d2_q10",
       roundIndex: 9,
-      prompt: "PARAPHRASE: Câu \"Young tech workers suffer from burnout because the tight work schedule leaves little time for sleep or personal life\" được diễn đạt lại tương đương nhất là:",
+      prompt: "PARAPHRASE: Câu \"Young tech workers suffer from burnout because tight schedules leave little time for rest\" tương đương với:",
       options: [
-        { id: "opt_A", label: "A", text: "Severe physical and mental exhaustion among tech staff stems from grueling hours that severely restrict rest." },
-        { id: "opt_B", label: "B", text: "Employees enjoy working late at night because it boosts their productivity and financial freedom." },
-        { id: "opt_C", label: "C", text: "Startups have officially outlawed overtime to ensure young workers maintain optimal physical health." },
-        { id: "opt_D", label: "D", text: "Lack of personal life is completely unrelated to the excessive working hours demanded by tech firms." }
+        { id: "opt_A", label: "A", text: "Tech staff face severe exhaustion as grueling hours heavily restrict rest." },
+        { id: "opt_B", label: "B", text: "Employees enjoy working late because it boosts their productivity." },
+        { id: "opt_C", label: "C", text: "Startups have outlawed overtime to safeguard workers' physical health." },
+        { id: "opt_D", label: "D", text: "Lack of rest is completely unrelated to long working hours at tech firms." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Severe physical and mental exhaustion among tech staff stems from grueling hours that severely restrict rest.",
-      correctExplanation: "\"Severe physical and mental exhaustion\" paraphrase cho \"burnout\", và \"grueling hours that severely restrict rest\" paraphrase cho \"tight schedule leaves little time for sleep\".",
+      correctAnswerText: "A. Tech staff face severe exhaustion as grueling hours heavily restrict rest.",
+      correctExplanation: "\"Severe exhaustion\" paraphrase cho \"burnout\", và \"grueling hours heavily restrict rest\" paraphrase cho \"tight schedules leave little time for rest\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. parents -> parent",
-        diagnosticTitle: "Đảo ngược thông điệp chỉ trích thành sự thích thú",
-        explanation: "Bài đọc nêu rõ sự đau khổ và cái chết vì kiệt sức, không phải sự thích thú làm việc đêm."
+        baitOptionText: "B. Employees enjoy working late because it boosts their productivity.",
+        diagnosticTitle: "Đảo ngược thông điệp kiệt sức thành thích thú",
+        explanation: "Bài đọc nêu rõ sự đau khổ và kiệt sức do làm việc quá độ, không phải sự thích thú làm việc đêm."
       }
     }
   ],

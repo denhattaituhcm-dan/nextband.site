@@ -75,6 +75,7 @@ export default function ArenaPlayPage() {
 
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
+  const [roundTimeLimit, setRoundTimeLimit] = useState<number>(15);
   const [timeLeft, setTimeLeft] = useState<number>(15);
   const [isLocked, setIsLocked] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<boolean>(false);
@@ -223,7 +224,10 @@ export default function ArenaPlayPage() {
         if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
         if (typeof payload?.totalQuestions === 'number') setTotalQuestions(payload.totalQuestions);
         if (payload?.gameMode) setGameMode(payload.gameMode);
-        if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
+        if (payload?.timeLimit) {
+          setTimeLeft(payload.timeLimit);
+          setRoundTimeLimit(payload.timeLimit);
+        }
 
         // Chuẩn bị cho vòng mới: Xóa trạng thái câu cũ để hiển thị màn hình đệm
         setHasSubmitted(false);
@@ -237,8 +241,13 @@ export default function ArenaPlayPage() {
         setIsJoinedAcknowledged(true);
         setStartCountdown(null);
         if (payload?.gameMode) setGameMode(payload.gameMode);
-        if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
-        else setTimeLeft(15);
+        if (payload?.timeLimit) {
+          setTimeLeft(payload.timeLimit);
+          setRoundTimeLimit(payload.timeLimit);
+        } else {
+          setTimeLeft(15);
+          setRoundTimeLimit(15);
+        }
 
         if (payload?.question) setCurrentQuestion(payload.question);
         if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
@@ -256,8 +265,13 @@ export default function ArenaPlayPage() {
         setIsJoinedAcknowledged(true);
         setStartCountdown(null);
         if (payload?.gameMode) setGameMode(payload.gameMode);
-        if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
-        else setTimeLeft(15);
+        if (payload?.timeLimit) {
+          setTimeLeft(payload.timeLimit);
+          setRoundTimeLimit(payload.timeLimit);
+        } else {
+          setTimeLeft(15);
+          setRoundTimeLimit(15);
+        }
 
         if (payload?.question) setCurrentQuestion(payload.question);
         if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
@@ -730,7 +744,7 @@ export default function ArenaPlayPage() {
                   ? `💰 CƯỚP VÀNG · CÂU ${questionIndex + 1}/${totalQuestions}`
                   : totalQuestions > 0 && questionIndex >= totalQuestions - 1
                   ? `⚡ CÂU CUỐI CÙNG (X2 ĐIỂM) · CÂU ${questionIndex + 1}/${totalQuestions}`
-                  : `🎯 CÂU HỎI ${questionIndex + 1}/${totalQuestions} · 15 GIÂY`}
+                  : `🎯 CÂU HỎI ${questionIndex + 1}/${totalQuestions} · ${roundTimeLimit} GIÂY`}
               </span>
               <h2 className="text-lg md:text-xl font-bold text-white leading-snug">
                 "{currentQuestion.prompt}"
@@ -738,7 +752,7 @@ export default function ArenaPlayPage() {
             </div>
 
             {/* Incense Timer */}
-            <ArenaIncenseTimer timeLeftSeconds={timeLeft} totalTimeSeconds={15} />
+            <ArenaIncenseTimer timeLeftSeconds={timeLeft} totalTimeSeconds={roundTimeLimit} />
 
             {/* 4 Interactive Answer Cards */}
             <div className="grid grid-cols-1 gap-2.5 pt-2">

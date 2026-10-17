@@ -68,7 +68,15 @@ export const StudentAnswerCard: React.FC<StudentAnswerCardProps> = React.memo(
 
         {/* Option Text Content */}
         <div className="flex-1 min-w-0">
-          <span className="text-base md:text-lg font-bold text-white leading-snug block">
+          <span
+            className={`font-bold text-white leading-snug block break-words ${
+              option.text.length > 80
+                ? 'text-xs sm:text-sm'
+                : option.text.length > 50
+                ? 'text-sm sm:text-base'
+                : 'text-base md:text-lg'
+            }`}
+          >
             {option.text}
           </span>
         </div>

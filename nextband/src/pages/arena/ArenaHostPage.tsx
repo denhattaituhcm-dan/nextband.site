@@ -1053,16 +1053,18 @@ export default function ArenaHostPage() {
             <ArenaIncenseTimer timeLeftSeconds={timeLeft} totalTimeSeconds={roomSettings.timeLimit} />
 
             {/* 4 Cards Hiển thị trên máy chiếu */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-w-2xl mx-auto pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-w-3xl mx-auto pt-2">
               {currentQuestion.options.map((opt) => (
                 <div
                   key={opt.id}
-                  className="p-3.5 rounded-xl bg-purple-950/50 border border-purple-800/60 flex items-center gap-3 text-left shadow-md"
+                  className="p-3.5 rounded-xl bg-purple-950/50 border border-purple-800/60 flex items-start gap-3 text-left shadow-md"
                 >
-                  <span className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center font-black text-xs text-orange-400">
+                  <span className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center font-black text-xs text-orange-400 shrink-0 mt-0.5">
                     {opt.label}
                   </span>
-                  <span className="font-bold text-sm text-slate-200">{opt.text}</span>
+                  <span className="font-bold text-sm md:text-base text-slate-200 leading-snug break-words flex-1">
+                    {opt.text}
+                  </span>
                 </div>
               ))}
             </div>

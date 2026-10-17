@@ -502,16 +502,16 @@ export const ArenaQuestionEditorModal: React.FC<ArenaQuestionEditorModalProps> =
                                   {opt.label}
                                 </button>
 
-                                <input
-                                  type="text"
+                                <textarea
+                                  rows={opt.text.length > 60 ? 2 : 1}
                                   value={opt.text}
                                   onChange={(e) => handleOptionTextChange(qIdx, optIdx, e.target.value)}
                                   placeholder={`Nội dung lựa chọn ${opt.label}...`}
-                                  className="flex-1 text-xs text-gray-900 bg-transparent focus:outline-none font-medium"
+                                  className="flex-1 text-xs text-gray-900 bg-transparent focus:outline-none font-medium resize-none leading-relaxed"
                                 />
 
                                 {isCorrect && (
-                                  <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded shrink-0 flex items-center gap-1">
+                                  <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded shrink-0 flex items-center gap-1 self-start mt-0.5">
                                     <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Đúng
                                   </span>
                                 )}
