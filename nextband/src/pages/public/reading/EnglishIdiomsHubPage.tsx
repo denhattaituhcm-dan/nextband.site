@@ -41,15 +41,17 @@ import unit10Data from "@/data/idioms/unit10";
 import { UNIT_10_ETYMOLOGY } from "@/data/idioms/unit10_etymology";
 import unit11Data from "@/data/idioms/unit11";
 import { UNIT_11_ETYMOLOGY } from "@/data/idioms/unit11_etymology";
+import unit12Data from "@/data/idioms/unit12";
+import { UNIT_12_ETYMOLOGY } from "@/data/idioms/unit12_etymology";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
 
   const parsedId = unitId ? parseInt(unitId, 10) : 1;
-  const initialUnitId = (parsedId >= 1 && parsedId <= 11 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+  const initialUnitId = (parsedId >= 1 && parsedId <= 12 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11>(initialUnitId);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -112,8 +114,8 @@ export default function EnglishIdiomsHubPage() {
   useEffect(() => {
     if (unitId) {
       const p = parseInt(unitId, 10);
-      if (p >= 1 && p <= 11 && p !== selectedUnitId) {
-        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11);
+      if (p >= 1 && p <= 12 && p !== selectedUnitId) {
+        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12);
         setActiveModuleFilter("ALL");
         reset23();
         reset25();
@@ -122,6 +124,7 @@ export default function EnglishIdiomsHubPage() {
         reset28();
         resetErrCorr();
         resetAudioOrder();
+        resetWordOrder();
       }
     }
   }, [unitId]);
@@ -173,6 +176,11 @@ export default function EnglishIdiomsHubPage() {
   const [selectedAudioOrder, setSelectedAudioOrder] = useState<Record<string, number>>({});
   const [checkedAudioOrder, setCheckedAudioOrder] = useState<Record<string, boolean | null>>({});
   const [showRetryAudioOrder, setShowRetryAudioOrder] = useState(false);
+
+  // Exercise Word Ordering (Unit 12)
+  const [answersWordOrder, setAnswersWordOrder] = useState<Record<number, string>>({});
+  const [checkedWordOrder, setCheckedWordOrder] = useState<Record<number, boolean | null>>({});
+  const [showRetryWordOrder, setShowRetryWordOrder] = useState(false);
 
   // Exercise 1.4 State (Listening Fill-in-the-blank)
   const [answers14, setAnswers14] = useState<Record<number, string>>({});
@@ -274,7 +282,9 @@ export default function EnglishIdiomsHubPage() {
       ? unit09Data
       : selectedUnitId === 10
       ? unit10Data
-      : unit11Data;
+      : selectedUnitId === 11
+      ? unit11Data
+      : unit12Data;
 
   const currentEtymologyData =
     selectedUnitId === 1
@@ -297,7 +307,9 @@ export default function EnglishIdiomsHubPage() {
       ? UNIT_09_ETYMOLOGY
       : selectedUnitId === 10
       ? UNIT_10_ETYMOLOGY
-      : UNIT_11_ETYMOLOGY;
+      : selectedUnitId === 11
+      ? UNIT_11_ETYMOLOGY
+      : UNIT_12_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -883,7 +895,49 @@ export default function EnglishIdiomsHubPage() {
     setShowRetryAudioOrder(false);
   };
 
-  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11) => {
+  // EXERCISE WORD ORDERING (12.7)
+  const exWordOrder = (currentUnitData.exercises as readonly any[]).find((e) => e.exercise_type === "WORD_ORDERING");
+  const checkWordOrder = () => {
+    if (!exWordOrder?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    exWordOrder.questions.forEach((q: any) => {
+      const val = (answersWordOrder[q.question_number] || "").trim().toLowerCase().replace(/[.,!]/g, "");
+      const isMatch = q.accepted_answers.some((ans: string) => ans.toLowerCase().replace(/[.,!]/g, "") === val);
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setCheckedWordOrder(res);
+    setShowRetryWordOrder(hasFail);
+  };
+
+  const resetWordOrder = () => {
+    setAnswersWordOrder({});
+    setCheckedWordOrder({});
+    setShowRetryWordOrder(false);
+  };
+
+  const retryWordOrder = () => {
+    setAnswersWordOrder((prev) => {
+      const updated = { ...prev };
+      Object.keys(checkedWordOrder).forEach((k) => {
+        const num = Number(k);
+        if (checkedWordOrder[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setCheckedWordOrder((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetryWordOrder(false);
+  };
+
+  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
     reset23();
@@ -893,6 +947,7 @@ export default function EnglishIdiomsHubPage() {
     reset28();
     resetErrCorr();
     resetAudioOrder();
+    resetWordOrder();
     navigate(`/reading/idioms/${unitId}`);
   };
 
@@ -924,16 +979,16 @@ export default function EnglishIdiomsHubPage() {
               {selectedUnitId > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11)}
+                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   ← Unit {selectedUnitId - 1 < 10 ? `0${selectedUnitId - 1}` : selectedUnitId - 1}
                 </button>
               )}
-              {selectedUnitId < 11 && (
+              {selectedUnitId < 12 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11)}
+                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   Unit {selectedUnitId + 1 < 10 ? `0${selectedUnitId + 1}` : selectedUnitId + 1} →
@@ -1004,7 +1059,9 @@ export default function EnglishIdiomsHubPage() {
                 ? "Khám phá 20 thành ngữ then chốt diễn tả sự đồng thuận, bất đồng nảy lửa và nghệ thuật thương lượng, từ 'bury the hatchet', 'strike a deal' đến 'on the same wavelength'."
                 : selectedUnitId === 10
                 ? "Khám phá 20 thành ngữ then chốt diễn tả cách đối nhân xử thế, lòng nhân ái trắc ẩn, thái độ bóc lột tệ bạc, trò đùa tai quái và chuẩn mực hành vi con người."
-                : "Khám phá 20 thành ngữ then chốt khắc họa các cung bậc cảm xúc dữ dội của con người qua ẩn dụ bộ phận cơ thể, sắc màu tâm trạng và thế giới ẩm thực."}
+                : selectedUnitId === 11
+                ? "Khám phá 20 thành ngữ then chốt khắc họa các cung bậc cảm xúc dữ dội của con người qua ẩn dụ bộ phận cơ thể, sắc màu tâm trạng và thế giới ẩm thực."
+                : "Khám phá 20 thành ngữ ngập tràn năng lượng tích cực, niềm hân hoan tột đỉnh, tình yêu say đắm, lòng nhiệt huyết hăng say và sự phấn khích hồi hộp khó tả."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
@@ -2466,6 +2523,133 @@ export default function EnglishIdiomsHubPage() {
                         <button
                           type="button"
                           onClick={retryAudioOrder}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE WORD ORDERING (12.7) */}
+                {exWordOrder && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-teal-600 text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập {exWordOrder.exercise_id}
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{exWordOrder.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {exWordOrder.description || "Sắp xếp các từ xáo trộn để tạo thành thành ngữ chuẩn xác điền vào câu"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-5">
+                      {exWordOrder.questions?.map((q: any) => {
+                        const status = checkedWordOrder[q.question_number];
+                        const currentInput = answersWordOrder[q.question_number] || "";
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-4 sm:p-5 rounded-2xl border text-xs sm:text-sm space-y-3 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            {/* Scrambled word tiles */}
+                            {q.scrambled_words && (
+                              <div className="flex flex-wrap items-center gap-1.5 p-2.5 bg-white rounded-xl border border-slate-200">
+                                <span className="text-[11px] font-bold text-slate-400 mr-1 uppercase tracking-wide">
+                                  Từ gợi ý:
+                                </span>
+                                {q.scrambled_words.map((word: string, wIdx: number) => (
+                                  <button
+                                    key={wIdx}
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = currentInput ? `${currentInput.trim()} ${word}` : word;
+                                      setAnswersWordOrder((prev) => ({ ...prev, [q.question_number]: updated }));
+                                    }}
+                                    className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold transition cursor-pointer shadow-2xs active:scale-95"
+                                  >
+                                    {word}
+                                  </button>
+                                ))}
+                                {currentInput && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setAnswersWordOrder((prev) => ({ ...prev, [q.question_number]: "" }))
+                                    }
+                                    className="text-[11px] text-slate-400 hover:text-red-500 underline ml-auto cursor-pointer"
+                                  >
+                                    Xóa nhập lại
+                                  </button>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Sentence with blank */}
+                            <div className="flex flex-wrap items-center gap-2 text-slate-800 font-medium">
+                              <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">
+                                {q.question_number}
+                              </span>
+                              <span>{q.prompt_prefix}</span>
+                              <input
+                                type="text"
+                                value={currentInput}
+                                onChange={(e) =>
+                                  setAnswersWordOrder((prev) => ({ ...prev, [q.question_number]: e.target.value }))
+                                }
+                                placeholder="Bấm từ gợi ý hoặc tự nhập..."
+                                className="px-3 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 min-w-[200px]"
+                              />
+                              <span>{q.prompt_suffix}</span>
+                            </div>
+
+                            {status === true && (
+                              <div className="text-xs font-semibold text-emerald-800 pl-8">
+                                ✓ Chính xác! Đáp án chuẩn: <strong>{q.target_answer}</strong>
+                                {q.explanation && <div className="mt-0.5 font-normal text-emerald-700">{q.explanation}</div>}
+                              </div>
+                            )}
+                            {status === false && (
+                              <div className="text-xs text-red-800 pl-8">
+                                ✗ Chưa chính xác. Đáp án đúng: <strong>{q.target_answer}</strong>
+                                {q.explanation && <div className="mt-0.5 font-normal text-red-700">{q.explanation}</div>}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={resetWordOrder}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={checkWordOrder}
+                        className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra sắp xếp từ
+                      </button>
+                      {showRetryWordOrder && (
+                        <button
+                          type="button"
+                          onClick={retryWordOrder}
                           className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />

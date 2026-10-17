@@ -25,6 +25,7 @@ import unit08Data from "@/data/idioms/unit08";
 import unit09Data from "@/data/idioms/unit09";
 import unit10Data from "@/data/idioms/unit10";
 import unit11Data from "@/data/idioms/unit11";
+import unit12Data from "@/data/idioms/unit12";
 
 interface UnitCatalogItem {
   id: number;
@@ -348,13 +349,49 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     accent: "UK (Anh)",
     isAvailable: true,
   },
+  {
+    id: 12,
+    unit_number_str: unit12Data.unit_number_str,
+    title_en: unit12Data.unit_title,
+    title_vi: "Cảm xúc tích cực & Hân hoan",
+    section: unit12Data.major_section,
+    description_vi:
+      "20 thành ngữ ngập tràn năng lượng tích cực, niềm hoan hỉ ngất ngây, tình yêu say đắm, lòng nhiệt huyết cống hiến và sự phấn khích hồi hộp khôn nguôi.",
+    total_idioms: unit12Data.summary.total_idioms,
+    total_exercises: unit12Data.summary.total_practice_exercises,
+    modules: [
+      {
+        id: "12.1",
+        title: "Happiness",
+        sample: "on cloud nine, on top of the world, grin from ear to ear, over the moon...",
+      },
+      {
+        id: "12.2",
+        title: "Expressions with 'joy'",
+        sample: "pride and joy, jump for joy, weep with joy, a joy to behold...",
+      },
+      {
+        id: "12.3",
+        title: "Enthusiasm",
+        sample: "raring to go, heart and soul, eager beaver, bright-eyed and bushy-tailed...",
+      },
+      {
+        id: "12.4",
+        title: "Excitement",
+        sample: "on the edge of seat, with bated breath, bouncing off the walls, butterflies in stomach...",
+      },
+    ],
+    tags: ["Cảm xúc tích cực", "Hạnh phúc", "Nhiệt huyết", "Phấn khích", "IELTS Speaking & Writing"],
+    accent: "UK (Anh)",
+    isAvailable: true,
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 12, unit_number_str: "12", title_en: "Relationships", title_vi: "Quan hệ tình cảm & bạn bè sâu rộng" },
   { id: 13, unit_number_str: "13", title_en: "Communication", title_vi: "Giao tiếp, đối thoại & truyền thông" },
   { id: 14, unit_number_str: "14", title_en: "Work", title_vi: "Công việc, sự nghiệp & công sở" },
   { id: 15, unit_number_str: "15", title_en: "Money", title_vi: "Tiền bạc, tài chính & đầu tư" },
+  { id: 16, unit_number_str: "16", title_en: "Success and failure", title_vi: "Thành bại, thăng trầm & cơ hội" },
 ];
 
 export default function EnglishIdiomsCatalogPage() {
@@ -399,7 +436,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              11 Units Sẵn Sàng (220 Idioms)
+              12 Units Sẵn Sàng (240 Idioms)
             </span>
           </div>
         </div>
@@ -427,11 +464,11 @@ export default function EnglishIdiomsCatalogPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">11</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">12</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">220</div>
+                <div className="text-2xl sm:text-3xl font-black text-sky-200">240</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
@@ -439,7 +476,7 @@ export default function EnglishIdiomsCatalogPage() {
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">55</div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-200">60</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
             </div>
