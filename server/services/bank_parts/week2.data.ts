@@ -40,7 +40,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Discuss\" là ngoại động từ trực tiếp (transitive verb), có tân ngữ đi liền phía sau (discuss something), tuyệt đối không thêm giới từ \"about\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. is -> are",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Nghi ngờ số ít/số nhiều của danh từ tập hợp",
         explanation: "\"The board of directors\" xem như một thể thống nhất nên dùng \"is\" chuẩn ngữ pháp, lỗi cốt lõi là thừa giới từ \"about\" sau discuss."
       }
@@ -60,7 +60,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Raise\" là ngoại động từ (transitive verb) cần có tân ngữ theo sau: raise their hands (giơ tay). Trong khi \"rise\" là nội động từ (tự tăng lên, không có tân ngữ).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. rise",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Nhầm lẫn cặp động từ Raise vs. Rise",
         explanation: "Rise là nội động từ (The sun rises), không thể đi trực tiếp với tân ngữ \"their hands\"."
       }
@@ -80,7 +80,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Look\" ở đây là linking verb (trông có vẻ), theo sau phải là một tính từ (adjective) bổ nghĩa cho chủ ngữ, không dùng trạng từ (beautifully).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. looks -> is looking",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Chuyển sang thì tiếp diễn cho động từ tri giác",
         explanation: "Look thể hiện vẻ bề ngoài là linking verb mang tính trạng thái, không dùng ở dạng tiếp diễn."
       }
@@ -100,7 +100,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc chuẩn của động từ spend: spend time/money DOING something (V-ing), không dùng to-infinitive.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Many children spend too much time to play video games.",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Dùng to-V sau spend time",
         explanation: "Thói quen dịch \"để làm gì\" sang \"to-V\" khiến học viên viết \"spend time to play\", trong khi chuẩn tiếng Anh là spend time V-ing."
       }
@@ -120,7 +120,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc: provide somebody WITH something (hoặc provide something FOR somebody). Knowledge là danh từ không đếm được.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. The course provided him a lot of useful knowledges.",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Bỏ quên giới từ \"with\" và thêm \"s\" vào knowledge",
         explanation: "Provide sb with sth cần có with, và knowledge không bao giờ có số nhiều knowledges."
       }
@@ -140,7 +140,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Động từ consider đòi hỏi một V-ing theo sau: consider DOING something (cân nhắc làm gì).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. to leave",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Chọn to-infinitive sau consider",
         explanation: "Rất nhiều người học nhầm consider đi với to-V, nhưng đúng quy tắc ngữ pháp phải là consider + V-ing."
       }
@@ -160,7 +160,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc: find + Object + Adjective (nhận thấy cái gì như thế nào). Bổ ngữ cho cuốn sách là tính từ chủ động \"interesting\".",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. I find this book very interested.",
+        baitOptionText: "C. children",
         diagnosticTitle: "Nhầm đuôi -ed và -ing của tính từ",
         explanation: "\"Interested\" chỉ cảm xúc của con người; đặc tính của cuốn sách gây hứng thú phải dùng \"interesting\"."
       }
@@ -180,7 +180,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation học thuật chuẩn đi với survey là \"conduct a survey\" (hoặc \"carry out a survey\").",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. make a survey",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Dịch từ \"làm khảo sát\" thành \"make a survey\"",
         explanation: "Người bản xứ không dùng make a survey; trong nghiên cứu học thuật luôn dùng conduct / carry out."
       }
@@ -200,7 +200,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation bất di bất dịch trong tiếng Anh: MAKE a mistake / make mistakes (phạm sai lầm).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. doing mistakes",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Dịch \"làm lỗi\" thành \"do mistakes\"",
         explanation: "Thói quen liên hệ từ \"làm\" với \"do\" khiến học viên chọn \"do mistakes\" thay vì cụm chuẩn \"make mistakes\"."
       }
@@ -212,17 +212,17 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Trong câu: \"Employees are protesting what is infamous as 996\", từ \"infamous\" (adj) ĐỒNG NGHĨA nhất với từ nào?",
       options: [
-        { id: "opt_A", label: "A", text: "notorious (khét tiếng, tai tiếng vì điều xấu)" },
-        { id: "opt_B", label: "B", text: "unpopular / unknown (vô danh, không ai biết)" },
-        { id: "opt_C", label: "C", text: "prestigious (uy tín, danh giá)" },
-        { id: "opt_D", label: "D", text: "admirable (đáng khâm phục, ngưỡng mộ)" }
+        { id: "opt_A", label: "A", text: "notorious" },
+        { id: "opt_B", label: "B", text: "unpopular" },
+        { id: "opt_C", label: "C", text: "prestigious" },
+        { id: "opt_D", label: "D", text: "admirable" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. notorious (khét tiếng, tai tiếng vì điều xấu)",
+      correctAnswerText: "A. notorious",
       correctExplanation: "\"Infamous\" đồng nghĩa với \"notorious\": nổi danh vì tai tiếng, gắn với điều tồi tệ hoặc độc hại.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. unpopular / unknown",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Hiểu nhầm tiền tố in- là phủ định \"không nổi tiếng\"",
         explanation: "Nhiều người lầm tưởng in- + famous = không nổi tiếng, nhưng infamous thực chất mang nghĩa khét tiếng vì điều xấu."
       }
@@ -232,17 +232,17 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Từ TRÁI NGHĨA với \"compulsory\" trong cụm \"compulsory weekend overtime\" (tăng ca bắt buộc cuối tuần) là:",
       options: [
-        { id: "opt_A", label: "A", text: "voluntary / optional (tự nguyện, tùy chọn)" },
-        { id: "opt_B", label: "B", text: "mandatory (bắt buộc theo luật)" },
-        { id: "opt_C", label: "C", text: "punitive (trừng phạt)" },
-        { id: "opt_D", label: "D", text: "relentless (không ngừng nghỉ)" }
+        { id: "opt_A", label: "A", text: "voluntary" },
+        { id: "opt_B", label: "B", text: "mandatory" },
+        { id: "opt_C", label: "C", text: "punitive" },
+        { id: "opt_D", label: "D", text: "relentless" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. voluntary / optional (tự nguyện, tùy chọn)",
+      correctAnswerText: "A. voluntary",
       correctExplanation: "\"Compulsory\" = bắt buộc, cưỡng chế. Từ trái nghĩa trực tiếp là \"voluntary\" hoặc \"optional\" (tự nguyện/tùy chọn).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. mandatory",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
         explanation: "Mandatory là từ đồng nghĩa với compulsory. Đề bài đang yêu cầu tìm từ TRÁI NGHĨA."
       }
@@ -262,7 +262,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Burnout\" là thuật ngữ tâm lý học lao động chỉ sự suy sụp, cạn kiệt năng lượng thể xác và cảm xúc vì làm việc quá tải.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Sự nhiệt tình hăng hái cháy hết mình",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Dịch nghĩa đen từ chữ \"burn\" thành cháy hết mình tích cực",
         explanation: "Burnout luôn mang nghĩa tiêu cực chỉ sự kiệt quệ, không dùng cho sự hào hứng cống hiến."
       }
@@ -282,7 +282,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation học thuật cố định: \"raise awareness about/of something\" (nâng cao nhận thức xã hội về một vấn đề).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. rise",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Nhầm lẫn giữa ngoại động từ raise (cần tân ngữ) và nội động từ rise",
         explanation: "\"Rise\" là nội động từ không đi kèm tân ngữ. Muốn tác động lên tân ngữ \"awareness\" bắt buộc phải dùng ngoại động từ \"raise\"."
       }
@@ -302,7 +302,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Enforce rules/hours\" nghĩa là thực thi, bắt buộc tuân thủ quy chế hoặc luật lệ.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. reinforce",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Nhầm lẫn giữa enforce (thực thi) và reinforce (củng cố, gia cố)",
         explanation: "Reinforce mang nghĩa gia cố độ bền hoặc củng cố lập luận, không dùng cho việc bắt buộc thực thi giờ làm việc."
       }
@@ -322,7 +322,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc song hành với trạng từ \"formally\": \"formally or informally\" (một cách chính thức hoặc ngấm ngầm phi chính thức).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. informal",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Vi phạm tính song hành từ loại (parallel structure)",
         explanation: "Từ kết nối bởi liên từ \"or\" với trạng từ \"formally\" bắt buộc cũng phải là một trạng từ (\"informally\")."
       }
@@ -342,7 +342,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc chuẩn: \"protest against something\" (phản đối, biểu tình chống lại chính sách/hành động).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. for",
+        baitOptionText: "C. children",
         diagnosticTitle: "Dùng giới từ chỉ sự ủng hộ thay vì phản đối",
         explanation: "Protest for là đấu tranh đòi một quyền lợi, còn phản đối chống lại văn hóa độc hại phải dùng \"protest against\"."
       }
@@ -362,7 +362,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Exchange something for something\" là cấu trúc chuẩn để chỉ sự đánh đổi hoặc trao đổi lấy vật phẩm/tiền bạc.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. exchange [A] into [B]",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Nhầm lẫn với chuyển đổi tiền tệ",
         explanation: "Đổi ngoại tệ thành đồng tiền khác dùng exchange money into, còn đánh đổi thứ trừu tượng (mạng sống lấy tiền) phải dùng \"for\"."
       }
@@ -382,7 +382,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"A tight schedule\" là collocation tự nhiên chỉ lịch trình làm việc kín đặc, dày đặc và căng thẳng.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. loose",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Chọn từ trái nghĩa (lỏng lẻo)",
         explanation: "Loose schedule là lịch rảnh rỗi lỏng lẻo, mâu thuẫn trực tiếp với vế sau \"barely any personal time\"."
       }
@@ -402,7 +402,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Severe physical and mental exhaustion\" paraphrase cho \"burnout\", và \"grueling hours that severely restrict rest\" paraphrase cho \"tight schedule leaves little time for sleep\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Employees enjoy working late",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Đảo ngược thông điệp chỉ trích thành sự thích thú",
         explanation: "Bài đọc nêu rõ sự đau khổ và cái chết vì kiệt sức, không phải sự thích thú làm việc đêm."
       }
@@ -424,7 +424,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Food có âm u dài /u:/ (chu môi tròn chặt), foot có âm u ngắn /ʊ/ (môi hơi mở, thả lỏng).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. four /fɔː/ vs. far /fɑː/",
+        baitOptionText: "C. children",
         diagnosticTitle: "Nhầm sang cặp /ɔː/ và /ɑː/",
         explanation: "Four vs far là cặp phân biệt giữa âm o dài tròn môi và âm a dài hạ hàm."
       }
@@ -444,7 +444,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Quy tắc kim tự tháp giới từ không gian: sống ở tầng mấy luôn đi với giới từ \"ON\": on the 1st/2nd/5th floor.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. in",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Dịch \"ở trong tầng 5\" thành \"in the floor\"",
         explanation: "Tiếng Việt nói \"ở trong tầng 5\" làm nhiều bạn chọn \"in\", nhưng tiếng Anh mặt sàn bề mặt phẳng bắt buộc dùng \"on\"."
       }
@@ -464,7 +464,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Thành phố, quốc gia hoặc khu vực địa lý lớn luôn dùng giới từ \"IN\": in Hanoi, in Ho Chi Minh City.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. at - at",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Dùng \"at\" cho địa bàn thành phố lớn",
         explanation: "Giới từ \"at\" dùng cho điểm cụ thể (at the bus stop, at 12 Ba Hat Street), không dùng cho cả thành phố rộng lớn."
       }
@@ -484,7 +484,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Khi chỉ có tên đường phố chung (chưa có số nhà cụ thể), ta dùng giới từ \"ON\": on Ba Hat Street.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. at",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Nhầm lẫn giữa tên đường và số nhà cụ thể",
         explanation: "Chỉ khi có số nhà cụ thể (ví dụ: at 12 Ba Hat Street) mới dùng \"at\"; nếu chỉ có tên đường thì dùng \"on\"."
       }
@@ -504,7 +504,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc chuẩn về thời lượng: It takes (somebody) + time + TO DO something.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. It spends me around 30 minutes to drive here.",
+        baitOptionText: "C. children",
         diagnosticTitle: "Dùng nhầm \"spend\" với chủ ngữ giả It",
         explanation: "Spend chỉ dùng với chủ ngữ là người (I spend 30 minutes driving), còn chủ ngữ giả It bắt buộc dùng với \"takes\"."
       }
@@ -524,7 +524,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Tính từ ghép chỉ số tầng: number + singular noun ghép gạch nối \"three-storey\" (hoặc three-story), danh từ không thêm s.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. a three-storeys house",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Thêm số nhiều vào danh từ trong tính từ ghép",
         explanation: "Trong tính từ ghép đứng trước danh từ (compound adjective), danh từ đo lường luôn ở dạng số ít."
       }
@@ -544,7 +544,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Chỉ vị trí vật lý ở điểm cuối cùng: \"at the end of...\". Ngược lại, \"in the end\" là phó từ chỉ thời gian mang nghĩa rốt cuộc/cuối cùng.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. in the end of the hallway",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Nhầm lẫn giữa \"at the end of\" và \"in the end\"",
         explanation: "\"In the end\" không bao giờ đi với \"of something\"; để chỉ vị trí nơi chốn bắt buộc dùng \"at the end of\"."
       }
@@ -564,7 +564,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Cozy\" (hoặc cosy) miêu tả một không gian nhỏ gọn, ấm cúng và đem lại cảm giác bình yên thư giãn.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. crowded",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Nhầm lẫn sự ấm cúng với sự đông đúc",
         explanation: "Crowded mang nghĩa tiêu cực là đông đúc, chật ních người."
       }
@@ -584,7 +584,7 @@ export const WEEK_2_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Opposite something\" đóng vai trò là cụm giới từ chỉ vị trí, cấu trúc đảo ngữ: Opposite + [Nơi chốn] + is + [Chủ ngữ].",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Opposite to my desk has a large window.",
+        baitOptionText: "B. parents -> parent",
         diagnosticTitle: "Dùng động từ \"has\" thay vì to be chỉ sự tồn tại",
         explanation: "Tiếng Việt nói \"đối diện có một cửa sổ\" làm người học dịch thành \"has a window\", sai ngữ pháp tiếng Anh."
       }

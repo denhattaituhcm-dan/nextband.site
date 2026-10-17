@@ -20,7 +20,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cụm giới từ \"with + noun phrase\" (với/sở hữu đặc điểm gì) đứng ngay sau danh từ \"students\" để làm modifier rút gọn.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. accept students have",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Lỗi hai động từ vị ngữ đứng liền kề không liên từ (Run-on/Double Verb)",
         explanation: "Students have tạo ra 2 finite verb (accept và have) trong cùng một clause đơn mà không có liên từ hoặc đại từ quan hệ."
       }
@@ -40,7 +40,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Work for an organization\" (làm việc cho tổ chức nào) và \"in Switzerland\" (ở quốc gia nào dùng in).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. into Switzerland",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dùng giới từ chỉ chuyển động \"into\" thay vì trạng thái vị trí \"in\"",
         explanation: "Into thể hiện hướng chuyển động đi vào trong, còn vị trí ở một đất nước phải là \"in\"."
       }
@@ -60,7 +60,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cụm thành ngữ \"on the verge of extinction\" (trên bờ vực tuyệt chủng), sau đó là cụm giới từ chỉ nguyên nhân \"due to + noun phrase\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. because habitat destruction",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dùng liên từ because trực tiếp với cụm danh từ",
         explanation: "\"Because\" phải đi kèm với một mệnh đề (clause S+V); đi với cụm danh từ bắt buộc dùng \"due to / because of\"."
       }
@@ -80,7 +80,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"In spite of\" luôn có \"of\". Ngược lại, từ đồng nghĩa \"Despite\" thì KHÔNG BAO GIỜ có \"of\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Despite of",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Lỗi kinh điển thêm \"of\" sau Despite",
         explanation: "Thí sinh cực kỳ hay nhầm lẫn viết \"Despite of\" do bị ảnh hưởng bởi cụm \"In spite of\"."
       }
@@ -90,17 +90,17 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       roundIndex: 4,
       prompt: "Xác định vai trò ngữ pháp của cụm giới từ in đậm trong câu: \"The young girl **with curly hair** is my niece.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Adjective phrase (cụm tính từ bổ nghĩa cho danh từ The young girl)" },
-        { id: "opt_B", label: "B", text: "Adverb phrase (cụm trạng từ bổ nghĩa cho động từ is)" },
+        { id: "opt_A", label: "A", text: "Adjective phrase" },
+        { id: "opt_B", label: "B", text: "Adverb phrase" },
         { id: "opt_C", label: "C", text: "Subject chính của câu" },
         { id: "opt_D", label: "D", text: "Finite Verb của câu" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Adjective phrase (cụm tính từ bổ nghĩa cho danh từ The young girl)",
+      correctAnswerText: "A. Adjective phrase",
       correctExplanation: "Cụm giới từ đứng ngay sau danh từ và trả lời cho câu hỏi \"Which girl?\" (Cô gái nào?), do đó đóng vai trò là một Adjective phrase.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Adverb phrase",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Nhầm lẫn giữa Adjective phrase và Adverb phrase",
         explanation: "Nếu cụm giới từ bổ nghĩa cho động từ hoặc cả câu (về thời gian, nơi chốn, cách thức) thì mới là trạng từ; bổ nghĩa cho danh từ là tính từ."
       }
@@ -120,7 +120,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Subject là \"The book on the table\" (với \"on the table\" là cụm giới từ bổ nghĩa), Finite Verb là \"belongs to\" (thuộc về ai).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. is belongs to",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Thêm to be trước động từ thường belong",
         explanation: "Belong là động từ thường có nghĩa là thuộc về, không bao giờ dùng dạng bị động \"is belonged\" hay thừa to be \"is belongs\"."
       }
@@ -140,7 +140,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cụm cố định: \"under someone's guidance / supervision\" (dưới sự chỉ dẫn / giám sát của ai).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. below",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dịch \"dưới sự chỉ dẫn\" thành below",
         explanation: "Below dùng cho vị trí thấp hơn về độ cao hoặc mức độ số liệu; sự che chở/chỉ dẫn quyền hạn quy ước dùng \"under\"."
       }
@@ -160,7 +160,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc bị động \"is designed for + V-ing / noun phrase\" hoặc \"is designed to analyze data efficiently\" (efficiently là trạng từ).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. analyze data efficient",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dùng tính từ efficient bổ nghĩa cho động từ analyze",
         explanation: "Sau động từ hành động analyze cần phó từ efficiently, phương án B dùng tính từ efficient nên sai."
       }
@@ -180,7 +180,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Giới từ phức hợp: \"instead of + noun/V-ing\" (thay vì cái gì). Nếu chỉ dùng \"instead\" thì nó là trạng từ đứng cuối câu.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. instead",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Rơi rụng giới từ \"of\" sau instead",
         explanation: "Đứng trước danh từ hoặc V-ing bắt buộc phải dùng \"instead of\"; không được dùng \"instead\" trơ trọi."
       }
@@ -200,7 +200,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Quy tắc không gian: in the corner of a room (góc trong phòng khép kín), at the corner of the street (góc ngoài đường phố mở).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Cả hai hoàn toàn giống nhau",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Coi nhẹ sự phân biệt giới từ không gian",
         explanation: "Sự phân biệt giữa góc trong (in) và góc ngoài giao lộ (at/on) là điểm kiểm tra ngữ pháp không gian rất chuẩn xác."
       }
@@ -212,17 +212,17 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Trong bài đọc Karaoke in Vietnam, từ \"communal\" trong cụm \"one of its great communal joys\" ĐỒNG NGHĨA nhất với từ nào?",
       options: [
-        { id: "opt_A", label: "A", text: "shared / collective (thuộc về tập thể, cộng đồng cùng chia sẻ)" },
-        { id: "opt_B", label: "B", text: "private / solitary (riêng tư, đơn độc)" },
-        { id: "opt_C", label: "C", text: "commercial (mang tính thương mại)" },
-        { id: "opt_D", label: "D", text: "competitive (có tính cạnh tranh gay gắt)" }
+        { id: "opt_A", label: "A", text: "shared" },
+        { id: "opt_B", label: "B", text: "private" },
+        { id: "opt_C", label: "C", text: "commercial" },
+        { id: "opt_D", label: "D", text: "competitive" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. shared / collective (thuộc về tập thể, cộng đồng cùng chia sẻ)",
+      correctAnswerText: "A. shared",
       correctExplanation: "\"Communal\" = mang tính cộng đồng, tập thể cùng chung vui, đồng nghĩa với shared/collective.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. private / solitary",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Chọn nhầm từ trái nghĩa",
         explanation: "Private/solitary là riêng tư cá nhân, trái ngược hoàn toàn với ý nghĩa cộng đồng của communal."
       }
@@ -232,17 +232,17 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Từ TRÁI NGHĨA với \"inappropriate\" trong câu \"a karaoke machine pops up at completely inappropriate moments\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "suitable / fitting (thích hợp, đúng lúc, phù hợp hoàn cảnh)" },
-        { id: "opt_B", label: "B", text: "hilarious (vui nhộn, buồn cười)" },
-        { id: "opt_C", label: "C", text: "bizarre (kỳ dị, quái đản)" },
-        { id: "opt_D", label: "D", text: "awkward (ngượng ngùng)" }
+        { id: "opt_A", label: "A", text: "suitable" },
+        { id: "opt_B", label: "B", text: "hilarious" },
+        { id: "opt_C", label: "C", text: "bizarre" },
+        { id: "opt_D", label: "D", text: "awkward" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. suitable / fitting (thích hợp, đúng lúc, phù hợp hoàn cảnh)",
+      correctAnswerText: "A. suitable",
       correctExplanation: "Tiền tố in- mang nghĩa phủ định: inappropriate = không thích hợp, vô duyên. Từ trái nghĩa trực tiếp là \"suitable\" hoặc \"fitting\".",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. bizarre",
+        baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
         diagnosticTitle: "Nhầm lẫn giữa từ đồng nghĩa và trái nghĩa",
         explanation: "Bizarre (kỳ lạ) mang tính chất tương tự với inappropriate trong ngữ cảnh bất thường. Đề bài yêu cầu tìm từ TRÁI NGHĨA."
       }
@@ -262,7 +262,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Untrained tongue\" là lối nói ẩn dụ chỉ chiếc lưỡi chưa được tập luyện để uốn âm và phát âm các thanh sắc, hỏi, ngã, nặng trong tiếng Việt.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Người bị mất giọng",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dịch nghĩa đen từ \"tongue\" thành vấn đề cổ họng",
         explanation: "Đây là cách nói tu từ về kỹ năng phát âm ngoại ngữ, không phải bệnh lý mất giọng."
       }
@@ -282,7 +282,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation học thuật: \"leave a favorable/good impression on somebody\" (để lại ấn tượng tốt đẹp trong lòng ai).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. imprint",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dùng từ dấu ấn vật lý thay vì ấn tượng tâm lý",
         explanation: "Imprint là dấu vết in hằn cơ học, còn tạo ấn tượng cảm xúc với người khác bắt buộc dùng \"impression\"."
       }
@@ -302,7 +302,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc cấm đoán pháp lý: \"be banned / prohibited FROM doing something\" (bị nghiêm cấm làm việc gì).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. to",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dùng to-V sau động từ ban",
         explanation: "Động từ ban không đi với to-V mà bắt buộc dùng giới từ \"from + V-ing\"."
       }
@@ -322,7 +322,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc động từ nguyên thể sau to: \"immerse oneself in sth\" (đắm chìm bản thân vào điều gì).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. immersion",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dùng nhầm danh từ sau to",
         explanation: "Sau \"love to\" cần một động từ nguyên mẫu (immerse), không dùng danh từ immersion."
       }
@@ -342,7 +342,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Gốc từ Latin \"cent-\" = 100 (như century: thế kỷ). \"Centenary\" là lễ kỷ niệm tròn đúng 100 năm.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Lễ kỷ niệm 50 năm",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Nhầm lẫn với golden jubilee (50 năm)",
         explanation: "50 năm là jubilee, 100 năm là centenary / centennial."
       }
@@ -352,17 +352,17 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       roundIndex: 7,
       prompt: "Cụm danh từ \"mixed reactions\" trong câu \"The gaming curfew caused mixed reactions among citizens\" mang sắc thái gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Các phản ứng trái chiều (người khen người chê, kẻ đồng tình kẻ phản đối)" },
+        { id: "opt_A", label: "A", text: "Các phản ứng trái chiều" },
         { id: "opt_B", label: "B", text: "100% người dân đều kịch liệt phản đối" },
         { id: "opt_C", label: "C", text: "Toàn bộ xã hội đồng thuận tuyệt đối không ý kiến" },
         { id: "opt_D", label: "D", text: "Người dân hoàn toàn thờ ơ không ai quan tâm" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Các phản ứng trái chiều (người khen người chê, kẻ đồng tình kẻ phản đối)",
+      correctAnswerText: "A. Các phản ứng trái chiều",
       correctExplanation: "\"Mixed reactions\" miêu tả luồng ý kiến phân hóa: phụ huynh thì vui mừng trong khi giới trẻ coi đó là vi phạm quyền tự do.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. Toàn bộ xã hội đồng thuận",
+        baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
         diagnosticTitle: "Hiểu sai chữ mixed thành hòa hợp đồng thuận",
         explanation: "\"Mixed\" là pha trộn các ý kiến mâu thuẫn trái chiều nhau, không phải đồng thuận một chiều."
       }
@@ -382,7 +382,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"An immersive experience\" là tính từ cao cấp chỉ trải nghiệm cuốn hút đến mức người tham gia như hòa mình hoàn toàn vào không gian tác phẩm.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. bland",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Chọn tính từ tiêu cực mâu thuẫn ngữ cảnh",
         explanation: "Bland là nhạt nhẽo vô vị, trái ngược với sự cuốn hút của vở kịch tương tác."
       }
@@ -402,7 +402,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Bridge social divides and foster interpersonal bonds\" paraphrase tuyệt vời cho \"capacity to connect us and serves as a means of human connection\".",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. Music divides communities",
+        baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
         diagnosticTitle: "Đảo ngược thông điệp gắn kết thành chia rẽ",
         explanation: "Đoạn văn ca ngợi âm nhạc là cầu nối nhân văn, không hề chia rẽ người nghe."
       }
@@ -424,7 +424,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Street\" bắt đầu bằng cụm 3 phụ âm /s-t-r/ (street, spring, scream, splash). Các từ còn lại chỉ có 2 phụ âm đầu.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. play",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Chọn cụm chỉ có 2 phụ âm",
         explanation: "/pl-/ chỉ gồm 2 phụ âm p và l."
       }
@@ -434,17 +434,17 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Từ \"comfortable\" /ˈkʌm.fə.tə.bl/ thường được phát âm chuẩn tự nhiên với bao nhiêu âm tiết (syllables)?",
       options: [
-        { id: "opt_A", label: "A", text: "3 hoặc 4 âm tiết (thông dụng nhất là 3 âm tiết: /ˈkʌmf.tə.bl/)" },
+        { id: "opt_A", label: "A", text: "3 âm tiết" },
         { id: "opt_B", label: "B", text: "Chính xác 5 âm tiết" },
         { id: "opt_C", label: "C", text: "Chỉ có 1 âm tiết" },
         { id: "opt_D", label: "D", text: "6 âm tiết" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. 3 hoặc 4 âm tiết (thông dụng nhất là 3 âm tiết: /ˈkʌmf.tə.bl/)",
+      correctAnswerText: "A. 3 âm tiết",
       correctExplanation: "Người bản xứ thường nuốt âm \"or\" để phát âm thành 3 âm tiết: /ˈkʌmf.tə.bəl/ (comf-ta-ble).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. 5 âm tiết",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Đếm từng chữ cái com-for-ta-b-le",
         explanation: "Người học nhìn mặt chữ đếm âm tiết rất dễ phát âm thừa âm tiết làm mất tự nhiên."
       }
@@ -464,7 +464,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Competitive có trọng âm rơi vào âm tiết thứ hai \"pet\". (Lưu ý: danh từ \"competition\" lại có trọng âm ở âm tiết thứ 3).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Âm tiết thứ 1",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Nhầm với động từ gốc \"compete\" hoặc danh từ \"company\"",
         explanation: "Đây là từ rất hay bị học viên phát âm sai trọng âm vào âm tiết đầu tiên."
       }
@@ -484,7 +484,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc chuẩn: have a hard time / difficulty / trouble DOING something (V-ing), không dùng to-infinitive.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. to manage",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dùng to-V sau have a hard time",
         explanation: "Thói quen ghép to-V làm sai cấu trúc cố định have a hard time + V-ing."
       }
@@ -504,7 +504,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc: struggle TO DO something (chật vật/gặp khó khăn để làm gì). (Lưu ý: struggle WITH + Noun).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. improving",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Đồng hóa cấu trúc struggle với have a hard time V-ing",
         explanation: "Have a hard time đi với V-ing, nhưng động từ struggle lại đi với TO-infinitive."
       }
@@ -524,7 +524,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc đưa lời khuyên nhã nhặn, tự nhiên: \"My advice would be to + V\" hoặc \"If I were you, I would...\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. You must immediately do...",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dùng mệnh lệnh thô bạo (imperative/must)",
         explanation: "Trong giao tiếp Speaking, dùng must tạo cảm giác áp đặt, thiếu đi tính tương tác mềm mỏng."
       }
@@ -544,7 +544,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Hân khuyên: \"start using a planner on Google Calendar and set clear goals... limit distractions by turning off your phone and closing unnecessary tabs\".",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. Làm việc thâu đêm",
+        baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
         diagnosticTitle: "Nhầm thói quen xấu với giải pháp năng suất",
         explanation: "Làm việc thâu đêm chính là nguyên nhân gây mệt mỏi mà bài học đang tìm cách khắc phục."
       }
@@ -564,7 +564,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc so sánh tương phản: \"While + Clause 1, Clause 2\". Không dùng thêm liên từ \"but\" ở mệnh đề chính.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. While..., but others...",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Lỗi dùng cặp liên từ kép \"Although/While... but...\"",
         explanation: "Thói quen dịch tiếng Việt \"Mặc dù... nhưng...\" khiến học viên viết thừa liên từ \"but\"."
       }
@@ -584,7 +584,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation chuẩn trong quản trị thời gian: \"break tasks/goals into smaller steps\" (chia nhỏ nhiệm vụ thành các bước thực hiện).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. cut jobs in pieces",
+        baitOptionText: "B. Medical schools only accept students have outstanding academic performance.",
         diagnosticTitle: "Dịch từ vựng theo nghĩa đen của việc cắt gọt",
         explanation: "Cut jobs in pieces không phải là cụm từ tự nhiên trong quản lý công việc."
       }
@@ -604,7 +604,7 @@ export const WEEK_5_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Touch wood\" (gõ vào đồ gỗ) là phong tục văn hóa nói sau khi nhắc đến một điều may mắn để tránh bị vận xui ập đến (tương đương chữ \"trộm vía\" trong tiếng Việt).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. Chê bai đồ nội thất gỗ",
+        baitOptionText: "C. Medical schools only accept students about outstanding academic performance.",
         diagnosticTitle: "Hiểu theo nghĩa đen của từ wood (gỗ)",
         explanation: "Đây là một thành ngữ văn hóa dân gian mang hàm nghĩa tâm linh cầu may, không liên quan đến nghề mộc."
       }

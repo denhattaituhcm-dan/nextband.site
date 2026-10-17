@@ -40,7 +40,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Ngữ cảnh xảy ra trước một mốc thời gian trong quá khứ (trước khi vào đại học, lúc còn là học sinh cấp 3), nên trạng thái nhận thức lúc đó chia ở Quá khứ đơn (were not aware).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. are",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Nhầm lẫn nhận thức quá khứ với thực tại",
         explanation: "Trạng ngữ chỉ thời gian quá khứ \"Before going to university\" quy định mệnh đề này phải chia thì quá khứ đơn."
       }
@@ -60,7 +60,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Mệnh đề chính dùng \"is still dirty\" ở hiện tại, việc chính quyền phạt hành chính là chính sách liên tục đang được thực thi ở hiện tại nên dùng thì Hiện tại đơn (fine).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. fined",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Lệch thì giữa hai mệnh đề tương phản",
         explanation: "Dùng fined (quá khứ) sẽ ngụ ý hiện nay không còn phạt nữa, mâu thuẫn với ý nghĩa liên tục kết nối với \"is still dirty\"."
       }
@@ -80,7 +80,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"These days\" là dấu hiệu của một quá trình tạm thời đang diễn ra quanh hiện tại, thì Hiện tại tiếp diễn (is looking) là chuẩn xác nhất.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. She looks for a new job these days.",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Dùng Hiện tại đơn cho tình huống mang tính tạm thời",
         explanation: "Hiện tại đơn diễn tả sự thật lâu dài/thói quen cố định; việc tìm việc là tạm thời trong giai đoạn hiện nay."
       }
@@ -100,7 +100,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Tính từ \"beneficial\" đi với giới từ \"to\" (có lợi cho ai/cái gì). Chủ ngữ Gerund \"Reading books\" đòi hỏi to be \"is\".",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. Reading books beneficial...",
+        baitOptionText: "D. will freeze",
         diagnosticTitle: "Bỏ quên động từ to be liên kết tính từ",
         explanation: "Tính từ beneficial không thể tự làm vị ngữ nếu thiếu động từ to be \"is\"."
       }
@@ -120,7 +120,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Động từ chia ở Quá khứ đơn (travelled, stayed) kết hợp với trạng từ tần suất (every summer, always) diễn tả thói quen trong quá khứ.",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. Một sự thật luôn luôn đúng trong hiện tại",
+        baitOptionText: "D. will freeze",
         diagnosticTitle: "Nhầm trạng từ \"always\" và \"every\" chỉ có trong hiện tại đơn",
         explanation: "Trạng từ tần suất như always/every hoàn toàn có thể kết hợp với Quá khứ đơn để chỉ thói quen cũ."
       }
@@ -140,7 +140,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Sau giới từ before là V-ing (suffering from). Mệnh đề chính chia quá khứ đơn (valued) và cấu trúc so sánh \"value X over Y\" (coi trọng X hơn Y).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. are valuing wealth than health",
+        baitOptionText: "C. froze",
         diagnosticTitle: "Dùng than với động từ value",
         explanation: "Cấu trúc chuẩn là \"value something OVER something else\", không dùng \"than\"."
       }
@@ -160,7 +160,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Lịch trình tàu xe, máy bay, thời khóa biểu cố định luôn dùng thì Hiện tại đơn mang nghĩa lịch trình công cộng.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. is leaving",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Dùng thì tiếp diễn cho lịch trình công cộng cố định",
         explanation: "Hiện tại tiếp diễn dùng cho kế hoạch cá nhân đã sắp xếp, với tàu xe công cộng theo giờ chuẩn phải dùng Hiện tại đơn."
       }
@@ -180,7 +180,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Mệnh lệnh thức gây chú ý \"Please be quiet!\" báo hiệu một hành động đang thực sự diễn ra ngay tại thời điểm nói.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. sleep",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Dùng Hiện tại đơn thay cho hành động đang xảy ra trước mắt",
         explanation: "Nếu dùng \"sleep\" thì chỉ nói về thói quen nói chung, không giải thích lý do phải giữ im lặng ngay lúc này."
       }
@@ -200,7 +200,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Forget to do sth = quên phải làm một việc gì đó (chưa làm). Forget doing sth = quên một việc đã từng làm trong quá khứ.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. put -> puts",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Tưởng nhầm động từ put chưa chia thì",
         explanation: "Động từ bất quy tắc \"put\" có cả 3 cột giống nhau (put - put - put), trong câu quá khứ yesterday dùng \"put\" là hoàn toàn đúng."
       }
@@ -212,17 +212,17 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Trong cụm từ \"one of those standout destinations\" (bài đọc Hội An), từ \"standout\" (adj) ĐỒNG NGHĨA nhất với từ nào?",
       options: [
-        { id: "opt_A", label: "A", text: "remarkable / extraordinary (nổi bật, xuất chúng)" },
-        { id: "opt_B", label: "B", text: "ordinary / average (bình thường, phổ thông)" },
-        { id: "opt_C", label: "C", text: "overcrowded (quá đông đúc)" },
-        { id: "opt_D", label: "D", text: "isolated (xa xôi, cô lập)" }
+        { id: "opt_A", label: "A", text: "remarkable" },
+        { id: "opt_B", label: "B", text: "ordinary" },
+        { id: "opt_C", label: "C", text: "overcrowded" },
+        { id: "opt_D", label: "D", text: "isolated" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. remarkable / extraordinary (nổi bật, xuất chúng)",
+      correctAnswerText: "A. remarkable",
       correctExplanation: "\"Standout\" (adj) mô tả một người/vật/địa điểm vượt trội, đặc biệt xuất sắc và đáng nhớ hơn tất cả những thứ xung quanh.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. overcrowded",
+        baitOptionText: "C. froze",
         diagnosticTitle: "Nhầm lẫn giữa nổi tiếng thu hút khách với đông đúc chật chội",
         explanation: "Standout chỉ chất lượng nổi bật vượt trội của địa danh, không mang nghĩa tiêu cực là quá tải hay chật chội."
       }
@@ -232,17 +232,17 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Từ TRÁI NGHĨA với \"bland\" trong câu: \"I always thought pho was such a bland dish without very much flavour\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "flavorful / tasty (đậm đà, giàu hương vị)" },
-        { id: "opt_B", label: "B", text: "tasteless (nhạt nhẽo, vô vị)" },
-        { id: "opt_C", label: "C", text: "plain (đơn điệu, không nêm nếm)" },
-        { id: "opt_D", label: "D", text: "mild (dịu nhẹ, không cay)" }
+        { id: "opt_A", label: "A", text: "flavorful" },
+        { id: "opt_B", label: "B", text: "tasteless" },
+        { id: "opt_C", label: "C", text: "plain" },
+        { id: "opt_D", label: "D", text: "mild" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. flavorful / tasty (đậm đà, giàu hương vị)",
+      correctAnswerText: "A. flavorful",
       correctExplanation: "\"Bland\" = nhạt nhẽo, thiếu gia vị. Do đó từ trái nghĩa chính xác nhất là \"flavorful\" (đầy đặn hương vị).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. tasteless",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
         explanation: "Tasteless là từ đồng nghĩa với bland. Đề bài đang yêu cầu tìm từ TRÁI NGHĨA."
       }
@@ -252,17 +252,17 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       roundIndex: 2,
       prompt: "Trong cụm \"a sobering look at the lasting effects of the Vietnam War\", từ \"sobering\" mang sắc thái nghĩa gì?",
       options: [
-        { id: "opt_A", label: "A", text: "serious and thought-provoking (lắng đọng, khiến người ta phải suy ngẫm sâu sắc)" },
-        { id: "opt_B", label: "B", text: "entertaining and humorous (mang tính giải trí, hài hước)" },
-        { id: "opt_C", label: "C", text: "boring and dull (nhàm chán, tẻ nhạt)" },
-        { id: "opt_D", label: "D", text: "terrifying and chaotic (kinh hoàng, hỗn loạn)" }
+        { id: "opt_A", label: "A", text: "serious and thought-provoking" },
+        { id: "opt_B", label: "B", text: "entertaining and humorous" },
+        { id: "opt_C", label: "C", text: "boring and dull" },
+        { id: "opt_D", label: "D", text: "terrifying and chaotic" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. serious and thought-provoking (lắng đọng, khiến người ta phải suy ngẫm sâu sắc)",
+      correctAnswerText: "A. serious and thought-provoking",
       correctExplanation: "\"Sobering\" (adj) mô tả trải nghiệm trang nghiêm khiến người xem bừng tỉnh, trở nên nghiêm túc và suy ngẫm sâu xa về thực tế.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. boring and dull",
+        baitOptionText: "C. froze",
         diagnosticTitle: "Đánh đồng cảm giác trầm lắng với sự nhàm chán",
         explanation: "Sobering là một trải nghiệm gây ấn tượng tinh thần mạnh mẽ và sâu sắc, hoàn toàn không phải tẻ nhạt."
       }
@@ -282,7 +282,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Travel itinerary\" là thuật ngữ chuẩn xác chỉ bản lịch trình chi tiết các chặng dừng chân trong một chuyến du lịch.",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. Travel coupon",
+        baitOptionText: "D. will freeze",
         diagnosticTitle: "Nhầm lẫn với vé giảm giá / phiếu tham quan",
         explanation: "Coupon là phiếu dịch vụ/giảm giá, không mang nghĩa lịch trình di chuyển."
       }
@@ -302,7 +302,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Topography\" (danh từ học thuật) chỉ đặc tính địa hình, hình thái các khối núi đá, đảo nổi và bề mặt địa thế tự nhiên.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. Hệ thống truyền thuyết và phong tục",
+        baitOptionText: "C. froze",
         diagnosticTitle: "Nhầm topography với folklore / mythology",
         explanation: "Topography thuần túy là thuật ngữ địa lý học miêu tả hình thể đất đai cảnh quan."
       }
@@ -322,7 +322,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Thoroughly experience something\" là collocation cao cấp trong IELTS: trải nghiệm một cách tường tận, cặn kẽ và trọn vẹn từ đầu đến cuối.",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. roughly",
+        baitOptionText: "D. will freeze",
         diagnosticTitle: "Nhầm roughly (sơ sài/ước chừng) với trải nghiệm sâu sắc",
         explanation: "Roughly mang nghĩa áng chừng hoặc thô kệch, trái ngược hoàn toàn với ý nghĩa tường tận của thoroughly."
       }
@@ -332,17 +332,17 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       roundIndex: 6,
       prompt: "Thành ngữ: \"I cannot recommend this experience enough!\" tương đương với câu nào dưới đây?",
       options: [
-        { id: "opt_A", label: "A", text: "I strongly / wholeheartedly encourage everyone to try this experience." },
+        { id: "opt_A", label: "A", text: "I strongly encourage everyone to try this experience." },
         { id: "opt_B", label: "B", text: "I do not think this experience is suitable for most tourists." },
         { id: "opt_C", label: "C", text: "I have run out of time to describe the trip properly." },
         { id: "opt_D", label: "D", text: "I refuse to provide any further recommendation about this tour." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. I strongly / wholeheartedly encourage everyone to try this experience.",
+      correctAnswerText: "A. I strongly encourage everyone to try this experience.",
       correctExplanation: "\"Cannot recommend sth enough\" là cấu trúc khen ngợi tuyệt đối: khen bao nhiêu cũng chưa đủ, nhiệt liệt khuyến khích nên thử.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. I do not think this experience is suitable",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Bẫy dịch nghĩa đen từ phủ định \"cannot\"",
         explanation: "Học sinh thấy chữ \"cannot\" tưởng là lời chê hoặc không giới thiệu, trong khi đây là thành ngữ bày tỏ sự thán phục cao nhất."
       }
@@ -362,7 +362,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc chuẩn xác: \"admission to a place/event\" (quyền được vào cửa, cấp phép vào một địa điểm nào đó).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. for",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Dịch từ \"cho\" trong tiếng Việt thành giới từ \"for\"",
         explanation: "Tiếng Việt nói \"vé vào cửa cho các ngôi đền\", nhưng tiếng Anh bắt buộc dùng \"admission TO [place]\"."
       }
@@ -382,7 +382,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"A standout exhibition\" = một buổi triển lãm nổi bật, xuất sắc vượt trội thu hút sự ca ngợi quốc tế. \"Bland\" (nhạt nhẽo) mâu thuẫn với vế sau.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. bland",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Không liên kết với kết quả tích cực \"attracted praise\"",
         explanation: "Nếu triển lãm \"bland\" (nhạt nhẽo) thì không thể nhận được sự tán dương rộng rãi của quốc tế."
       }
@@ -402,7 +402,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Relentless noise\" paraphrase cho \"constant honking\", \"chaotic traffic\" paraphrase cho \"mad traffic\", và \"discouraged me\" paraphrase cho \"didn't feel very inspired\".",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. The author was forbidden",
+        baitOptionText: "C. froze",
         diagnosticTitle: "Nhầm lẫn giữa mất cảm hứng cá nhân với bị pháp luật cấm đoán",
         explanation: "Tác giả chỉ không có hứng thú đi dạo (uninspired), không hề bị ai ngăn cấm (forbidden)."
       }
@@ -425,7 +425,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Âm môi-môi (bilabial stop): Hai môi khép chặt chặn luồng hơi lại rồi bật ra để phát âm /p/ (vô thanh) và /b/ (hữu thanh).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. /t/ và /d/",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Nhầm vị trí phát âm đầu lưỡi với môi",
         explanation: "/t/ và /d/ được tạo ra bằng đầu lưỡi chạm vào phần lợi hàm trên, không dùng hai môi khép."
       }
@@ -445,7 +445,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Đây là âm răng - môi (labiodental fricative): răng trên chạm nhẹ môi dưới, đẩy luồng hơi liên tục qua khe hở.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Mím chặt hai môi",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Nhầm sang cách phát âm âm môi-môi /p, b/",
         explanation: "Nếu mím hai môi thì sẽ tạo ra âm /p/ hoặc /b/, không thể tạo ra luồng hơi ma sát của /f, v/."
       }
@@ -465,7 +465,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cụm cố định mang nghĩa \"nhờ có cái gì\": Thanks to + Noun/Pronoun. Phải có đuôi \"s\" ở Thanks.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Thank to",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Rơi rụng đuôi -s trong cụm \"Thanks to\"",
         explanation: "Thói quen viết Thank to (thiếu s) là lỗi sơ đẳng thường thấy trong IELTS Writing."
       }
@@ -485,7 +485,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc: enable somebody TO DO something (cho phép/tạo điều kiện cho ai làm gì).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. enables me practice",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Bỏ quên \"to\" sau enable",
         explanation: "Khác với động từ let/make, động từ enable bắt buộc phải đi kèm với to-V."
       }
@@ -505,7 +505,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc to be worth something: \"Is it worth the fee?\" (Nó có đáng đồng tiền bát gạo / khoản phí bỏ ra không?).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. Does it worth money?",
+        baitOptionText: "C. froze",
         diagnosticTitle: "Dùng trợ động từ does với tính từ worth",
         explanation: "\"Worth\" trong trường hợp này đóng vai trò tính từ/giới từ đòi hỏi to be, không dùng trợ động từ Does."
       }
@@ -525,7 +525,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Danh từ access luôn đi với giới từ TO: have / give access TO something (quyền truy cập vào cái gì).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. for",
+        baitOptionText: "C. froze",
         diagnosticTitle: "Dịch \"truy cập cho nhiều bài học\"",
         explanation: "Giới từ học thuật bất di bất dịch của danh từ access là \"to\"."
       }
@@ -545,7 +545,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Bài đọc nêu: \"hurt your eyes... the blue light from the screens can make it hard to sleep\".",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. Khiến người dùng bị tăng cân",
+        baitOptionText: "D. will freeze",
         diagnosticTitle: "Nhầm lẫn tác hại của việc lười vận động với ánh sáng màn hình",
         explanation: "Ánh sáng xanh tác động trực tiếp đến võng mạc và hormone giấc ngủ melatonin, gây khó ngủ."
       }
@@ -565,7 +565,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc tân ngữ giả: make it + Adj + (for sb) + TO DO something. Đi với focus ON something.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. makes me hard to focus",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Bỏ quên tân ngữ giả \"it\"",
         explanation: "\"Make me hard\" là sai hoàn toàn về nghĩa và ngữ pháp; bắt buộc phải dùng tân ngữ giả: make IT hard for me."
       }
@@ -585,7 +585,7 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cụm phrasal verb tự nhiên trong chọn lựa: \"go for something\" (quyết định chọn / mua món đồ nào đó).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. take",
+        baitOptionText: "B. is freezing",
         diagnosticTitle: "Dùng từ take không đi kèm giới từ phù hợp",
         explanation: "Cụm từ tự nhiên mà người bản xứ hay dùng khi ra quyết định lựa chọn là \"I'll go for...\"."
       }
@@ -595,17 +595,17 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
       roundIndex: 9,
       prompt: "Thành ngữ \"make up one's mind\" có nghĩa tương đương với động từ nào?",
       options: [
-        { id: "opt_A", label: "A", text: "decide (đưa ra quyết định)" },
-        { id: "opt_B", label: "B", text: "remember (ghi nhớ)" },
-        { id: "opt_C", label: "C", text: "forget (quên)" },
-        { id: "opt_D", label: "D", text: "hesitate (do dự)" }
+        { id: "opt_A", label: "A", text: "decide" },
+        { id: "opt_B", label: "B", text: "remember" },
+        { id: "opt_C", label: "C", text: "forget" },
+        { id: "opt_D", label: "D", text: "hesitate" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. decide (đưa ra quyết định)",
+      correctAnswerText: "A. decide",
       correctExplanation: "\"Make up one's mind\" là thành ngữ phổ biến đồng nghĩa hoàn toàn với \"make a decision / decide\".",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. hesitate",
+        baitOptionText: "D. will freeze",
         diagnosticTitle: "Nhầm lẫn với giai đoạn suy nghĩ do dự",
         explanation: "Make up mind là đã chốt hạ quyết định xong, chấm dứt việc do dự."
       }

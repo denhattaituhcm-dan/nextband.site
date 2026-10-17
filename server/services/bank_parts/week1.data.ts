@@ -10,19 +10,19 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Trong 4 cấp độ ngôn ngữ (word, phrase, clause, sentence), thành phần nào bắt buộc phải có cặp Subject và Finite Verb?",
       options: [
-        { id: "opt_A", label: "A", text: "Clause (mệnh đề)" },
-        { id: "opt_B", label: "B", text: "Phrase (cụm từ)" },
-        { id: "opt_C", label: "C", text: "Word (từ đơn)" },
-        { id: "opt_D", label: "D", text: "Modifier (thành phần bổ nghĩa)" }
+        { id: "opt_A", label: "A", text: "Clause" },
+        { id: "opt_B", label: "B", text: "Phrase" },
+        { id: "opt_C", label: "C", text: "Word" },
+        { id: "opt_D", label: "D", text: "Modifier" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Clause (mệnh đề)",
+      correctAnswerText: "A. Clause",
       correctExplanation: "Mệnh đề (clause) luôn luôn phải có chủ ngữ (Subject) và động từ chính có chia thì (Finite Verb).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Phrase (cụm từ)",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Nhầm lẫn giữa Phrase và Clause",
-        explanation: "Phrase (cụm từ) chỉ là một tập hợp từ liên kết nhau, không chứa cặp Subject - Finite Verb trọn vẹn."
+        explanation: "Phrase chỉ là một tập hợp từ liên kết nhau, không chứa cặp Subject - Finite Verb trọn vẹn."
       }
     },
     {
@@ -40,7 +40,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Equipment là danh từ không đếm được (uncountable noun), không bao giờ có đuôi -s hay mạo từ an.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. equipments",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Thêm -s vào danh từ không đếm được",
         explanation: "Người học thường dịch từ \"nhiều thiết bị\" và tự động thêm số nhiều -s vào equipment, đây là lỗi phổ biến trong IELTS."
       }
@@ -60,7 +60,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Trong câu (1), book là động từ (đặt vé). Trong câu (2), book là danh từ (quyển sách).",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. (1) Noun - (2) Noun",
+        baitOptionText: "D. Modifier",
         diagnosticTitle: "Định kiến từ loại cố định",
         explanation: "Rất nhiều từ trong tiếng Anh vừa có thể làm danh từ vừa làm động từ tuỳ vị trí và chức năng trong câu."
       }
@@ -80,7 +80,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Advice là danh từ không đếm được, không dùng many và không có đuôi -s. Dùng much advice hoặc pieces of advice.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. in life -> on life",
+        baitOptionText: "C. Word",
         diagnosticTitle: "Phân tâm vào giới từ",
         explanation: "Người học thường săm soi giới từ mà bỏ sót lỗi cốt lõi về danh từ không đếm được (advice)."
       }
@@ -100,7 +100,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Chủ ngữ thật của câu là đại từ số ít \"One\", không phải \"sisters\", do đó động từ to be phải chia số ít là \"is\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. are",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Bẫy danh từ đứng liền kề (Proximity Trap)",
         explanation: "Học viên thấy từ \"sisters\" đứng ngay trước chỗ trống nên chia \"are\", quên mất chủ ngữ chính là \"One of...\"."
       }
@@ -120,7 +120,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Danh động từ (Gerund) \"Reading books\" làm Subject số ít, Finite Verb là \"is\", vị ngữ là tính từ \"beneficial to\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Know English beneficial to students.",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Thiếu Finite Verb hoặc dùng Verb nguyên mẫu làm S",
         explanation: "Know không thể làm chủ ngữ (phải là Knowing), và câu thiếu động từ to be \"is beneficial\"."
       }
@@ -140,7 +140,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc sai khiến: make someone DO something (động từ nguyên mẫu không to).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. My boss makes me to complete the task before 5 PM.",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Thêm \"to\" sau make sb",
         explanation: "Thói quen dùng \"to-infinitive\" sau mọi tân ngữ là sai lầm phổ biến; sau make sb phải là V nguyên thể."
       }
@@ -160,7 +160,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Homework là danh từ không đếm được trong tiếng Anh, luôn dùng too much homework chứ không có many homeworks.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. to do -> doing",
+        baitOptionText: "C. Word",
         diagnosticTitle: "Nhầm lẫn mục đích to-infinitive",
         explanation: "Homework to do là cấu trúc hoàn toàn chuẩn chỉ mục đích, lỗi sai thực sự nằm ở danh từ không đếm được."
       }
@@ -180,7 +180,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc chuẩn: allow someone TO DO something. Chủ ngữ Gerund Studying abroad chia động từ allows.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Studying abroad allows students know more about different cultures.",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Bỏ quên \"to\" sau allow sb",
         explanation: "Khác với make sb do, động từ allow bắt buộc phải đi với to-V: allow sb TO do sth."
       }
@@ -200,7 +200,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Sau cấu trúc help someone, động từ theo sau là V nguyên mẫu (write) hoặc to-V (to write), KHÔNG BAO GIỜ kẹp thêm modal verb \"can\" (lỗi thừa động từ vị ngữ: helps him write).",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. His detailed advice on future career choices is very helpful to us.",
+        baitOptionText: "D. Modifier",
         diagnosticTitle: "Bẫy danh từ bổ ngữ số nhiều \"choices\"",
         explanation: "Học viên hay tưởng nhầm câu D sai vì thấy choices là số nhiều đi với is, nhưng chủ ngữ chính thật sự là danh từ không đếm được advice (chia is là hoàn toàn đúng)."
       }
@@ -222,7 +222,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Tuition fees\" là tiền học phí, đồng nghĩa với education costs hoặc college charges.",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. living expenses / allowances",
+        baitOptionText: "D. Modifier",
         diagnosticTitle: "Nhầm học phí với chi phí sinh hoạt",
         explanation: "Living expenses là tiền ăn ở, sinh hoạt cá nhân, hoàn toàn tách biệt với tiền học phí (tuition fees)."
       }
@@ -232,17 +232,17 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Từ TRÁI NGHĨA với \"optimistic\" trong câu miêu tả tinh thần người lính: \"He was so optimistic and committed\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "pessimistic (bi quan, luôn nghĩ đến điều tiêu cực)" },
-        { id: "opt_B", label: "B", text: "enthusiastic (hào hứng, nhiệt huyết)" },
-        { id: "opt_C", label: "C", text: "exhausted (kiệt sức)" },
-        { id: "opt_D", label: "D", text: "committed (tận tâm, gắn bó)" }
+        { id: "opt_A", label: "A", text: "pessimistic" },
+        { id: "opt_B", label: "B", text: "enthusiastic" },
+        { id: "opt_C", label: "C", text: "exhausted" },
+        { id: "opt_D", label: "D", text: "committed" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. pessimistic (bi quan, luôn nghĩ đến điều tiêu cực)",
+      correctAnswerText: "A. pessimistic",
       correctExplanation: "\"Optimistic\" = lạc quan, tin tưởng vào tương lai tốt đẹp. Trái nghĩa trực tiếp là \"pessimistic\" (bi quan).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. exhausted",
+        baitOptionText: "C. Word",
         diagnosticTitle: "Nhầm lẫn giữa trạng thái thể lực kiệt sức và thái độ bi quan",
         explanation: "Exhausted là kiệt sức về thể chất, không phải từ trái nghĩa về mặt thái độ tinh thần của optimistic."
       }
@@ -262,7 +262,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Relief\" (danh từ) mô tả cảm xúc thư thái, nhẹ nhõm sau khi vượt qua một áp lực hay nỗi âu lo lớn.",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. Nỗi hoang mang lo sợ",
+        baitOptionText: "D. Modifier",
         diagnosticTitle: "Nhầm lẫn cảm xúc tích cực sau thi với áp lực lo lắng trước thi",
         explanation: "Relief xuất hiện sau khi bạn đã vượt qua thử thách thành công, mang nghĩa trút bỏ gánh nặng."
       }
@@ -282,7 +282,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation học thuật: \"practical application\" (sự ứng dụng mang tính thực tiễn vào đời sống).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. practice",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Nhầm lẫn danh từ practice với tính từ practical đứng trước danh từ",
         explanation: "Trước danh từ \"application\" cần một tính từ bổ nghĩa là \"practical\"."
       }
@@ -292,17 +292,17 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       roundIndex: 4,
       prompt: "Collocation nào trong bài đọc chỉ việc \"bỏ học giữa chừng / thôi học trước khi tốt nghiệp\"?",
       options: [
-        { id: "opt_A", label: "A", text: "dropping out of school / university" },
+        { id: "opt_A", label: "A", text: "dropping out of school" },
         { id: "opt_B", label: "B", text: "breaking up with school" },
         { id: "opt_C", label: "C", text: "going on with university" },
         { id: "opt_D", label: "D", text: "falling down the exam" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. dropping out of school / university",
+      correctAnswerText: "A. dropping out of school",
       correctExplanation: "\"Drop out of school/university\" là phrasal verb chuẩn xác chỉ hành vi bỏ học giữa chừng.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. breaking up with school",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Dùng phrasal verb quan hệ tình cảm cho trường học",
         explanation: "Break up dùng cho chia tay người yêu, không dùng cho việc thôi học."
       }
@@ -322,7 +322,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Stay alert\" = duy trì sự tỉnh táo và tập trung cảnh giác cao độ.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. luôn chạy thật nhanh",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Nhầm trạng thái nhận thức tinh thần với hành động thể chất",
         explanation: "Alert là trạng thái tập trung nhận thức của não bộ trước rủi ro, không phải hành vi vận động."
       }
@@ -342,7 +342,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Sau tính từ sở hữu \"their personal\" bắt buộc phải là một danh từ số nhiều: \"interests\" (các mối quan tâm / sở thích).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. interested",
+        baitOptionText: "C. Word",
         diagnosticTitle: "Nhầm lẫn tính từ cảm xúc đuôi -ed với danh từ",
         explanation: "Interested là tính từ chỉ cảm xúc của người, không thể làm tân ngữ trực tiếp sau explore their."
       }
@@ -362,7 +362,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Exhausted\" là tính từ cực độ tương đương với \"extremely tired / completely worn out\".",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. relieved",
+        baitOptionText: "C. Word",
         diagnosticTitle: "Nhầm cảm giác nhẹ nhõm với kiệt sức",
         explanation: "Relieved là cảm thấy nhẹ nhõm sau khi trút được gánh lo, không chỉ sự cạn kiệt năng lượng."
       }
@@ -382,7 +382,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"University campus\" là khuôn viên tổng thể của một trường đại học gồm các tòa giảng đường, viện nghiên cứu và tiện ích.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. yard",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Dịch từ \"sân bãi\" thay vì khuôn viên học thuật",
         explanation: "Yard chỉ khoảnh sân nhỏ trước/sau nhà, không dùng chỉ toàn bộ khuôn viên trường đại học."
       }
@@ -402,7 +402,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Strict adherence to safety guidelines\" paraphrase cho \"follow safety procedures carefully\", và \"veteran workers are not immune to hazards\" paraphrase cho \"experienced firefighters can find themselves in difficult situations\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Experienced firefighters never make mistakes",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Hiểu sai nghĩa cảnh báo thành khẳng định tuyệt đối",
         explanation: "Đoạn văn cảnh báo người có kinh nghiệm vẫn gặp nguy hiểm, không hề khẳng định họ không bao giờ mắc lỗi."
       }
@@ -424,7 +424,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"colleague\" phát âm là /ˈkɒliːɡ/ chứa nguyên âm dài /iː/. Trong khi đó, \"biscuit\" /ˈbɪskɪt/, \"building\" /ˈbɪldɪŋ/, \"system\" /ˈsɪstəm/ đều mang nguyên âm ngắn /ɪ/.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. biscuit",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Nhầm lẫn chữ 'ui' trong biscuit phát âm dài",
         explanation: "Học viên hay nhầm 'ui' trong biscuit phát âm là âm dài, nhưng thực tế biscuit đọc là âm /ɪ/ ngắn."
       }
@@ -444,7 +444,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"plaid\" là trường hợp đặc biệt phát âm là /plæd/ (nguyên âm /æ/). Trong khi \"bread\" /bred/, \"dead\" /ded/, và \"said\" /sed/ đều mang âm /e/ ngắn.",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. said",
+        baitOptionText: "D. Modifier",
         diagnosticTitle: "Nhầm lẫn từ nói said mang âm /æ/",
         explanation: "Nhiều người học lầm tưởng 'said' phát âm dạng /seɪd/ hoặc /sæd/, nhưng phiên âm chuẩn là /sed/ (âm /e/)."
       }
@@ -464,7 +464,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Âm schwa /ə/ là nguyên âm lướt nhẹ, không bao giờ mang trọng âm, xuất hiện trong today, about, doctor.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. /ʌ/",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Nhầm schwa với âm á /ʌ/",
         explanation: "Âm /ʌ/ (trong cup, duck) có thể mang trọng âm, còn schwa /ə/ luôn ở âm tiết không nhấn."
       }
@@ -504,7 +504,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation chuẩn với áp lực là: to be UNDER pressure / under a lot of pressure.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. I am in a lot of pressure",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Dùng sai giới từ (in thay vì under)",
         explanation: "Người học tiếng Việt thường dịch \"trong áp lực\" thành \"in pressure\", nhưng tiếng Anh quy chuẩn là \"under pressure\"."
       }
@@ -524,7 +524,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Job opportunities after graduation\" là cụm từ học thuật chuẩn xác chỉ cơ hội việc làm sau tốt nghiệp.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. job chances after graduate",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Dùng từ thân mật \"chance\" và sai từ loại sau \"after\"",
         explanation: "Chance mang nghĩa cơ hội may rủi hơn là cơ hội nghề nghiệp trang trọng, và sau giới từ after phải là danh từ graduation."
       }
@@ -544,7 +544,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Tính từ miêu tả công việc lương thấp là \"low-paid\" (hoặc \"poorly-paid\", \"a low salary\").",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. My job is cheap salary.",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Dịch \"rẻ\" thành \"cheap salary\"",
         explanation: "Tuyệt đối không dùng \"cheap\" với lương bổng trong tiếng Anh."
       }
@@ -564,7 +564,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Vế sau giải thích nguyên nhân/lý do cho vế trước, do đó sử dụng liên từ \"because\".",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. so",
+        baitOptionText: "C. Word",
         diagnosticTitle: "Đảo lộn nguyên nhân - kết quả",
         explanation: "\"So\" chỉ kết quả, nếu dùng \"so\" thì vế \"helps me get promoted\" phải ở trước."
       }
@@ -584,7 +584,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc chỉ phương tiện / cách thức: by + V-ing (bằng cách làm gì).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. with",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Dịch \"với việc luyện tập\" thành \"with V-ing\"",
         explanation: "Chỉ phương thức hành động để đạt kết quả luôn dùng giới từ \"by + V-ing\", không dùng \"with\"."
       }
@@ -604,7 +604,7 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"To be keen on\" (hoặc \"to be a big fan of / passionate about\") là cách diễn đạt tự nhiên, tránh lỗi dịch word-by-word.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. I very like football.",
+        baitOptionText: "B. Phrase",
         diagnosticTitle: "Lỗi ngữ pháp sơ đẳng \"very like\"",
         explanation: "Phó từ \"very\" không bao giờ bổ nghĩa trực tiếp cho động từ thường (không dùng very like, phải là like very much)."
       }

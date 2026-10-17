@@ -55,7 +55,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 3,
       prompt: "Điền liên từ thích hợp: 'Many girls want to become beauty vloggers, ____________ boys usually dream of becoming game streamers.'",
       options: [
-        { id: "opt_A", label: "A", text: "whereas / while" },
+        { id: "opt_A", label: "A", text: "whereas" },
         { id: "opt_B", label: "B", text: "because" },
         { id: "opt_C", label: "C", text: "so that" },
         { id: "opt_D", label: "D", text: "therefore" }
@@ -70,7 +70,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 4,
       prompt: "Điền liên từ thích hợp: 'He failed the test, ____________ he spent a lot of time revising.'",
       options: [
-        { id: "opt_A", label: "A", text: "although / even though" },
+        { id: "opt_A", label: "A", text: "although" },
         { id: "opt_B", label: "B", text: "because" },
         { id: "opt_C", label: "C", text: "so" },
         { id: "opt_D", label: "D", text: "as long as" }
@@ -78,14 +78,14 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       correctOptionId: "opt_A",
       timeLimitSeconds: 20,
       points: 1000,
-      explanation: "Vế 1 (rớt bài thi) trái ngược với vế 2 (dành nhiều thời gian ôn tập), do đó phải dùng liên từ nhượng bộ 'although / even though' (mặc dù)."
+      explanation: "Vế 1 (rớt bài thi) trái ngược với vế 2 (dành nhiều thời gian ôn tập), do đó phải dùng liên từ nhượng bộ 'although' (mặc dù)."
     },
     {
       id: "doer_w9d1_q06",
       roundIndex: 5,
       prompt: "Điền liên từ thích hợp: 'You can easily get a 6.5 in the IELTS test, ____________ you spend at least 2 hours each day studying English.'",
       options: [
-        { id: "opt_A", label: "A", text: "provided that / as long as" },
+        { id: "opt_A", label: "A", text: "as long as" },
         { id: "opt_B", label: "B", text: "unless" },
         { id: "opt_C", label: "C", text: "although" },
         { id: "opt_D", label: "D", text: "whereas" }
@@ -163,17 +163,17 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Trong chủ đề Media & Influencers, từ \"authenticity\" trong câu \"Khoai Lang Thang's success lies in his authenticity\" ĐỒNG NGHĨA nhất với:",
       options: [
-        { id: "opt_A", label: "A", text: "genuineness / truthfulness (sự chân thực, tính chân thành tự nhiên)" },
-        { id: "opt_B", label: "B", text: "artificiality / fakery (sự giả tạo, dàn dựng)" },
-        { id: "opt_C", label: "C", text: "extravagance (sự xa hoa lãng phí)" },
-        { id: "opt_D", label: "D", text: "popularity (sự nổi tiếng bề nổi)" }
+        { id: "opt_A", label: "A", text: "genuineness" },
+        { id: "opt_B", label: "B", text: "artificiality" },
+        { id: "opt_C", label: "C", text: "extravagance" },
+        { id: "opt_D", label: "D", text: "popularity" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. genuineness / truthfulness (sự chân thực, tính chân thành tự nhiên)",
+      correctAnswerText: "A. Nối 2 mệnh đề độc lập (main clauses) chỉ bằng một dấu phẩy mà không có liên từ phù hợp",
       correctExplanation: "\"Authenticity\" (danh từ) = tính chân thực, không diễn xuất giả tạo, đồng nghĩa với genuineness.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. artificiality / fakery",
+        baitOptionText: "B. Đặt dấu phẩy sau liên từ ",
         diagnosticTitle: "Chọn nhầm từ trái nghĩa",
         explanation: "Fakery/artificiality là sự giả tạo dàn dựng PR, trái ngược hoàn toàn với phẩm chất authenticity của vlogger."
       }
@@ -183,17 +183,17 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Từ TRÁI NGHĨA với \"approachable\" trong câu \"YouTube stars connect better with people by being approachable\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "distant / unapproachable (xa cách, khó gần, lạnh lùng)" },
-        { id: "opt_B", label: "B", text: "friendly / accessible (thân thiện, dễ tiếp cận)" },
-        { id: "opt_C", label: "C", text: "humorous (hài hước)" },
-        { id: "opt_D", label: "D", text: "weird (kỳ lạ)" }
+        { id: "opt_A", label: "A", text: "distant" },
+        { id: "opt_B", label: "B", text: "friendly" },
+        { id: "opt_C", label: "C", text: "humorous" },
+        { id: "opt_D", label: "D", text: "weird" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. distant / unapproachable (xa cách, khó gần, lạnh lùng)",
+      correctAnswerText: "A. distant",
       correctExplanation: "\"Approachable\" = thân thiện, dễ gần, tạo cảm giác chan hòa. Từ trái nghĩa là \"distant\" (xa cách, kiêu kỳ như ngôi sao truyền hình).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. friendly / accessible",
+        baitOptionText: "B. Đặt dấu phẩy sau liên từ ",
         diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
         explanation: "Friendly và accessible là từ đồng nghĩa với approachable. Đề bài yêu cầu tìm từ TRÁI NGHĨA."
       }
@@ -213,7 +213,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Peer\" là bạn đồng lứa/người ngang hàng. \"Peer-to-peer advice\" là lời khuyên truyền miệng giữa những người có cùng hoàn cảnh sống.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Thông điệp quảng cáo truyền hình",
+        baitOptionText: "B. Đặt dấu phẩy sau liên từ ",
         diagnosticTitle: "Nhầm lẫn tiếp thị truyền thông với chia sẻ ngang hàng",
         explanation: "Quảng cáo truyền hình là tiếp thị áp đặt một chiều (top-down), đối lập với sự tin tưởng tự nhiên của lời khuyên đồng trang lứa (peer-to-peer)."
       }
@@ -233,7 +233,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation truyền thông học: \"drive opinions\" = định hướng dư luận, dẫn dắt quan điểm công chúng.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. cars",
+        baitOptionText: "B. Đặt dấu phẩy sau liên từ ",
         diagnosticTitle: "Dịch nghĩa đen của động từ drive thành lái xe",
         explanation: "Trong lĩnh vực xã hội học truyền thông, \"drive opinions\" mang nghĩa bóng là dẫn dắt ý kiến số đông."
       }
@@ -253,7 +253,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Buying power\" (hoặc purchasing power) là thuật ngữ tài chính tiêu chuẩn chỉ tổng năng lực tài chính và sức mua sắm hàng hóa.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. buying energy",
+        baitOptionText: "B. Đặt dấu phẩy sau liên từ ",
         diagnosticTitle: "Dùng từ năng lượng thay vì thuật ngữ sức mua",
         explanation: "Năng lực mua sắm trong kinh tế bắt buộc dùng danh từ \"power\", không dùng \"energy\" hay \"muscle\"."
       }
@@ -273,7 +273,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Idiom chuẩn: \"fall flat\" = thất bại, không tạo được hiệu ứng hay sức hút đối với một nhóm khán giả cụ thể.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. down",
+        baitOptionText: "B. Đặt dấu phẩy sau liên từ ",
         diagnosticTitle: "Dịch thành ngữ rơi xuống (fall down)",
         explanation: "Fall down là ngã sấp cơ học, còn thông điệp/sức ảnh hưởng không có tác dụng với ai phải dùng thành ngữ \"fall flat\"."
       }
@@ -293,7 +293,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc cảm xúc giao tiếp: \"relate TO somebody/something\" (thấu hiểu, tìm thấy sự đồng cảm sâu sắc với câu chuyện của ai).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. with",
+        baitOptionText: "B. Đặt dấu phẩy sau liên từ ",
         diagnosticTitle: "Dùng giới từ \"with\" do thói quen liên kết nghĩa",
         explanation: "Mặc dù communicate with có with, cấu trúc đồng cảm tâm lý bắt buộc là \"relate TO somebody\"."
       }
@@ -313,7 +313,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Distaste for something\" = cảm giác không ưa, ác cảm hoặc phản đối điều gì một cách sâu sắc.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Vị đắng chát thức ăn",
+        baitOptionText: "B. Đặt dấu phẩy sau liên từ ",
         diagnosticTitle: "Hiểu nhầm tiền tố dis-taste theo vị giác sinh học",
         explanation: "Trong ngữ cảnh truyền thông, distaste là thái độ ác cảm về mặt tâm lý, không liên quan đến vị giác trên lưỡi."
       }
@@ -333,7 +333,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Content creators\" là danh từ chuẩn nghề nghiệp chỉ các nhà sáng tạo nội dung trên mạng xã hội hiện đại.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. burnouts",
+        baitOptionText: "C. Quên không đặt dấu phẩy trước liên từ ",
         diagnosticTitle: "Chọn sai chủ thể nhân sự",
         explanation: "Burnout là tình trạng kiệt sức lao động, không phải chức danh nghề nghiệp truyền thông."
       }
@@ -353,7 +353,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Younger demographics reject staged commercial ads\" paraphrase cho \"disdain scripted promotional endorsements\", và \"trusting candid guidance from relatable personalities\" paraphrase cho \"confidence in authentic peer-to-peer recommendations\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Television commercials regained total trust",
+        baitOptionText: "B. Đặt dấu phẩy sau liên từ ",
         diagnosticTitle: "Đảo ngược xu hướng tiêu dùng của giới trẻ",
         explanation: "Giới trẻ ngày nay né tránh quảng cáo tivi truyền thống và tìm kiếm sự chân thực từ những người có hoàn cảnh tương đồng."
       }
@@ -396,7 +396,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 2,
       prompt: "Từ 'refrigeration' có bao nhiêu âm tiết (syllables) và trọng âm rơi vào âm tiết thứ mấy?",
       options: [
-        { id: "opt_A", label: "A", text: "5 âm tiết, trọng âm rơi vào âm tiết thứ 4 (/re-fri-ge-RA-tion/)" },
+        { id: "opt_A", label: "A", text: "5 âm tiết, trọng âm rơi vào âm tiết thứ 4" },
         { id: "opt_B", label: "B", text: "4 âm tiết, trọng âm rơi vào âm tiết thứ 1" },
         { id: "opt_C", label: "C", text: "5 âm tiết, trọng âm rơi vào âm tiết thứ 2" },
         { id: "opt_D", label: "D", text: "3 âm tiết, trọng âm rơi vào âm tiết thứ 3" }
@@ -411,8 +411,8 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 3,
       prompt: "Từ danh từ 'access' (sự truy cập, đường vào) có trọng âm rơi vào âm tiết thứ mấy?",
       options: [
-        { id: "opt_A", label: "A", text: "Âm tiết thứ 1 (/ˈæk.ses/)" },
-        { id: "opt_B", label: "B", text: "Âm tiết thứ 2 (/ækˈses/)" },
+        { id: "opt_A", label: "A", text: "Âm tiết thứ 1" },
+        { id: "opt_B", label: "B", text: "Âm tiết thứ 2" },
         { id: "opt_C", label: "C", text: "Trọng âm đều cả 2 âm tiết" },
         { id: "opt_D", label: "D", text: "Không có trọng âm" }
       ],
@@ -426,10 +426,10 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 4,
       prompt: "Cụm diễn đạt nào sau đây dùng để nói về sở thích cá nhân tương đương với 'I like/love'?",
       options: [
-        { id: "opt_A", label: "A", text: "I'm really into / I'm keen on / I have a passion for" },
-        { id: "opt_B", label: "B", text: "I'm bored with / I can't stand" },
-        { id: "opt_C", label: "C", text: "I doubt that / I disagree with" },
-        { id: "opt_D", label: "D", text: "I am obliged to / I am forced to" }
+        { id: "opt_A", label: "A", text: "I'm really into" },
+        { id: "opt_B", label: "B", text: "I'm bored with" },
+        { id: "opt_C", label: "C", text: "I doubt that" },
+        { id: "opt_D", label: "D", text: "I am obliged to" }
       ],
       correctOptionId: "opt_A",
       timeLimitSeconds: 20,
@@ -441,10 +441,10 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 5,
       prompt: "Điền từ thích hợp vào câu trả lời Speaking: 'Reading books helps me ____________ my knowledge and ____________ my mind.'",
       options: [
-        { id: "opt_A", label: "A", text: "expand / refresh" },
-        { id: "opt_B", label: "B", text: "destroy / erase" },
-        { id: "opt_C", label: "C", text: "shorten / narrow" },
-        { id: "opt_D", label: "D", text: "forget / close" }
+        { id: "opt_A", label: "A", text: "expand" },
+        { id: "opt_B", label: "B", text: "destroy" },
+        { id: "opt_C", label: "C", text: "shorten" },
+        { id: "opt_D", label: "D", text: "forget" }
       ],
       correctOptionId: "opt_A",
       timeLimitSeconds: 20,
@@ -456,7 +456,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 6,
       prompt: "Khi trả lời câu hỏi Speaking: 'How have your hobbies changed over time?', thí sinh cần phối hợp các thì nào để thể hiện sự biến đổi?",
       options: [
-        { id: "opt_A", label: "A", text: "Quá khứ (used to do) để nói sở thích cũ, Hiện tại đơn (nowadays) cho sở thích hiện tại, và Tương lai/Kế hoạch (thinking about taking up) cho tương lai" },
+        { id: "opt_A", label: "A", text: "Quá khứ cho thói quen cũ, Hiện tại đơn cho hiện tại, và cấu trúc tương lai cho dự định" },
         { id: "opt_B", label: "B", text: "Chỉ dùng một thì Quá khứ đơn cho toàn bộ câu trả lời" },
         { id: "opt_C", label: "C", text: "Chỉ dùng Hiện tại tiếp diễn" },
         { id: "opt_D", label: "D", text: "Chỉ dùng Tương lai đơn với 'will'" }
@@ -501,7 +501,7 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
       roundIndex: 9,
       prompt: "Để đạt mục tiêu Target 4.0 - 5.0 về phát âm (Pronunciation) trong bài học này, tiêu chí cốt lõi cần đạt được là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Phát âm đủ số âm tiết, đặt đúng trọng âm từ, phát âm rõ nguyên âm/phụ âm, và phát âm đúng các âm đuôi (-ed, -s/es)" },
+        { id: "opt_A", label: "A", text: "Đầy đủ số âm tiết, chuẩn trọng âm, rõ phụ âm/nguyên âm và âm đuôi" },
         { id: "opt_B", label: "B", text: "Phải nói được giọng Anh - Anh chuẩn của Hoàng gia Anh" },
         { id: "opt_C", label: "C", text: "Nói thật nhanh bất chấp sai âm cuối" },
         { id: "opt_D", label: "D", text: "Sử dụng từ vựng cổ điển khó hiểu" }

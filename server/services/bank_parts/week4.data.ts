@@ -20,7 +20,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Tính từ bổ nghĩa (spacious: kích thước/không gian, modern: thời đại/tuổi thọ) đứng trước danh từ chính \"house\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. a house spacious modern",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Lỗi trật tự từ tiếng Việt (Danh từ trước Tính từ)",
         explanation: "Người Việt có thói quen nói danh từ rồi mới đến tính từ (ngôi nhà rộng rãi), trong khi tiếng Anh tính từ đứng trước danh từ."
       }
@@ -40,7 +40,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Trước danh từ \"actions\" cần một tính từ (adjective) để bổ nghĩa: \"strict actions\" (những hành động/biện pháp nghiêm khắc).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. strictly",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Nhầm vị trí tính từ và trạng từ",
         explanation: "Thấy động từ \"took\" nên tưởng cần trạng từ \"strictly\", nhưng thực chất từ này bổ nghĩa trực tiếp cho danh từ \"actions\"."
       }
@@ -60,7 +60,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Động từ hành động \"explained\" cần một trạng từ chỉ cách thức (Adverb of manner) bổ nghĩa: explained something clearly.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. clear",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Dùng tính từ thay vì trạng từ bổ nghĩa cho động từ",
         explanation: "Clear là tính từ, chỉ đi sau linking verb (The rule is clear); bổ nghĩa cho động từ thường explain phải dùng phó từ clearly."
       }
@@ -80,7 +80,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Trạng từ tần suất (rarely, always, usually, often) đứng trước động từ thường (stays up) và sau động từ to be.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. He stays rarely up late",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Chèn trạng từ vào giữa phrasal verb",
         explanation: "Trạng từ tần suất đứng trước toàn bộ cụm động từ thường, không chèn vào giữa verb và particle."
       }
@@ -100,7 +100,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Hard work\" (chăm chỉ), thành ngữ \"land a dream job\" (đạt được công việc mơ ước). \"Hardly\" là hiếm khi/hầu như không, không mang nghĩa chăm chỉ.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. work hardly",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Nhầm lẫn giữa \"hard\" và \"hardly\"",
         explanation: "\"Hard\" vừa là tính từ vừa là trạng từ mang nghĩa chăm chỉ; \"hardly\" là trạng từ phủ định nghĩa là hầu như không."
       }
@@ -120,7 +120,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Tính từ học thuật: \"chronic diseases\" (các bệnh mãn tính, bệnh kéo dài dai dẳng như tiểu đường, tim mạch).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. chronically",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Chọn sai dạng từ loại",
         explanation: "Trước danh từ \"diseases\" phải là một tính từ, không dùng trạng từ chronically."
       }
@@ -140,7 +140,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Trạng từ mức độ \"relatively\" (tương đối) bổ nghĩa cho tính từ \"difficult\". Thành ngữ \"pass with flying colors\" nghĩa là đạt kết quả rực rỡ.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. relative difficult",
+        baitOptionText: "C. They just bought a modern spacious house suburbs in.",
         diagnosticTitle: "Dùng tính từ bổ nghĩa cho tính từ",
         explanation: "Bổ nghĩa cho một tính từ khác (difficult) bắt buộc phải là trạng từ (relatively), không thể dùng tính từ relative."
       }
@@ -160,7 +160,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cụm tính từ: highly responsible (rất có trách nhiệm) và considerate (chu đáo).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. considerable person",
+        baitOptionText: "C. They just bought a modern spacious house suburbs in.",
         diagnosticTitle: "Nhầm lẫn giữa considerate và considerable",
         explanation: "\"Considerate\" là chu đáo, biết nghĩ cho người khác; còn \"considerable\" là đáng kể/to lớn (về số lượng). Đây là bẫy từ vựng kinh điển."
       }
@@ -180,7 +180,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Bổ nghĩa cho động từ tăng \"increased\" trong IELTS Writing Task 1 phải là trạng từ chỉ tốc độ/mức độ: increased dramatically.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. dramatic",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Dùng tính từ sau động từ thường",
         explanation: "Chỉ khi dùng danh từ (\"saw a dramatic increase\") mới dùng tính từ; sau động từ thường \"increased\" phải là phó từ dramatically."
       }
@@ -200,7 +200,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Drove carefully\" (động từ + trạng từ), \"slippery road\" (tính từ + danh từ), \"extremely dangerous\" (trạng từ + tính từ).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. drove careful... extreme dangerous",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Quên đuôi -ly ở cả hai vị trí phó từ",
         explanation: "Drove cần phó từ carefully, và dangerous cần phó từ extremely bổ nghĩa."
       }
@@ -212,17 +212,17 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Trong chủ đề Health, từ ĐỒNG NGHĨA chuẩn xác nhất với \"intake\" trong câu \"a higher intake of red meat\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "consumption (sự tiêu thụ, lượng nạp vào cơ thể)" },
-        { id: "opt_B", label: "B", text: "exercise (sự vận động)" },
-        { id: "opt_C", label: "C", text: "release (sự thải ra)" },
-        { id: "opt_D", label: "D", text: "prevention (sự phòng ngừa)" }
+        { id: "opt_A", label: "A", text: "consumption" },
+        { id: "opt_B", label: "B", text: "exercise" },
+        { id: "opt_C", label: "C", text: "release" },
+        { id: "opt_D", label: "D", text: "prevention" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. consumption (sự tiêu thụ, lượng nạp vào cơ thể)",
+      correctAnswerText: "A. consumption",
       correctExplanation: "\"Intake\" trong dinh dưỡng học đồng nghĩa với \"consumption\" (lượng thức ăn/nước uống dung nạp vào cơ thể).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. release",
+        baitOptionText: "C. They just bought a modern spacious house suburbs in.",
         diagnosticTitle: "Nhầm lẫn giữa nạp vào và thải ra",
         explanation: "\"Release\" mang nghĩa thải ra/phát tán, trái ngược hoàn toàn với \"intake\" (dung nạp vào)."
       }
@@ -242,7 +242,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Tiền tố un- tạo nên cặp đối lập kinh điển trong dinh dưỡng học: processed (chế biến công nghiệp nhiều phụ gia) vs. unprocessed (thịt nguyên bản chưa chế biến).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. red meat vs. white meat",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Chọn cặp đối lập màu sắc thông thường ngoài bài",
         explanation: "Bài đọc nhấn mạnh sự sai lệch nghiên cứu do không phân biệt giữa processed và unprocessed, chứ không so sánh thịt đỏ với thịt trắng."
       }
@@ -262,7 +262,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Cardiovascular\" bắt nguồn từ gốc Hy Lạp: cardio- (tim) và vascular (mạch máu). Cụm này chỉ bệnh tim mạch.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Phổi và đường hô hấp",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Nhầm lẫn với bệnh hô hấp (respiratory disease)",
         explanation: "Hô hấp là respiratory, còn cardiovascular luôn chuyên biệt cho tim và mạch máu."
       }
@@ -282,7 +282,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Tiền tố over- mang nghĩa quá mức: \"overeating\" là hành vi ăn quá nhiều, mất kiểm soát do cơn đói dồn lại.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. fasting",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Chọn từ trái nghĩa (nhịn ăn)",
         explanation: "Fasting là chủ động nhịn ăn, trái ngược với overeating (ăn vô độ)."
       }
@@ -302,7 +302,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation y khoa thông dụng: \"blood sugar levels\" (chỉ số đường huyết trong máu).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. sweet",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Dùng tính từ sweet thay vì danh từ sugar",
         explanation: "Trong danh từ ghép y khoa chỉ chỉ số đường huyết, từ chuẩn bắt buộc là \"blood sugar\", không dùng tính từ sweet."
       }
@@ -322,7 +322,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"A well-balanced diet\" là collocation tiêu chuẩn trong IELTS: một chế độ ăn cân bằng đầy đủ dinh dưỡng.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. heavily-sweetened",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Chọn chế độ ăn nhiều đường có hại",
         explanation: "Heavily-sweetened là nhiều đường ngọt gây hại sức khỏe, mâu thuẫn với lời khuyên ăn uống lành mạnh."
       }
@@ -342,7 +342,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc học thuật cố định: \"distinguish BETWEEN [A] AND [B]\" (phân biệt rạch ròi giữa đối tượng A và đối tượng B).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. with",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Dịch từ \"với\" trong tiếng Việt thành giới từ \"with\"",
         explanation: "Tiếng Việt nói \"phân biệt A với B\", nhưng tiếng Anh bắt buộc dùng \"distinguish between A and B\"."
       }
@@ -362,7 +362,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Change one's mind\" dùng phép nhân hóa để miêu tả quá trình khoa học tiến bộ: liên tục sửa đổi nhận thức cũ để tiệm cận chân lý.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. Khoa học là sự lừa dối",
+        baitOptionText: "C. They just bought a modern spacious house suburbs in.",
         diagnosticTitle: "Hiểu sai giọng văn khoa học thường thức",
         explanation: "Tác giả chỉ nêu ra cảm nhận ban đầu của công chúng trước khi giải thích rằng các nghiên cứu đang giúp ta đến gần sự thật hơn."
       }
@@ -382,7 +382,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Walking pace\" = tốc độ, nhịp bước chân đi bộ. \"Brisk walking pace\" là nhịp đi bộ nhanh mang lại lợi ích tim mạch và não bộ.",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. burnout",
+        baitOptionText: "D. They have bought just modern a spacious house in suburbs.",
         diagnosticTitle: "Nhầm thuật ngữ kiệt sức",
         explanation: "Burnout là trạng thái kiệt quệ, hoàn toàn vô nghĩa khi ghép vào cụm \"walking ______\"."
       }
@@ -402,7 +402,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Omitting the morning meal\" paraphrase cho \"skipping breakfast\", \"intense cravings\" paraphrase cho \"increased hunger\", và \"excessive food intake\" paraphrase cho \"overeating\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Avoiding morning nourishment is guaranteed to accelerate fat burning",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Đảo ngược quan hệ nhân quả y học",
         explanation: "Bài đọc chỉ rõ bỏ ăn sáng làm tăng nguy cơ ăn bù và béo phì, không hề kích thích đốt mỡ hay chữa bệnh."
       }
@@ -424,7 +424,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Âm răng (dental fricative /θ/): đầu lưỡi bắt buộc phải thè nhẹ ra giữa hai hàng răng, luồng hơi ma sát thổi qua kẽ răng.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. Bật hơi như âm /t/",
+        baitOptionText: "C. They just bought a modern spacious house suburbs in.",
         diagnosticTitle: "Phát âm /θ/ thành âm /t/ (lỗi phổ biến của người Việt)",
         explanation: "Người Việt thường phát âm \"think\" thành \"tink\" hoặc \"thinh\" theo tiếng Việt do không đưa đầu lưỡi ra giữa hai răng."
       }
@@ -434,17 +434,17 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Khác biệt cốt lõi giữa cặp phụ âm /θ/ (trong \"thanks\") và /ð/ (trong \"this\", \"breathe\") là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "/θ/ là âm vô thanh (dây thanh không rung), /ð/ là âm hữu thanh (dây thanh rung)" },
+        { id: "opt_A", label: "A", text: "/θ/ là âm vô thanh, /ð/ là âm hữu thanh" },
         { id: "opt_B", label: "B", text: "/θ/ là âm bật chặn, /ð/ là âm mũi" },
         { id: "opt_C", label: "C", text: "/θ/ cắn môi dưới, /ð/ mím hai môi" },
         { id: "opt_D", label: "D", text: "Khẩu hình miệng hoàn toàn khác nhau về vị trí của răng" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. /θ/ là âm vô thanh (dây thanh không rung), /ð/ là âm hữu thanh (dây thanh rung)",
+      correctAnswerText: "A. /θ/ là âm vô thanh, /ð/ là âm hữu thanh",
       correctExplanation: "Cả hai đều có cùng vị trí răng-lưỡi, nhưng /θ/ chỉ có luồng gió (voiceless), còn /ð/ kèm theo độ rung thanh quản (voiced).",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. Khẩu hình miệng hoàn toàn khác nhau",
+        baitOptionText: "D. They have bought just modern a spacious house in suburbs.",
         diagnosticTitle: "Tưởng hai âm có khẩu hình khác nhau",
         explanation: "Khẩu hình giống hệt nhau, chỉ khác nhau duy nhất ở sự rung của dây thanh đới."
       }
@@ -464,7 +464,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Sells, seashells (/s/ vs /ʃ/), seashore kết hợp đan xen giữa âm /s/ (răng sát, không chu môi) và /ʃ/ (tròn môi, chu ra phía trước).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. /θ/ và /s/",
+        baitOptionText: "C. They just bought a modern spacious house suburbs in.",
         diagnosticTitle: "Nhầm lẫn các cặp âm xát",
         explanation: "Câu văn kinh điển này tập trung 100% vào sự đối lập giữa s nhẹ (/s/) và s nặng (/ʃ/)."
       }
@@ -484,7 +484,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cụm danh từ cố định trong IELTS: \"health and well-being\" (sức khỏe và thể trạng hạnh phúc tổng thể).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. well-doing",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Dịch từ \"sống tốt\" thành well-doing",
         explanation: "Trong tiếng Anh danh từ chuẩn y khoa và đời sống là \"well-being\", không dùng \"well-doing\"."
       }
@@ -504,7 +504,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation chuẩn xác: \"break a bad habit\" (từ bỏ một thói quen xấu) >< \"form/build a good habit\".",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. cancel",
+        baitOptionText: "C. They just bought a modern spacious house suburbs in.",
         diagnosticTitle: "Dịch \"hủy thói quen\" thành cancel",
         explanation: "Cancel dùng cho lịch hẹn/chuyến bay; thói quen dùng \"break a habit\"."
       }
@@ -514,19 +514,19 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       roundIndex: 5,
       prompt: "Chọn cụm từ chuẩn để nói về việc giữ gìn vóc dáng thon gọn, khỏe mạnh: \"To ______ in shape, I work out at the gym 3 times a week.\"",
       options: [
-        { id: "opt_A", label: "A", text: "stay / keep" },
+        { id: "opt_A", label: "A", text: "stay" },
         { id: "opt_B", label: "B", text: "make" },
         { id: "opt_C", label: "C", text: "have" },
         { id: "opt_D", label: "D", text: "take" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. stay / keep",
+      correctAnswerText: "A. stay",
       correctExplanation: "Collocation quen thuộc: \"stay in shape\" hoặc \"keep in shape\" (giữ gìn vóc dáng cân đối).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. make",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Dịch \"tạo dáng\" thành make in shape",
-        explanation: "Giữ vóc dáng cân đối quy chuẩn luôn dùng động từ \"stay / keep in shape\"."
+        explanation: "Giữ vóc dáng cân đối quy chuẩn luôn dùng động từ \"stay in shape\"."
       }
     },
     {
@@ -544,7 +544,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc chỉ thói quen quá khứ: used to + Bare Verb (đã từng làm gì và nay không làm nữa).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. used to eating",
+        baitOptionText: "C. They just bought a modern spacious house suburbs in.",
         diagnosticTitle: "Nhầm lẫn với cấu trúc \"be/get used to + V-ing\"",
         explanation: "\"Be used to + V-ing\" mang nghĩa quen với việc gì ở hiện tại, còn thói quen quá khứ đã bỏ là \"used to + V nguyên mẫu\"."
       }
@@ -564,7 +564,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Động từ giảm cân là \"lose weight\". \"Loose\" là tính từ (lỏng lẻo, rộng thùng thình), \"loss\" là danh từ (sự mất mát).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. loose",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Nhầm lẫn chính tả tai hại giữa Lose và Loose",
         explanation: "Đây là một trong những lỗi chính tả bị trừ điểm nặng nhất trong kỳ thi IELTS Writing/Listening."
       }
@@ -584,7 +584,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Gerund \"Doing yoga\" làm chủ ngữ, \"enables me to be more flexible\" (enable sb to-V, tính từ flexible: linh hoạt/dẻo dai).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. allows me more flexible",
+        baitOptionText: "C. They just bought a modern spacious house suburbs in.",
         diagnosticTitle: "Bỏ quên động từ to be sau allow sb",
         explanation: "Sau allow sb phải là một to-V (\"to be flexible\"), không thể ghép trực tiếp tính từ flexible mà thiếu be."
       }
@@ -604,7 +604,7 @@ export const WEEK_4_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Tính từ chuẩn xác trong IELTS Speaking & Writing: \"health-conscious\" (có ý thức cao về sức khỏe).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. health-caring",
+        baitOptionText: "B. They have just bought a house spacious modern in the suburbs.",
         diagnosticTitle: "Tự sáng tạo tính từ ghép không chuẩn ngữ cảm",
         explanation: "Trong tiếng Anh từ chuẩn cho người chú trọng ăn uống rèn luyện vì sức khỏe là \"health-conscious\"."
       }

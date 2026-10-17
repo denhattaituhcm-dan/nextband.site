@@ -163,17 +163,17 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Trong chủ đề Environment, động từ \"discharge\" trong cụm \"discharged toxic waste into the ocean\" ĐỒNG NGHĨA nhất với:",
       options: [
-        { id: "opt_A", label: "A", text: "release / dump (thải ra, xả thải bừa bãi)" },
-        { id: "opt_B", label: "B", text: "recycle (tái chế)" },
-        { id: "opt_C", label: "C", text: "purify (thanh lọc, lọc sạch)" },
-        { id: "opt_D", label: "D", text: "contain (ngăn chặn, kìm hãm)" }
+        { id: "opt_A", label: "A", text: "release" },
+        { id: "opt_B", label: "B", text: "recycle" },
+        { id: "opt_C", label: "C", text: "purify" },
+        { id: "opt_D", label: "D", text: "contain" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. release / dump (thải ra, xả thải bừa bãi)",
+      correctAnswerText: "A. where",
       correctExplanation: "\"Discharge\" chất thải công nghiệp có nghĩa là xả ra môi trường bên ngoài, đồng nghĩa với release hoặc dump.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. purify",
+        baitOptionText: "C. why",
         diagnosticTitle: "Nhầm lẫn giữa hành vi gây ô nhiễm và giải pháp xử lý",
         explanation: "Discharge chất thải là nguồn cơn thảm họa ô nhiễm, hoàn toàn trái ngược với purify (làm sạch)."
       }
@@ -183,17 +183,17 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Từ TRÁI NGHĨA với \"toxic\" trong cụm \"toxic chemical waste\" (chất thải hóa học độc hại) là:",
       options: [
-        { id: "opt_A", label: "A", text: "harmless / non-hazardous (vô hại, an toàn)" },
-        { id: "opt_B", label: "B", text: "poisonous (có độc tính cao)" },
-        { id: "opt_C", label: "C", text: "fatal (gây chết người)" },
-        { id: "opt_D", label: "D", text: "lethal (nguy hiểm chết chóc)" }
+        { id: "opt_A", label: "A", text: "harmless" },
+        { id: "opt_B", label: "B", text: "poisonous" },
+        { id: "opt_C", label: "C", text: "fatal" },
+        { id: "opt_D", label: "D", text: "lethal" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. harmless / non-hazardous (vô hại, an toàn)",
+      correctAnswerText: "A. harmless",
       correctExplanation: "\"Toxic\" = độc hại. Từ trái nghĩa trực tiếp là \"harmless\" (vô hại) hoặc \"non-hazardous\" (không nguy hại).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. poisonous",
+        baitOptionText: "B. when",
         diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
         explanation: "Poisonous là từ đồng nghĩa trực tiếp với toxic. Đề bài đang yêu cầu tìm từ TRÁI NGHĨA."
       }
@@ -213,7 +213,7 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Livelihood\" là kế sinh nhai (a means of securing the necessities of life), nguồn nuôi sống bản thân và gia đình.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Thuyền buồm và ngư cụ",
+        baitOptionText: "B. when",
         diagnosticTitle: "Nhầm lẫn tài sản vật chất với kế sinh nhai",
         explanation: "Thuyền bè chỉ là công cụ (gear/vessel), còn livelihood là phương kế kiếm sống toàn diện của con người."
       }
@@ -233,7 +233,7 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation môi trường pháp lý: \"exceed the permitted level / standard\" (vượt quá ngưỡng quy chuẩn an toàn cho phép).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. succeeded",
+        baitOptionText: "B. when",
         diagnosticTitle: "Nhầm lẫn hình thái từ do cùng đuôi -ceed",
         explanation: "Succeed là thành công hoặc kế nhiệm, không mang nghĩa vượt quá ngưỡng chỉ số số lượng."
       }
@@ -253,7 +253,7 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Marine life\" là thuật ngữ chuẩn xác trong sinh thái học chỉ các loài sinh vật biển và hệ sinh thái đại dương.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. navy life",
+        baitOptionText: "B. when",
         diagnosticTitle: "Dùng từ lực lượng quân sự hải quân",
         explanation: "Navy là lực lượng quân đội hải quân, không liên quan đến sinh vật sinh thái biển (marine)."
       }
@@ -273,7 +273,7 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Untreated waste\" là quá khứ phân từ làm tính từ mang nghĩa bị động: chất thải chưa từng được qua hệ thống xử lý hóa chất.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. not-treating waste",
+        baitOptionText: "C. why",
         diagnosticTitle: "Dùng hiện tại phân từ chủ động sai ngữ pháp",
         explanation: "Chất thải là đối tượng được xử lý (bị động), nên phải dùng past participle có tiền tố phủ định \"untreated\"."
       }
@@ -293,7 +293,7 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc cố định: \"accept / take responsibility FOR something\" (chịu trách nhiệm về hành vi hoặc hậu quả nào đó).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. with",
+        baitOptionText: "B. when",
         diagnosticTitle: "Dùng giới từ \"with\" do ảnh hưởng tiếng Việt",
         explanation: "Tiếng Việt nói \"chịu trách nhiệm với ai/việc gì\", nhưng tiếng Anh bắt buộc dùng \"responsibility FOR sth\"."
       }
@@ -303,17 +303,17 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       roundIndex: 7,
       prompt: "Hiện tượng sinh học \"red tide\" được dịch chuẩn xác sang tiếng Việt là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Hiện tượng thủy triều đỏ (sự bùng phát tảo biển nở hoa phát sinh độc tố)" },
+        { id: "opt_A", label: "A", text: "Hiện tượng thủy triều đỏ" },
         { id: "opt_B", label: "B", text: "Hiện tượng sóng thần do động đất ngầm" },
         { id: "opt_C", label: "C", text: "Sự cố tràn dầu thô nhuộm màu nước biển" },
         { id: "opt_D", label: "D", text: "Nước biển dâng cao vào mùa lũ lụt" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Hiện tượng thủy triều đỏ (sự bùng phát tảo biển nở hoa phát sinh độc tố)",
+      correctAnswerText: "A. Hiện tượng thủy triều đỏ",
       correctExplanation: "\"Red tide\" là thuật ngữ hải dương học chỉ hiện tượng thủy triều đỏ khi vi tảo nở hoa làm đổi màu nước và tiêu hao dưỡng khí.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. Sự cố tràn dầu thô",
+        baitOptionText: "C. why",
         diagnosticTitle: "Nhầm hiện tượng sinh học với sự cố dầu loang",
         explanation: "Dầu tràn là oil spill, còn red tide là hiện tượng bùng nổ tảo biển."
       }
@@ -333,7 +333,7 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Collocation: \"place a ban on something\" (áp đặt lệnh cấm đối với hoạt động đánh bắt/mua bán nào đó).",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. itinerary",
+        baitOptionText: "D. which",
         diagnosticTitle: "Ghép từ lịch trình chuyến đi không tương thích",
         explanation: "Itinerary là lịch trình du lịch, không thể đi với hành động quản lý khẩn cấp của cơ quan môi trường."
       }
@@ -353,7 +353,7 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Illicit industrial waste disposal\" paraphrase cho \"unlawfully discharged untreated chemical toxins\", \"wiped out aquatic habitats\" paraphrase cho \"decimating marine ecosystems\", và \"compromised economic survival\" paraphrase cho \"ruining fishermen's livelihoods\".",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. Red tide algae blooms were verified as the cause",
+        baitOptionText: "D. which",
         diagnosticTitle: "Chọn giả thuyết đã bị bác bỏ trong điều tra",
         explanation: "Giả thuyết thủy triều đỏ đã bị Hội nghề cá và kết luận chính phủ bác bỏ; nguyên nhân thật sự là do chất độc xả từ nhà máy."
       }
@@ -486,7 +486,7 @@ export const WEEK_7_QUESTIONS: Record<string, any[]> = {
       roundIndex: 8,
       prompt: "Cụm từ nào diễn tả một 'người bạn thân thiết tri kỷ có thể tâm sự mọi điều'?",
       options: [
-        { id: "opt_A", label: "A", text: "A close confidant / intimate friend" },
+        { id: "opt_A", label: "A", text: "A close confidant" },
         { id: "opt_B", label: "B", text: "A casual acquaintance" },
         { id: "opt_C", label: "C", text: "A fair-weather friend" },
         { id: "opt_D", label: "D", text: "A stranger on the street" }

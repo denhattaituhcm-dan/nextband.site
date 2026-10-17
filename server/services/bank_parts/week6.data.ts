@@ -163,17 +163,17 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Trong chủ đề Technology & Business, từ \"settlement\" trong vụ kiện bản quyền ý tưởng của Facebook ĐỒNG NGHĨA nhất với:",
       options: [
-        { id: "opt_A", label: "A", text: "legal agreement / compromise (sự hòa giải, thỏa thuận dàn xếp pháp lý)" },
-        { id: "opt_B", label: "B", text: "court battle / confrontation (cuộc chiến tranh tụng gay gắt)" },
-        { id: "opt_C", label: "C", text: "bankruptcy declaration (tuyên bố phá sản)" },
-        { id: "opt_D", label: "D", text: "residential colony (khu tái định cư)" }
+        { id: "opt_A", label: "A", text: "legal agreement" },
+        { id: "opt_B", label: "B", text: "court battle" },
+        { id: "opt_C", label: "C", text: "bankruptcy declaration" },
+        { id: "opt_D", label: "D", text: "residential colony" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. legal agreement / compromise (sự hòa giải, thỏa thuận dàn xếp pháp lý)",
+      correctAnswerText: "B. Thay ",
       correctExplanation: "\"Settlement\" trong luật thương mại là sự dàn xếp, thỏa thuận hòa giải ngoài tòa để chấm dứt kiện tụng (thường kèm bồi thường cổ phần/tiền).",
       misconception: {
         baitOptionId: "opt_D",
-        baitOptionText: "D. residential colony",
+        baitOptionText: "D. Thêm ",
         diagnosticTitle: "Nhầm lẫn nghĩa địa lý định cư với thuật ngữ luật học",
         explanation: "Trong bối cảnh tranh chấp bản quyền (lawsuit), settlement là thỏa thuận hòa giải bồi thường, không phải khu định cư dân cư."
       }
@@ -183,17 +183,17 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Từ TRÁI NGHĨA với \"expulsion\" trong câu \"Though he faced expulsion from Harvard for his actions\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "admission / enrollment (sự thu nhận, nhập học chính thức)" },
-        { id: "opt_B", label: "B", text: "dismissal (sự sa thải, đuổi học)" },
-        { id: "opt_C", label: "C", text: "suspension (đình chỉ học tạm thời)" },
-        { id: "opt_D", label: "D", text: "punishment (sự trừng phạt)" }
+        { id: "opt_A", label: "A", text: "admission" },
+        { id: "opt_B", label: "B", text: "dismissal" },
+        { id: "opt_C", label: "C", text: "suspension" },
+        { id: "opt_D", label: "D", text: "punishment" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. admission / enrollment (sự thu nhận, nhập học chính thức)",
+      correctAnswerText: "A. admission",
       correctExplanation: "\"Expulsion\" = sự trục xuất, buộc thôi học vĩnh viễn. Từ trái nghĩa trực tiếp là \"admission\" hoặc \"enrollment\" (nhận vào trường).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. dismissal",
+        baitOptionText: "B. Thay ",
         diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
         explanation: "Dismissal là từ đồng nghĩa mang nghĩa đuổi học. Đề bài đang yêu cầu tìm từ TRÁI NGHĨA."
       }
@@ -203,17 +203,17 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       roundIndex: 2,
       prompt: "Thuật ngữ tài chính khởi nghiệp \"angel investor\" (như Sean Parker đối với Facebook) dùng để chỉ ai?",
       options: [
-        { id: "opt_A", label: "A", text: "Nhà đầu tư thiên thần (cá nhân giàu có rót vốn ban đầu hỗ trợ các startup non trẻ)" },
+        { id: "opt_A", label: "A", text: "Nhà đầu tư thiên thần" },
         { id: "opt_B", label: "B", text: "Tổ chức từ thiện tôn giáo phát tiền miễn phí" },
         { id: "opt_C", label: "C", text: "Ngân hàng nhà nước bảo lãnh tín dụng" },
         { id: "opt_D", label: "D", text: "Luật sư đại diện cho các cổ đông thiểu số" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Nhà đầu tư thiên thần (cá nhân giàu có rót vốn ban đầu hỗ trợ các startup non trẻ)",
+      correctAnswerText: "A. Nhà đầu tư thiên thần",
       correctExplanation: "\"Angel investor\" là thuật ngữ quốc tế chỉ các cá nhân đầu tư thiên thần, chấp nhận rủi ro cao để rót vốn hạt giống cho các công ty khởi nghiệp.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Tổ chức từ thiện tôn giáo",
+        baitOptionText: "B. Thay ",
         diagnosticTitle: "Dịch nghĩa đen từ chữ \"angel\" thành tổ chức tôn giáo",
         explanation: "Đây là thuật ngữ tài chính mạo hiểm, hoàn toàn không liên quan đến tôn giáo hay từ thiện đơn thuần."
       }
@@ -233,7 +233,7 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Thành ngữ học thuật cố định: \"on the brink of something / doing something\" (đang trên bờ vực gặp phải một nguy hiểm hay biến cố lớn).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. side",
+        baitOptionText: "B. Thay ",
         diagnosticTitle: "Dịch từ \"bên cạnh\" thành side",
         explanation: "Thành ngữ chỉ bờ vực nguy nan bắt buộc phải dùng \"on the brink of\", không dùng \"on the side of\"."
       }
@@ -253,7 +253,7 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Tính từ đuôi -ive chỉ tính chất gây nghiện của sự vật/ứng dụng: \"highly addictive\". Còn người bị nghiện mới dùng \"addicted to\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. addicted",
+        baitOptionText: "B. Thay ",
         diagnosticTitle: "Nhầm lẫn giữa tính từ bị động (người bị nghiện) và chủ động (vật gây nghiện)",
         explanation: "Ứng dụng phần mềm có tính chất gây nghiện cho người khác thì phải dùng \"addictive\", không dùng \"addicted\"."
       }
@@ -273,7 +273,7 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Động từ \"found\" (thành lập) có quá khứ phân từ là \"founded\". Câu bị động chỉ sự kiện lịch sử trong quá khứ: \"was founded\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. was found",
+        baitOptionText: "B. Thay ",
         diagnosticTitle: "Nhầm lẫn giữa động từ find (tìm thấy) và found (thành lập)",
         explanation: "\"Find - found - found\" là tìm thấy, còn \"found - founded - founded\" là thành lập, sáng lập."
       }
@@ -293,7 +293,7 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Quy tắc giới từ cho các nền tảng công nghệ, website, ứng dụng số: luôn dùng giới từ \"ON the platform / on the internet / on Facebook\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. in",
+        baitOptionText: "B. Thay ",
         diagnosticTitle: "Dịch từ \"trong nền tảng\" thành giới từ \"in\"",
         explanation: "Tiếng Việt nói \"trong nền tảng mạng xã hội\", nhưng tiếng Anh bắt buộc dùng \"ON the platform\"."
       }
@@ -303,17 +303,17 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       roundIndex: 7,
       prompt: "Trong cụm \"Zuckerberg signed a pledge along with other philanthropists\", từ \"pledge\" mang nghĩa gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Lời cam kết chính thức / văn bản thề nguyện hiến tặng tài sản" },
+        { id: "opt_A", label: "A", text: "Lời cam kết chính thức" },
         { id: "opt_B", label: "B", text: "Hợp đồng vay thế chấp ngân hàng" },
         { id: "opt_C", label: "C", text: "Đơn khiếu nại bản quyền tại tòa án" },
         { id: "opt_D", label: "D", text: "Bản báo cáo doanh thu tài chính quý" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Lời cam kết chính thức / văn bản thề nguyện hiến tặng tài sản",
+      correctAnswerText: "A. Lời cam kết chính thức",
       correctExplanation: "\"A pledge\" là một lời hứa danh dự, bản cam kết công khai đóng góp tài sản vì mục tiêu nhân đạo.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Hợp đồng vay thế chấp",
+        baitOptionText: "B. Thay ",
         diagnosticTitle: "Nhầm thuật ngữ cam kết với hợp đồng nợ",
         explanation: "Trong bối cảnh hiến tặng tài sản (philanthropy), \"pledge\" là lời cam kết từ thiện của các tỷ phú."
       }
@@ -333,7 +333,7 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Registration fees\" = phí đăng ký (đăng ký tên miền hoặc sở hữu trí tuệ để chống hàng giả mạo).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. burnout",
+        baitOptionText: "C. Bỏ ",
         diagnosticTitle: "Ghép từ không liên quan ngữ nghĩa kinh doanh",
         explanation: "Burnout là kiệt sức lao động, hoàn toàn không tương thích với khái niệm bảo vệ tên miền."
       }
@@ -353,7 +353,7 @@ export const WEEK_6_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Digital networks empowered regular users\" paraphrase cho \"platforms enabled ordinary individuals\", \"spearhead viral movements\" paraphrase cho \"set trends\", và \"independently of legacy broadcast outlets\" paraphrase cho \"without traditional media gatekeepers\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Traditional television retains monopoly",
+        baitOptionText: "B. Thay ",
         diagnosticTitle: "Đảo ngược hoàn toàn thực tế thay đổi của truyền thông",
         explanation: "Bài đọc nêu rõ truyền hình đang suy giảm và nhường quyền định hình xu hướng cho người sáng tạo số."
       }

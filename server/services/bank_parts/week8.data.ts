@@ -100,7 +100,7 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 6,
       prompt: "Động từ nào sau đây là nội động từ (Intransitive verb) KHÔNG THỂ chia ở thể bị động?",
       options: [
-        { id: "opt_A", label: "A", text: "happen / occur" },
+        { id: "opt_A", label: "A", text: "happen" },
         { id: "opt_B", label: "B", text: "build" },
         { id: "opt_C", label: "C", text: "destroy" },
         { id: "opt_D", label: "D", text: "publish" }
@@ -163,17 +163,17 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 0,
       prompt: "Trong chủ đề Crime & Law, từ \"lucrative\" trong tiêu đề \"Britain's lucrative marijuana trade\" ĐỒNG NGHĨA nhất với:",
       options: [
-        { id: "opt_A", label: "A", text: "highly profitable / moneymaking (siêu lợi nhuận, kiếm được rất nhiều tiền)" },
-        { id: "opt_B", label: "B", text: "unprofitable / loss-making (thua lỗ)" },
-        { id: "opt_C", label: "C", text: "legal / lawful (hợp pháp)" },
-        { id: "opt_D", label: "D", text: "perilous (nguy hiểm)" }
+        { id: "opt_A", label: "A", text: "highly profitable" },
+        { id: "opt_B", label: "B", text: "unprofitable" },
+        { id: "opt_C", label: "C", text: "legal" },
+        { id: "opt_D", label: "D", text: "perilous" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. highly profitable / moneymaking (siêu lợi nhuận, kiếm được rất nhiều tiền)",
+      correctAnswerText: "A. Khi người viết muốn nhấn mạnh vào hành động/đối tượng chịu tác động hoặc khi chủ thể thực hiện hành động không quan trọng/chưa rõ",
       correctExplanation: "\"Lucrative\" (tính từ học thuật) mô tả một hoạt động hoặc thương vụ đem lại nguồn lợi nhuận kếch xù (profitable).",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. legal / lawful",
+        baitOptionText: "C. Trong tất cả mọi câu văn miêu tả quan điểm cá nhân",
         diagnosticTitle: "Nhầm lẫn giữa tính sinh lời với tính hợp pháp",
         explanation: "Buôn bán ma túy là phạm pháp (illegal) nhưng mang lại lợi nhuận khổng lồ nên gọi là lucrative trade."
       }
@@ -183,17 +183,17 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 1,
       prompt: "Từ TRÁI NGHĨA với \"broke\" trong câu miêu tả tình cảnh khi hồi hương: \"Cuong returned broke and now lives in a modest house\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "wealthy / affluent (giàu có, dư dả tiền bạc)" },
-        { id: "opt_B", label: "B", text: "penniless / bankrupt (cháy túi, khánh kiệt)" },
-        { id: "opt_C", label: "C", text: "reformed (hoàn lương)" },
-        { id: "opt_D", label: "D", text: "imprisoned (bị tống giam)" }
+        { id: "opt_A", label: "A", text: "wealthy" },
+        { id: "opt_B", label: "B", text: "penniless" },
+        { id: "opt_C", label: "C", text: "reformed" },
+        { id: "opt_D", label: "D", text: "imprisoned" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. wealthy / affluent (giàu có, dư dả tiền bạc)",
+      correctAnswerText: "A. wealthy",
       correctExplanation: "\"Broke\" (tính từ khẩu ngữ thông dụng) = hoàn toàn rỗng túi, khánh kiệt tài chính. Từ trái nghĩa là \"wealthy\" hoặc \"affluent\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. penniless / bankrupt",
+        baitOptionText: "B. Chỉ khi người viết muốn câu văn dài thêm nhiều từ để đạt độ dài tối thiểu",
         diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
         explanation: "Penniless/bankrupt đồng nghĩa với broke. Đề bài đang yêu cầu tìm từ TRÁI NGHĨA."
       }
@@ -203,17 +203,17 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 2,
       prompt: "Thuật ngữ tội phạm \"human trafficker\" trong bài đọc dùng để chỉ ai?",
       options: [
-        { id: "opt_A", label: "A", text: "Kẻ buôn người / tội phạm buôn bán, vận chuyển người vượt biên trái phép" },
+        { id: "opt_A", label: "A", text: "Kẻ buôn người" },
         { id: "opt_B", label: "B", text: "Cảnh sát điều phối giao thông đường bộ" },
         { id: "opt_C", label: "C", text: "Cán bộ quản lý xuất nhập cảnh tại sân bay" },
         { id: "opt_D", label: "D", text: "Tài xế lái xe buýt du lịch châu Âu" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Kẻ buôn người / tội phạm buôn bán, vận chuyển người vượt biên trái phép",
+      correctAnswerText: "A. Kẻ buôn người",
       correctExplanation: "\"Human trafficker\" là tội phạm buôn bán người xuyên quốc gia (trafficking: buôn lậu bất hợp pháp hàng cấm hoặc con người).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Cảnh sát điều phối giao thông",
+        baitOptionText: "B. Chỉ khi người viết muốn câu văn dài thêm nhiều từ để đạt độ dài tối thiểu",
         diagnosticTitle: "Dịch nhầm từ gốc traffic (giao thông)",
         explanation: "Trong hình sự, trafficking là tội phạm buôn lậu/buôn người, không liên quan đến trật tự giao thông đường bộ."
       }
@@ -233,7 +233,7 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "Cấu trúc pháp lý chuẩn: \"be sentenced to [time] in prison/jail\" (bị toà tuyên phạt mức án bao lâu).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. worded",
+        baitOptionText: "B. Chỉ khi người viết muốn câu văn dài thêm nhiều từ để đạt độ dài tối thiểu",
         diagnosticTitle: "Dịch nhầm từ nghĩa ngữ pháp của sentence (câu văn)",
         explanation: "Trong luật pháp, \"sentence\" là bản án/tuyên án của thẩm phán, không liên quan đến câu cú ngữ pháp."
       }
@@ -253,7 +253,7 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Deport somebody (back to...)\" là thuật ngữ xuất nhập cảnh chỉ hành vi cưỡng chế trục xuất người nhập cư không hợp lệ về nước.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. imported",
+        baitOptionText: "B. Chỉ khi người viết muốn câu văn dài thêm nhiều từ để đạt độ dài tối thiểu",
         diagnosticTitle: "Nhầm lẫn với hành vi nhập khẩu hàng hóa",
         explanation: "Import là nhập khẩu hàng hóa, deport mới là trục xuất con người vi phạm visa/nhập cảnh."
       }
@@ -273,9 +273,9 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"A reformed criminal/character\" chỉ người từng phạm pháp nay đã ăn năn hối cải và hoàn lương sống lương thiện.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. deformed",
+        baitOptionText: "B. Chỉ khi người viết muốn câu văn dài thêm nhiều từ để đạt độ dài tối thiểu",
         diagnosticTitle: "Nhầm lẫn từ biến dạng thể xác với cải tạo nhân cách",
-        explanation: "Deformed là bị biến dạng hình thể dị tật, hoàn toàn khác với reformed (hoàn lương)."
+        explanation: "Deformed là bị biến dạng hình thể dị tật, hoàn toàn khác với reformed."
       }
     },
     {
@@ -293,7 +293,7 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Underneath a lorry\" (dưới gầm xe tải): Giới từ chỉ vị trí ẩn nấp nguy hiểm chết người của người tị nạn/di cư chui.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. above",
+        baitOptionText: "B. Chỉ khi người viết muốn câu văn dài thêm nhiều từ để đạt độ dài tối thiểu",
         diagnosticTitle: "Chọn vị trí trên nóc xe sai sự thật bài đọc",
         explanation: "Họ đu bám dưới trục gầm xe (underneath/under), trèo lên nóc xe (above) sẽ bị camera quét nhiệt phát hiện ngay lập tức."
       }
@@ -303,17 +303,17 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 7,
       prompt: "Cụm danh từ \"fake passport\" trong bài đọc thuộc chủ đề giấy tờ giả mạo được viết chuẩn ngữ pháp là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "fake passport / fraudulent passport" },
+        { id: "opt_A", label: "A", text: "fake passport" },
         { id: "opt_B", label: "B", text: "untrue passport" },
         { id: "opt_C", label: "C", text: "wrong passport" },
         { id: "opt_D", label: "D", text: "error passport" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. fake passport / fraudulent passport",
+      correctAnswerText: "A. fake passport",
       correctExplanation: "Collocation bất di bất dịch trong tội phạm giấy tờ: \"fake passport\" hoặc thuật ngữ pháp lý \"fraudulent passport\" (hộ chiếu giả mạo).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. untrue passport",
+        baitOptionText: "B. Chỉ khi người viết muốn câu văn dài thêm nhiều từ để đạt độ dài tối thiểu",
         diagnosticTitle: "Dịch từ \"hộ chiếu không thật\"",
         explanation: "Tiếng Anh không dùng untrue hay wrong cho giấy tờ giả, bắt buộc dùng fake/fraudulent/counterfeit."
       }
@@ -333,7 +333,7 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Illicit drug network\" là collocation học thuật band cao trong IELTS: mạng lưới buôn bán chất cấm phi pháp.",
       misconception: {
         baitOptionId: "opt_C",
-        baitOptionText: "C. bland",
+        baitOptionText: "C. Trong tất cả mọi câu văn miêu tả quan điểm cá nhân",
         diagnosticTitle: "Chọn tính từ nhạt nhẽo của thức ăn",
         explanation: "Bland là hương vị thức ăn nhạt, hoàn toàn vô nghĩa trong văn cảnh tội phạm ma túy."
       }
@@ -353,7 +353,7 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       correctExplanation: "\"Criminal cartels\" paraphrase cho \"organized gangs\", \"desperate laborers from underprivileged backgrounds\" paraphrase cho \"impoverished migrants coerced\", và \"clandestine marijuana farms\" paraphrase cho \"illegal cannabis in suburban stash houses\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Migrants voluntarily invested in lawful greenhouses",
+        baitOptionText: "B. Chỉ khi người viết muốn câu văn dài thêm nhiều từ để đạt độ dài tối thiểu",
         diagnosticTitle: "Tẩy trắng hoạt động tội phạm thành đầu tư nông nghiệp hợp pháp",
         explanation: "Bài đọc nêu rõ đây là chuỗi tội phạm ngầm bất hợp pháp với những lao động nghèo khó bị bóc lột."
       }
@@ -426,7 +426,7 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 4,
       prompt: "Collocation nào trong bài miêu tả món ăn để chỉ 'nước dùng đậm đà hương vị'?",
       options: [
-        { id: "opt_A", label: "A", text: "A rich / flavorful broth" },
+        { id: "opt_A", label: "A", text: "A rich broth" },
         { id: "opt_B", label: "B", text: "A sweet sauce water" },
         { id: "opt_C", label: "C", text: "A tasteless soup liquid" },
         { id: "opt_D", label: "D", text: "A salty mineral drink" }
@@ -456,7 +456,7 @@ export const WEEK_8_QUESTIONS: Record<string, any[]> = {
       roundIndex: 6,
       prompt: "Trong câu: 'Nhà hàng này phục vụ món ăn rất ngon nên tôi là khách quen ở đây.' Cụm từ 'khách quen' tiếng Anh là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "A regular / a regular customer" },
+        { id: "opt_A", label: "A", text: "A regular customer" },
         { id: "opt_B", label: "B", text: "A first-time visitor" },
         { id: "opt_C", label: "C", text: "A passenger" },
         { id: "opt_D", label: "D", text: "A casual pedestrian" }
