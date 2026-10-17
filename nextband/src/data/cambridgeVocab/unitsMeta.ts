@@ -78,7 +78,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Du lịch, Giao thông & Di chuyển",
     descriptionVi: "Các loại hình du lịch bền vững, mạng lưới giao thông công cộng và văn hóa bản địa.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["sustainable tourism", "public transit", "cultural heritage", "remote destinations"]
   },
   {

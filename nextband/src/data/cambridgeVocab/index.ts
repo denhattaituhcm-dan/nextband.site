@@ -5,6 +5,7 @@ import { unit03Data } from "./unit03";
 import { unit04Data } from "./unit04";
 import { unit05Data } from "./unit05";
 import { unit06Data } from "./unit06";
+import { unit07Data } from "./unit07";
 import { CAMBRIDGE_VOCAB_UNITS } from "./unitsMeta";
 
 export * from "./types";
@@ -16,7 +17,8 @@ const unitsDataMap: Record<number, CambridgeUnitData> = {
   3: unit03Data,
   4: unit04Data,
   5: unit05Data,
-  6: unit06Data
+  6: unit06Data,
+  7: unit07Data
 };
 
 export function getCambridgeUnitData(unitId: number): CambridgeUnitData | null {
