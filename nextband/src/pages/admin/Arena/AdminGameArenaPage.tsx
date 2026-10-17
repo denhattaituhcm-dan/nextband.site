@@ -14,7 +14,6 @@ import {
   Layers, 
   ExternalLink,
   BookOpen,
-  CheckCircle2,
   Clock,
   PlusCircle,
   FolderArchive,
@@ -48,21 +47,30 @@ export default function AdminGameArenaPage() {
   });
   const courses = coursesData?.data || [];
 
-  // Tự động chọn khóa DOER (trước đây là DREAMER) khi tải xong danh sách
+  // Lọc bỏ Dreamer, P1 IELTS Intensive, Entrance test theo yêu cầu
+  const EXCLUDED_COURSE_PATTERNS = [
+    /dreamer/i,
+    /p1\s*ielts/i,
+    /entrance\s*test/i,
+  ];
+
+  const visibleCourses = courses.filter((c: any) => {
+    const text = `${c.title || ""} ${c.slug || ""}`;
+    return !EXCLUDED_COURSE_PATTERNS.some((pat) => pat.test(text));
+  });
+
+  // Tự động chọn khóa DOER khi tải xong danh sách
   useEffect(() => {
-    if (courses.length > 0 && !selectedCourseId) {
-      const targetCourse = courses.find((c: any) => 
-        c.title?.toLowerCase().includes("doer") || c.slug?.toLowerCase().includes("doer")
-      ) || courses.find((c: any) => 
-        c.title?.toLowerCase().includes("dreamer") || c.slug?.toLowerCase().includes("dreamer")
-      );
-      if (targetCourse) {
-        setSelectedCourseId(targetCourse.id);
-      } else {
-        setSelectedCourseId(courses[0].id);
+    if (visibleCourses.length > 0) {
+      const isValid = visibleCourses.some((c: any) => c.id === selectedCourseId);
+      if (!isValid) {
+        const doerCourse = visibleCourses.find((c: any) => 
+          c.title?.toLowerCase().includes("doer") || c.slug?.toLowerCase().includes("doer")
+        );
+        setSelectedCourseId(doerCourse ? doerCourse.id : visibleCourses[0].id);
       }
     }
-  }, [courses, selectedCourseId]);
+  }, [visibleCourses, selectedCourseId]);
 
   // Fetch danh sách các bộ câu hỏi / bài học của Khóa học đã chọn (27 bài của DREAMER)
   const { data: examsData, isLoading: isLoadingExams } = useQuery({
@@ -100,7 +108,7 @@ export default function AdminGameArenaPage() {
     !searchFilter.trim() || ex.title?.toLowerCase().includes(searchFilter.toLowerCase().trim())
   );
 
-  const selectedCourse = courses.find((c: any) => c.id === selectedCourseId);
+  const selectedCourse = visibleCourses.find((c: any) => c.id === selectedCourseId);
 
   const handleLaunchHost = async (examId?: string) => {
     setIsCreatingRoom(true);
@@ -134,7 +142,7 @@ export default function AdminGameArenaPage() {
         <div>
           <h1 className="text-2xl font-black text-gray-900 flex items-center gap-2.5">
             <Gamepad2 className="w-7 h-7 text-orange-500" />
-            Quản Lý Game Giảng Dạy & Tương Tác
+            Quản Lý Game Giảng Dạy
           </h1>
         </div>
 
@@ -145,7 +153,7 @@ export default function AdminGameArenaPage() {
             className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold px-5 py-2.5 rounded-xl shadow-md shadow-orange-500/20 transition-all hover:scale-105 active:scale-95 text-sm"
           >
             <Play className="w-4 h-4 fill-white" />
-            {isCreatingRoom ? "Đang mở..." : "Mở Màn Chiếu Host (Máy chiếu)"}
+            {isCreatingRoom ? "Đang mở..." : "Mở Màn Chiếu Host"}
             <ExternalLink className="w-3.5 h-3.5" />
           </Button>
         </div>
@@ -318,10 +326,10 @@ export default function AdminGameArenaPage() {
                 <div>
                   <CardTitle className="text-base font-black text-gray-900 flex items-center gap-2">
                     <GraduationCap className="w-5 h-5 text-orange-500" />
-                    Lộ Trình Khóa Học & Bộ Câu Hỏi Giảng Dạy
+                    Khóa Học & Bộ Câu Hỏi
                   </CardTitle>
                   <CardDescription className="text-xs text-gray-500 mt-0.5">
-                    Chọn khóa học và chọn bài học trong 27 buổi theo đúng giáo trình để tổ chức thi đấu trực tiếp.
+                    Chọn bài học để bắt đầu thi đấu trực tiếp.
                   </CardDescription>
                 </div>
                 {selectedGame.status === "ACTIVE" ? (
@@ -335,11 +343,11 @@ export default function AdminGameArenaPage() {
                 )}
               </div>
 
-              {/* Tầng 1: Chọn Khóa Học (Course Tabs/Pills) */}
+              {/* Tầng 1: Chọn Khóa Học */}
               <div className="mt-4 pt-3 border-t border-gray-100">
-                <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5 text-orange-500" />
-                  Chọn Khóa Học:
+                  Khóa học:
                 </div>
                 {isLoadingCourses ? (
                   <div className="flex items-center gap-2 text-xs text-gray-400 py-2">
@@ -347,9 +355,8 @@ export default function AdminGameArenaPage() {
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    {courses.map((course: any) => {
+                    {visibleCourses.map((course: any) => {
                       const isCurrentCourse = selectedCourseId === course.id;
-                      const isDoerOrDreamer = course.title?.toLowerCase().includes("doer") || course.title?.toLowerCase().includes("dreamer");
                       return (
                         <button
                           key={course.id}
@@ -364,13 +371,6 @@ export default function AdminGameArenaPage() {
                           }`}
                         >
                           <span>{course.title}</span>
-                          {isDoerOrDreamer && (
-                            <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold ${
-                              isCurrentCourse ? "bg-white/20 text-white" : "bg-orange-100 text-orange-700"
-                            }`}>
-                              Lộ trình chuẩn
-                            </span>
-                          )}
                         </button>
                       );
                     })}
@@ -380,15 +380,15 @@ export default function AdminGameArenaPage() {
             </CardHeader>
 
             <CardContent className="p-6 space-y-4">
-              {/* Tầng 2: Thanh tìm kiếm & Thông tin tổng số bộ câu hỏi */}
+              {/* Tầng 2: Thanh tìm kiếm & Thông tin tổng số bài */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70 p-3 rounded-xl border border-slate-100">
                 <div className="flex items-center gap-2">
                   <CalendarDays className="w-4 h-4 text-orange-600" />
                   <span className="text-xs font-bold text-gray-800">
-                    Danh sách bài học khóa {selectedCourse?.title || "đang chọn"}:
+                    Khóa {selectedCourse?.title || "đang chọn"}:
                   </span>
                   <Badge variant="secondary" className="font-extrabold text-[11px] bg-orange-100 text-orange-700">
-                    {filteredExams.length} bộ câu hỏi
+                    {filteredExams.length} bài
                   </Badge>
                 </div>
 
@@ -396,7 +396,7 @@ export default function AdminGameArenaPage() {
                   <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
-                    placeholder="Tìm tuần, ngày, kỹ năng..."
+                    placeholder="Tìm bài học..."
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
                     className="w-full bg-white border border-gray-200 rounded-lg pl-8 pr-3 py-1 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-orange-500"
@@ -469,12 +469,9 @@ export default function AdminGameArenaPage() {
                               </Badge>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-400">
-                            <span>Thời lượng chuẩn: {exam.durationMinutes || exam.duration_minutes || 45} phút</span>
-                            <span>•</span>
-                            <span className="text-emerald-600 font-semibold flex items-center gap-1">
-                              <CheckCircle2 className="w-3 h-3" /> Chuẩn giáo trình thực tế
-                            </span>
+                          <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                            <Clock className="w-3 h-3 text-gray-400" />
+                            <span>{exam.durationMinutes || exam.duration_minutes || 45} phút</span>
                           </div>
                         </div>
 
@@ -521,7 +518,7 @@ export default function AdminGameArenaPage() {
                 <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
                   <div className="text-xs text-gray-500">
                     <span className="font-bold text-gray-700">Mã PIN:</span>{" "}
-                    <span className="font-mono font-black text-orange-600 text-sm">Tự động sinh ngẫu nhiên khi mở phòng</span>
+                    <span className="text-gray-500">Tự động tạo khi mở phòng</span>
                   </div>
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <Button
@@ -546,22 +543,22 @@ export default function AdminGameArenaPage() {
           </Card>
         </div>
 
-        {/* Right Col: Host Guide & Standards */}
+        {/* Right Col: Host Guide */}
         <div className="space-y-6">
           <Card className="border-gray-200 shadow-sm bg-gradient-to-br from-slate-900 to-slate-950 text-white">
-            <CardHeader className="border-b border-slate-800 pb-4">
-              <CardTitle className="text-base font-black flex items-center gap-2 text-white">
+            <CardHeader className="border-b border-slate-800 pb-3">
+              <CardTitle className="text-sm font-black flex items-center gap-2 text-white">
                 <Trophy className="w-4 h-4 text-amber-400" />
-                Quy Trình Giảng Dạy (MC Flow)
+                Quy Trình Thi Đấu
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-5 space-y-3.5 text-xs">
+            <CardContent className="p-4 space-y-3 text-xs">
               <div className="flex items-start gap-2.5">
                 <div className="w-5 h-5 rounded-full bg-orange-500/20 border border-orange-500 text-orange-400 flex items-center justify-center font-black text-[10px] shrink-0 mt-0.5">
                   1
                 </div>
                 <p className="text-slate-300 leading-relaxed">
-                  Bấm <strong>Mở Màn Chiếu Host</strong> và chiếu toàn màn hình lên máy chiếu / TV lớp học.
+                  Bấm <strong>Mở Màn Chiếu Host</strong> lên TV hoặc máy chiếu lớp học.
                 </p>
               </div>
 
@@ -570,7 +567,7 @@ export default function AdminGameArenaPage() {
                   2
                 </div>
                 <p className="text-slate-300 leading-relaxed">
-                  Học sinh vào <strong>/arena/join</strong> trên điện thoại cá nhân, nhập mã PIN và tên để avatar nảy lên màn hình.
+                  Học sinh quét mã QR hoặc vào <strong>/arena/join</strong> và nhập mã PIN.
                 </p>
               </div>
 
@@ -579,35 +576,8 @@ export default function AdminGameArenaPage() {
                   3
                 </div>
                 <p className="text-slate-300 leading-relaxed">
-                  Giáo viên chỉ cần bấm <strong>1 nút điều khiển duy nhất</strong> ở chân màn hình theo từng nhịp sư phạm.
+                  Bấm <strong>Bắt đầu</strong> và chuyển câu hỏi theo nhịp giảng dạy.
                 </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-gray-200 shadow-sm">
-            <CardHeader className="border-b border-gray-100 pb-3">
-              <CardTitle className="text-sm font-black text-gray-800 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                Tiêu Chuẩn Đấu Trường 10–20 HS
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 space-y-2.5 text-xs text-gray-600">
-              <div className="flex items-center justify-between">
-                <span>Chấm điểm:</span>
-                <span className="font-bold text-gray-900">100% Server Authority</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Độ trễ phản xạ:</span>
-                <span className="font-bold text-emerald-600">&lt; 50ms Haptic</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Nhịp nghi thức:</span>
-                <span className="font-bold text-gray-900">15s Nén nhang</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Âm thanh sư phạm:</span>
-                <span className="font-bold text-gray-900">gathering.mp3 + FX</span>
               </div>
             </CardContent>
           </Card>
