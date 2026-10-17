@@ -27,6 +27,7 @@ import unit10Data from "@/data/idioms/unit10";
 import unit11Data from "@/data/idioms/unit11";
 import unit12Data from "@/data/idioms/unit12";
 import unit13Data from "@/data/idioms/unit13";
+import unit14Data from "@/data/idioms/unit14";
 
 interface UnitCatalogItem {
   id: number;
@@ -422,13 +423,34 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     accent: "US (Mỹ)",
     isAvailable: true,
   },
+  {
+    id: 14,
+    unit_number_str: unit14Data.unit_number_str,
+    title_en: unit14Data.unit_title,
+    title_vi: "Trí nhớ & Quên lãng (Ghi nhớ, Đãng trí, Kỷ niệm & Hoài niệm)",
+    section: unit14Data.major_section,
+    description_vi:
+      "20 thành ngữ then chốt diễn tả hoạt động trí nhớ, hiện tượng quên lãng, ký ức ùa về, hồi tưởng quá khứ và nỗ lực vắt kiệt óc để suy nghĩ.",
+    total_idioms: unit14Data.summary.total_idioms,
+    total_exercises: unit14Data.summary.total_practice_exercises,
+    modules: [
+      {
+        id: "14.1",
+        title: "Idioms and expressions about memory",
+        sample: "on the tip of my tongue, memory like a sieve, train of thought, rings a bell, racking my brain...",
+      },
+    ],
+    tags: ["Trí nhớ", "Quên lãng", "Ký ức", "Hoài niệm", "IELTS Speaking & Writing"],
+    accent: "UK (Anh)",
+    isAvailable: true,
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 14, unit_number_str: "14", title_en: "Remembering and forgetting", title_vi: "Ký ức & Quên lãng" },
   { id: 15, unit_number_str: "15", title_en: "Sight and hearing", title_vi: "Thị giác & Thính giác" },
   { id: 16, unit_number_str: "16", title_en: "Smell, taste, and touch", title_vi: "Khứu giác, vị giác & xúc giác" },
   { id: 17, unit_number_str: "17", title_en: "Communication", title_vi: "Giao tiếp, đối thoại & truyền thông" },
+  { id: 18, unit_number_str: "18", title_en: "Truth and lies", title_vi: "Sự thật & Lời dối trá" },
 ];
 
 export default function EnglishIdiomsCatalogPage() {
@@ -473,7 +495,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              13 Units Sẵn Sàng (260 Idioms)
+              14 Units Sẵn Sàng (280 Idioms)
             </span>
           </div>
         </div>
@@ -501,11 +523,11 @@ export default function EnglishIdiomsCatalogPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">13</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">14</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">260</div>
+                <div className="text-2xl sm:text-3xl font-black text-sky-200">280</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
@@ -513,7 +535,7 @@ export default function EnglishIdiomsCatalogPage() {
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">65</div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-200">70</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
             </div>

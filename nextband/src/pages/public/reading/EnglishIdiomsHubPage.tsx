@@ -45,15 +45,17 @@ import unit12Data from "@/data/idioms/unit12";
 import { UNIT_12_ETYMOLOGY } from "@/data/idioms/unit12_etymology";
 import unit13Data from "@/data/idioms/unit13";
 import { UNIT_13_ETYMOLOGY } from "@/data/idioms/unit13_etymology";
+import unit14Data from "@/data/idioms/unit14";
+import { UNIT_14_ETYMOLOGY } from "@/data/idioms/unit14_etymology";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
 
   const parsedId = unitId ? parseInt(unitId, 10) : 1;
-  const initialUnitId = (parsedId >= 1 && parsedId <= 13 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
+  const initialUnitId = (parsedId >= 1 && parsedId <= 14 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13>(initialUnitId);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -116,8 +118,8 @@ export default function EnglishIdiomsHubPage() {
   useEffect(() => {
     if (unitId) {
       const p = parseInt(unitId, 10);
-      if (p >= 1 && p <= 13 && p !== selectedUnitId) {
-        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13);
+      if (p >= 1 && p <= 14 && p !== selectedUnitId) {
+        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14);
         setActiveModuleFilter("ALL");
         reset23();
         reset25();
@@ -294,7 +296,9 @@ export default function EnglishIdiomsHubPage() {
       ? unit11Data
       : selectedUnitId === 12
       ? unit12Data
-      : unit13Data;
+      : selectedUnitId === 13
+      ? unit13Data
+      : unit14Data;
 
   const currentEtymologyData =
     selectedUnitId === 1
@@ -321,7 +325,9 @@ export default function EnglishIdiomsHubPage() {
       ? UNIT_11_ETYMOLOGY
       : selectedUnitId === 12
       ? UNIT_12_ETYMOLOGY
-      : UNIT_13_ETYMOLOGY;
+      : selectedUnitId === 13
+      ? UNIT_13_ETYMOLOGY
+      : UNIT_14_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -990,7 +996,7 @@ export default function EnglishIdiomsHubPage() {
     setShowRetryAudioPic(false);
   };
 
-  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13) => {
+  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
     reset23();
@@ -1033,16 +1039,16 @@ export default function EnglishIdiomsHubPage() {
               {selectedUnitId > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13)}
+                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   ← Unit {selectedUnitId - 1 < 10 ? `0${selectedUnitId - 1}` : selectedUnitId - 1}
                 </button>
               )}
-              {selectedUnitId < 13 && (
+              {selectedUnitId < 14 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13)}
+                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   Unit {selectedUnitId + 1 < 10 ? `0${selectedUnitId + 1}` : selectedUnitId + 1} →
@@ -1117,7 +1123,9 @@ export default function EnglishIdiomsHubPage() {
                 ? "Khám phá 20 thành ngữ then chốt khắc họa các cung bậc cảm xúc dữ dội của con người qua ẩn dụ bộ phận cơ thể, sắc màu tâm trạng và thế giới ẩm thực."
                 : selectedUnitId === 12
                 ? "Khám phá 20 thành ngữ ngập tràn năng lượng tích cực, niềm hân hoan tột đỉnh, tình yêu say đắm, lòng nhiệt huyết hăng say và sự phấn khích hồi hộp khó tả."
-                : "Khám phá 20 thành ngữ then chốt diễn tả các sắc thái cảm xúc tiêu cực, từ nỗi buồn sâu lắng, cơn giận dữ sôi máu, nỗi khiếp đảm lạnh sống lưng cho đến sự ngượng ngùng muốn độn thổ."}
+                : selectedUnitId === 13
+                ? "Khám phá 20 thành ngữ then chốt diễn tả các sắc thái cảm xúc tiêu cực, từ nỗi buồn sâu lắng, cơn giận dữ sôi máu, nỗi khiếp đảm lạnh sống lưng cho đến sự ngượng ngùng muốn độn thổ."
+                : "Khám phá 20 thành ngữ then chốt về trí nhớ và quên lãng, từ hiện tượng 'nằm ngay trên đầu lưỡi', đãng trí như 'cái rây thủng', hồi tưởng xuôi dòng ký ức cho đến nỗ lực vắt kiệt óc để nhớ lại."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
@@ -2990,6 +2998,19 @@ export default function EnglishIdiomsHubPage() {
                               <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">
                                 {q.question_number}
                               </span>
+                              {(q as any).audio_file && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const unitFolder = `unit${String(selectedUnitId).padStart(2, "0")}`;
+                                    playAudio(`/audio/idioms/${unitFolder}/${(q as any).audio_file}`);
+                                  }}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs cursor-pointer border border-indigo-200 transition"
+                                >
+                                  <Volume2 className="w-3.5 h-3.5" />
+                                  <span>Nghe audio</span>
+                                </button>
+                              )}
                               <span className="text-slate-800">{q.prompt_prefix}</span>
                               <input
                                 type="text"
