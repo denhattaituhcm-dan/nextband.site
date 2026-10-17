@@ -341,19 +341,19 @@ export const WEEK_9_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w9d2_q10",
       roundIndex: 9,
-      prompt: "PARAPHRASE: Câu \"Millennials disdain scripted promotional endorsements by mainstream celebrities, placing their confidence instead in authentic peer-to-peer recommendations\" được diễn đạt lại tương đương nhất là:",
+      prompt: "PARAPHRASE: \"Millennials disdain scripted ads, trusting authentic peer recommendations instead\" đồng nghĩa với:",
       options: [
-        { id: "opt_A", label: "A", text: "Younger demographics reject staged commercial ads by traditional stars, trusting candid guidance from relatable online personalities instead." },
-        { id: "opt_B", label: "B", text: "Television commercials have completely regained total trust among teenagers who refuse to open mobile applications." },
-        { id: "opt_C", label: "C", text: "Movie stars are officially prohibited from partnering with consumer product manufacturers." },
-        { id: "opt_D", label: "D", text: "Consumers make purchases strictly when celebrities refuse to disclose sponsored agreements." }
+        { id: "opt_A", label: "A", text: "Youth reject fake celebrity ads and rely on genuine advice." },
+        { id: "opt_B", label: "B", text: "Teenagers prefer watching TV commercials over social media." },
+        { id: "opt_C", label: "C", text: "Famous movie stars are banned from online brand campaigns." },
+        { id: "opt_D", label: "D", text: "Consumers only buy goods when influencers hide promotions." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Younger demographics reject staged commercial ads by traditional stars, trusting candid guidance from relatable online personalities instead.",
-      correctExplanation: "\"Younger demographics reject staged commercial ads\" paraphrase cho \"disdain scripted promotional endorsements\", và \"trusting candid guidance from relatable personalities\" paraphrase cho \"confidence in authentic peer-to-peer recommendations\".",
+      correctAnswerText: "A. Youth reject fake celebrity ads and rely on genuine advice.",
+      correctExplanation: "\"Youth reject fake celebrity ads\" paraphrase cho \"disdain scripted ads\", và \"rely on genuine advice\" paraphrase cho \"trusting authentic peer recommendations\".",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Television commercials regained total trust",
+        baitOptionText: "B. Teenagers prefer watching TV commercials over social media.",
         diagnosticTitle: "Đảo ngược xu hướng tiêu dùng của giới trẻ",
         explanation: "Giới trẻ ngày nay né tránh quảng cáo tivi truyền thống và tìm kiếm sự chân thực từ những người có hoàn cảnh tương đồng."
       }
