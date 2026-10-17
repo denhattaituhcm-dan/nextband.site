@@ -22,6 +22,7 @@ import unit05Data from "@/data/idioms/unit05";
 import unit06Data from "@/data/idioms/unit06";
 import unit07Data from "@/data/idioms/unit07";
 import unit08Data from "@/data/idioms/unit08";
+import unit09Data from "@/data/idioms/unit09";
 
 interface UnitCatalogItem {
   id: number;
@@ -247,10 +248,40 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     accent: "US (Mỹ)",
     isAvailable: true,
   },
+  {
+    id: 9,
+    unit_number_str: unit09Data.unit_number_str,
+    title_en: unit09Data.unit_title,
+    title_vi: "Đồng thuận, Bất đồng & Thương lượng",
+    section: unit09Data.major_section,
+    description_vi:
+      "20 thành ngữ then chốt diễn tả sự đồng thuận, bất đồng nảy lửa, nghệ thuật thỏa hiệp và chốt giao kèo trong công việc lẫn đời sống.",
+    total_idioms: unit09Data.summary.total_idioms,
+    total_exercises: unit09Data.summary.total_practice_exercises,
+    modules: [
+      {
+        id: "9.1",
+        title: "Agreement and understanding",
+        sample: "see eye to eye, give the green light, on the same page...",
+      },
+      {
+        id: "9.2",
+        title: "Disagreement and conflict",
+        sample: "at odds, a bone of contention, fight like cats and dogs...",
+      },
+      {
+        id: "9.3",
+        title: "Compromise and resolution",
+        sample: "bury the hatchet, hammer out a deal, hold out an olive branch...",
+      },
+    ],
+    tags: ["Đồng thuận", "Tranh luận", "Đàm phán", "IELTS Speaking & Writing"],
+    accent: "US (Mỹ)",
+    isAvailable: true,
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 9, unit_number_str: "09", title_en: "Agreeing and disagreeing", title_vi: "Đồng thuận, tranh luận & bất đồng ý kiến" },
   { id: 10, unit_number_str: "10", title_en: "Clothes and fashion", title_vi: "Trang phục & Thời trang" },
   { id: 11, unit_number_str: "11", title_en: "Emotions", title_vi: "Cảm xúc & Tâm trạng con người" },
   { id: 12, unit_number_str: "12", title_en: "Relationships", title_vi: "Quan hệ tình cảm & bạn bè sâu rộng" },
@@ -299,7 +330,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              8 Units Sẵn Sàng (160 Idioms)
+              9 Units Sẵn Sàng (180 Idioms)
             </span>
           </div>
         </div>
@@ -327,11 +358,11 @@ export default function EnglishIdiomsCatalogPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">08</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">09</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">160</div>
+                <div className="text-2xl sm:text-3xl font-black text-sky-200">180</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
@@ -339,7 +370,7 @@ export default function EnglishIdiomsCatalogPage() {
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">40</div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-200">45</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
             </div>
