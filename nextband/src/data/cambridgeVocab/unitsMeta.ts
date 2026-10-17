@@ -89,7 +89,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Thời gian, Lịch sử & Kỷ nguyên cổ đại",
     descriptionVi: "Dòng chảy lịch sử, di tích khảo cổ, thời gian niên đại và sự tiến hóa của nền văn minh.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["archaeological dig", "ancient civilization", "chronological order", "historical era"]
   },
   {
