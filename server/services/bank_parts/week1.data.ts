@@ -534,14 +534,14 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       roundIndex: 6,
       prompt: "Để diễn đạt \"Công việc của tôi có lương bèo bọt / thấp\", cách nói tự nhiên và chính xác là:",
       options: [
-        { id: "opt_A", label: "A", text: "My job is low-paid / poorly-paid." },
+        { id: "opt_A", label: "A", text: "My job is low-paid." },
         { id: "opt_B", label: "B", text: "My job is cheap salary." },
         { id: "opt_C", label: "C", text: "My job earns small money." },
         { id: "opt_D", label: "D", text: "My salary is very short." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. My job is low-paid / poorly-paid.",
-      correctExplanation: "Tính từ miêu tả công việc lương thấp là \"low-paid\" hoặc \"poorly-paid\" (hoặc \"a low salary\").",
+      correctAnswerText: "A. My job is low-paid.",
+      correctExplanation: "Tính từ miêu tả công việc lương thấp là \"low-paid\" (hoặc \"poorly-paid\", \"a low salary\").",
       misconception: {
         baitOptionId: "opt_B",
         baitOptionText: "B. My job is cheap salary.",
@@ -594,14 +594,14 @@ export const WEEK_1_QUESTIONS: Record<string, any[]> = {
       roundIndex: 9,
       prompt: "Cụm từ nào sau đây diễn đạt mức độ yêu thích cao hơn và học thuật hơn \"I like football\"?",
       options: [
-        { id: "opt_A", label: "A", text: "I am a big fan of football / I am really keen on football." },
+        { id: "opt_A", label: "A", text: "I am really keen on football." },
         { id: "opt_B", label: "B", text: "I very like football." },
         { id: "opt_C", label: "C", text: "I like so much football." },
         { id: "opt_D", label: "D", text: "Football is my favourite love." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. I am a big fan of football / I am really keen on football.",
-      correctExplanation: "\"To be a big fan of\" hoặc \"to be keen on / passionate about\" là cách diễn đạt tự nhiên, tránh lỗi dịch word-by-word.",
+      correctAnswerText: "A. I am really keen on football.",
+      correctExplanation: "\"To be keen on\" (hoặc \"to be a big fan of / passionate about\") là cách diễn đạt tự nhiên, tránh lỗi dịch word-by-word.",
       misconception: {
         baitOptionId: "opt_B",
         baitOptionText: "B. I very like football.",
