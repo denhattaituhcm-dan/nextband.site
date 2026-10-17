@@ -10,6 +10,7 @@ import { ArenaQuestionOption } from '@/lib/arena/types';
 interface StudentAnswerCardProps {
   option: ArenaQuestionOption;
   isSelected: boolean;
+  isConfirmed?: boolean;
   isLocked: boolean;
   onSelect: (optionId: string) => void;
 }
@@ -42,16 +43,19 @@ const OPTION_THEMES: Record<string, { bg: string; border: string; text: string; 
 };
 
 export const StudentAnswerCard: React.FC<StudentAnswerCardProps> = React.memo(
-  ({ option, isSelected, isLocked, onSelect }) => {
+  ({ option, isSelected, isConfirmed = false, isLocked, onSelect }) => {
     const theme = OPTION_THEMES[option.label] || OPTION_THEMES.A;
 
     return (
       <button
+        type="button"
         onClick={() => !isLocked && onSelect(option.id)}
         disabled={isLocked}
         className={`w-full p-4 md:p-5 rounded-2xl border text-left flex items-center gap-4 transition-all duration-150 cursor-pointer ${
           isSelected
-            ? 'ring-4 ring-white border-white bg-white/20 scale-[1.02] shadow-2xl'
+            ? isConfirmed
+              ? 'ring-4 ring-emerald-400 border-emerald-300 bg-emerald-500/25 scale-[1.02] shadow-2xl'
+              : 'ring-4 ring-amber-400 border-amber-300 bg-amber-500/20 scale-[1.02] shadow-xl'
             : `${theme.bg} ${theme.border}`
         } ${isLocked ? 'cursor-not-allowed opacity-80' : 'active:scale-95'}`}
       >
@@ -69,11 +73,18 @@ export const StudentAnswerCard: React.FC<StudentAnswerCardProps> = React.memo(
           </span>
         </div>
 
-        {/* Checked Indicator */}
+        {/* Status Indicator */}
         {isSelected && (
-          <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-slate-950 font-black text-xs shrink-0 shadow">
-            ✓
-          </div>
+          isConfirmed ? (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-400 text-slate-950 font-black text-xs shrink-0 shadow animate-in zoom-in-75">
+              <span>✓ ĐÃ CHỐT</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400 text-slate-950 font-black text-xs shrink-0 shadow animate-pulse">
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping" />
+              <span>ĐANG CHỌN</span>
+            </div>
+          )
         )}
       </button>
     );

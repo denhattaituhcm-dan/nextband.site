@@ -98,6 +98,11 @@ export default function ArenaPlayPage() {
   playClickSoundRef.current = playClickSound;
   const playWrongSoundRef = useRef(playWrongSound);
   playWrongSoundRef.current = playWrongSound;
+  const selectedOptionIdRef = useRef<string | null>(selectedOptionId);
+  selectedOptionIdRef.current = selectedOptionId;
+  const hasSubmittedRef = useRef<boolean>(hasSubmitted);
+  hasSubmittedRef.current = hasSubmitted;
+  const handleConfirmAnswerRef = useRef<(fallbackId?: string) => void>(() => {});
 
   // Self-Healing Watchdog: Tự động khôi phục nếu mất đồng bộ hoặc drop kết nối
   const handleResyncRequired = useCallback(() => {
@@ -259,6 +264,9 @@ export default function ArenaPlayPage() {
         playClickSoundRef.current();
       })
       .on('broadcast', { event: 'round-locked' }, () => {
+        if (selectedOptionIdRef.current && !hasSubmittedRef.current) {
+          handleConfirmAnswerRef.current(selectedOptionIdRef.current);
+        }
         setIsLocked(true);
         setGameState('ROUND_LOCKED');
       })
@@ -356,6 +364,9 @@ export default function ArenaPlayPage() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
+          if (selectedOptionIdRef.current && !hasSubmittedRef.current) {
+            handleConfirmAnswerRef.current(selectedOptionIdRef.current);
+          }
           setIsLocked(true);
           setGameState('ROUND_LOCKED');
           setTimeout(() => {
@@ -372,13 +383,23 @@ export default function ArenaPlayPage() {
 
   const isCorrect = selectedOptionId === currentQuestion.correctOptionId;
 
-  // Xử lý khi học sinh chọn đáp án
+  // Xử lý khi học sinh chọn một phương án (cho phép đổi trước khi bấm Xác nhận)
   const handleSelectOption = useCallback(
-    async (optionId: string) => {
+    (optionId: string) => {
       if (isLocked || hasSubmitted) return;
-
       playClickSound();
       setSelectedOptionId(optionId);
+    },
+    [isLocked, hasSubmitted, playClickSound]
+  );
+
+  // Xử lý khi học sinh bấm nút xác nhận chốt đáp án
+  const handleConfirmAnswer = useCallback(
+    async (fallbackOptionId?: string) => {
+      const optionId = fallbackOptionId || selectedOptionId;
+      if (!optionId || isLocked || hasSubmitted) return;
+
+      playClickSound();
       setHasSubmitted(true);
 
       const isAnsCorrect = optionId === currentQuestion.correctOptionId;
@@ -442,8 +463,23 @@ export default function ArenaPlayPage() {
         }, 600);
       }
     },
-    [isLocked, hasSubmitted, playClickSound, nickname, timeLeft, gold, gameMode, currentQuestion, questionIndex, roomId, playerToken]
+    [
+      selectedOptionId,
+      isLocked,
+      hasSubmitted,
+      playClickSound,
+      currentQuestion,
+      roomId,
+      playerToken,
+      questionIndex,
+      nickname,
+      timeLeft,
+      gold,
+      gameMode,
+    ]
   );
+
+  handleConfirmAnswerRef.current = handleConfirmAnswer;
 
   // Xử lý khi mở rương nhận vàng
   const handleApplyChestReward = (goldDelta: number) => {
@@ -665,26 +701,58 @@ export default function ArenaPlayPage() {
                   key={opt.id}
                   option={opt}
                   isSelected={selectedOptionId === opt.id}
+                  isConfirmed={hasSubmitted && selectedOptionId === opt.id}
                   isLocked={isLocked || hasSubmitted}
                   onSelect={handleSelectOption}
                 />
               ))}
             </div>
 
-            {/* Status notice */}
-            <div className="text-center">
-              {hasSubmitted ? (
-                <span className="text-xs text-emerald-400 font-bold animate-pulse">
-                  {gameMode === 'GOLD_QUEST' && isCorrect
-                    ? '✓ Chính xác! Đang chuẩn bị mở Rương Kho Báu...'
-                    : '✓ Đã ghi nhận câu trả lời. Đang chờ khóa câu...'}
-                </span>
-              ) : (
-                <span className="text-xs text-purple-300/70">
-                  Chạm vào phương án để trả lời
-                </span>
-              )}
-            </div>
+            {/* Action Bar: Nút Xác Nhận Đáp Án để tránh bấm nhầm */}
+            {!hasSubmitted && !isLocked ? (
+              <div className="pt-2 animate-fadeIn space-y-2">
+                <button
+                  type="button"
+                  onClick={() => handleConfirmAnswer()}
+                  disabled={!selectedOptionId}
+                  className={`w-full py-4 px-6 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-2.5 transition-all shadow-xl cursor-pointer ${
+                    selectedOptionId
+                      ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/30 active:scale-95 animate-pulse'
+                      : 'bg-white/10 text-white/40 border border-white/10 cursor-not-allowed opacity-60'
+                  }`}
+                >
+                  <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                  <span>
+                    {selectedOptionId
+                      ? `XÁC NHẬN ĐÁP ÁN ${currentQuestion.options.find((o) => o.id === selectedOptionId)?.label}`
+                      : 'CHỌN 1 ĐÁP ÁN ĐỂ XÁC NHẬN'}
+                  </span>
+                </button>
+                <p className="text-[11px] text-purple-300/80 text-center font-medium">
+                  {selectedOptionId
+                    ? '💡 Bạn có thể chạm đáp án khác để đổi ý trước khi bấm Xác nhận'
+                    : 'Chạm vào 1 đáp án ở trên, sau đó bấm Xác nhận'}
+                </p>
+              </div>
+            ) : (
+              /* Status notice when submitted or locked */
+              <div className="text-center pt-2">
+                {hasSubmitted ? (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-bold text-xs sm:text-sm shadow-md animate-pulse">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>
+                      {gameMode === 'GOLD_QUEST' && isCorrect
+                        ? '✓ Chính xác! Đang chuẩn bị mở Rương Kho Báu...'
+                        : `✓ Đã chốt đáp án ${currentQuestion.options.find((o) => o.id === selectedOptionId)?.label || ''}! Đang chờ khóa câu...`}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-xs text-slate-400 font-semibold">
+                    Đã hết thời gian trả lời
+                  </span>
+                )}
+              </div>
+            )}
           </>
         ) : (
           /* Personal Micro-feedback Screen */
