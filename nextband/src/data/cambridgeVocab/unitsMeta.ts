@@ -100,7 +100,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Thiên nhiên hoang dã & Nông nghiệp",
     descriptionVi: "Hệ sinh thái, chuỗi thức ăn, bảo tồn động thực vật quý hiếm và tập quán canh tác.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["endangered species", "natural habitat", "biodiversity loss", "agricultural cultivation"]
   },
   {
@@ -111,7 +111,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Thám hiểm không gian & Vũ trụ học",
     descriptionVi: "Khám phá các hành tinh, sứ mệnh vệ tinh, trọng lực không trọng lượng và cuộc sống ngoài Trái Đất.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["space exploration", "orbital mission", "zero gravity", "celestial bodies"]
   },
 
@@ -124,7 +124,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Kiến trúc, Thiết kế & Đổi mới sáng tạo",
     descriptionVi: "Cảnh quan đô thị, vật liệu xây dựng tiên tiến, kỹ thuật cơ khí và giải pháp thẩm mỹ.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["architectural masterpiece", "innovative concept", "structural engineering", "eco-friendly design"]
   },
   {
@@ -135,7 +135,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Công nghệ thông tin & Trí tuệ nhân tạo",
     descriptionVi: "Thời đại kỹ thuật số, an ninh mạng, tự động hóa và tác động của mạng xã hội đến xã hội.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["artificial intelligence", "cybersecurity protocols", "digital disruption", "automated workplace"]
   },
   {
@@ -146,7 +146,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Toàn cầu hóa & Xu thế quốc tế",
     descriptionVi: "Hội nhập kinh tế, thương mại quốc tế, văn hóa đại chúng và phân hóa giàu nghèo toàn cầu.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["economic globalization", "cultural homogenization", "international trade", "income disparity"]
   },
   {
@@ -157,7 +157,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Đô thị hóa & Áp lực hạ tầng thành phố",
     descriptionVi: "Di cư nông thôn - thành thị, quá tải giao thông, ô nhiễm khói bụi và chính sách phát triển thành phố thông minh.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["rural-to-urban migration", "traffic congestion", "smart city initiatives", "infrastructure strain"]
   },
   {
@@ -168,7 +168,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Năng lượng tái tạo & Biến đổi khí hậu",
     descriptionVi: "Hiệu ứng nhà kính, năng lượng gió và mặt trời, lượng phát thải carbon và phát triển bền vững.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["renewable energy", "carbon footprint", "greenhouse emissions", "environmental conservation"]
   },
 
@@ -181,7 +181,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Khủng hoảng năng lượng & Nhiên liệu hóa thạch",
     descriptionVi: "Cạn kiệt tài nguyên dầu mỏ, năng lượng hạt nhân, an ninh năng lượng quốc gia.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["fossil fuels", "deplete reserves", "nuclear power", "energy security"]
   },
   {
@@ -192,7 +192,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Kinh doanh, Thị trường & Kinh tế",
     descriptionVi: "Khởi nghiệp, quản trị doanh nghiệp, biến động thị trường chứng khoán và hành vi người tiêu dùng.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["entrepreneurial spirit", "market volatility", "consumer confidence", "profit margin"]
   },
   {
@@ -203,7 +203,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Pháp luật, Tội phạm & Công lý",
     descriptionVi: "Hệ thống tư pháp, thi hành luật pháp, cải tạo phạm nhân và phòng chống tội phạm công nghệ cao.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["judicial system", "criminal justice", "deter crime", "rehabilitate offenders"]
   },
   {
@@ -214,7 +214,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Truyền thông đại chúng & Báo chí",
     descriptionVi: "Tự do báo chí, tin giả, mạng xã hội, quảng cáo tiếp thị và ảnh hưởng của truyền thông tới dư luận.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["investigative journalism", "freedom of the press", "media bias", "disseminate information"]
   },
   {
@@ -225,7 +225,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Nghệ thuật, Văn học & Di sản biểu diễn",
     descriptionVi: "Hội họa, âm nhạc hàn lâm, sân khấu kịch nghệ, tài trợ công cho nghệ thuật và giá trị tinh thần.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["visual arts", "subsidize the arts", "artistic expression", "literary heritage"]
   }
 ];
