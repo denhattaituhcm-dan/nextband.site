@@ -139,6 +139,9 @@ const VocabC1Page = lazyWithRetry(() => import("@/pages/public/vocab-c1/VocabC1P
 // Lazy-loaded Cambridge Vocabulary for IELTS Focus App
 const CambridgeVocabHubPage = lazyWithRetry(() => import("@/pages/public/cambridge-vocab/CambridgeVocabHubPage"));
 
+// Lazy-loaded C1/C2 Mastery Lab Lean Prototype
+const C1MasteryMiniLabPage = lazyWithRetry(() => import("@/features/c1-mastery/pages/C1MasteryMiniLabPage"));
+
 
 // Lazy-loaded Auth Pages
 const LoginPage = lazyWithRetry(() => import("@/pages/auth/LoginPage"));
@@ -407,6 +410,10 @@ const App = () => (
               <Route path="/cambridge-vocab/:unitId" element={<CambridgeVocabHubPage />} />
               <Route path="/reading/cambridge-vocab" element={<CambridgeVocabHubPage />} />
               <Route path="/reading/cambridge-vocab/:unitId" element={<CambridgeVocabHubPage />} />
+
+              {/* C1/C2 Mastery Lab Lean Prototype (Have/Get) */}
+              <Route path="/c1-mastery" element={<C1MasteryMiniLabPage />} />
+              <Route path="/reading/c1-mastery" element={<C1MasteryMiniLabPage />} />
               
               {/* Class Arena Live Routes */}
               <Route
