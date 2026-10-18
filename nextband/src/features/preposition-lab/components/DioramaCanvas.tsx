@@ -160,24 +160,40 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             <stop offset="50%" stopColor="#64748b" />
             <stop offset="100%" stopColor="#334155" />
           </linearGradient>
+          <radialGradient id="pinSphereGradient" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#f87171" />
+            <stop offset="40%" stopColor="#ef4444" />
+            <stop offset="75%" stopColor="#dc2626" />
+            <stop offset="100%" stopColor="#7f1d1d" />
+          </radialGradient>
           <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="3" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
         </defs>
 
-        {/* 1. Base Tabletop Perspective Surface (Light Birch / Modern Lab Counter) */}
-        <polygon
-          points="50,220 450,220 410,270 90,270"
-          fill="url(#tableGradient)"
-          stroke="#94a3b8"
-          strokeWidth="1.5"
-        />
-        {/* Table Bevel Edge */}
-        <polygon
-          points="90,270 410,270 410,278 90,278"
-          fill="#94a3b8"
-        />
+        {/* 1. Base Tabletop Perspective Surface - strictly rendered for tabletop scenarios */}
+        {[
+          'p1-placement-basics',
+          'p2-overflowing-bowl',
+          'p3-cover-or-container',
+          'p4-smoke-challenge',
+          'p5-transfer-test',
+        ].includes(puzzle.id) && (
+          <g>
+            <polygon
+              points="50,220 450,220 410,270 90,270"
+              fill="url(#tableGradient)"
+              stroke="#94a3b8"
+              strokeWidth="1.5"
+            />
+            {/* Table Bevel Edge */}
+            <polygon
+              points="90,270 410,270 410,278 90,278"
+              fill="#94a3b8"
+            />
+          </g>
+        )}
 
         {/* SCENARIO 1: PLACEMENT BASICS */}
         {puzzle.id === 'p1-placement-basics' && (
@@ -591,16 +607,28 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         {/* SCENARIO LEVEL 2: SCENARIO 1 - THE WALL & THE PICTURE */}
         {puzzle.id === 'p2-1-wall-and-picture' && (
           <g>
-            {/* 3D Brick Wall Perspective Section */}
-            <g>
-              {/* Wall Surface (Vertical plane) */}
-              <rect x="140" y="70" width="220" height="150" fill="#f8fafc" stroke="#94a3b8" strokeWidth="2" />
-              {/* Subtle mortar lines */}
-              <line x1="140" y1="120" x2="360" y2="120" stroke="#e2e8f0" strokeWidth="1.5" />
-              <line x1="140" y1="170" x2="360" y2="170" stroke="#e2e8f0" strokeWidth="1.5" />
-              <line x1="250" y1="70" x2="250" y2="120" stroke="#e2e8f0" strokeWidth="1.5" />
-              <line x1="200" y1="120" x2="200" y2="170" stroke="#e2e8f0" strokeWidth="1.5" />
-              <line x1="300" y1="120" x2="300" y2="170" stroke="#e2e8f0" strokeWidth="1.5" />
+            {/* Gallery Wall Background (Vertical plane) */}
+            <rect x="50" y="45" width="400" height="185" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+            {/* Architectural Baseboard Trim */}
+            <rect x="50" y="230" width="400" height="22" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1.5" />
+            <line x1="50" y1="234" x2="450" y2="234" stroke="#ffffff" strokeWidth="1" />
+
+            {/* Subtle vertical wall paneling / mortar lines */}
+            <line x1="50" y1="110" x2="450" y2="110" stroke="#f1f5f9" strokeWidth="1.5" />
+            <line x1="50" y1="170" x2="450" y2="170" stroke="#f1f5f9" strokeWidth="1.5" />
+            <line x1="150" y1="45" x2="150" y2="230" stroke="#f1f5f9" strokeWidth="1.5" />
+            <line x1="350" y1="45" x2="350" y2="230" stroke="#f1f5f9" strokeWidth="1.5" />
+
+            {/* Embedded electrical socket in wall demonstrating IN vs ON */}
+            <g transform="translate(100, 150)">
+              <rect x="0" y="0" width="26" height="34" rx="4" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1.2" />
+              <circle cx="9" cy="13" r="1.5" fill="#475569" />
+              <circle cx="17" cy="13" r="1.5" fill="#475569" />
+              <circle cx="9" cy="23" r="1.5" fill="#475569" />
+              <circle cx="17" cy="23" r="1.5" fill="#475569" />
+              <text x="13" y="46" fill="#94a3b8" fontSize="8" textAnchor="middle">
+                (IN the wall)
+              </text>
             </g>
 
             {/* The Framed Painting (draggable against the wall) */}
@@ -615,25 +643,28 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
               transform={`translate(${dragOffset.x}, ${isManipulated ? -20 : dragOffset.y})`}
               onPointerDown={handlePointerDown}
             >
-              {/* Frame Drop Shadow */}
-              <rect x="202" y="97" width="96" height="76" rx="4" fill="rgba(0,0,0,0.15)" />
+              {/* Frame Drop Shadow on vertical wall surface */}
+              <rect x="198" y="93" width="104" height="82" rx="4" fill="rgba(0,0,0,0.14)" />
               {/* Wooden Frame */}
-              <rect x="200" y="95" width="96" height="76" rx="4" fill="#b45309" stroke="#78350f" strokeWidth="2" />
+              <rect x="195" y="90" width="104" height="82" rx="4" fill="#b45309" stroke="#78350f" strokeWidth="2.5" />
+              <rect x="201" y="96" width="92" height="70" fill="#fef3c7" stroke="#d97706" strokeWidth="1" />
               {/* Canvas Art */}
-              <rect x="208" y="103" width="80" height="60" rx="2" fill="#38bdf8" />
-              <circle cx="230" cy="120" r="12" fill="#facc15" />
-              <polygon points="212,158 240,135 260,158" fill="#15803d" />
-              <polygon points="245,158 268,140 286,158" fill="#166534" />
-              {/* Hanging Cord */}
-              <line x1="248" y1="85" x2="235" y2="95" stroke="#475569" strokeWidth="1.5" />
-              <line x1="248" y1="85" x2="261" y2="95" stroke="#475569" strokeWidth="1.5" />
-              <circle cx="248" cy="85" r="3" fill="#334155" />
+              <rect x="205" y="100" width="84" height="62" rx="2" fill="#38bdf8" />
+              <circle cx="228" cy="116" r="11" fill="#facc15" />
+              <polygon points="208,162 238,132 260,162" fill="#15803d" />
+              <polygon points="245,162 270,138 288,162" fill="#166534" />
+              {/* Specular glass gleam across painting */}
+              <path d="M 210,105 L 245,105 L 225,155 L 210,155 Z" fill="#ffffff" opacity="0.25" />
+              {/* Hanging Cord & Anchor Nail */}
+              <line x1="247" y1="78" x2="232" y2="90" stroke="#475569" strokeWidth="1.5" />
+              <line x1="247" y1="78" x2="262" y2="90" stroke="#475569" strokeWidth="1.5" />
+              <circle cx="247" cy="78" r="3.5" fill="#334155" stroke="#94a3b8" strokeWidth="1" />
             </g>
 
             {/* Label callout */}
-            <rect x="180" y="235" width="140" height="24" rx="6" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
-            <text x="250" y="251" fill="#475569" fontSize="10" textAnchor="middle" fontWeight="bold">
-              Tì lên bề mặt phẳng (ON)
+            <rect x="155" y="235" width="190" height="26" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
+            <text x="250" y="252" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
+              Bức tranh tì trên mặt phẳng (ON the wall)
             </text>
           </g>
         )}
@@ -895,11 +926,24 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         {/* SCENARIO LEVEL 2: SCENARIO 3 - THE CORNER PARADOX */}
         {puzzle.id === 'p2-3-corner-paradox' && (
           <g>
-            {/* 3D Room Corner Walls */}
-            <polygon points="70,50 250,90 250,230 70,190" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="1.5" />
-            <polygon points="250,90 430,50 430,190 250,230" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
-            {/* Corner seam line */}
-            <line x1="250" y1="90" x2="250" y2="230" stroke="#94a3b8" strokeWidth="2.5" />
+            {/* 3D Room Corner Walls with subtle lighting & vertical paneling */}
+            <polygon points="50,40 250,85 250,225 50,180" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
+            <polygon points="250,85 450,40 450,180 250,225" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="1.5" />
+            {/* Corner vertical seam line */}
+            <line x1="250" y1="85" x2="250" y2="225" stroke="#94a3b8" strokeWidth="2.5" />
+
+            {/* Baseboard Skirting along walls */}
+            <polygon points="50,172 250,217 250,225 50,180" fill="#cbd5e1" />
+            <polygon points="250,217 450,172 450,180 250,225" fill="#94a3b8" />
+
+            {/* Parquet Hardwood Floor in 3D Perspective */}
+            <polygon points="50,180 250,225 450,180 250,270" fill="#fef3c7" stroke="#cbd5e1" strokeWidth="1.2" />
+            {/* Perspective Wood Plank Lines */}
+            <line x1="150" y1="202" x2="150" y2="248" stroke="#fde68a" strokeWidth="1.5" />
+            <line x1="200" y1="214" x2="200" y2="259" stroke="#fde68a" strokeWidth="1.5" />
+            <line x1="250" y1="225" x2="250" y2="270" stroke="#f59e0b" strokeWidth="2" />
+            <line x1="300" y1="214" x2="300" y2="259" stroke="#fde68a" strokeWidth="1.5" />
+            <line x1="350" y1="202" x2="350" y2="248" stroke="#fde68a" strokeWidth="1.5" />
 
             {/* Bookshelf tucked inside the corner */}
             <g
@@ -913,21 +957,32 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
               transform={`translate(${isManipulated ? 0 : dragOffset.x}, ${isManipulated ? -15 : dragOffset.y})`}
               onPointerDown={handlePointerDown}
             >
+              {/* Floor Contact Shadow */}
+              <ellipse cx="250" cy="222" rx="38" ry="9" fill="rgba(0,0,0,0.18)" />
+
               {/* Bookshelf 3D Box */}
-              <rect x="220" y="110" width="60" height="100" rx="3" fill="#b45309" stroke="#78350f" strokeWidth="2" />
+              <rect x="218" y="105" width="64" height="112" rx="4" fill="#b45309" stroke="#78350f" strokeWidth="2" />
               {/* Shelves and colorful books */}
-              <rect x="226" y="122" width="48" height="6" fill="#78350f" />
-              <rect x="228" y="128" width="8" height="24" fill="#ef4444" />
-              <rect x="238" y="132" width="8" height="20" fill="#3b82f6" />
-              <rect x="248" y="130" width="8" height="22" fill="#10b981" />
-              <rect x="226" y="156" width="48" height="6" fill="#78350f" />
-              <rect x="230" y="162" width="10" height="26" fill="#eab308" />
-              <rect x="242" y="166" width="10" height="22" fill="#8b5cf6" />
+              <rect x="224" y="118" width="52" height="6" fill="#78350f" />
+              <rect x="226" y="124" width="8" height="26" fill="#ef4444" />
+              <rect x="236" y="128" width="8" height="22" fill="#3b82f6" />
+              <rect x="246" y="126" width="8" height="24" fill="#10b981" />
+              <rect x="256" y="130" width="8" height="20" fill="#f59e0b" />
+
+              <rect x="224" y="154" width="52" height="6" fill="#78350f" />
+              <rect x="228" y="160" width="10" height="28" fill="#eab308" />
+              <rect x="240" y="164" width="10" height="24" fill="#8b5cf6" />
+              <rect x="252" y="162" width="10" height="26" fill="#06b6d4" />
+
+              <rect x="224" y="190" width="52" height="6" fill="#78350f" />
+              <rect x="230" y="196" width="12" height="18" fill="#ec4899" />
+              <rect x="244" y="198" width="12" height="16" fill="#64748b" />
             </g>
 
-            <rect x="180" y="240" width="140" height="24" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" />
-            <text x="250" y="256" fill="#0369a1" fontSize="10" textAnchor="middle" fontWeight="bold">
-              Góc phòng ôm trọn (IN)
+            {/* Label callout */}
+            <rect x="160" y="235" width="180" height="26" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
+            <text x="250" y="252" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
+              Góc phòng 3D ôm trọn (IN the corner)
             </text>
           </g>
         )}
@@ -935,7 +990,22 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         {/* SCENARIO LEVEL 2: SCENARIO 4 - THE COMMUTER'S VEHICLE */}
         {puzzle.id === 'p2-4-commuters-vehicle' && (
           <g>
-            {/* The Express Bus Body */}
+            {/* Urban Street Environment */}
+            {/* Distant building skyline backdrop */}
+            <rect x="40" y="60" width="420" height="135" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+            <rect x="70" y="110" width="45" height="85" fill="#e2e8f0" />
+            <rect x="130" y="90" width="60" height="105" fill="#cbd5e1" />
+            <rect x="330" y="100" width="50" height="95" fill="#e2e8f0" />
+            <rect x="395" y="80" width="55" height="115" fill="#cbd5e1" />
+
+            {/* Sidewalk Curb */}
+            <polygon points="30,192 470,192 455,206 45,206" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="1" />
+            {/* Asphalt Road Surface in perspective */}
+            <polygon points="45,206 455,206 480,268 20,268" fill="#334155" stroke="#1e293b" strokeWidth="1" />
+            {/* Yellow Dashed Highway Divider Line */}
+            <line x1="50" y1="242" x2="450" y2="242" stroke="#facc15" strokeWidth="3" strokeDasharray="18 14" />
+
+            {/* The Express Bus Body (Tactile & Draggable) */}
             <g
               className={
                 isDragging
@@ -947,41 +1017,135 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
               transform={`translate(${isManipulated ? 50 : dragOffset.x}, 0)`}
               onPointerDown={handlePointerDown}
             >
+              {/* Wheel Asphalt Shadows */}
+              <ellipse cx="180" cy="226" rx="26" ry="7" fill="rgba(0,0,0,0.4)" />
+              <ellipse cx="330" cy="226" rx="26" ry="7" fill="rgba(0,0,0,0.4)" />
+
               {/* Bus Outer Shell */}
-              <rect x="130" y="110" width="250" height="100" rx="16" fill="#0284c7" stroke="#0369a1" strokeWidth="2.5" />
-              {/* Windows & Walkable Aisle Floor */}
-              <rect x="150" y="125" width="210" height="40" rx="4" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="1.5" />
-              {/* Walking Passenger Silhouettes inside */}
-              <circle cx="180" cy="140" r="8" fill="#1e293b" />
-              <rect x="174" y="148" width="12" height="16" rx="3" fill="#1e293b" />
-              <circle cx="230" cy="140" r="8" fill="#1e293b" />
-              <rect x="224" y="148" width="12" height="16" rx="3" fill="#1e293b" />
-              <circle cx="280" cy="140" r="8" fill="#1e293b" />
-              <rect x="274" y="148" width="12" height="16" rx="3" fill="#1e293b" />
-              {/* Walkable aisle floor platform line */}
-              <line x1="150" y1="165" x2="360" y2="165" stroke="#f59e0b" strokeWidth="3" />
-              {/* Wheels */}
-              <circle cx="180" cy="215" r="18" fill="#1e293b" stroke="#64748b" strokeWidth="4" />
-              <circle cx="330" cy="215" r="18" fill="#1e293b" stroke="#64748b" strokeWidth="4" />
+              <rect x="125" y="108" width="260" height="102" rx="14" fill="#0284c7" stroke="#0369a1" strokeWidth="2.5" />
+
+              {/* Roof Light Strip */}
+              <rect x="155" y="108" width="200" height="4" fill="#38bdf8" />
+
+              {/* Digital LED Route Display */}
+              <rect x="160" y="115" width="90" height="10" rx="2" fill="#0f172a" />
+              <text x="205" y="123" fill="#facc15" fontSize="8" fontFamily="monospace" fontWeight="black" textAnchor="middle">
+                EXPRESS 85
+              </text>
+
+              {/* Panoramic Passenger Windows */}
+              <rect x="145" y="128" width="220" height="42" rx="4" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="1.5" />
+
+              {/* Walking / Standing Passenger Silhouettes inside */}
+              <circle cx="175" cy="142" r="8" fill="#1e293b" />
+              <rect x="169" y="150" width="12" height="18" rx="3" fill="#1e293b" />
+              <circle cx="225" cy="142" r="8" fill="#1e293b" />
+              <rect x="219" y="150" width="12" height="18" rx="3" fill="#1e293b" />
+              <circle cx="275" cy="142" r="8" fill="#1e293b" />
+              <rect x="269" y="150" width="12" height="18" rx="3" fill="#1e293b" />
+              <circle cx="325" cy="142" r="8" fill="#1e293b" />
+              <rect x="319" y="150" width="12" height="18" rx="3" fill="#1e293b" />
+
+              {/* Walkable Aisle Floor Platform Line (Gold Highlight) */}
+              <line x1="145" y1="168" x2="365" y2="168" stroke="#f59e0b" strokeWidth="3.5" />
+
+              {/* Front Headlights & Rear Taillights */}
+              <rect x="382" y="180" width="4" height="12" rx="1" fill="#fef08a" />
+              <rect x="125" y="180" width="4" height="12" rx="1" fill="#ef4444" />
+
+              {/* Heavy Duty Wheels */}
+              <circle cx="180" cy="214" r="18" fill="#1e293b" stroke="#64748b" strokeWidth="5" />
+              <circle cx="180" cy="214" r="7" fill="#cbd5e1" />
+              <circle cx="330" cy="214" r="18" fill="#1e293b" stroke="#64748b" strokeWidth="5" />
+              <circle cx="330" cy="214" r="7" fill="#cbd5e1" />
             </g>
 
-            <rect x="160" y="245" width="180" height="24" rx="6" fill="#ffffff" stroke="#f59e0b" strokeWidth="1.5" />
-            <text x="250" y="261" fill="#b45309" fontSize="10" textAnchor="middle" fontWeight="bold">
-              Mặt sàn đứng đi lại được (ON)
+            {/* Label callout */}
+            <rect x="150" y="235" width="200" height="26" rx="6" fill="#ffffff" stroke="#f59e0b" strokeWidth="1.5" className="drop-shadow-sm" />
+            <text x="250" y="252" fill="#b45309" fontSize="11" textAnchor="middle" fontWeight="bold">
+              Mặt sàn đứng đi lại được ➔ Dùng ON (ON the bus)
             </text>
           </g>
         )}
 
-        {/* SCENARIO LEVEL 2: SCENARIO 5 - THE MAP & THE PIN */}
+        {/* SCENARIO LEVEL 2: SCENARIO 5 - THE MAP & THE PIN (HIGH-FIDELITY CARTOGRAPHIC DIORAMA) */}
         {puzzle.id === 'p2-5-map-and-pin' && (
           <g>
-            {/* Folded Map Canvas */}
-            <polygon points="110,80 390,80 370,220 90,220" fill="#fef3c7" stroke="#d97706" strokeWidth="2" />
-            {/* Map Roads / Demarcations */}
-            <path d="M 120,150 Q 240,140 370,160" stroke="#cbd5e1" strokeWidth="8" fill="none" />
-            <path d="M 230,80 Q 250,150 240,220" stroke="#f59e0b" strokeWidth="6" fill="none" />
+            {/* 1. Architectural Cutting Mat / Drafting Desk Background */}
+            <polygon points="35,50 465,50 435,265 65,265" fill="#0f172a" stroke="#334155" strokeWidth="2" />
+            {/* Grid markings on the cutting mat */}
+            <line x1="55" y1="100" x2="445" y2="100" stroke="#1e293b" strokeWidth="1" strokeDasharray="3 4" />
+            <line x1="55" y1="155" x2="445" y2="155" stroke="#1e293b" strokeWidth="1" strokeDasharray="3 4" />
+            <line x1="55" y1="210" x2="445" y2="210" stroke="#1e293b" strokeWidth="1" strokeDasharray="3 4" />
+            <line x1="150" y1="50" x2="150" y2="265" stroke="#1e293b" strokeWidth="1" strokeDasharray="3 4" />
+            <line x1="250" y1="50" x2="250" y2="265" stroke="#1e293b" strokeWidth="1" strokeDasharray="3 4" />
+            <line x1="350" y1="50" x2="350" y2="265" stroke="#1e293b" strokeWidth="1" strokeDasharray="3 4" />
 
-            {/* Target Coordinate Crosshair and Map Pin */}
+            {/* 2. Tri-Fold 3D Topographic Map */}
+            {/* Map Cast Drop Shadow on desk */}
+            <polygon points="70,68 425,78 410,252 60,242" fill="rgba(0,0,0,0.4)" />
+
+            {/* Map Panel 1 (Left Fold) */}
+            <polygon points="75,65 190,74 184,245 65,235" fill="#fefce8" stroke="#d97706" strokeWidth="1.2" />
+            {/* Map Panel 2 (Center Fold - Primary Area) */}
+            <polygon points="190,74 310,68 316,240 184,245" fill="#fffbeb" stroke="#d97706" strokeWidth="1.2" />
+            {/* Map Panel 3 (Right Fold) */}
+            <polygon points="310,68 425,76 415,248 316,240" fill="#fef9c3" stroke="#d97706" strokeWidth="1.2" />
+
+            {/* Crease Lighting / Fold Lines */}
+            <line x1="190" y1="74" x2="184" y2="245" stroke="#d97706" strokeWidth="1.5" opacity="0.6" />
+            <line x1="310" y1="68" x2="316" y2="240" stroke="#d97706" strokeWidth="1.5" opacity="0.6" />
+
+            {/* Topographic Contour Lines */}
+            <path d="M 80,105 Q 130,85 180,110 T 300,95 T 410,115" stroke="#d97706" strokeWidth="1" fill="none" opacity="0.3" />
+            <path d="M 85,185 Q 140,165 200,195 T 320,175 T 405,195" stroke="#d97706" strokeWidth="1" fill="none" opacity="0.3" />
+
+            {/* Meandering Blue River */}
+            <path d="M 90,115 Q 165,100 235,160 T 405,135" stroke="#38bdf8" strokeWidth="8" fill="none" opacity="0.85" />
+            {/* Highway Bridge over River */}
+            <rect x="232" y="150" width="26" height="12" rx="2" fill="#94a3b8" stroke="#475569" strokeWidth="1" />
+
+            {/* Shaded Territorial Zone (Demonstrating IN the border zone) */}
+            <polygon
+              points="105,80 220,86 210,145 95,140"
+              fill="rgba(16, 185, 129, 0.18)"
+              stroke="#10b981"
+              strokeWidth="1.5"
+              strokeDasharray="4 3"
+            />
+            <text x="155" y="112" fill="#047857" fontSize="8" fontWeight="bold" textAnchor="middle">
+              Khu vực kiểm soát (IN)
+            </text>
+
+            {/* International Border Trajectory Line (Demonstrating ON the border line) */}
+            <line x1="330" y1="72" x2="330" y2="244" stroke="#6366f1" strokeWidth="2" strokeDasharray="5 3" />
+            <text x="335" y="105" fill="#4f46e5" fontSize="8" fontWeight="bold">
+              Đường biên (ON)
+            </text>
+
+            {/* Two Major Intersecting Arterial Highways */}
+            {/* North-South Highway */}
+            <path d="M 250,70 L 250,242" stroke="#475569" strokeWidth="10" strokeLinecap="round" />
+            <path d="M 250,70 L 250,242" stroke="#facc15" strokeWidth="1.5" strokeDasharray="6 5" />
+            {/* East-West Highway */}
+            <path d="M 80,155 L 415,155" stroke="#475569" strokeWidth="10" strokeLinecap="round" />
+            <path d="M 80,155 L 415,155" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="6 5" />
+
+            {/* Border Checkpoint Guard Booth at (250, 155) */}
+            <rect x="234" y="145" width="12" height="16" rx="2" fill="#1e293b" stroke="#cbd5e1" strokeWidth="1" />
+            <rect x="236" y="148" width="8" height="5" fill="#38bdf8" />
+            <line x1="246" y1="154" x2="272" y2="154" stroke="#ef4444" strokeWidth="2.5" strokeDasharray="4 2" />
+
+            {/* Target 0-D Coordinate Sonar Pulse at Intersection */}
+            <circle cx="250" cy="155" r="18" fill="none" stroke="#ef4444" strokeWidth="1.5" className="animate-ping" opacity="0.8" />
+            <circle cx="250" cy="155" r="28" fill="none" stroke="#ef4444" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+            <circle cx="250" cy="155" r="4.5" fill="#ef4444" />
+            <circle cx="250" cy="155" r="1.5" fill="#ffffff" />
+            {/* Crosshairs */}
+            <line x1="220" y1="155" x2="280" y2="155" stroke="#ef4444" strokeWidth="1" strokeDasharray="2 2" />
+            <line x1="250" y1="125" x2="250" y2="185" stroke="#ef4444" strokeWidth="1" strokeDasharray="2 2" />
+
+            {/* 3. The 3D Metal Location Pin (Tactile & Draggable) */}
             <g
               className={
                 isDragging
@@ -990,20 +1154,30 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
                   ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
                   : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
               }
-              transform={`translate(${dragOffset.x}, ${isManipulated ? -15 : dragOffset.y})`}
+              transform={`translate(${dragOffset.x}, ${isManipulated ? -18 : dragOffset.y})`}
               onPointerDown={handlePointerDown}
             >
-              {/* Point Target Pulse */}
-              <circle cx="245" cy="145" r="22" fill="#ef4444" opacity="0.2" className="animate-ping" />
-              <circle cx="245" cy="145" r="6" fill="#ef4444" />
-              {/* Standing Map Pin Marker */}
-              <path d="M 245,145 C 230,120 230,105 245,105 C 260,105 260,120 245,145 Z" fill="#ef4444" stroke="#991b1b" strokeWidth="1.5" />
-              <circle cx="245" cy="115" r="4" fill="#ffffff" />
+              {/* Pin Drop Shadow on map paper */}
+              <ellipse cx="258" cy="158" rx="14" ry="5" fill="rgba(0,0,0,0.35)" />
+
+              {/* Tapered Chrome Needle Shaft */}
+              <polygon points="248.5,125 251.5,125 250,155" fill="url(#metalNail)" stroke="#334155" strokeWidth="0.75" />
+
+              {/* Pin Head - 3D Sphere with Metallic Bevel */}
+              <circle cx="250" cy="115" r="15" fill="url(#pinSphereGradient)" stroke="#7f1d1d" strokeWidth="1.5" />
+              {/* Metallic Inner Ring */}
+              <circle cx="250" cy="115" r="9" fill="#dc2626" stroke="#fca5a5" strokeWidth="1" />
+              {/* Center Bullseye Dot */}
+              <circle cx="250" cy="115" r="4" fill="#ffffff" />
+              <circle cx="250" cy="115" r="1.8" fill="#991b1b" />
+              {/* Specular 3D Reflection Glint */}
+              <ellipse cx="245" cy="109" rx="4.5" ry="2.5" fill="#ffffff" opacity="0.9" />
             </g>
 
-            <rect x="170" y="235" width="160" height="24" rx="6" fill="#ffffff" stroke="#ef4444" strokeWidth="1.5" />
-            <text x="250" y="251" fill="#991b1b" fontSize="10" textAnchor="middle" fontWeight="bold">
-              Toạ độ điểm hội tụ (AT)
+            {/* Label callout */}
+            <rect x="150" y="235" width="200" height="26" rx="6" fill="#ffffff" stroke="#ef4444" strokeWidth="1.5" className="drop-shadow-sm" />
+            <text x="250" y="252" fill="#991b1b" fontSize="11" textAnchor="middle" fontWeight="bold">
+              Toạ độ điểm hội tụ 0-D ➔ Dùng AT (AT the border)
             </text>
           </g>
         )}
