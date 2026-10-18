@@ -172,6 +172,22 @@ export function PublicFooter() {
                 </Link>
               </li>
             </ul>
+
+            {/* Google Maps embed */}
+            <div className="pt-2">
+              <div className="w-full overflow-hidden rounded-lg border border-border shadow-sm">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.654146429267!2d106.76257297461882!3d10.913867256644396!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d9f9b1f06fb7%3A0xed7870977727b3dd!2zVHJ1bmcgdMOibSBOZ2_huqFpIG5n4buvIEFSSVMgSUVMVFM!5e0!3m2!1svi!2s!4v1792344773070!5m2!1svi!2s"
+                  width="100%"
+                  height="160"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  title="Bản đồ ARIS IELTS"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
