@@ -5,6 +5,7 @@ import { DioramaCanvas } from './DioramaCanvas';
 import { PrepositionSelector } from './PrepositionSelector';
 import { FeedbackDrawer } from './FeedbackDrawer';
 import { CompletionSummary } from './CompletionSummary';
+import { IeltsMetaphorBridge } from './IeltsMetaphorBridge';
 import { soundEffects } from '../utils/soundEffects';
 
 export const PrepositionLabContainer: React.FC = () => {
@@ -232,6 +233,9 @@ export const PrepositionLabContainer: React.FC = () => {
           }}
           isLastPuzzle={currentPuzzleIndex === LEVEL_1_PUZZLES.length - 1}
         />
+
+        {/* IELTS 8.5+ Metaphor Bridge (Visible once tested prediction) */}
+        {hasTestedPrediction && <IeltsMetaphorBridge puzzle={puzzle} />}
       </div>
     </div>
   );

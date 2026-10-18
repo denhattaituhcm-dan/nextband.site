@@ -55,6 +55,22 @@ export interface PuzzleScenario {
     principleName: string;
     principleNameVi?: string;
   };
+  ieltsBridge?: {
+    metaphorTitle: string;
+    academicExplanation: string;
+    collocationPills: string[];
+    writingExample: {
+      band: string;
+      sentence: string;
+      targetPreposition: string;
+    };
+    microChallenge: {
+      prompt: string;
+      options: string[];
+      correctAnswer: string;
+      explanation: string;
+    };
+  };
 }
 
 export type SceneActionState =

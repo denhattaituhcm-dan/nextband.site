@@ -38,6 +38,22 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
       en: 'In English, when concave surfaces enclose an object and prevent it from rolling or falling out, the relationship is IN.',
       vi: 'Trong tiếng Anh, khi một bề mặt lõm bao bọc vật thể và giữ cho nó không bị lăn hay rơi ra ngoài, mối quan hệ đó dùng IN.'
     },
+    ieltsBridge: {
+      metaphorTitle: 'State & Condition as Container (Vùng chứa trạng thái)',
+      academicExplanation: 'Trong IELTS Writing & Speaking, các trạng thái xã hội, tâm lý hay kinh tế luôn được tư duy như một "chiếc bát chứa" vô hình. Khi chủ thể rơi vào đó, họ bị hoàn cảnh bao bọc và chi phối.',
+      collocationPills: ['in a dilemma', 'in crisis', 'in jeopardy', 'in progress', 'invest in an initiative'],
+      writingExample: {
+        band: 'Band 8.0 Task 2',
+        sentence: 'When developing nations find themselves in an economic downturn, vulnerable populations bear the heaviest burden.',
+        targetPreposition: 'in'
+      },
+      microChallenge: {
+        prompt: 'The government has poured billions of dollars ______ an effort to transition towards green energy.',
+        options: ['on', 'in', 'at', 'with'],
+        correctAnswer: 'in',
+        explanation: 'Thành ngữ học thuật: "in an effort to" (trong nỗ lực nhằm...). "Effort" được tư duy như một chiếc phễu/vùng chứa đón nhận nguồn lực.'
+      }
+    },
     options: [
       {
         id: 'in',
@@ -97,6 +113,22 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
       principleNameVi: 'Cùng chuyển động & Thuộc khối vật chứa',
       en: 'Functional containment extends upward through interlocking objects. If moving the bowl moves the fruit, native speakers judge it as IN.',
       vi: 'Chức năng chứa đựng mở rộng lên trên nhờ các vật thể xếp lồng vào nhau. Nếu đẩy bát làm quả chuối di chuyển theo, người bản xứ dùng IN.'
+    },
+    ieltsBridge: {
+      metaphorTitle: 'The Coupled Drag Principle (Quy luật cùng chuyển động)',
+      academicExplanation: 'Dù quả chuối nhô cao hơn vành bát, khi bát di chuyển, chuối vẫn bị cuốn theo. Trong IELTS, khi một cá thể hay tổ chức tham gia vào một hệ thống hoặc một khóa học, họ thuộc về hệ thống đó ("enrolled in", "engaged in").',
+      collocationPills: ['engaged in dialogue', 'enrolled in university', 'caught in a vicious circle', 'involved in politics'],
+      writingExample: {
+        band: 'Band 8.5 Task 2',
+        sentence: 'Individuals engaged in lifelong learning adapt significantly faster to sudden fluctuations in the job market.',
+        targetPreposition: 'in'
+      },
+      microChallenge: {
+        prompt: 'Both developed and developing nations must actively participate ______ international climate pacts.',
+        options: ['with', 'in', 'on', 'to'],
+        correctAnswer: 'in',
+        explanation: 'Thành ngữ học thuật: "participate IN" (tham gia vào một hoạt động/hiệp ước). Hệ thống hiệp ước đóng vai trò như khối vận hành cuốn các thành viên cùng chuyển động.'
+      }
     },
     options: [
       {
@@ -168,6 +200,22 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
       en: 'Geometric enclosure alone does not make an object IN. When an inverted vessel acts as a roof/shield, the located object is UNDER.',
       vi: 'Bao bọc hình học đơn thuần không đủ để dùng IN. Khi một vật úp xuống đóng vai trò mái che/nắp đậy, vật ở bên dưới là UNDER.'
     },
+    ieltsBridge: {
+      metaphorTitle: 'The Shielding & Authority Umbrella (Mái che & Áp lực từ trên)',
+      academicExplanation: 'Bát úp che quả táo chính là nguyên mẫu của "mái che bảo hộ hoặc thẩm quyền". Trong IELTS, khi ai đó chịu sự chi phối, giám sát hoặc áp lực từ cấp trên/hoàn cảnh nặng nề, ta dùng UNDER.',
+      collocationPills: ['under the supervision of', 'under financial pressure', 'under severe scrutiny', 'under the guise of'],
+      writingExample: {
+        band: 'Band 8.0 Task 2',
+        sentence: 'Medical professionals currently work under intense strain due to persistent shortages of essential hospital staff.',
+        targetPreposition: 'under'
+      },
+      microChallenge: {
+        prompt: 'New policies implemented ______ the jurisdiction of local councils have lowered crime rates.',
+        options: ['under', 'in', 'at', 'on'],
+        correctAnswer: 'under',
+        explanation: 'Thành ngữ học thuật: "under the jurisdiction/authority of" (dưới thẩm quyền của...). Thẩm quyền phủ xuống như một chiếc vòm che chở/quản lý.'
+      }
+    },
     options: [
       {
         id: 'under',
@@ -238,6 +286,22 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
       en: 'Because rising gas naturally escapes upward, the inverted bowl holds it and prevents escape. Holding something in creates functional containment: IN.',
       vi: 'Vì chất khí tự nhiên bốc lên và thoát ra, chiếc bát úp chặn lại và giữ không cho nó thoát. Ngăn không cho thoát ra chính là chức năng chứa đựng: IN.'
     },
+    ieltsBridge: {
+      metaphorTitle: 'Containment as Restraint & Seclusion (Kiểm soát & Ngăn chặn phát tán)',
+      academicExplanation: 'Bát úp giữ khói chứng minh bản chất sâu xa nhất của IN: Giữ không cho một thứ dễ bốc hơi/phát tán thoát ra ngoài. Trong IELTS Writing, khi bàn về dịch bệnh, lạm phát hoặc tội phạm, "keep/bring in check" hay "containment strategy" là cụm từ đắt giá band 8.5.',
+      collocationPills: ['keep inflation in check', 'in custody', 'in quarantine', 'in detention'],
+      writingExample: {
+        band: 'Band 8.5 Task 2',
+        sentence: 'During viral outbreaks, keeping contagious carriers in strict quarantine remains the most effective containment strategy.',
+        targetPreposition: 'in'
+      },
+      microChallenge: {
+        prompt: 'Central banks raised benchmark rates to keep surging inflation ______ check.',
+        options: ['under', 'in', 'at', 'on'],
+        correctAnswer: 'in',
+        explanation: 'Thành ngữ học thuật C2: "keep something IN check" (kiểm soát, kiềm chế trong vòng kiểm soát). Nghĩa gốc là giam giữ trong lồng kiểm soát.'
+      }
+    },
     options: [
       {
         id: 'in',
@@ -307,6 +371,22 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
       principleNameVi: 'Lực kẹp giữ cơ học tạo nên Chứa đựng',
       en: 'No geometric box encloses the protruding nail. English uses IN because the wood fibers grip and hold it: moving the wood moves the nail.',
       vi: 'Không có chiếc hộp hình học nào bao bọc phần đinh nhô ra. Tiếng Anh dùng IN vì thớ gỗ kẹp chặt và giữ nó: di chuyển thanh gỗ thì đinh chuyển động theo.'
+    },
+    ieltsBridge: {
+      metaphorTitle: 'Deep Rooted Embedding & Anchoring (Găm sâu & Ăn sâu vào cấu trúc)',
+      academicExplanation: 'Dù 70% đinh lộ ra ngoài, người bản xứ dùng IN vì mũi đinh đã găm vào thớ gỗ. Trong IELTS, những định kiến xã hội, giá trị văn hóa hoặc lỗ hổng luật pháp đã "ăn sâu vào tiềm thức" luôn dùng cụm từ C1/C2 với IN.',
+      collocationPills: ['deeply rooted in tradition', 'inherent in the system', 'ingrained in popular culture', 'anchored in reality'],
+      writingExample: {
+        band: 'Band 9.0 Task 2',
+        sentence: 'Gender stereotypes are often so deeply ingrained in cultural customs that formal legislation alone cannot eradicate them.',
+        targetPreposition: 'in'
+      },
+      microChallenge: {
+        prompt: 'Corruption has unfortunately become deeply embedded ______ bureaucratic procedures.',
+        options: ['on', 'with', 'in', 'at'],
+        correctAnswer: 'in',
+        explanation: 'Thành ngữ học thuật C1: "embedded IN" (găm chặt/ăn sâu vào bên trong). Thể hiện mối liên kết cấu trúc không thể tách rời.'
+      }
     },
     options: [
       {
