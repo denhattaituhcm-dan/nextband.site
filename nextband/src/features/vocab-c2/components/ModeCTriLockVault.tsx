@@ -335,27 +335,67 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
 
             {/* Vault Cracked Celebration & Nuances */}
             {isVaultCracked && (
-              <div className="p-5 rounded-2xl bg-cyan-950/40 border border-cyan-500/40 space-y-3 animate-in fade-in duration-300">
+              <div
+                className={`p-5 rounded-2xl border space-y-3 animate-in fade-in duration-300 ${
+                  isPaperTheme
+                    ? "bg-emerald-50 border-emerald-300 text-slate-900"
+                    : isSlateTheme
+                    ? "bg-emerald-950/30 border-emerald-500/40 text-slate-100"
+                    : "bg-cyan-950/40 border-cyan-500/40 text-slate-100"
+                }`}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-cyan-300" />
-                    <span className="text-sm font-black text-cyan-200">
+                    <ShieldCheck
+                      className={`w-5 h-5 ${
+                        isPaperTheme ? "text-emerald-700" : "text-cyan-300"
+                      }`}
+                    />
+                    <span
+                      className={`text-sm font-black ${
+                        isPaperTheme
+                          ? "text-emerald-900 font-serif"
+                          : "text-cyan-200"
+                      }`}
+                    >
                       ⚡ VAULT CRACKED! Từ chuẩn: {currentPuzzle.targetWord.toUpperCase()}
                     </span>
                   </div>
                   <button
                     onClick={nextTriPuzzle}
-                    className="px-4 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-black text-xs transition-all shadow-md cursor-pointer flex items-center gap-1.5"
+                    className={`px-4 py-1.5 rounded-xl font-black text-xs transition-all shadow-md cursor-pointer flex items-center gap-1.5 ${
+                      isPaperTheme
+                        ? "bg-teal-700 hover:bg-teal-800 text-white"
+                        : "bg-cyan-400 hover:bg-cyan-300 text-slate-950"
+                    }`}
                   >
                     <span>Mở khóa ổ tiếp theo</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 text-xs text-slate-300 font-mono">
+                <div
+                  className={`grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 text-xs font-mono ${
+                    isPaperTheme ? "text-slate-700" : "text-slate-300"
+                  }`}
+                >
                   {currentPuzzle.nuanceNotes.map((note, idx) => (
-                    <div key={idx} className="p-2.5 rounded-xl bg-black/40 border border-white/5">
-                      <strong className="text-cyan-400">Lock {idx + 1}:</strong> {note}
+                    <div
+                      key={idx}
+                      className={`p-2.5 rounded-xl border ${
+                        isPaperTheme
+                          ? "bg-white border-emerald-200 text-slate-800 shadow-xs"
+                          : isSlateTheme
+                          ? "bg-slate-800/80 border-slate-700 text-slate-200"
+                          : "bg-black/40 border-white/5"
+                      }`}
+                    >
+                      <strong
+                        className={isPaperTheme ? "text-teal-800" : "text-cyan-400"}
+                      >
+                        Lock {idx + 1}:
+                      </strong>{" "}
+                      {note}
                     </div>
                   ))}
                 </div>
@@ -368,24 +408,60 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
       ) : (
         /* Morphological Root Reactor */
         currentMorph ? (
-          <div className="rounded-3xl p-6 sm:p-8 bg-[#0D1322] border border-amber-500/30 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div
+            className={`rounded-3xl p-6 sm:p-8 border shadow-xl space-y-6 ${
+              isPaperTheme
+                ? "bg-[#FAF7F2] border-[#E2D9CC] text-slate-900"
+                : isSlateTheme
+                ? "bg-[#0F172A] border-amber-500/30 text-slate-100"
+                : "bg-[#0D1322] border-amber-500/30 text-slate-100 shadow-2xl"
+            }`}
+          >
+            <div
+              className={`flex items-center justify-between border-b pb-4 ${
+                isPaperTheme ? "border-slate-200" : "border-white/10"
+              }`}
+            >
               <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-amber-400">
+                <span
+                  className={`text-xs font-mono uppercase tracking-widest ${
+                    isPaperTheme ? "text-amber-800 font-black" : "text-amber-400"
+                  }`}
+                >
                   MORPHOLOGICAL REACTOR {morphIndex + 1} / {morphFamilies.length}
                 </span>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p
+                  className={`text-xs mt-0.5 ${
+                    isPaperTheme ? "text-slate-600 font-medium" : "text-slate-400"
+                  }`}
+                >
                   Biến đổi gốc từ sang đúng hình thái cú pháp ngữ cảnh yêu cầu
                 </p>
               </div>
-              <span className="text-xs font-mono text-amber-300 px-3 py-1 rounded-xl bg-amber-500/10 border border-amber-500/30">
+              <span
+                className={`text-xs font-mono px-3 py-1 rounded-xl border ${
+                  isPaperTheme
+                    ? "bg-amber-100 text-amber-900 border-amber-300 font-bold"
+                    : "text-amber-300 bg-amber-500/10 border-amber-500/30"
+                }`}
+              >
                 ROOT: {currentMorph.rootWord.toUpperCase()}
               </span>
             </div>
 
             {/* Cloze Prompt Sentence */}
-            <div className="p-5 rounded-2xl bg-black/40 border border-white/10">
-              <p className="text-base font-serif text-white leading-relaxed">
+            <div
+              className={`p-5 rounded-2xl border ${
+                isPaperTheme
+                  ? "bg-white border-slate-200 shadow-xs"
+                  : "bg-black/40 border-white/10"
+              }`}
+            >
+              <p
+                className={`text-base font-serif leading-relaxed ${
+                  isPaperTheme ? "text-slate-800" : "text-white"
+                }`}
+              >
                 {currentMorph.transformationPrompt}
               </p>
             </div>
@@ -394,15 +470,23 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {morphChoices.map((choice, idx) => {
                 const isTarget = choice.toLowerCase() === currentMorph.targetAnswer.toLowerCase();
-                let style = "bg-white/5 border-white/10 text-white hover:bg-white/15";
+                let style = isPaperTheme
+                  ? "bg-white border-slate-300 text-slate-800 hover:bg-slate-100 hover:border-slate-400 shadow-xs"
+                  : "bg-white/5 border-white/10 text-white hover:bg-white/15";
 
                 if (isMorphSubmitted) {
                   if (isTarget) {
-                    style = "bg-emerald-500/20 border-emerald-400 text-emerald-300 font-black shadow-lg shadow-emerald-500/20";
+                    style = isPaperTheme
+                      ? "bg-emerald-100 border-emerald-500 text-emerald-950 font-black shadow-md"
+                      : "bg-emerald-500/20 border-emerald-400 text-emerald-300 font-black shadow-lg shadow-emerald-500/20";
                   } else if (selectedMorphAnswer === choice) {
-                    style = "bg-rose-500/20 border-rose-400 text-rose-300 font-bold";
+                    style = isPaperTheme
+                      ? "bg-rose-100 border-rose-400 text-rose-950 font-bold"
+                      : "bg-rose-500/20 border-rose-400 text-rose-300 font-bold";
                   } else {
-                    style = "opacity-40 bg-white/5 border-transparent text-slate-500";
+                    style = isPaperTheme
+                      ? "opacity-40 bg-slate-100 border-transparent text-slate-400"
+                      : "opacity-40 bg-white/5 border-transparent text-slate-500";
                   }
                 }
 
@@ -420,17 +504,39 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             </div>
 
             {isMorphSubmitted && (
-              <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/40 flex items-center justify-between animate-in fade-in duration-200">
+              <div
+                className={`p-4 rounded-2xl border flex items-center justify-between animate-in fade-in duration-200 ${
+                  isPaperTheme
+                    ? "bg-amber-50 border-amber-300"
+                    : "bg-amber-950/30 border-amber-500/40"
+                }`}
+              >
                 <div className="space-y-1">
-                  <p className="text-xs font-bold text-amber-300">
+                  <p
+                    className={`text-xs font-bold ${
+                      isPaperTheme ? "text-amber-900" : "text-amber-300"
+                    }`}
+                  >
                     Target POS: <span className="underline">{currentMorph.targetPos}</span> | Đáp án:{" "}
-                    <strong className="text-white">{currentMorph.targetAnswer}</strong>
+                    <strong className={isPaperTheme ? "text-slate-900" : "text-white"}>
+                      {currentMorph.targetAnswer}
+                    </strong>
                   </p>
-                  <p className="text-xs text-slate-300">{currentMorph.explanationVi}</p>
+                  <p
+                    className={`text-xs ${
+                      isPaperTheme ? "text-slate-700" : "text-slate-300"
+                    }`}
+                  >
+                    {currentMorph.explanationVi}
+                  </p>
                 </div>
                 <button
                   onClick={nextMorph}
-                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all shadow-md cursor-pointer flex items-center gap-1.5"
+                  className={`px-4 py-2 rounded-xl font-black text-xs transition-all shadow-md cursor-pointer flex items-center gap-1.5 ${
+                    isPaperTheme
+                      ? "bg-amber-600 hover:bg-amber-700 text-white"
+                      : "bg-amber-500 hover:bg-amber-400 text-slate-950"
+                  }`}
                 >
                   <span>Tiếp tục</span>
                   <ArrowRight className="w-3.5 h-3.5" />

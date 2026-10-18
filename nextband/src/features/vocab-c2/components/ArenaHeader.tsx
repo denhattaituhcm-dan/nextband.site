@@ -94,6 +94,7 @@ export interface ArenaHeaderProps {
   mistakes?: MistakeHeatItem[];
   onClearMistake?: (word: string) => void;
   onRecordAttempt?: (payload: AttemptPayload) => void;
+  onOpenUnitHub?: () => void;
 }
 
 const DEFAULT_RANKS: CultivationRankInfo[] = [
@@ -185,6 +186,7 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
   mistakes = [],
   onClearMistake,
   onRecordAttempt,
+  onOpenUnitHub,
 }) => {
   const [isMistakeDrawerOpen, setIsMistakeDrawerOpen] = useState(false);
   const [isUnitSelectorOpen, setIsUnitSelectorOpen] = useState(false);
@@ -441,7 +443,13 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setIsUnitSelectorOpen((prev) => !prev)}
+                onClick={() => {
+                  if (onOpenUnitHub) {
+                    onOpenUnitHub();
+                  } else {
+                    setIsUnitSelectorOpen((prev) => !prev);
+                  }
+                }}
                 className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all text-left cursor-pointer ${
                   isPaperTheme
                     ? "bg-white hover:bg-slate-50 border-[#E2D9CC] text-slate-800 shadow-xs"
