@@ -23,7 +23,8 @@ __pycache__/
 # Slides, Engine & Offline Teaching System
 slides/
 lessons/
-engine/
+/engine/
+!nextband/src/features/**/engine/
 scratch/
 !scripts/
 scripts/archive/
