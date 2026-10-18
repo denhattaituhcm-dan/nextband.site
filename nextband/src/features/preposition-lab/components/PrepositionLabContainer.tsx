@@ -71,30 +71,30 @@ export const PrepositionLabContainer: React.FC = () => {
 
   if (isCompleted) {
     return (
-      <div className="w-full min-h-[calc(100vh-80px)] py-8 px-4 flex items-center justify-center bg-slate-950">
+      <div className="w-full min-h-[calc(100vh-80px)] py-8 px-4 flex items-center justify-center bg-slate-50">
         <CompletionSummary onReplay={handleReplay} />
       </div>
     );
   }
 
   return (
-    <div className="w-full min-h-[calc(100vh-80px)] py-6 px-3 sm:px-6 bg-slate-950 text-slate-100 flex flex-col items-center select-none">
+    <div className="w-full min-h-[calc(100vh-80px)] py-6 px-3 sm:px-6 bg-slate-50 text-slate-800 flex flex-col items-center select-none">
       <div className="w-full max-w-2xl flex flex-col gap-4">
         {/* Top Header & Progression Bar */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-400 font-mono text-xs font-bold uppercase tracking-wider border border-sky-500/30">
-                Level 1: Puzzles
+              <span className="px-2.5 py-0.5 rounded-md bg-sky-100 text-sky-700 font-mono text-xs font-bold uppercase tracking-wider border border-sky-300">
+                Level 1: Thí nghiệm
               </span>
-              <span className="text-xs text-slate-400">
-                Scenario {puzzle.order} of {LEVEL_1_PUZZLES.length}
+              <span className="text-xs text-slate-500 font-medium">
+                Màn {puzzle.order} / {LEVEL_1_PUZZLES.length}
               </span>
             </div>
-            <h1 className="text-lg sm:text-xl font-black text-white mt-0.5">
+            <h1 className="text-lg sm:text-xl font-black text-slate-900 mt-0.5">
               {puzzle.title}
             </h1>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               {puzzle.subtitle}
             </p>
           </div>
@@ -103,29 +103,29 @@ export const PrepositionLabContainer: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowHint((prev) => !prev)}
-            className={`p-2 rounded-xl border transition-all text-xs flex items-center gap-1.5 ${
+            className={`p-2 sm:px-3 rounded-xl border transition-all text-xs flex items-center gap-1.5 cursor-pointer ${
               showHint
-                ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
-                : 'bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800'
+                ? 'bg-amber-100 border-amber-300 text-amber-800 shadow-xs'
+                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 shadow-xs'
             }`}
-            aria-label="Toggle Hint"
+            aria-label="Bật gợi ý"
           >
             <span>💡</span>
-            <span className="hidden sm:inline font-medium">Hint</span>
+            <span className="hidden sm:inline font-bold">Gợi ý</span>
           </button>
         </div>
 
         {/* Progress Dots */}
-        <div className="flex gap-1.5 w-full">
+        <div className="flex gap-2 w-full">
           {LEVEL_1_PUZZLES.map((p, idx) => (
             <div
               key={p.id}
-              className={`h-1.5 rounded-full flex-1 transition-all ${
+              className={`h-2 rounded-full flex-1 transition-all ${
                 idx === currentPuzzleIndex
-                  ? 'bg-sky-400 shadow-sm shadow-sky-400/50'
+                  ? 'bg-sky-600 shadow-sm shadow-sky-600/30'
                   : idx < currentPuzzleIndex
-                  ? 'bg-sky-800'
-                  : 'bg-slate-800'
+                  ? 'bg-sky-300'
+                  : 'bg-slate-200'
               }`}
             />
           ))}
@@ -133,12 +133,12 @@ export const PrepositionLabContainer: React.FC = () => {
 
         {/* Expandable Hint Banner */}
         {showHint && (
-          <div className="p-3 bg-amber-950/30 border border-amber-500/40 rounded-xl text-xs text-amber-200 animate-fadeIn">
-            <span className="font-bold text-amber-400 mr-1.5">Observation Hint:</span>
-            {puzzle.hint.en}
+          <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs sm:text-sm text-amber-900 shadow-xs animate-fadeIn">
+            <span className="font-bold text-amber-800 mr-1.5">Gợi ý quan sát:</span>
+            {puzzle.hint.vi}
             {showViInsight && (
-              <span className="block mt-1 text-amber-300/90 italic">
-                (Gợi ý: {puzzle.hint.vi})
+              <span className="block mt-1 text-slate-600 italic">
+                (English: {puzzle.hint.en})
               </span>
             )}
           </div>
@@ -154,18 +154,18 @@ export const PrepositionLabContainer: React.FC = () => {
         />
 
         {/* Central Sentence Prompt & Prediction Interface */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-lg flex flex-col items-center text-center">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">
-            Predict the natural relationship:
+        <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/90 shadow-md flex flex-col items-center text-center">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">
+            Dự đoán giới từ tự nhiên nhất:
           </span>
 
-          <div className="text-lg sm:text-xl font-medium text-slate-200 leading-snug my-1.5">
+          <div className="text-lg sm:text-xl font-semibold text-slate-900 leading-snug my-2">
             <span>{puzzle.sentencePrompt.lead} </span>
             <span
-              className={`inline-block px-3 py-0.5 mx-1.5 rounded-lg border-2 font-bold tracking-wide transition-all ${
+              className={`inline-block px-4 py-1 mx-1.5 rounded-xl border-2 font-black tracking-wide transition-all ${
                 selectedOption
-                  ? 'bg-sky-500/20 text-sky-300 border-sky-400'
-                  : 'border-dashed border-slate-600 text-slate-500 min-w-[70px]'
+                  ? 'bg-sky-50 text-sky-700 border-sky-500 shadow-xs'
+                  : 'border-dashed border-slate-300 text-slate-400 min-w-[80px]'
               }`}
             >
               {selectedOption ? selectedOption.label : '_______'}
@@ -188,20 +188,21 @@ export const PrepositionLabContainer: React.FC = () => {
               disabled={!selectedPreposition}
               onClick={handleTestPrediction}
               className={`
-                w-full max-w-sm mt-2 py-3 rounded-xl font-bold text-sm tracking-wide
+                w-full max-w-sm mt-2 py-3.5 rounded-xl font-black text-sm tracking-wide
                 transition-all duration-200 flex items-center justify-center gap-2 shadow-md
                 ${
                   selectedPreposition
-                    ? 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white cursor-pointer active:scale-95 shadow-sky-500/20'
-                    : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/60'
+                    ? 'bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white cursor-pointer active:scale-95 shadow-sky-600/25'
+                    : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
                 }
               `}
             >
-              <span>🔬 Test My Prediction</span>
+              <span>🔬 Kiểm tra phán đoán (Test Prediction)</span>
             </button>
           ) : (
-            <div className="text-xs text-sky-400 font-medium mt-1">
-              ✓ Prediction recorded and physical reaction tested below
+            <div className="text-xs text-emerald-700 font-bold mt-1.5 flex items-center gap-1.5 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              <span>✓</span>
+              <span>Đã ghi nhận phán đoán và kích hoạt mô phỏng vật lý bên dưới</span>
             </div>
           )}
         </div>

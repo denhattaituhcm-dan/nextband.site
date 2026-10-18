@@ -22,21 +22,21 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
 
   // Render specific diorama based on puzzle order (1..5)
   return (
-    <div className="relative w-full aspect-[16/10] max-h-[340px] bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 rounded-2xl border border-slate-700/60 shadow-xl overflow-hidden select-none flex flex-col items-center justify-center p-3">
-      {/* Background Subtle Lab Grid */}
-      <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]" />
+    <div className="relative w-full aspect-[16/10] max-h-[340px] bg-gradient-to-b from-slate-50 via-sky-50/40 to-slate-100 rounded-2xl border border-slate-200/90 shadow-lg overflow-hidden select-none flex flex-col items-center justify-center p-3">
+      {/* Background Subtle Modern Lab Grid */}
+      <div className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:16px_16px]" />
 
       {/* Responsive SVG Scene */}
       <svg
         viewBox="0 0 500 300"
-        className="w-full h-full max-h-[280px] drop-shadow-md"
+        className="w-full h-full max-h-[280px] drop-shadow-sm"
         role="img"
         aria-label={`Interactive 2.5D scene for ${puzzle.title}`}
       >
         <defs>
           <linearGradient id="tableGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#475569" />
-            <stop offset="100%" stopColor="#334155" />
+            <stop offset="0%" stopColor="#f1f5f9" />
+            <stop offset="100%" stopColor="#cbd5e1" />
           </linearGradient>
           <linearGradient id="bowlCeramic" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="#38bdf8" />
@@ -44,13 +44,14 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             <stop offset="100%" stopColor="#0369a1" />
           </linearGradient>
           <linearGradient id="glassBowl" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(56, 189, 248, 0.45)" />
-            <stop offset="100%" stopColor="rgba(14, 165, 233, 0.2)" />
+            <stop offset="0%" stopColor="rgba(255, 255, 255, 0.85)" />
+            <stop offset="50%" stopColor="rgba(186, 230, 253, 0.45)" />
+            <stop offset="100%" stopColor="rgba(125, 211, 252, 0.3)" />
           </linearGradient>
           <linearGradient id="smokeGradient" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%" stopColor="#a855f7" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#c084fc" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#e879f9" stopOpacity="0.1" />
+            <stop offset="0%" stopColor="#9333ea" stopOpacity="0.85" />
+            <stop offset="50%" stopColor="#c084fc" stopOpacity="0.65" />
+            <stop offset="100%" stopColor="#e879f9" stopOpacity="0.15" />
           </linearGradient>
           <linearGradient id="woodTexture" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor="#d97706" />
@@ -58,9 +59,9 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             <stop offset="100%" stopColor="#92400e" />
           </linearGradient>
           <linearGradient id="metalNail" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#e2e8f0" />
-            <stop offset="50%" stopColor="#94a3b8" />
-            <stop offset="100%" stopColor="#475569" />
+            <stop offset="0%" stopColor="#f8fafc" />
+            <stop offset="50%" stopColor="#64748b" />
+            <stop offset="100%" stopColor="#334155" />
           </linearGradient>
           <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -68,17 +69,17 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
           </filter>
         </defs>
 
-        {/* 1. Base Tabletop Perspective Surface */}
+        {/* 1. Base Tabletop Perspective Surface (Light Birch / Modern Lab Counter) */}
         <polygon
           points="50,220 450,220 410,270 90,270"
           fill="url(#tableGradient)"
-          stroke="#64748b"
+          stroke="#94a3b8"
           strokeWidth="1.5"
         />
         {/* Table Bevel Edge */}
         <polygon
           points="90,270 410,270 410,278 90,278"
-          fill="#1e293b"
+          fill="#94a3b8"
         />
 
         {/* SCENARIO 1: PLACEMENT BASICS */}
@@ -236,9 +237,9 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {isManipulated && (
               <g className="transition-opacity duration-500">
                 <line x1="250" y1="130" x2="250" y2="150" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#arrow)" />
-                <rect x="180" y="95" width="140" height="26" rx="6" fill="#1e293b" stroke="#f59e0b" strokeWidth="1" />
-                <text x="250" y="112" fill="#fef08a" fontSize="11" textAnchor="middle" fontWeight="bold">
-                  Bowl lifted: Apple stays!
+                <rect x="175" y="95" width="150" height="26" rx="6" fill="#ffffff" stroke="#f59e0b" strokeWidth="1.5" className="drop-shadow-sm" />
+                <text x="250" y="112" fill="#b45309" fontSize="11" textAnchor="middle" fontWeight="bold">
+                  Bát nhấc lên: Táo ở lại bàn!
                 </text>
               </g>
             )}
@@ -251,14 +252,10 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Table Shadow */}
             <ellipse cx="250" cy="222" rx="75" ry="16" fill="rgba(0,0,0,0.3)" />
 
-            {/* Swirling Smoke inside the inverted dome */}
+            {/* Inverted Glass Bowl & Trapped Smoke */}
             <g
-              className="transition-transform duration-700 ease-out origin-bottom-right"
-              transform={
-                isManipulated || tiltAngle > 0
-                  ? 'rotate(-16, 325, 220)'
-                  : 'rotate(0, 325, 220)'
-              }
+              className="transition-transform duration-700 ease-out"
+              transform={isManipulated || tiltAngle > 0 ? 'rotate(-16 325 220)' : 'rotate(0 325 220)'}
             >
               {/* Smoke clouds inside inverted bowl */}
               <path
@@ -269,15 +266,17 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
               <circle cx="270" cy="190" r="22" fill="#d8b4fe" opacity="0.5" filter="url(#glowEffect)" />
               <circle cx="250" cy="180" r="16" fill="#e9d5ff" opacity="0.7" />
 
-              {/* The Glass Inverted Dome */}
+              {/* The Glass Inverted Dome with crisp reflections */}
               <path
                 d="M 175,220 Q 175,155 250,155 Q 325,155 325,220 Z"
                 fill="url(#glassBowl)"
-                stroke="#38bdf8"
-                strokeWidth="2"
+                stroke="#0284c7"
+                strokeWidth="2.5"
               />
-              <ellipse cx="250" cy="155" rx="28" ry="7" fill="#0284c7" stroke="#38bdf8" strokeWidth="1.5" />
-              <ellipse cx="250" cy="220" rx="75" ry="14" fill="none" stroke="#7dd3fc" strokeWidth="1.5" />
+              {/* Top Glass Foot Ring */}
+              <ellipse cx="250" cy="155" rx="28" ry="7" fill="#bae6fd" stroke="#0284c7" strokeWidth="2" />
+              {/* Bottom Rim */}
+              <ellipse cx="250" cy="220" rx="75" ry="14" fill="none" stroke="#0369a1" strokeWidth="2.5" />
             </g>
 
             {/* Escaping Smoke wisps when tilted or manipulated */}
@@ -285,26 +284,26 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
               <g className="transition-opacity duration-500 animate-pulse">
                 <path
                   d="M 170,215 Q 130,190 120,150 Q 110,110 140,80"
-                  stroke="#c084fc"
+                  stroke="#9333ea"
                   strokeWidth="8"
                   fill="none"
                   strokeLinecap="round"
-                  opacity="0.8"
+                  opacity="0.85"
                 />
-                <circle cx="130" cy="140" r="12" fill="#d8b4fe" opacity="0.7" />
-                <circle cx="140" cy="80" r="16" fill="#e9d5ff" opacity="0.6" />
-                <rect x="50" y="80" width="120" height="26" rx="6" fill="#581c87" stroke="#d8b4fe" strokeWidth="1" />
-                <text x="110" y="97" fill="#fdf4ff" fontSize="11" textAnchor="middle" fontWeight="bold">
-                  Smoke escapes!
+                <circle cx="130" cy="140" r="12" fill="#c084fc" opacity="0.8" />
+                <circle cx="140" cy="80" r="16" fill="#d8b4fe" opacity="0.7" />
+                <rect x="40" y="80" width="130" height="28" rx="8" fill="#581c87" stroke="#e9d5ff" strokeWidth="1.5" />
+                <text x="105" y="98" fill="#ffffff" fontSize="12" textAnchor="middle" fontWeight="bold">
+                  Khói thoát ra ngoài!
                 </text>
               </g>
             )}
 
             {!isManipulated && tiltAngle === 0 && (
               <g>
-                <rect x="180" y="100" width="140" height="24" rx="6" fill="#1e293b" stroke="#38bdf8" strokeWidth="1" />
-                <text x="250" y="116" fill="#7dd3fc" fontSize="11" textAnchor="middle">
-                  Sealed: Trap Smoke
+                <rect x="175" y="98" width="150" height="26" rx="8" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
+                <text x="250" y="115" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
+                  Bát úp kín: Khói bị nhốt
                 </text>
               </g>
             )}
@@ -371,10 +370,10 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
 
       {/* Interactive Controls Overlay Bar */}
       <div className="mt-2 w-full flex items-center justify-between px-2 gap-2 text-xs">
-        <div className="flex items-center gap-1.5 text-slate-400">
-          <span className="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-          <span className="font-medium tracking-wide">
-            {isManipulated ? 'Result Demonstrated' : 'Interactive Scene Ready'}
+        <div className="flex items-center gap-1.5 text-slate-500">
+          <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="font-semibold tracking-wide">
+            {isManipulated ? 'Đã chạy mô phỏng' : 'Sẵn sàng tương tác'}
           </span>
         </div>
 
@@ -382,32 +381,32 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         <button
           type="button"
           onClick={onManipulate}
-          className="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 active:scale-95 text-white font-semibold shadow-sm transition-all flex items-center gap-1.5 text-xs touch-manipulation"
+          className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 active:scale-95 text-white font-bold shadow-md hover:shadow-sky-500/20 transition-all flex items-center gap-1.5 text-xs touch-manipulation cursor-pointer"
         >
-          {puzzle.order === 1 && (isManipulated ? 'Reset Position' : 'Slide Bowl ➔')}
-          {puzzle.order === 2 && (isManipulated ? 'Reset Position' : 'Push Bowl ➔')}
-          {puzzle.order === 3 && (isManipulated ? 'Lower Bowl' : 'Lift Bowl ⬆️')}
-          {puzzle.order === 4 && (isManipulated ? 'Seal Bowl Down' : 'Tilt Edge 15° ↗️')}
-          {puzzle.order === 5 && (isManipulated ? 'Reset Wood' : 'Slide Wood Block ➔')}
+          {puzzle.order === 1 && (isManipulated ? 'Đặt lại vị trí' : 'Đẩy trượt cái bát ➔')}
+          {puzzle.order === 2 && (isManipulated ? 'Đặt lại vị trí' : 'Đẩy trượt cái bát ➔')}
+          {puzzle.order === 3 && (isManipulated ? 'Hạ bát xuống' : 'Nhấc bổng bát lên ⬆️')}
+          {puzzle.order === 4 && (isManipulated ? 'Úp kín bát lại' : 'Nhấc nghiêng mép bát ↗️')}
+          {puzzle.order === 5 && (isManipulated ? 'Đặt lại thanh gỗ' : 'Trượt thanh gỗ ➔')}
         </button>
       </div>
 
       {/* Snap Zone Selector for Puzzle 1 */}
       {puzzle.order === 1 && onSnapZoneChange && (
-        <div className="absolute top-3 left-3 flex gap-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700/60 backdrop-blur-sm text-[11px]">
-          <span className="text-slate-400 px-1 py-0.5">Snap:</span>
+        <div className="absolute top-3 left-3 flex gap-1.5 bg-white/95 p-1 rounded-xl border border-slate-300 shadow-sm backdrop-blur-sm text-[11px]">
+          <span className="text-slate-500 px-1 py-0.5 font-medium">Vị trí:</span>
           {(['cavity', 'rim', 'table'] as const).map((zone) => (
             <button
               key={zone}
               type="button"
               onClick={() => onSnapZoneChange(zone)}
-              className={`px-2 py-0.5 rounded font-medium transition-colors ${
+              className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
                 snapZone === zone
-                  ? 'bg-sky-500 text-white'
-                  : 'text-slate-300 hover:bg-slate-800'
+                  ? 'bg-sky-500 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              {zone === 'cavity' ? 'Inside Bowl' : zone === 'rim' ? 'On Rim' : 'On Table'}
+              {zone === 'cavity' ? 'Trong lòng bát' : zone === 'rim' ? 'Trên mép vành' : 'Trên mặt bàn'}
             </button>
           ))}
         </div>
