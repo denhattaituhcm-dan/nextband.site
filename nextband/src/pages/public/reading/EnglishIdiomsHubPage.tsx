@@ -413,27 +413,49 @@ export default function EnglishIdiomsHubPage() {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase().trim();
     return (
-      item.headword.toLowerCase().includes(q) ||
-      item.definition_en.toLowerCase().includes(q) ||
-      item.context_sentence.toLowerCase().includes(q) ||
-      item.vietnamese.meaning.toLowerCase().includes(q)
+      (item.headword || "").toLowerCase().includes(q) ||
+      (item.definition_en || "").toLowerCase().includes(q) ||
+      (item.context_sentence || "").toLowerCase().includes(q) ||
+      (item.vietnamese?.meaning || "").toLowerCase().includes(q)
     );
   });
 
-  // Highlight keywords
+  // Highlight keywords safely
   const renderHighlightedSentence = (sentence: string, headword: string) => {
-    const clean = headword.replace(/^(as|in the|that|a|an)\s+/i, "").replace(/one's/i, "").trim();
-    const token = clean.split(" ").filter((t) => t.length > 2)[0] || clean;
-    const parts = sentence.split(new RegExp(`(${token}[a-z]*|${headword})`, "gi"));
-    return parts.map((part, idx) =>
-      part.toLowerCase() === token.toLowerCase() || part.toLowerCase() === headword.toLowerCase() ? (
-        <mark key={idx} className="bg-purple-100 text-purple-900 font-bold px-1 rounded-xs">
-          {part}
-        </mark>
-      ) : (
-        <span key={idx}>{part}</span>
-      )
-    );
+    if (!sentence) return null;
+    const cleanHeadword = (headword || "")
+      .replace(/\([^)]*\)/g, "")
+      .replace(/^(as|in the|that|a|an)\s+/i, "")
+      .replace(/one's/i, "")
+      .trim();
+    const token = cleanHeadword.split(/\s+/).filter((t) => t.length > 2)[0] || cleanHeadword;
+    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const escapedToken = escapeRegex(token);
+    const escapedClean = escapeRegex(cleanHeadword);
+
+    let parts: string[] = [];
+    try {
+      const pattern = new RegExp(`(${escapedClean}|${escapedToken}[a-z]*)`, "gi");
+      parts = sentence.split(pattern);
+    } catch {
+      return <span>{sentence}</span>;
+    }
+
+    return parts
+      .filter((p) => p !== undefined && p !== null && p !== "")
+      .map((part, idx) => {
+        const lowerPart = part.toLowerCase();
+        const isMatch =
+          (token && lowerPart.startsWith(token.toLowerCase())) ||
+          (cleanHeadword && lowerPart === cleanHeadword.toLowerCase());
+        return isMatch ? (
+          <mark key={idx} className="bg-purple-100 text-purple-900 font-bold px-1 rounded-xs">
+            {part}
+          </mark>
+        ) : (
+          <span key={idx}>{part}</span>
+        );
+      });
   };
 
   // EXERCISE 1.3 LOGIC
