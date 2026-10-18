@@ -1,5 +1,5 @@
 /**
- * Core Type Definitions for C1/C2 Mastery Lab (Milestone 1)
+ * Core Type Definitions for C1/C2 Mastery Lab
  * Focus: Causative & Experiential Have/Get and Key-Word Transformation.
  */
 
@@ -17,6 +17,7 @@ export type NearMissCode =
   | 'KEYWORD_MUTATED'
   | 'WORD_ORDER'
   | 'AGENT_OBJECT_CONFUSION'
+  | 'REPEATED_SOURCE_VERB'
   | 'INCORRECT_TENSE';
 
 export interface NearMissRule {
@@ -38,19 +39,33 @@ export interface TransformationItem {
   nearMissRules: NearMissRule[];
   explanationVi: string;
   pedagogicalNote?: string;
+  structuralBlueprint: string; // e.g. "HAD + [Tân ngữ chịu tổn hại] + severely damaged"
+  hintText: string;             // Scaffolded hint when user is stuck
 }
 
 export interface ContrastivePair {
   id: string;
-  title: string;
+  axisTitle: string;
+  formulaA: string;
+  formulaB: string;
   sentenceA: {
-    text: string;
-    focus: string;
+    rawText: string;
+    prefix: string;
+    verbTrigger: string;
+    agentOrObject: string;
+    verbAction: string;
+    suffix: string;
+    roleTag: string;
     nuanceVi: string;
   };
   sentenceB: {
-    text: string;
-    focus: string;
+    rawText: string;
+    prefix: string;
+    verbTrigger: string;
+    agentOrObject: string;
+    verbAction: string;
+    suffix: string;
+    roleTag: string;
     nuanceVi: string;
   };
   checkQuestion: {
@@ -62,6 +77,7 @@ export interface ContrastivePair {
       rationaleVi: string;
     }[];
   };
+  takeawayFormulaVi: string;
 }
 
 export interface DiagnosticItem {
@@ -73,9 +89,6 @@ export interface DiagnosticItem {
     isCorrect: boolean;
   }[];
   explanationVi: string;
-  /**
-   * Only attached to high-confusion boundary items to separate lucky guesses from true mastery.
-   */
   whyProbe?: {
     questionVi: string;
     options: {

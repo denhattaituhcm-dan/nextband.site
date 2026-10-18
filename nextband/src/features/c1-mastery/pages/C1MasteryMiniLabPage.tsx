@@ -13,6 +13,9 @@ import {
   BookOpen,
   MessageSquare,
   Send,
+  Lightbulb,
+  Eye,
+  Check,
 } from 'lucide-react';
 
 export default function C1MasteryMiniLabPage() {
@@ -29,7 +32,9 @@ export default function C1MasteryMiniLabPage() {
   const [userInputs, setUserInputs] = useState<Record<string, string>>({});
   const [evalResults, setEvalResults] = useState<Record<string, EvaluationResult>>({});
   const [attemptCounts, setAttemptCounts] = useState<Record<string, number>>({});
-  const [itemStatuses, setItemStatuses] = useState<Record<string, 'unattempted' | 'first_try_correct' | 'assisted_correct' | 'in_progress'>>({});
+  const [itemStatuses, setItemStatuses] = useState<Record<string, 'unattempted' | 'first_try_correct' | 'assisted_correct' | 'in_progress' | 'revealed'>>({});
+  const [showHintMap, setShowHintMap] = useState<Record<string, boolean>>({});
+  const [revealedMap, setRevealedMap] = useState<Record<string, boolean>>({});
 
   // Screen 3: User qualitative survey responses
   const [feedbackClarity, setFeedbackClarity] = useState<string | null>(null);
@@ -62,9 +67,21 @@ export default function C1MasteryMiniLabPage() {
     } else {
       setItemStatuses((prev) => ({
         ...prev,
-        [activeTransItem.id]: 'in_progress',
+        [activeTransItem.id]: prev[activeTransItem.id] === 'first_try_correct' ? prev[activeTransItem.id] : 'in_progress',
       }));
     }
+  };
+
+  const handleRevealAnswer = () => {
+    setRevealedMap((prev) => ({ ...prev, [activeTransItem.id]: true }));
+    setUserInputs((prev) => ({ ...prev, [activeTransItem.id]: activeTransItem.acceptedAnswers[0] }));
+    const result = evaluateTransformation(activeTransItem.acceptedAnswers[0], activeTransItem);
+    setEvalResults((prev) => ({ ...prev, [activeTransItem.id]: result }));
+    setItemStatuses((prev) => ({ ...prev, [activeTransItem.id]: 'revealed' }));
+  };
+
+  const handleToggleHint = () => {
+    setShowHintMap((prev) => ({ ...prev, [activeTransItem.id]: !prev[activeTransItem.id] }));
   };
 
   const handleNextTransformation = () => {
@@ -82,6 +99,7 @@ export default function C1MasteryMiniLabPage() {
       delete next[activeTransItem.id];
       return next;
     });
+    setRevealedMap((prev) => ({ ...prev, [activeTransItem.id]: false }));
   };
 
   // Quick stats for Screen 3
@@ -104,31 +122,40 @@ export default function C1MasteryMiniLabPage() {
           </div>
 
           <div className="flex items-center gap-2 text-xs font-semibold">
-            <span className={`px-2.5 py-1 rounded-full transition-colors ${currentScreen === 1 ? 'bg-[#C86D51] text-white' : 'bg-[#EFE9DF] text-[#7A7067]'}`}>
+            <button
+              onClick={() => setCurrentScreen(1)}
+              className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${currentScreen === 1 ? 'bg-[#C86D51] text-white' : 'bg-[#EFE9DF] text-[#7A7067]'}`}
+            >
               1. Soi chiếu
-            </span>
+            </button>
             <span className="text-[#C5BCB1]">→</span>
-            <span className={`px-2.5 py-1 rounded-full transition-colors ${currentScreen === 2 ? 'bg-[#C86D51] text-white' : 'bg-[#EFE9DF] text-[#7A7067]'}`}>
+            <button
+              onClick={() => setCurrentScreen(2)}
+              className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${currentScreen === 2 ? 'bg-[#C86D51] text-white' : 'bg-[#EFE9DF] text-[#7A7067]'}`}
+            >
               2. Rèn cấu trúc
-            </span>
+            </button>
             <span className="text-[#C5BCB1]">→</span>
-            <span className={`px-2.5 py-1 rounded-full transition-colors ${currentScreen === 3 ? 'bg-[#C86D51] text-white' : 'bg-[#EFE9DF] text-[#7A7067]'}`}>
+            <button
+              onClick={() => setCurrentScreen(3)}
+              className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${currentScreen === 3 ? 'bg-[#C86D51] text-white' : 'bg-[#EFE9DF] text-[#7A7067]'}`}
+            >
               3. Tổng kết
-            </span>
+            </button>
           </div>
         </header>
 
         {/* ============================================================== */}
-        {/* SCREEN 1: CONTRASTIVE LENS (Soi chiếu sắc thái tối thiểu)      */}
+        {/* SCREEN 1: CONTRASTIVE LENS (Soi chiếu khác biệt cú pháp)       */}
         {/* ============================================================== */}
         {currentScreen === 1 && (
           <main className="space-y-6 animate-in fade-in duration-300">
             <div className="space-y-2">
               <h1 className="font-serif text-2xl sm:text-3xl text-[#241F1C] tracking-tight">
-                Soi chiếu cặp câu đối lập
+                Soi chiếu cấu trúc đối lập
               </h1>
               <p className="text-sm text-[#685D55] leading-relaxed font-light">
-                Quan sát sự khác biệt về vai trò chủ ngữ và mức độ chủ động giữa hai câu dưới đây trước khi làm bài tập viết lại câu.
+                Quét nhanh các từ được <strong>tô màu nổi bật</strong> bên dưới để nhận ra ngay điểm khác biệt về công thức giữa <code className="font-mono font-bold bg-[#EFE9DF] px-1.5 py-0.5 rounded text-[#2D2825]">HAVE</code> và <code className="font-mono font-bold bg-[#EFE9DF] px-1.5 py-0.5 rounded text-[#2D2825]">GET</code> trước khi sang phần viết lại câu.
               </p>
             </div>
 
@@ -142,39 +169,82 @@ export default function C1MasteryMiniLabPage() {
                     key={pair.id}
                     className="bg-white rounded-2xl border border-[#E8E1D5] p-5 sm:p-6 shadow-xs space-y-5"
                   >
-                    <div className="text-xs font-bold font-mono uppercase tracking-wider text-[#9E948A] border-b border-[#F2ECE2] pb-2">
-                      Trường hợp {pIdx + 1}: {pair.title}
+                    {/* Clean Axis Header */}
+                    <div className="flex items-center justify-between border-b border-[#F2ECE2] pb-2.5">
+                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#9E948A]">
+                        {pair.axisTitle}
+                      </span>
+                      <span className="text-[11px] font-mono text-[#C86D51] font-semibold bg-[#FDF0ED] px-2 py-0.5 rounded-full">
+                        Cặp đối chiếu #{pIdx + 1}
+                      </span>
                     </div>
 
+                    {/* Side-by-Side Minimal Pair Comparison with Syntax Highlighting */}
                     <div className="grid sm:grid-cols-2 gap-4">
-                      {/* Sentence A */}
-                      <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE3D9] space-y-2">
-                        <span className="text-[10px] font-mono uppercase font-bold text-[#7A7067] px-2 py-0.5 rounded bg-white border border-[#E0D7CB]">
-                          Câu A · Uỷ quyền / Chủ động
-                        </span>
-                        <p className="font-serif text-base text-[#2E2723] leading-relaxed">
-                          "{pair.sentenceA.text}"
+                      {/* Sentence A (e.g. HAVE) */}
+                      <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE3D9] space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase font-bold text-[#2D5A38] px-2.5 py-0.5 rounded bg-[#EBF7EE] border border-[#C6EBD0]">
+                            {pair.sentenceA.roleTag}
+                          </span>
+                          <span className="text-[11px] font-mono font-semibold text-[#7A7067]">
+                            {pair.formulaA}
+                          </span>
+                        </div>
+
+                        {/* Highlighted Sentence A */}
+                        <p className="font-serif text-base sm:text-lg text-[#2E2723] leading-relaxed pt-1">
+                          <span className="text-[#7A7067]">{pair.sentenceA.prefix} </span>
+                          <span className="font-sans font-extrabold text-[#1B4332] bg-[#D8F3DC] px-1.5 py-0.5 rounded border border-[#B7E4C7]">
+                            {pair.sentenceA.verbTrigger}
+                          </span>{' '}
+                          <span className="font-sans font-medium text-[#2D2825] underline decoration-[#95D5B2] decoration-2 underline-offset-4">
+                            {pair.sentenceA.agentOrObject}
+                          </span>{' '}
+                          <span className="font-sans font-extrabold text-[#1B4332] bg-[#D8F3DC] px-1.5 py-0.5 rounded border border-[#B7E4C7]">
+                            {pair.sentenceA.verbAction}
+                          </span>{' '}
+                          <span className="text-[#7A7067]">{pair.sentenceA.suffix}</span>
                         </p>
-                        <p className="text-xs text-[#685D55] leading-normal pt-1 border-t border-[#EAE3D9]/60">
-                          {pair.sentenceA.nuanceVi}
+
+                        <p className="text-xs text-[#685D55] leading-normal pt-2 border-t border-[#EAE3D9]/60 font-light">
+                          💡 <strong>Bản chất:</strong> {pair.sentenceA.nuanceVi}
                         </p>
                       </div>
 
-                      {/* Sentence B */}
-                      <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE3D9] space-y-2">
-                        <span className="text-[10px] font-mono uppercase font-bold text-[#C86D51] px-2 py-0.5 rounded bg-white border border-[#F2DBD3]">
-                          Câu B · Thuyết phục / Rủi ro
-                        </span>
-                        <p className="font-serif text-base text-[#2E2723] leading-relaxed">
-                          "{pair.sentenceB.text}"
+                      {/* Sentence B (e.g. GET) */}
+                      <div className="p-4 rounded-xl bg-[#FAF7F2] border border-[#EAE3D9] space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase font-bold text-[#8C2B14] px-2.5 py-0.5 rounded bg-[#FDF0ED] border border-[#FCD7CE]">
+                            {pair.sentenceB.roleTag}
+                          </span>
+                          <span className="text-[11px] font-mono font-semibold text-[#C86D51]">
+                            {pair.formulaB}
+                          </span>
+                        </div>
+
+                        {/* Highlighted Sentence B */}
+                        <p className="font-serif text-base sm:text-lg text-[#2E2723] leading-relaxed pt-1">
+                          <span className="text-[#7A7067]">{pair.sentenceB.prefix} </span>
+                          <span className="font-sans font-extrabold text-[#8C2B14] bg-[#FDE2DC] px-1.5 py-0.5 rounded border border-[#F9B7A6]">
+                            {pair.sentenceB.verbTrigger}
+                          </span>{' '}
+                          <span className="font-sans font-medium text-[#2D2825] underline decoration-[#F2A691] decoration-2 underline-offset-4">
+                            {pair.sentenceB.agentOrObject}
+                          </span>{' '}
+                          <span className="font-sans font-extrabold text-[#8C2B14] bg-[#FDE2DC] px-1.5 py-0.5 rounded border border-[#F9B7A6]">
+                            {pair.sentenceB.verbAction}
+                          </span>{' '}
+                          <span className="text-[#7A7067]">{pair.sentenceB.suffix}</span>
                         </p>
-                        <p className="text-xs text-[#685D55] leading-normal pt-1 border-t border-[#EAE3D9]/60">
-                          {pair.sentenceB.nuanceVi}
+
+                        <p className="text-xs text-[#685D55] leading-normal pt-2 border-t border-[#EAE3D9]/60 font-light">
+                          💡 <strong>Bản chất:</strong> {pair.sentenceB.nuanceVi}
                         </p>
                       </div>
                     </div>
 
-                    {/* Fast Verification Probe */}
+                    {/* Active Verification Probe */}
                     <div className="pt-2 border-t border-[#F2ECE2] space-y-3">
                       <p className="text-xs sm:text-sm font-semibold text-[#2E2723] flex items-center gap-2">
                         <HelpCircle className="w-4 h-4 text-[#C86D51] shrink-0" />
@@ -188,8 +258,8 @@ export default function C1MasteryMiniLabPage() {
 
                           if (isSelected) {
                             btnStyle = opt.isCorrect
-                              ? 'bg-[#EBF7EE] border-[#82C99B] text-[#1E5631] font-semibold'
-                              : 'bg-[#FDF0ED] border-[#F2A691] text-[#8C2B14] font-semibold';
+                              ? 'bg-[#EBF7EE] border-[#82C99B] text-[#1E5631] font-semibold ring-1 ring-[#82C99B]'
+                              : 'bg-[#FDF0ED] border-[#F2A691] text-[#8C2B14] font-semibold ring-1 ring-[#F2A691]';
                           }
 
                           return (
@@ -205,16 +275,22 @@ export default function C1MasteryMiniLabPage() {
                         })}
                       </div>
 
+                      {/* Takeaway formula revealed after answer */}
                       {selectedOpt && (
                         <div
-                          className={`p-3 rounded-xl text-xs leading-relaxed transition-all ${
+                          className={`p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed transition-all space-y-1.5 ${
                             selectedOpt.isCorrect
                               ? 'bg-[#EBF7EE] text-[#1E5631] border border-[#C6EBD0]'
                               : 'bg-[#FDF0ED] text-[#8C2B14] border border-[#FCD7CE]'
                           }`}
                         >
-                          <span className="font-bold">{selectedOpt.isCorrect ? '✓ ' : '✕ '}</span>
-                          {selectedOpt.rationaleVi}
+                          <div className="font-bold flex items-center gap-1.5">
+                            {selectedOpt.isCorrect ? <CheckCircle2 className="w-4 h-4 text-[#2E7D32]" /> : <AlertCircle className="w-4 h-4 text-[#DC2626]" />}
+                            <span>{selectedOpt.rationaleVi}</span>
+                          </div>
+                          <div className="font-mono text-xs font-bold pt-1 border-t border-black/10 text-[#2D2825]">
+                            {pair.takeawayFormulaVi}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -234,7 +310,7 @@ export default function C1MasteryMiniLabPage() {
                     : 'bg-[#E5DDCF] text-[#9E948A] cursor-not-allowed'
                 }`}
               >
-                <span>Bắt đầu rèn luyện cấu trúc</span>
+                <span>Chuyển sang phần Rèn cấu trúc</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -263,6 +339,7 @@ export default function C1MasteryMiniLabPage() {
                   let dotColor = 'bg-[#E5DDCF]';
                   if (status === 'first_try_correct') dotColor = 'bg-[#2E7D32]';
                   if (status === 'assisted_correct') dotColor = 'bg-[#F59E0B]';
+                  if (status === 'revealed') dotColor = 'bg-[#6366F1]';
                   if (status === 'in_progress') dotColor = 'bg-[#E11D48]';
                   if (idx === activeItemIndex) dotColor += ' ring-2 ring-[#2D2825]';
 
@@ -281,38 +358,64 @@ export default function C1MasteryMiniLabPage() {
 
             {/* Exercise Box */}
             <div className="bg-white rounded-2xl border border-[#E8E1D5] p-6 sm:p-8 space-y-6 shadow-xs">
-              {/* Source Sentence */}
-              <div className="space-y-1.5 pb-4 border-b border-[#F2ECE2]">
+              {/* Source Sentence with Highlight on Key Transformation Trigger */}
+              <div className="space-y-2 pb-4 border-b border-[#F2ECE2]">
                 <span className="text-[10px] font-mono uppercase font-bold tracking-wider text-[#9E948A]">
-                  CÂU GỐC CẦN DIỄN ĐẠT LẠI:
+                  CÂU GỐC CẦN BIẾN ĐỔI:
                 </span>
                 <p className="font-serif text-lg sm:text-xl text-[#241F1C] leading-relaxed">
                   "{activeTransItem.sourceSentence}"
                 </p>
               </div>
 
-              {/* Keyword Display */}
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EAE3D9]">
+              {/* Keyword & Constraint Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EAE3D9]">
                 <div className="flex items-center gap-2.5">
                   <span className="text-xs text-[#7A7067] font-medium">Từ khóa bắt buộc:</span>
-                  <span className="font-mono text-sm sm:text-base font-extrabold px-3 py-0.5 rounded-md bg-[#2D2825] text-white tracking-widest">
+                  <span className="font-mono text-sm sm:text-base font-extrabold px-3 py-0.5 rounded-md bg-[#2D2825] text-white tracking-widest shadow-xs">
                     {activeTransItem.keyword}
                   </span>
                 </div>
-                <span className="text-xs text-[#9E948A] font-mono">
-                  Giới hạn: {activeTransItem.minWords}–{activeTransItem.maxWords} từ
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-[#7A7067] font-mono bg-white px-2.5 py-1 rounded-md border border-[#E0D7CB]">
+                    Giới hạn: <strong>{activeTransItem.minWords}–{activeTransItem.maxWords} từ</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleToggleHint}
+                    className="text-xs text-[#C86D51] hover:text-[#A74E34] font-semibold flex items-center gap-1 cursor-pointer transition"
+                  >
+                    <Lightbulb className="w-3.5 h-3.5" />
+                    <span>{showHintMap[activeTransItem.id] ? 'Ẩn gợi ý' : '💡 Xem gợi ý'}</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Target Sentence Fill-in Workspace */}
+              {/* Progressive Structural Hint Box */}
+              {showHintMap[activeTransItem.id] && (
+                <div className="p-4 rounded-xl bg-[#FFFDF5] border border-[#FDE68A] text-[#92400E] text-xs sm:text-sm space-y-2 animate-in fade-in duration-200">
+                  <div className="font-bold flex items-center gap-1.5 text-[#B45309]">
+                    <Lightbulb className="w-4 h-4 shrink-0" />
+                    <span>Khung công thức gợi ý:</span>
+                  </div>
+                  <p className="font-mono text-xs font-semibold bg-white p-2 rounded-lg border border-[#FDE68A] text-[#78350F]">
+                    {activeTransItem.structuralBlueprint}
+                  </p>
+                  <p className="text-xs text-[#78350F] leading-relaxed">
+                    {activeTransItem.hintText}
+                  </p>
+                </div>
+              )}
+
+              {/* Target Sentence Fill-in Workspace with Visual Tokens */}
               <div className="space-y-3">
                 <div className="text-base sm:text-lg text-[#2E2723] font-serif leading-relaxed">
-                  <span className="font-semibold">{activeTransItem.targetPrefix}</span>
+                  <span className="font-bold text-[#1F2937]">{activeTransItem.targetPrefix}</span>
                   <span className="mx-2 inline-block">
                     <input
                       type="text"
                       autoFocus
-                      placeholder="Nhập cụm từ cần điền..."
+                      placeholder="Nhập phần khuyết (chứa từ khóa)..."
                       value={userInputs[activeTransItem.id] || ''}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -323,19 +426,24 @@ export default function C1MasteryMiniLabPage() {
                           handleCheckTransformation();
                         }
                       }}
-                      className="w-full sm:w-[320px] font-sans font-medium text-sm sm:text-base px-3.5 py-2 rounded-xl border border-[#C5BCB1] focus:outline-none focus:border-[#C86D51] focus:ring-2 focus:ring-[#C86D51]/20 bg-[#FAF7F2] text-[#241F1C]"
+                      className="w-full sm:w-[340px] font-sans font-medium text-sm sm:text-base px-3.5 py-2.5 rounded-xl border border-[#C5BCB1] focus:outline-none focus:border-[#C86D51] focus:ring-2 focus:ring-[#C86D51]/20 bg-[#FAF7F2] text-[#241F1C]"
                     />
                   </span>
-                  <span className="font-semibold">{activeTransItem.targetSuffix}</span>
+                  <span className="font-bold text-[#1F2937]">{activeTransItem.targetSuffix}</span>
                 </div>
 
-                <p className="text-[11px] text-[#9E948A] italic font-light">
-                  * Nhập chỉ phần còn thiếu trong ngoặc vuông (phải chứa từ khóa "{activeTransItem.keyword}").
-                </p>
+                <div className="flex items-center justify-between text-[11px] text-[#9E948A]">
+                  <span>* Gõ chỉ phần còn thiếu nằm trong ô trống. Giữ nguyên dạng in hoa "{activeTransItem.keyword}".</span>
+                  {userInputs[activeTransItem.id] && (
+                    <span className="font-mono font-medium text-[#7A7067]">
+                      Số từ hiện tại: {userInputs[activeTransItem.id].trim().split(/\s+/).filter(Boolean).length} từ
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={handleCheckTransformation}
@@ -353,6 +461,18 @@ export default function C1MasteryMiniLabPage() {
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Gõ lại</span>
                 </button>
+
+                {/* Show Answer Escape Hatch (Only available after at least 1 attempt) */}
+                {(attemptCounts[activeTransItem.id] || 0) >= 1 && (
+                  <button
+                    type="button"
+                    onClick={handleRevealAnswer}
+                    className="px-4 py-2.5 rounded-xl border border-[#FDE68A] bg-[#FFFDF5] hover:bg-[#FEF3C7] text-[#92400E] text-xs font-semibold transition cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Xem đáp án mẫu & Phân tích</span>
+                  </button>
+                )}
               </div>
 
               {/* Feedback Drawer (Evaluator Output) */}
@@ -368,14 +488,14 @@ export default function C1MasteryMiniLabPage() {
                             <CheckCircle2 className="w-4 h-4 text-[#2E7D32]" />
                             <span>{res.feedbackVi}</span>
                           </div>
-                          <p className="text-xs leading-relaxed text-[#2D5A38]">
+                          <p className="text-xs sm:text-sm leading-relaxed text-[#2D5A38]">
                             <strong>Giải thích học thuật:</strong> {activeTransItem.explanationVi}
                           </p>
                           <div className="pt-2 flex justify-end">
                             <button
                               type="button"
                               onClick={handleNextTransformation}
-                              className="px-4 py-2 rounded-lg bg-[#2E7D32] hover:bg-[#256629] text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                              className="px-4 py-2 rounded-lg bg-[#2E7D32] hover:bg-[#256629] text-white text-xs sm:text-sm font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
                             >
                               <span>{activeItemIndex < unit.transformationItems.length - 1 ? 'Câu tiếp theo' : 'Xem tổng kết bài học'}</span>
                               <ArrowRight className="w-3.5 h-3.5" />
@@ -390,13 +510,13 @@ export default function C1MasteryMiniLabPage() {
                         <div className="p-4 rounded-xl bg-[#FFFBEB] border border-[#FCD34D] text-[#92400E] space-y-2">
                           <div className="flex items-start gap-2 font-bold text-sm">
                             <AlertCircle className="w-4 h-4 text-[#D97706] shrink-0 mt-0.5" />
-                            <span>Phát hiện bẫy ngữ pháp thường gặp!</span>
+                            <span>Phát hiện bẫy ngữ pháp thường gặp:</span>
                           </div>
-                          <p className="text-xs leading-relaxed text-[#78350F]">
+                          <p className="text-xs sm:text-sm leading-relaxed text-[#78350F] font-medium">
                             {res.feedbackVi}
                           </p>
-                          <p className="text-[11px] text-[#B45309] italic">
-                            Gợi ý: Đọc kỹ lại phản hồi bên trên, chỉnh sửa trong ô nhập liệu và bấm "Kiểm tra đáp án" lần nữa.
+                          <p className="text-[11px] text-[#B45309] italic pt-1 border-t border-[#FCD34D]/40">
+                            💡 Gợi ý: Hãy đọc kỹ phản hồi trên, sửa lại chữ trong ô nhập liệu và bấm "Kiểm tra đáp án" lần nữa.
                           </p>
                         </div>
                       );
@@ -418,11 +538,14 @@ export default function C1MasteryMiniLabPage() {
 
                     if (res.verdict === 'CONSTRAINT_VIOLATION') {
                       return (
-                        <div className="p-4 rounded-xl bg-[#FEF2F2] border border-[#FECACA] text-[#991B1B] space-y-1">
-                          <div className="flex items-center gap-2 font-bold text-sm">
-                            <AlertCircle className="w-4 h-4 text-[#DC2626]" />
+                        <div className="p-4 rounded-xl bg-[#FEF2F2] border border-[#FECACA] text-[#991B1B] space-y-2">
+                          <div className="flex items-start gap-2 font-bold text-sm">
+                            <AlertCircle className="w-4 h-4 text-[#DC2626] shrink-0 mt-0.5" />
                             <span>{res.feedbackVi}</span>
                           </div>
+                          <p className="text-xs text-[#7F1D1D]">
+                            Gợi ý: Nếu chưa rõ cần điền bao nhiêu từ hay cấu trúc ra sao, hãy nhấn nút <strong>"💡 Xem gợi ý"</strong> ở góc trên.
+                          </p>
                         </div>
                       );
                     }
@@ -435,7 +558,7 @@ export default function C1MasteryMiniLabPage() {
                           <span>{res.feedbackVi}</span>
                         </div>
                         <p className="text-xs text-[#64748B]">
-                          Số lần thử hiện tại: {attemptCounts[activeTransItem.id] || 1}. Nếu muốn chuyển sang câu khác, bạn có thể nhấp vào các số thứ tự ở trên.
+                          Số lần thử hiện tại: {attemptCounts[activeTransItem.id] || 1}. Bạn có thể bấm nút <strong>"💡 Xem gợi ý"</strong> hoặc <strong>"Xem đáp án mẫu"</strong> để được trợ giúp.
                         </p>
                       </div>
                     );
@@ -530,6 +653,7 @@ export default function C1MasteryMiniLabPage() {
                 {unit.transformationItems.map((item, idx) => {
                   const input = userInputs[item.id] || '(Chưa nhập)';
                   const res = evalResults[item.id];
+                  const status = itemStatuses[item.id];
                   const isSuccess = res?.verdict === 'EXACT_MATCH';
 
                   return (
@@ -539,8 +663,8 @@ export default function C1MasteryMiniLabPage() {
                     >
                       <div className="flex items-center justify-between font-bold">
                         <span className="text-[#7A7067]">Câu {idx + 1}: {item.title}</span>
-                        <span className={isSuccess ? 'text-[#2E7D32]' : 'text-[#DC2626]'}>
-                          {isSuccess ? '✓ Hoàn thành' : 'Chưa hoàn thành'}
+                        <span className={isSuccess ? (status === 'revealed' ? 'text-[#6366F1]' : 'text-[#2E7D32]') : 'text-[#DC2626]'}>
+                          {status === 'revealed' ? '👁 Đã mở đáp án mẫu' : isSuccess ? '✓ Hoàn thành' : 'Chưa hoàn thành'}
                         </span>
                       </div>
                       <p className="text-[#4A423D]">
@@ -654,6 +778,8 @@ export default function C1MasteryMiniLabPage() {
                   setUserInputs({});
                   setAttemptCounts({});
                   setItemStatuses({});
+                  setShowHintMap({});
+                  setRevealedMap({});
                   setSurveySubmitted(false);
                 }}
                 className="px-5 py-2.5 rounded-xl border border-[#C5BCB1] hover:bg-white text-[#4A423D] text-xs font-semibold transition cursor-pointer flex items-center gap-2"

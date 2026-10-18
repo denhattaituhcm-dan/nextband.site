@@ -57,18 +57,18 @@ describe('transformationEvaluator - Unit Tests', () => {
       expect(res.feedbackVi).toContain('Bắt buộc sử dụng từ khóa in hoa');
     });
 
-    it('returns CONSTRAINT_VIOLATION when word count is below minWords', () => {
-      // minWords is 5, we provide 4 words with intact keyword
-      const res = evaluateTransformation('got an auditor inspect', item1);
+    it('returns CONSTRAINT_VIOLATION when word count is below minWords and not a recognized near-miss', () => {
+      // minWords is 5, we provide 2 random words with intact keyword
+      const res = evaluateTransformation('got something', item1);
       expect(res.verdict).toBe('CONSTRAINT_VIOLATION');
-      expect(res.feedbackVi).toContain('Độ dài không hợp lệ');
+      expect(res.feedbackVi).toContain('Độ dài chưa phù hợp');
     });
 
     it('returns CONSTRAINT_VIOLATION when word count exceeds maxWords', () => {
       // maxWords is 6, we provide 7 words
       const res = evaluateTransformation('finally got an external auditor to inspect thoroughly', item1);
       expect(res.verdict).toBe('CONSTRAINT_VIOLATION');
-      expect(res.feedbackVi).toContain('Độ dài không hợp lệ');
+      expect(res.feedbackVi).toContain('Độ dài chưa phù hợp');
     });
 
     it('accepts keyword accompanied by accidental punctuation without violation', () => {
@@ -108,7 +108,16 @@ describe('transformationEvaluator - Unit Tests', () => {
     });
   });
 
-  describe('Near-Miss Pedagogical Pitfalls', () => {
+  describe('Near-Miss Pedagogical Pitfalls (Prioritized over Word Count)', () => {
+    it('intercepts "had suffered" on Item 2 immediately as REPEATED_SOURCE_VERB even with only 2 words', () => {
+      // User typed 2 words: "had suffered" -> Must NOT say "wrong word count", but explain the structural misconception!
+      const res = evaluateTransformation('had suffered', item2);
+      expect(res.verdict).toBe('NEAR_MISS');
+      expect(res.diagnosticCode).toBe('REPEATED_SOURCE_VERB');
+      expect(res.feedbackVi).toContain('severely damaged');
+      expect(res.feedbackVi).toContain('suffered');
+    });
+
     it('detects MISSING_TO when learner omits "to" after "get someone"', () => {
       // Word count: 5 (within bounds 5-6), contains keyword "got"
       const res = evaluateTransformation('got an external auditor inspect', item1);
