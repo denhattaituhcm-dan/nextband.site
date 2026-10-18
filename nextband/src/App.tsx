@@ -148,6 +148,9 @@ const C1MasteryMiniLabPage = lazyWithRetry(() => import("@/features/c1-mastery/p
 // Lazy-loaded Preposition Lab Prototype (Spatial Puzzles)
 const PrepositionLabPage = lazyWithRetry(() => import("@/features/preposition-lab/pages/PrepositionLabPage"));
 
+// Lazy-loaded Cambridge Kids Course Page
+const CambridgeKidsCoursePage = lazyWithRetry(() => import("@/pages/public/CambridgeKidsCoursePage"));
+
 
 // Lazy-loaded Auth Pages
 const LoginPage = lazyWithRetry(() => import("@/pages/auth/LoginPage"));
@@ -366,6 +369,7 @@ const App = () => (
                 <Route path="/method" element={<MethodPage />} />
                 <Route path="/academic-system" element={<AcademicSystemPage />} />
                 <Route path="/courses" element={<CoursesPage />} />
+                <Route path="/courses/cambridge-kids" element={<CambridgeKidsCoursePage />} />
                 <Route path="/courses/:slug" element={<CourseDetailPage />} />
                 <Route path="/teachers" element={<TeachersPage />} />
                 <Route path="/results" element={<ResultsPage />} />
