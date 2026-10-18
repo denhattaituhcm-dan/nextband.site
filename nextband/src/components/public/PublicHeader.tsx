@@ -35,7 +35,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
     label: "Khóa học",
     href: "/courses",
     children: [
-      { label: "Tiếng Anh Trẻ Em (Cambridge)", href: "/courses/cambridge-kids", badge: "7-12 Tuổi" },
+      { label: "Tiếng Anh Cambridge (Flyers - KET - PET)", href: "/courses/cambridge-kids", badge: "10-15 Tuổi" },
       { label: "Hệ thống học thuật ARIS-7", href: "/academic-system", badge: "Phương pháp" },
       { label: "Khảo thí năng lực", href: "/assessment", badge: "Test 4 kỹ năng" },
       { label: "Lộ trình học tổng quan", href: "/courses" },
