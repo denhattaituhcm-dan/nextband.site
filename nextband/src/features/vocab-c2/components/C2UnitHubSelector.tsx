@@ -114,7 +114,7 @@ export const C2UnitHubSelector: React.FC<C2UnitHubSelectorProps> = ({
   const [activeIndex, setActiveIndex] = useState(
     Math.max(0, Math.min(units.length - 1, initialUnitNumber - 1))
   );
-  const { theme } = useArenaTheme();
+  const { theme, setTheme } = useArenaTheme();
   const isPaperTheme = theme === "paper";
   const isSlateTheme = theme === "slate";
 
@@ -198,12 +198,65 @@ export const C2UnitHubSelector: React.FC<C2UnitHubSelectorProps> = ({
           </p>
         </div>
 
-        {/* Quick pagination indicator */}
-        <div className="flex items-center gap-2 font-mono text-sm font-black">
-          <span className={isPaperTheme ? "text-teal-800" : "text-cyan-400"}>
-            UNIT {String(activeUnit.unitNumber).padStart(2, "0")}
-          </span>
-          <span className="text-slate-400">/ 12</span>
+        {/* Right side: Quick pagination indicator & Theme Tri-Toggle */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Theme Tri-Toggle */}
+          <div
+            className={`flex items-center p-1 rounded-xl border ${
+              isPaperTheme
+                ? "bg-white border-[#E2D9CC] shadow-xs"
+                : isSlateTheme
+                ? "bg-slate-900 border-slate-700"
+                : "bg-slate-900/90 border-slate-800"
+            }`}
+          >
+            <button
+              type="button"
+              onClick={() => setTheme("paper")}
+              title="Chế độ Academic Paper (Giấy ngà)"
+              className={`px-2 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                isPaperTheme
+                  ? "bg-amber-100 text-amber-900 shadow-xs border border-amber-300"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <span className="text-amber-600">☀️</span>
+              <span className="hidden sm:inline">Paper</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTheme("slate")}
+              title="Chế độ Executive Slate"
+              className={`px-2 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                isSlateTheme
+                  ? "bg-slate-800 text-sky-300 shadow-xs border border-slate-600"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <span className="text-sky-400">🌙</span>
+              <span className="hidden sm:inline">Slate</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTheme("cyber")}
+              title="Chế độ Cyber Arena"
+              className={`px-2 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                theme === "cyber"
+                  ? "bg-cyan-500/20 text-[#00F5D4] shadow-xs border border-cyan-500/40"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <span className="text-cyan-400">✨</span>
+              <span className="hidden sm:inline">Cyber</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 font-mono text-sm font-black px-3 py-1.5 rounded-xl border border-black/5 dark:border-white/10 bg-black/5 dark:bg-white/5">
+            <span className={isPaperTheme ? "text-teal-800" : "text-cyan-400"}>
+              UNIT {String(activeUnit.unitNumber).padStart(2, "0")}
+            </span>
+            <span className="text-slate-400">/ 12</span>
+          </div>
         </div>
       </div>
 

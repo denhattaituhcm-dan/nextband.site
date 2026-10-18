@@ -63,8 +63,8 @@ const VocabC2ArenaContent: React.FC = () => {
           : "bg-[#070A12] text-slate-100 selection:bg-cyan-500 selection:text-slate-950"
       }`}
     >
-      {/* Cyber-Academic HUD */}
-      {!isZenMode && (
+      {/* Cyber-Academic HUD - chỉ hiển thị khi người dùng đã vào làm bài (viewState === "arena") */}
+      {!isZenMode && viewState === "arena" && (
         <ArenaHeader
           unit={currentUnit}
           allUnits={VOCAB_C2_UNITS}
