@@ -31,14 +31,18 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
   const binaryPairs: BinaryPrecisionItem[] = unit.binaryPrecisionPairs || [];
   const currentBinary: BinaryPrecisionItem | undefined = binaryPairs[binaryIndex];
 
-  // 5.0s Duel Countdown
+  const [isTimerPaused, setIsTimerPaused] = useState(false);
+
+  // 5.0s Duel Countdown (respecting pause toggle)
   useEffect(() => {
     let animId: number;
     duelStartTimeRef.current = Date.now();
     setTimeLeftMs(5000);
-    setIsTimerActive(true);
+    setIsTimerActive(!isTimerPaused);
     setSelectedCounter(null);
     setIsDuelResolved(false);
+
+    if (isTimerPaused) return;
 
     const tick = () => {
       const elapsed = Date.now() - duelStartTimeRef.current;
@@ -64,7 +68,7 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
 
     animId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animId);
-  }, [cardIndex, unit]);
+  }, [cardIndex, unit, isTimerPaused]);
 
   useEffect(() => {
     binaryStartTimeRef.current = Date.now();
@@ -152,40 +156,61 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Sub-View Switcher Tabs */}
       <div
-        className={`flex items-center gap-2 border-b pb-2 ${
+        className={`flex flex-wrap items-center justify-between gap-3 border-b pb-3 ${
           isPaperTheme ? "border-[#E2D9CC]" : "border-white/10"
         }`}
       >
-        <button
-          onClick={() => setActiveSubView("clash")}
-          className={`px-4 py-2 rounded-xl text-xs font-black tracking-wide uppercase transition-all cursor-pointer flex items-center gap-2 ${
-            activeSubView === "clash"
-              ? isPaperTheme
-                ? "bg-rose-100 text-rose-950 border border-rose-300 shadow-xs"
-                : "bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-xs shadow-rose-500/20"
-              : isPaperTheme
-              ? "text-slate-600 hover:text-black"
-              : "text-slate-400 hover:text-white"
-          }`}
-        >
-          <Swords className={`w-4 h-4 ${isPaperTheme ? "text-rose-700" : "text-rose-400"}`} />
-          <span>Sub-View 1: Persona Clash (5.0s Counter Duel)</span>
-        </button>
-        <button
-          onClick={() => setActiveSubView("binary")}
-          className={`px-4 py-2 rounded-xl text-xs font-black tracking-wide uppercase transition-all cursor-pointer flex items-center gap-2 ${
-            activeSubView === "binary"
-              ? isPaperTheme
-                ? "bg-teal-100 text-teal-900 border border-teal-300 shadow-xs"
-                : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-xs shadow-cyan-500/20"
-              : isPaperTheme
-              ? "text-slate-600 hover:text-black"
-              : "text-slate-400 hover:text-white"
-          }`}
-        >
-          <Scale className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-cyan-400"}`} />
-          <span>Sub-View 2: Fifty-Fifty Binary Precision</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setActiveSubView("clash")}
+            className={`px-4 py-2 rounded-xl text-xs font-black tracking-wide uppercase transition-all cursor-pointer flex items-center gap-2 ${
+              activeSubView === "clash"
+                ? isPaperTheme
+                  ? "bg-rose-100 text-rose-950 border border-rose-300 shadow-xs"
+                  : "bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-xs shadow-rose-500/20"
+                : isPaperTheme
+                ? "text-slate-600 hover:text-black"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Swords className={`w-4 h-4 ${isPaperTheme ? "text-rose-700" : "text-rose-400"}`} />
+            <span>Sub-View 1: Persona Clash (Counter Duel)</span>
+          </button>
+          <button
+            onClick={() => setActiveSubView("binary")}
+            className={`px-4 py-2 rounded-xl text-xs font-black tracking-wide uppercase transition-all cursor-pointer flex items-center gap-2 ${
+              activeSubView === "binary"
+                ? isPaperTheme
+                  ? "bg-teal-100 text-teal-900 border border-teal-300 shadow-xs"
+                  : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-xs shadow-cyan-500/20"
+                : isPaperTheme
+                ? "text-slate-600 hover:text-black"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Scale className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-cyan-400"}`} />
+            <span>Sub-View 2: Fifty-Fifty Binary Precision</span>
+          </button>
+        </div>
+
+        {/* Study Mode: Toggle Timer Pause for Deep Learning */}
+        {activeSubView === "clash" && (
+          <button
+            onClick={() => setIsTimerPaused((prev) => !prev)}
+            className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              isTimerPaused
+                ? isPaperTheme
+                  ? "bg-teal-100 text-teal-900 border-teal-300 font-black shadow-xs"
+                  : "bg-cyan-500/20 text-cyan-300 border-cyan-400 shadow-xs"
+                : isPaperTheme
+                ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                : "bg-white/5 text-slate-300 hover:text-white"
+            }`}
+          >
+            <Timer className="w-3.5 h-3.5" />
+            <span>{isTimerPaused ? "⚡ Đang ở Chế Độ Nghiên Cứu (Tắt Hẹn Giờ)" : "⏱️ Bật Hẹn Giờ 5s (Thi Đấu)"}</span>
+          </button>
+        )}
       </div>
 
       {activeSubView === "clash" ? (
@@ -199,38 +224,40 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                 : "bg-[#0D1322] border-rose-500/30 text-slate-100 shadow-2xl"
             }`}
           >
-            {/* Countdown Bar */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span
-                  className={`flex items-center gap-1 ${
-                    isPaperTheme ? "text-rose-800 font-bold" : "text-rose-400"
+            {/* Countdown Bar (Only active when timer is running) */}
+            {!isTimerPaused && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span
+                    className={`flex items-center gap-1 ${
+                      isPaperTheme ? "text-rose-800 font-bold" : "text-rose-400"
+                    }`}
+                  >
+                    <Timer className="w-3.5 h-3.5" />
+                    THỜI GIAN ĐỐI KHÁNG PHẢN XẠ
+                  </span>
+                  <span className={`font-black ${isPaperTheme ? "text-slate-900" : "text-white"}`}>
+                    {(timeLeftMs / 1000).toFixed(2)}s
+                  </span>
+                </div>
+                <div
+                  className={`h-2 w-full rounded-full overflow-hidden border ${
+                    isPaperTheme ? "bg-slate-200 border-slate-300" : "bg-black/60 border-white/10"
                   }`}
                 >
-                  <Timer className="w-3.5 h-3.5" />
-                  THỜI GIAN ĐỐI KHÁNG PHẢN XẠ
-                </span>
-                <span className={`font-black ${isPaperTheme ? "text-slate-900" : "text-white"}`}>
-                  {(timeLeftMs / 1000).toFixed(2)}s
-                </span>
+                  <div
+                    className={`h-full transition-all duration-75 ${
+                      timerPercent > 40
+                        ? isPaperTheme
+                          ? "bg-rose-600"
+                          : "bg-rose-500"
+                        : "bg-red-600 animate-pulse"
+                    }`}
+                    style={{ width: `${timerPercent}%` }}
+                  />
+                </div>
               </div>
-              <div
-                className={`h-2 w-full rounded-full overflow-hidden border ${
-                  isPaperTheme ? "bg-slate-200 border-slate-300" : "bg-black/60 border-white/10"
-                }`}
-              >
-                <div
-                  className={`h-full transition-all duration-75 ${
-                    timerPercent > 40
-                      ? isPaperTheme
-                        ? "bg-rose-600"
-                        : "bg-rose-500"
-                      : "bg-red-600 animate-pulse"
-                  }`}
-                  style={{ width: `${timerPercent}%` }}
-                />
-              </div>
-            </div>
+            )}
 
             {/* Opponent's Deployed Archetype Card */}
             <div
@@ -315,7 +342,7 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                 if (isDuelResolved) {
                   if (isTarget) {
                     style = isPaperTheme
-                      ? "bg-emerald-100 border-emerald-500 text-emerald-950 font-black shadow-md"
+                      ? "bg-emerald-100 border-emerald-500 text-emerald-950 font-black shadow-md ring-2 ring-emerald-500/30"
                       : "bg-emerald-500/20 border-emerald-400 text-emerald-300 font-black shadow-lg shadow-emerald-500/20";
                   } else if (selectedCounter === opt) {
                     style = isPaperTheme
@@ -336,28 +363,91 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                     className={`p-4 rounded-2xl border text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${style}`}
                   >
                     <span className="text-[10px] opacity-60 font-mono">[{idx + 1}]</span>
-                    <span className="truncate w-full text-center">{opt}</span>
+                    <span className="truncate w-full text-center text-base font-black">{opt}</span>
                   </button>
                 );
               })}
             </div>
 
-            {/* Duel Resolution Banner */}
+            {/* Duel Resolution Banner - CHI TIẾT SƯ PHẠM ĐẲNG CẤP */}
             {isDuelResolved && (
-              <div className="p-5 rounded-2xl bg-black/60 border border-white/10 space-y-2 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-black text-rose-300 font-mono">
-                    ✦ Thẻ khắc chế chuẩn: {currentCard.semanticOpposite.toUpperCase()}
-                  </span>
+              <div
+                className={`p-5 rounded-2xl border space-y-4 animate-in fade-in duration-200 ${
+                  isPaperTheme
+                    ? "bg-white border-slate-300 shadow-sm text-slate-900"
+                    : isSlateTheme
+                    ? "bg-[#131C31] border-slate-700 text-slate-100"
+                    : "bg-black/60 border-white/10 text-slate-100"
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-xs font-mono uppercase px-2 py-0.5 rounded font-black ${
+                          selectedCounter?.toLowerCase() === currentCard.semanticOpposite.toLowerCase()
+                            ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
+                            : "bg-rose-100 text-rose-900 border border-rose-300"
+                        }`}
+                      >
+                        {selectedCounter?.toLowerCase() === currentCard.semanticOpposite.toLowerCase()
+                          ? "⚡ THẮNG TRẬN: PHẢN ĐÒN CHÍNH XÁC"
+                          : "⚠️ THUA TRẬN: BẪY SẮC THÁI C2"}
+                      </span>
+                      <span className="text-base font-black font-serif">
+                        Khắc chế: {currentCard.semanticOpposite.toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 mt-1 italic">
+                      "{currentCard.oppositeMeaningEn}"
+                    </p>
+                  </div>
+
                   <button
                     onClick={nextCard}
-                    className="px-4 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-black text-xs transition-all shadow-md cursor-pointer flex items-center gap-1.5"
+                    className={`px-4 py-2 rounded-xl font-black text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-1.5 shrink-0 ${
+                      isPaperTheme
+                        ? "bg-teal-700 hover:bg-teal-800 text-white"
+                        : "bg-rose-500 hover:bg-rose-400 text-white"
+                    }`}
                   >
                     <span>Trận tiếp theo</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <p className="text-xs text-slate-300">{currentCard.counterExplanationVi}</p>
+
+                {/* Phân tích ngôn ngữ học & vì sao các từ gây nhiễu lại sai */}
+                <div className="space-y-2.5 text-xs leading-relaxed">
+                  <div
+                    className={`p-3 rounded-xl border-l-4 font-sans ${
+                      isPaperTheme
+                        ? "bg-[#FAF7F2] border-teal-600 text-slate-800"
+                        : "bg-white/5 border-cyan-400 text-slate-200"
+                    }`}
+                  >
+                    <strong className="text-teal-900 dark:text-cyan-300 font-bold">
+                      💡 Bản chất đối lập (Semantic Opposition):
+                    </strong>{" "}
+                    {currentCard.counterExplanationVi}
+                  </div>
+
+                  {/* Phân tích bẫy từ gây nhiễu nếu người dùng chọn sai */}
+                  {selectedCounter &&
+                    selectedCounter.toLowerCase() !== currentCard.semanticOpposite.toLowerCase() && (
+                      <div
+                        className={`p-3 rounded-xl border-l-4 font-sans ${
+                          isPaperTheme
+                            ? "bg-rose-50 border-rose-500 text-rose-950"
+                            : "bg-rose-950/30 border-rose-400 text-rose-200"
+                        }`}
+                      >
+                        <strong>⚠️ Vì sao '{selectedCounter}' không phải từ đối lập chính xác?</strong>
+                        <p className="mt-1">
+                          {getDistractorNuanceExplanation(selectedCounter, currentCard.word)}
+                        </p>
+                      </div>
+                    )}
+                </div>
               </div>
             )}
           </div>
@@ -367,21 +457,47 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
       ) : (
         /* Fifty-Fifty Binary Precision */
         currentBinary ? (
-          <div className="rounded-3xl p-6 sm:p-8 bg-[#0D1322] border border-cyan-500/30 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div
+            className={`rounded-3xl p-6 sm:p-8 border shadow-xl space-y-6 ${
+              isPaperTheme
+                ? "bg-[#FAF7F2] border-[#E2D9CC] text-slate-900"
+                : isSlateTheme
+                ? "bg-[#0F172A] border-slate-700/80 text-slate-100"
+                : "bg-[#0D1322] border-cyan-500/30 text-slate-100 shadow-2xl"
+            }`}
+          >
+            <div
+              className={`flex items-center justify-between border-b pb-4 ${
+                isPaperTheme ? "border-slate-200" : "border-white/10"
+              }`}
+            >
               <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-cyan-400">
+                <span
+                  className={`text-xs font-mono uppercase tracking-widest ${
+                    isPaperTheme ? "text-teal-800 font-bold" : "text-cyan-400"
+                  }`}
+                >
                   BINARY PRECISION PAIR {binaryIndex + 1} / {binaryPairs.length}
                 </span>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p
+                  className={`text-xs mt-0.5 ${
+                    isPaperTheme ? "text-slate-600 font-medium" : "text-slate-400"
+                  }`}
+                >
                   Phân biệt sắc thái giữa 2 từ C2 dễ nhầm lẫn
                 </p>
               </div>
             </div>
 
             {/* Cloze Sentence */}
-            <div className="p-6 rounded-2xl bg-black/40 border border-white/10 text-center">
-              <p className="text-lg font-serif text-white leading-relaxed max-w-2xl mx-auto">
+            <div
+              className={`p-6 rounded-2xl border text-center ${
+                isPaperTheme
+                  ? "bg-white border-slate-200 text-slate-900 shadow-xs"
+                  : "bg-black/40 border-white/10 text-white"
+              }`}
+            >
+              <p className="text-lg font-serif leading-relaxed max-w-2xl mx-auto">
                 {currentBinary.contextSentence.replace("___", " [ ? ] ")}
               </p>
             </div>
@@ -390,15 +506,23 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
               {[currentBinary.wordA, currentBinary.wordB].map((wordChoice, idx) => {
                 const isTarget = wordChoice.toLowerCase() === currentBinary.correctWord.toLowerCase();
-                let style = "bg-white/5 border-white/10 text-white hover:bg-white/15 hover:border-cyan-400/40";
+                let style = isPaperTheme
+                  ? "bg-white border-slate-300 text-slate-800 hover:bg-slate-100 hover:border-slate-400 shadow-xs"
+                  : "bg-white/5 border-white/10 text-white hover:bg-white/15 hover:border-cyan-400/40";
 
                 if (isBinaryResolved) {
                   if (isTarget) {
-                    style = "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-black shadow-lg shadow-cyan-500/20";
+                    style = isPaperTheme
+                      ? "bg-emerald-100 border-emerald-500 text-emerald-950 font-black shadow-md ring-2 ring-emerald-500/30"
+                      : "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-black shadow-lg shadow-cyan-500/20";
                   } else if (selectedBinaryChoice === wordChoice) {
-                    style = "bg-rose-500/20 border-rose-400 text-rose-300 font-bold";
+                    style = isPaperTheme
+                      ? "bg-rose-100 border-rose-400 text-rose-950 font-bold"
+                      : "bg-rose-500/20 border-rose-400 text-rose-300 font-bold";
                   } else {
-                    style = "opacity-40 bg-white/5 border-transparent text-slate-500";
+                    style = isPaperTheme
+                      ? "opacity-40 bg-slate-100 border-transparent text-slate-400"
+                      : "opacity-40 bg-white/5 border-transparent text-slate-500";
                   }
                 }
 
@@ -410,27 +534,41 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                     className={`py-4 px-6 rounded-2xl border text-base font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${style}`}
                   >
                     <span className="text-[11px] opacity-60 font-mono">[{idx + 1}]</span>
-                    <span>{wordChoice}</span>
+                    <span className="font-serif text-lg">{wordChoice}</span>
                   </button>
                 );
               })}
             </div>
 
             {isBinaryResolved && (
-              <div className="p-5 rounded-2xl bg-cyan-950/30 border border-cyan-500/40 space-y-2 animate-in fade-in duration-200">
+              <div
+                className={`p-5 rounded-2xl border space-y-2 animate-in fade-in duration-200 ${
+                  isPaperTheme
+                    ? "bg-white border-slate-200 text-slate-900 shadow-xs"
+                    : "bg-cyan-950/30 border-cyan-500/40 text-slate-100"
+                }`}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-black text-cyan-300">
+                  <span
+                    className={`text-sm font-black font-serif ${
+                      isPaperTheme ? "text-teal-900" : "text-cyan-300"
+                    }`}
+                  >
                     Phân biệt chuẩn C2:
                   </span>
                   <button
                     onClick={nextBinary}
-                    className="px-4 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs transition-all shadow-md cursor-pointer flex items-center gap-1.5"
+                    className={`px-4 py-1.5 rounded-xl font-black text-xs transition-all shadow-md cursor-pointer flex items-center gap-1.5 ${
+                      isPaperTheme
+                        ? "bg-teal-700 hover:bg-teal-800 text-white"
+                        : "bg-cyan-500 hover:bg-cyan-400 text-slate-950"
+                    }`}
                   >
                     <span>Cặp tiếp theo</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <p className="text-xs text-slate-200">{currentBinary.distinctionVi}</p>
+                <p className="text-xs leading-relaxed">{currentBinary.distinctionVi}</p>
               </div>
             )}
           </div>
@@ -441,3 +579,17 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
     </div>
   );
 };
+
+function getDistractorNuanceExplanation(distractor: string, targetWord: string): string {
+  const d = distractor.toLowerCase();
+  if (d === "aloof") {
+    return "'Aloof' chỉ sự xa cách, lạnh lùng, thu mình khỏi giao tiếp xã hội. Nó không mang nghĩa 'hòa giải, hợp tác' để khắc chế tính chất hiếu chiến khát máu của 'cut-throat'.";
+  }
+  if (d === "mercurial") {
+    return "'Mercurial' miêu tả tính khí thất thường, thay đổi xoành xoạch như thời tiết (từ nguyên sao Thủy/thủy ngân), không phải là tính từ thể hiện thiện chí hòa bình.";
+  }
+  if (d === "dogmatic") {
+    return "'Dogmatic' là độc đoán, giáo điều, khăng khăng bảo thủ ý kiến cá nhân. Chọn từ này thậm chí còn tạo ra sự cứng đầu thay vì hòa hoãn.";
+  }
+  return `Từ '${distractor}' chỉ một khía cạnh tính cách khác, không đối lập trực diện về trục ngữ nghĩa với '${targetWord}'.`;
+}
