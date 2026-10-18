@@ -1078,6 +1078,7 @@ export const UNIT_19_DATA = {
               "is_correct": false
             }
           ],
+          "correct_key": "B",
           "target_answer": "Rain is fairly likely.",
           "explanation": "'in for a chance of rain' tương đương với khả năng mưa tương đối cao (Rain is fairly likely)."
         },
@@ -1101,6 +1102,7 @@ export const UNIT_19_DATA = {
               "is_correct": false
             }
           ],
+          "correct_key": "A",
           "target_answer": "Buster is likely to win.",
           "explanation": "'the hot favourite' chỉ ứng viên sáng giá nhất, có khả năng cao sẽ giành chiến thắng (Buster is likely to win)."
         },
@@ -1124,6 +1126,7 @@ export const UNIT_19_DATA = {
               "is_correct": true
             }
           ],
+          "correct_key": "C",
           "target_answer": "It is very unlikely.",
           "explanation": "'when pigs fly' là chuyện không tưởng, xác suất xảy ra gần như bằng 0 (It is very unlikely)."
         },
@@ -1147,6 +1150,7 @@ export const UNIT_19_DATA = {
               "is_correct": false
             }
           ],
+          "correct_key": "B",
           "target_answer": "She is unlikely to pass.",
           "explanation": "'don't hold your breath' ngụ ý việc đó khó lòng xảy ra (She is unlikely to pass)."
         },
@@ -1170,6 +1174,7 @@ export const UNIT_19_DATA = {
               "is_correct": true
             }
           ],
+          "correct_key": "C",
           "target_answer": "It is almost certain.",
           "explanation": "'a foregone conclusion' là kết quả hiển nhiên gần như chắc chắn 100% (It is almost certain)."
         }
@@ -1211,6 +1216,48 @@ export const UNIT_19_DATA = {
           "left_text": "Bức tranh 5: Khách hàng vui mừng khi người bán hàng tìm thấy chiếc váy cuối cùng",
           "right_text": "You're in luck! We have one dress left in your size.",
           "vietnamese_meaning": "Bạn thật may mắn! Chúng tôi còn lại đúng một chiếc váy vừa kích cỡ của bạn"
+        }
+      ],
+      "questions": [
+        {
+          "question_number": 1,
+          "term": "Bức tranh 1: Chàng trai mộng mơ nhìn hình bóng ngôi sao ca nhạc trên mây",
+          "definition": "I think Ruben's dreams of becoming a pop star are totally pie in the sky.",
+          "target_definition": "I think Ruben's dreams of becoming a pop star are totally pie in the sky.",
+          "correct_idiom": "pie in the sky",
+          "explanation": "Ước mơ thành ngôi sao nhạc pop của Ruben hoàn toàn là giấc mơ hão huyền (pie in the sky)."
+        },
+        {
+          "question_number": 2,
+          "term": "Bức tranh 2: Vận động viên ném lao xuất thần ăn mừng cơ hội giành huy chương",
+          "definition": "It looks like a medal is in the cards for Noriko after that amazing throw.",
+          "target_definition": "It looks like a medal is in the cards for Noriko after that amazing throw.",
+          "correct_idiom": "in the cards",
+          "explanation": "Nhiều khả năng Noriko sẽ giành được huy chương sau cú ném xuất thần đó (in the cards)."
+        },
+        {
+          "question_number": 3,
+          "term": "Bức tranh 3: Hành khách thất vọng nhìn bảng điện tử chuyến tàu cuối vừa rời ga",
+          "definition": "I'm afraid you're out of luck. The last train has just left the station.",
+          "target_definition": "I'm afraid you're out of luck. The last train has just left the station.",
+          "correct_idiom": "out of luck",
+          "explanation": "E rằng bạn không may rồi, chuyến tàu cuối cùng vừa rời bến (out of luck)."
+        },
+        {
+          "question_number": 4,
+          "term": "Bức tranh 4: Đám đông dài dằng dặc xếp hàng chờ vào bảo tàng giờ cao điểm",
+          "definition": "We don't stand a chance of getting into the museum before lunchtime.",
+          "target_definition": "We don't stand a chance of getting into the museum before lunchtime.",
+          "correct_idiom": "don't stand a chance",
+          "explanation": "Chúng ta không có cơ hội nào vào được bảo tàng trước giờ ăn trưa (don't stand a chance)."
+        },
+        {
+          "question_number": 5,
+          "term": "Bức tranh 5: Khách hàng vui mừng khi người bán hàng tìm thấy chiếc váy cuối cùng",
+          "definition": "You're in luck! We have one dress left in your size.",
+          "target_definition": "You're in luck! We have one dress left in your size.",
+          "correct_idiom": "in luck",
+          "explanation": "Bạn thật may mắn! Chúng tôi còn lại đúng một chiếc váy vừa kích cỡ của bạn (in luck)."
         }
       ]
     },
@@ -1376,6 +1423,7 @@ export const UNIT_19_DATA = {
               "is_correct": false
             }
           ],
+          "correct_key": "B",
           "target_answer": "Vở kịch bi kịch Othello (1603) của William Shakespeare",
           "explanation": "Đại văn hào William Shakespeare là người đầu tiên sáng tạo cụm từ 'a foregone conclusion' trong Othello, Hồi 3, Cảnh 3."
         },
@@ -1404,6 +1452,7 @@ export const UNIT_19_DATA = {
               "is_correct": false
             }
           ],
+          "correct_key": "A",
           "target_answer": "Bài hát phản kháng phong trào công nhân năm 1911 của Joe Hill",
           "explanation": "Joe Hill sáng tác bài 'The Preacher and the Slave' (1911) mỉa mai những lời hứa hão huyền 'You'll get pie in the sky when you die'."
         }

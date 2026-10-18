@@ -1079,6 +1079,7 @@ export const UNIT_18_DATA = {
               "is_correct": true
             }
           ],
+          "correct_key": "C",
           "target_answer": "finishing",
           "explanation": "Thành ngữ chuẩn là 'putting the finishing touches on it' (hoàn thiện những chi tiết cuối cùng)."
         },
@@ -1102,6 +1103,7 @@ export const UNIT_18_DATA = {
               "is_correct": false
             }
           ],
+          "correct_key": "B",
           "target_answer": "newbie",
           "explanation": "Từ lóng chuẩn mực chỉ người mới bắt đầu chưa có kinh nghiệm là 'newbie'."
         },
@@ -1125,6 +1127,7 @@ export const UNIT_18_DATA = {
               "is_correct": false
             }
           ],
+          "correct_key": "A",
           "target_answer": "fresh",
           "explanation": "Thành ngữ chuẩn là 'made a fresh start' (bắt đầu lại một trang đời mới tốt hơn)."
         },
@@ -1148,6 +1151,7 @@ export const UNIT_18_DATA = {
               "is_correct": true
             }
           ],
+          "correct_key": "C",
           "target_answer": "sight",
           "explanation": "Thành ngữ cố định là 'the end is in sight' (đã nhìn thấy đích đến gần kề)."
         }
@@ -1450,6 +1454,7 @@ export const UNIT_18_DATA = {
               "is_correct": false
             }
           ],
+          "correct_key": "B",
           "target_answer": "Chiến dịch tranh cử Tổng thống Mỹ năm 1840 của Harrison khi người ủng hộ lăn quả cầu khổng lồ qua các thị trấn",
           "explanation": "Chiến dịch năm 1840 của William Henry Harrison đã tạo ra khẩu hiệu 'Keep the ball rolling' với quả bóng thiếc khổng lồ được lăn xuyên bang."
         },
@@ -1478,6 +1483,7 @@ export const UNIT_18_DATA = {
               "is_correct": false
             }
           ],
+          "correct_key": "C",
           "target_answer": "Trang giấy trắng trong cuốn sách (page)",
           "explanation": "Trong tiếng Anh từ thế kỷ 16, 'leaf' thường được dùng để chỉ một trang sách. Lật sang trang mới là cam kết viết nên câu chuyện cuộc đời tốt đẹp hơn."
         }
