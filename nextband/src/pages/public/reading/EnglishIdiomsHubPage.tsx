@@ -53,15 +53,19 @@ import unit16Data from "@/data/idioms/unit16";
 import { UNIT_16_ETYMOLOGY } from "@/data/idioms/unit16_etymology";
 import unit17Data from "@/data/idioms/unit17";
 import { UNIT_17_ETYMOLOGY } from "@/data/idioms/unit17_etymology";
+import unit18Data from "@/data/idioms/unit18";
+import { UNIT_18_ETYMOLOGY } from "@/data/idioms/unit18_etymology";
+import unit19Data from "@/data/idioms/unit19";
+import { UNIT_19_ETYMOLOGY } from "@/data/idioms/unit19_etymology";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
 
   const parsedId = unitId ? parseInt(unitId, 10) : 1;
-  const initialUnitId = (parsedId >= 1 && parsedId <= 17 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17;
+  const initialUnitId = (parsedId >= 1 && parsedId <= 19 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19;
 
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17>(initialUnitId);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -124,8 +128,8 @@ export default function EnglishIdiomsHubPage() {
   useEffect(() => {
     if (unitId) {
       const p = parseInt(unitId, 10);
-      if (p >= 1 && p <= 17 && p !== selectedUnitId) {
-        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17);
+      if (p >= 1 && p <= 19 && p !== selectedUnitId) {
+        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19);
         setActiveModuleFilter("ALL");
         reset13();
         reset14();
@@ -346,7 +350,11 @@ export default function EnglishIdiomsHubPage() {
       ? unit15Data
       : selectedUnitId === 16
       ? unit16Data
-      : unit17Data;
+      : selectedUnitId === 17
+      ? unit17Data
+      : selectedUnitId === 18
+      ? unit18Data
+      : unit19Data;
 
   const currentEtymologyData =
     selectedUnitId === 1
@@ -381,7 +389,11 @@ export default function EnglishIdiomsHubPage() {
       ? UNIT_15_ETYMOLOGY
       : selectedUnitId === 16
       ? UNIT_16_ETYMOLOGY
-      : UNIT_17_ETYMOLOGY;
+      : selectedUnitId === 17
+      ? UNIT_17_ETYMOLOGY
+      : selectedUnitId === 18
+      ? UNIT_18_ETYMOLOGY
+      : UNIT_19_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -1246,7 +1258,7 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry98(false);
   };
 
-  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17) => {
+  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
     reset13();
@@ -1300,16 +1312,16 @@ export default function EnglishIdiomsHubPage() {
               {selectedUnitId > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17)}
+                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   ← Unit {selectedUnitId - 1 < 10 ? `0${selectedUnitId - 1}` : selectedUnitId - 1}
                 </button>
               )}
-              {selectedUnitId < 17 && (
+              {selectedUnitId < 19 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17)}
+                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   Unit {selectedUnitId + 1 < 10 ? `0${selectedUnitId + 1}` : selectedUnitId + 1} →
@@ -1392,7 +1404,11 @@ export default function EnglishIdiomsHubPage() {
                 ? "Khám phá 20 thành ngữ kinh điển mượn ẩn dụ các bộ phận cơ thể con người (mắt, tai, tim, vai, cằm, da, dây thần kinh), từ sự hồi hộp bồn chồn, lòng can đảm phút chót đến nghệ thuật tùy cơ ứng biến."
                 : selectedUnitId === 16
                 ? "Khám phá 20 thành ngữ mượn thuật ngữ quân sự, chiến hào, hỏa lực và vũ khí chiến đấu cổ điển để khắc họa sắc sảo các xung đột, sự phản bội, lòng kiên định phòng thủ và nghệ thuật đàm phán."
-                : "Khám phá 20 thành ngữ phong phú diễn tả các thang bậc số lượng (từ hạt muối bỏ bể đến trọn gói A-Z) và khoảng cách địa lý (từ trong gang tấc bước chân đến chốn khỉ ho cò gáy xa xôi)."}
+                : selectedUnitId === 17
+                ? "Khám phá 20 thành ngữ phong phú diễn tả các thang bậc số lượng (từ hạt muối bỏ bể đến trọn gói A-Z) và khoảng cách địa lý (từ trong gang tấc bước chân đến chốn khỉ ho cò gáy xa xôi)."
+                : selectedUnitId === 18
+                ? "Khám phá 20 thành ngữ sinh động về sự khởi đầu và kết thúc, từ vạch xuất phát thuận buồm xuôi gió, lật sang trang mới cuộc đời cho đến lúc hạ màn trọn vẹn và đặt dấu chấm hết."
+                : "Khám phá 20 thành ngữ kinh điển về cơ hội, vận may và xác suất xảy ra, từ cơ duyên trời ban, ăn may phút chót đến những ước mơ viển vông khi mặt trời mọc đằng tây."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
