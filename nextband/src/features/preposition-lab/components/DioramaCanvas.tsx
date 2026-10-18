@@ -48,7 +48,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
     lastPos.current = { x: e.clientX, y: e.clientY, time: performance.now() };
 
     // Play appropriate sound depending on scenario
-    if (puzzle.order === 5) {
+    if (puzzle.id === 'p5-transfer-test') {
       soundEffects.playClink();
     } else {
       soundEffects.playPickUp();
@@ -73,7 +73,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
     });
 
     // Sound effect on aggressive dragging/escaping
-    if (puzzle.order === 4 && dragOffset.y < -30 && Math.abs(lastVelocity.current.y) > 4) {
+    if (puzzle.id === 'p4-smoke-challenge' && dragOffset.y < -30 && Math.abs(lastVelocity.current.y) > 4) {
       soundEffects.playWhoosh();
     }
   };
@@ -95,10 +95,10 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
   };
 
   // Check if player selected a specific misconception for dramatic physics
-  const isAboveFailure = hasTestedPrediction && puzzle.order === 2 && selectedOptionId === 'above';
-  const isAppleInFailure = hasTestedPrediction && puzzle.order === 3 && selectedOptionId === 'in';
-  const isSmokeUnderFailure = hasTestedPrediction && puzzle.order === 4 && selectedOptionId === 'under';
-  const isNailOnFailure = hasTestedPrediction && puzzle.order === 5 && selectedOptionId === 'on';
+  const isAboveFailure = hasTestedPrediction && puzzle.id === 'p2-overflowing-bowl' && selectedOptionId === 'above';
+  const isAppleInFailure = hasTestedPrediction && puzzle.id === 'p3-cover-or-container' && selectedOptionId === 'in';
+  const isSmokeUnderFailure = hasTestedPrediction && puzzle.id === 'p4-smoke-challenge' && selectedOptionId === 'under';
+  const isNailOnFailure = hasTestedPrediction && puzzle.id === 'p5-transfer-test' && selectedOptionId === 'on';
 
   return (
     <div className="relative w-full aspect-[16/10] max-h-[340px] bg-gradient-to-b from-slate-50 via-sky-50/40 to-slate-100 rounded-2xl border border-slate-200/90 shadow-lg overflow-hidden select-none flex flex-col items-center justify-center p-3">
@@ -129,6 +129,22 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             <stop offset="50%" stopColor="rgba(186, 230, 253, 0.45)" />
             <stop offset="100%" stopColor="rgba(125, 211, 252, 0.3)" />
           </linearGradient>
+          <linearGradient id="tumblerGlass" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="rgba(255, 255, 255, 0.85)" />
+            <stop offset="30%" stopColor="rgba(224, 242, 254, 0.45)" />
+            <stop offset="70%" stopColor="rgba(186, 230, 253, 0.3)" />
+            <stop offset="100%" stopColor="rgba(125, 211, 252, 0.6)" />
+          </linearGradient>
+          <linearGradient id="waterSpillGradient" x1="0" y1="0" x2="1" y2="0.8">
+            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8" />
+            <stop offset="50%" stopColor="#0ea5e9" stopOpacity="0.7" />
+            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.85" />
+          </linearGradient>
+          <radialGradient id="waterDropletGradient" cx="35%" cy="35%" r="65%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+            <stop offset="45%" stopColor="#38bdf8" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.95" />
+          </radialGradient>
           <linearGradient id="smokeGradient" x1="0" y1="1" x2="0" y2="0">
             <stop offset="0%" stopColor="#9333ea" stopOpacity="0.85" />
             <stop offset="50%" stopColor="#c084fc" stopOpacity="0.65" />
@@ -164,7 +180,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         />
 
         {/* SCENARIO 1: PLACEMENT BASICS */}
-        {puzzle.order === 1 && (
+        {puzzle.id === 'p1-placement-basics' && (
           <g>
             {/* The Ceramic Bowl (movable by drag or action button) */}
             <g
@@ -232,7 +248,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         )}
 
         {/* SCENARIO 2: OVERFLOWING BOWL (FRUIT STACK) */}
-        {puzzle.order === 2 && (
+        {puzzle.id === 'p2-overflowing-bowl' && (
           <g>
             {/* The Bowl and Lower Fruits */}
             <g
@@ -319,7 +335,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         )}
 
         {/* SCENARIO 3: COVER OR CONTAINER (INVERTED BOWL & APPLE) */}
-        {puzzle.order === 3 && (
+        {puzzle.id === 'p3-cover-or-container' && (
           <g>
             {/* The Red Apple on Tabletop (Subject remains stationary on table) */}
             {/* If player wrongly picked 'IN', apple levitates awkwardly with the bowl before dropping! */}
@@ -391,7 +407,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         )}
 
         {/* SCENARIO 4: THE SMOKE CHALLENGE (TRAPPED ESCAPE) */}
-        {puzzle.order === 4 && (
+        {puzzle.id === 'p4-smoke-challenge' && (
           <g>
             {/* Table Shadow */}
             <ellipse cx="250" cy="222" rx="75" ry="16" fill="rgba(0,0,0,0.3)" />
@@ -483,7 +499,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         )}
 
         {/* SCENARIO 5: THE TRANSFER TEST (PROTRUDING NAIL IN WOOD) */}
-        {puzzle.order === 5 && (
+        {puzzle.id === 'p5-transfer-test' && (
           <g>
             {/* The Moving Wood Plank */}
             <g
@@ -625,10 +641,155 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
         {/* SCENARIO LEVEL 2: SCENARIO 2 - THE TABLETOP SPILL */}
         {puzzle.id === 'p2-2-tabletop-spill' && (
           <g>
-            {/* Table Surface */}
-            <polygon points="80,140 420,140 370,240 130,240" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="1.5" />
+            {/* Table Surface with light wood finish */}
+            <polygon
+              points="60,165 440,165 405,255 95,255"
+              fill="#f8fafc"
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+            {/* Table bevel edge shadow */}
+            <polygon
+              points="95,255 405,255 405,263 95,263"
+              fill="#94a3b8"
+            />
 
-            {/* Spilled Glass */}
+            {/* Subtle table grain / reflection lines */}
+            <line x1="80" y1="195" x2="420" y2="195" stroke="#f1f5f9" strokeWidth="2" opacity="0.8" />
+            <line x1="75" y1="225" x2="415" y2="225" stroke="#f1f5f9" strokeWidth="2" opacity="0.8" />
+
+            {/* --- 1. SPILLED WATER PUDDLE (Multi-layer realistic fluid) --- */}
+            <g className="transition-all duration-700">
+              {/* Layer 1: Puddle Soft Drop Shadow / Meniscus Contact */}
+              <path
+                d={
+                  isManipulated
+                    ? "M 188,206 C 205,178 265,168 335,174 C 400,180 435,200 410,224 C 385,248 300,252 235,246 C 195,240 188,222 188,206 Z"
+                    : "M 188,206 C 205,188 238,182 280,186 C 322,190 350,202 338,218 C 322,234 275,238 235,234 C 200,228 188,220 188,206 Z"
+                }
+                fill="rgba(2, 132, 199, 0.18)"
+                transform="translate(1, 2.5)"
+              />
+
+              {/* Layer 2: Main Translucent Water Body with Gradient */}
+              <path
+                d={
+                  isManipulated
+                    ? "M 188,206 C 205,178 265,168 335,174 C 400,180 435,200 410,224 C 385,248 300,252 235,246 C 195,240 188,222 188,206 Z"
+                    : "M 188,206 C 205,188 238,182 280,186 C 322,190 350,202 338,218 C 322,234 275,238 235,234 C 200,228 188,220 188,206 Z"
+                }
+                fill="url(#waterSpillGradient)"
+                stroke="#0284c7"
+                strokeWidth="1.2"
+                strokeOpacity="0.75"
+              />
+
+              {/* Layer 3: Inner Caustic Light Diffusion Lobe */}
+              <path
+                d={
+                  isManipulated
+                    ? "M 205,204 C 220,186 265,178 320,184 C 370,190 395,205 375,220 C 350,235 290,238 245,234 C 215,228 205,216 205,204 Z"
+                    : "M 202,204 C 215,192 242,188 275,192 C 305,196 324,204 314,215 C 300,226 265,228 238,225 C 215,220 202,214 202,204 Z"
+                }
+                fill="#ffffff"
+                opacity="0.22"
+              />
+
+              {/* Layer 4: Specular Surface Highlights (Gleams & Meniscus Reflections) */}
+              <path
+                d={
+                  isManipulated
+                    ? "M 225,186 C 265,178 315,180 360,190"
+                    : "M 220,194 C 248,188 280,190 310,198"
+                }
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                opacity="0.85"
+              />
+              <path
+                d={
+                  isManipulated
+                    ? "M 245,238 C 290,242 345,236 380,224"
+                    : "M 235,228 C 265,232 300,228 325,220"
+                }
+                fill="none"
+                stroke="#e0f2fe"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                opacity="0.7"
+              />
+
+              {/* Layer 5: Satellite Water Droplets Scattered with Spherical Gradients */}
+              <g className="transition-all duration-700">
+                {/* Droplet 1 (Top right) */}
+                <circle
+                  cx={isManipulated ? 395 : 348}
+                  cy={isManipulated ? 175 : 182}
+                  r="5"
+                  fill="url(#waterDropletGradient)"
+                  stroke="#0284c7"
+                  strokeWidth="0.75"
+                />
+                <circle
+                  cx={isManipulated ? 393.5 : 346.5}
+                  cy={isManipulated ? 173.5 : 180.5}
+                  r="1.8"
+                  fill="#ffffff"
+                />
+
+                {/* Droplet 2 (Far right splash) */}
+                <circle
+                  cx={isManipulated ? 430 : 362}
+                  cy={isManipulated ? 208 : 205}
+                  r="3.5"
+                  fill="url(#waterDropletGradient)"
+                  stroke="#0284c7"
+                  strokeWidth="0.75"
+                />
+                <circle
+                  cx={isManipulated ? 429 : 361}
+                  cy={isManipulated ? 207 : 204}
+                  r="1.2"
+                  fill="#ffffff"
+                />
+
+                {/* Droplet 3 (Bottom edge) */}
+                <circle
+                  cx={isManipulated ? 360 : 315}
+                  cy={isManipulated ? 245 : 235}
+                  r="4"
+                  fill="url(#waterDropletGradient)"
+                  stroke="#0284c7"
+                  strokeWidth="0.75"
+                />
+                <circle
+                  cx={isManipulated ? 358.5 : 313.5}
+                  cy={isManipulated ? 243.5 : 233.5}
+                  r="1.5"
+                  fill="#ffffff"
+                />
+
+                {/* Droplet 4 (Top center small splash) */}
+                <circle
+                  cx={isManipulated ? 295 : 270}
+                  cy={isManipulated ? 168 : 178}
+                  r="3"
+                  fill="url(#waterDropletGradient)"
+                  stroke="#0284c7"
+                  strokeWidth="0.75"
+                />
+                <circle
+                  cx={isManipulated ? 294 : 269}
+                  cy={isManipulated ? 167 : 177}
+                  r="1.1"
+                  fill="#ffffff"
+                />
+              </g>
+            </g>
+
+            {/* --- 2. FALLEN GLASS TUMBLER (Tactile & Draggable) --- */}
             <g
               className={
                 isDragging
@@ -637,28 +798,97 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
                   ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
                   : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
               }
-              transform={`translate(${isManipulated ? 40 : dragOffset.x}, 0)`}
+              transform={`translate(${isManipulated ? -15 : dragOffset.x}, ${dragOffset.y})`}
               onPointerDown={handlePointerDown}
             >
-              {/* Overturned Glass Silhouette */}
-              <path d="M 170,175 L 215,165 L 220,185 L 175,195 Z" fill="url(#glassBowl)" stroke="#0284c7" strokeWidth="1.5" />
-              <ellipse cx="218" cy="175" rx="5" ry="10" fill="#bae6fd" stroke="#0284c7" strokeWidth="1.5" />
+              {/* Glass Shadow on tabletop */}
+              <ellipse cx="145" cy="216" rx="42" ry="9" fill="rgba(0,0,0,0.14)" />
+
+              {/* Glass Body (horizontal tipped over) */}
+              <path
+                d="M 112,192 L 186,196 L 186,216 L 112,216 Z"
+                fill="url(#tumblerGlass)"
+                stroke="#0284c7"
+                strokeWidth="1.5"
+              />
+
+              {/* Heavy Solid Glass Base (Refraction & thickness) */}
+              <path
+                d="M 112,192 L 122,193 L 122,215 L 112,216 Z"
+                fill="#bae6fd"
+                stroke="#0284c7"
+                strokeWidth="1.2"
+                opacity="0.8"
+              />
+              <line x1="117" y1="194" x2="117" y2="214" stroke="#0284c7" strokeWidth="1" opacity="0.6" />
+
+              {/* Glass Rim Opening facing the water spill */}
+              <ellipse
+                cx="186"
+                cy="206"
+                rx="6"
+                ry="10"
+                fill="rgba(186, 230, 253, 0.45)"
+                stroke="#0284c7"
+                strokeWidth="1.5"
+              />
+              <ellipse
+                cx="186"
+                cy="206"
+                rx="4"
+                ry="8"
+                fill="none"
+                stroke="#38bdf8"
+                strokeWidth="1"
+              />
+
+              {/* Specular White Glass Reflection Streaks */}
+              <line
+                x1="125"
+                y1="195"
+                x2="182"
+                y2="198"
+                stroke="#ffffff"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                opacity="0.9"
+              />
+              <line
+                x1="125"
+                y1="199"
+                x2="178"
+                y2="201"
+                stroke="#ffffff"
+                strokeWidth="1"
+                strokeLinecap="round"
+                opacity="0.6"
+              />
+
+              {/* Glass Lip Outpouring: Liquid trickling from rim onto the table */}
+              <path
+                d="M 186,204 Q 192,206 190,214 Q 186,216 186,214 Z"
+                fill="#38bdf8"
+                opacity="0.9"
+              />
             </g>
 
-            {/* Free Spreading Water Puddle on Flat Table */}
-            <path
-              d={
-                isManipulated
-                  ? "M 220,185 Q 260,175 320,185 Q 360,200 330,215 Q 270,225 230,210 Q 210,195 220,185 Z"
-                  : "M 220,185 Q 240,180 270,185 Q 290,195 270,205 Q 240,210 230,200 Z"
-              }
-              fill="#38bdf8"
-              opacity="0.75"
-              className="transition-all duration-700"
-            />
-            <text x="280" y="200" fill="#0369a1" fontSize="11" fontWeight="bold">
-              {isManipulated ? 'Nước lan trên mặt phẳng (ON)' : 'Vũng nước loang (ON)'}
-            </text>
+            {/* Dynamic Label Badge */}
+            <g className="transition-all duration-500">
+              <rect
+                x="200"
+                y="95"
+                width="200"
+                height="32"
+                rx="8"
+                fill="#ffffff"
+                stroke="#0284c7"
+                strokeWidth="1.5"
+                className="drop-shadow-sm"
+              />
+              <text x="300" y="115" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
+                {isManipulated ? '💧 Nước loang rộng trên mặt bàn (ON)' : '💧 Cốc đổ nước tràn trên bàn (ON)'}
+              </text>
+            </g>
           </g>
         )}
 
@@ -824,7 +1054,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
       </div>
 
       {/* Snap Zone Selector for Puzzle 1 */}
-      {puzzle.order === 1 && onSnapZoneChange && (
+      {puzzle.id === 'p1-placement-basics' && onSnapZoneChange && (
         <div className="absolute top-3 left-3 flex gap-1.5 bg-white/95 p-1 rounded-xl border border-slate-300 shadow-sm backdrop-blur-sm text-[11px]">
           <span className="text-slate-500 px-1 py-0.5 font-medium">Vị trí:</span>
           {(['cavity', 'rim', 'table'] as const).map((zone) => (
