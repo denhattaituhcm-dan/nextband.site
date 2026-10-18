@@ -35,20 +35,34 @@ function resolveCanonicalDatabaseUrl(): string | undefined {
   return url;
 }
 
+const globalForPrisma = globalThis as unknown as {
+  __nextbandPrisma?: PrismaClient;
+};
+
 const prismaPlugin: FastifyPluginAsync = async (fastify) => {
   const dbUrl = resolveCanonicalDatabaseUrl();
   if (dbUrl) {
     process.env.DATABASE_URL = dbUrl;
   }
-  const prisma = new PrismaClient({
-    datasources: dbUrl ? { db: { url: dbUrl } } : undefined,
-    log: fastify.log.level === "debug" ? ["query", "error", "warn"] : ["error"],
-  });
+  const prisma =
+    globalForPrisma.__nextbandPrisma ??
+    new PrismaClient({
+      datasources: dbUrl ? { db: { url: dbUrl } } : undefined,
+      log: fastify.log.level === "debug" ? ["query", "error", "warn"] : ["error"],
+    });
 
-  try {
-    await prisma.$connect();
-  } catch (dbErr: any) {
-    fastify.log.warn({ err: dbErr }, "Prisma initial connection deferred in serverless runtime");
+  if (!globalForPrisma.__nextbandPrisma) {
+    globalForPrisma.__nextbandPrisma = prisma;
+  }
+
+  // Do not block Fastify boot on TCP/TLS handshake during Vercel serverless cold starts;
+  // Prisma automatically connects on the first query, or warms up in the background.
+  if (!process.env.VERCEL) {
+    try {
+      await prisma.$connect();
+    } catch (dbErr: any) {
+      fastify.log.warn({ err: dbErr }, "Prisma initial connection deferred");
+    }
   }
 
   fastify.decorate("prisma", prisma);

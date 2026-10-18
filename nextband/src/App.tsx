@@ -6,13 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
-// Layouts
-import PublicLayout from "@/layouts/PublicLayout";
-import ClientLayout from "@/layouts/ClientLayout";
-import AdminLayout from "@/layouts/AdminLayout";
-import MinimalLayout from "@/layouts/MinimalLayout";
-
-
 /**
  * Detects stale Vite chunk errors (happen after a new deployment or network hiccup).
  * Covers Chrome, Safari, Firefox, and Rollup/Vite error signatures.
@@ -92,6 +85,12 @@ function lazyWithRetry<T extends React.ComponentType<any>>(
     })
   );
 }
+
+// Lazy-loaded Layouts (prevents Public & Arena Mobile routes from downloading Admin/Client layouts)
+const PublicLayout = lazyWithRetry(() => import("@/layouts/PublicLayout"));
+const ClientLayout = lazyWithRetry(() => import("@/layouts/ClientLayout"));
+const AdminLayout = lazyWithRetry(() => import("@/layouts/AdminLayout"));
+const MinimalLayout = lazyWithRetry(() => import("@/layouts/MinimalLayout"));
 
 // Lazy-loaded Core Pages
 const HomePage = lazyWithRetry(() => import("@/pages/HomePage"));

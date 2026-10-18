@@ -118,17 +118,35 @@ export async function handleApiResponse<T = any>(
   throw new ApiError(errorMessage, res.status, "UNKNOWN", errorDetails);
 }
 
+let cachedAccessToken: string | null = null;
+let cachedTokenExpiresAt = 0;
+
+if (typeof window !== "undefined") {
+  supabase.auth.onAuthStateChange((_event, session) => {
+    cachedAccessToken = session?.access_token ?? null;
+    cachedTokenExpiresAt = session?.expires_at ?? 0;
+  });
+}
+
 export const getAuthToken = async (): Promise<string | null> => {
   try {
+    const nowSec = Date.now() / 1000;
+    if (cachedAccessToken && (!cachedTokenExpiresAt || nowSec < cachedTokenExpiresAt - 120)) {
+      return cachedAccessToken;
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.access_token) {
+      cachedAccessToken = session.access_token;
+      cachedTokenExpiresAt = session.expires_at ?? 0;
       // Auto-refresh token if it expires in less than 2 minutes
-      const expiresAt = session.expires_at; // timestamp in seconds
-      if (expiresAt && Date.now() / 1000 > expiresAt - 120) {
+      if (cachedTokenExpiresAt && nowSec > cachedTokenExpiresAt - 120) {
         try {
           const { data: refreshed } = await supabase.auth.refreshSession();
           if (refreshed?.session?.access_token) {
-            return refreshed.session.access_token;
+            cachedAccessToken = refreshed.session.access_token;
+            cachedTokenExpiresAt = refreshed.session.expires_at ?? 0;
+            return cachedAccessToken;
           }
         } catch (refreshErr) {
           console.warn("[Auth] Token refresh notice:", refreshErr);
@@ -144,7 +162,11 @@ export const getAuthToken = async (): Promise<string | null> => {
         const raw = localStorage.getItem(key);
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (parsed.access_token) return parsed.access_token;
+          if (parsed.access_token) {
+            cachedAccessToken = parsed.access_token;
+            cachedTokenExpiresAt = parsed.expires_at ?? 0;
+            return parsed.access_token;
+          }
         }
       }
     }

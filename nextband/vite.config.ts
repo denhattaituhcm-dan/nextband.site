@@ -36,24 +36,28 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes("node_modules")) {
-            if (id.includes("react-dom") || id.includes("react-router-dom") || id.includes("/react/")) {
+          const norm = id.replace(/\\/g, "/");
+          if (norm.includes("node_modules")) {
+            if (norm.includes("react-dom") || norm.includes("react-router-dom") || norm.includes("/react/")) {
               return "vendor-react";
             }
-            if (id.includes("@tanstack/react-query")) {
+            if (norm.includes("@tanstack/react-query")) {
               return "vendor-query";
             }
-            if (id.includes("@supabase/supabase-js")) {
+            if (norm.includes("@supabase/supabase-js")) {
               return "vendor-supabase";
             }
-            if (id.includes("lucide-react")) {
+            if (norm.includes("lucide-react")) {
               return "vendor-lucide";
             }
-            if (id.includes("@radix-ui")) {
+            if (norm.includes("@radix-ui")) {
               return "vendor-radix";
             }
-            if (id.includes("date-fns")) {
+            if (norm.includes("date-fns")) {
               return "vendor-date-fns";
+            }
+            if (norm.includes("/zod/")) {
+              return "vendor-zod";
             }
           }
         },

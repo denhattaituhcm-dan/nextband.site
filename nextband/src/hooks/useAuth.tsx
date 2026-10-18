@@ -3,10 +3,11 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
   ReactNode,
 } from "react";
 import { supabase } from "@/lib/supabase";
-import { classesApi } from "@/lib/api";
+import { API_BASE_URL, authenticatedFetch } from "@/lib/api/client";
 import { User as SupabaseAuthUser } from "@supabase/supabase-js";
 
 export type AppRole = "admin" | "teacher" | "student" | "staff";
@@ -49,68 +50,93 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const inflightProfileRef = useRef<{ userId: string; promise: Promise<void> } | null>(null);
 
   const fetchUserProfile = async (authUser: SupabaseAuthUser) => {
-    try {
-      // 0. Auto-claim pre-provisioned profile by email non-blocking in background
-      if (authUser.email) {
-        classesApi.claimProfileOnLogin(authUser).catch((claimErr) => {
-          console.warn("Auto-claim profile warning:", claimErr);
-        });
-      }
-
-      // 1 & 2. Parallel Fetch: Profile and User Roles simultaneously
-      const [profileResult, rolesResult] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("*")
-          .eq("user_id", authUser.id)
-          .maybeSingle(),
-        supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", authUser.id),
-      ]);
-
-      const profile = profileResult.data;
-      if (profileResult.error) {
-        console.error("Failed to query profile:", profileResult.error);
-      }
-
-      // If user profile is marked inactive (disabled by admin), force sign out immediately
-      if (profile && (profile.is_active === false || profile.isActive === false)) {
-        console.warn("[AUTH] Account has been deactivated:", authUser.email);
-        await supabase.auth.signOut();
-        setUser(null);
-        setToken(null);
-        throw new Error("Tài khoản của bạn đã bị vô hiệu hóa hoặc tắt kích hoạt. Vui lòng liên hệ ban quản trị.");
-      }
-
-      const rolesData = rolesResult.data;
-      if (rolesResult.error) {
-        console.error("Failed to query user roles:", rolesResult.error);
-      }
-
-      const userRoles: AppRole[] = rolesData
-        ? (rolesData.map((r) => r.role as AppRole))
-        : [];
-
-      setUser({
-        id: authUser.id,
-        email: authUser.email || "",
-        fullName: profile?.full_name || authUser.user_metadata?.full_name || null,
-        avatarUrl: profile?.avatar_url || authUser.user_metadata?.avatar_url || null,
-        bio: profile?.bio || null,
-        phone: profile?.phone || null,
-        gender: profile?.gender || null,
-        isActive: profile?.is_active ?? true,
-        roles: userRoles,
-      });
-    } catch (err: any) {
-      console.error("Failed to load user profile:", err);
-      setUser(null);
-      throw err;
+    if (inflightProfileRef.current?.userId === authUser.id) {
+      return inflightProfileRef.current.promise;
     }
+
+    const promise = (async () => {
+      try {
+        // 0. Auto-claim pre-provisioned profile once per browser session non-blocking
+        if (authUser.email) {
+          const claimKey = `nb_profile_claimed_${authUser.id}`;
+          const alreadyClaimed = typeof window !== "undefined" && sessionStorage.getItem(claimKey);
+          if (!alreadyClaimed) {
+            if (typeof window !== "undefined") {
+              try {
+                sessionStorage.setItem(claimKey, "1");
+              } catch {}
+            }
+            authenticatedFetch(`${API_BASE_URL}/classes/claim-profile`, {
+              method: "POST",
+            }).catch((claimErr) => {
+              console.warn("Auto-claim profile warning:", claimErr);
+            });
+          }
+        }
+
+        // 1 & 2. Parallel Fetch: Profile and User Roles simultaneously
+        const [profileResult, rolesResult] = await Promise.all([
+          supabase
+            .from("profiles")
+            .select("*")
+            .eq("user_id", authUser.id)
+            .maybeSingle(),
+          supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", authUser.id),
+        ]);
+
+        const profile = profileResult.data;
+        if (profileResult.error) {
+          console.error("Failed to query profile:", profileResult.error);
+        }
+
+        // If user profile is marked inactive (disabled by admin), force sign out immediately
+        if (profile && (profile.is_active === false || profile.isActive === false)) {
+          console.warn("[AUTH] Account has been deactivated:", authUser.email);
+          await supabase.auth.signOut();
+          setUser(null);
+          setToken(null);
+          throw new Error("Tài khoản của bạn đã bị vô hiệu hóa hoặc tắt kích hoạt. Vui lòng liên hệ ban quản trị.");
+        }
+
+        const rolesData = rolesResult.data;
+        if (rolesResult.error) {
+          console.error("Failed to query user roles:", rolesResult.error);
+        }
+
+        const userRoles: AppRole[] = rolesData
+          ? (rolesData.map((r) => r.role as AppRole))
+          : [];
+
+        setUser({
+          id: authUser.id,
+          email: authUser.email || "",
+          fullName: profile?.full_name || authUser.user_metadata?.full_name || null,
+          avatarUrl: profile?.avatar_url || authUser.user_metadata?.avatar_url || null,
+          bio: profile?.bio || null,
+          phone: profile?.phone || null,
+          gender: profile?.gender || null,
+          isActive: profile?.is_active ?? true,
+          roles: userRoles,
+        });
+      } catch (err: any) {
+        console.error("Failed to load user profile:", err);
+        setUser(null);
+        throw err;
+      } finally {
+        if (inflightProfileRef.current?.userId === authUser.id) {
+          inflightProfileRef.current = null;
+        }
+      }
+    })();
+
+    inflightProfileRef.current = { userId: authUser.id, promise };
+    return promise;
   };
 
   useEffect(() => {
@@ -132,12 +158,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    // Listen to Auth state changes
+    // Listen to Auth state changes (skip duplicate INITIAL_SESSION already handled by getSession)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "INITIAL_SESSION") {
+        return;
+      }
       if (session?.user) {
         setToken(session.access_token);
+        if (event === "TOKEN_REFRESHED") {
+          setIsLoading(false);
+          return;
+        }
         try {
           await fetchUserProfile(session.user);
         } catch (err) {

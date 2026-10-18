@@ -109340,6 +109340,237 @@ var init_unit1_data = __esm({
   }
 });
 
+// server/services/grade8_bank_parts/unit2.data.ts
+var GRADE8_UNIT2_QUESTIONS;
+var init_unit2_data = __esm({
+  "server/services/grade8_bank_parts/unit2.data.ts"() {
+    GRADE8_UNIT2_QUESTIONS = {
+      "UNIT 2 \u2013 LIFE IN THE COUNTRYSIDE": [
+        {
+          id: "g8_u2_q01",
+          roundIndex: 0,
+          prompt: "Ch\u1ECDn t\u1EEB c\xF3 ph\u1EA7n g\u1EA1ch ch\xE2n ph\xE1t \xE2m l\xE0 /\u0259/ kh\xE1c bi\u1EC7t v\u1EDBi ba t\u1EEB c\xF2n l\u1EA1i ph\xE1t \xE2m l\xE0 /\u026A/:",
+          options: [
+            { id: "opt_A", label: "A", text: "again" },
+            { id: "opt_B", label: "B", text: "busy" },
+            { id: "opt_C", label: "C", text: "village" },
+            { id: "opt_D", label: "D", text: "pretty" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. again",
+          correctExplanation: "'again' b\u1EAFt \u0111\u1EA7u b\u1EB1ng \xE2m schwa /\u0259/ (/\u0259\u02C8\u0261en/). C\u1EA3 ba t\u1EEB c\xF2n l\u1EA1i \u0111\u1EC1u c\xF3 nguy\xEAn \xE2m ph\xE1t \xE2m l\xE0 /\u026A/: 'busy' /\u02C8b\u026Azi/, 'village' /\u02C8v\u026Al\u026Ad\u0292/, 'pretty' /\u02C8pr\u026Ati/.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. busy",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn c\xE1ch ph\xE1t \xE2m \u0111\u1EB7c bi\u1EC7t c\u1EE7a t\u1EEB 'busy'",
+            explanation: "H\u1ECDc sinh th\u1EA5y ch\u1EEF c\xE1i 'u' trong 'busy' th\xEC hay nh\u1EA7m v\u1EDBi \xE2m /\u028C/ ho\u1EB7c /u\u02D0/, qu\xEAn r\u1EB1ng 'busy' ph\xE1t \xE2m l\xE0 /\u026A/ (/\u02C8b\u026Azi/). \u0110\xE1p \xE1n c\xF3 \xE2m /\u0259/ duy nh\u1EA5t l\xE0 'again'."
+          }
+        },
+        {
+          id: "g8_u2_q02",
+          roundIndex: 1,
+          prompt: '\u0110i\u1EC1n t\u1EEB th\xEDch h\u1EE3p v\xE0o \u0111\u1ECBnh ngh\u0129a: "A _______ is an area of land where people grow rice."',
+          options: [
+            { id: "opt_A", label: "A", text: "paddy field" },
+            { id: "opt_B", label: "B", text: "fruit orchard" },
+            { id: "opt_C", label: "C", text: "water canal" },
+            { id: "opt_D", label: "D", text: "country cottage" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. paddy field",
+          correctExplanation: "'paddy field' c\xF3 ngh\u0129a l\xE0 c\xE1nh \u0111\u1ED3ng l\xFAa n\u01B0\u1EDBc (n\u01A1i n\xF4ng d\xE2n tr\u1ED3ng l\xFAa). 'orchard' l\xE0 v\u01B0\u1EDDn c\xE2y \u0103n qu\u1EA3, 'canal' l\xE0 k\xEAnh r\u1EA1ch, 'cottage' l\xE0 nh\xE0 tranh.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. fruit orchard",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa ru\u1ED9ng l\xFAa (paddy field) v\xE0 v\u01B0\u1EDDn c\xE2y \u0103n tr\xE1i (orchard)",
+            explanation: "H\u1ECDc sinh d\u1EC5 nh\u1EA7m l\u1EABn c\xE1c kh\xE1i ni\u1EC7m \u0111\u1EA5t canh t\xE1c \u1EDF n\xF4ng th\xF4n. N\u01A1i tr\u1ED3ng c\xE2y \u0103n tr\xE1i l\xE0 'orchard', c\xF2n n\u01A1i tr\u1ED3ng l\xFAa b\u1EAFt bu\u1ED9c l\xE0 'paddy field'."
+          }
+        },
+        {
+          id: "g8_u2_q03",
+          roundIndex: 2,
+          prompt: 'Ch\u1ECDn \u0111\u1ED9ng t\u1EEB th\xEDch h\u1EE3p: "Every afternoon after school, Nam helps his grandfather _______ the buffaloes on the pasture."',
+          options: [
+            { id: "opt_A", label: "A", text: "herd" },
+            { id: "opt_B", label: "B", text: "catch" },
+            { id: "opt_C", label: "C", text: "load" },
+            { id: "opt_D", label: "D", text: "feed" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. herd",
+          correctExplanation: "\u0110\u1ED9ng t\u1EEB 'herd' c\xF3 ngh\u0129a l\xE0 ch\u0103n, d\u1EAFt \u0111\xE0n gia s\xFAc ('herd the buffaloes / cows / cattle').",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. feed",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa ch\u0103n th\u1EA3 (herd) v\xE0 cho \u0103n (feed)",
+            explanation: "H\u1ECDc sinh th\u1EA5y tr\xE2u b\xF2 tr\xEAn b\xE3i c\u1ECF pasture th\xEC d\u1EC5 ch\u1ECDn 'feed' (cho \u0103n), nh\u01B0ng h\xE0nh \u0111\u1ED9ng d\u1EABn d\u1EAFt c\u1EA3 \u0111\xE0n tr\xE2u b\xF2 \u0111i \u0103n c\u1ECF l\xE0 \u0111\u1ED9ng t\u1EEB 'herd'."
+          }
+        },
+        {
+          id: "g8_u2_q04",
+          roundIndex: 3,
+          prompt: 'Ch\u1ECDn t\xEAn lo\u1EA1i m\xE1y m\xF3c n\xF4ng nghi\u1EC7p: "A _______ is a modern machine that harvests rice and separates the grains from the plant."',
+          options: [
+            { id: "opt_A", label: "A", text: "combine harvester" },
+            { id: "opt_B", label: "B", text: "heavy tractor" },
+            { id: "opt_C", label: "C", text: "delivery truck" },
+            { id: "opt_D", label: "D", text: "water pump" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. combine harvester",
+          correctExplanation: "'combine harvester' l\xE0 m\xE1y g\u1EB7t \u0111\u1EADp li\xEAn h\u1EE3p (v\u1EEBa c\u1EAFt l\xFAa, v\u1EEBa \u0111\u1EADp v\xE0 t\xE1ch h\u1EA1t l\xFAa t\u1EF1 \u0111\u1ED9ng).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. heavy tractor",
+            diagnosticTitle: "Nh\u1EA7m gi\u1EEFa m\xE1y c\xE0y (tractor) v\xE0 m\xE1y g\u1EB7t \u0111\u1EADp (combine harvester)",
+            explanation: "'tractor' l\xE0 m\xE1y c\xE0y ho\u1EB7c \u0111\u1EA7u k\xE9o, kh\xF4ng c\xF3 ch\u1EE9c n\u0103ng thu ho\u1EA1ch v\xE0 tu\u1ED1t h\u1EA1t l\xFAa nh\u01B0 'combine harvester'."
+          }
+        },
+        {
+          id: "g8_u2_q05",
+          roundIndex: 4,
+          prompt: '\u0110i\u1EC1n d\u1EA1ng so s\xE1nh h\u01A1n ch\xEDnh x\xE1c c\u1EE7a tr\u1EA1ng t\u1EEB: "Life in the countryside seems to move _______ than life in the noisy city."',
+          options: [
+            { id: "opt_A", label: "A", text: "more slowly" },
+            { id: "opt_B", label: "B", text: "slowlier" },
+            { id: "opt_C", label: "C", text: "more slower" },
+            { id: "opt_D", label: "D", text: "most slowly" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. more slowly",
+          correctExplanation: "Tr\u1EA1ng t\u1EEB t\u1EADn c\xF9ng l\xE0 '-ly' nh\u01B0 'slowly' khi chuy\u1EC3n sang so s\xE1nh h\u01A1n ph\u1EA3i d\xF9ng c\u1EA5u tr\xFAc 'more + tr\u1EA1ng t\u1EEB' ('more slowly').",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. slowlier",
+            diagnosticTitle: "\xC1p d\u1EE5ng sai quy t\u1EAFc th\xEAm \u0111u\xF4i '-ier' cho tr\u1EA1ng t\u1EEB d\xE0i t\u1EADn c\xF9ng -ly",
+            explanation: "H\u1ECDc sinh th\u01B0\u1EDDng \xE1p d\u1EE5ng m\xE1y m\xF3c quy t\u1EAFc t\xEDnh t\u1EEB c\xF3 \u0111u\xF4i '-y' sang tr\u1EA1ng t\u1EEB \u0111u\xF4i '-ly'. V\u1EDBi tr\u1EA1ng t\u1EEB 'slowly', d\u1EA1ng so s\xE1nh h\u01A1n b\u1EAFt bu\u1ED9c l\xE0 'more slowly', kh\xF4ng c\xF3 t\u1EEB 'slowlier'."
+          }
+        },
+        {
+          id: "g8_u2_q06",
+          roundIndex: 5,
+          prompt: "Ch\u1ECDn c\xE2u c\xF3 c\u1EA5u tr\xFAc so s\xE1nh h\u01A1n CHU\u1EA8N X\xC1C v\u1EC1 tr\u1EA1ng t\u1EEB:",
+          options: [
+            { id: "opt_A", label: "A", text: "Local farmers work harder during the harvest season." },
+            { id: "opt_B", label: "B", text: "Local farmers work more hardly during the harvest season." },
+            { id: "opt_C", label: "C", text: "Local farmers work more hard during the harvest season." },
+            { id: "opt_D", label: "D", text: "Local farmers work hardlier during the harvest season." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Local farmers work harder during the harvest season.",
+          correctExplanation: "'hard' l\xE0 tr\u1EA1ng t\u1EEB ng\u1EAFn b\u1EA5t quy t\u1EAFc, c\xF3 d\u1EA1ng so s\xE1nh h\u01A1n l\xE0 'harder'. 'hardly' l\xE0 m\u1ED9t t\u1EEB ho\xE0n to\xE0n kh\xE1c mang ngh\u0129a ph\u1EE7 \u0111\u1ECBnh ('h\u1EA7u nh\u01B0 kh\xF4ng'), tuy\u1EC7t \u0111\u1ED1i kh\xF4ng d\xF9ng 'more hardly'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Local farmers work more hardly during the harvest season.",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn tai h\u1EA1i gi\u1EEFa 'harder' v\xE0 'hardly / more hardly'",
+            explanation: "H\u1ECDc sinh ngh\u0129 tr\u1EA1ng t\u1EEB ph\u1EA3i c\xF3 \u0111u\xF4i '-ly' n\xEAn gh\xE9p 'hardly' r\u1ED3i th\xEAm 'more'. Th\u1EF1c t\u1EBF 'hard' v\u1EEBa l\xE0 t\xEDnh t\u1EEB v\u1EEBa l\xE0 tr\u1EA1ng t\u1EEB, so s\xE1nh h\u01A1n l\xE0 'harder'."
+          }
+        },
+        {
+          id: "g8_u2_q07",
+          roundIndex: 6,
+          prompt: "T\xECm c\xE2u CH\u01AFA CH\xCDNH X\xC1C v\u1EC1 ng\u1EEF ph\xE1p so s\xE1nh h\u01A1n:",
+          options: [
+            { id: "opt_A", label: "A", text: "She drives more careful than her husband on the narrow road." },
+            { id: "opt_B", label: "B", text: "My father usually gets up earlier than everyone else in the house." },
+            { id: "opt_C", label: "C", text: "Minh runs faster than all of his classmates in the race." },
+            { id: "opt_D", label: "D", text: "Lan speaks English more fluently now than she did last year." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. She drives more careful than her husband on the narrow road.",
+          correctExplanation: "\u0110\u1ED9ng t\u1EEB th\u01B0\u1EDDng 'drives' \u0111\xF2i h\u1ECFi tr\u1EA1ng t\u1EEB b\u1ED5 ngh\u0129a: ph\u1EA3i l\xE0 'more carefully', kh\xF4ng \u0111\u01B0\u1EE3c d\xF9ng t\xEDnh t\u1EEB 'more careful'. C\xE1c c\xE2u B, C, D \u0111\u1EC1u chu\u1EA9n x\xE1c ('earlier', 'faster', 'more fluently').",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. My father usually gets up earlier than everyone else in the house.",
+            diagnosticTitle: "Nghi ng\u1EDD t\u1EEB 'earlier' l\xE0 sai ng\u1EEF ph\xE1p",
+            explanation: "Nhi\u1EC1u h\u1ECDc sinh ngh\u0129 tr\u1EA1ng t\u1EEB 'early' ph\u1EA3i d\xF9ng 'more early'. Th\u1EF1c t\u1EBF tr\u1EA1ng t\u1EEB 'early' \u0111\u1ED5i \u0111u\xF4i 'y' th\xE0nh 'ier' ('earlier'). L\u1ED7i sai th\u1EADt s\u1EF1 n\u1EB1m \u1EDF c\xE2u A: 'drives more carefully'."
+          }
+        },
+        {
+          id: "g8_u2_q08",
+          roundIndex: 7,
+          prompt: '\u0110i\u1EC1n v\xE0o ch\u1ED7 tr\u1ED1ng: "Local buses in the city run every 10 minutes, but village buses run every hour. Therefore, city buses operate _______ than village buses."',
+          options: [
+            { id: "opt_A", label: "A", text: "more frequently" },
+            { id: "opt_B", label: "B", text: "more frequent" },
+            { id: "opt_C", label: "C", text: "frequentlier" },
+            { id: "opt_D", label: "D", text: "most frequently" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. more frequently",
+          correctExplanation: "\u0110\u1ED9ng t\u1EEB 'operate' (ho\u1EA1t \u0111\u1ED9ng, v\u1EADn h\xE0nh) c\u1EA7n tr\u1EA1ng t\u1EEB 'more frequently' (th\u01B0\u1EDDng xuy\xEAn h\u01A1n) \u0111\u1EC3 b\u1ED5 ngh\u0129a.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. more frequent",
+            diagnosticTitle: "D\xF9ng t\xEDnh t\u1EEB thay v\xEC tr\u1EA1ng t\u1EEB b\u1ED5 ngh\u0129a cho \u0111\u1ED9ng t\u1EEB",
+            explanation: "'frequent' l\xE0 t\xEDnh t\u1EEB (d\xF9ng tr\u01B0\u1EDBc danh t\u1EEB ho\u1EB7c sau to be). \u0110\u1EC3 b\u1ED5 ngh\u0129a cho h\xE0nh \u0111\u1ED9ng 'operate' khi so s\xE1nh h\u01A1n, b\u1EAFt bu\u1ED9c ph\u1EA3i d\xF9ng tr\u1EA1ng t\u1EEB 'more frequently'."
+          }
+        },
+        {
+          id: "g8_u2_q09",
+          roundIndex: 8,
+          prompt: 'Khi ng\u01B0\u1EDDi b\u1EA1n n\xF3i: "You really have a nice shirt, Nam!", c\xE2u \u0111\xE1p l\u1EA1i th\u1EC3 hi\u1EC7n s\u1EF1 l\u1ECBch s\u1EF1 v\xE0 t\u1EF1 nhi\xEAn nh\u1EA5t l\xE0:',
+          options: [
+            { id: "opt_A", label: "A", text: "Thank you. My mother bought it for me." },
+            { id: "opt_B", label: "B", text: "You are welcome." },
+            { id: "opt_C", label: "C", text: "Never mind about that." },
+            { id: "opt_D", label: "D", text: "No, it is very ugly." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Thank you. My mother bought it for me.",
+          correctExplanation: "Khi nh\u1EADn \u0111\u01B0\u1EE3c l\u1EDDi khen ng\u1EE3i (giving compliments), l\u1EDDi \u0111\xE1p l\u1EA1i ph\xF9 h\u1EE3p l\xE0 l\u1EDDi c\u1EA3m \u01A1n ch\xE2n th\xE0nh ('Thank you') k\xE8m th\xF4ng tin vui v\u1EBB, l\u1ECBch s\u1EF1.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. You are welcome.",
+            diagnosticTitle: "D\xF9ng nh\u1EA7m c\xE2u \u0111\xE1p l\u1EA1i l\u1EDDi c\u1EA3m \u01A1n",
+            explanation: "'You are welcome' (Kh\xF4ng c\xF3 chi) ch\u1EC9 d\xF9ng \u0111\u1EC3 \u0111\xE1p l\u1EA1i khi ai \u0111\xF3 c\u1EA3m \u01A1n m\xECnh, kh\xF4ng th\u1EC3 d\xF9ng l\xE0m c\xE2u tr\u1EA3 l\u1EDDi khi \u0111\u01B0\u1EE3c ng\u01B0\u1EDDi kh\xE1c khen."
+          }
+        },
+        {
+          id: "g8_u2_q10",
+          roundIndex: 9,
+          prompt: 'Ph\xE1t hi\u1EC7n l\u1ED7i ng\u1EEF ph\xE1p trong c\xE2u: "You must ride your bicycle more carefuller on this bumpy village road."',
+          options: [
+            { id: "opt_A", label: "A", text: "D\xF9ng th\u1EEBa c\xF9ng l\xFAc c\u1EA3 'more' v\xE0 \u0111u\xF4i '-er' trong 'more carefuller'" },
+            { id: "opt_B", label: "B", text: "\u0110\u1ED9ng t\u1EEB khuy\u1EBFt thi\u1EBFu 'must' b\u1EAFt bu\u1ED9c ph\u1EA3i \u0111\u1ED5i th\xE0nh 'should'" },
+            { id: "opt_C", label: "C", text: "\u0110\u1ED9ng t\u1EEB 'ride' ph\u1EA3i chuy\u1EC3n th\xE0nh d\u1EA1ng nguy\xEAn m\u1EABu c\xF3 'to'" },
+            { id: "opt_D", label: "D", text: "Gi\u1EDBi t\u1EEB 'on' tr\u01B0\u1EDBc 'this bumpy road' ph\u1EA3i \u0111\u1ED5i th\xE0nh 'in'" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. D\xF9ng th\u1EEBa c\xF9ng l\xFAc c\u1EA3 'more' v\xE0 \u0111u\xF4i '-er' trong 'more carefuller'",
+          correctExplanation: "\u0110\xE2y l\xE0 l\u1ED7i so s\xE1nh k\xE9p (double comparative). Tr\u1EA1ng t\u1EEB 'carefully' l\xE0 tr\u1EA1ng t\u1EEB d\xE0i, d\u1EA1ng so s\xE1nh h\u01A1n ch\u1EC9 l\xE0 'more carefully', kh\xF4ng bao gi\u1EDD c\xF3 d\u1EA1ng 'more carefuller'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. \u0110\u1ED9ng t\u1EEB khuy\u1EBFt thi\u1EBFu 'must' b\u1EAFt bu\u1ED9c ph\u1EA3i \u0111\u1ED5i th\xE0nh 'should'",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa s\u1EAFc th\xE1i c\u1EA3nh b\xE1o an to\xE0n v\xE0 l\u1ED7i ng\u1EEF ph\xE1p",
+            explanation: "'must' ho\xE0n to\xE0n \u0111\xFAng khi \u0111\u01B0a ra y\xEAu c\u1EA7u an to\xE0n. L\u1ED7i ng\u1EEF ph\xE1p nghi\xEAm tr\u1ECDng trong c\xE2u l\xE0 'more carefuller' (ph\u1EA3i s\u1EEDa th\xE0nh 'more carefully')."
+          }
+        }
+      ]
+    };
+  }
+});
+
 // server/services/grade8-questions-bank.data.ts
 function normalizeBankQuestions(bank) {
   const result = {};
@@ -109381,8 +109612,10 @@ var GRADE8_ARENA_LESSON_QUESTIONS;
 var init_grade8_questions_bank_data = __esm({
   "server/services/grade8-questions-bank.data.ts"() {
     init_unit1_data();
+    init_unit2_data();
     GRADE8_ARENA_LESSON_QUESTIONS = normalizeBankQuestions({
-      ...GRADE8_UNIT1_QUESTIONS
+      ...GRADE8_UNIT1_QUESTIONS,
+      ...GRADE8_UNIT2_QUESTIONS
     });
   }
 });
@@ -110214,19 +110447,25 @@ function resolveCanonicalDatabaseUrl() {
   }
   return url;
 }
+var globalForPrisma = globalThis;
 var prismaPlugin = async (fastify) => {
   const dbUrl = resolveCanonicalDatabaseUrl();
   if (dbUrl) {
     process.env.DATABASE_URL = dbUrl;
   }
-  const prisma = new PrismaClient({
+  const prisma = globalForPrisma.__nextbandPrisma ?? new PrismaClient({
     datasources: dbUrl ? { db: { url: dbUrl } } : void 0,
     log: fastify.log.level === "debug" ? ["query", "error", "warn"] : ["error"]
   });
-  try {
-    await prisma.$connect();
-  } catch (dbErr) {
-    fastify.log.warn({ err: dbErr }, "Prisma initial connection deferred in serverless runtime");
+  if (!globalForPrisma.__nextbandPrisma) {
+    globalForPrisma.__nextbandPrisma = prisma;
+  }
+  if (!process.env.VERCEL) {
+    try {
+      await prisma.$connect();
+    } catch (dbErr) {
+      fastify.log.warn({ err: dbErr }, "Prisma initial connection deferred");
+    }
   }
   fastify.decorate("prisma", prisma);
   fastify.addHook("onClose", async (instance) => {

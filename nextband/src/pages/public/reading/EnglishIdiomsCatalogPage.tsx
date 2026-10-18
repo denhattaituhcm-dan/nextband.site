@@ -14,24 +14,6 @@ import {
   Layers,
   GraduationCap,
 } from "lucide-react";
-import unit01Data from "@/data/idioms/unit01";
-import unit02Data from "@/data/idioms/unit02";
-import unit03Data from "@/data/idioms/unit03";
-import unit04Data from "@/data/idioms/unit04";
-import unit05Data from "@/data/idioms/unit05";
-import unit06Data from "@/data/idioms/unit06";
-import unit07Data from "@/data/idioms/unit07";
-import unit08Data from "@/data/idioms/unit08";
-import unit09Data from "@/data/idioms/unit09";
-import unit10Data from "@/data/idioms/unit10";
-import unit11Data from "@/data/idioms/unit11";
-import unit12Data from "@/data/idioms/unit12";
-import unit13Data from "@/data/idioms/unit13";
-import unit14Data from "@/data/idioms/unit14";
-import unit15Data from "@/data/idioms/unit15";
-import unit16Data from "@/data/idioms/unit16";
-import unit17Data from "@/data/idioms/unit17";
-
 interface UnitCatalogItem {
   id: number;
   unit_number_str: string;
@@ -50,14 +32,14 @@ interface UnitCatalogItem {
 const UNITS_CATALOG: UnitCatalogItem[] = [
   {
     id: 1,
-    unit_number_str: unit01Data.unit_number_str,
-    title_en: unit01Data.unit_title,
+    unit_number_str: "01",
+    title_en: "Age",
     title_vi: "Tuổi tác & Các giai đoạn cuộc đời",
-    section: unit01Data.major_section,
+    section: "DESCRIBING PEOPLE AND THINGS",
     description_vi:
       "Khám phá 20 thành ngữ cốt lõi và cụm từ cố định về tuổi thơ, thanh xuân nồng nhiệt, bước ngoặt trưởng thành và những năm tháng xế chiều.",
-    total_idioms: unit01Data.summary.total_idioms,
-    total_exercises: unit01Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "1.1",
@@ -76,14 +58,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 2,
-    unit_number_str: unit02Data.unit_number_str,
-    title_en: unit02Data.unit_title,
+    unit_number_str: "02",
+    title_en: "Friends and family",
     title_vi: "Gia đình & Tình bạn thâm giao",
-    section: unit02Data.major_section,
+    section: "DESCRIBING PEOPLE AND THINGS",
     description_vi:
       "20 thành ngữ then chốt diễn tả tình bạn, kết giao tâm đầu ý hợp, xung đột gia tộc và các mối quan hệ ruột thịt nhiều thế hệ.",
-    total_idioms: unit02Data.summary.total_idioms,
-    total_exercises: unit02Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 6,
     modules: [
       {
         id: "2.1",
@@ -102,14 +84,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 3,
-    unit_number_str: unit03Data.unit_number_str,
-    title_en: unit03Data.unit_title,
+    unit_number_str: "03",
+    title_en: "Appearance and background",
     title_vi: "Diện mạo & Xuất thân xã hội",
-    section: unit03Data.major_section,
+    section: "DESCRIBING PEOPLE AND THINGS",
     description_vi:
       "20 thành ngữ ấn tượng miêu tả diện mạo, nét tương đồng người với người, phong thái ăn mặc sang trọng chỉn chu và nguồn gốc xuất thân.",
-    total_idioms: unit03Data.summary.total_idioms,
-    total_exercises: unit03Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "3.1",
@@ -128,14 +110,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 4,
-    unit_number_str: unit04Data.unit_number_str,
-    title_en: unit04Data.unit_title,
+    unit_number_str: "04",
+    title_en: "Personality traits",
     title_vi: "Nét tính cách qua lăng kính ẩn dụ",
-    section: unit04Data.major_section,
+    section: "Describing people and things",
     description_vi:
       "Khắc họa tính cách con người qua lăng kính động vật và thực phẩm, từ điềm tĩnh kiên định đến lập dị, sắc sảo hay chân chất.",
-    total_idioms: unit04Data.summary.total_idioms,
-    total_exercises: unit04Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "4.1",
@@ -154,14 +136,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 5,
-    unit_number_str: unit05Data.unit_number_str,
-    title_en: unit05Data.unit_title,
+    unit_number_str: "05",
+    title_en: "Good things",
     title_vi: "Sự xuất sắc, may mắn & Điều tuyệt hảo",
-    section: unit05Data.major_section,
+    section: "Describing people and things",
     description_vi:
       "20 thành ngữ đỉnh cao miêu tả sự xuất sắc, thành tựu kiệt xuất, những điều tuyệt vời ngoài sức tưởng tượng và cơ duyên tái ông thất mã.",
-    total_idioms: unit05Data.summary.total_idioms,
-    total_exercises: unit05Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "5.1",
@@ -180,14 +162,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 6,
-    unit_number_str: unit06Data.unit_number_str,
-    title_en: unit06Data.unit_title,
+    unit_number_str: "06",
+    title_en: "Bad things",
     title_vi: "Sự thất vọng, phẩm chất kém & Giọt nước tràn ly",
-    section: unit06Data.major_section,
+    section: "DESCRIBING PEOPLE AND THINGS",
     description_vi:
       "Khám phá 20 thành ngữ then chốt diễn tả chất lượng tồi tàn, sự hụt hẫng thất vọng, cảm giác tẻ nhạt đến phát ngấy và giới hạn chịu đựng giọt nước tràn ly.",
-    total_idioms: unit06Data.summary.total_idioms,
-    total_exercises: unit06Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "6.1",
@@ -206,14 +188,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 7,
-    unit_number_str: unit07Data.unit_number_str,
-    title_en: unit07Data.unit_title,
+    unit_number_str: "07",
+    title_en: "Animals",
     title_vi: "Thế giới động vật & Ẩn dụ ngụ ngôn",
-    section: unit07Data.major_section,
+    section: "DESCRIBING PEOPLE AND THINGS",
     description_vi:
       "20 thành ngữ đặc sắc mượn tập tính sinh học, ngụ ngôn cổ xưa và đặc trưng loài vật để khắc họa tâm lý, hành vi con người và tình huống xã hội.",
-    total_idioms: unit07Data.summary.total_idioms,
-    total_exercises: unit07Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "7.1",
@@ -232,14 +214,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 8,
-    unit_number_str: unit08Data.unit_number_str,
-    title_en: unit08Data.unit_title,
+    unit_number_str: "08",
+    title_en: "Food",
     title_vi: "Ẩm thực, Bếp núc & Ẩn dụ Đời sống",
-    section: unit08Data.major_section,
+    section: "DESCRIBING PEOPLE AND THINGS",
     description_vi:
       "Khám phá 20 thành ngữ đặc sắc mượn chất liệu ẩm thực, bánh trái, bơ sữa và thói quen ăn uống để khắc họa tâm lý, thế giới nghề nghiệp và các mối quan hệ xã hội.",
-    total_idioms: unit08Data.summary.total_idioms,
-    total_exercises: unit08Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "8.1",
@@ -258,14 +240,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 9,
-    unit_number_str: unit09Data.unit_number_str,
-    title_en: unit09Data.unit_title,
+    unit_number_str: "09",
+    title_en: "Agreeing and disagreeing",
     title_vi: "Đồng thuận, Bất đồng & Thương lượng",
-    section: unit09Data.major_section,
+    section: "ATTITUDE",
     description_vi:
       "20 thành ngữ then chốt diễn tả sự đồng thuận, bất đồng nảy lửa, nghệ thuật thỏa hiệp và chốt giao kèo trong công việc lẫn đời sống.",
-    total_idioms: unit09Data.summary.total_idioms,
-    total_exercises: unit09Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "9.1",
@@ -289,14 +271,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 10,
-    unit_number_str: unit10Data.unit_number_str,
-    title_en: unit10Data.unit_title,
+    unit_number_str: "10",
+    title_en: "Behavior",
     title_vi: "Đối nhân xử thế & Chuẩn mực hành vi",
-    section: unit10Data.major_section,
+    section: "ATTITUDE",
     description_vi:
       "20 thành ngữ then chốt diễn tả cách đối nhân xử thế, lòng nhân ái thấu cảm, thái độ đối xử tệ bạc, trò đùa trêu ghẹo và quy chuẩn hành vi xã hội.",
-    total_idioms: unit10Data.summary.total_idioms,
-    total_exercises: unit10Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "10.1",
@@ -325,14 +307,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 11,
-    unit_number_str: unit11Data.unit_number_str,
-    title_en: unit11Data.unit_title,
+    unit_number_str: "11",
+    title_en: "Emotions",
     title_vi: "Cảm xúc & Tâm trạng con người",
-    section: unit11Data.major_section,
+    section: "ATTITUDE",
     description_vi:
       "20 thành ngữ kinh điển khắc họa các cung bậc cảm xúc dữ dội của con người qua ẩn dụ bộ phận cơ thể, sắc màu tâm trạng và thế giới ẩm thực.",
-    total_idioms: unit11Data.summary.total_idioms,
-    total_exercises: unit11Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "11.1",
@@ -356,14 +338,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 12,
-    unit_number_str: unit12Data.unit_number_str,
-    title_en: unit12Data.unit_title,
+    unit_number_str: "12",
+    title_en: "Positive emotions",
     title_vi: "Cảm xúc tích cực & Hân hoan",
-    section: unit12Data.major_section,
+    section: "ATTITUDE",
     description_vi:
       "20 thành ngữ ngập tràn năng lượng tích cực, niềm hoan hỉ ngất ngây, tình yêu say đắm, lòng nhiệt huyết cống hiến và sự phấn khích hồi hộp khôn nguôi.",
-    total_idioms: unit12Data.summary.total_idioms,
-    total_exercises: unit12Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "12.1",
@@ -392,14 +374,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 13,
-    unit_number_str: unit13Data.unit_number_str,
-    title_en: unit13Data.unit_title,
+    unit_number_str: "13",
+    title_en: "Negative emotions",
     title_vi: "Cảm xúc tiêu cực (Buồn bã, Tức giận, Nỗi sợ & Xấu hổ)",
-    section: unit13Data.major_section,
+    section: "ATTITUDE",
     description_vi:
       "Khám phá 20 thành ngữ then chốt diễn tả các sắc thái cảm xúc tiêu cực, từ nỗi buồn sâu lắng, cơn giận dữ sôi máu, nỗi khiếp đảm lạnh sống lưng cho đến sự ngượng ngùng muốn độn thổ.",
-    total_idioms: unit13Data.summary.total_idioms,
-    total_exercises: unit13Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "13.1",
@@ -428,14 +410,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 14,
-    unit_number_str: unit14Data.unit_number_str,
-    title_en: unit14Data.unit_title,
+    unit_number_str: "14",
+    title_en: "Memory",
     title_vi: "Trí nhớ & Quên lãng (Ghi nhớ, Đãng trí, Kỷ niệm & Hoài niệm)",
-    section: unit14Data.major_section,
+    section: "ATTITUDE",
     description_vi:
       "20 thành ngữ then chốt diễn tả hoạt động trí nhớ, hiện tượng quên lãng, ký ức ùa về, hồi tưởng quá khứ và nỗ lực vắt kiệt óc để suy nghĩ.",
-    total_idioms: unit14Data.summary.total_idioms,
-    total_exercises: unit14Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "14.1",
@@ -449,14 +431,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 15,
-    unit_number_str: unit15Data.unit_number_str,
-    title_en: unit15Data.unit_title,
+    unit_number_str: "15",
+    title_en: "The body",
     title_vi: "Các bộ phận cơ thể (Cảm xúc, Hành động & Phản xạ con người)",
-    section: unit15Data.major_section,
+    section: "ATTITUDE",
     description_vi:
       "20 thành ngữ kinh điển mượn ẩn dụ các bộ phận cơ thể (mắt, tai, tim, vai, cằm, da, dây thần kinh), từ sự hồi hộp bồn chồn đến nghệ thuật tùy cơ ứng biến.",
-    total_idioms: unit15Data.summary.total_idioms,
-    total_exercises: unit15Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "15.1",
@@ -470,14 +452,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 16,
-    unit_number_str: unit16Data.unit_number_str,
-    title_en: unit16Data.unit_title,
+    unit_number_str: "16",
+    title_en: "War and weapons",
     title_vi: "Chiến tranh & Vũ khí (Xung đột, Bất hòa, Kiên định & Đàm phán)",
-    section: unit16Data.major_section,
+    section: "ATTITUDE",
     description_vi:
       "20 thành ngữ mượn thuật ngữ quân sự, chiến hào, hỏa lực và vũ khí chiến đấu cổ điển để khắc họa sắc sảo các xung đột, sự phản bội, lòng kiên định phòng thủ và nghệ thuật đàm phán.",
-    total_idioms: unit16Data.summary.total_idioms,
-    total_exercises: unit16Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "16.1",
@@ -491,14 +473,14 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
   },
   {
     id: 17,
-    unit_number_str: unit17Data.unit_number_str,
-    title_en: unit17Data.unit_title,
+    unit_number_str: "17",
+    title_en: "Amount and distance",
     title_vi: "Số lượng & Khoảng cách (Định lượng, Cự ly & Không gian)",
-    section: unit17Data.major_section,
+    section: "SITUATIONS AND CIRCUMSTANCES",
     description_vi:
       "20 thành ngữ phong phú diễn tả các thang bậc số lượng (từ hạt muối bỏ bể đến trọn gói A-Z) và khoảng cách địa lý (từ trong gang tấc bước chân đến chốn khỉ ho cò gáy xa xôi).",
-    total_idioms: unit17Data.summary.total_idioms,
-    total_exercises: unit17Data.summary.total_practice_exercises,
+    total_idioms: 20,
+    total_exercises: 5,
     modules: [
       {
         id: "17.1",
@@ -515,13 +497,76 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     accent: "UK (Anh)",
     isAvailable: true,
   },
+  {
+    id: 18,
+    unit_number_str: "18",
+    title_en: "Beginning and ending",
+    title_vi: "Khởi đầu & Kết thúc (Xuất phát, Lật trang mới, Hạ màn & Dấu chấm hết)",
+    section: "SITUATIONS AND CIRCUMSTANCES",
+    description_vi:
+      "20 thành ngữ sinh động về sự khởi đầu và kết thúc, từ vạch xuất phát thuận buồm xuôi gió, lật sang trang mới cuộc đời cho đến lúc hạ màn trọn vẹn và đặt dấu chấm hết.",
+    total_idioms: 20,
+    total_exercises: 5,
+    modules: [
+      {
+        id: "18.1",
+        title: "Beginning",
+        sample: "made a fresh start, hit the ground running, kicked off, got off to a flying start, get the ball rolling...",
+      },
+      {
+        id: "18.2",
+        title: "Ending",
+        sample: "call it a day, putting the finishing touches on it, drew to a close, ground to a halt...",
+      },
+      {
+        id: "18.3",
+        title: "Expressions with 'end'",
+        sample: "put an end to, the end of an era, all good things must come to an end, the end is in sight...",
+      },
+    ],
+    tags: ["Khởi đầu", "Kết thúc", "Thời gian", "Tiến độ", "IELTS Speaking & Writing"],
+    accent: "US (Mỹ)",
+    isAvailable: true,
+  },
+  {
+    id: 19,
+    unit_number_str: "19",
+    title_en: "Chance, luck, and probability",
+    title_vi: "Cơ hội, Vận may & Xác suất (Cơ duyên, Ăn may, Bất khả thi & Ước mơ viển vông)",
+    section: "SITUATIONS AND CIRCUMSTANCES",
+    description_vi:
+      "20 thành ngữ kinh điển về cơ hội, vận may và xác suất xảy ra, từ cơ duyên trời ban, ăn may phút chót đến những ước mơ viển vông khi mặt trời mọc đằng tây.",
+    total_idioms: 20,
+    total_exercises: 5,
+    modules: [
+      {
+        id: "19.1",
+        title: "Expressions with 'chance'",
+        sample: "on the off-chance, a slim chance, in for a chance of, don't stand a chance...",
+      },
+      {
+        id: "19.2",
+        title: "Expressions with 'luck'",
+        sample: "a stroke of luck, beginner's luck, don't push your luck, in luck, out of luck, sheer luck...",
+      },
+      {
+        id: "19.3",
+        title: "Probability",
+        sample: "the hot favorite, in the cards, a foregone conclusion, when pigs fly, pie in the sky, against all odds...",
+      },
+    ],
+    tags: ["Cơ hội", "May mắn", "Xác suất", "Khả năng", "IELTS Speaking & Writing"],
+    accent: "UK (Anh)",
+    isAvailable: true,
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 18, unit_number_str: "18", title_en: "Beginning and ending", title_vi: "Khởi đầu & Kết thúc" },
-  { id: 19, unit_number_str: "19", title_en: "Chance, luck, and probability", title_vi: "Cơ hội, may mắn & xác suất" },
-  { id: 20, unit_number_str: "20", title_en: "Time", title_vi: "Thời gian & Khoảnh khắc" },
-  { id: 21, unit_number_str: "21", title_en: "Communication", title_vi: "Giao tiếp & Truyền đạt" },
+  { id: 20, unit_number_str: "20", title_en: "Ease and difficulty", title_vi: "Dễ dàng & Khó khăn" },
+  { id: 21, unit_number_str: "21", title_en: "Safety and danger", title_vi: "An toàn & Nguy hiểm" },
+  { id: 22, unit_number_str: "22", title_en: "Difficult situations", title_vi: "Tình huống nan giải" },
+  { id: 23, unit_number_str: "23", title_en: "The weather and nature", title_vi: "Thời tiết & Thiên nhiên" },
+  { id: 24, unit_number_str: "24", title_en: "Talking", title_vi: "Trò chuyện & Giao tiếp" },
 ];
 
 export default function EnglishIdiomsCatalogPage() {
@@ -566,7 +611,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              17 Units Sẵn Sàng (340 Idioms)
+              19 Units Sẵn Sàng (380 Idioms)
             </span>
           </div>
         </div>
@@ -594,11 +639,11 @@ export default function EnglishIdiomsCatalogPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">17</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">19</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">340</div>
+                <div className="text-2xl sm:text-3xl font-black text-sky-200">380</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
@@ -606,7 +651,7 @@ export default function EnglishIdiomsCatalogPage() {
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">85</div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-200">95</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
             </div>
