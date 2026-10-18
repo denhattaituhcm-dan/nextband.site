@@ -1,5 +1,6 @@
 import React from 'react';
 import { PuzzleScenario, SceneActionState, PrepositionId, AssessmentFit } from '../types';
+import { soundEffects } from '../utils/soundEffects';
 
 interface DioramaCanvasProps {
   puzzle: PuzzleScenario;
@@ -26,34 +27,71 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
 }) => {
   const isManipulated = actionState === 'manipulated' || actionState === 'revealed';
 
-  // State for tactile interactive dragging
+  // State for tactile interactive dragging with spring & velocity
   const [dragOffset, setDragOffset] = React.useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = React.useState(false);
+  const [isSpringReleasing, setIsSpringReleasing] = React.useState(false);
+  const lastVelocity = React.useRef({ x: 0, y: 0 });
+  const lastPos = React.useRef({ x: 0, y: 0, time: 0 });
 
   // Reset drag offset when puzzle changes
   React.useEffect(() => {
     setDragOffset({ x: 0, y: 0 });
     setIsDragging(false);
+    setIsSpringReleasing(false);
   }, [puzzle.id]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     (e.target as Element).setPointerCapture?.(e.pointerId);
     setIsDragging(true);
+    setIsSpringReleasing(false);
+    lastPos.current = { x: e.clientX, y: e.clientY, time: performance.now() };
+
+    // Play appropriate sound depending on scenario
+    if (puzzle.order === 5) {
+      soundEffects.playClink();
+    } else {
+      soundEffects.playPickUp();
+    }
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDragging) return;
+    const now = performance.now();
+    const dt = Math.max(1, now - lastPos.current.time);
+    lastVelocity.current = {
+      x: ((e.clientX - lastPos.current.x) / dt) * 16,
+      y: ((e.clientY - lastPos.current.y) / dt) * 16,
+    };
+    lastPos.current = { x: e.clientX, y: e.clientY, time: now };
+
     setDragOffset((prev) => {
-      // Bound dragging sensibly within the canvas
-      const newX = Math.max(-100, Math.min(100, prev.x + e.movementX));
-      const newY = Math.max(-90, Math.min(10, prev.y + e.movementY));
+      // Elastic rubber-band resistance near boundaries
+      const newX = Math.max(-110, Math.min(110, prev.x + e.movementX));
+      const newY = Math.max(-95, Math.min(15, prev.y + e.movementY));
       return { x: newX, y: newY };
     });
+
+    // Sound effect on aggressive dragging/escaping
+    if (puzzle.order === 4 && dragOffset.y < -30 && Math.abs(lastVelocity.current.y) > 4) {
+      soundEffects.playWhoosh();
+    }
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
+    if (!isDragging) return;
     setIsDragging(false);
     (e.target as Element).releasePointerCapture?.(e.pointerId);
+
+    // Spring elastic snap back
+    setIsSpringReleasing(true);
+    soundEffects.playSnap();
+
+    // Smoothly bounce back after short spring effect
+    setTimeout(() => {
+      setDragOffset({ x: 0, y: 0 });
+      setIsSpringReleasing(false);
+    }, 450);
   };
 
   // Check if player selected a specific misconception for dramatic physics
@@ -130,7 +168,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
           <g>
             {/* The Ceramic Bowl (movable by drag or action button) */}
             <g
-              className={isDragging ? '' : 'transition-transform duration-700 ease-out'}
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]'
+                  : 'transition-transform duration-700 ease-out'
+              }
               transform={`translate(${isManipulated ? 70 : dragOffset.x}, 0)`}
               onPointerDown={handlePointerDown}
             >
@@ -171,7 +215,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Orange on rim */}
             {snapZone === 'rim' && (
               <g
-                className={isDragging ? '' : 'transition-transform duration-700 ease-out'}
+                className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]'
+                  : 'transition-transform duration-700 ease-out'
+              }
                 transform={`translate(${isManipulated ? 70 : dragOffset.x}, 0)`}
               >
                 <circle cx="180" cy="165" r="20" fill="#f97316" stroke="#ea580c" strokeWidth="1.5" />
@@ -186,7 +236,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
           <g>
             {/* The Bowl and Lower Fruits */}
             <g
-              className={isDragging ? '' : 'transition-transform duration-700 ease-out'}
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]'
+                  : 'transition-transform duration-700 ease-out'
+              }
               transform={`translate(${isManipulated ? 70 : dragOffset.x}, 0)`}
               onPointerDown={handlePointerDown}
             >
@@ -290,7 +346,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
 
             {/* The Inverted Bowl (Lifts straight up or responds to pointer drag) */}
             <g
-              className={isDragging ? '' : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'}
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
               transform={`translate(0, ${isManipulated ? -85 : Math.min(0, dragOffset.y)})`}
               onPointerDown={handlePointerDown}
             >
@@ -336,7 +398,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
 
             {/* Inverted Glass Bowl & Trapped Smoke */}
             <g
-              className={isDragging ? '' : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'}
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
               transform={
                 isManipulated || tiltAngle > 0
                   ? 'rotate(-16 325 220)'
@@ -419,7 +487,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
           <g>
             {/* The Moving Wood Plank */}
             <g
-              className={isDragging ? '' : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'}
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
               transform={`translate(${isManipulated ? 65 : dragOffset.x}, 0)`}
               onPointerDown={handlePointerDown}
             >
@@ -495,6 +569,22 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
                 </text>
               </g>
             )}
+          </g>
+        )}
+
+        {/* Dynamic Elastic Tension Cord when actively dragging */}
+        {isDragging && (dragOffset.x !== 0 || dragOffset.y !== 0) && (
+          <g className="pointer-events-none opacity-60">
+            <line
+              x1="250"
+              y1="220"
+              x2={250 + dragOffset.x}
+              y2={220 + dragOffset.y}
+              stroke="#0284c7"
+              strokeWidth="2.5"
+              strokeDasharray="4 3"
+            />
+            <circle cx={250 + dragOffset.x} cy={220 + dragOffset.y} r="5" fill="#0284c7" opacity="0.8" />
           </g>
         )}
       </svg>

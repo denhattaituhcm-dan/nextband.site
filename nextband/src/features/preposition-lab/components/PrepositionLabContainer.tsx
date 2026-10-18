@@ -5,6 +5,7 @@ import { DioramaCanvas } from './DioramaCanvas';
 import { PrepositionSelector } from './PrepositionSelector';
 import { FeedbackDrawer } from './FeedbackDrawer';
 import { CompletionSummary } from './CompletionSummary';
+import { soundEffects } from '../utils/soundEffects';
 
 export const PrepositionLabContainer: React.FC = () => {
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
@@ -32,14 +33,20 @@ export const PrepositionLabContainer: React.FC = () => {
 
   // Select preposition prediction
   const handleSelectPreposition = (id: PrepositionId) => {
+    soundEffects.playPickUp();
     setSelectedPreposition(id);
   };
 
   // Test Prediction trigger
   const handleTestPrediction = () => {
-    if (!selectedPreposition) return;
+    if (!selectedPreposition || !selectedOption) return;
     setActionState('manipulated');
     setHasTestedPrediction(true);
+    if (selectedOption.fit === 'canonical') {
+      soundEffects.playSuccess();
+    } else {
+      soundEffects.playThud();
+    }
   };
 
   // Advance to next puzzle or completion
