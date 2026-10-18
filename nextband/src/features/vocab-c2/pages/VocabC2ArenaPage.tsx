@@ -115,10 +115,10 @@ const VocabC2ArenaContent: React.FC = () => {
       ) : (
         /* VIEW STATE 2: Main Game Stage Container */
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-5 animate-in fade-in duration-300">
-          {/* Unit Info Banner & Mode Tabs with Back-to-Hub button */}
+          {/* Streamlined Mode Navigation Bar with 12 Chủ Đề Back Button */}
           {!isZenMode && (
             <div
-              className={`flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 p-4 rounded-2xl border transition-all ${
+              className={`flex flex-col md:flex-row md:items-center justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border transition-all ${
                 isPaperTheme
                   ? "bg-[#FAF7F2] border-[#E2D9CC] shadow-xs text-slate-900"
                   : isSlateTheme
@@ -126,59 +126,52 @@ const VocabC2ArenaContent: React.FC = () => {
                   : "bg-[#0B0F19] border-white/10 shadow-lg text-slate-100"
               }`}
             >
-              <div className="flex items-start sm:items-center gap-3">
+              <div className="flex items-center gap-2.5">
                 <button
                   onClick={() => setViewState("hub")}
                   title="Quay lại sảnh chọn 12 chủ đề 3D"
-                  className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 shrink-0 text-xs font-bold ${
                     isPaperTheme
-                      ? "bg-white border-slate-200 hover:bg-slate-100 text-slate-800 shadow-xs"
+                      ? "bg-white border-slate-300 hover:bg-slate-100 text-slate-800 shadow-xs"
                       : "bg-white/5 border-white/10 hover:bg-white/15 text-white"
                   }`}
                 >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span className="text-xs font-bold hidden sm:inline">12 Chủ đề</span>
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>12 Chủ đề</span>
                 </button>
 
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider font-mono border ${
-                        isPaperTheme
-                          ? "bg-teal-50 text-teal-800 border-teal-200"
-                          : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30"
-                      }`}
-                    >
-                      UNIT {currentUnit.unitNumber} • {currentUnit.pdfPages}
-                    </span>
-                    <h1
-                      className={`text-lg font-black tracking-tight ${
-                        isPaperTheme ? "text-slate-900 font-serif" : "text-white"
-                      }`}
-                    >
-                      {currentUnit.titleEn}
-                    </h1>
-                  </div>
-                  <p
-                    className={`text-xs mt-1 leading-relaxed ${
-                      isPaperTheme ? "text-slate-600 font-normal" : "text-slate-400"
+                <div className="h-4 w-px bg-slate-300 dark:bg-slate-700 hidden sm:block" />
+
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase font-mono border ${
+                      isPaperTheme
+                        ? "bg-teal-50 text-teal-800 border-teal-200"
+                        : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30"
                     }`}
                   >
-                    {currentUnit.themeSummaryVi}
-                  </p>
+                    U{currentUnit.unitNumber}
+                  </span>
+                  <span
+                    className={`text-sm font-bold truncate max-w-[200px] sm:max-w-xs ${
+                      isPaperTheme ? "text-slate-900 font-serif" : "text-white"
+                    }`}
+                  >
+                    {currentUnit.titleEn}
+                  </span>
                 </div>
               </div>
 
               {/* Mode Switcher Tabs */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+              <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
                 {[
-                  { id: "schema" as ArenaModeId, label: "A: Schema", icon: Layers },
-                  { id: "synapse" as ArenaModeId, label: "B: Synapse", icon: Zap },
-                  { id: "trilock" as ArenaModeId, label: "C: Tri-Lock", icon: Key },
-                  { id: "persona" as ArenaModeId, label: "D: Persona", icon: Swords },
-                  { id: "chronicles" as ArenaModeId, label: "E: Chronicles", icon: BookOpen },
-                  { id: "gradient" as ArenaModeId, label: "⚡ Gradients", icon: Sliders },
-                  { id: "frameweb" as ArenaModeId, label: "🕸️ Frames", icon: Network },
+                  { id: "schema" as ArenaModeId, label: "Schema", icon: Layers },
+                  { id: "synapse" as ArenaModeId, label: "Synapse", icon: Zap },
+                  { id: "trilock" as ArenaModeId, label: "Tri-Lock", icon: Key },
+                  { id: "persona" as ArenaModeId, label: "Persona", icon: Swords },
+                  { id: "chronicles" as ArenaModeId, label: "Chronicles", icon: BookOpen },
+                  { id: "gradient" as ArenaModeId, label: "Gradients", icon: Sliders },
+                  { id: "frameweb" as ArenaModeId, label: "Frames", icon: Network },
                 ].map((m) => {
                   const Icon = m.icon;
                   const isActive = activeMode === m.id;
@@ -186,11 +179,11 @@ const VocabC2ArenaContent: React.FC = () => {
                     <button
                       key={m.id}
                       onClick={() => setActiveMode(m.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                      className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                         isActive
                           ? isPaperTheme
-                            ? "bg-teal-700 text-white font-black shadow-sm"
-                            : "bg-cyan-500 text-slate-950 font-black shadow-md shadow-cyan-500/30"
+                            ? "bg-teal-700 text-white font-black shadow-xs"
+                            : "bg-cyan-500 text-slate-950 font-black shadow-xs shadow-cyan-500/30"
                           : isPaperTheme
                           ? "bg-white text-slate-700 hover:bg-slate-100 hover:text-black border border-slate-200"
                           : "bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 border border-white/5"
