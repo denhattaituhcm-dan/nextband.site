@@ -3,6 +3,7 @@ import {
   DiscourseFeedbackItem,
   EssayDiagnosticPayload,
 } from "../types/diagnostic.js";
+import { env } from "../config/env.js";
 
 export interface WritingAiDiagnosisRequest {
   essayText: string;
@@ -19,18 +20,13 @@ export interface WritingAiDiagnosisResponse {
 }
 
 export class GeminiWritingDiagnosticService {
-  private apiKey: string | null;
-  private model: string;
-  private apiUrl: string;
-
-  constructor() {
-    this.apiKey = process.env.GEMINI_API_KEY || null;
-    this.model = process.env.GEMINI_MODEL || "gemini-3.6-flash";
-    this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent`;
+  private getApiKey(): string | null {
+    return env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || null;
   }
 
   public async diagnoseEssay(req: WritingAiDiagnosisRequest): Promise<WritingAiDiagnosisResponse> {
-    if (!this.apiKey) {
+    const apiKey = this.getApiKey();
+    if (!apiKey) {
       return {
         success: false,
         essayDiagnostic: {
@@ -140,75 +136,74 @@ ${req.essayText}
       },
     };
 
-    try {
-      const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    // Candidate models in priority order: configured model -> gemini-2.5-flash -> gemini-2.0-flash -> gemini-1.5-flash
+    const candidateModels = Array.from(
+      new Set(
+        [
+          process.env.GEMINI_MODEL,
+          "gemini-2.5-flash",
+          "gemini-2.0-flash",
+          "gemini-1.5-flash",
+        ].filter(Boolean) as string[]
+      )
+    );
 
-      if (!response.ok) {
-        const errorText = await response.text();
+    let lastError = "";
+
+    for (const model of candidateModels) {
+      try {
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          lastError = `HTTP ${response.status} (${model}): ${errorText}`;
+          // If model not found (404) or bad request on model name, try next fallback model
+          if (response.status === 404 || response.status === 400 || response.status === 503) {
+            continue;
+          }
+          break;
+        }
+
+        const data: any = await response.json();
+        const rawJson = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawJson) {
+          lastError = `Empty candidate response from Gemini (${model})`;
+          continue;
+        }
+
+        const parsed = JSON.parse(rawJson);
         return {
-          success: false,
-          essayDiagnostic: {
-            bandScores: {},
-            summary: {
-              strengths: [],
-              primaryWeakness: "Gemini API trả về lỗi HTTP " + response.status,
-              actionableAdvice: errorText,
-            },
+          success: true,
+          essayDiagnostic: parsed.essayDiagnostic || {
+            bandScores: parsed.bandScores || {},
+            summary: parsed.summary || { strengths: [], primaryWeakness: "", actionableAdvice: "" },
           },
-          discourseFeedbacks: [],
-          sentenceFeedbacks: [],
-          error: `HTTP ${response.status}: ${errorText}`,
+          discourseFeedbacks: Array.isArray(parsed.discourseFeedbacks) ? parsed.discourseFeedbacks : [],
+          sentenceFeedbacks: Array.isArray(parsed.sentenceFeedbacks) ? parsed.sentenceFeedbacks : [],
         };
+      } catch (err: any) {
+        lastError = err.message || "Unknown error";
       }
-
-      const data: any = await response.json();
-      const rawJson = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawJson) {
-        return {
-          success: false,
-          essayDiagnostic: {
-            bandScores: {},
-            summary: {
-              strengths: [],
-              primaryWeakness: "Gemini API không trả về nội dung hợp lệ.",
-              actionableAdvice: "Thử lại sau ít phút.",
-            },
-          },
-          discourseFeedbacks: [],
-          sentenceFeedbacks: [],
-          error: "Empty candidate response from Gemini",
-        };
-      }
-
-      const parsed = JSON.parse(rawJson);
-      return {
-        success: true,
-        essayDiagnostic: parsed.essayDiagnostic || {
-          bandScores: parsed.bandScores || {},
-          summary: parsed.summary || { strengths: [], primaryWeakness: "", actionableAdvice: "" },
-        },
-        discourseFeedbacks: Array.isArray(parsed.discourseFeedbacks) ? parsed.discourseFeedbacks : [],
-        sentenceFeedbacks: Array.isArray(parsed.sentenceFeedbacks) ? parsed.sentenceFeedbacks : [],
-      };
-    } catch (err: any) {
-      return {
-        success: false,
-        essayDiagnostic: {
-          bandScores: {},
-          summary: {
-            strengths: [],
-            primaryWeakness: "Lỗi xử lý khi gọi Gemini API.",
-            actionableAdvice: err.message,
-          },
-        },
-        discourseFeedbacks: [],
-        sentenceFeedbacks: [],
-        error: err.message,
-      };
     }
+
+    return {
+      success: false,
+      essayDiagnostic: {
+        bandScores: {},
+        summary: {
+          strengths: [],
+          primaryWeakness: "Lỗi xử lý khi gọi Gemini API.",
+          actionableAdvice: lastError,
+        },
+      },
+      discourseFeedbacks: [],
+      sentenceFeedbacks: [],
+      error: lastError || "Failed to generate diagnostic from all candidate Gemini models",
+    };
   }
 }
