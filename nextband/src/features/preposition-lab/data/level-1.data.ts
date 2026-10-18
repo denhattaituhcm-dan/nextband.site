@@ -34,6 +34,7 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
     },
     pedagogicalTakeaway: {
       principleName: 'Concave Enclosure & Containment',
+      principleNameVi: 'Bao bọc & Chứa đựng (Lòng bát)',
       en: 'In English, when concave surfaces enclose an object and prevent it from rolling or falling out, the relationship is IN.',
       vi: 'Trong tiếng Anh, khi một bề mặt lõm bao bọc vật thể và giữ cho nó không bị lăn hay rơi ra ngoài, mối quan hệ đó dùng IN.'
     },
@@ -93,6 +94,7 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
     },
     pedagogicalTakeaway: {
       principleName: 'Coupled Movement & Cargo Membership',
+      principleNameVi: 'Cùng chuyển động & Thuộc khối vật chứa',
       en: 'Functional containment extends upward through interlocking objects. If moving the bowl moves the fruit, native speakers judge it as IN.',
       vi: 'Chức năng chứa đựng mở rộng lên trên nhờ các vật thể xếp lồng vào nhau. Nếu đẩy bát làm quả chuối di chuyển theo, người bản xứ dùng IN.'
     },
@@ -162,6 +164,7 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
     },
     pedagogicalTakeaway: {
       principleName: 'Covering vs Containing',
+      principleNameVi: 'Vật che đậy vs Vật chứa đựng',
       en: 'Geometric enclosure alone does not make an object IN. When an inverted vessel acts as a roof/shield, the located object is UNDER.',
       vi: 'Bao bọc hình học đơn thuần không đủ để dùng IN. Khi một vật úp xuống đóng vai trò mái che/nắp đậy, vật ở bên dưới là UNDER.'
     },
@@ -231,6 +234,7 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
     },
     pedagogicalTakeaway: {
       principleName: 'Prevention of Escape as Containment',
+      principleNameVi: 'Chặn thoát ra chính là Chứa đựng',
       en: 'Because rising gas naturally escapes upward, the inverted bowl holds it and prevents escape. Holding something in creates functional containment: IN.',
       vi: 'Vì chất khí tự nhiên bốc lên và thoát ra, chiếc bát úp chặn lại và giữ không cho nó thoát. Ngăn không cho thoát ra chính là chức năng chứa đựng: IN.'
     },
@@ -300,6 +304,7 @@ export const LEVEL_1_PUZZLES: PuzzleScenario[] = [
     },
     pedagogicalTakeaway: {
       principleName: 'Mechanical Grip as Containment',
+      principleNameVi: 'Lực kẹp giữ cơ học tạo nên Chứa đựng',
       en: 'No geometric box encloses the protruding nail. English uses IN because the wood fibers grip and hold it: moving the wood moves the nail.',
       vi: 'Không có chiếc hộp hình học nào bao bọc phần đinh nhô ra. Tiếng Anh dùng IN vì thớ gỗ kẹp chặt và giữ nó: di chuyển thanh gỗ thì đinh chuyển động theo.'
     },

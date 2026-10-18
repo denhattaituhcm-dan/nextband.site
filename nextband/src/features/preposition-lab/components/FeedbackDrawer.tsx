@@ -37,8 +37,8 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({
           : 'bg-rose-50/80 border-rose-300 text-rose-950'
       }`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-3">
+        <div>
           <span
             className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-sm ${
               isCanonical
@@ -49,9 +49,6 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({
             }`}
           >
             {isCanonical ? '✓ Tự nhiên & Chuẩn xác' : isNuanced ? '⚠️ Sắc thái ngữ cảnh' : '💡 Nhận diện sự khác biệt'}
-          </span>
-          <span className="text-xs text-slate-500 font-mono">
-            Sách Lindstromberg Ch.{puzzle.sourceReference.chapter} (tr. {puzzle.sourceReference.printedPages})
           </span>
         </div>
 
@@ -87,7 +84,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({
       {/* Action to advance */}
       <div className="mt-4 pt-3.5 border-t border-slate-200/80 flex items-center justify-between">
         <div className="text-xs text-slate-500">
-          Quy luật cốt lõi: <span className="text-slate-900 font-bold">{puzzle.pedagogicalTakeaway.principleName}</span>
+          Nguyên lý: <span className="text-slate-900 font-bold">{puzzle.pedagogicalTakeaway.principleNameVi || puzzle.pedagogicalTakeaway.principleName}</span>
         </div>
 
         <button

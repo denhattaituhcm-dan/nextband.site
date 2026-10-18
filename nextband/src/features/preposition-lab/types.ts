@@ -53,6 +53,7 @@ export interface PuzzleScenario {
     en: string;
     vi: string;
     principleName: string;
+    principleNameVi?: string;
   };
 }
 

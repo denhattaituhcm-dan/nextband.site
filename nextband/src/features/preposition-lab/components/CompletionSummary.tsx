@@ -33,10 +33,7 @@ export const CompletionSummary: React.FC<CompletionSummaryProps> = ({ onReplay }
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-sm text-slate-900">
-                  {puzzle.pedagogicalTakeaway.principleName}
-                </span>
-                <span className="text-[11px] text-sky-700 font-mono font-semibold">
-                  (tr. {puzzle.sourceReference.printedPages})
+                  {puzzle.pedagogicalTakeaway.principleNameVi || puzzle.pedagogicalTakeaway.principleName}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
