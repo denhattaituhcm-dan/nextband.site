@@ -20,6 +20,7 @@ import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/compon
 import { ArenaRulesModal } from '@/components/arena/ArenaRulesModal';
 import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
 import { ArenaFreeFireLeaderboard } from '@/components/arena/ArenaFreeFireLeaderboard';
+import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
 import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap, Users, BookOpen, HelpCircle, Shield, Heart } from 'lucide-react';
@@ -76,6 +77,7 @@ export default function ArenaHostPage() {
   const [playerStreakMap, setPlayerStreakMap] = useState<Record<string, number>>({});
   const [eliminatedRoundMap, setEliminatedRoundMap] = useState<Record<string, number>>({});
   const [roundProcessedIndex, setRoundProcessedIndex] = useState<number>(-1);
+  const [activeJudgedEliminatedNames, setActiveJudgedEliminatedNames] = useState<string[]>([]);
   const [liveLogs, setLiveLogs] = useState<string[]>([]);
   const [timeLeft, setTimeLeft] = useState<number>(DEFAULT_ROOM_SETTINGS.timeLimit);
 
@@ -915,6 +917,7 @@ export default function ArenaHostPage() {
             const nextStreakMap: Record<string, number> = { ...playerStreakMap };
             const nextElimMap: Record<string, number> = { ...eliminatedRoundMap };
             const roundEvents: string[] = [];
+            const newlyEliminatedNames: string[] = [];
             survivalUpdates = {};
 
             players.forEach((p) => {
@@ -957,6 +960,7 @@ export default function ArenaHostPage() {
 
                 if (newLives === 0) {
                   nextElimMap[name] = questionIndex;
+                  newlyEliminatedNames.push(name);
                   roundEvents.push(`💀 [${name}] đã hết mạng và dừng bước tại Câu ${questionIndex + 1}!`);
                 } else {
                   roundEvents.push(`💔 [${name}] mất 1 mạng (còn ${newLives}/${maxL} ❤️)`);
@@ -975,6 +979,7 @@ export default function ArenaHostPage() {
             setPlayerLivesMap(nextLivesMap);
             setPlayerStreakMap(nextStreakMap);
             setEliminatedRoundMap(nextElimMap);
+            setActiveJudgedEliminatedNames(newlyEliminatedNames);
             if (roundEvents.length > 0) {
               setLiveLogs((prev) => [...roundEvents, ...prev].slice(0, 6));
             }
@@ -1045,6 +1050,7 @@ export default function ArenaHostPage() {
             const nextIdx = questionIndex + 1;
             setQuestionIndex(nextIdx);
             setAnswers({});
+            setActiveJudgedEliminatedNames([]);
             const nextQ = serverQuestion || currentQuestion;
             runQuestionCountdown(nextIdx, nextQ, serverTotal, false);
           }
@@ -1062,6 +1068,7 @@ export default function ArenaHostPage() {
           setCumulativeScores({});
           setRoundProcessedIndex(-1);
           setEliminatedRoundMap({});
+          setActiveJudgedEliminatedNames([]);
           setPlayerStreakMap({});
           setLiveLogs([]);
           setState('LOBBY');
@@ -1499,6 +1506,24 @@ export default function ArenaHostPage() {
             {/* Bảng Trạng Thái Sinh Tồn Đấu Trường 100 sau khi công bố đáp án */}
             {roomSettings.gameMode === 'ARENA_100' && state !== 'REVEAL_DISTRIBUTION' && (
               <div className="max-w-3xl mx-auto p-4 rounded-2xl bg-rose-950/40 border border-rose-500/40 space-y-3 animate-fadeIn">
+                {/* Banner Phán Quyết Đấu Trường: Chỉ hiển thị khi có người vừa bị loại ở câu hiện tại */}
+                {activeJudgedEliminatedNames.length > 0 && (
+                  <div className="p-3 rounded-xl bg-gradient-to-r from-rose-900/80 via-purple-950/90 to-rose-900/80 border-2 border-rose-400 text-center shadow-lg shadow-rose-950/60 animate-in zoom-in-95 duration-300">
+                    <div className="flex items-center justify-center gap-2 text-rose-300 font-black text-sm sm:text-base">
+                      <span>💀</span>
+                      <span>
+                        {activeJudgedEliminatedNames.length === 1
+                          ? `[${activeJudgedEliminatedNames[0]}] ĐÃ DỪNG BƯỚC TẠI CÂU ${questionIndex + 1}!`
+                          : `[${activeJudgedEliminatedNames.join(', ')}] ĐÃ DỪNG BƯỚC TẠI CÂU ${questionIndex + 1}!`}
+                      </span>
+                      <span>💀</span>
+                    </div>
+                    <p className="text-[11px] text-rose-200/90 mt-0.5">
+                      Chuyển sang Chế độ Thử Sức để tiếp tục ôn luyện kiến thức
+                    </p>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider">
                   <span className="text-rose-300 flex items-center gap-1.5">
                     <Shield className="w-4 h-4 text-rose-400" /> Sàn Đấu Sinh Tồn Đấu Trường 100
@@ -1509,23 +1534,33 @@ export default function ArenaHostPage() {
                       : `Còn ${survivingPlayersCount} / ${players.length} chiến binh trụ lại`}
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-2 justify-center max-h-28 overflow-y-auto p-1">
+                <div className="flex flex-wrap gap-2.5 justify-center max-h-36 overflow-y-auto p-1">
                   {players.map((p) => {
                     const lives = playerLivesMap[p.name] ?? roomSettings.survivalInitialLives;
                     const isOut = lives <= 0;
+                    const isJustEliminated = activeJudgedEliminatedNames.includes(p.name);
                     return (
                       <div
                         key={p.id}
-                        className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border transition-all ${
+                        className={`px-3 py-1.5 rounded-2xl text-xs font-bold flex items-center gap-2 border transition-all ${
                           isOut
-                            ? 'bg-slate-900/70 border-slate-700/50 text-slate-500 line-through opacity-60'
+                            ? isJustEliminated
+                              ? 'bg-rose-950/80 border-rose-500/80 text-rose-300 shadow-md ring-2 ring-rose-500/50'
+                              : 'bg-slate-900/80 border-slate-700/50 text-slate-500 opacity-60'
                             : 'bg-rose-500/20 border-rose-400/50 text-white shadow-sm'
                         }`}
                       >
-                        <span className="truncate max-w-[110px]">{p.name}</span>
-                        <span className="text-[10px]">
-                          {isOut ? '💀' : '❤️'.repeat(lives)}
-                        </span>
+                        <div className={isOut ? 'grayscale opacity-75' : ''}>
+                          <PvZCardAvatar avatarId={p.avatarSeed as any} seed={p.avatarSeed || p.name} size="sm" />
+                        </div>
+                        <div className="flex flex-col text-left">
+                          <span className={`truncate max-w-[100px] ${isOut ? 'line-through text-slate-400' : 'text-white'}`}>
+                            {p.name}
+                          </span>
+                          <span className="text-[10px]">
+                            {isOut ? (isJustEliminated ? '💀 Vừa bị loại' : '💀 Đã loại') : '❤️'.repeat(lives)}
+                          </span>
+                        </div>
                       </div>
                     );
                   })}
