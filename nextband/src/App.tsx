@@ -145,6 +145,9 @@ const CambridgeVocabHubPage = lazyWithRetry(() => import("@/pages/public/cambrid
 // Lazy-loaded C1/C2 Mastery Lab Lean Prototype
 const C1MasteryMiniLabPage = lazyWithRetry(() => import("@/features/c1-mastery/pages/C1MasteryMiniLabPage"));
 
+// Lazy-loaded Preposition Lab Prototype (Spatial Puzzles)
+const PrepositionLabPage = lazyWithRetry(() => import("@/features/preposition-lab/pages/PrepositionLabPage"));
+
 
 // Lazy-loaded Auth Pages
 const LoginPage = lazyWithRetry(() => import("@/pages/auth/LoginPage"));
@@ -421,6 +424,10 @@ const App = () => (
               {/* C1/C2 Mastery Lab Lean Prototype (Have/Get) */}
               <Route path="/c1-mastery" element={<C1MasteryMiniLabPage />} />
               <Route path="/reading/c1-mastery" element={<C1MasteryMiniLabPage />} />
+              
+              {/* Preposition Lab Prototype (Spatial Puzzles) */}
+              <Route path="/preposition-lab" element={<PrepositionLabPage />} />
+              <Route path="/reading/preposition-lab" element={<PrepositionLabPage />} />
               
               {/* Class Arena Live Routes */}
               <Route
