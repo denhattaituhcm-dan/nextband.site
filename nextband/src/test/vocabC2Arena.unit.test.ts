@@ -56,6 +56,16 @@ describe("LEXICON OVERDRIVE: C2 COGNITIVE ARENA Data & Engine Tests", () => {
     const deliberate = evaluateLatency(3400);
     expect(deliberate.tier).toBe("DELIBERATE_RECALL");
     expect(deliberate.xpMultiplier).toBe(1.0);
+
+    // Cognitive Deliberation for Nuance Modes
+    const hasty = evaluateLatency(600, "persona");
+    expect(hasty.tier).toBe("HASTY_GUESS");
+    expect(hasty.xpMultiplier).toBe(0.8);
+
+    const scholarDeliberate = evaluateLatency(3500, "persona");
+    expect(scholarDeliberate.tier).toBe("DELIBERATE_RECALL");
+    expect(scholarDeliberate.isDeliberateScholar).toBe(true);
+    expect(scholarDeliberate.xpMultiplier).toBe(1.6);
   });
 
   it("should progress through 6 Cultivation Ranks correctly", () => {

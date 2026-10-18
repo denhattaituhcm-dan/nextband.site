@@ -22,7 +22,9 @@ export type ArenaModeId =
   | "synapse"
   | "trilock"
   | "persona"
-  | "chronicles";
+  | "chronicles"
+  | "gradient"
+  | "frameweb";
 
 export interface AttemptPayload {
   itemId: string;

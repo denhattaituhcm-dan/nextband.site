@@ -7,7 +7,9 @@ import { ModeBSynapseSlash } from "../components/ModeBSynapseSlash";
 import { ModeCTriLockVault } from "../components/ModeCTriLockVault";
 import { ModeDPersonaClash } from "../components/ModeDPersonaClash";
 import { ModeEChroniclesOfFate } from "../components/ModeEChroniclesOfFate";
-import { Layers, Zap, Key, Swords, BookOpen } from "lucide-react";
+import { SemanticGradientLab } from "../components/SemanticGradientLab";
+import { FrameSemanticWebBurst } from "../components/FrameSemanticWebBurst";
+import { Layers, Zap, Key, Swords, BookOpen, Sliders, Network } from "lucide-react";
 
 export const VocabC2ArenaPage: React.FC = () => {
   const [selectedUnitNumber, setSelectedUnitNumber] = useState(1);
@@ -69,11 +71,13 @@ export const VocabC2ArenaPage: React.FC = () => {
           {/* Mode Switcher Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
             {[
-              { id: "schema" as ArenaModeId, label: "Mode A: Schema", icon: Layers },
-              { id: "synapse" as ArenaModeId, label: "Mode B: Synapse", icon: Zap },
-              { id: "trilock" as ArenaModeId, label: "Mode C: Tri-Lock", icon: Key },
-              { id: "persona" as ArenaModeId, label: "Mode D: Persona", icon: Swords },
-              { id: "chronicles" as ArenaModeId, label: "Mode E: Chronicles", icon: BookOpen },
+              { id: "schema" as ArenaModeId, label: "A: Schema", icon: Layers },
+              { id: "synapse" as ArenaModeId, label: "B: Synapse", icon: Zap },
+              { id: "trilock" as ArenaModeId, label: "C: Tri-Lock", icon: Key },
+              { id: "persona" as ArenaModeId, label: "D: Persona", icon: Swords },
+              { id: "chronicles" as ArenaModeId, label: "E: Chronicles", icon: BookOpen },
+              { id: "gradient" as ArenaModeId, label: "⚡ Gradients (Rosch)", icon: Sliders },
+              { id: "frameweb" as ArenaModeId, label: "🕸️ Frames (Fillmore)", icon: Network },
             ].map((m) => {
               const Icon = m.icon;
               const isActive = activeMode === m.id;
@@ -111,6 +115,12 @@ export const VocabC2ArenaPage: React.FC = () => {
           )}
           {activeMode === "chronicles" && (
             <ModeEChroniclesOfFate unit={currentUnit} onRecordAttempt={recordAttempt} />
+          )}
+          {activeMode === "gradient" && (
+            <SemanticGradientLab unit={currentUnit} onRecordAttempt={recordAttempt} />
+          )}
+          {activeMode === "frameweb" && (
+            <FrameSemanticWebBurst frameWebs={currentUnit.frameWebs} />
           )}
         </div>
       </main>

@@ -126,6 +126,42 @@ export interface NarrativeChronicle {
   segments: NarrativeSegment[];
 }
 
+export interface SemanticGradientAxis {
+  axisName: string;
+  poleA: string; // e.g. "Warm & Intimate (0)"
+  poleB: string; // e.g. "Aloof & Detached (100)"
+  targetValue: number; // 0 to 100
+  tolerance: number; // e.g. 15
+  hintVi: string;
+}
+
+export interface SemanticGradientItem {
+  id: string;
+  word: string;
+  ipa: string;
+  pos: string;
+  definitionEn: string;
+  definitionVi: string;
+  axes: [SemanticGradientAxis, SemanticGradientAxis, SemanticGradientAxis];
+  cognitiveAnalysisVi: string;
+}
+
+export interface FrameElement {
+  role: "Agent" | "Target" | "Trigger" | "Institution" | "Consequence";
+  term: string;
+  meaningVi: string;
+  sentenceUsage: string;
+}
+
+export interface FrameSemanticWeb {
+  id: string;
+  frameName: string;
+  frameConceptVi: string;
+  anchorCollocation: string;
+  elements: FrameElement[];
+  academicSynthesisParagraph: string;
+}
+
 export interface C2UnitData {
   unitNumber: number;
   unitCode: string;
@@ -143,4 +179,6 @@ export interface C2UnitData {
   personaCards: PersonaCard[];
   binaryPrecisionPairs: BinaryPrecisionItem[];
   narrativeChronicle: NarrativeChronicle;
+  semanticGradients?: SemanticGradientItem[];
+  frameWebs?: FrameSemanticWeb[];
 }

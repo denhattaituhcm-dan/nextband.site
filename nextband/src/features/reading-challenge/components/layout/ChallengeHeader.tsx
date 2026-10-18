@@ -14,6 +14,7 @@ import {
   Layers 
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SiteLogo } from '@/components/common/SiteLogo';
 
 interface ChallengeHeaderProps {
   unit: UnitConfig;
@@ -49,8 +50,15 @@ export const ChallengeHeader: React.FC<ChallengeHeaderProps> = ({
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shadow-xs">
       <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         {/* Left: Back & Unit Indicator */}
-        <div className="flex items-center gap-3">
-          <Link to="/reading-challenge">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Link to="/" title="Quay về trang chủ NextBand" className="flex items-center group">
+            <SiteLogo
+              alt="NextBand Logo"
+              className="h-8 w-8 object-contain transition-transform group-hover:scale-105"
+            />
+          </Link>
+          <div className="h-5 w-px bg-border/60" />
+          <Link to="/reading-challenge" title="Quay về danh sách Unit">
             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
               <ArrowLeft className="w-4 h-4" />
             </Button>

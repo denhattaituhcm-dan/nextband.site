@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Link } from 'react-router-dom';
+import { SiteLogo } from '@/components/common/SiteLogo';
 import { 
   BookOpen, 
   Sparkles, 
@@ -12,7 +13,8 @@ import {
   ArrowRight, 
   Lock, 
   Layers, 
-  Compass 
+  Compass,
+  Home 
 } from 'lucide-react';
 
 export const ChallengeHubPage: React.FC = () => {
@@ -33,6 +35,40 @@ export const ChallengeHubPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 pb-20">
+      {/* Top Navigation Bar with Logo */}
+      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/90 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between">
+          <Link
+            to="/"
+            title="Quay về trang chủ NextBand"
+            className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none transition-transform active:scale-95"
+          >
+            <SiteLogo
+              alt="NextBand Logo"
+              className="h-8 w-8 sm:h-9 sm:w-9 object-contain transition-transform group-hover:scale-105 shrink-0"
+            />
+            <div className="flex flex-col">
+              <span className="font-black text-sm sm:text-base tracking-wider text-foreground leading-none">
+                NEXTBAND
+              </span>
+              <span className="text-[10px] text-muted-foreground font-medium tracking-wide">
+                Quay về trang chủ
+              </span>
+            </div>
+          </Link>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-muted-foreground hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/50 transition-colors"
+            >
+              <Home className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Trang chủ NextBand</span>
+            </Link>
+          </div>
+        </div>
+      </header>
+
       {/* Hero Banner */}
       <section className="bg-gradient-to-b from-sky-500/10 via-indigo-500/5 to-transparent border-b border-sky-100 dark:border-sky-900/40">
         <div className="max-w-6xl mx-auto px-4 py-12 sm:py-16">
