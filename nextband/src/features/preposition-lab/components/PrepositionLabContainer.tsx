@@ -151,6 +151,9 @@ export const PrepositionLabContainer: React.FC = () => {
           onManipulate={handleManipulate}
           snapZone={snapZone}
           onSnapZoneChange={setSnapZone}
+          selectedOptionId={selectedPreposition}
+          selectedOptionFit={selectedOption?.fit ?? null}
+          hasTestedPrediction={hasTestedPrediction}
         />
 
         {/* Central Sentence Prompt & Prediction Interface */}
