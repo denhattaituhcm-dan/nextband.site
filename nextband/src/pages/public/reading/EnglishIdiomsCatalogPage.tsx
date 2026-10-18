@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/common/SEO";
 import {
-  Sparkles,
   BookOpen,
   Volume2,
   FileCheck2,
@@ -620,37 +619,32 @@ export default function EnglishIdiomsCatalogPage() {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-12">
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-[#002147] via-[#0369a1] to-[#0284c7] rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden">
-          <div className="relative z-10 space-y-5 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-xs text-xs font-bold tracking-wider uppercase text-amber-200 border border-white/20">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>DK Publishing & NextBand Academic</span>
-            </div>
-
+          <div className="relative z-10 space-y-6 max-w-4xl mx-auto text-center flex flex-col items-center">
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
               Kho Thành Ngữ Tiếng Anh Theo Chủ Đề
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-light">
+            <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-light mx-auto">
               Tuyển tập thành ngữ và cụm từ cố định trực quan theo giáo trình{" "}
               <strong className="text-white font-medium">English for Everyone: English Idioms</strong>{" "}
               (DK Publishing). Mỗi bài học trang bị đầy đủ audio bản ngữ giọng Anh/Mỹ, nghiên cứu từ nguyên học OED giải mã lý do tại sao cụm từ có nghĩa như vậy, cùng hệ thống 5 bài tập tương tác chấm điểm chuẩn xác.
             </p>
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 w-full">
+              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
                 <div className="text-2xl sm:text-3xl font-black text-amber-300">19</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
+              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
                 <div className="text-2xl sm:text-3xl font-black text-sky-200">380</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
+              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
                 <div className="text-2xl sm:text-3xl font-black text-emerald-200">100%</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
+              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
                 <div className="text-2xl sm:text-3xl font-black text-purple-200">95</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
