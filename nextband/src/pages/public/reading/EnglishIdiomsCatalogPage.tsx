@@ -26,6 +26,7 @@ interface UnitCatalogItem {
   tags: string[];
   accent: string;
   isAvailable: boolean;
+  cover_image: string;
 }
 
 const UNITS_CATALOG: UnitCatalogItem[] = [
@@ -51,9 +52,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "look your age, golden age, come of age...",
       },
     ],
-    tags: ["Tuổi tác", "Trưởng thành", "Thời gian", "IELTS Speaking Part 2"],
+    tags: ["Tuổi tác", "Trưởng thành", "Thời gian"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 2,
@@ -77,9 +79,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "flesh and blood, bad blood, run in the family...",
       },
     ],
-    tags: ["Bạn bè", "Gia đình", "Quan hệ xã hội", "IELTS Speaking Part 1 & 3"],
+    tags: ["Bạn bè", "Gia đình", "Quan hệ xã hội"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 3,
@@ -103,9 +106,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "born with a silver spoon, down at heel, cut a dash...",
       },
     ],
-    tags: ["Ngoại hình", "Trang phục", "Địa vị", "Tả người"],
+    tags: ["Ngoại hình", "Trang phục", "Địa vị"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 4,
@@ -129,9 +133,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "tough cookie, cool as a cucumber, salt of the earth...",
       },
     ],
-    tags: ["Tính cách", "Ẩn dụ động vật", "Ẩn dụ ẩm thực", "Band 8.0+ Lexical"],
+    tags: ["Tính cách", "Ẩn dụ độc đáo", "Tả người"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 5,
@@ -155,9 +160,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "the best of both worlds, a blessing in disguise, crème de la crème...",
       },
     ],
-    tags: ["Khen ngợi", "Xuất sắc", "May mắn", "Đỉnh cao"],
+    tags: ["Khen ngợi", "Xuất sắc", "May mắn"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 6,
@@ -181,9 +187,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "seen better days, like watching paint dry, the last straw...",
       },
     ],
-    tags: ["Thất vọng", "Chất lượng kém", "Giọt nước tràn ly", "IELTS Speaking Part 2 & 3"],
+    tags: ["Thất vọng", "Chất lượng kém", "Giới hạn"],
     accent: "UK (Anh)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 7,
@@ -207,9 +214,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "a night owl, get someone's goat, bird's-eye view, lion's share...",
       },
     ],
-    tags: ["Động vật", "Ẩn dụ ngụ ngôn", "Tập tính tự nhiên", "IELTS Speaking & Writing"],
+    tags: ["Động vật", "Ẩn dụ ngụ ngôn", "Tập tính"],
     accent: "UK (Anh)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 8,
@@ -233,9 +241,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "can't have your cake and eat it, takes the cake, warm and toasty, butterfingers...",
       },
     ],
-    tags: ["Ẩm thực", "Bếp núc", "Nghề nghiệp", "IELTS Speaking & Writing"],
+    tags: ["Ẩm thực", "Bếp núc", "Ẩn dụ"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 9,
@@ -264,9 +273,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "bury the hatchet, hammer out a deal, hold out an olive branch...",
       },
     ],
-    tags: ["Đồng thuận", "Tranh luận", "Đàm phán", "IELTS Speaking & Writing"],
+    tags: ["Đồng thuận", "Tranh luận", "Đàm phán"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 10,
@@ -300,9 +310,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "well behaved, behave beautifully, on best behavior, out of character...",
       },
     ],
-    tags: ["Hành vi", "Đối nhân xử thế", "Trêu đùa", "IELTS Speaking & Writing"],
+    tags: ["Hành vi", "Đối nhân xử thế", "Giao tiếp"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 11,
@@ -331,9 +342,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "went bananas, driving me nuts, full of beans, had egg on my face...",
       },
     ],
-    tags: ["Cảm xúc", "Tâm trạng", "Ẩn dụ cơ thể", "IELTS Speaking & Writing"],
+    tags: ["Cảm xúc", "Tâm trạng", "Ẩn dụ màu sắc"],
     accent: "UK (Anh)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 12,
@@ -367,9 +379,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "on the edge of seat, with bated breath, bouncing off the walls, butterflies in stomach...",
       },
     ],
-    tags: ["Cảm xúc tích cực", "Hạnh phúc", "Nhiệt huyết", "Phấn khích", "IELTS Speaking & Writing"],
+    tags: ["Cảm xúc tích cực", "Hạnh phúc", "Phấn khởi"],
     accent: "UK (Anh)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 13,
@@ -403,9 +416,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "lost face, wanted the earth to swallow her up, died of shame, tails between their legs...",
       },
     ],
-    tags: ["Cảm xúc tiêu cực", "Nỗi buồn", "Tức giận", "Nỗi sợ", "Xấu hổ", "IELTS Speaking & Writing"],
+    tags: ["Cảm xúc tiêu cực", "Tức giận", "Nỗi sợ"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 14,
@@ -424,9 +438,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "on the tip of my tongue, memory like a sieve, train of thought, rings a bell, racking my brain...",
       },
     ],
-    tags: ["Trí nhớ", "Quên lãng", "Ký ức", "Hoài niệm", "IELTS Speaking & Writing"],
+    tags: ["Trí nhớ", "Ký ức", "Hoài niệm"],
     accent: "UK (Anh)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 15,
@@ -445,9 +460,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "heart set on, bundle of nerves, eyes in the back of head, cold feet, rule of thumb, play it by ear...",
       },
     ],
-    tags: ["Bộ phận cơ thể", "Cảm xúc", "Phản xạ", "Giao tiếp", "IELTS Speaking & Writing"],
+    tags: ["Bộ phận cơ thể", "Phản xạ", "Cảm xúc"],
     accent: "UK (Anh)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 16,
@@ -466,9 +482,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "an ax to grind, loose cannon, stabbed in the back, hold down the fort, long shot, catch off guard...",
       },
     ],
-    tags: ["Chiến tranh", "Vũ khí", "Xung đột", "Đàm phán", "IELTS Speaking & Writing"],
+    tags: ["Chiến tranh", "Vũ khí", "Chiến lược"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 17,
@@ -492,9 +509,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "a stone's throw, far-flung corner, within walking distance, off the beaten path, middle of nowhere...",
       },
     ],
-    tags: ["Số lượng", "Khoảng cách", "Không gian", "Cự ly", "IELTS Speaking & Writing"],
+    tags: ["Số lượng", "Khoảng cách", "Không gian"],
     accent: "UK (Anh)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 18,
@@ -523,9 +541,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "put an end to, the end of an era, all good things must come to an end, the end is in sight...",
       },
     ],
-    tags: ["Khởi đầu", "Kết thúc", "Thời gian", "Tiến độ", "IELTS Speaking & Writing"],
+    tags: ["Khởi đầu", "Kết thúc", "Tiến độ"],
     accent: "US (Mỹ)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=700&q=80",
   },
   {
     id: 19,
@@ -554,9 +573,10 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
         sample: "the hot favorite, in the cards, a foregone conclusion, when pigs fly, pie in the sky, against all odds...",
       },
     ],
-    tags: ["Cơ hội", "May mắn", "Xác suất", "Khả năng", "IELTS Speaking & Writing"],
+    tags: ["Cơ hội", "May mắn", "Xác suất"],
     accent: "UK (Anh)",
     isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=700&q=80",
   },
 ];
 
@@ -688,89 +708,58 @@ export default function EnglishIdiomsCatalogPage() {
           </div>
 
           {/* Unit Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredUnits.map((unit) => (
-              <div
+              <Link
                 key={unit.id}
-                className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between group"
+                to={`/reading/idioms/${unit.id}`}
+                className="bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden shadow-xs hover:shadow-lg hover:border-sky-400 hover:-translate-y-1 transition-all duration-300 flex flex-col group cursor-pointer"
               >
-                <div className="space-y-4">
-                  {/* Card Header */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1">
-                      <span className="text-xs font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-100 uppercase tracking-wider inline-block">
-                        Unit {unit.unit_number_str}
-                      </span>
-                      <h3 className="text-xl font-black text-slate-900 group-hover:text-[#002147] transition">
-                        {unit.title_en}
-                      </h3>
-                      <p className="text-xs font-semibold text-slate-500">{unit.title_vi}</p>
-                    </div>
-
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-extrabold">
-                        Sẵn sàng học
-                      </span>
-                    </div>
+                {/* Image Cover Container */}
+                <div className="relative aspect-16/10 w-full overflow-hidden bg-slate-100">
+                  <img
+                    src={unit.cover_image}
+                    alt={unit.title_en}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  {/* Top Stats Overlay */}
+                  <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-semibold">
+                    <BookOpen className="w-3 h-3 text-sky-300" />
+                    <span>{unit.total_idioms} Thành ngữ</span>
                   </div>
 
-                  {/* Card Description */}
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-light">
-                    {unit.description_vi}
-                  </p>
-
-                  {/* Modules Preview */}
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
-                    <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                      <Layers className="w-3 h-3 text-[#0369a1]" />
-                      Nội dung trọng tâm (2 Modules)
-                    </div>
-                    <div className="space-y-1.5 text-xs text-slate-700">
-                      {unit.modules.map((m) => (
-                        <div key={m.id} className="flex flex-col sm:flex-row sm:items-baseline gap-1">
-                          <span className="font-bold text-slate-800 shrink-0">
-                            • Module {m.id}: {m.title}
-                          </span>
-                          <span className="text-slate-500 text-[11px] italic truncate sm:max-w-xs">
-                            ({m.sample})
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Highlights Tags */}
-                  <div className="flex flex-wrap gap-2 pt-1 text-[11px]">
-                    <span className="px-2.5 py-0.5 rounded-md bg-[#FAF7F2] text-slate-700 font-medium border border-[#EAE3D9] flex items-center gap-1">
-                      <BookOpen className="w-3 h-3 text-sky-600" />
-                      {unit.total_idioms} Idioms
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-[#FAF7F2] text-slate-700 font-medium border border-[#EAE3D9] flex items-center gap-1">
-                      <Volume2 className="w-3 h-3 text-amber-600" />
-                      Audio Giọng Mỹ {unit.accent}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-[#FAF7F2] text-slate-700 font-medium border border-[#EAE3D9] flex items-center gap-1">
-                      <FileCheck2 className="w-3 h-3 text-emerald-600" />
-                      {unit.total_exercises} Bài tập
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-[#FAF7F2] text-slate-700 font-medium border border-[#EAE3D9] flex items-center gap-1">
-                      <Compass className="w-3 h-3 text-purple-600" />
-                      Từ nguyên học OED
+                  {/* Section / Unit Badge */}
+                  <div className="absolute bottom-2.5 left-2.5">
+                    <span className="px-3 py-1 rounded-lg bg-[#002147] text-white text-xs font-black shadow-sm tracking-wide">
+                      Unit {unit.unit_number_str}
                     </span>
                   </div>
                 </div>
 
-                {/* Card CTA */}
-                <div className="pt-6 mt-4 border-t border-slate-100">
-                  <Link
-                    to={`/reading/idioms/${unit.id}`}
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-2xl bg-[#002147] hover:bg-[#0369a1] text-white font-bold text-xs sm:text-sm shadow-xs transition cursor-pointer"
-                  >
-                    <span>Vào học Unit {unit.unit_number_str}: {unit.title_en}</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                {/* Card Content Body */}
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1">
+                    <h3 className="text-base font-black text-slate-900 group-hover:text-[#0369a1] transition line-clamp-1">
+                      {unit.title_en}
+                    </h3>
+                    <p className="text-xs font-medium text-slate-500 line-clamp-1">
+                      {unit.title_vi}
+                    </p>
+                  </div>
+
+                  {/* Meta Footer */}
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                    <span className="flex items-center gap-1 font-medium">
+                      <Volume2 className="w-3 h-3 text-amber-500" />
+                      Giọng {unit.accent.includes("Mỹ") ? "US" : "UK"}
+                    </span>
+                    <span className="flex items-center gap-1 font-bold text-[#0369a1] group-hover:translate-x-0.5 transition-transform">
+                      {unit.total_exercises} Bài tập • Vào học →
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
