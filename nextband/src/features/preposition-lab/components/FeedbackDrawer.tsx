@@ -8,6 +8,7 @@ interface FeedbackDrawerProps {
   showViInsight: boolean;
   onToggleViInsight: () => void;
   onNext: () => void;
+  onRetry: () => void;
   isLastPuzzle: boolean;
 }
 
@@ -18,6 +19,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({
   showViInsight,
   onToggleViInsight,
   onNext,
+  onRetry,
   isLastPuzzle,
 }) => {
   if (!hasTestedPrediction || !selectedOption) {
@@ -40,7 +42,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({
       <div className="flex items-center justify-between gap-3">
         <div>
           <span
-            className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-sm ${
+            className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-sm flex items-center gap-1.5 ${
               isCanonical
                 ? 'bg-emerald-600 text-white'
                 : isNuanced
@@ -48,7 +50,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({
                 : 'bg-rose-600 text-white'
             }`}
           >
-            {isCanonical ? '✓ Tự nhiên & Chuẩn xác' : isNuanced ? '⚠️ Sắc thái ngữ cảnh' : '💡 Nhận diện sự khác biệt'}
+            {isCanonical ? '✓ Tự nhiên & Chuẩn xác' : isNuanced ? '⚠️ Chưa tối ưu ngữ cảnh' : '✕ Chưa chính xác'}
           </span>
         </div>
 
@@ -66,7 +68,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({
       {/* Primary Vietnamese Explanation for A2-B1 Learners */}
       <div className="mt-3.5 text-sm sm:text-base leading-relaxed font-medium text-slate-800">
         <p className="flex items-start gap-2">
-          <span className="text-base">💡</span>
+          <span className="text-base">{isCanonical ? '💡' : isNuanced ? '⚠️' : '❌'}</span>
           <span>{selectedOption.explanation.vi}</span>
         </p>
       </div>
@@ -81,20 +83,38 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({
         </div>
       )}
 
-      {/* Action to advance */}
-      <div className="mt-4 pt-3.5 border-t border-slate-200/80 flex items-center justify-between">
+      {/* Action to advance or retry */}
+      <div className="mt-4 pt-3.5 border-t border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="text-xs text-slate-500">
           Nguyên lý: <span className="text-slate-900 font-bold">{puzzle.pedagogicalTakeaway.principleNameVi || puzzle.pedagogicalTakeaway.principleName}</span>
         </div>
 
-        <button
-          type="button"
-          onClick={onNext}
-          className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white font-extrabold text-sm shadow-md transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
-        >
-          <span>{isLastPuzzle ? 'Xem tổng kết bài học' : 'Kịch bản tiếp theo'}</span>
-          <span>➔</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Allow user to retry if not canonical */}
+          {!isCanonical && (
+            <button
+              type="button"
+              onClick={onRetry}
+              className="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm border-2 border-slate-300 shadow-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>🔄</span>
+              <span>Chọn lại</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={onNext}
+            className={`px-6 py-2.5 rounded-xl text-white font-extrabold text-sm shadow-md transition-all active:scale-95 flex items-center gap-2 cursor-pointer ${
+              isCanonical
+                ? 'bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600'
+                : 'bg-slate-700 hover:bg-slate-600'
+            }`}
+          >
+            <span>{isLastPuzzle ? 'Xem tổng kết bài học' : isCanonical ? 'Kịch bản tiếp theo' : 'Bỏ qua & Tiếp tục'}</span>
+            <span>➔</span>
+          </button>
+        </div>
       </div>
     </div>
   );

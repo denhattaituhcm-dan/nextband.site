@@ -179,6 +179,7 @@ export const PrepositionLabContainer: React.FC = () => {
             selectedId={selectedPreposition}
             onSelect={handleSelectPreposition}
             disabled={hasTestedPrediction}
+            hasTestedPrediction={hasTestedPrediction}
           />
 
           {/* Test Prediction Primary CTA */}
@@ -215,6 +216,10 @@ export const PrepositionLabContainer: React.FC = () => {
           showViInsight={showViInsight}
           onToggleViInsight={() => setShowViInsight((prev) => !prev)}
           onNext={handleNext}
+          onRetry={() => {
+            setHasTestedPrediction(false);
+            setActionState('idle');
+          }}
           isLastPuzzle={currentPuzzleIndex === LEVEL_1_PUZZLES.length - 1}
         />
       </div>
