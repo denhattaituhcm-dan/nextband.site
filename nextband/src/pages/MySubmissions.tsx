@@ -35,9 +35,12 @@ import {
   HelpCircle,
   MessageSquare,
   Zap,
+  LayoutGrid,
+  Layers,
 } from "lucide-react";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
+import { Coverflow3D } from "@/components/submission/Coverflow3D";
 import {
   CanonicalSubmissionStatus,
   normalizeSubmissionStatus,
@@ -140,6 +143,8 @@ export default function MySubmissions() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [skillFilter, setSkillFilter] = useState("all");
   const [errorFilter, setErrorFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"3d" | "grid">("3d");
+  const [selectedWeek, setSelectedWeek] = useState<number | "all">("all");
 
   // Debounce search
   const debounceTimer = useMemo(
@@ -422,6 +427,18 @@ export default function MySubmissions() {
     return groups;
   }, [filteredItems]);
 
+  // Available Weeks for Coverflow filter tabs
+  const availableWeeks = useMemo(() => {
+    const weeks = Array.from(new Set(filteredItems.map((item) => item.week))).sort((a, b) => a - b);
+    return weeks;
+  }, [filteredItems]);
+
+  // Items to display in 3D Coverflow (either all or filtered by selectedWeek)
+  const coverflowItems = useMemo(() => {
+    if (selectedWeek === "all") return filteredItems;
+    return filteredItems.filter((it) => it.week === selectedWeek);
+  }, [filteredItems, selectedWeek]);
+
   const isLoading = submissionsLoading || (!!enrolledClassId && classLessonsLoading);
 
   return (
@@ -568,7 +585,7 @@ export default function MySubmissions() {
           </div>
 
           <Select value={statusFilter} onValueChange={handleStatusChange}>
-            <SelectTrigger className="h-9 w-full sm:w-[190px] text-xs bg-slate-50 border-slate-200 rounded-xl font-medium text-slate-700">
+            <SelectTrigger className="h-9 w-full sm:w-[170px] text-xs bg-slate-50 border-slate-200 rounded-xl font-medium text-slate-700">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -579,6 +596,36 @@ export default function MySubmissions() {
               ))}
             </SelectContent>
           </Select>
+
+          {/* View Mode Toggle: 3D Coverflow vs Standard Grid */}
+          <div className="flex items-center p-0.5 rounded-xl bg-slate-100 border border-slate-200 shrink-0">
+            <button
+              type="button"
+              onClick={() => setViewMode("3d")}
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                viewMode === "3d"
+                  ? "bg-white text-indigo-700 shadow-xs"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
+              title="Xem dạng 3D Coverflow xoay ngang"
+            >
+              <Layers className="h-3.5 w-3.5" />
+              <span>3D</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("grid")}
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                viewMode === "grid"
+                  ? "bg-white text-indigo-700 shadow-xs"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
+              title="Xem dạng lưới truyền thống"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+              <span>Lưới</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -623,7 +670,7 @@ export default function MySubmissions() {
         </div>
       )}
 
-      {/* Content Area: Grouped by Week */}
+      {/* Content Area */}
       {isLoading ? (
         <div className="space-y-6">
           {[...Array(2)].map((_, i) => (
@@ -637,9 +684,54 @@ export default function MySubmissions() {
             </div>
           ))}
         </div>
-      ) : groupedByWeek.length > 0 ? (
-        <div className="space-y-8">
-          {groupedByWeek.map((group) => {
+      ) : filteredItems.length > 0 ? (
+        viewMode === "3d" ? (
+          <div className="space-y-4">
+            {/* Week selector pills for 3D view */}
+            {availableWeeks.length > 1 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <span className="text-xs font-bold text-slate-500 shrink-0">Chọn Tuần:</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedWeek("all")}
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                    selectedWeek === "all"
+                      ? "bg-slate-900 text-white shadow-xs"
+                      : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  Tất cả các tuần ({filteredItems.length})
+                </button>
+                {availableWeeks.map((w) => {
+                  const count = filteredItems.filter((it) => it.week === w).length;
+                  const isSelected = selectedWeek === w;
+                  return (
+                    <button
+                      key={w}
+                      type="button"
+                      onClick={() => setSelectedWeek(w)}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                        isSelected
+                          ? "bg-indigo-600 text-white shadow-xs"
+                          : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-indigo-600"
+                      }`}
+                    >
+                      {w === 999 ? "TEST" : `Tuần ${w}`} ({count})
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* 3D Coverflow Container */}
+            <Coverflow3D
+              items={coverflowItems}
+              errorCategoryConfig={ERROR_CATEGORY_CONFIG}
+            />
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {groupedByWeek.map((group) => {
             const completedCount = group.items.filter(
               (item) => item.canonicalStatus === "GRADED"
             ).length;
@@ -951,7 +1043,8 @@ export default function MySubmissions() {
               </div>
             );
           })}
-        </div>
+          </div>
+        )
       ) : (
         <div className="text-center py-16 px-4 border rounded-3xl bg-white shadow-xs">
           <div className="h-16 w-16 mx-auto mb-4 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
