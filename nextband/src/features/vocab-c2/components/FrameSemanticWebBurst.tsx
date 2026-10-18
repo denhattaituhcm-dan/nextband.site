@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FrameSemanticWeb, FrameElement } from "@/data/vocab-c2/types";
+import { useArenaTheme } from "../context/ThemeContext";
 import { Network, Sparkles, BookOpen, Layers, Check, ExternalLink } from "lucide-react";
 
 interface Props {
@@ -8,6 +9,10 @@ interface Props {
 }
 
 export const FrameSemanticWebBurst: React.FC<Props> = ({ frameWebs, anchorCollocation }) => {
+  const { theme } = useArenaTheme();
+  const isPaperTheme = theme === "paper";
+  const isSlateTheme = theme === "slate";
+
   const fallbackWebs: FrameSemanticWeb[] = [
     {
       id: "frame_judicial",
@@ -86,28 +91,64 @@ export const FrameSemanticWebBurst: React.FC<Props> = ({ frameWebs, anchorColloc
   const [activeElementRole, setActiveElementRole] = useState<string | null>(null);
 
   return (
-    <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#0D1322] to-[#080C16] border border-cyan-500/30 shadow-2xl space-y-6 animate-in fade-in duration-300">
+    <div
+      className={`rounded-3xl p-6 sm:p-8 border shadow-xl space-y-6 animate-in fade-in duration-300 ${
+        isPaperTheme
+          ? "bg-[#FAF7F2] border-[#E2D9CC] text-slate-900"
+          : isSlateTheme
+          ? "bg-[#0F172A] border-slate-700/80 text-slate-100"
+          : "bg-gradient-to-b from-[#0D1322] to-[#080C16] border-cyan-500/30 text-white shadow-2xl"
+      }`}
+    >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+      <div
+        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 ${
+          isPaperTheme ? "border-slate-200" : "border-white/10"
+        }`}
+      >
         <div>
           <div className="flex items-center gap-2">
-            <Network className="w-5 h-5 text-cyan-400" />
-            <span className="text-xs font-mono font-black uppercase tracking-widest text-cyan-400">
+            <Network className={`w-5 h-5 ${isPaperTheme ? "text-teal-700" : "text-cyan-400"}`} />
+            <span
+              className={`text-xs font-mono font-black uppercase tracking-widest ${
+                isPaperTheme ? "text-teal-800" : "text-cyan-400"
+              }`}
+            >
               FILLMORE FRAME SEMANTICS • MẠNG KHUNG Ý NIỆM
             </span>
           </div>
-          <h3 className="text-xl font-black text-white mt-1">
+          <h3
+            className={`text-xl font-black mt-1 font-serif ${
+              isPaperTheme ? "text-slate-900" : "text-white"
+            }`}
+          >
             {currentWeb.frameName}
           </h3>
-          <p className="text-xs text-slate-300 font-serif italic">
+          <p
+            className={`text-xs font-serif italic ${
+              isPaperTheme ? "text-slate-600 font-medium" : "text-slate-300"
+            }`}
+          >
             "{currentWeb.frameConceptVi}"
           </p>
         </div>
 
         {/* Anchor Tag */}
-        <div className="px-3.5 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-300 flex items-center gap-1.5 self-start sm:self-auto">
+        <div
+          className={`px-3.5 py-1.5 rounded-xl border text-xs font-mono flex items-center gap-1.5 self-start sm:self-auto ${
+            isPaperTheme
+              ? "bg-teal-50 border-teal-200 text-teal-800 shadow-xs"
+              : "bg-cyan-500/10 border-cyan-500/30 text-cyan-300"
+          }`}
+        >
           <span>Anchor Collocation:</span>
-          <strong className="underline text-white">{currentWeb.anchorCollocation}</strong>
+          <strong
+            className={`underline font-bold ${
+              isPaperTheme ? "text-teal-900" : "text-white"
+            }`}
+          >
+            {currentWeb.anchorCollocation}
+          </strong>
         </div>
       </div>
 
@@ -116,34 +157,75 @@ export const FrameSemanticWebBurst: React.FC<Props> = ({ frameWebs, anchorColloc
         {currentWeb.elements.map((elem: FrameElement) => {
           const isSelected = activeElementRole === elem.role;
 
-          let roleColor = "border-cyan-500/30 bg-cyan-950/20 text-cyan-300";
-          if (elem.role === "Agent") roleColor = "border-blue-500/40 bg-blue-950/20 text-blue-300";
-          if (elem.role === "Trigger") roleColor = "border-amber-500/40 bg-amber-950/20 text-amber-300";
-          if (elem.role === "Institution") roleColor = "border-purple-500/40 bg-purple-950/20 text-purple-300";
-          if (elem.role === "Consequence") roleColor = "border-rose-500/40 bg-rose-950/20 text-rose-300";
+          let roleColor = isPaperTheme
+            ? "border-teal-200 bg-teal-50/70 text-teal-950"
+            : "border-cyan-500/30 bg-cyan-950/20 text-cyan-300";
+
+          if (elem.role === "Agent") {
+            roleColor = isPaperTheme
+              ? "border-blue-200 bg-blue-50/70 text-blue-950"
+              : "border-blue-500/40 bg-blue-950/20 text-blue-300";
+          }
+          if (elem.role === "Trigger") {
+            roleColor = isPaperTheme
+              ? "border-amber-200 bg-amber-50/70 text-amber-950"
+              : "border-amber-500/40 bg-amber-950/20 text-amber-300";
+          }
+          if (elem.role === "Institution") {
+            roleColor = isPaperTheme
+              ? "border-purple-200 bg-purple-50/70 text-purple-950"
+              : "border-purple-500/40 bg-purple-950/20 text-purple-300";
+          }
+          if (elem.role === "Consequence") {
+            roleColor = isPaperTheme
+              ? "border-rose-200 bg-rose-50/70 text-rose-950"
+              : "border-rose-500/40 bg-rose-950/20 text-rose-300";
+          }
 
           return (
             <div
               key={elem.role}
               onClick={() => setActiveElementRole(isSelected ? null : elem.role)}
               className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 ${roleColor} ${
-                isSelected ? "ring-2 ring-white/40 scale-[1.02] shadow-xl" : "hover:bg-white/10"
+                isSelected
+                  ? isPaperTheme
+                    ? "ring-2 ring-teal-600 scale-[1.02] shadow-md bg-white"
+                    : "ring-2 ring-white/40 scale-[1.02] shadow-xl"
+                  : isPaperTheme
+                  ? "hover:bg-white shadow-xs"
+                  : "hover:bg-white/10"
               }`}
             >
               <div className="space-y-1">
                 <span className="text-[10px] font-mono font-black uppercase tracking-wider opacity-70">
                   [{elem.role.toUpperCase()}]
                 </span>
-                <h4 className="text-sm font-black text-white leading-tight">
+                <h4
+                  className={`text-sm font-black leading-tight ${
+                    isPaperTheme ? "text-slate-900" : "text-white"
+                  }`}
+                >
                   {elem.term}
                 </h4>
               </div>
 
-              <div className="space-y-1.5 pt-2 border-t border-white/10">
-                <p className="text-xs text-slate-300 font-sans">
+              <div
+                className={`space-y-1.5 pt-2 border-t ${
+                  isPaperTheme ? "border-slate-200" : "border-white/10"
+                }`}
+              >
+                <p
+                  className={`text-xs font-sans ${
+                    isPaperTheme ? "text-slate-700" : "text-slate-300"
+                  }`}
+                >
                   🇻🇳 {elem.meaningVi}
                 </p>
-                <p className="text-[11px] text-slate-400 italic font-serif">
+                <p
+                  className={`text-[11px] italic font-serif ${
+                    isPaperTheme ? "text-slate-600" : "text-slate-400"
+                  }`}
+                >
                   "{elem.sentenceUsage}"
                 </p>
               </div>
@@ -153,12 +235,26 @@ export const FrameSemanticWebBurst: React.FC<Props> = ({ frameWebs, anchorColloc
       </div>
 
       {/* Academic IELTS Task 2 Synthesis */}
-      <div className="p-5 rounded-2xl bg-black/60 border border-white/10 space-y-2">
-        <div className="flex items-center gap-2 text-cyan-300 text-xs font-mono font-bold">
+      <div
+        className={`p-5 rounded-2xl border space-y-2 ${
+          isPaperTheme
+            ? "bg-white border-slate-200 text-slate-800 shadow-xs"
+            : "bg-black/60 border-white/10 text-slate-200"
+        }`}
+      >
+        <div
+          className={`flex items-center gap-2 text-xs font-mono font-bold ${
+            isPaperTheme ? "text-teal-800" : "text-cyan-300"
+          }`}
+        >
           <BookOpen className="w-4 h-4" />
           <span>IELTS BAND 8.5+ SYNTHESIS PARAGRAPH (KẾT HỢP TOÀN BỘ KHUNG):</span>
         </div>
-        <p className="text-sm font-serif text-slate-200 leading-relaxed italic">
+        <p
+          className={`text-sm font-serif leading-relaxed italic ${
+            isPaperTheme ? "text-slate-800" : "text-slate-200"
+          }`}
+        >
           "{currentWeb.academicSynthesisParagraph}"
         </p>
       </div>
@@ -172,7 +268,11 @@ export const FrameSemanticWebBurst: React.FC<Props> = ({ frameWebs, anchorColloc
               onClick={() => setSelectedWebIndex(i)}
               className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                 selectedWebIndex === i
-                  ? "bg-cyan-500 text-slate-950 font-black shadow-xs shadow-cyan-500/20"
+                  ? isPaperTheme
+                    ? "bg-teal-700 text-white font-black shadow-xs"
+                    : "bg-cyan-500 text-slate-950 font-black shadow-xs shadow-cyan-500/20"
+                  : isPaperTheme
+                  ? "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   : "bg-white/5 text-slate-400 hover:text-white"
               }`}
             >
@@ -184,3 +284,4 @@ export const FrameSemanticWebBurst: React.FC<Props> = ({ frameWebs, anchorColloc
     </div>
   );
 };
+
