@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { LEVEL_1_PUZZLES } from '../data/level-1.data';
+import { soundEffects } from '../utils/soundEffects';
 
 interface CompletionSummaryProps {
   onReplay: () => void;
@@ -70,6 +71,34 @@ const LEVEL_1_SUMMARY_CARDS: TakeawayCard[] = [
 ];
 
 export const CompletionSummary: React.FC<CompletionSummaryProps> = ({ onReplay }) => {
+  // Extract all micro-challenges from puzzles and shuffle them once
+  const allQuestions = useMemo(() => {
+    const list = LEVEL_1_PUZZLES.map((p) => ({
+      puzzleOrder: p.order,
+      ...p.ieltsBridge!.microChallenge
+    }));
+    // Fisher-Yates shuffle with fixed seed-like behavior per mount
+    return [...list].sort(() => Math.random() - 0.5);
+  }, []);
+
+  // Track answers for each question index
+  const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
+
+  const handleSelectOption = (qIdx: number, opt: string, correct: string) => {
+    if (userAnswers[qIdx]) return;
+    setUserAnswers((prev) => ({ ...prev, [qIdx]: opt }));
+    if (opt === correct) {
+      soundEffects.playSuccess();
+    } else {
+      soundEffects.playThud();
+    }
+  };
+
+  const answeredCount = Object.keys(userAnswers).length;
+  const correctCount = Object.entries(userAnswers).filter(
+    ([idx, ans]) => ans === allQuestions[Number(idx)].correctAnswer
+  ).length;
+
   return (
     <div className="w-full max-w-2xl mx-auto p-5 sm:p-7 bg-white border border-slate-200/90 rounded-3xl shadow-xl text-slate-800">
       {/* Header */}
@@ -134,8 +163,113 @@ export const CompletionSummary: React.FC<CompletionSummaryProps> = ({ onReplay }
         </div>
       </div>
 
+      {/* SECTION: SHUFFLED IELTS ACADEMIC REVIEW CHALLENGE */}
+      <div className="mt-7 pt-6 border-t-2 border-indigo-100">
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-mono text-xs font-black tracking-wide shadow-xs">
+              IELTS REVIEW ARENA
+            </span>
+            <span className="text-sm font-black text-indigo-950">
+              Thử thách phản xạ tổng hợp (Đã xáo trộn câu)
+            </span>
+          </div>
+          <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200">
+            {answeredCount} / {allQuestions.length} câu
+          </span>
+        </div>
+        <p className="text-xs text-slate-500 mb-4">
+          Các câu hỏi học thuật được xáo ngẫu nhiên để kiểm tra xem bạn đã thực sự thấu suốt bản chất hay chưa:
+        </p>
+
+        <div className="space-y-4">
+          {allQuestions.map((q, qIdx) => {
+            const userAnswer = userAnswers[qIdx];
+            const isAnswered = !!userAnswer;
+            const isCorrect = userAnswer === q.correctAnswer;
+
+            return (
+              <div
+                key={qIdx}
+                className="p-4 rounded-2xl bg-slate-50 border border-indigo-100/80 shadow-2xs text-left"
+              >
+                <div className="flex items-center justify-between text-xs font-bold text-slate-500 mb-2">
+                  <span>Câu {qIdx + 1}:</span>
+                  {isAnswered && (
+                    <span className={isCorrect ? 'text-emerald-600 font-black' : 'text-rose-600 font-black'}>
+                      {isCorrect ? '✓ Đúng' : '✕ Sai'}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs sm:text-sm font-semibold text-slate-900 leading-relaxed mb-3">
+                  {q.prompt}
+                </p>
+
+                {/* Shuffled Options */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {q.options.map((opt) => {
+                    const isSelected = userAnswer === opt;
+                    const isTarget = opt === q.correctAnswer;
+                    let btnClass = 'bg-white text-slate-700 hover:bg-slate-100 border-slate-200';
+
+                    if (isAnswered) {
+                      if (isTarget) {
+                        btnClass = 'bg-emerald-600 text-white border-emerald-600 font-black shadow-xs';
+                      } else if (isSelected) {
+                        btnClass = 'bg-rose-600 text-white border-rose-600 font-black';
+                      } else {
+                        btnClass = 'bg-slate-100 text-slate-400 border-slate-200 opacity-60';
+                      }
+                    }
+
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        disabled={isAnswered}
+                        onClick={() => handleSelectOption(qIdx, opt, q.correctAnswer)}
+                        className={`py-2 px-3 rounded-xl border font-bold text-xs uppercase tracking-wide transition-all active:scale-95 cursor-pointer ${btnClass}`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Explanation on answer */}
+                {isAnswered && (
+                  <div
+                    className={`mt-2.5 p-2.5 rounded-xl text-xs font-medium leading-relaxed animate-fadeIn ${
+                      isCorrect
+                        ? 'bg-emerald-50 text-emerald-950 border border-emerald-200'
+                        : 'bg-rose-50 text-rose-950 border border-rose-200'
+                    }`}
+                  >
+                    <span className="font-bold mr-1">Đáp án đúng: {q.correctAnswer.toUpperCase()} ➔</span>
+                    {q.explanation}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {answeredCount === allQuestions.length && (
+          <div className="mt-4 p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-center animate-fadeIn">
+            <span className="text-xl">🎉</span>
+            <h4 className="text-sm font-black text-indigo-950 mt-1">
+              Bạn đạt {correctCount}/{allQuestions.length} câu chính xác!
+            </h4>
+            <p className="text-xs text-slate-600 mt-0.5">
+              Tư duy bản chất vật lý đã ngấm sâu thành phản xạ tự nhiên trong bài thi IELTS.
+            </p>
+          </div>
+        )}
+      </div>
+
       {/* Action Buttons */}
-      <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
         <button
           type="button"
           onClick={onReplay}
