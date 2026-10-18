@@ -1,0 +1,202 @@
+{
+  "unitNumber": 8,
+  "unitCode": "unit_08",
+  "titleEn": "Issues Facing Young People",
+  "titleVi": "Thách thức Của Thế hệ Trẻ & Áp lực Đương đại",
+  "themeSummaryVi": "Áp lực đồng trang lứa, mạng xã hội, lo âu tâm lý, nợ nần học tập và các trào lưu phản văn hóa.",
+  "pdfPages": "Trang 32–35",
+  "schemaItems": [
+    {
+      "id": "u8_w1",
+      "word": "alienation",
+      "ipa": "/ˌeɪ.li.əˈneɪ.ʃən/",
+      "pos": "n.",
+      "definitionEn": "The state or experience of being isolated from a group or an activity to which one should belong.",
+      "definitionVi": "Sự tha hóa, cảm giác bị cô lập và tách biệt khỏi cộng đồng xã hội.",
+      "exampleSentence": "Pervasive social media algorithms can paradoxically exacerbate feelings of loneliness and alienation.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "visualMetaphor": "A solitary lone particle drifting outside an impenetrable reflective sphere.",
+      "contrastWord": "belonging",
+      "contrastDefinitionEn": "An affinity for a place or situation; feeling accepted and included.",
+      "contrastVisualMetaphor": "Warm intertwining waves drawing a wandering ember home.",
+      "simulationConfig": {
+        "primaryColor": "#64748B",
+        "secondaryColor": "#475569",
+        "velocityFactor": 1.2,
+        "particleCount": 60,
+        "vectorPattern": "diverge"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u8_col1",
+      "columnA": "peer",
+      "columnB": "pressure",
+      "fullCollocation": "peer pressure",
+      "meaningEn": "Influence from members of one's peer group to conform to their behaviors.",
+      "meaningVi": "Áp lực từ bạn bè đồng trang lứa ép phải hòa theo số đông.",
+      "example": "Adolescents frequently succumb to peer pressure regarding drinking and substance use.",
+      "imageSchemaTag": "FORCE_COLLISION"
+    },
+    {
+      "id": "u8_col2",
+      "columnA": "identity",
+      "columnB": "crisis",
+      "fullCollocation": "identity crisis",
+      "meaningEn": "A period of uncertainty and confusion in which a person's sense of identity becomes insecure.",
+      "meaningVi": "Khủng hoảng bản sắc cá nhân trong quá trình trưởng thành.",
+      "example": "Moving to a foreign boarding school triggered an acute identity crisis in the teenager.",
+      "imageSchemaTag": "BALANCE_SHIFT"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u8_ds1",
+      "term": "subculture",
+      "domain": "Sociology",
+      "meaningVi": "Tiểu văn hóa giới trẻ",
+      "clueEn": "A cultural group within a larger culture with distinct beliefs and interests."
+    },
+    {
+      "id": "u8_ds2",
+      "term": "burnout",
+      "domain": "Digital Well-being",
+      "meaningVi": "Hội chứng kiệt quệ tâm lý",
+      "clueEn": "Physical or mental collapse caused by overwork or stress."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u8_tri1",
+      "targetWord": "strain",
+      "rootHint": "Physical tension / Muscular injury / Inherited psychological pressure",
+      "ipa": "/streɪn/",
+      "meaningVi": "Áp lực căng thẳng tâm lý / Giãn cơ chấn thương / Biến thể mầm bệnh",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "sentences": [
+        "Exorbitant tuition fees place immense financial ___ on working-class families.",
+        "The sprinter suffered an acute hamstring ___ during the 100-meter semi-final.",
+        "Microbiologists identified a treatment-resistant ___ of the respiratory pathogen."
+      ],
+      "nuanceNotes": [
+        "Psychology: emotional overload.",
+        "Orthopedics: soft tissue overextension.",
+        "Virology: genetic mutation variant."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u8_mf1",
+      "rootWord": "rebel",
+      "meaningVi": "Nổi loạn, chống đối",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "forms": {
+        "noun": [
+          "rebel",
+          "rebellion"
+        ],
+        "verb": [
+          "rebel"
+        ],
+        "adjective": [
+          "rebellious"
+        ],
+        "adverb": [
+          "rebelliously"
+        ]
+      },
+      "transformationPrompt": "Teenage angst often manifests in fierce ___ (rebel) against parental curfews.",
+      "targetAnswer": "rebellion",
+      "targetPos": "noun",
+      "explanationVi": "Rebellion là sự nổi loạn chống lại các quy ước áp đặt."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u8_card1",
+      "word": "iconoclast",
+      "ipa": "/aɪˈkɒn.ə.klæst/",
+      "archetypeTitle": "The Idol Shatterer",
+      "meaningEn": "A person who attacks cherished beliefs or traditional academic orthodoxy.",
+      "meaningVi": "Kẻ đập phá thần tượng, người cấp tiến đả phá giáo điều cổ hủ.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "powerStat": 94,
+      "precisionStat": 91,
+      "semanticOpposite": "traditionalist",
+      "oppositeMeaningEn": "A person who strictly adheres to established customs, rituals, and institutions.",
+      "distractors": [
+        "sycophant",
+        "indolent",
+        "hypochondriac"
+      ],
+      "battleScenario": "The Iconoclast publishes a scathing manifesto debunking legacy dogmas!",
+      "counterExplanationVi": "Người đả phá truyền thống (iconoclast) đối lập với người thủ cựu tôn sùng truyền thống (traditionalist)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u8_bin1",
+      "wordA": "conformity",
+      "wordB": "compliance",
+      "contextSentence": "Adolescent subcultures paradoxically demand rigid internal ___ while rebelling against adult rules.",
+      "correctWord": "conformity",
+      "distinctionVi": "Conformity là sự tuân theo chuẩn mực hành vi xã hội; Compliance là sự chấp hành một chỉ thị cụ thể."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "Breaking the Mold",
+    "subtitleVi": "Phá Vỡ Khuôn Vàng Thước Ngọc",
+    "settingDescription": "A university dorm room buzzing with student activists debating contemporary youth rights.",
+    "segments": [
+      {
+        "id": "u8_nar1",
+        "chapterLabel": "Chapter I: The Generational Divide",
+        "speakerOrMood": "Student President (Fervent & Articulate)",
+        "promptTextBefore": "We refuse to succumb to passive social ",
+        "promptTextAfter": "; our generation will actively champion systemic change.",
+        "correctWord": "conformity",
+        "imageSchemaTag": "FORCE_COLLISION",
+        "choices": [
+          {
+            "word": "conformity",
+            "isCorrect": true,
+            "consequenceTitle": "A New Voice",
+            "whatIfFeedbackEn": "The auditorium erupts in applause as youth leadership charts a bold direction.",
+            "nuanceExplanationVi": "Social conformity là việc rập khuôn theo lề lối truyền thống."
+          },
+          {
+            "word": "remission",
+            "isCorrect": false,
+            "consequenceTitle": "Medical Non-Sequitur",
+            "whatIfFeedbackEn": "Claiming youth refuse to succumb to cancer remission makes zero sense.",
+            "nuanceExplanationVi": "Remission là sự thuyên giảm bệnh y khoa."
+          },
+          {
+            "word": "penchant",
+            "isCorrect": false,
+            "consequenceTitle": "Hobby Confusion",
+            "whatIfFeedbackEn": "You cannot succumb to a passive social penchant.",
+            "nuanceExplanationVi": "Penchant là sở thích thiên hướng cá nhân."
+          },
+          {
+            "word": "viciously",
+            "isCorrect": false,
+            "consequenceTitle": "Grammar Wreck",
+            "whatIfFeedbackEn": "Using an adverb where an abstract noun is required collapses the sentence.",
+            "nuanceExplanationVi": "Viciously là phó từ, không làm bổ ngữ cho tính từ passive social."
+          }
+        ]
+      }
+    ]
+  },
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Adolescent Psychology",
+    "Sociology",
+    "Digital Well-being",
+    "Higher Education",
+    "Subcultures"
+  ]
+}

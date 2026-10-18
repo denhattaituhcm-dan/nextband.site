@@ -1,0 +1,220 @@
+{
+  "unitNumber": 12,
+  "unitCode": "unit_12",
+  "titleEn": "General High-Level Vocabulary",
+  "titleVi": "Từ vựng Học thuật Tinh hoa C2 — Đỉnh cao Sắc thái",
+  "themeSummaryVi": "Kho từ vựng C2 hiếm gặp và tinh vi nhất: rancour, capitulate, philanthropy, viable, ubiquitous, ephemeral và các cấu trúc biến đổi hình thái đỉnh cao.",
+  "pdfPages": "Trang 56–63",
+  "schemaItems": [
+    {
+      "id": "u12_w1",
+      "word": "rancour",
+      "ipa": "/ˈræŋ.kər/",
+      "pos": "n.",
+      "definitionEn": "Bitterness or resentfulness, especially when long-standing and deeply unforgiving.",
+      "definitionVi": "Mối thâm thù cay đắng, nỗi hận sâu sắc âm ỉ không thể hóa giải.",
+      "exampleSentence": "The bitter territorial dispute was settled without rancour through patient multilateral diplomacy.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "visualMetaphor": "A dark acrid corrosive pool slowly dissolving stone foundations over centuries.",
+      "contrastWord": "goodwill",
+      "contrastDefinitionEn": "Friendly, helpful, or cooperative feelings or attitude.",
+      "contrastVisualMetaphor": "A radiant crystal chalice brimming with pure sparkling light.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#7F1D1D",
+        "velocityFactor": 1.4,
+        "particleCount": 75,
+        "vectorPattern": "collide"
+      }
+    },
+    {
+      "id": "u12_w2",
+      "word": "ephemeral",
+      "ipa": "/ɪˈfem.ər.əl/",
+      "pos": "adj.",
+      "definitionEn": "Lasting for a very short, fleeting time; transitory and evanescent.",
+      "definitionVi": "Phù du, sớm nở tối tàn, ngắn ngủi thoáng qua như một cơn gió.",
+      "exampleSentence": "Fame in the viral digital era is notoriously ephemeral, evaporating within hours of arrival.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "visualMetaphor": "Delicate morning dew droplets vanishing into thin air under the first rays of dawn.",
+      "contrastWord": "perennial",
+      "contrastDefinitionEn": "Lasting or existing for a long or apparently infinite time; enduringly perpetual.",
+      "contrastVisualMetaphor": "An ancient giant sequoia tree towering timelessly through millennia.",
+      "simulationConfig": {
+        "primaryColor": "#A855F7",
+        "secondaryColor": "#EC4899",
+        "velocityFactor": 1.8,
+        "particleCount": 65,
+        "vectorPattern": "diverge"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u12_col1",
+      "columnA": "unmitigated",
+      "columnB": "disaster",
+      "fullCollocation": "unmitigated disaster",
+      "meaningEn": "An absolute, total, and unqualified catastrophe.",
+      "meaningVi": "Thảm họa hoàn toàn, sự thất bại ê chề không có gì cứu vãn được.",
+      "example": "The rushed product launch proved to be an unmitigated disaster for the startup.",
+      "imageSchemaTag": "FORCE_COLLISION"
+    },
+    {
+      "id": "u12_col2",
+      "columnA": "clandestine",
+      "columnB": "meeting",
+      "fullCollocation": "clandestine meeting",
+      "meaningEn": "A secret rendezvous arranged for illicit or sensitive purposes.",
+      "meaningVi": "Cuộc gặp gỡ lén lút bí mật không để lộ tung tích.",
+      "example": "The dissident diplomats held a clandestine meeting inside an abandoned warehouse.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u12_ds1",
+      "term": "philanthropy",
+      "domain": "Rhetoric",
+      "meaningVi": "Lòng bác ái từ thiện vì nhân loại",
+      "clueEn": "The desire to promote the welfare of others expressed by generous donation."
+    },
+    {
+      "id": "u12_ds2",
+      "term": "paradox",
+      "domain": "Epistemology",
+      "meaningVi": "Nghịch lý tưởng chừng mâu thuẫn nhưng lại chứa chân lý",
+      "clueEn": "A seemingly absurd or contradictory proposition that when investigated may prove true."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u12_tri1",
+      "targetWord": "sound",
+      "rootHint": "Audio vibration / Flawless reasoning / Ocean inlet channel",
+      "ipa": "/saʊnd/",
+      "meaningVi": "Lý lẽ chặt chẽ vững chắc (sound logic) / Âm thanh vang / Giấc ngủ say (sound sleep)",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "The professors thesis rested on thoroughly researched, philosophically ___ argumentation.",
+        "The acoustic sensor failed to pick up any detectable ___ in the recording booth.",
+        "After the grueling marathon, she collapsed into a deep, uninterruptedly ___ sleep."
+      ],
+      "nuanceNotes": [
+        "Logic: valid, cogent, and unimpeachable reasoning.",
+        "Physics: sonic acoustic wave.",
+        "Physiology: healthy and undisturbed slumber."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u12_mf1",
+      "rootWord": "rigor",
+      "meaningVi": "Nghiêm ngặt, chặt chẽ khắt khe",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "rigor",
+          "rigorousness"
+        ],
+        "adjective": [
+          "rigorous"
+        ],
+        "adverb": [
+          "rigorously"
+        ]
+      },
+      "transformationPrompt": "Academic journals require all empirical findings to be tested with uncompromising ___ (rigor).",
+      "targetAnswer": "rigor",
+      "targetPos": "noun",
+      "explanationVi": "Rigor là sự nghiêm ngặt và tính chuẩn xác khoa học cao nhất."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u12_card1",
+      "word": "pedant",
+      "ipa": "/ˈped.ənt/",
+      "archetypeTitle": "The Rule Enforcer",
+      "meaningEn": "A person excessively concerned with minor details, rules, or displaying academic trivia.",
+      "meaningVi": "Kẻ câu nệ chữ nghĩa tiểu tiết, thích bắt bẻ quy tắc vụn vặt.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "powerStat": 84,
+      "precisionStat": 99,
+      "semanticOpposite": "visionary",
+      "oppositeMeaningEn": "A person with original, far-reaching ideas who sees the grand big picture.",
+      "distractors": [
+        "maverick",
+        "sycophant",
+        "zealot"
+      ],
+      "battleScenario": "The Pedant halts an inspiring debate to correct a minor Latin grammatical declension!",
+      "counterExplanationVi": "Kẻ câu nệ tiểu tiết vụn vặt (pedant) đối lập với bậc nhìn xa trông rộng (visionary)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u12_bin1",
+      "wordA": "disinterested",
+      "wordB": "uninterested",
+      "contextSentence": "To guarantee an equitable trial, the court appointed a completely ___ and impartial arbitrator.",
+      "correctWord": "disinterested",
+      "distinctionVi": "Disinterested là vô tư khách quan không vụ lợi cá nhân; Uninterested là thờ ơ không quan tâm."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "The Philosophical Summit",
+    "subtitleVi": "Hội Nghị Triết Học — Cuộc Đối Đầu Tư Tưởng",
+    "settingDescription": "An ancient amphitheater in Oxford as scholars debate truth, language, and the frontiers of human cognition.",
+    "segments": [
+      {
+        "id": "u12_nar1",
+        "chapterLabel": "Chapter I: The Core Paradox",
+        "speakerOrMood": "Senior Fellow (Wise & Contemplative)",
+        "promptTextBefore": "We concluded the seminar without any lingering personal ",
+        "promptTextAfter": ", agreeing to embrace our profound intellectual differences.",
+        "correctWord": "rancour",
+        "imageSchemaTag": "FORCE_COLLISION",
+        "choices": [
+          {
+            "word": "rancour",
+            "isCorrect": true,
+            "consequenceTitle": "Intellectual Harmony",
+            "whatIfFeedbackEn": "The scholars shake hands in mutual respect, elevating the debate to new heights.",
+            "nuanceExplanationVi": "Without rancour nghĩa là không mang hằn học hay cay cú."
+          },
+          {
+            "word": "consortium",
+            "isCorrect": false,
+            "consequenceTitle": "Corporate Intrusion",
+            "whatIfFeedbackEn": "Finishing a philosophy seminar without a consortium sounds like an abandoned merger.",
+            "nuanceExplanationVi": "Consortium là tổ hợp doanh nghiệp, sai ngữ cảnh."
+          },
+          {
+            "word": "biopsy",
+            "isCorrect": false,
+            "consequenceTitle": "Medical Emergency",
+            "whatIfFeedbackEn": "Philosophers do not perform biopsies on their own debate arguments.",
+            "nuanceExplanationVi": "Biopsy là xét nghiệm sinh thiết ung thư."
+          },
+          {
+            "word": "subpoena",
+            "isCorrect": false,
+            "consequenceTitle": "Legal Summons",
+            "whatIfFeedbackEn": "Debating colleagues do not subpoena each other over ontological theory.",
+            "nuanceExplanationVi": "Subpoena là trát tòa án, hoàn toàn lạc đề."
+          }
+        ]
+      }
+    ]
+  },
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Epistemology",
+    "Rhetoric",
+    "Morphological Synthesis",
+    "High Stylistics",
+    "Classical Idiom"
+  ]
+}

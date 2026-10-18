@@ -1,0 +1,275 @@
+{
+  "unitNumber": 2,
+  "unitCode": "unit_02",
+  "titleEn": "The World of Politics",
+  "titleVi": "Chính trường & Thể chế Chính trị Đương đại",
+  "themeSummaryVi": "Hệ thống từ vựng về bầu cử, lập pháp, liên minh nghị viện, thăm dò dư luận và phân chia khu vực bầu cử.",
+  "pdfPages": "Trang 8–11",
+  "schemaItems": [
+    {
+      "id": "u2_w1",
+      "word": "gerrymandering",
+      "ipa": "/ˈdʒer.iˌmæn.dər.ɪŋ/",
+      "pos": "n.",
+      "definitionEn": "Manipulating electoral district boundaries to give unfair political advantage to a party.",
+      "definitionVi": "Thủ thuật vẽ lại ranh giới khu vực bầu cử nhằm trục lợi đảng phái.",
+      "exampleSentence": "Redistricting committees were condemned for blatant gerrymandering aimed at suppressing opposition turnout.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "visualMetaphor": "Distorted fluid boundary lines twisting unnaturally around clusters of voters.",
+      "contrastWord": "fair representation",
+      "contrastDefinitionEn": "Equitable electoral mapping reflecting actual demographic distribution.",
+      "contrastVisualMetaphor": "A balanced harmonious grid evenly dividing light and shadow.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#F59E0B",
+        "velocityFactor": 1.7,
+        "particleCount": 70,
+        "vectorPattern": "breach"
+      }
+    },
+    {
+      "id": "u2_w2",
+      "word": "renege",
+      "ipa": "/rɪˈneɪɡ/",
+      "pos": "v.",
+      "definitionEn": "To go back on a promise, undertaking, or contractual campaign pledge.",
+      "definitionVi": "Nuốt lời, bội ước, lật lọng không thực hiện lời hứa tranh cử.",
+      "exampleSentence": "The newly elected premier was accused of attempting to renege on her central manifesto commitments.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "visualMetaphor": "A solid glowing pact cracking into brittle fragments and falling away.",
+      "contrastWord": "uphold",
+      "contrastDefinitionEn": "To steadfastly maintain and honor a solemn commitment.",
+      "contrastVisualMetaphor": "A sturdy pillar standing immovable under a golden sun.",
+      "simulationConfig": {
+        "primaryColor": "#F43F5E",
+        "secondaryColor": "#881337",
+        "velocityFactor": 2.1,
+        "particleCount": 65,
+        "vectorPattern": "oscillate"
+      }
+    },
+    {
+      "id": "u2_w3",
+      "word": "heckle",
+      "ipa": "/ˈhek.əl/",
+      "pos": "v.",
+      "definitionEn": "To interrupt a public speaker with aggressive comments or abusive questions.",
+      "definitionVi": "La ó, châm chọc, ngắt lời người diễn thuyết với thái độ hung hăng.",
+      "exampleSentence": "Disaffected youth gathered outside the town hall to loudly heckle the prime minister during his speech.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "visualMetaphor": "Jagged sharp projectile darts repeatedly striking a protective speaking dome.",
+      "contrastWord": "applaud",
+      "contrastDefinitionEn": "To express enthusiastic approval through clapping and praise.",
+      "contrastVisualMetaphor": "Warm harmonic waves bathing a podium in gentle radiant energy.",
+      "simulationConfig": {
+        "primaryColor": "#F97316",
+        "secondaryColor": "#EF4444",
+        "velocityFactor": 2.6,
+        "particleCount": 75,
+        "vectorPattern": "collide"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u2_col1",
+      "columnA": "hung",
+      "columnB": "parliament",
+      "fullCollocation": "hung parliament",
+      "meaningEn": "A parliament in which no political party has gained an absolute majority.",
+      "meaningVi": "Nghị viện treo (không có đảng nào chiếm đa số ghế tuyệt đối).",
+      "example": "The general election resulted in a hung parliament, forcing rapid coalition negotiations.",
+      "imageSchemaTag": "BALANCE_SHIFT"
+    },
+    {
+      "id": "u2_col2",
+      "columnA": "landslide",
+      "columnB": "victory",
+      "fullCollocation": "landslide victory",
+      "meaningEn": "An overwhelming triumph in an election.",
+      "meaningVi": "Chiến thắng vang dội với số phiếu áp đảo hoàn toàn.",
+      "example": "The opposition party secured a landslide victory across former industrial heartlands.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY"
+    },
+    {
+      "id": "u2_col3",
+      "columnA": "exit",
+      "columnB": "poll",
+      "fullCollocation": "exit poll",
+      "meaningEn": "A poll taken of individuals immediately after they exit polling stations.",
+      "meaningVi": "Thăm dò dư luận ngoài phòng bỏ phiếu ngay sau khi cử tri bầu.",
+      "example": "The nationwide exit poll correctly anticipated the collapse of the governing party.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    },
+    {
+      "id": "u2_col4",
+      "columnA": "whistle-stop",
+      "columnB": "tour",
+      "fullCollocation": "whistle-stop tour",
+      "meaningEn": "A rapid series of brief campaign appearances across multiple constituencies.",
+      "meaningVi": "Chuyến vận động tranh cử chớp nhoáng qua nhiều thành phố.",
+      "example": "The candidate embarked on a breathless whistle-stop tour across key swing states.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u2_ds1",
+      "term": "gerrymandering",
+      "domain": "Electoral Politics",
+      "meaningVi": "Vẽ lại khu vực bầu cử trục lợi",
+      "clueEn": "Manipulating district lines for partisan gain."
+    },
+    {
+      "id": "u2_ds2",
+      "term": "veto",
+      "domain": "Constitutional Law",
+      "meaningVi": "Quyền phủ quyết luật của nguyên thủ",
+      "clueEn": "A constitutional right to reject a legislative proposal."
+    },
+    {
+      "id": "u2_ds3",
+      "term": "filibuster",
+      "domain": "Governance",
+      "meaningVi": "Kỹ thuật kéo dài thời gian tranh luận cản trở biểu quyết",
+      "clueEn": "Prolonged speechmaking to obstruct legislative voting."
+    },
+    {
+      "id": "u2_ds4",
+      "term": "canvass",
+      "domain": "Public Opinion",
+      "meaningVi": "Đi từng nhà vận động xin phiếu cử tri",
+      "clueEn": "Soliciting votes and opinions from local residents."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u2_tri1",
+      "targetWord": "poll",
+      "rootHint": "Voting survey / Head count / Electoral ballot",
+      "ipa": "/pəʊl/",
+      "meaningVi": "Cuộc thăm dò ý kiến (opinion poll) / Điểm bỏ phiếu (go to the polls) / Thăm dò cử tri",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "sentences": [
+        "The latest opinion ___ indicates a neck-and-neck race between the two front-runners.",
+        "Citizens will go to the ___s this Thursday to decide the constitutional referendum.",
+        "Volunteers arrived early to prepare the ballot boxes at the local school ___ing station."
+      ],
+      "nuanceNotes": [
+        "Survey research: statistical public sampling.",
+        "Civic participation: casting ballots.",
+        "Location: designated electoral booth."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u2_mf1",
+      "rootWord": "partisan",
+      "meaningVi": "Mang tính bè phái đảng phái",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "partisanship"
+        ],
+        "adjective": [
+          "partisan",
+          "non-partisan"
+        ],
+        "adverb": [
+          "partisanly"
+        ]
+      },
+      "transformationPrompt": "Fierce ___ (partisan) has paralyzed the senate from passing emergency infrastructure spending.",
+      "targetAnswer": "partisanship",
+      "targetPos": "noun",
+      "explanationVi": "Partisanship là sự cuồng tín theo phe phái chính trị làm đình trệ công việc chung."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u2_card1",
+      "word": "spin doctor",
+      "ipa": "/ˈspɪn ˌdɒk.tər/",
+      "archetypeTitle": "The Media Alchemist",
+      "meaningEn": "A political PR adviser tasked with portraying catastrophic policies favorably.",
+      "meaningVi": "Chuyên gia bẻ lái truyền thông làm đẹp hình ảnh chính trị gia.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "powerStat": 91,
+      "precisionStat": 95,
+      "semanticOpposite": "whistleblower",
+      "oppositeMeaningEn": "A person who exposes truthful illicit misconduct without deceit.",
+      "distractors": [
+        "statesman",
+        "diplomat",
+        "constituent"
+      ],
+      "battleScenario": "The Spin Doctor twists an embarrassing cabinet leak into a visionary strategy!",
+      "counterExplanationVi": "Chuyên gia nhào nặn thông tin (spin doctor) đối lập với người vạch trần sự thật (whistleblower)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u2_bin1",
+      "wordA": "referendum",
+      "wordB": "plebiscite",
+      "contextSentence": "Voters were invited to decide whether to adopt the new constitution via a nationwide direct ___.",
+      "correctWord": "referendum",
+      "distinctionVi": "Referendum là cuộc trưng cầu dân ý về một dự thảo luật/hiến pháp cụ thể."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "The Coalition Mandate",
+    "subtitleVi": "Thỏa Hiệp Sau Bầu Cử — Đấu Trí Giữa Các Phe Phái",
+    "settingDescription": "Downing Street press room as party chiefs hammer out emergency power-sharing pacts.",
+    "segments": [
+      {
+        "id": "u2_nar1",
+        "chapterLabel": "Chapter I: The Deadlock",
+        "speakerOrMood": "Political Correspondent (Brisk & Dramatic)",
+        "promptTextBefore": "The unexpected general election resulted in a tense, unpredictable ",
+        "promptTextAfter": " parliament, with neither party commanding an outright majority.",
+        "correctWord": "hung",
+        "imageSchemaTag": "BALANCE_SHIFT",
+        "choices": [
+          {
+            "word": "hung",
+            "isCorrect": true,
+            "consequenceTitle": "Nail-Biting Parity",
+            "whatIfFeedbackEn": "Cabinet secretaries rush into urgent cross-party negotiation rooms.",
+            "nuanceExplanationVi": "Hung parliament là nghị viện treo không bên nào đủ 50% ghế."
+          },
+          {
+            "word": "vacant",
+            "isCorrect": false,
+            "consequenceTitle": "Empty Chamber",
+            "whatIfFeedbackEn": "Claiming the parliament is vacant implies all MPs went home on holiday.",
+            "nuanceExplanationVi": "Vacant chỉ phòng ốc bỏ trống, không dùng cho tình trạng bầu cử."
+          },
+          {
+            "word": "nominal",
+            "isCorrect": false,
+            "consequenceTitle": "Trivializing Government",
+            "whatIfFeedbackEn": "Calling a deadlocked democracy nominal causes market panic.",
+            "nuanceExplanationVi": "Nominal là danh nghĩa tượng trưng, không miêu tả thế trận chính trị."
+          },
+          {
+            "word": "heckled",
+            "isCorrect": false,
+            "consequenceTitle": "Grammar Crash",
+            "whatIfFeedbackEn": "A parliament cannot be 'heckled' as a constitutional state of being.",
+            "nuanceExplanationVi": "Heckle là hành động la ó ngắt lời, không bổ nghĩa cho quốc hội."
+          }
+        ]
+      }
+    ]
+  },
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Electoral Politics",
+    "Constitutional Law",
+    "Governance",
+    "Public Opinion",
+    "Diplomacy"
+  ]
+}

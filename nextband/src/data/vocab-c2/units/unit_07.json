@@ -1,0 +1,197 @@
+{
+  "unitNumber": 7,
+  "unitCode": "unit_07",
+  "titleEn": "Food, Travel and Holidays",
+  "titleVi": "Ẩm thực Tinh tế, Du lịch Trải nghiệm & Lữ hành",
+  "themeSummaryVi": "Nghệ thuật nấu nướng cao cấp, thuật ngữ du lịch sinh thái, hành trình thám hiểm và phân biệt sắc thái ẩm thực.",
+  "pdfPages": "Trang 28–31",
+  "schemaItems": [
+    {
+      "id": "u7_w1",
+      "word": "intrepid",
+      "ipa": "/ɪnˈtrep.ɪd/",
+      "pos": "adj.",
+      "definitionEn": "Fearless, adventurous, and undaunted by danger or grueling terrain.",
+      "definitionVi": "Dũng cảm quả cảm, không lùi bước trước hiểm nguy nơi rừng thiêng nước độc.",
+      "exampleSentence": "The intrepid mountaineers traversed the crevasse during an unpredicted arctic blizzard.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "visualMetaphor": "A solitary glowing spear driving fearlessly straight through an encroaching storm wall.",
+      "contrastWord": "timorous",
+      "contrastDefinitionEn": "Showing or suffering from nervousness, fear, or a lack of confidence.",
+      "contrastVisualMetaphor": "A trembling fragile spark cowering behind a cold stone.",
+      "simulationConfig": {
+        "primaryColor": "#00F5D4",
+        "secondaryColor": "#38BDF8",
+        "velocityFactor": 2.2,
+        "particleCount": 75,
+        "vectorPattern": "ascend"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u7_col1",
+      "columnA": "culinary",
+      "columnB": "delight",
+      "fullCollocation": "culinary delight",
+      "meaningEn": "A dish that provides immense sensory gastronomic pleasure.",
+      "meaningVi": "Tuyệt phẩm ẩm thực làm say đắm vị giác.",
+      "example": "The truffle risotto proved to be an unforgettable culinary delight.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u7_col2",
+      "columnA": "unchartered",
+      "columnB": "territory",
+      "fullCollocation": "unchartered territory",
+      "meaningEn": "An area or situation not previously mapped or experienced.",
+      "meaningVi": "Vùng đất chưa từng được khai phá / địa hạt hoàn toàn mới lạ.",
+      "example": "The eco-expedition pushed deep into unchartered territory along the Amazonian basin.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u7_ds1",
+      "term": "marinate",
+      "domain": "Culinary Arts",
+      "meaningVi": "Ướp gia vị cho thấm đượm",
+      "clueEn": "Soaking meat or vegetables in seasoned liquid before cooking."
+    },
+    {
+      "id": "u7_ds2",
+      "term": "itinerary",
+      "domain": "Hospitality",
+      "meaningVi": "Lịch trình tour du lịch chi tiết",
+      "clueEn": "A planned route or journey schedule."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u7_tri1",
+      "targetWord": "course",
+      "rootHint": "Meal stage / Navigational direction / Academic curriculum",
+      "ipa": "/kɔːs/",
+      "meaningVi": "Món ăn trong bữa tiệc (three-course meal) / Hải trình đường đi / Khóa học",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "sentences": [
+        "The banquet concluded with a sumptuous dessert served as the final ___.",
+        "The ship captain altered ___ to steer clear of the approaching typhoon.",
+        "She enrolled in an intensive advanced writing ___ at Oxford."
+      ],
+      "nuanceNotes": [
+        "Gastronomy: sequential dining stage.",
+        "Maritime: compass direction.",
+        "Education: instructional syllabus."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u7_mf1",
+      "rootWord": "palate",
+      "meaningVi": "Khẩu vị, vòm miệng",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "palate",
+          "palatability"
+        ],
+        "adjective": [
+          "palatable",
+          "unpalatable"
+        ]
+      },
+      "transformationPrompt": "The chef added aged balsamic vinegar to make the bitter greens more ___ (palate) to patrons.",
+      "targetAnswer": "palatable",
+      "targetPos": "adjective",
+      "explanationVi": "Palatable nghĩa là vừa miệng, dễ ăn, ngon lành."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u7_card1",
+      "word": "epicure",
+      "ipa": "/ˈep.ɪ.kjʊər/",
+      "archetypeTitle": "The Grand Gastronome",
+      "meaningEn": "A person who takes particular pleasure in fine food and vintage drink.",
+      "meaningVi": "Người sành ăn uống, theo đuổi mỹ vị ẩm thực thượng hạng.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "powerStat": 89,
+      "precisionStat": 96,
+      "semanticOpposite": "ascetic",
+      "oppositeMeaningEn": "A person who practices severe self-discipline and abstains from all indulgence.",
+      "distractors": [
+        "hypochondriac",
+        "glutton",
+        "drifter"
+      ],
+      "battleScenario": "The Epicure detects the precise vintage and terroir of an obscured wine blend!",
+      "counterExplanationVi": "Người sành ăn hưởng lạc (epicure) đối nghịch với người sống khổ hạnh kiêng khem (ascetic)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u7_bin1",
+      "wordA": "simmer",
+      "wordB": "boil",
+      "contextSentence": "To preserve delicate herb aromas, leave the broth to gently ___ over low flame rather than bubble vigorously.",
+      "correctWord": "simmer",
+      "distinctionVi": "Simmer là ninh nhỏ lửa liu riu; Boil là đun sôi sùng sục ùng ục."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "The Himalayan Crossing",
+    "subtitleVi": "Vượt Đỉnh Himalaya — Hành Trình Thử Thách",
+    "settingDescription": "High mountain pass at 5,000 meters above sea level as icy gales buffet the expedition base camp.",
+    "segments": [
+      {
+        "id": "u7_nar1",
+        "chapterLabel": "Chapter I: The Frost Ascent",
+        "speakerOrMood": "Expedition Leader (Steely & Vigilant)",
+        "promptTextBefore": "Only the most ",
+        "promptTextAfter": " mountaineers possessed the psychological grit to press forward across the razor ridge.",
+        "correctWord": "intrepid",
+        "imageSchemaTag": "PATH_TRAJECTORY",
+        "choices": [
+          {
+            "word": "intrepid",
+            "isCorrect": true,
+            "consequenceTitle": "Summit Within Sight",
+            "whatIfFeedbackEn": "The climbers anchor fixed lines securely, braving sub-zero gusts.",
+            "nuanceExplanationVi": "Intrepid miêu tả lòng dũng cảm phi thường trước hiểm nguy hoang dã."
+          },
+          {
+            "word": "indolent",
+            "isCorrect": false,
+            "consequenceTitle": "Campfire Sloth",
+            "whatIfFeedbackEn": "An indolent climber refuses to get out of their sleeping bag, freezing to the tent floor.",
+            "nuanceExplanationVi": "Indolent là lười biếng, hoàn toàn trái ngược với phẩm chất leo núi."
+          },
+          {
+            "word": "aloof",
+            "isCorrect": false,
+            "consequenceTitle": "Social Blunder",
+            "whatIfFeedbackEn": "Being aloof from your climbing partner means you ignore their desperate rope signals.",
+            "nuanceExplanationVi": "Aloof chỉ sự xa cách giao tiếp, không diễn tả ý chí mạo hiểm."
+          },
+          {
+            "word": "heinous",
+            "isCorrect": false,
+            "consequenceTitle": "Criminal Mountaineering",
+            "whatIfFeedbackEn": "Climbing mountains is an athletic feat, not a heinous crime!",
+            "nuanceExplanationVi": "Heinous là tàn ác vô nhân tính, sai lệch ngữ nghĩa."
+          }
+        ]
+      }
+    ]
+  },
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Culinary Arts",
+    "Hospitality",
+    "Eco-tourism",
+    "Exploration",
+    "Gastronomy"
+  ]
+}

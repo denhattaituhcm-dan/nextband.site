@@ -1,0 +1,819 @@
+{
+  "unitNumber": 5,
+  "unitCode": "unit_05",
+  "titleEn": "Different Kinds of People",
+  "titleVi": "Nhân cách, Tính cách & Các Hình mẫu Tâm lý Học thuật",
+  "themeSummaryVi": "Hệ thống tính từ tính cách C2 tinh vi nhất: phân biệt sắc thái uyên bác, hiếu chiến, thất thường, nịnh bợ, kiên định và câu chuyện The Hopeless Romantic.",
+  "pdfPages": "Trang 20–23",
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Psychology",
+    "Personality Archetypes",
+    "Social Dynamics",
+    "Behavioral Nuances",
+    "Literary Tropes"
+  ],
+  "schemaItems": [
+    {
+      "id": "u5_w1",
+      "word": "affable",
+      "ipa": "/ˈæf.ə.bəl/",
+      "pos": "adj.",
+      "definitionEn": "Pleasantly easy to approach and talk to; friendly, cordial, and warmly courteous.",
+      "definitionVi": "Niềm nở, ân cần, hòa nhã, cực kỳ dễ gần và tạo cảm giác ấm cúng.",
+      "exampleSentence": "Despite his monumental academic stature, the professor remained disarmingly affable to all freshmen.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "visualMetaphor": "A warm golden glowing aura welcoming nearby floating particles into a harmonious shared orbit.",
+      "contrastWord": "aloof",
+      "contrastDefinitionEn": "Conspicuously uninvolved and distant; maintaining cold psychological detachment.",
+      "contrastVisualMetaphor": "A crystalline frost barrier pushing away all incoming particles into outer darkness.",
+      "simulationConfig": {
+        "primaryColor": "#10B981",
+        "secondaryColor": "#38BDF8",
+        "velocityFactor": 1.4,
+        "particleCount": 75,
+        "vectorPattern": "converge"
+      }
+    },
+    {
+      "id": "u5_w2",
+      "word": "belligerent",
+      "ipa": "/bəˈlɪdʒ.ər.ənt/",
+      "pos": "adj.",
+      "definitionEn": "Hostile, aggressive, and eagerly combative; actively seeking confrontation.",
+      "definitionVi": "Hiếu chiến, ngổ ngáo, hung hăng hiếu thắng và luôn chực chờ cãi vã.",
+      "exampleSentence": "His belligerent demeanor during the committee debate alienated even his most steadfast supporters.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "visualMetaphor": "Jagged crimson spikes projecting outward and clashing violently with neighboring energy fields.",
+      "contrastWord": "conciliatory",
+      "contrastDefinitionEn": "Intended to placate, pacify, or reconcile opposing factions.",
+      "contrastVisualMetaphor": "Gentle soothing ripples dissolving abrasive shockwaves into tranquil stillness.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#F97316",
+        "velocityFactor": 2.8,
+        "particleCount": 85,
+        "vectorPattern": "collide"
+      }
+    },
+    {
+      "id": "u5_w3",
+      "word": "capricious",
+      "ipa": "/kəˈprɪʃ.əs/",
+      "pos": "adj.",
+      "definitionEn": "Given to sudden and unaccountable changes of mood, whims, or unpredictable behavior.",
+      "definitionVi": "Thất thường, đồng bóng, sáng nắng chiều mưa, hoàn toàn không thể đoán trước.",
+      "exampleSentence": "Working under such a capricious editor meant that praised drafts were torn up the very next morning.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "visualMetaphor": "A wildly erratic lightning bolt zigzagging arbitrarily between opposite magnetic poles.",
+      "contrastWord": "steadfast",
+      "contrastDefinitionEn": "Resolutely firm, unwavering, and constant in direction and purpose.",
+      "contrastVisualMetaphor": "An immovable granite obelisk beaming a continuous, laser-straight beacon.",
+      "simulationConfig": {
+        "primaryColor": "#A855F7",
+        "secondaryColor": "#EC4899",
+        "velocityFactor": 2.4,
+        "particleCount": 80,
+        "vectorPattern": "oscillate"
+      }
+    },
+    {
+      "id": "u5_w4",
+      "word": "erudite",
+      "ipa": "/ˈer.ʊ.daɪt/",
+      "pos": "adj.",
+      "definitionEn": "Having or showing profound knowledge gained from extensive reading and academic research.",
+      "definitionVi": "Uyên bác, thông thái sâu rộng, tinh thông kinh sử và kiến thức học thuật đỉnh cao.",
+      "exampleSentence": "Her erudite monograph on Byzantine trade networks transformed medieval historiography.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "visualMetaphor": "A radiant crystal tower projecting intricate geometric lattices of illumination across the horizon.",
+      "contrastWord": "ignorant",
+      "contrastDefinitionEn": "Lacking knowledge, awareness, or academic sophistication.",
+      "contrastVisualMetaphor": "A dense murky fog extinguishing flickering sparks of insight.",
+      "simulationConfig": {
+        "primaryColor": "#00F5D4",
+        "secondaryColor": "#6366F1",
+        "velocityFactor": 1.6,
+        "particleCount": 70,
+        "vectorPattern": "ascend"
+      }
+    },
+    {
+      "id": "u5_w5",
+      "word": "mercurial",
+      "ipa": "/mɜːˈkjʊə.ri.əl/",
+      "pos": "adj.",
+      "definitionEn": "Subject to sudden or volatile changes of mood or mind; highly animated and volatile.",
+      "definitionVi": "Tính khí như thủy ngân, biến đổi tâm trạng mau lẹ trong chớp mắt.",
+      "exampleSentence": "The directors mercurial temperament kept the entire theater troupe perpetually on edge.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "visualMetaphor": "Droplets of liquid quicksilver splintering and recombining at dizzying speeds.",
+      "contrastWord": "stoic",
+      "contrastDefinitionEn": "Enduring pain, hardship, or emotional upheaval without displaying feeling or complaint.",
+      "contrastVisualMetaphor": "A silent stone mountain standing tranquil against howling freezing blizzards.",
+      "simulationConfig": {
+        "primaryColor": "#F59E0B",
+        "secondaryColor": "#38BDF8",
+        "velocityFactor": 2.2,
+        "particleCount": 75,
+        "vectorPattern": "oscillate"
+      }
+    },
+    {
+      "id": "u5_w6",
+      "word": "sycophant",
+      "ipa": "/ˈsɪk.ə.fænt/",
+      "pos": "n.",
+      "definitionEn": "A servile, self-seeking flatterer who acts obsequiously toward someone important to gain advantage.",
+      "definitionVi": "Kẻ xu nịnh, luồn cúi bợ đỡ cấp trên để mưu cầu tư lợi cá nhân.",
+      "exampleSentence": "Surrounded by spineless sycophants, the CEO never heard an honest word of critical appraisal.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "visualMetaphor": "A crawling subservient shadow clinging parasitically to the hem of an oversized luminary.",
+      "contrastWord": "maverick",
+      "contrastDefinitionEn": "An independent-minded individual who refuses to conform to a group or party line.",
+      "contrastVisualMetaphor": "A solitary blazing comet carving its own fearless trajectory through the cosmos.",
+      "simulationConfig": {
+        "primaryColor": "#64748B",
+        "secondaryColor": "#94A3B8",
+        "velocityFactor": 1.1,
+        "particleCount": 55,
+        "vectorPattern": "descend"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u5_col1",
+      "columnA": "erudite",
+      "columnB": "scholar",
+      "fullCollocation": "erudite scholar",
+      "meaningEn": "A deeply learned academic possessing vast intellectual mastery.",
+      "meaningVi": "Học giả uyên thâm, nhà nghiên cứu thông tuệ kinh sách.",
+      "example": "He is an extremely erudite scholar of marine ecosystems, renowned worldwide.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY"
+    },
+    {
+      "id": "u5_col2",
+      "columnA": "hopeless",
+      "columnB": "romantic",
+      "fullCollocation": "hopeless romantic",
+      "meaningEn": "A person enamored with idealistic notions of love despite all cynical reality.",
+      "meaningVi": "Kẻ lãng mạn vô phương cứu chữa (luôn tin vào tình yêu màu hồng cổ tích).",
+      "example": "The painful rejection did nothing to extinguish the spark of the hopeless romantic within Jeff.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    },
+    {
+      "id": "u5_col3",
+      "columnA": "dogmatic",
+      "columnB": "conviction",
+      "fullCollocation": "dogmatic conviction",
+      "meaningEn": "An assertive, unbending belief asserted as incontrovertible truth without evidence.",
+      "meaningVi": "Niềm tin giáo điều bảo thủ khăng khăng không nghe ai.",
+      "example": "Her dogmatic conviction that she alone held the truth made constructive dialogue impossible.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u5_col4",
+      "columnA": "curt",
+      "columnB": "dismissal",
+      "fullCollocation": "curt dismissal",
+      "meaningEn": "A rudely brief and brusque rejection.",
+      "meaningVi": "Sự xua đuổi cộc lốc, gạt phắt đi một cách cộc cằn lạnh lùng.",
+      "example": "Her curt dismissal of his proposal crushed whatever fragile confidence he had mustered.",
+      "imageSchemaTag": "FORCE_COLLISION"
+    },
+    {
+      "id": "u5_col5",
+      "columnA": "gregarious",
+      "columnB": "socialite",
+      "fullCollocation": "gregarious socialite",
+      "meaningEn": "A person who is highly sociable, fond of company, and thrives at parties.",
+      "meaningVi": "Người hướng ngoại thích giao du tiệc tùng, chan hòa kết bạn.",
+      "example": "Being a gregarious socialite, he drew immense energy from crowded artistic salons.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u5_col6",
+      "columnA": "stoic",
+      "columnB": "endurance",
+      "fullCollocation": "stoic endurance",
+      "meaningEn": "Calm, impassive resilience in suffering adversity without complaint.",
+      "meaningVi": "Sức chịu đựng khắc kỷ, điềm tĩnh trước nỗi đau mà không than vãn.",
+      "example": "Her stoic endurance during years of grueling medical treatment inspired the whole ward.",
+      "imageSchemaTag": "BALANCE_SHIFT"
+    },
+    {
+      "id": "u5_col7",
+      "columnA": "insatiable",
+      "columnB": "appetite",
+      "fullCollocation": "insatiable appetite",
+      "meaningEn": "An appetite or desire that is impossible to satisfy or quench.",
+      "meaningVi": "Cơn thèm khát không thể thỏa mãn, khao khát vô độ.",
+      "example": "Jeff possessed an insatiable appetite for poetry and romantic literature.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    },
+    {
+      "id": "u5_col8",
+      "columnA": "cursory",
+      "columnB": "glance",
+      "fullCollocation": "cursory glance",
+      "meaningEn": "A hasty, superficial look without paying attention to detail.",
+      "meaningVi": "Cái nhìn lướt qua hờ hững, cái liếc mắt chiếu lệ.",
+      "example": "She barely spared him a cursory glance as she swept out through the conservatory doors.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u5_ds1",
+      "term": "sycophant",
+      "domain": "Social Dynamics",
+      "meaningVi": "Kẻ nịnh bợ luồn cúi bợ đít",
+      "clueEn": "A person who praises powerful people in order to get their approval."
+    },
+    {
+      "id": "u5_ds2",
+      "term": "maverick",
+      "domain": "Personality Archetypes",
+      "meaningVi": "Kẻ lập dị đi ngược dòng số đông",
+      "clueEn": "An unorthodox or independent-minded person who refuses to conform."
+    },
+    {
+      "id": "u5_ds3",
+      "term": "zealot",
+      "domain": "Behavioral Nuances",
+      "meaningVi": "Kẻ cuồng tín cực đoan",
+      "clueEn": "A person who is fanatical and uncompromising in pursuit of religious or political ideals."
+    },
+    {
+      "id": "u5_ds4",
+      "term": "charlatan",
+      "domain": "Social Dynamics",
+      "meaningVi": "Kẻ bịp bợm lừa đảo giả danh chuyên gia",
+      "clueEn": "A person falsely claiming to have a special knowledge or skill; a fraud."
+    },
+    {
+      "id": "u5_ds5",
+      "term": "connoisseur",
+      "domain": "Literary Tropes",
+      "meaningVi": "Chuyên gia sành sỏi thẩm định nghệ thuật",
+      "clueEn": "An expert judge in matters of taste and fine art."
+    },
+    {
+      "id": "u5_ds6",
+      "term": "hermit",
+      "domain": "Psychology",
+      "meaningVi": "Người ẩn sĩ sống ẩn dật lánh đời",
+      "clueEn": "A person living in solitude as a religious discipline or personal preference."
+    },
+    {
+      "id": "u5_ds7",
+      "term": "pragmatist",
+      "domain": "Personality Archetypes",
+      "meaningVi": "Người thực dụng hành động vì hiệu quả thực tế",
+      "clueEn": "A person who is guided more by practical considerations than by ideals."
+    },
+    {
+      "id": "u5_ds8",
+      "term": "indolent",
+      "domain": "Behavioral Nuances",
+      "meaningVi": "Kẻ lười nhác trốn tránh lao động",
+      "clueEn": "Wanting to avoid activity or exertion; habitually lazy."
+    },
+    {
+      "id": "u5_ds9",
+      "term": "impetuous",
+      "domain": "Psychology",
+      "meaningVi": "Kẻ bốc đồng hành động thiếu suy nghĩ",
+      "clueEn": "Acting or done quickly and without thought or care."
+    },
+    {
+      "id": "u5_ds10",
+      "term": "mendacious",
+      "domain": "Behavioral Nuances",
+      "meaningVi": "Kẻ dối trá gian manh bất lương",
+      "clueEn": "Not telling the truth; habitually lying and dishonest."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u5_tri1",
+      "targetWord": "cast",
+      "rootHint": "To throw / Dramatic actors troupe / Rigid plaster casing",
+      "ipa": "/kɑːst/",
+      "meaningVi": "Dàn diễn viên nhạc kịch / Băng bột cố định xương / Phóng cái nhìn hoài nghi",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "The director assembled an exceptionally star-studded theatrical ___ for the West End premiere.",
+        "After breaking his wrist during the rugby scrimmage, his arm was placed in a plaster ___.",
+        "She couldn't help but ___ a suspicious look toward the nervous stranger in the foyer."
+      ],
+      "nuanceNotes": [
+        "Performing arts: collective group of performers.",
+        "Orthopedics: rigid supportive dressing for fractured bones.",
+        "Gaze: directing a sharp glance or shadow."
+      ]
+    },
+    {
+      "id": "u5_tri2",
+      "targetWord": "temper",
+      "rootHint": "Disposition / Heat treatment to harden metal / To moderate with restraint",
+      "ipa": "/ˈtem.pər/",
+      "meaningVi": "Tính khí nóng giận / Tôi luyện kim loại / Tiết chế giảm bớt thái độ",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "sentences": [
+        "Under sustained provocation, the ambassador completely lost his ___ and slammed the microphone.",
+        "Blacksmiths repeatedly quench and heat steel to properly ___ the blade for battle.",
+        "Senior diplomats warned that ambitious rhetoric must be ___ed with pragmatic reality."
+      ],
+      "nuanceNotes": [
+        "Emotional psychology: angry emotional equilibrium.",
+        "Metallurgy: hardening alloy through thermal cycling.",
+        "Rhetoric: softening or moderating an extreme stance."
+      ]
+    },
+    {
+      "id": "u5_tri3",
+      "targetWord": "grave",
+      "rootHint": "Burial tomb / Utterly serious and weighty / Solemn accent mark",
+      "ipa": "/ɡreɪv/",
+      "meaningVi": "Ngôi mộ an nghỉ / Cực kỳ nghiêm trọng khẩn cấp / Nét mặt trầm ngâm",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "sentences": [
+        "Every November, pilgrims placed fresh wreaths of rosemary beside the soldier's ___.",
+        "The surgeon emerged from the operating theater with a deeply ___ expression on his face.",
+        "Violating sovereign airspace carries ___ geopolitical consequences for bilateral treaties."
+      ],
+      "nuanceNotes": [
+        "Mortality: burial excavation.",
+        "Affect: somber, alarming, or solemn demeanor.",
+        "Magnitude: momentous severity of consequence."
+      ]
+    },
+    {
+      "id": "u5_tri4",
+      "targetWord": "pose",
+      "rootHint": "To present a threat or question / Photographic stance / To feign an attitude",
+      "ipa": "/pəʊz/",
+      "meaningVi": "Tạo dáng chụp ảnh / Đặt ra mối đe dọa tiềm tàng / Giả vờ tỏ ra ta đây",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "The models held a dramatic avant-garde ___ under the studio strobe lights.",
+        "Cybersecurity specialists warn that quantum computing will ___ unprecedented risks to encryption.",
+        "He struck an intellectual ___ by carrying unread philosophical tomes in public."
+      ],
+      "nuanceNotes": [
+        "Visual modeling: static physical posture.",
+        "Risk analysis: presenting or constituting a hazard.",
+        "Social pretension: affecting an artificial persona."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u5_mf1",
+      "rootWord": "mendacious",
+      "meaningVi": "Dối trá, xảo trá",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "forms": {
+        "noun": [
+          "mendacity"
+        ],
+        "adjective": [
+          "mendacious"
+        ],
+        "adverb": [
+          "mendaciously"
+        ]
+      },
+      "transformationPrompt": "The sheer ___ (mendacious) of the deposed prime ministers testimony stunned the investigative committee.",
+      "targetAnswer": "mendacity",
+      "targetPos": "noun",
+      "explanationVi": "Mendacity là danh từ C2 chỉ sự dối trá, tính xảo ngôn trơ trẽn."
+    },
+    {
+      "id": "u5_mf2",
+      "rootWord": "belligerent",
+      "meaningVi": "Hiếu chiến, ngổ ngáo",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "forms": {
+        "noun": [
+          "belligerence",
+          "belligerency"
+        ],
+        "adjective": [
+          "belligerent"
+        ],
+        "adverb": [
+          "belligerently"
+        ]
+      },
+      "transformationPrompt": "The envoys unprovoked ___ (belligerent) doomed what was supposed to be a diplomatic peace summit.",
+      "targetAnswer": "belligerence",
+      "targetPos": "noun",
+      "explanationVi": "Belligerence là danh từ chỉ thái độ hung hăng khiêu khích."
+    },
+    {
+      "id": "u5_mf3",
+      "rootWord": "stoic",
+      "meaningVi": "Khắc kỷ, chịu đựng không than thở",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "forms": {
+        "noun": [
+          "stoicism"
+        ],
+        "adjective": [
+          "stoic",
+          "stoical"
+        ],
+        "adverb": [
+          "stoically"
+        ]
+      },
+      "transformationPrompt": "She endured the excruciating setbacks with admirable ___ (stoic), never once uttering a complaint.",
+      "targetAnswer": "stoicism",
+      "targetPos": "noun",
+      "explanationVi": "Stoicism là chủ nghĩa khắc kỷ, tinh thần điềm tĩnh chịu đựng nghịch cảnh."
+    },
+    {
+      "id": "u5_mf4",
+      "rootWord": "erudite",
+      "meaningVi": "Uyên bác, thông thái",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "forms": {
+        "noun": [
+          "erudition"
+        ],
+        "adjective": [
+          "erudite"
+        ],
+        "adverb": [
+          "eruditely"
+        ]
+      },
+      "transformationPrompt": "The panel was captivated by the profound depth of her scholarly ___ (erudite).",
+      "targetAnswer": "erudition",
+      "targetPos": "noun",
+      "explanationVi": "Erudition là danh từ C2 chỉ sự uyên bác và kiến thức học thuật thâm sâu."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u5_card1",
+      "word": "affable",
+      "ipa": "/ˈæf.ə.bəl/",
+      "archetypeTitle": "The Gracious Diplomat",
+      "meaningEn": "Warm, polite, pleasant, and exceptionally easy to talk to.",
+      "meaningVi": "Hòa nhã, ân cần, hòa đồng dễ mến.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "powerStat": 86,
+      "precisionStat": 95,
+      "semanticOpposite": "aloof",
+      "oppositeMeaningEn": "Distant, detached, and cold in social interactions.",
+      "distractors": [
+        "belligerent",
+        "capricious",
+        "dogmatic"
+      ],
+      "battleScenario": "The Gracious Diplomat disarms hostile tensions with genuine warmth!",
+      "counterExplanationVi": "Affable (hòa nhã, thân thiện dễ gần) đối lập trực tiếp với aloof (lạnh lùng, xa cách, trịch thượng)."
+    },
+    {
+      "id": "u5_card2",
+      "word": "belligerent",
+      "ipa": "/bəˈlɪdʒ.ər.ənt/",
+      "archetypeTitle": "The Warlord Vanguard",
+      "meaningEn": "Fiercely argumentative, aggressive, and spoiling for a brawl.",
+      "meaningVi": "Hiếu chiến, thích gây hấn hung hăng.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "powerStat": 95,
+      "precisionStat": 87,
+      "semanticOpposite": "conciliatory",
+      "oppositeMeaningEn": "Peacemaking, eager to appease and harmonize.",
+      "distractors": [
+        "stoic",
+        "erudite",
+        "gregarious"
+      ],
+      "battleScenario": "The Warlord roars and initiates an all-out confrontation!",
+      "counterExplanationVi": "Belligerent (hiếu chiến hung hăng) bị khắc chế triệt để bởi tính cách hòa giải ôn tồn (conciliatory)."
+    },
+    {
+      "id": "u5_card3",
+      "word": "capricious",
+      "ipa": "/kəˈprɪʃ.əs/",
+      "archetypeTitle": "The Chaos Monarch",
+      "meaningEn": "Whimsically erratic, impulsive, and constantly shifting moods without warning.",
+      "meaningVi": "Sáng nắng chiều mưa, bốc đồng thất thường.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "powerStat": 89,
+      "precisionStat": 84,
+      "semanticOpposite": "steadfast",
+      "oppositeMeaningEn": "Unwavering, constant, and rock-solid in resolve and loyalty.",
+      "distractors": [
+        "aloof",
+        "affable",
+        "indolent"
+      ],
+      "battleScenario": "The Chaos Monarch abruptly reverses the kingdom's decrees on a whim!",
+      "counterExplanationVi": "Capricious (thất thường, thay đổi xoành xoạch) đối lập với sự kiên định vững chãi (steadfast)."
+    },
+    {
+      "id": "u5_card4",
+      "word": "erudite",
+      "ipa": "/ˈer.ʊ.daɪt/",
+      "archetypeTitle": "The High Archon",
+      "meaningEn": "Possessing profound scholarly learning and vast intellectual mastery.",
+      "meaningVi": "Bậc học giả thông tuệ kim cổ, trí tuệ uyên thâm.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "powerStat": 94,
+      "precisionStat": 98,
+      "semanticOpposite": "ignorant",
+      "oppositeMeaningEn": "Lacking basic knowledge, uneducated, and illiterate in deep matters.",
+      "distractors": [
+        "cynical",
+        "impetuous",
+        "mercurial"
+      ],
+      "battleScenario": "The High Archon analyzes opponent weaknesses through ancient treatises!",
+      "counterExplanationVi": "Erudite (uyên bác thông thái) đối lập tuyệt đối với sự ngu ngơ vô tri (ignorant)."
+    },
+    {
+      "id": "u5_card5",
+      "word": "sycophant",
+      "ipa": "/ˈsɪk.ə.fænt/",
+      "archetypeTitle": "The Golden Courtier",
+      "meaningEn": "An obsequious flatterer who curries favor with the powerful for gain.",
+      "meaningVi": "Kẻ ton hót luồn cúi bợ đít quyền lực.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "powerStat": 78,
+      "precisionStat": 90,
+      "semanticOpposite": "maverick",
+      "oppositeMeaningEn": "A fierce nonconformist who defies authorities and carves an independent path.",
+      "distractors": [
+        "zealot",
+        "hermit",
+        "charlatan"
+      ],
+      "battleScenario": "The Courtier showers the ruler in honeyed false praise to secure promotion!",
+      "counterExplanationVi": "Kẻ bợ đỡ nịnh thần (sycophant) bị khắc chế bởi cánh chim độc lập không chịu luồn cúi (maverick)."
+    },
+    {
+      "id": "u5_card6",
+      "word": "quixotic",
+      "ipa": "/kwɪkˈsɒt.ɪk/",
+      "archetypeTitle": "The Knight of Windmills",
+      "meaningEn": "Exceedingly idealistic, unrealistic, and chasing romantic impossibilities.",
+      "meaningVi": "Lãng mạn hảo huyền viển vông như Đông Ki-sốt đánh cối xay gió.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "powerStat": 84,
+      "precisionStat": 89,
+      "semanticOpposite": "pragmatic",
+      "oppositeMeaningEn": "Grounded in sensible, realistic, and practical calculations.",
+      "distractors": [
+        "dogmatic",
+        "eccentric",
+        "benevolent"
+      ],
+      "battleScenario": "The Knight charges full gallop at insurmountable imaginary windmills!",
+      "counterExplanationVi": "Quixotic (mơ mộng viển vông, hảo huyền phi thực tế) đối lập với pragmatic (thực tế, tỉnh táo và hữu dụng)."
+    },
+    {
+      "id": "u5_card7",
+      "word": "stoic",
+      "ipa": "/ˈstəʊ.ɪk/",
+      "archetypeTitle": "The Granite Sentinel",
+      "meaningEn": "Enduring immense hardship or agony without displaying outward emotion.",
+      "meaningVi": "Người khắc kỷ, điềm nhiên trước bão giông thử thách.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "powerStat": 93,
+      "precisionStat": 91,
+      "semanticOpposite": "mercurial",
+      "oppositeMeaningEn": "Volatile, wildly expressive, and emotionally unpredictable.",
+      "distractors": [
+        "affable",
+        "erudite",
+        "indolent"
+      ],
+      "battleScenario": "The Sentinel absorbs a thunderous blow without blinking an eye!",
+      "counterExplanationVi": "Stoic (điềm đạm khắc kỷ, vững như bàn thạch) đối nghịch với mercurial (dễ dao động, xúc cảm thất thường)."
+    },
+    {
+      "id": "u5_card8",
+      "word": "zealot",
+      "ipa": "/ˈzel.ət/",
+      "archetypeTitle": "The Inferno Inquisitor",
+      "meaningEn": "A fanatical and uncompromising partisan in pursuit of radical dogmas.",
+      "meaningVi": "Kẻ cuồng tín mù quáng, bất chấp lý lẽ.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "powerStat": 96,
+      "precisionStat": 85,
+      "semanticOpposite": "moderate",
+      "oppositeMeaningEn": "A reasonable person favoring centrist compromise and calm restraint.",
+      "distractors": [
+        "connoisseur",
+        "hermit",
+        "sycophant"
+      ],
+      "battleScenario": "The Inquisitor brandishes an unyielding manifesto that condemns all dissent!",
+      "counterExplanationVi": "Zealot (kẻ cuồng tín cực đoan) bị khắc chế bởi người theo chủ nghĩa ôn hòa chừng mực (moderate)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u5_bin1",
+      "wordA": "ingenious",
+      "wordB": "ingenuous",
+      "contextSentence": "It was rather ___ of Jeff to believe that a simple bouquet would make the neighbor girl fall into his arms.",
+      "correctWord": "ingenuous",
+      "distinctionVi": "Ingenuous là ngây thơ, khờ dại, chất phác thiếu trải đời; Ingenious là tài tình, khéo léo, phát minh thông minh."
+    },
+    {
+      "id": "u5_bin2",
+      "wordA": "elicit",
+      "wordB": "illicit",
+      "contextSentence": "At first when I gently tried to ___ an answer from his bruised lips, he stared vacantly at the ceiling.",
+      "correctWord": "elicit",
+      "distinctionVi": "Elicit là động từ khơi gợi, moi ra thông tin; Illicit là tính từ chỉ hành vi phi pháp, trái luật."
+    },
+    {
+      "id": "u5_bin3",
+      "wordA": "aloof",
+      "wordB": "affable",
+      "contextSentence": "Despite her public image as an approachable leader, in private meetings she appeared distant and decidedly ___.",
+      "correctWord": "aloof",
+      "distinctionVi": "Aloof là xa cách, lạnh lùng, không hòa đồng; Affable là niềm nở, thân thiện, dễ bắt chuyện."
+    },
+    {
+      "id": "u5_bin4",
+      "wordA": "insolent",
+      "wordB": "indolent",
+      "contextSentence": "The headmaster suspended the student not for being lazy, but for his openly ___ and disrespectful backtalk.",
+      "correctWord": "insolent",
+      "distinctionVi": "Insolent là láo xược, xấc xược thô lỗ; Indolent là lười nhác, lười biếng chảy thây."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "Story: The Hopeless Romantic",
+    "subtitleVi": "Chuyện Chàng Khờ Si Tình — Bi Kịch & Hy Vọng Của Jeff",
+    "settingDescription": "Downs Road suburban cul-de-sac. Poor Jeff has nursed an unrequited infatuation for Martha Higgins for five long years.",
+    "segments": [
+      {
+        "id": "u5_nar1",
+        "chapterLabel": "Chapter I: The Unrequited Obsession",
+        "speakerOrMood": "Jeff's Big Brother (Amused & Skeptical)",
+        "promptTextBefore": "Ever since the Joneses moved into 37 Downs Road, poor Jeff had been hopelessly ",
+        "promptTextAfter": " with Martha Higgins, the neighbors daughter.",
+        "correctWord": "infatuated",
+        "imageSchemaTag": "PATH_TRAJECTORY",
+        "choices": [
+          {
+            "word": "infatuated",
+            "isCorrect": true,
+            "consequenceTitle": "Cupid's Blindfold",
+            "whatIfFeedbackEn": "Jeff wanders into dreamland, convinced that his five-year schoolboy crush is cosmic destiny.",
+            "nuanceExplanationVi": "Infatuated with someone là say mê đắm đuối đến mờ mắt vì ai đó."
+          },
+          {
+            "word": "mesmerized",
+            "isCorrect": false,
+            "consequenceTitle": "Hypnotic Stasis",
+            "whatIfFeedbackEn": "Being merely mesmerized describes momentary sensory fascination, not a five-year chronic emotional obsession.",
+            "nuanceExplanationVi": "Mesmerized chỉ trạng thái bị hớp hồn nhất thời, không đi liền với cụm tình cảm lâu năm 'infatuated with'."
+          },
+          {
+            "word": "seduced",
+            "isCorrect": false,
+            "consequenceTitle": "Scandalous Overstatement",
+            "whatIfFeedbackEn": "Martha was an 18-year-old girl who barely knew Jeff existed; claiming she seduced him is an outrageous fabrication!",
+            "nuanceExplanationVi": "Seduced là bị dụ dỗ quyến rũ thể xác, hoàn toàn sai lệch tính cách tình cảm đơn phương trong sáng của Jeff."
+          },
+          {
+            "word": "entertained",
+            "isCorrect": false,
+            "consequenceTitle": "Casual Dismissal",
+            "whatIfFeedbackEn": "Saying he was merely entertained reduces high-stakes puppy love to an afternoon circus show.",
+            "nuanceExplanationVi": "Entertained chỉ mang tính giải trí thư giãn, không thể hiện tình yêu cuồng nhiệt."
+          }
+        ]
+      },
+      {
+        "id": "u5_nar2",
+        "chapterLabel": "Chapter II: The Shared Passion",
+        "speakerOrMood": "Narrator (Wry & Knowing)",
+        "promptTextBefore": "Martha became more and more of an enigma. She had a strong ",
+        "promptTextAfter": " for the Arts, and it wasn't long until Jeff also developed an insatiable appetite for poetry.",
+        "correctWord": "penchant",
+        "imageSchemaTag": "CONTAINER_BOUNDARY",
+        "choices": [
+          {
+            "word": "penchant",
+            "isCorrect": true,
+            "consequenceTitle": "The Muse Awakens",
+            "whatIfFeedbackEn": "Jeff buys half the Shakespeare canon overnight in a desperate bid to appear erudite before Martha.",
+            "nuanceExplanationVi": "A penchant for something là sở thích mãnh liệt, niềm thiên hướng đam mê nghệ thuật."
+          },
+          {
+            "word": "likeness",
+            "isCorrect": false,
+            "consequenceTitle": "Portrait Confusion",
+            "whatIfFeedbackEn": "Saying she had a likeness for the arts sounds like her face physically resembles an oil painting.",
+            "nuanceExplanationVi": "Likeness là sự tương đồng về ngoại hình hoặc bức chân dung, không phải sở thích."
+          },
+          {
+            "word": "affirmation",
+            "isCorrect": false,
+            "consequenceTitle": "Bureaucratic Art",
+            "whatIfFeedbackEn": "An affirmation for the arts sounds like Martha is a tax auditor certifying an art exhibition grant.",
+            "nuanceExplanationVi": "Affirmation là sự khẳng định xác nhận, không dùng chỉ sở thích cá nhân."
+          },
+          {
+            "word": "brainteaser",
+            "isCorrect": false,
+            "consequenceTitle": "Crossword Obsession",
+            "whatIfFeedbackEn": "Turning Martha's artistic soul into a brainteaser makes her sound like a Sunday Sudoku booklet.",
+            "nuanceExplanationVi": "Brainteaser là câu đố mẹo trí tuệ, hoàn toàn lạc quẻ."
+          }
+        ]
+      },
+      {
+        "id": "u5_nar3",
+        "chapterLabel": "Chapter III: The Wooden Mallet",
+        "speakerOrMood": "Jeff (Dazed & Concussed)",
+        "promptTextBefore": "Jeff professed his undying devotion on her doorstep, but instead of embracing him, a terrified Martha kedonked him fairly ",
+        "promptTextAfter": " over the head with a wooden mallet!",
+        "correctWord": "viciously",
+        "imageSchemaTag": "FORCE_COLLISION",
+        "choices": [
+          {
+            "word": "viciously",
+            "isCorrect": true,
+            "consequenceTitle": "Head Injury Achieved",
+            "whatIfFeedbackEn": "BONK! Poor Jeff crumples onto the porch with a lump the size of an apple throbbing on his temple.",
+            "nuanceExplanationVi": "Viciously miêu tả cú đập mạnh mẽ, dữ dội và tàn nhẫn của chiếc búa gỗ tự vệ."
+          },
+          {
+            "word": "tamely",
+            "isCorrect": false,
+            "consequenceTitle": "Gentle Love Tap",
+            "whatIfFeedbackEn": "A tame tap with a mallet would not knock a teenage boy unconscious onto the pavement for two hours.",
+            "nuanceExplanationVi": "Tamely là nhu mì yếu ớt, không giải thích được chấn thương bầm dập của Jeff."
+          },
+          {
+            "word": "infrequently",
+            "isCorrect": false,
+            "consequenceTitle": "Rhythm Malfunction",
+            "whatIfFeedbackEn": "Kedonking someone infrequently sounds like Martha strikes him on the head once every leap year.",
+            "nuanceExplanationVi": "Infrequently là hiếm khi, không miêu tả được cường độ của một cú nện búa tức thời."
+          },
+          {
+            "word": "accidentally",
+            "isCorrect": false,
+            "consequenceTitle": "Accidental Carpenter",
+            "whatIfFeedbackEn": "You cannot accidentally wind up a wooden mallet and strike an admirer squarely on the skull.",
+            "nuanceExplanationVi": "Văn cảnh bài đọc cho thấy cô bé hoảng loạn vung búa tự vệ dữ dội (viciously)."
+          }
+        ]
+      },
+      {
+        "id": "u5_nar4",
+        "chapterLabel": "Chapter IV: The Unquenchable Spark",
+        "speakerOrMood": "Big Brother (Shaking Head in Resigned Awe)",
+        "promptTextBefore": "Just when all seemed lost, Martha arrived with flowers and a get-well card. Instantly, the spark of the hopeless romantic was ",
+        "promptTextAfter": " in Jeff's starry eyes.",
+        "correctWord": "rekindled",
+        "imageSchemaTag": "BALANCE_SHIFT",
+        "choices": [
+          {
+            "word": "rekindled",
+            "isCorrect": true,
+            "consequenceTitle": "The Eternal Flame",
+            "whatIfFeedbackEn": "Despite the gargantuan concussion, Jeff is already scheming his next grand romantic gesture!",
+            "nuanceExplanationVi": "Rekindle a spark là collocation C2 chuẩn xác nhất chỉ việc nhen nhóm lại ngọn lửa tình cảm."
+          },
+          {
+            "word": "resuscitated",
+            "isCorrect": false,
+            "consequenceTitle": "Emergency CPR",
+            "whatIfFeedbackEn": "Resuscitate applies to a drowned patient needing oxygen, not a poetic spark in a boy's heart.",
+            "nuanceExplanationVi": "Resuscitate là hô hấp nhân tạo ép tim, dùng cho tia sáng tình yêu là lạc phong cách."
+          },
+          {
+            "word": "revamped",
+            "isCorrect": false,
+            "consequenceTitle": "Interior Remodel",
+            "whatIfFeedbackEn": "Revamping Jeff's romantic spark makes it sound like a discounted living room furniture set.",
+            "nuanceExplanationVi": "Revamp là tân trang sửa chữa nội thất/hệ thống, không dùng cho cảm xúc thiêng liêng."
+          },
+          {
+            "word": "resurrected",
+            "isCorrect": false,
+            "consequenceTitle": "The Undead Crush",
+            "whatIfFeedbackEn": "Resurrected makes Jeff's infatuation sound like a terrifying zombie climbing out of a suburban grave.",
+            "nuanceExplanationVi": "Rekindled là cách kết hợp tự nhiên nhất với 'spark of the hopeless romantic'."
+          }
+        ]
+      }
+    ]
+  }
+}

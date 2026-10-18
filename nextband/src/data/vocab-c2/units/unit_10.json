@@ -1,0 +1,199 @@
+{
+  "unitNumber": 10,
+  "unitCode": "unit_10",
+  "titleEn": "Entertainment Industry and Mass Media",
+  "titleVi": "Công nghiệp Giải trí, Truyền thông & Văn hóa Đại chúng",
+  "themeSummaryVi": "Điều tra báo chí, bản quyền tác quyền, rating truyền hình, marketing lan truyền và văn hóa giật gân.",
+  "pdfPages": "Trang 40–47",
+  "schemaItems": [
+    {
+      "id": "u10_w1",
+      "word": "sensationalism",
+      "ipa": "/senˈseɪ.ʃən.əl.ɪ.zəm/",
+      "pos": "n.",
+      "definitionEn": "The use of shocking stories or language at the expense of accuracy to provoke interest.",
+      "definitionVi": "Chủ nghĩa giật gân câu khách, thổi phồng tin đồn giật gân để hút view.",
+      "exampleSentence": "Tabloid editors were heavily rebuked for resorting to crude sensationalism during the royal tragedy.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "visualMetaphor": "Loud flickering neon strobe lights drowning out quiet factual displays.",
+      "contrastWord": "objective reporting",
+      "contrastDefinitionEn": "Journalism adhering strictly to verified fact and fair balance.",
+      "contrastVisualMetaphor": "A calm clear glass pane reflecting clean sunlight without distortion.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#F59E0B",
+        "velocityFactor": 2.4,
+        "particleCount": 85,
+        "vectorPattern": "collide"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u10_col1",
+      "columnA": "prime",
+      "columnB": "time",
+      "fullCollocation": "prime time",
+      "meaningEn": "The hours with the largest viewing audience on television.",
+      "meaningVi": "Khung giờ vàng phát sóng truyền hình có đông khán giả nhất.",
+      "example": "Advertising slots during Sunday prime time command millions in revenue.",
+      "imageSchemaTag": "BALANCE_SHIFT"
+    },
+    {
+      "id": "u10_col2",
+      "columnA": "investigative",
+      "columnB": "journalism",
+      "fullCollocation": "investigative journalism",
+      "meaningEn": "A form of reporting where journalists deeply investigate corrupt matters.",
+      "meaningVi": "Báo chí điều tra phanh phui tham nhũng và khuất tất.",
+      "example": "The Watergate scandal remains a high-water mark for courageous investigative journalism.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u10_ds1",
+      "term": "watershed",
+      "domain": "Broadcasting",
+      "meaningVi": "Thời điểm sau 9h tối được phát sóng chương trình người lớn",
+      "clueEn": "The time after which programmes with adult content may be broadcast."
+    },
+    {
+      "id": "u10_ds2",
+      "term": "box-office",
+      "domain": "Film Industry",
+      "meaningVi": "Doanh thu phòng vé rạp chiếu phim",
+      "clueEn": "Commercial cinema ticket sales and takings."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u10_tri1",
+      "targetWord": "spot",
+      "rootHint": "Commercial slot / Physical blemish / To notice from afar",
+      "ipa": "/spɒt/",
+      "meaningVi": "Suất chiếu quảng cáo 30 giây (commercial spot) / Vết mẩn đỏ / Nhận ra nhận diện",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "Automakers paid unprecedented sums for a 30-second commercial ___ during the Super Bowl.",
+        "The dermatologist confirmed the dark ___ on his cheek was completely benign.",
+        "Trained lookouts were the first to ___ the incoming fleet on the horizon."
+      ],
+      "nuanceNotes": [
+        "Advertising: broadcast time slot.",
+        "Dermatology: skin lesion.",
+        "Perception: visual detection."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u10_mf1",
+      "rootWord": "demography",
+      "meaningVi": "Nhân khẩu học, đối tượng khán giả",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "demography",
+          "demographic"
+        ],
+        "adjective": [
+          "demographic"
+        ],
+        "adverb": [
+          "demographically"
+        ]
+      },
+      "transformationPrompt": "The primary target ___ (demography) for this reality gaming show is males aged 18 to 25.",
+      "targetAnswer": "demographic",
+      "targetPos": "noun",
+      "explanationVi": "Target demographic là nhóm khán giả mục tiêu theo độ tuổi và giới tính."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u10_card1",
+      "word": "paparazzo",
+      "ipa": "/ˌpæp.ərˈæt.səʊ/",
+      "archetypeTitle": "The Stalker Lens",
+      "meaningEn": "A freelance photographer who aggressively pursues celebrities for candid snapshots.",
+      "meaningVi": "Thợ săn ảnh lá cải săn đuổi đời tư nghệ sĩ.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "powerStat": 82,
+      "precisionStat": 91,
+      "semanticOpposite": "documentarian",
+      "oppositeMeaningEn": "A principled filmmaker creating truthful educational documentaries with consent.",
+      "distractors": [
+        "connoisseur",
+        "maverick",
+        "autocrat"
+      ],
+      "battleScenario": "The Stalker Lens flashes blinded strobe bursts to provoke an explosive celebrity meltdown!",
+      "counterExplanationVi": "Kẻ săn ảnh đời tư xâm phạm quyền riêng tư (paparazzo) đối lập với nhà làm phim tài liệu nhân văn (documentarian)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u10_bin1",
+      "wordA": "libel",
+      "wordB": "slander",
+      "contextSentence": "Because the false defamatory accusation was printed in a widely circulated newspaper, she sued for ___.",
+      "correctWord": "libel",
+      "distinctionVi": "Libel là phỉ báng bôi nhọ bằng văn bản xuất bản; Slander là bôi nhọ bằng lời nói miệng."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "Breaking the Story",
+    "subtitleVi": "Phía Sau Bản Tin Độc Quyền",
+    "settingDescription": "The bustling national newsroom on deadline night as evidence of a high-level government coverup lands.",
+    "segments": [
+      {
+        "id": "u10_nar1",
+        "chapterLabel": "Chapter I: The Midnight Scoop",
+        "speakerOrMood": "Editor-in-Chief (Adrenaline-Fueled & Gritty)",
+        "promptTextBefore": "Hold the front page! This leaked audio is the definition of groundbreaking investigative ",
+        "promptTextAfter": "; prepare the special morning edition.",
+        "correctWord": "journalism",
+        "imageSchemaTag": "PATH_TRAJECTORY",
+        "choices": [
+          {
+            "word": "journalism",
+            "isCorrect": true,
+            "consequenceTitle": "Pulitzer Contender",
+            "whatIfFeedbackEn": "Rotary printing presses roll at dawn; the scoop shocks the political establishment.",
+            "nuanceExplanationVi": "Investigative journalism là thể loại báo chí điều tra danh giá."
+          },
+          {
+            "word": "sensationalism",
+            "isCorrect": false,
+            "consequenceTitle": "Tabloid Degradation",
+            "whatIfFeedbackEn": "Calling your own Pulitzer report 'sensationalism' discredits the evidence before breakfast.",
+            "nuanceExplanationVi": "Sensationalism là chiêu trò giật gân rẻ tiền, làm giảm uy tín bài báo."
+          },
+          {
+            "word": "remission",
+            "isCorrect": false,
+            "consequenceTitle": "Medical Misfire",
+            "whatIfFeedbackEn": "Newsrooms do not publish investigative remissions.",
+            "nuanceExplanationVi": "Remission là thuật ngữ y học về thuyên giảm bệnh."
+          },
+          {
+            "word": "camaraderie",
+            "isCorrect": false,
+            "consequenceTitle": "Emotional Mismatch",
+            "whatIfFeedbackEn": "You cannot print investigative camaraderie on newsprint.",
+            "nuanceExplanationVi": "Camaraderie là tình bạn đồng chí, không phải thể loại báo chí."
+          }
+        ]
+      }
+    ]
+  },
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Journalism",
+    "Broadcasting",
+    "Film Industry",
+    "Advertising",
+    "Digital Streaming"
+  ]
+}

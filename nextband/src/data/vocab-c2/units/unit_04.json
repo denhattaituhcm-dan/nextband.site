@@ -1,0 +1,785 @@
+{
+  "unitNumber": 4,
+  "unitCode": "unit_04",
+  "titleEn": "Crime and Punishment",
+  "titleVi": "Tội phạm, Công lý & Hệ thống Tư pháp Hình sự",
+  "themeSummaryVi": "Hệ thống thuật ngữ tư pháp C2 tinh vi: tội danh, phán quyết, tình tiết giảm nhẹ, dẫn độ và các mức án hình sự.",
+  "pdfPages": "Trang 16–19",
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Criminal Law",
+    "Forensics",
+    "Judicial Process",
+    "Penology",
+    "Law Enforcement"
+  ],
+  "schemaItems": [
+    {
+      "id": "u4_w1",
+      "word": "exonerate",
+      "ipa": "/ɪɡˈzɒn.ə.reɪt/",
+      "pos": "v.",
+      "definitionEn": "To officially absolve someone from blame or a criminal charge after conclusive proof.",
+      "definitionVi": "Minh oan, tuyên bố vô tội và giải phóng khỏi mọi cáo buộc hình sự.",
+      "exampleSentence": "Fresh post-conviction DNA evidence completely exonerated the wrongly imprisoned defendant.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "visualMetaphor": "A luminous figure breaking free from heavy iron shackles into radiant open space.",
+      "contrastWord": "incriminate",
+      "contrastDefinitionEn": "To make someone appear guilty of a crime or wrongdoing.",
+      "contrastVisualMetaphor": "Dark constriction bands wrapping tightly around an entrapped silhouette.",
+      "simulationConfig": {
+        "primaryColor": "#00F5D4",
+        "secondaryColor": "#38BDF8",
+        "velocityFactor": 2.2,
+        "particleCount": 80,
+        "vectorPattern": "diverge"
+      }
+    },
+    {
+      "id": "u4_w2",
+      "word": "extenuating",
+      "ipa": "/ɪkˈsten.ju.eɪ.tɪŋ/",
+      "pos": "adj.",
+      "definitionEn": "Serving to lessen the apparent seriousness or guilt of a crime (mitigating).",
+      "definitionVi": "Mang tính giảm nhẹ (hoàn cảnh xoa dịu mức độ nghiêm trọng của hành vi vi phạm).",
+      "exampleSentence": "The magistrate imposed a suspended sentence on account of undeniable extenuating circumstances.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "visualMetaphor": "A heavy tilted scale gently swinging back toward level equilibrium under a warm protective light.",
+      "contrastWord": "aggravated",
+      "contrastDefinitionEn": "Made more severe, violent, or heinous through deliberate malice.",
+      "contrastVisualMetaphor": "A harsh spike abruptly overloading a fragile scale with jagged fiery shockwaves.",
+      "simulationConfig": {
+        "primaryColor": "#10B981",
+        "secondaryColor": "#F59E0B",
+        "velocityFactor": 1.2,
+        "particleCount": 65,
+        "vectorPattern": "oscillate"
+      }
+    },
+    {
+      "id": "u4_w3",
+      "word": "recidivism",
+      "ipa": "/rɪˈsɪd.ɪ.vɪ.zəm/",
+      "pos": "n.",
+      "definitionEn": "The tendency of a convicted criminal to relapse into habitual criminal behavior.",
+      "definitionVi": "Tình trạng tái phạm tội sau khi thụ án; thói quen ngựa quen đường cũ.",
+      "exampleSentence": "Rigorous vocational rehabilitation programmes in penitentiaries drastically reduce the rate of recidivism.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "visualMetaphor": "A cyclical recursive orbital loop endlessly dragging a wandering particle back into an obsidian vortex.",
+      "contrastWord": "rehabilitation",
+      "contrastDefinitionEn": "The restoration of someone to a useful and constructive place in society.",
+      "contrastVisualMetaphor": "A straight ascending golden vector breaking through a recursive ring.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#7F1D1D",
+        "velocityFactor": 1.8,
+        "particleCount": 70,
+        "vectorPattern": "converge"
+      }
+    },
+    {
+      "id": "u4_w4",
+      "word": "incarcerate",
+      "ipa": "/ɪnˈkɑː.sər.eɪt/",
+      "pos": "v.",
+      "definitionEn": "To imprison, confine, or lock someone up in a penitentiary.",
+      "definitionVi": "Tống giam, giam giữ trong nhà tù kiên cố.",
+      "exampleSentence": "Following the landmark ruling, the ringleader was incarcerated in maximum security for twenty years.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "visualMetaphor": "Heavy lattice force-bars slamming shut and isolating a particle inside an impenetrable core.",
+      "contrastWord": "parole",
+      "contrastDefinitionEn": "The conditional early release of a prisoner prior to completing full sentence.",
+      "contrastVisualMetaphor": "A sliding laser barrier parting smoothly to permit controlled forward passage.",
+      "simulationConfig": {
+        "primaryColor": "#94A3B8",
+        "secondaryColor": "#475569",
+        "velocityFactor": 1.4,
+        "particleCount": 60,
+        "vectorPattern": "converge"
+      }
+    },
+    {
+      "id": "u4_w5",
+      "word": "quash",
+      "ipa": "/kwɒʃ/",
+      "pos": "v.",
+      "definitionEn": "To reject or void an official verdict by legal judicial procedure.",
+      "definitionVi": "Hủy bỏ, bác bỏ hoàn toàn một bản án/phán quyết sai lệch.",
+      "exampleSentence": "The Court of Appeal moved to quash the conviction after forensic falsification was exposed.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "visualMetaphor": "A massive crystalline gavel striking down and shattering a flawed stone tablet into dust.",
+      "contrastWord": "uphold",
+      "contrastDefinitionEn": "To confirm or support a legal decision which has been questioned.",
+      "contrastVisualMetaphor": "Reinforcing columns rising up to buttress and lock a foundation stone in place.",
+      "simulationConfig": {
+        "primaryColor": "#F43F5E",
+        "secondaryColor": "#881337",
+        "velocityFactor": 2.6,
+        "particleCount": 85,
+        "vectorPattern": "collide"
+      }
+    },
+    {
+      "id": "u4_w6",
+      "word": "heinous",
+      "ipa": "/ˈheɪ.nəs/",
+      "pos": "adj.",
+      "definitionEn": "Utterly odious, wicked, and shocking to all moral sensibilities.",
+      "definitionVi": "Tàn độc, ghê tởm, cực kỳ dã man đến mức rúng động lương tri.",
+      "exampleSentence": "The judge described the premeditated arson as the most heinous infraction to enter his courtroom.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "visualMetaphor": "Corrosive black lightning tendrils tearing violently across a peaceful geometric grid.",
+      "contrastWord": "venial",
+      "contrastDefinitionEn": "Denoting a sin or offense that is minor and excusable.",
+      "contrastVisualMetaphor": "A tiny ripple dissolving softly into calm still water.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#F59E0B",
+        "velocityFactor": 2.4,
+        "particleCount": 90,
+        "vectorPattern": "collide"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u4_col1",
+      "columnA": "extenuating",
+      "columnB": "circumstances",
+      "fullCollocation": "extenuating circumstances",
+      "meaningEn": "Conditions that make a criminal act appear less severe and warrant leniency.",
+      "meaningVi": "Tình tiết giảm nhẹ (hoàn cảnh xoa dịu mức án).",
+      "example": "He was let off with a caution on account of verifiable extenuating circumstances.",
+      "imageSchemaTag": "BALANCE_SHIFT"
+    },
+    {
+      "id": "u4_col2",
+      "columnA": "miscarriage of",
+      "columnB": "justice",
+      "fullCollocation": "miscarriage of justice",
+      "meaningEn": "A failure of a court of law to attain justice, typically sentencing an innocent party.",
+      "meaningVi": "Án oan sai; sự đổ vỡ của công lý do sai lệch tố tụng.",
+      "example": "The wrongful imprisonment of the Guildford Four stands as a notorious miscarriage of justice.",
+      "imageSchemaTag": "BALANCE_SHIFT"
+    },
+    {
+      "id": "u4_col3",
+      "columnA": "custodial",
+      "columnB": "sentence",
+      "fullCollocation": "custodial sentence",
+      "meaningEn": "A judicial sentence requiring imprisonment or detention in an institution.",
+      "meaningVi": "Bản án phạt tù giam (bắt buộc phải thụ án trong trại giam).",
+      "example": "Given the gravity of the assault, the judge handed down an immediate custodial sentence.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u4_col4",
+      "columnA": "suspended",
+      "columnB": "sentence",
+      "fullCollocation": "suspended sentence",
+      "meaningEn": "A prison sentence that will only be served if the convict reoffends within a set duration.",
+      "meaningVi": "Án treo (chỉ phải đi tù nếu tái phạm trong thời gian thử thách).",
+      "example": "He was handed a two-year suspended sentence accompanied by rigorous community service.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u4_col5",
+      "columnA": "quash the",
+      "columnB": "verdict",
+      "fullCollocation": "quash the verdict",
+      "meaningEn": "To legally overturn or declare void an earlier court determination.",
+      "meaningVi": "Tuyên hủy bản án / bác bỏ phán quyết sai phạm.",
+      "example": "The appellate panel unanimously voted to quash the verdict and ordered a complete retrial.",
+      "imageSchemaTag": "FORCE_COLLISION"
+    },
+    {
+      "id": "u4_col6",
+      "columnA": "mandatory",
+      "columnB": "life sentence",
+      "fullCollocation": "mandatory life sentence",
+      "meaningEn": "A statutory prison term of life imprisonment legally mandated without judicial discretion.",
+      "meaningVi": "Bản án chung thân bắt buộc theo luật định.",
+      "example": "Conviction for first-degree premeditated murder carries an automatic mandatory life sentence.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u4_col7",
+      "columnA": "subpoena",
+      "columnB": "a witness",
+      "fullCollocation": "subpoena a witness",
+      "meaningEn": "To order someone under penalty of law to appear and give sworn testimony in court.",
+      "meaningVi": "Tống đạt trát đòi nhân chứng ra hầu tòa đối chất.",
+      "example": "The special prosecutor moved to subpoena a key witness who had fled overseas.",
+      "imageSchemaTag": "FORCE_COLLISION"
+    },
+    {
+      "id": "u4_col8",
+      "columnA": "electronic",
+      "columnB": "monitoring",
+      "fullCollocation": "electronic monitoring",
+      "meaningEn": "Tracking an offenders geographic whereabouts using an ankle tag or tracking device.",
+      "meaningVi": "Giám sát điện tử qua vòng đeo chân định vị.",
+      "example": "As a strict condition of bail, the suspect was placed under continuous electronic monitoring.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u4_ds1",
+      "term": "perjury",
+      "domain": "Judicial Process",
+      "meaningVi": "Tội khai man có tuyên thệ trước tòa",
+      "clueEn": "The offense of willfully telling an untruth in a court after taking an oath."
+    },
+    {
+      "id": "u4_ds2",
+      "term": "embezzlement",
+      "domain": "Criminal Law",
+      "meaningVi": "Tội tham ô tài sản được ủy thác",
+      "clueEn": "Theft or misappropriation of funds placed in ones trust or belonging to ones employer."
+    },
+    {
+      "id": "u4_ds3",
+      "term": "subpoena",
+      "domain": "Judicial Process",
+      "meaningVi": "Trát hầu tòa bắt buộc của thẩm phán",
+      "clueEn": "A writ issuing from a court ordering a person to attend and present evidence."
+    },
+    {
+      "id": "u4_ds4",
+      "term": "extradition",
+      "domain": "Law Enforcement",
+      "meaningVi": "Sự dẫn độ tội phạm quốc tế",
+      "clueEn": "The official surrender of an alleged criminal by one state to another."
+    },
+    {
+      "id": "u4_ds5",
+      "term": "probation",
+      "domain": "Penology",
+      "meaningVi": "Chế độ quản chế theo dõi ngoài xã hội",
+      "clueEn": "The release of an offender from detention subject to a period of good behavior under supervision."
+    },
+    {
+      "id": "u4_ds6",
+      "term": "parole",
+      "domain": "Penology",
+      "meaningVi": "Đặc xá tha tù trước thời hạn",
+      "clueEn": "The conditional release of a prisoner before the sentence expires on promise of good conduct."
+    },
+    {
+      "id": "u4_ds7",
+      "term": "indictment",
+      "domain": "Judicial Process",
+      "meaningVi": "Bản cáo trạng luận tội chính thức",
+      "clueEn": "A formal charge or accusation of a serious crime issued by a grand jury."
+    },
+    {
+      "id": "u4_ds8",
+      "term": "ballistics",
+      "domain": "Forensics",
+      "meaningVi": "Khoa học giám định đạn đạo vũ khí",
+      "clueEn": "The forensic study of the mechanics of projectiles, firearms, and bullet trajectories."
+    },
+    {
+      "id": "u4_ds9",
+      "term": "restitution",
+      "domain": "Penology",
+      "meaningVi": "Bồi thường tổn thất cho nạn nhân",
+      "clueEn": "Recompense for injury or loss paid directly by the perpetrator to the victim."
+    },
+    {
+      "id": "u4_ds10",
+      "term": "recidivism",
+      "domain": "Penology",
+      "meaningVi": "Tỷ lệ tái phạm tội sau mãn hạn",
+      "clueEn": "The relapse of an individual into criminal activity after correctional punishment."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u4_tri1",
+      "targetWord": "charge",
+      "rootHint": "Formal criminal accusation / Electrical energy / Sudden frontal assault",
+      "ipa": "/tʃɑːdʒ/",
+      "meaningVi": "Cáo buộc hình sự / Điện tích tích lũy / Xung phong đột kích",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "sentences": [
+        "The prosecutor formally filed a murder ___ against the apprehended suspect.",
+        "The battery was completely drained and refused to hold an electric ___.",
+        "The cavalry captain ordered a furious frontal ___ against enemy fortifications."
+      ],
+      "nuanceNotes": [
+        "Criminal law: formal indictment.",
+        "Physics: electrical polarity accumulation.",
+        "Military tactics: aggressive advance under fire."
+      ]
+    },
+    {
+      "id": "u4_tri2",
+      "targetWord": "plead",
+      "rootHint": "To present a formal court answer / To beg passionately",
+      "ipa": "/pliːd/",
+      "meaningVi": "Nhận tội trước tòa (plead guilty) / Biện hộ van nài / Đưa ra lý lẽ",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "sentences": [
+        "Counsel advised the defendant to ___ guilty in exchange for sentencing leniency.",
+        "The victim could only tearfully ___ for mercy as the armed intruders surrounded him.",
+        "She tried to ___ ignorance of the company's fraudulent offshore tax shelters."
+      ],
+      "nuanceNotes": [
+        "Judicial proceeding: entering a formal plea of guilt or innocence.",
+        "Emotional rhetoric: desperate beseeching.",
+        "Legal defense: asserting a justification."
+      ]
+    },
+    {
+      "id": "u4_tri3",
+      "targetWord": "sentence",
+      "rootHint": "Judicial punishment order / Grammatical syntactic clause",
+      "ipa": "/ˈsen.təns/",
+      "meaningVi": "Mức án hình sự / Câu hoàn chỉnh ngữ pháp / Tuyên án",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "The presiding judge handed down a mandatory life ___ without possibility of parole.",
+        "Every declarative ___ in the academic essay must possess an explicit subject and predicate.",
+        "The tribunal opted to ___ the disgraced executive to five years of community labor."
+      ],
+      "nuanceNotes": [
+        "Penology: penal sanction decreed by a magistrate.",
+        "Linguistics: grammatical syntactic unit.",
+        "Verb transitivity: the judicial act of decreeing punishment."
+      ]
+    },
+    {
+      "id": "u4_tri4",
+      "targetWord": "breach",
+      "rootHint": "Violation of legal duty / Gap smashed in a barrier",
+      "ipa": "/briːtʃ/",
+      "meaningVi": "Vi phạm nghĩa vụ hợp đồng / Chọc thủng phòng tuyến / Phá vỡ an ninh",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "Leaking the confidential client ledger constituted an actionable ___ of fiduciary trust.",
+        "Artillery fire succeeded in blasting a massive ___ in the fortress battlements.",
+        "Cybersecurity investigators confirmed a severe data ___ affecting millions of accounts."
+      ],
+      "nuanceNotes": [
+        "Contract law: violation of binding covenant.",
+        "Siege warfare: physical fracture in protective enclosure.",
+        "Information security: unauthorized penetration of firewall."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u4_mf1",
+      "rootWord": "incriminate",
+      "meaningVi": "Buộc tội, đổ trách nhiệm hình sự",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "incrimination"
+        ],
+        "verb": [
+          "incriminate"
+        ],
+        "adjective": [
+          "incriminating",
+          "incriminatory"
+        ],
+        "adverb": [
+          "incriminatingly"
+        ]
+      },
+      "transformationPrompt": "He ___ (incriminate) himself beyond doubt by unwittingly providing the detectives with a fabricated alibi.",
+      "targetAnswer": "incriminated",
+      "targetPos": "verb (past)",
+      "explanationVi": "Incriminate oneself (tự chuốc vạ vào thân, tự cung cấp bằng chứng buộc tội chính mình)."
+    },
+    {
+      "id": "u4_mf2",
+      "rootWord": "exonerate",
+      "meaningVi": "Minh oan, giải tội",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "exoneration"
+        ],
+        "verb": [
+          "exonerate"
+        ],
+        "adjective": [
+          "exonerative",
+          "exonerated"
+        ]
+      },
+      "transformationPrompt": "The newly unearthed forensic analysis led to the complete ___ (exonerate) of the two co-defendants.",
+      "targetAnswer": "exoneration",
+      "targetPos": "noun",
+      "explanationVi": "Exoneration là danh từ chỉ sự tuyên bố trắng án và minh oan toàn diện."
+    },
+    {
+      "id": "u4_mf3",
+      "rootWord": "custody",
+      "meaningVi": "Tạm giam, giam giữ",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "custody",
+          "custodian"
+        ],
+        "adjective": [
+          "custodial",
+          "non-custodial"
+        ]
+      },
+      "transformationPrompt": "The magistrate deemed the offense sufficiently severe to warrant a ___ (custody) sentence.",
+      "targetAnswer": "custodial",
+      "targetPos": "adjective",
+      "explanationVi": "Custodial sentence là án tù giam (trái nghĩa với non-custodial sentence như phạt tiền hay lao động công ích)."
+    },
+    {
+      "id": "u4_mf4",
+      "rootWord": "mitigate",
+      "meaningVi": "Giảm nhẹ",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "forms": {
+        "noun": [
+          "mitigation"
+        ],
+        "verb": [
+          "mitigate"
+        ],
+        "adjective": [
+          "mitigating",
+          "unmitigated"
+        ],
+        "adverb": [
+          "mitigatingly"
+        ]
+      },
+      "transformationPrompt": "In plea ___ (mitigate), the defense attorney highlighted the suspects voluntary surrender and genuine remorse.",
+      "targetAnswer": "mitigation",
+      "targetPos": "noun",
+      "explanationVi": "Plea in mitigation là lời thỉnh cầu giảm nhẹ hình phạt trước tòa."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u4_card1",
+      "word": "perjurer",
+      "ipa": "/ˈpɜː.dʒər.ər/",
+      "archetypeTitle": "The Deceitful Witness",
+      "meaningEn": "A witness who willfully utters falsehoods under sworn oath in court.",
+      "meaningVi": "Kẻ khai man, nhân chứng làm chứng dối trước tòa.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "powerStat": 88,
+      "precisionStat": 91,
+      "semanticOpposite": "veracious witness",
+      "oppositeMeaningEn": "A scrupulously truthful and incorruptible witness.",
+      "distractors": [
+        "culprit",
+        "accomplice",
+        "prosecutor"
+      ],
+      "battleScenario": "The Perjurer weaves a fabricated alibi under sworn oath!",
+      "counterExplanationVi": "Đối lập trực diện với kẻ khai man dối trá (perjurer) là nhân chứng trung thực không thể lay chuyển (veracious witness)."
+    },
+    {
+      "id": "u4_card2",
+      "word": "heinous",
+      "ipa": "/ˈheɪ.nəs/",
+      "archetypeTitle": "The Abyssal Malice",
+      "meaningEn": "Shockingly atrocious, reprehensible, and wicked beyond imagination.",
+      "meaningVi": "Tội ác tày đình, man rợ và ghê rợn khôn cùng.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "powerStat": 97,
+      "precisionStat": 94,
+      "semanticOpposite": "venial",
+      "oppositeMeaningEn": "Excusable, pardonable, and minor in moral consequence.",
+      "distractors": [
+        "clandestine",
+        "premeditated",
+        "insolent"
+      ],
+      "battleScenario": "The Abyssal Malice strikes with an unforgivable and premeditated crime!",
+      "counterExplanationVi": "Heinous (tội ác dã man không thể dung thứ) bị hóa giải bởi venial (lỗi lầm nhỏ nhặt, dễ tha thứ)."
+    },
+    {
+      "id": "u4_card3",
+      "word": "recidivist",
+      "ipa": "/rɪˈsɪd.ɪ.vɪst/",
+      "archetypeTitle": "The Relentless Felon",
+      "meaningEn": "An incorrigible habitual criminal constantly relapsing into lawbreaking.",
+      "meaningVi": "Tội phạm tái phạm kinh niên, bất trị trước mọi hình phạt.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "powerStat": 92,
+      "precisionStat": 86,
+      "semanticOpposite": "reformed citizen",
+      "oppositeMeaningEn": "A fully rehabilitated person who has renounced all unlawful conduct.",
+      "distractors": [
+        "accomplice",
+        "fugitive",
+        "magistrate"
+      ],
+      "battleScenario": "The Relentless Felon returns to the scene of crime, trapped in habitual cycle!",
+      "counterExplanationVi": "Kẻ tái phạm quen mui (recidivist) đối lập hoàn toàn với người công dân hoàn lương hướng thiện (reformed citizen)."
+    },
+    {
+      "id": "u4_card4",
+      "word": "exonerated",
+      "ipa": "/ɪɡˈzɒn.ə.reɪ.tɪd/",
+      "archetypeTitle": "The Vindicated Inmate",
+      "meaningEn": "Completely cleared of guilt after suffering wrongful accusation.",
+      "meaningVi": "Người được minh oan và khôi phục toàn bộ danh dự sau biến cố oan khuất.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "powerStat": 90,
+      "precisionStat": 96,
+      "semanticOpposite": "culpable",
+      "oppositeMeaningEn": "Deserving blame; guilty of committing the offense.",
+      "distractors": [
+        "remanded",
+        "indicted",
+        "subpoenaed"
+      ],
+      "battleScenario": "The Vindicated Inmate presents indisputable DNA evidence shattering the prosecution case!",
+      "counterExplanationVi": "Được minh oan trắng án (exonerated) đối lập với có tội và phải chịu trách nhiệm hình sự (culpable)."
+    },
+    {
+      "id": "u4_card5",
+      "word": "clandestine",
+      "ipa": "/klænˈdes.tɪn/",
+      "archetypeTitle": "The Shadow Syndicate",
+      "meaningEn": "Conducted in absolute secrecy, especially for illicit or subversive aims.",
+      "meaningVi": "Bí mật, lén lút, hoạt động ngầm phi pháp.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "powerStat": 91,
+      "precisionStat": 89,
+      "semanticOpposite": "overt",
+      "oppositeMeaningEn": "Open, manifest, and plain to see without concealment.",
+      "distractors": [
+        "extenuating",
+        "dogmatic",
+        "impervious"
+      ],
+      "battleScenario": "The Shadow Syndicate launders illicit cartel profits through offshore conduits!",
+      "counterExplanationVi": "Clandestine (ngấm ngầm, lén lút bất minh) bị khắc chế bởi overt (công khai, minh bạch trước thanh thiên bạch nhật)."
+    },
+    {
+      "id": "u4_card6",
+      "word": "extradited",
+      "ipa": "/ˈek.strə.daɪ.tɪd/",
+      "archetypeTitle": "The Border Fugitive",
+      "meaningEn": "Surrendered by one sovereign territory to another to face criminal justice.",
+      "meaningVi": "Kẻ trốn chạy bị áp giải dẫn độ qua biên giới.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "powerStat": 87,
+      "precisionStat": 92,
+      "semanticOpposite": "granted asylum",
+      "oppositeMeaningEn": "Officially granted sovereign diplomatic sanctuary against foreign prosecution.",
+      "distractors": [
+        "paroled",
+        "exonerated",
+        "quashed"
+      ],
+      "battleScenario": "The Fugitive is seized at the international tarmac under an active Interpol Red Notice!",
+      "counterExplanationVi": "Bị dẫn độ về nước thụ án (extradited) đối nghịch với việc được cấp quyền tị nạn ngoại giao an toàn (granted asylum)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u4_bin1",
+      "wordA": "probation",
+      "wordB": "parole",
+      "contextSentence": "Because he had completed seven years of his term with exemplary behavior, the warden recommended him for early ___.",
+      "correctWord": "parole",
+      "distinctionVi": "Parole là đặc xá tha tù sớm khi đang ngồi tù; Probation là chế độ quản chế án treo ngay từ đầu mà không phải vào tù."
+    },
+    {
+      "id": "u4_bin2",
+      "wordA": "extenuating",
+      "wordB": "aggravating",
+      "contextSentence": "The fact that the perpetrator targeted a defenseless elderly victim served as a major ___ factor in the judge's sentencing.",
+      "correctWord": "aggravating",
+      "distinctionVi": "Aggravating factor là tình tiết tăng nặng (làm tăng mức án); Extenuating factor là tình tiết giảm nhẹ."
+    },
+    {
+      "id": "u4_bin3",
+      "wordA": "indictment",
+      "wordB": "verdict",
+      "contextSentence": "Following months of grand jury hearings, the federal court handed down a scathing 40-count ___ against the corrupt mayor.",
+      "correctWord": "indictment",
+      "distinctionVi": "Indictment là bản cáo trạng truy tố ban đầu; Verdict là phán quyết cuối cùng có tội hay vô tội sau phiên xử."
+    },
+    {
+      "id": "u4_bin4",
+      "wordA": "homicide",
+      "wordB": "manslaughter",
+      "contextSentence": "Because the driver caused the fatal collision through reckless negligence rather than premeditated intent, he was charged with ___.",
+      "correctWord": "manslaughter",
+      "distinctionVi": "Manslaughter là tội ngộ sát (vô ý làm chết người do bất cẩn); Homicide là thuật ngữ chung chỉ hành vi giết người."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "The Trial of the Shadow Ledger",
+    "subtitleVi": "Vụ Án Cuốn Sổ Cái Trong Bóng Tối",
+    "settingDescription": "The Old Bailey Central Criminal Court. Heavy oak paneling echoes as a high-stakes embezzlement trial takes an unprecedented dramatic turn.",
+    "segments": [
+      {
+        "id": "u4_nar1",
+        "chapterLabel": "Chapter I: The Sudden Collapse",
+        "speakerOrMood": "Judge Abernathy (Stern & Impatient)",
+        "promptTextBefore": "The proceedings came to an abrupt halt. When it was revealed that the chief prosecution witness had committed blatant perjury, the entire trial ",
+        "promptTextAfter": " within minutes.",
+        "correctWord": "collapsed",
+        "imageSchemaTag": "FORCE_COLLISION",
+        "choices": [
+          {
+            "word": "collapsed",
+            "isCorrect": true,
+            "consequenceTitle": "Proceedings Implode",
+            "whatIfFeedbackEn": "The judge throws his hands up in dismay as the prosecution case crumbles beyond salvage.",
+            "nuanceExplanationVi": "A trial collapses nghĩa là một phiên tòa bị đổ vỡ hoàn toàn do nhân chứng chủ chốt mất uy tín."
+          },
+          {
+            "word": "extradited",
+            "isCorrect": false,
+            "consequenceTitle": "Geographic Confusion",
+            "whatIfFeedbackEn": "You try to extradite the courtroom itself to another country, leaving the bailiff completely bewildered.",
+            "nuanceExplanationVi": "Extradite là dẫn độ người đào tẩu, không thể dùng cho một phiên xét xử."
+          },
+          {
+            "word": "incarcerated",
+            "isCorrect": false,
+            "consequenceTitle": "Grammar Violation",
+            "whatIfFeedbackEn": "Incarcerating an abstract legal event causes the court stenographer to stop typing in protest.",
+            "nuanceExplanationVi": "Incarcerate chỉ áp dụng cho người (bỏ tù ai đó), không thể dùng cho vụ án."
+          },
+          {
+            "word": "quashed",
+            "isCorrect": false,
+            "consequenceTitle": "Premature Jurisdiction",
+            "whatIfFeedbackEn": "Only higher appellate courts can quash verdicts after conviction; a live trial simply collapses.",
+            "nuanceExplanationVi": "Quash dùng cho phán quyết (verdict/conviction), không dùng cho tiến trình phiên tòa (trial)."
+          }
+        ]
+      },
+      {
+        "id": "u4_nar2",
+        "chapterLabel": "Chapter II: The Extenuating Plea",
+        "speakerOrMood": "Barrister Sterling (Persuasive & Passionate)",
+        "promptTextBefore": "'My client only diverted company funds because his family was held at gunpoint,' Sterling argued. 'These undeniable ",
+        "promptTextAfter": " circumstances warrant the dismissal of all criminal intent.'",
+        "correctWord": "extenuating",
+        "imageSchemaTag": "BALANCE_SHIFT",
+        "choices": [
+          {
+            "word": "extenuating",
+            "isCorrect": true,
+            "consequenceTitle": "Leniency Granted",
+            "whatIfFeedbackEn": "The courtroom nods in sympathy; the severity of the charge is dramatically lowered.",
+            "nuanceExplanationVi": "Extenuating circumstances là tình tiết giảm nhẹ mang tính chuẩn mực trong tố tụng C2."
+          },
+          {
+            "word": "heinous",
+            "isCorrect": false,
+            "consequenceTitle": "Self-Sabotaging Defense",
+            "whatIfFeedbackEn": "You plead that your client committed heinous circumstances, instantly convincing the judge to give him life in prison!",
+            "nuanceExplanationVi": "Heinous mang nghĩa tàn độc ghê tởm, dùng thế này là tự kết án tử thân chủ!"
+          },
+          {
+            "word": "clandestine",
+            "isCorrect": false,
+            "consequenceTitle": "Suspicious Secrecy",
+            "whatIfFeedbackEn": "Claiming clandestine circumstances makes your client sound like a shadowy spy rather than a victim of extortion.",
+            "nuanceExplanationVi": "Clandestine chỉ hành vi ngấm ngầm bất minh, không mang nghĩa pháp lý giảm nhẹ."
+          },
+          {
+            "word": "nominal",
+            "isCorrect": false,
+            "consequenceTitle": "Trivializing the Hostage Crisis",
+            "whatIfFeedbackEn": "Describing an armed kidnapping as nominal circumstances causes the jury to question your sanity.",
+            "nuanceExplanationVi": "Nominal nghĩa là danh nghĩa/không đáng kể, không phù hợp ngữ cảnh cứu mạng gia đình."
+          }
+        ]
+      },
+      {
+        "id": "u4_nar3",
+        "chapterLabel": "Chapter III: The Forensic Revelation",
+        "speakerOrMood": "Chief Inspector Finch (Methodical & Objective)",
+        "promptTextBefore": "The forensic lab released its ballistics report. 'The recovered slug confirms the defendant never discharged the weapon, which completely ",
+        "promptTextAfter": " him of the attempted murder charge.'",
+        "correctWord": "exonerates",
+        "imageSchemaTag": "CONTAINER_BOUNDARY",
+        "choices": [
+          {
+            "word": "exonerates",
+            "isCorrect": true,
+            "consequenceTitle": "Complete Vindication",
+            "whatIfFeedbackEn": "The defendant bursts into tears as the murder charge is formally struck from the record.",
+            "nuanceExplanationVi": "Exonerate nghĩa là minh oan và xóa bỏ hoàn toàn tội danh hình sự."
+          },
+          {
+            "word": "incriminates",
+            "isCorrect": false,
+            "consequenceTitle": "Catastrophic Misread",
+            "whatIfFeedbackEn": "You claim the clean forensic report incriminates him, causing the bailiff to handcuff him right there on the spot!",
+            "nuanceExplanationVi": "Incriminate là buộc tội làm cho có tội, trái ngược hoàn toàn với exonerate."
+          },
+          {
+            "word": "subpoenas",
+            "isCorrect": false,
+            "consequenceTitle": "Procedural Nonsense",
+            "whatIfFeedbackEn": "A ballistic bullet cannot subpoena a person into court; bullets do not have judicial stamps.",
+            "nuanceExplanationVi": "Subpoena là tống đạt trát đòi hầu tòa, không dùng cho kết quả chứng cứ vật chứng."
+          },
+          {
+            "word": "paroles",
+            "isCorrect": false,
+            "consequenceTitle": "Early Release Anomaly",
+            "whatIfFeedbackEn": "You cannot parole someone who has not yet been convicted or served a single day of prison sentence.",
+            "nuanceExplanationVi": "Parole là đặc xá khi đang ngồi tù, không phải hành vi minh oan tại tòa."
+          }
+        ]
+      },
+      {
+        "id": "u4_nar4",
+        "chapterLabel": "Chapter IV: The Final Decree",
+        "speakerOrMood": "The Court Clerk (Resonant & Decisive)",
+        "promptTextBefore": "Justice having been restored, the High Court moved to officially ",
+        "promptTextAfter": " the previous wrongful conviction and awarded full statutory restitution.",
+        "correctWord": "quash",
+        "imageSchemaTag": "FORCE_COLLISION",
+        "choices": [
+          {
+            "word": "quash",
+            "isCorrect": true,
+            "consequenceTitle": "The Historic Overturn",
+            "whatIfFeedbackEn": "The magistrate strikes the gavel; the wrongful indictment is erased forever from British legal history.",
+            "nuanceExplanationVi": "Quash a conviction/verdict là thuật ngữ chuẩn mực về việc hủy bỏ bản án sai lệch."
+          },
+          {
+            "word": "uphold",
+            "isCorrect": false,
+            "consequenceTitle": "Tragic Injustice",
+            "whatIfFeedbackEn": "Upholding the wrongful conviction sends an innocent man straight back to prison despite forensic proof!",
+            "nuanceExplanationVi": "Uphold là giữ nguyên bản án cũ, trái ngược với mục đích minh oan phục hồi danh dự."
+          },
+          {
+            "word": "flout",
+            "isCorrect": false,
+            "consequenceTitle": "Reckless Disdain",
+            "whatIfFeedbackEn": "Saying the High Court flouted the conviction makes the judges sound like lawless anarchists.",
+            "nuanceExplanationVi": "Flout mang nghĩa coi thường, khinh nhờn pháp luật, không phải động từ tư pháp chính quy."
+          },
+          {
+            "word": "incur",
+            "isCorrect": false,
+            "consequenceTitle": "Financial Misplacement",
+            "whatIfFeedbackEn": "You cannot incur a conviction like an unwanted bank fee.",
+            "nuanceExplanationVi": "Incur là gánh chịu nợ nần/chi phí, không áp dụng cho việc xử lý phán quyết."
+          }
+        ]
+      }
+    ]
+  }
+}

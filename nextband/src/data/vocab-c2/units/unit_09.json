@@ -1,0 +1,810 @@
+{
+  "unitNumber": 9,
+  "unitCode": "unit_09",
+  "titleEn": "Medical and Health Issues",
+  "titleVi": "Y khoa, Bệnh học & Trị liệu Chuyên sâu",
+  "themeSummaryVi": "Làm chủ từ vựng y khoa C2: phân biệt malignant vs benign, chronic vs acute, prognosis vs diagnosis, Three of a Kind và bài đọc Coming to Terms with Cancer.",
+  "pdfPages": "Trang 36–39",
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Oncology",
+    "Pathology",
+    "Pharmacology",
+    "Surgical Medicine",
+    "Clinical Diagnostics"
+  ],
+  "schemaItems": [
+    {
+      "id": "u9_w1",
+      "word": "malignant",
+      "ipa": "/məˈlɪɡ.nənt/",
+      "pos": "adj.",
+      "definitionEn": "Virulent, infectious, or uncontrollably invasive, especially of a tumor that metastasizes.",
+      "definitionVi": "Ác tính, có khả năng xâm lấn và di căn hủy hoại cơ thể.",
+      "exampleSentence": "The biopsy confirmed that the excised throat lesion was indeed malignant and required urgent intervention.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "visualMetaphor": "A dark jagged cell mass rupturing its cellular membrane and aggressively spreading tendrils outward.",
+      "contrastWord": "benign",
+      "contrastDefinitionEn": "Not harmful in effect; mild and non-cancerous in pathological condition.",
+      "contrastVisualMetaphor": "A smooth luminous sphere self-contained peacefully within a soft translucent bubble.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#7F1D1D",
+        "velocityFactor": 2.4,
+        "particleCount": 85,
+        "vectorPattern": "breach"
+      }
+    },
+    {
+      "id": "u9_w2",
+      "word": "chronic",
+      "ipa": "/ˈkrɒn.ɪk/",
+      "pos": "adj.",
+      "definitionEn": "Persisting for a long time or constantly recurring over years.",
+      "definitionVi": "Mãn tính, dai dẳng kéo dài nhiều năm tháng khó dứt điểm.",
+      "exampleSentence": "I suffered occasionally for twenty years, but it has only recently transformed into a chronic complaint.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "visualMetaphor": "A continuous low-frequency crimson hum oscillating relentlessly along an infinite timeline.",
+      "contrastWord": "acute",
+      "contrastDefinitionEn": "Experienced to an intense, sharp degree over a short duration.",
+      "contrastVisualMetaphor": "A blinding instantaneous bolt of lightning discharging violently at a single focal point.",
+      "simulationConfig": {
+        "primaryColor": "#F59E0B",
+        "secondaryColor": "#B45309",
+        "velocityFactor": 1.2,
+        "particleCount": 60,
+        "vectorPattern": "oscillate"
+      }
+    },
+    {
+      "id": "u9_w3",
+      "word": "prognosis",
+      "ipa": "/prɒɡˈnəʊ.sɪs/",
+      "pos": "n.",
+      "definitionEn": "The clinical forecast of the likely future course and outcome of a disease.",
+      "definitionVi": "Tiên lượng bệnh; dự đoán khoa học về tiến triển hồi phục trong tương lai.",
+      "exampleSentence": "The oncologist delivered an encouraging prognosis: early detection afforded a 90% full remission rate.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "visualMetaphor": "A forward-looking telescope beaming a focused vector of light through a misty pathway.",
+      "contrastWord": "diagnosis",
+      "contrastDefinitionEn": "The identification of the nature of an illness by examination of current symptoms.",
+      "contrastVisualMetaphor": "A high-magnification microscope laser analyzing a static specimen pinpoint under glass.",
+      "simulationConfig": {
+        "primaryColor": "#00F5D4",
+        "secondaryColor": "#0284C7",
+        "velocityFactor": 1.8,
+        "particleCount": 70,
+        "vectorPattern": "ascend"
+      }
+    },
+    {
+      "id": "u9_w4",
+      "word": "debilitating",
+      "ipa": "/dɪˈbɪl.ɪ.teɪ.tɪŋ/",
+      "pos": "adj.",
+      "definitionEn": "Tending to weaken or enfeeble someone to a severe, incapacitating degree.",
+      "definitionVi": "Làm suy nhược kiệt quệ, bào mòn thể lực và tước đoạt sức sống.",
+      "exampleSentence": "Rheumatoid arthritis can prove utterly debilitating if aggressive therapy is not initiated swiftly.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "visualMetaphor": "A glowing kinetic armature buckling downward under an invisible gravitational load.",
+      "contrastWord": "invigorating",
+      "contrastDefinitionEn": "Making one feel fresh, energized, and brimming with vitality.",
+      "contrastVisualMetaphor": "A geyser of effervescent electric cyan sparks shooting effortlessly upward.",
+      "simulationConfig": {
+        "primaryColor": "#94A3B8",
+        "secondaryColor": "#475569",
+        "velocityFactor": 1.1,
+        "particleCount": 50,
+        "vectorPattern": "descend"
+      }
+    },
+    {
+      "id": "u9_w5",
+      "word": "convalesce",
+      "ipa": "/ˌkɒn.vəˈles/",
+      "pos": "v.",
+      "definitionEn": "To gradually recover health and strength over time after illness or medical surgery.",
+      "definitionVi": "Tĩnh dưỡng phục hồi sức khỏe, lại sức dần sau bạo bệnh.",
+      "exampleSentence": "The patient was transferred to a tranquil coastal sanatorium to convalesce after bypass surgery.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "visualMetaphor": "Faint emerald embers slowly gathering warmth, brightening steadily into a resilient flame.",
+      "contrastWord": "relapse",
+      "contrastDefinitionEn": "To deteriorate or fall back into illness after a period of temporary improvement.",
+      "contrastVisualMetaphor": "A budding flower abruptly drooping and shriveling back into shadowy cold soil.",
+      "simulationConfig": {
+        "primaryColor": "#10B981",
+        "secondaryColor": "#34D399",
+        "velocityFactor": 1.3,
+        "particleCount": 65,
+        "vectorPattern": "ascend"
+      }
+    },
+    {
+      "id": "u9_w6",
+      "word": "exacerbate",
+      "ipa": "/ɪɡˈzæs.ə.beɪt/",
+      "pos": "v.",
+      "definitionEn": "To make a disease, pain, or acute problem significantly worse and more severe.",
+      "definitionVi": "Làm trầm trọng thêm căn bệnh, làm bùng phát cơn đau dữ dội hơn.",
+      "exampleSentence": "Administering the wrong compound only served to exacerbate the patients pulmonary inflammation.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "visualMetaphor": "Pouring volatile accelerant onto a smoldering fire, triggering explosive fiery plumes.",
+      "contrastWord": "alleviate",
+      "contrastDefinitionEn": "To make suffering, deficiency, or pain more bearable and less severe.",
+      "contrastVisualMetaphor": "A cool crystal droplet descending and soothing a scorched ember into gentle steam.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#EA580C",
+        "velocityFactor": 2.5,
+        "particleCount": 85,
+        "vectorPattern": "collide"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u9_col1",
+      "columnA": "malignant",
+      "columnB": "tumour",
+      "fullCollocation": "malignant tumour",
+      "meaningEn": "A cancerous, invasive mass of tissue that metastasizes to other organs.",
+      "meaningVi": "Khối u ác tính (ung thư có nguy cơ lây lan).",
+      "example": "Biopsy analysis revealed the presence of a malignant tumour in the lymph nodes.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u9_col2",
+      "columnA": "clinical",
+      "columnB": "trial",
+      "fullCollocation": "clinical trial",
+      "meaningEn": "A scientifically controlled study testing modern therapies on human volunteers.",
+      "meaningVi": "Thử nghiệm lâm sàng thuốc mới trên người.",
+      "example": "The groundbreaking immunotherapy drug is undergoing Phase III clinical trials.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    },
+    {
+      "id": "u9_col3",
+      "columnA": "biological",
+      "columnB": "clock",
+      "fullCollocation": "biological clock",
+      "meaningEn": "The physiological reproductive window of human fertility as age advances.",
+      "meaningVi": "Đồng hồ sinh học sinh sản.",
+      "example": "At 34, she felt the pressure of her ticking biological clock as she deliberated pregnancy.",
+      "imageSchemaTag": "BALANCE_SHIFT"
+    },
+    {
+      "id": "u9_col4",
+      "columnA": "post-operative",
+      "columnB": "consultation",
+      "fullCollocation": "post-operative consultation",
+      "meaningEn": "A specialized clinical follow-up examination conducted after surgical incisions.",
+      "meaningVi": "Buổi tái khám hậu phẫu với bác sĩ phẫu thuật.",
+      "example": "The surgeon confirmed clean wound margins during the post-operative consultation.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    },
+    {
+      "id": "u9_col5",
+      "columnA": "general",
+      "columnB": "anaesthetic",
+      "fullCollocation": "general anaesthetic",
+      "meaningEn": "A medically induced state of total unconsciousness and analgesia for major surgery.",
+      "meaningVi": "Thuốc gây mê toàn thân.",
+      "example": "She was placed under general anaesthetic and remained asleep throughout the two-hour surgery.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u9_col6",
+      "columnA": "congenital",
+      "columnB": "disorder",
+      "fullCollocation": "congenital disorder",
+      "meaningEn": "A medical condition or anatomical defect present at birth.",
+      "meaningVi": "Dị tật bẩm sinh / rối loạn bẩm sinh có từ trong bụng mẹ.",
+      "example": "Echocardiograms revealed a congenital disorder in the infant's ventricular valve.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u9_col7",
+      "columnA": "cardiac",
+      "columnB": "arrest",
+      "fullCollocation": "cardiac arrest",
+      "meaningEn": "A sudden, abrupt loss of mechanical heart function and blood circulation.",
+      "meaningVi": "Cơn ngừng tim đột ngột đe dọa tính mạng.",
+      "example": "Defibrillator pads were applied within seconds of the patient suffering cardiac arrest.",
+      "imageSchemaTag": "FORCE_COLLISION"
+    },
+    {
+      "id": "u9_col8",
+      "columnA": "terminal",
+      "columnB": "illness",
+      "fullCollocation": "terminal illness",
+      "meaningEn": "An incurable illness that will ultimately cause death within an estimated time.",
+      "meaningVi": "Căn bệnh nan y giai đoạn cuối không thể cứu chữa.",
+      "example": "Palliative hospice care focuses on dignified comfort for patients with a terminal illness.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u9_ds1",
+      "term": "biopsy",
+      "domain": "Oncology",
+      "meaningVi": "Sinh thiết mô bệnh phẩm",
+      "clueEn": "An examination of tissue removed from a living body to discover the presence of disease."
+    },
+    {
+      "id": "u9_ds2",
+      "term": "defibrillator",
+      "domain": "Surgical Medicine",
+      "meaningVi": "Máy khử rung tim khẩn cấp",
+      "clueEn": "An apparatus used to control heart fibrillation by application of an electric current."
+    },
+    {
+      "id": "u9_ds3",
+      "term": "palliative care",
+      "domain": "Clinical Diagnostics",
+      "meaningVi": "Chăm sóc giảm nhẹ cho bệnh nhân nan y",
+      "clueEn": "Specialized medical care focusing on relief from pain and stress of serious illness."
+    },
+    {
+      "id": "u9_ds4",
+      "term": "pathogen",
+      "domain": "Pathology",
+      "meaningVi": "Mầm bệnh, vi sinh vật gây bệnh",
+      "clueEn": "A bacterium, virus, or other microorganism that can cause systemic disease."
+    },
+    {
+      "id": "u9_ds5",
+      "term": "placebo",
+      "domain": "Pharmacology",
+      "meaningVi": "Giả dược dùng trong thử nghiệm lâm sàng",
+      "clueEn": "A harmless pill or dummy treatment given in clinical trials as a control."
+    },
+    {
+      "id": "u9_ds6",
+      "term": "metastasize",
+      "domain": "Oncology",
+      "meaningVi": "Di căn tế bào ung thư",
+      "clueEn": "The spread of cancer cells from primary site to secondary areas of the body."
+    },
+    {
+      "id": "u9_ds7",
+      "term": "scalpel",
+      "domain": "Surgical Medicine",
+      "meaningVi": "Dao mổ phẫu thuật lưỡi siêu bén",
+      "clueEn": "A small, extremely sharp bladed instrument used for delicate surgery and dissection."
+    },
+    {
+      "id": "u9_ds8",
+      "term": "immunosuppressant",
+      "domain": "Pharmacology",
+      "meaningVi": "Thuốc ức chế miễn dịch chống thải ghép",
+      "clueEn": "An agent that prevents or diminishes the body's immune response to a transplanted organ."
+    },
+    {
+      "id": "u9_ds9",
+      "term": "remission",
+      "domain": "Oncology",
+      "meaningVi": "Sự thuyên giảm bệnh (không còn tế bào ung thư)",
+      "clueEn": "A temporary or permanent diminution of the severity of disease or cancer symptoms."
+    },
+    {
+      "id": "u9_ds10",
+      "term": "anaesthetic",
+      "domain": "Surgical Medicine",
+      "meaningVi": "Thuốc gây mê / gây tê phẫu thuật",
+      "clueEn": "A substance that induces insensitivity to pain with or without loss of consciousness."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u9_tri1",
+      "targetWord": "body",
+      "rootHint": "Physical anatomy / Foreign entity / Regulatory assembly",
+      "ipa": "/ˈbɒd.i/",
+      "meaningVi": "Dị vật xâm nhập (foreign body) / Nhiệt độ cơ thể (body temperature) / Hội đồng chuyên gia",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "The neurosurgeons extracted a metallic foreign ___ lodged near his cranium.",
+        "His core ___ temperature had fallen dangerously low into severe hypothermia.",
+        "An independent professional ___ was convened to review clinical ethics."
+      ],
+      "nuanceNotes": [
+        "Emergency surgery: extraneous object inside physical tissue.",
+        "Thermodynamics: human biological temperature regulation.",
+        "Governance: formal institutional council."
+      ]
+    },
+    {
+      "id": "u9_tri2",
+      "targetWord": "pain",
+      "rootHint": "Physical suffering / Pain threshold / Analgesic relief",
+      "ipa": "/peɪn/",
+      "meaningVi": "Ngưỡng chịu đau (pain threshold) / Cơn đau nhức đầu / Thuốc giảm đau (pain relief)",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "sentences": [
+        "The pediatric patient possessed a notoriously low ___ threshold, requiring local numbing.",
+        "He complained of a throbbing, unbearable ___ in his chest before collapsing.",
+        "The pharmacist dispensed two packets of effervescent ___ relief caplets."
+      ],
+      "nuanceNotes": [
+        "Neurophysiology: sensitivity boundary for nociception.",
+        "Clinical diagnosis: symptom description.",
+        "Pharmacology: symptomatic analgesic suppression."
+      ]
+    },
+    {
+      "id": "u9_tri3",
+      "targetWord": "skin",
+      "rootHint": "Dermal surface / Epidermal graft / Outer covering",
+      "ipa": "/skɪn/",
+      "meaningVi": "Ung thư da (skin cancer) / Ghép da (skin graft) / Phát ban nổi mẩn da",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "Dermatologists diagnosed an aggressive malignant melanoma of the ___.",
+        "The third-degree burn on his forearm required an emergency autologous ___ graft.",
+        "Her entire upper torso came out in a blistering red ___ rash from the antibiotic."
+      ],
+      "nuanceNotes": [
+        "Oncology: dermal carcinoma.",
+        "Reconstructive surgery: epidermal transplantation.",
+        "Immunology: allergic dermatological reaction."
+      ]
+    },
+    {
+      "id": "u9_tri4",
+      "targetWord": "discharge",
+      "rootHint": "Release from hospital / Fluid drainage / Firing an electric charge",
+      "ipa": "/dɪsˈtʃɑːdʒ/",
+      "meaningVi": "Xuất viện về nhà / Chảy dịch mủ vết thương / Phóng xung điện",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "The attending physician signed the formal orders to ___ the patient from the ward.",
+        "Nurses noted an abnormal yellowish ___ oozing from the surgical incision site.",
+        "The defibrillator capacitors delivered an instantaneous electrical ___ across the sternum."
+      ],
+      "nuanceNotes": [
+        "Hospital administration: official authorization to leave care.",
+        "Wound care: exudate excretion.",
+        "Medical physics: energy emission."
+      ]
+    },
+    {
+      "id": "u9_tri5",
+      "targetWord": "drip",
+      "rootHint": "Intravenous line / Falling liquid droplet / Continuous sound",
+      "ipa": "/drɪp/",
+      "meaningVi": "Truyền dịch tĩnh mạch (on a drip) / Nhỏ giọt chậm / Tiếng nước rỉ",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "sentences": [
+        "Post-surgery, the patient was hooked up to an intravenous saline ___ for 48 hours.",
+        "The steady hypnotic ___ of water from the leaking tap kept the whole ward awake.",
+        "The anesthetic infusion was calibrated to ___ slowly into the venous cannula."
+      ],
+      "nuanceNotes": [
+        "Intravenous therapy: clinical infusion apparatus.",
+        "Auditory: rhythmic repetitive percussion.",
+        "Dosage: continuous micro-volume administration."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u9_mf1",
+      "rootWord": "remiss",
+      "meaningVi": "Thuyên giảm bệnh (remission)",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "forms": {
+        "noun": [
+          "remission"
+        ],
+        "adjective": [
+          "remissible",
+          "unremitting"
+        ],
+        "adverb": [
+          "unremittingly"
+        ]
+      },
+      "transformationPrompt": "After four rounds of targeted immunotherapy, the lymphoma is officially in complete ___ (remiss).",
+      "targetAnswer": "remission",
+      "targetPos": "noun",
+      "explanationVi": "In remission là cụm y khoa chỉ bệnh ung thư đã thuyên giảm và không còn dấu vết."
+    },
+    {
+      "id": "u9_mf2",
+      "rootWord": "deficient",
+      "meaningVi": "Thiếu hụt chất dinh dưỡng",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "deficiency",
+          "deficit"
+        ],
+        "adjective": [
+          "deficient"
+        ]
+      },
+      "transformationPrompt": "Blood chemistry assays confirmed a severe iron ___ (deficient), prompting intravenous infusions.",
+      "targetAnswer": "deficiency",
+      "targetPos": "noun",
+      "explanationVi": "Iron deficiency là tình trạng thiếu sắt / thiếu máu trong huyết học."
+    },
+    {
+      "id": "u9_mf3",
+      "rootWord": "hereditary",
+      "meaningVi": "Mang tính di truyền gia đình",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "forms": {
+        "noun": [
+          "heredity"
+        ],
+        "adjective": [
+          "hereditary"
+        ]
+      },
+      "transformationPrompt": "Genetic counseling revealed that the predisposition to ovarian tumors was purely ___ (heredity).",
+      "targetAnswer": "hereditary",
+      "targetPos": "adjective",
+      "explanationVi": "Hereditary bệnh di truyền truyền từ thế hệ này sang thế hệ sau."
+    },
+    {
+      "id": "u9_mf4",
+      "rootWord": "prognose",
+      "meaningVi": "Tiên lượng diễn tiến bệnh",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "forms": {
+        "noun": [
+          "prognosis",
+          "prognostication"
+        ],
+        "verb": [
+          "prognosticate",
+          "prognose"
+        ],
+        "adjective": [
+          "prognostic"
+        ]
+      },
+      "transformationPrompt": "The oncologists final ___ (prognose) was exceptionally optimistic owing to early stage intervention.",
+      "targetAnswer": "prognosis",
+      "targetPos": "noun",
+      "explanationVi": "Prognosis là tiên lượng kết quả điều trị bệnh tật."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u9_card1",
+      "word": "malignant",
+      "ipa": "/məˈlɪɡ.nənt/",
+      "archetypeTitle": "The Invasive Spore",
+      "meaningEn": "Aggressive, metastatic, and relentlessly destructive to biological host cells.",
+      "meaningVi": "Khối u ác tính hủy hoại tế bào lành.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "powerStat": 97,
+      "precisionStat": 94,
+      "semanticOpposite": "benign",
+      "oppositeMeaningEn": "Harmless, localized, non-invasive, and non-cancerous.",
+      "distractors": [
+        "chronic",
+        "contagious",
+        "terminal"
+      ],
+      "battleScenario": "The Invasive Spore breaches cellular margins and attempts systemic metastasis!",
+      "counterExplanationVi": "Malignant (ác tính, xâm lấn hung hãn) đối nghịch trực diện với benign (lành tính, vô hại)."
+    },
+    {
+      "id": "u9_card2",
+      "word": "chronic",
+      "ipa": "/ˈkrɒn.ɪk/",
+      "archetypeTitle": "The Eternal Torment",
+      "meaningEn": "Enduring relentlessly across decades; permanent and stubbornly recurring.",
+      "meaningVi": "Căn bệnh mãn tính dai dẳng quanh năm.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "powerStat": 91,
+      "precisionStat": 93,
+      "semanticOpposite": "acute",
+      "oppositeMeaningEn": "Brief, sudden, sharp, and resolving rapidly.",
+      "distractors": [
+        "congenital",
+        "debilitating",
+        "terminal"
+      ],
+      "battleScenario": "The Eternal Torment drains stamina steadily with unrelenting systemic inflammation!",
+      "counterExplanationVi": "Chronic (mãn tính, âm ỉ trường kỳ) đối lập với acute (cấp tính, bộc phát dữ dội trong thời gian ngắn)."
+    },
+    {
+      "id": "u9_card3",
+      "word": "hypochondriac",
+      "ipa": "/ˌhaɪ.pəˈkɒn.dri.æk/",
+      "archetypeTitle": "The Phantom Sufferer",
+      "meaningEn": "A person abnormally anxious and obsessively convinced they have severe illnesses.",
+      "meaningVi": "Kẻ tưởng tượng ra bệnh, lúc nào cũng lo lắng thái quá về sức khỏe.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "powerStat": 76,
+      "precisionStat": 88,
+      "semanticOpposite": "stoic",
+      "oppositeMeaningEn": "A person who endures genuine pain with complete composure without panic.",
+      "distractors": [
+        "coroner",
+        "donor",
+        "convalescent"
+      ],
+      "battleScenario": "The Phantom Sufferer diagnoses themselves with rare tropical diseases after a sneeze!",
+      "counterExplanationVi": "Kẻ hoang tưởng lo sợ bệnh tật (hypochondriac) đối lập với người khắc kỷ kiên cường (stoic)."
+    },
+    {
+      "id": "u9_card4",
+      "word": "debilitating",
+      "ipa": "/dɪˈbɪl.ɪ.teɪ.tɪŋ/",
+      "pos": "adj.",
+      "archetypeTitle": "The Atrophy Ray",
+      "meaningEn": "Draining all muscular vigor and rendering the victim utterly incapacitated.",
+      "meaningVi": "Gây suy nhược bại liệt tàn phế.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "powerStat": 94,
+      "precisionStat": 90,
+      "semanticOpposite": "invigorating",
+      "oppositeMeaningEn": "Imparting robust vitality, rejuvenation, and boundless energy.",
+      "distractors": [
+        "congenital",
+        "terminal",
+        "morbid"
+      ],
+      "battleScenario": "The Atrophy Ray saps kinetic vigor from all active joints!",
+      "counterExplanationVi": "Debilitating (làm hao mòn suy kiệt) bị hóa giải bởi invigorating (tiếp thêm sinh lực sung mãn)."
+    },
+    {
+      "id": "u9_card5",
+      "word": "terminal",
+      "ipa": "/ˈtɜː.mɪ.nəl/",
+      "archetypeTitle": "The Final Horizon",
+      "meaningEn": "Signaling an irreversible, fatal outcome that medicine cannot halt.",
+      "meaningVi": "Giai đoạn cuối không thể cứu vãn.",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "powerStat": 99,
+      "precisionStat": 95,
+      "semanticOpposite": "curable",
+      "oppositeMeaningEn": "Amenable to complete medical eradication and full restoration of life.",
+      "distractors": [
+        "chronic",
+        "contagious",
+        "allergic"
+      ],
+      "battleScenario": "The Final Horizon signals that conventional interventions have reached their boundary!",
+      "counterExplanationVi": "Terminal (vô phương cứu chữa, giai đoạn cận tử) đối lập với curable (hoàn toàn có thể chữa khỏi)."
+    },
+    {
+      "id": "u9_card6",
+      "word": "panacea",
+      "ipa": "/ˌpæn.əˈsiː.ə/",
+      "archetypeTitle": "The Mythic Elixir",
+      "meaningEn": "A hypothetical remedy claiming to cure all diseases and solve every malady.",
+      "meaningVi": "Phương thuốc vạn năng trị bách bệnh (thần dược huyền thoại).",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "powerStat": 92,
+      "precisionStat": 97,
+      "semanticOpposite": "toxin",
+      "oppositeMeaningEn": "A poisonous substance producing systemic harm and organ failure.",
+      "distractors": [
+        "placebo",
+        "anaesthetic",
+        "sedative"
+      ],
+      "battleScenario": "The Mythic Elixir purges all afflictions and balances the biological field!",
+      "counterExplanationVi": "Panacea (thần dược trị bách bệnh) đối lập với chất độc hủy hoại tạng phủ (toxin)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u9_bin1",
+      "wordA": "chronic",
+      "wordB": "acute",
+      "contextSentence": "The patient presented with sudden, ___ abdominal spasms requiring emergency appendectomy within the hour.",
+      "correctWord": "acute",
+      "distinctionVi": "Acute là cấp tính (bộc phát dữ dội đột ngột); Chronic là mãn tính (kéo dài âm ỉ nhiều năm)."
+    },
+    {
+      "id": "u9_bin2",
+      "wordA": "prognosis",
+      "wordB": "diagnosis",
+      "contextSentence": "While the initial ___ identified pulmonary tuberculosis, the long-term ___ for recovery remained superb.",
+      "correctWord": "diagnosis",
+      "distinctionVi": "Diagnosis là chẩn đoán tìm ra tên bệnh hiện tại; Prognosis là tiên lượng kết quả tương lai sau điều trị."
+    },
+    {
+      "id": "u9_bin3",
+      "wordA": "malignant",
+      "wordB": "benign",
+      "contextSentence": "The pathologist had reassuring news: the excised polyp was completely ___, presenting zero risk of metastasis.",
+      "correctWord": "benign",
+      "distinctionVi": "Benign là u lành tính không lây lan; Malignant là u ác tính ung thư."
+    },
+    {
+      "id": "u9_bin4",
+      "wordA": "contagious",
+      "wordB": "congenital",
+      "contextSentence": "The heart murmur was not acquired through infection; rather, it was a ___ defect present from birth.",
+      "correctWord": "congenital",
+      "distinctionVi": "Congenital là bẩm sinh có từ khi chào đời; Contagious là truyền nhiễm lây từ người sang người."
+    },
+    {
+      "id": "u9_bin5",
+      "wordA": "outpatient",
+      "wordB": "inpatient",
+      "contextSentence": "You are at the wrong reception desk: this corridor is for overnight ___s staying for continuous monitoring.",
+      "correctWord": "inpatient",
+      "distinctionVi": "Inpatient là bệnh nhân nội trú nằm viện qua đêm; Outpatient là bệnh nhân ngoại trú khám xong về trong ngày."
+    },
+    {
+      "id": "u9_bin6",
+      "wordA": "dementia",
+      "wordB": "amnesia",
+      "contextSentence": "Her elderly grandmother suffered from senile ___, gradually losing reasoning abilities and personal memories.",
+      "correctWord": "dementia",
+      "distinctionVi": "Dementia là chứng sa sút trí tuệ tuổi già làm suy thoái thần kinh; Amnesia là chứng mất trí nhớ tạm thời sau chấn thương."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "Coming to Terms with Cancer",
+    "subtitleVi": "Đối Diện Với Ung Thư — Bản Lĩnh & Hy Vọng Trong Nghịch Cảnh",
+    "settingDescription": "The surgical oncology consultation room. Fluorescent lights buzz softly as a 33-year-old patient receives life-altering biopsy results.",
+    "segments": [
+      {
+        "id": "u9_nar1",
+        "chapterLabel": "Chapter I: The Diagnostic Shock",
+        "speakerOrMood": "Patient Journal (Numb & Vulnerable)",
+        "promptTextBefore": "The prognosis was not good. I may not have had a terminal illness, but the doctor revealed that I had a(n) ",
+        "promptTextAfter": " tumour that had already begun spreading to my lymph nodes.",
+        "correctWord": "malignant",
+        "imageSchemaTag": "CONTAINER_BOUNDARY",
+        "choices": [
+          {
+            "word": "malignant",
+            "isCorrect": true,
+            "consequenceTitle": "Oncological Reality",
+            "whatIfFeedbackEn": "The realization hits like a physical blow: aggressive treatment must commence immediately.",
+            "nuanceExplanationVi": "Malignant tumour là khối u ác tính di căn."
+          },
+          {
+            "word": "benign",
+            "isCorrect": false,
+            "consequenceTitle": "False Solace",
+            "whatIfFeedbackEn": "A benign tumour does not spread to lymph nodes or require emergency cancer oncology!",
+            "nuanceExplanationVi": "Benign là u lành tính, hoàn toàn mâu thuẫn với việc di căn hạch bạch huyết."
+          },
+          {
+            "word": "convalescent",
+            "isCorrect": false,
+            "consequenceTitle": "Grammar Fracture",
+            "whatIfFeedbackEn": "Convalescent refers to a recovering person, not a cellular cancer growth.",
+            "nuanceExplanationVi": "Convalescent là người đang dưỡng bệnh, không thể dùng làm tính từ cho khối u."
+          },
+          {
+            "word": "nominal",
+            "isCorrect": false,
+            "consequenceTitle": "Deadly Underestimation",
+            "whatIfFeedbackEn": "Calling a spreading cancer 'nominal' makes your oncologist drop their clipboard in disbelief.",
+            "nuanceExplanationVi": "Nominal là không đáng kể trên danh nghĩa, vô cùng nguy hiểm khi nói về ung thư!"
+          }
+        ]
+      },
+      {
+        "id": "u9_nar2",
+        "chapterLabel": "Chapter II: The Emergency Procedure",
+        "speakerOrMood": "Dr. Vance (Urgent & Focused)",
+        "promptTextBefore": "The excision could not wait. I would have to be put under general ",
+        "promptTextAfter": " again and would be completely unconscious for roughly two hours.",
+        "correctWord": "anaesthetic",
+        "imageSchemaTag": "CONTAINER_BOUNDARY",
+        "choices": [
+          {
+            "word": "anaesthetic",
+            "isCorrect": true,
+            "consequenceTitle": "The Deep Slumber",
+            "whatIfFeedbackEn": "The counting backwards from ten begins; monitors hum steadily as surgery gets underway.",
+            "nuanceExplanationVi": "General anaesthetic là thuốc gây mê toàn thân cho phẫu thuật lớn."
+          },
+          {
+            "word": "placebo",
+            "isCorrect": false,
+            "consequenceTitle": "The Agony of Sugar Pills",
+            "whatIfFeedbackEn": "Giving someone a placebo before cutting open their throat means they feel every scalpel incision!",
+            "nuanceExplanationVi": "Placebo là giả dược không hoạt tính, phẫu thuật dùng placebo là tra tấn dã man!"
+          },
+          {
+            "word": "antibiotic",
+            "isCorrect": false,
+            "consequenceTitle": "Bacterial Mismatch",
+            "whatIfFeedbackEn": "Antibiotics kill bacteria; they do not knock you unconscious for two hours during throat surgery.",
+            "nuanceExplanationVi": "Antibiotic là thuốc kháng sinh, không có tác dụng gây mê phẫu thuật."
+          },
+          {
+            "word": "remission",
+            "isCorrect": false,
+            "consequenceTitle": "Nonsensical Timeline",
+            "whatIfFeedbackEn": "You cannot put a patient under 'general remission' like a blanket.",
+            "nuanceExplanationVi": "Remission là trạng thái thuyên giảm bệnh, không phải chất gây mê."
+          }
+        ]
+      },
+      {
+        "id": "u9_nar3",
+        "chapterLabel": "Chapter III: The Genetic Precaution",
+        "speakerOrMood": "Patient (Reflective & Determined)",
+        "promptTextBefore": "Chemotherapy was ruled out because of family complications. I opted instead for preventive ",
+        "promptTextAfter": " surgery to excise the adjacent tissue before any further mutation occurred.",
+        "correctWord": "elective",
+        "imageSchemaTag": "PATH_TRAJECTORY",
+        "choices": [
+          {
+            "word": "elective",
+            "isCorrect": true,
+            "consequenceTitle": "Prudent Intervention",
+            "whatIfFeedbackEn": "The surgical margins are cleared cleanly, eliminating the risk of recurrent mutation.",
+            "nuanceExplanationVi": "Elective surgery là phẫu thuật chủ động lựa chọn phòng ngừa trước khi quá muộn."
+          },
+          {
+            "word": "contagious",
+            "isCorrect": false,
+            "consequenceTitle": "Infectious Fallacy",
+            "whatIfFeedbackEn": "Surgery cannot be contagious; cancer surgery is not a cold that catches on people.",
+            "nuanceExplanationVi": "Contagious là truyền nhiễm lây lan, không dùng để phân loại loại hình phẫu thuật."
+          },
+          {
+            "word": "hypochondriac",
+            "isCorrect": false,
+            "consequenceTitle": "Insulting Diagnosis",
+            "whatIfFeedbackEn": "Calling preventive cancer surgery 'hypochondriac surgery' mocks a genuinely life-saving operation.",
+            "nuanceExplanationVi": "Hypochondriac là chứng lo sợ bệnh hoang tưởng, hoàn toàn không tương thích."
+          },
+          {
+            "word": "morbid",
+            "isCorrect": false,
+            "consequenceTitle": "Gloomy Mismatch",
+            "whatIfFeedbackEn": "Morbid describes morbid obesity or gloomy fascinations with death, not a medical procedure type.",
+            "nuanceExplanationVi": "Morbid mang nghĩa bệnh lý hoặc bệnh hoạn, không đi với phẫu thuật chủ động."
+          }
+        ]
+      },
+      {
+        "id": "u9_nar4",
+        "chapterLabel": "Chapter IV: The Ticking Window",
+        "speakerOrMood": "Patient (Hopeful Amidst Uncertainty)",
+        "promptTextBefore": "At 33, my situation is complicated by the fact that my partner and I were planning a family. My biological ",
+        "promptTextAfter": " is ticking, but for today, the cancer is in complete remission.",
+        "correctWord": "clock",
+        "imageSchemaTag": "BALANCE_SHIFT",
+        "choices": [
+          {
+            "word": "clock",
+            "isCorrect": true,
+            "consequenceTitle": "The Gift of Tomorrow",
+            "whatIfFeedbackEn": "Tears of relief fall as the final scans show zero evidence of disease; the future is open once more.",
+            "nuanceExplanationVi": "Biological clock is ticking là collocation C2 nổi tiếng về đồng hồ sinh học sinh sản."
+          },
+          {
+            "word": "alarm",
+            "isCorrect": false,
+            "consequenceTitle": "Snooze Button",
+            "whatIfFeedbackEn": "A 'biological alarm' makes it sound like your pancreas rings loudly at 7:00 AM.",
+            "nuanceExplanationVi": "Biological clock là thành ngữ cố định; biological alarm không tồn tại trong tiếng Anh tự nhiên."
+          },
+          {
+            "word": "trial",
+            "isCorrect": false,
+            "consequenceTitle": "Clinical Misplacement",
+            "whatIfFeedbackEn": "Calling the human fertility window a 'biological trial' sounds like a university lab exam.",
+            "nuanceExplanationVi": "Biological trial không mang ý nghĩa độ tuổi sinh sản của người phụ nữ."
+          },
+          {
+            "word": "pulse",
+            "isCorrect": false,
+            "consequenceTitle": "Cardiology Mixup",
+            "whatIfFeedbackEn": "Your biological pulse does not 'tick' about having babies; hearts beat, clocks tick.",
+            "nuanceExplanationVi": "Collocation chuẩn xác với ticking là clock (đồng hồ sinh học)."
+          }
+        ]
+      }
+    ]
+  }
+}

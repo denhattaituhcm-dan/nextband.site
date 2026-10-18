@@ -1,0 +1,263 @@
+{
+  "unitNumber": 3,
+  "unitCode": "unit_03",
+  "titleEn": "Employment & Working Conditions",
+  "titleVi": "Thị trường Lao động & Quản trị Nhân sự Cao cấp",
+  "themeSummaryVi": "Phân loại 5 nhóm ngành nghề, thuật ngữ hợp đồng lao động, sa thải, đãi ngộ và bài đọc Making Ends Meet.",
+  "pdfPages": "Trang 12–15",
+  "schemaItems": [
+    {
+      "id": "u3_w1",
+      "word": "camaraderie",
+      "ipa": "/ˌkæm.əˈrɑː.dər.i/",
+      "pos": "n.",
+      "definitionEn": "Mutual trust and friendship among people who spend a lot of time together working.",
+      "definitionVi": "Tình bạn đồng đội keo sơn, sự gắn kết thân thiết giữa các đồng nghiệp cùng chiến hào.",
+      "exampleSentence": "The genuine camaraderie among the emergency room nursing team carried them through grueling 14-hour night shifts.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "visualMetaphor": "Interlocking glowing golden links forming a flexible, resilient communal ring.",
+      "contrastWord": "animosity",
+      "contrastDefinitionEn": "Strong hostility, bitter friction, and mutual dislike.",
+      "contrastVisualMetaphor": "Jagged barbed shards scraping aggressively against one another.",
+      "simulationConfig": {
+        "primaryColor": "#10B981",
+        "secondaryColor": "#38BDF8",
+        "velocityFactor": 1.3,
+        "particleCount": 70,
+        "vectorPattern": "converge"
+      }
+    },
+    {
+      "id": "u3_w2",
+      "word": "remuneration",
+      "ipa": "/rɪˌmjuː.nərˈeɪ.ʃən/",
+      "pos": "n.",
+      "definitionEn": "Money paid for work or service rendered; comprehensive financial compensation.",
+      "definitionVi": "Thù lao đãi ngộ, tiền công lương thưởng xứng đáng với công sức bỏ ra.",
+      "exampleSentence": "Executive remuneration packages have skyrocketed even as factory wages remained stagnant.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "visualMetaphor": "A descending radiant beam depositing golden crystalline tokens into waiting hands.",
+      "contrastWord": "penury",
+      "contrastDefinitionEn": "The state of being utterly destitute and lacking all financial means.",
+      "contrastVisualMetaphor": "Empty withered soil blowing dry in an icy wind.",
+      "simulationConfig": {
+        "primaryColor": "#F59E0B",
+        "secondaryColor": "#10B981",
+        "velocityFactor": 1.6,
+        "particleCount": 65,
+        "vectorPattern": "ascend"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u3_col1",
+      "columnA": "white-collar",
+      "columnB": "crime",
+      "fullCollocation": "white-collar crime",
+      "meaningEn": "Financially motivated, nonviolent crime committed by corporate and business professionals.",
+      "meaningVi": "Tội phạm cổ cồn trắng (tội phạm kinh tế tài chính tinh vi).",
+      "example": "Special taskforces investigate embezzlement and insider trading as severe white-collar crime.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u3_col2",
+      "columnA": "constructive",
+      "columnB": "dismissal",
+      "fullCollocation": "constructive dismissal",
+      "meaningEn": "When an employee is forced to resign because the employer made work intolerable.",
+      "meaningVi": "Sa thải gián tiếp (ép người lao động tự viết đơn nghỉ việc vì môi trường độc hại).",
+      "example": "She took the firm to an industrial tribunal, successfully alleging constructive dismissal.",
+      "imageSchemaTag": "FORCE_COLLISION"
+    },
+    {
+      "id": "u3_col3",
+      "columnA": "fringe",
+      "columnB": "benefits",
+      "fullCollocation": "fringe benefits",
+      "meaningEn": "Extra benefits supplementing an employee's regular salary (health cover, company vehicle).",
+      "meaningVi": "Phúc lợi phụ đãi ngộ ngoài lương (bảo hiểm tư, xe hơi riêng, voucher).",
+      "example": "Comprehensive dental insurance and gym memberships are standard fringe benefits here.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u3_col4",
+      "columnA": "career",
+      "columnB": "break",
+      "fullCollocation": "career break",
+      "meaningEn": "A period of time during which you choose not to work, typically to travel or study.",
+      "meaningVi": "Thời gian tạm nghỉ sự nghiệp để tái tạo năng lượng hoặc học lên cao.",
+      "example": "He took a sabbatical year for a career break to complete his doctoral thesis.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u3_ds1",
+      "term": "plaintiff",
+      "domain": "Lawyer",
+      "meaningVi": "Nguyên đơn khởi kiện trong vụ kiện dân sự",
+      "clueEn": "A person who brings a case against another in a court of law."
+    },
+    {
+      "id": "u3_ds2",
+      "term": "arbitrage",
+      "domain": "Investment Banker",
+      "meaningVi": "Nghiệp vụ kinh doanh chênh lệch giá chứng khoán",
+      "clueEn": "The simultaneous buying and selling of securities in different markets."
+    },
+    {
+      "id": "u3_ds3",
+      "term": "manuscript",
+      "domain": "Author",
+      "meaningVi": "Bản thảo sách viết tay trước khi xuất bản",
+      "clueEn": "An author's unpublished handwritten or typed text."
+    },
+    {
+      "id": "u3_ds4",
+      "term": "specimen",
+      "domain": "Scientist",
+      "meaningVi": "Mẫu vật thí nghiệm khoa học",
+      "clueEn": "An individual animal, plant, or tissue sample used for scientific analysis."
+    },
+    {
+      "id": "u3_ds5",
+      "term": "cordon",
+      "domain": "Police Officer",
+      "meaningVi": "Hàng rào phong tỏa hiện trường vụ án",
+      "clueEn": "A line or circle of police officers or tape guarding an area."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u3_tri1",
+      "targetWord": "contract",
+      "rootHint": "Legal binding agreement / To shrink in size / To catch an infection",
+      "ipa": "/ˈkɒn.trækt/",
+      "meaningVi": "Hợp đồng lao động / Co rút thu nhỏ kích thước / Mắc bệnh truyền nhiễm",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "The engineer signed a lucrative four-year employment ___ with the aerospace consortium.",
+        "Metals expand when heated and steadily ___ when exposed to freezing temperatures.",
+        "Doctors cautioned travelers not to ___ malaria during their jungle expedition."
+      ],
+      "nuanceNotes": [
+        "Employment: binding covenant.",
+        "Thermodynamics: dimensional shrinkage.",
+        "Pathology: acquiring an illness."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u3_mf1",
+      "rootWord": "employ",
+      "meaningVi": "Thuê mướn, tuyển dụng",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "employment",
+          "unemployment",
+          "employability"
+        ],
+        "verb": [
+          "employ"
+        ],
+        "adjective": [
+          "employable",
+          "unemployed"
+        ]
+      },
+      "transformationPrompt": "Continuous professional development enhances lifelong ___ (employ) in a changing economy.",
+      "targetAnswer": "employability",
+      "targetPos": "noun",
+      "explanationVi": "Employability là khả năng được tuyển dụng và duy trì việc làm của người lao động."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u3_card1",
+      "word": "autocrat",
+      "ipa": "/ˈɔː.tə.kræt/",
+      "archetypeTitle": "The Iron Manager",
+      "meaningEn": "A ruler or boss who has absolute power and demands total submissive obedience.",
+      "meaningVi": "Kẻ độc đoán chuyên quyền trong quản trị công ty.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "powerStat": 93,
+      "precisionStat": 89,
+      "semanticOpposite": "servant leader",
+      "oppositeMeaningEn": "A leader whose primary focus is the growth and well-being of their team.",
+      "distractors": [
+        "freelancer",
+        "apprentice",
+        "intern"
+      ],
+      "battleScenario": "The Iron Manager dictates directives without tolerating any employee feedback!",
+      "counterExplanationVi": "Kẻ độc tài chuyên quyền (autocrat) đối lập với phong cách lãnh đạo phụng sự vì tập thể (servant leader)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u3_bin1",
+      "wordA": "remuneration",
+      "wordB": "perquisite",
+      "contextSentence": "In addition to base salary and overtime ___, executive partners enjoy exclusive corporate perquisites.",
+      "correctWord": "remuneration",
+      "distinctionVi": "Remuneration là thù lao công sức (tiền lương); Perquisite (perk) là đặc quyền đặc lợi đi kèm."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "Making Ends Meet",
+    "subtitleVi": "Vật Lộn Mưu Sinh Nơi Đô Thị",
+    "settingDescription": "A chilly London flat after an unceremonious tech internship layoff.",
+    "segments": [
+      {
+        "id": "u3_nar1",
+        "chapterLabel": "Chapter I: The Broken Promise",
+        "speakerOrMood": "Recent Graduate (Defeated & Reflective)",
+        "promptTextBefore": "After my six-month graduate internship expired, I was devastated not to be offered a ",
+        "promptTextAfter": " position despite stellar performance appraisals.",
+        "correctWord": "permanent",
+        "imageSchemaTag": "PATH_TRAJECTORY",
+        "choices": [
+          {
+            "word": "permanent",
+            "isCorrect": true,
+            "consequenceTitle": "Corporate Downsizing",
+            "whatIfFeedbackEn": "The harsh reality sets in: budget freezes spare no junior staff.",
+            "nuanceExplanationVi": "A permanent position là vị trí làm việc chính thức lâu dài."
+          },
+          {
+            "word": "cottage",
+            "isCorrect": false,
+            "consequenceTitle": "Chintzy Confusion",
+            "whatIfFeedbackEn": "A 'cottage position' makes it sound like you were hired to be a garden gnome.",
+            "nuanceExplanationVi": "Cottage không dùng làm tính từ cho hợp đồng việc làm."
+          },
+          {
+            "word": "heinous",
+            "isCorrect": false,
+            "consequenceTitle": "Evil Contract",
+            "whatIfFeedbackEn": "Asking for a heinous position sounds like you are applying to be a supervillain.",
+            "nuanceExplanationVi": "Heinous là tàn ác ghê rợn, hoàn toàn sai nghĩa."
+          },
+          {
+            "word": "interleaved",
+            "isCorrect": false,
+            "consequenceTitle": "Pagination Error",
+            "whatIfFeedbackEn": "An interleaved position sounds like your resume got stuck inside a laser printer.",
+            "nuanceExplanationVi": "Interleaved chỉ việc xen kẽ trang giấy/nhiệm vụ."
+          }
+        ]
+      }
+    ]
+  },
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Labor Relations",
+    "Executive Recruitment",
+    "Workplace Psychology",
+    "Corporate Contracts",
+    "Occupational Jargon"
+  ]
+}

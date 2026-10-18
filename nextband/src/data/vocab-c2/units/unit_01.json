@@ -1,0 +1,788 @@
+{
+  "unitNumber": 1,
+  "unitCode": "unit_01",
+  "titleEn": "The Business World",
+  "titleVi": "Thế giới Kinh doanh & Tài chính Doanh nghiệp",
+  "themeSummaryVi": "Chinh phục từ vựng C2 về chu kỳ kinh tế, mua bán sáp nhập, khủng hoảng thanh khoản và chiến lược thị trường.",
+  "pdfPages": "Trang 4–7",
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Corporate Finance",
+    "Mergers & Acquisitions",
+    "Market Strategy",
+    "Economics",
+    "Corporate Governance"
+  ],
+  "schemaItems": [
+    {
+      "id": "u1_w1",
+      "word": "skyrocket",
+      "ipa": "/ˈskaɪˌrɒk.ɪt/",
+      "pos": "v.",
+      "definitionEn": "To rise or increase dramatically, suddenly, and uncontrollably.",
+      "definitionVi": "Tăng vọt theo phương thẳng đứng với vận tốc chóng mặt.",
+      "exampleSentence": "Following the announcement of the breakthrough patent, company shares skyrocketed by 140%.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "visualMetaphor": "A fiery rocket punching upward through resistance ceilings with exponential momentum.",
+      "contrastWord": "plummet",
+      "contrastDefinitionEn": "To plunge steeply downward at rapid speed.",
+      "contrastVisualMetaphor": "A heavy lead weight snapping its tether and plummeting down an abyss.",
+      "simulationConfig": {
+        "primaryColor": "#00F5D4",
+        "secondaryColor": "#0EA5E9",
+        "velocityFactor": 2.4,
+        "particleCount": 75,
+        "vectorPattern": "ascend"
+      }
+    },
+    {
+      "id": "u1_w2",
+      "word": "encroach",
+      "ipa": "/ɪnˈkrəʊtʃ/",
+      "pos": "v.",
+      "definitionEn": "To intrude gradually or advance stealthily upon anothers territory or rights beyond normal limits.",
+      "definitionVi": "Lấn chiếm, xâm lấn từ từ và ngấm ngầm qua ranh giới an toàn.",
+      "exampleSentence": "Tech conglomerates have begun to encroach on territory traditionally preserved for regional retail stores.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "visualMetaphor": "Tendrils of a creeping fluid stealthily breaching a glowing protective boundary ring.",
+      "contrastWord": "stampede",
+      "contrastDefinitionEn": "To surge forward in sudden, violent, chaotic mass motion.",
+      "contrastVisualMetaphor": "A frantic chaotic herd violently smashing everything in broad daylight.",
+      "simulationConfig": {
+        "primaryColor": "#F59E0B",
+        "secondaryColor": "#EF4444",
+        "velocityFactor": 1.2,
+        "particleCount": 60,
+        "vectorPattern": "breach"
+      }
+    },
+    {
+      "id": "u1_w3",
+      "word": "conglomerate",
+      "ipa": "/kənˈɡlɒm.ər.ət/",
+      "pos": "n.",
+      "definitionEn": "A multi-industry company formed by merging diverse corporate entities into one colossal structure.",
+      "definitionVi": "Tập đoàn đa ngành khổng lồ quy tụ các công ty con hoạt động độc lập.",
+      "exampleSentence": "It is a huge conglomerate with activities in diverse industries ranging from mining to telecommunications.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "visualMetaphor": "Multiple orbiting planetary rings collapsing inward and coalescing into a single massive nexus.",
+      "contrastWord": "cottage industry",
+      "contrastDefinitionEn": "A small-scale, decentralized manufacturing business run from homes.",
+      "contrastVisualMetaphor": "A single solitary candle flickering inside a small quiet workshop.",
+      "simulationConfig": {
+        "primaryColor": "#8B5CF6",
+        "secondaryColor": "#38BDF8",
+        "velocityFactor": 1.6,
+        "particleCount": 85,
+        "vectorPattern": "converge"
+      }
+    },
+    {
+      "id": "u1_w4",
+      "word": "solvent",
+      "ipa": "/ˈsɒl.vənt/",
+      "pos": "adj.",
+      "definitionEn": "Having sufficient liquid assets and capital to meet all debts and financial obligations as they fall due.",
+      "definitionVi": "Có đủ khả năng thanh toán, ổn định và dồi dào về thanh khoản tài chính.",
+      "exampleSentence": "Management reassured frantic shareholders that the balance sheet remains exceptionally solvent.",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "visualMetaphor": "A balanced hydraulic reservoir maintaining steady equilibrium under pressure.",
+      "contrastWord": "receivership",
+      "contrastDefinitionEn": "A state where a bankrupted company is placed under the control of an appointed receiver.",
+      "contrastVisualMetaphor": "A fractured hydraulic valve draining completely dry into a warning zone.",
+      "simulationConfig": {
+        "primaryColor": "#10B981",
+        "secondaryColor": "#064E3B",
+        "velocityFactor": 1.0,
+        "particleCount": 50,
+        "vectorPattern": "oscillate"
+      }
+    },
+    {
+      "id": "u1_w5",
+      "word": "cut-throat",
+      "ipa": "/ˈkʌt.θrəʊt/",
+      "pos": "adj.",
+      "definitionEn": "Fierce, unprincipled, and relentless in striving for competitive advantage.",
+      "definitionVi": "Cực kỳ khốc liệt, tàn nhẫn, không khoan nhượng nhằm tiêu diệt đối thủ.",
+      "exampleSentence": "This is a cut-throat business, so do not feign surprise that the consortium double-crossed our alliance.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "visualMetaphor": "Opposing laser beams colliding head-on in an explosive spark shower.",
+      "contrastWord": "camaraderie",
+      "contrastDefinitionEn": "Mutual trust, friendship, and collaborative spirit among colleagues.",
+      "contrastVisualMetaphor": "Gentle parallel concentric rings synchronizing in harmonic harmony.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#F97316",
+        "velocityFactor": 2.8,
+        "particleCount": 90,
+        "vectorPattern": "collide"
+      }
+    },
+    {
+      "id": "u1_w6",
+      "word": "lucrative",
+      "ipa": "/ˈluː.krə.tɪv/",
+      "pos": "adj.",
+      "definitionEn": "Yielding an immense financial profit; highly remunerative.",
+      "definitionVi": "Hái ra tiền, sinh lợi nhuận khổng lồ, vô cùng béo bở.",
+      "exampleSentence": "The remuneration package was not lucrative enough to lure him away from his executive directorship.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "visualMetaphor": "A glowing golden fountain raining dense radiant particles steadily upward.",
+      "contrastWord": "unremunerative",
+      "contrastDefinitionEn": "Bringing little or no financial return or profit.",
+      "contrastVisualMetaphor": "A dry withered funnel with slow decaying sparks fading to black.",
+      "simulationConfig": {
+        "primaryColor": "#F59E0B",
+        "secondaryColor": "#10B981",
+        "velocityFactor": 1.8,
+        "particleCount": 70,
+        "vectorPattern": "ascend"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u1_col1",
+      "columnA": "double-dip",
+      "columnB": "recession",
+      "fullCollocation": "double-dip recession",
+      "meaningEn": "A prolonged economic slump where a brief recovery is immediately followed by a second dip.",
+      "meaningVi": "Suy thoái kinh tế kép (vừa le lói phục hồi lại chìm ngay vào đợt suy thoái thứ hai).",
+      "example": "The much-feared double-dip recession has become reality after consecutive negative quarters.",
+      "imageSchemaTag": "BALANCE_SHIFT"
+    },
+    {
+      "id": "u1_col2",
+      "columnA": "cut-throat",
+      "columnB": "competition",
+      "fullCollocation": "cut-throat competition",
+      "meaningEn": "Fierce, aggressive, and ruthless competition among corporate rivals.",
+      "meaningVi": "Cạnh tranh khốc liệt, triệt hạ đối thủ không tiếc tay.",
+      "example": "In the cut-throat competition of investment banking, margins are defended at all costs.",
+      "imageSchemaTag": "FORCE_COLLISION"
+    },
+    {
+      "id": "u1_col3",
+      "columnA": "credit",
+      "columnB": "crunch",
+      "fullCollocation": "credit crunch",
+      "meaningEn": "A sudden, severe shortage of available loans and banking credit across financial markets.",
+      "meaningVi": "Khủng hoảng thắt chặt tín dụng (ngân hàng siết chặt dòng vốn cho vay).",
+      "example": "The 2008 credit crunch triggered an unprecedented paralysis across interbank lending markets.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY"
+    },
+    {
+      "id": "u1_col4",
+      "columnA": "cottage",
+      "columnB": "industry",
+      "fullCollocation": "cottage industry",
+      "meaningEn": "A home-based small-scale artisanal craft or decentralized business.",
+      "meaningVi": "Tiểu thủ công nghiệp gia đình (sản xuất quy mô nhỏ tại nhà).",
+      "example": "She expanded her venture from a modest cottage industry into an international catering empire.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    },
+    {
+      "id": "u1_col5",
+      "columnA": "corporate",
+      "columnB": "ladder",
+      "fullCollocation": "corporate ladder",
+      "meaningEn": "The hierarchical series of promotion levels within a company.",
+      "meaningVi": "Nấc thang thăng tiến trong tập đoàn.",
+      "example": "Climbing the corporate ladder demands diplomatic prowess as much as technical expertise.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY"
+    },
+    {
+      "id": "u1_col6",
+      "columnA": "junk",
+      "columnB": "bond",
+      "fullCollocation": "junk bond",
+      "meaningEn": "A high-yield bond carrying substantial risk of corporate default.",
+      "meaningVi": "Trái phiếu rác (lãi suất cao đi kèm nguy cơ vỡ nợ nghiêm trọng).",
+      "example": "Having its credit rating downgraded reduced the debt issuance to the status of a junk bond.",
+      "imageSchemaTag": "BALANCE_SHIFT"
+    },
+    {
+      "id": "u1_col7",
+      "columnA": "golden",
+      "columnB": "handshake",
+      "fullCollocation": "golden handshake",
+      "meaningEn": "A lucrative severance package given to an executive upon departure.",
+      "meaningVi": "Khoản tiền đền bù thôi việc béo bở dành cho lãnh đạo cấp cao.",
+      "example": "The ousted CEO departed the boardroom armed with an eight-figure golden handshake.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY"
+    },
+    {
+      "id": "u1_col8",
+      "columnA": "exit",
+      "columnB": "strategy",
+      "fullCollocation": "exit strategy",
+      "meaningEn": "A pre-formulated plan to liquidate ones holdings or retreat safely if things deteriorate.",
+      "meaningVi": "Chiến lược thoái vốn / lối thoát hiểm phòng ngừa thất bại.",
+      "example": "Venturing into unchartered markets without a viable exit strategy is corporate recklessness.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u1_ds1",
+      "term": "consortium",
+      "domain": "Mergers & Acquisitions",
+      "meaningVi": "Tổ hợp công ty liên kết đấu thầu",
+      "clueEn": "An association of several financial entities pooling resources."
+    },
+    {
+      "id": "u1_ds2",
+      "term": "conglomeration",
+      "domain": "Corporate Finance",
+      "meaningVi": "Sự sáp nhập tập đoàn đa ngành",
+      "clueEn": "The amalgamating of diverse business branches."
+    },
+    {
+      "id": "u1_ds3",
+      "term": "predatory lending",
+      "domain": "Economics",
+      "meaningVi": "Cho vay mang tính trục lợi",
+      "clueEn": "Imposing unfair, deceptive loan terms on desperate borrowers."
+    },
+    {
+      "id": "u1_ds4",
+      "term": "meritocracy",
+      "domain": "Corporate Governance",
+      "meaningVi": "Chế độ trọng dụng nhân tài",
+      "clueEn": "System where advancement is governed strictly by ability."
+    },
+    {
+      "id": "u1_ds5",
+      "term": "punitive damages",
+      "domain": "Corporate Governance",
+      "meaningVi": "Khoản tiền bồi thường răn đe",
+      "clueEn": "Court damages awarded to punish the defendant beyond actual loss."
+    },
+    {
+      "id": "u1_ds6",
+      "term": "liquidate",
+      "domain": "Corporate Finance",
+      "meaningVi": "Thanh lý toàn bộ tài sản để trả nợ",
+      "clueEn": "To wind up affairs and convert corporate assets into cash."
+    },
+    {
+      "id": "u1_ds7",
+      "term": "market penetration",
+      "domain": "Market Strategy",
+      "meaningVi": "Mức độ thâm nhập thị phần",
+      "clueEn": "The proportion of customers in a target market purchasing a product."
+    },
+    {
+      "id": "u1_ds8",
+      "term": "industrial espionage",
+      "domain": "Mergers & Acquisitions",
+      "meaningVi": "Gián điệp công nghiệp",
+      "clueEn": "Clandestine spying to uncover a competitors trade secrets."
+    },
+    {
+      "id": "u1_ds9",
+      "term": "insider trading",
+      "domain": "Corporate Finance",
+      "meaningVi": "Giao dịch nội gián phi pháp",
+      "clueEn": "Trading public stock using confidential, non-public data."
+    },
+    {
+      "id": "u1_ds10",
+      "term": "indemnify",
+      "domain": "Corporate Governance",
+      "meaningVi": "Bảo đảm bồi thường rủi ro tổn thất",
+      "clueEn": "To compensate a party for harm or civil loss sustained."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u1_tri1",
+      "targetWord": "capital",
+      "rootHint": "Core asset / Chief / Upper-tier",
+      "ipa": "/ˈkæp.ɪ.təl/",
+      "meaningVi": "Vốn tư bản / Thủ phủ / Án phạt tử hình",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "The startup struggled to secure sufficient seed ___ to finance production tooling.",
+        "Imposing ___ punishment for financial white-collar crimes remains fiercely contested.",
+        "Brussels is universally recognized as the political ___ of the European Union."
+      ],
+      "nuanceNotes": [
+        "Corporate finance: liquid investment wealth.",
+        "Jurisprudence: capital sentence = maximum severity.",
+        "Geography: seat of political sovereignty."
+      ]
+    },
+    {
+      "id": "u1_tri2",
+      "targetWord": "yield",
+      "rootHint": "To produce profit / To surrender under force",
+      "ipa": "/jiːld/",
+      "meaningVi": "Lợi suất trái tức / Sản sinh kết quả / Nhượng bộ",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "sentences": [
+        "The dividend ___ on 10-year sovereign bonds plummeted to historic lows.",
+        "Extensive market testing failed to ___ any statistically actionable insights.",
+        "Refusing to ___ to hostile boardroom pressure, the chairperson stood her ground."
+      ],
+      "nuanceNotes": [
+        "Investment metric: financial rate of return.",
+        "Empirical research: generating tangible findings.",
+        "Psychological/political: capitulating under coercion."
+      ]
+    },
+    {
+      "id": "u1_tri3",
+      "targetWord": "margin",
+      "rootHint": "Edge / Cushion / Financial profit differential",
+      "ipa": "/ˈmɑː.dʒɪn/",
+      "meaningVi": "Biên lợi nhuận / Ranh giới biên độ / Khoảng chênh lệch",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "The net profit ___ on discount grocery items is notoriously razor-thin.",
+        "The coalition government retained its parliamentary majority by the narrowest of ___s.",
+        "She scribbled critical editorial notations in the left-hand ___ of the dossier."
+      ],
+      "nuanceNotes": [
+        "Accounting: percentage of revenue exceeding costs.",
+        "Electoral politics: winning differential threshold.",
+        "Spatial typography: outer page boundary."
+      ]
+    },
+    {
+      "id": "u1_tri4",
+      "targetWord": "float",
+      "rootHint": "To suspend on liquid / To launch onto the stock exchange",
+      "ipa": "/fləʊt/",
+      "meaningVi": "Niêm yết cổ phiếu lên sàn / Đề xuất ý tưởng / Thả nổi tiền tệ",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "sentences": [
+        "Maxwell Mining finalized preparations to ___ its shares on the London Stock Exchange.",
+        "The managing director opted to ___ the radical restructuring proposal during lunch.",
+        "Central bank governors decided to allow the domestic currency to ___ freely."
+      ],
+      "nuanceNotes": [
+        "Securities: initial public offering (IPO).",
+        "Discourse: tentatively suggesting an idea for reaction.",
+        "Forex: liberating an exchange rate from government peg."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u1_mf1",
+      "rootWord": "penetrate",
+      "meaningVi": "Thâm nhập, xuyên qua",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "forms": {
+        "noun": [
+          "penetration",
+          "penetrability"
+        ],
+        "verb": [
+          "penetrate"
+        ],
+        "adjective": [
+          "penetrating",
+          "penetrable",
+          "impenetrable"
+        ],
+        "adverb": [
+          "penetratingly"
+        ]
+      },
+      "transformationPrompt": "The level of market ___ (penetrate) has not been as high as desired by executive leadership.",
+      "targetAnswer": "penetration",
+      "targetPos": "noun",
+      "explanationVi": "Chuyển động từ penetrate thành danh từ market penetration (độ thâm nhập thị trường)."
+    },
+    {
+      "id": "u1_mf2",
+      "rootWord": "mitigate",
+      "meaningVi": "Làm giảm nhẹ, xoa dịu",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "forms": {
+        "noun": [
+          "mitigation"
+        ],
+        "verb": [
+          "mitigate"
+        ],
+        "adjective": [
+          "mitigating",
+          "mitigative",
+          "unmitigated"
+        ],
+        "adverb": [
+          "mitigatingly"
+        ]
+      },
+      "transformationPrompt": "There were ___ (mitigate) factors at play and I do not believe the products failure was sheer incompetence.",
+      "targetAnswer": "mitigating",
+      "targetPos": "adjective",
+      "explanationVi": "Mitigating factors (các tình tiết/yếu tố giảm nhẹ) là collocation C2 cố định."
+    },
+    {
+      "id": "u1_mf3",
+      "rootWord": "viable",
+      "meaningVi": "Khả thi, có khả năng sống sót/duy trì",
+      "imageSchemaTag": "PATH_TRAJECTORY",
+      "forms": {
+        "noun": [
+          "viability"
+        ],
+        "adjective": [
+          "viable",
+          "non-viable"
+        ],
+        "adverb": [
+          "viably"
+        ]
+      },
+      "transformationPrompt": "The commercial ___ (viable) of the proposal is compromised because projected costs have tripled.",
+      "targetAnswer": "viability",
+      "targetPos": "noun",
+      "explanationVi": "Commercial viability (khả năng sinh lời khả thi về mặt thương mại)."
+    },
+    {
+      "id": "u1_mf4",
+      "rootWord": "solvent",
+      "meaningVi": "Có khả năng thanh toán",
+      "imageSchemaTag": "BALANCE_SHIFT",
+      "forms": {
+        "noun": [
+          "solvency",
+          "insolvency"
+        ],
+        "adjective": [
+          "solvent",
+          "insolvent"
+        ]
+      },
+      "transformationPrompt": "The enterprise is officially declared ___ (solve) as it can no longer satisfy debt covenants.",
+      "targetAnswer": "insolvent",
+      "targetPos": "adjective",
+      "explanationVi": "Insolvent = vỡ nợ, mất khả năng thanh toán nợ đến hạn."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u1_card1",
+      "word": "mogul",
+      "ipa": "/ˈməʊ.ɡəl/",
+      "archetypeTitle": "The Media Titan",
+      "meaningEn": "An omnipotent, dominant business magnate wielding immense industry influence.",
+      "meaningVi": "Trùm tư bản sừng sỏ, ông trùm thâu tóm toàn ngành.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "powerStat": 96,
+      "precisionStat": 92,
+      "semanticOpposite": "pauper",
+      "oppositeMeaningEn": "An utterly impoverished individual possessing zero assets.",
+      "distractors": [
+        "sycophant",
+        "intern",
+        "underling"
+      ],
+      "battleScenario": "The Mogul unleashes a crushing leveraged buyout to corner the market!",
+      "counterExplanationVi": "Đối lập với ông trùm tư bản sở hữu khối tài sản vô hạn (mogul) chính là kẻ bần hàn khánh kiệt (pauper)."
+    },
+    {
+      "id": "u1_card2",
+      "word": "conglomerate",
+      "ipa": "/kənˈɡlɒm.ər.ət/",
+      "archetypeTitle": "The Monolith Apex",
+      "meaningEn": "A colossal syndicate spanning disparate global operations.",
+      "meaningVi": "Đại tập đoàn đa ngành quy mô toàn cầu.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "powerStat": 94,
+      "precisionStat": 88,
+      "semanticOpposite": "cottage industry",
+      "oppositeMeaningEn": "A minute, family-run craft workshop.",
+      "distractors": [
+        "subsidiary",
+        "bureaucracy",
+        "franchise"
+      ],
+      "battleScenario": "The Monolith absorbs whole supply chains into its massive portfolio!",
+      "counterExplanationVi": "Đối lập với đại tập đoàn công nghiệp đa ngành khổng lồ là xưởng thủ công gia đình quy mô nhỏ (cottage industry)."
+    },
+    {
+      "id": "u1_card3",
+      "word": "predatory",
+      "ipa": "/ˈpred.ə.tər.i/",
+      "archetypeTitle": "The Ruthless Shark",
+      "meaningEn": "Exploiting vulnerability to extract ruinous financial returns.",
+      "meaningVi": "Mang tính bóc lột, trục lợi tàn nhẫn trên sự cơ cực của kẻ khác.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "powerStat": 91,
+      "precisionStat": 89,
+      "semanticOpposite": "philanthropic",
+      "oppositeMeaningEn": "Charitable, dedicated to promoting human welfare selflessly.",
+      "distractors": [
+        "frugal",
+        "indolent",
+        "prudent"
+      ],
+      "battleScenario": "The Shark corners vulnerable firms with punishing predatory interest rates!",
+      "counterExplanationVi": "Predatory (trục lợi, bóc lột dã man) bị khắc chế hoàn toàn bởi philanthropic (từ thiện, hào hiệp vì nhân loại)."
+    },
+    {
+      "id": "u1_card4",
+      "word": "lucrative",
+      "ipa": "/ˈluː.krə.tɪv/",
+      "archetypeTitle": "The Midas Sovereign",
+      "meaningEn": "Producing colossal wealth and bountiful profits.",
+      "meaningVi": "Siêu lợi nhuận, mang lại dòng tiền dồi dào.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "powerStat": 89,
+      "precisionStat": 93,
+      "semanticOpposite": "unremunerative",
+      "oppositeMeaningEn": "Yielding negligible or zero monetary reward.",
+      "distractors": [
+        "precarious",
+        "extravagant",
+        "audacious"
+      ],
+      "battleScenario": "The Midas Sovereign projects irresistible financial incentives across the board!",
+      "counterExplanationVi": "Lucrative (sinh lãi lớn) đối nghịch với unremunerative (không đem lại thù lao hay lợi nhuận)."
+    },
+    {
+      "id": "u1_card5",
+      "word": "cut-throat",
+      "ipa": "/ˈkʌt.θrəʊt/",
+      "archetypeTitle": "The Boardroom Mercenary",
+      "meaningEn": "Mercilessly unyielding, sacrificing all ethics to annihilate rivals.",
+      "meaningVi": "Tàn bạo, cạnh tranh khát máu không từ thủ đoạn.",
+      "imageSchemaTag": "FORCE_COLLISION",
+      "powerStat": 93,
+      "precisionStat": 95,
+      "semanticOpposite": "conciliatory",
+      "oppositeMeaningEn": "Intended to pacify, mediate, and cultivate harmony.",
+      "distractors": [
+        "dogmatic",
+        "mercurial",
+        "aloof"
+      ],
+      "battleScenario": "The Mercenary strikes at the Achilles heel of the competitor without remorse!",
+      "counterExplanationVi": "Khắc chế thái độ cạnh tranh tiêu diệt (cut-throat) là phong thái hòa giải, thiện chí hợp tác (conciliatory)."
+    },
+    {
+      "id": "u1_card6",
+      "word": "nepotistic",
+      "ipa": "/ˌnep.əˈtɪs.tɪk/",
+      "archetypeTitle": "The Dynastic Patron",
+      "meaningEn": "Granting illicit corporate privileges strictly along family bloodlines.",
+      "meaningVi": "Gia đình trị, ưu ái nâng đỡ con cháu bất chấp thực tài.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "powerStat": 85,
+      "precisionStat": 90,
+      "semanticOpposite": "meritocratic",
+      "oppositeMeaningEn": "Selecting and elevating leaders strictly based on verified excellence.",
+      "distractors": [
+        "bureaucratic",
+        "charismatic",
+        "autocratic"
+      ],
+      "battleScenario": "The Dynastic Patron appoints an unqualified niece over decorated executives!",
+      "counterExplanationVi": "Chế độ bổ nhiệm thân tộc (nepotistic) đối nghịch trực diện với chế độ trọng dụng nhân tài (meritocratic)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u1_bin1",
+      "wordA": "solvent",
+      "wordB": "liquid",
+      "contextSentence": "Although the company remains technically ___, it lacks immediate cash to satisfy payroll obligations.",
+      "correctWord": "solvent",
+      "distinctionVi": "Solvent là tình trạng tài chính tổng tài sản lớn hơn tổng nợ; Liquid là tài sản mặt có thể chi trả tức thì."
+    },
+    {
+      "id": "u1_bin2",
+      "wordA": "indemnify",
+      "wordB": "reimburse",
+      "contextSentence": "The insurance underwriting syndicate agreed to ___ the multinational against systemic losses from civil unrest.",
+      "correctWord": "indemnify",
+      "distinctionVi": "Indemnify là cam kết pháp lý bảo lãnh đền bù tổn thất trong tương lai; Reimburse là hoàn trả tiền túi ai đó đã chi trước."
+    },
+    {
+      "id": "u1_bin3",
+      "wordA": "conglomerate",
+      "wordB": "consortium",
+      "contextSentence": "A high-powered ___ of private equity investors pooled $5 billion to launch a joint takeover bid.",
+      "correctWord": "consortium",
+      "distinctionVi": "Consortium là liên minh tạm thời giữa các tổ chức để thực hiện một dự án/đấu thầu; Conglomerate là một tập đoàn hợp nhất đa ngành."
+    },
+    {
+      "id": "u1_bin4",
+      "wordA": "nominal",
+      "wordB": "real",
+      "contextSentence": "While the central banks ___ interest rate rose by 2%, soaring inflation kept real borrowing yields negative.",
+      "correctWord": "nominal",
+      "distinctionVi": "Nominal là lãi suất danh nghĩa trên giấy tờ chưa khấu trừ lạm phát; Real là lãi suất thực tế sau lạm phát."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "The Sovereign Boardroom Takeover",
+    "subtitleVi": "Cuộc Đảo Chính Nơi Phòng Hội Đồng Quản Trị",
+    "settingDescription": "The 48th floor of Matriarch Tower. Rain hammers against bulletproof glass as Wall Street sharks deliberate an unprompted $18B hostile acquisition.",
+    "segments": [
+      {
+        "id": "u1_nar1",
+        "chapterLabel": "Chapter I: The Opening Gambit",
+        "speakerOrMood": "Managing Director Vance (Calculated & Stern)",
+        "promptTextBefore": "Vance slammed the valuation dossier onto the mahogany table. 'Unperturbed by market turbulence, our syndicate has finalized a(n) ",
+        "promptTextAfter": " of international financiers ready to execute the acquisition.'",
+        "correctWord": "consortium",
+        "imageSchemaTag": "CONTAINER_BOUNDARY",
+        "choices": [
+          {
+            "word": "consortium",
+            "isCorrect": true,
+            "consequenceTitle": "The Alliance Unites",
+            "whatIfFeedbackEn": "The coalition of sovereign funds signs the pledge, locking in $18B of liquid liquidity.",
+            "nuanceExplanationVi": "Consortium chỉ một liên minh các tổ chức tài chính bắt tay góp vốn cho một thương vụ lớn."
+          },
+          {
+            "word": "cottage industry",
+            "isCorrect": false,
+            "consequenceTitle": "Artisanal Ambush",
+            "whatIfFeedbackEn": "You announce that a group of home knitters and jam-makers will purchase the multinational, sparking baffled laughter across Wall Street.",
+            "nuanceExplanationVi": "Cottage industry là nghề tiểu thủ công nghiệp tại gia, hoàn toàn vô lý trong thương vụ sáp nhập 18 tỷ USD!"
+          },
+          {
+            "word": "syndicate",
+            "isCorrect": false,
+            "consequenceTitle": "Semantic Redundancy",
+            "whatIfFeedbackEn": "While close in tone, syndicate misses the specific formal joint-venture contract required under SEC takeover filing.",
+            "nuanceExplanationVi": "Consortium là từ thuật ngữ C2 chuẩn xác nhất dùng cho tổ hợp ngân hàng/quỹ liên kết thâu tóm."
+          },
+          {
+            "word": "monopoly",
+            "isCorrect": false,
+            "consequenceTitle": "Antitrust Intervention",
+            "whatIfFeedbackEn": "Declaring an outright monopoly summons DOJ regulators before the opening bell even rings.",
+            "nuanceExplanationVi": "Monopoly là thế độc quyền thị trường của một doanh nghiệp duy nhất, không phải nhóm nhà đầu tư."
+          }
+        ]
+      },
+      {
+        "id": "u1_nar2",
+        "chapterLabel": "Chapter II: The Defense Protocol",
+        "speakerOrMood": "Chief Legal Officer Diana (Sharp & Uncompromising)",
+        "promptTextBefore": "Diana adjusted her glasses. 'Before any talks proceed, it must be ",
+        "promptTextAfter": " whether the incumbent board is even legally empowered to consider this unsolicited tender.'",
+        "correctWord": "ascertained",
+        "imageSchemaTag": "PATH_TRAJECTORY",
+        "choices": [
+          {
+            "word": "ascertained",
+            "isCorrect": true,
+            "consequenceTitle": "Legal Perimeter Secured",
+            "whatIfFeedbackEn": "The audit team confirms fiduciary clearance to review binding acquisition terms.",
+            "nuanceExplanationVi": "Ascertain (xác minh chắc chắn sự thật qua điều tra/đối chiếu thông tin)."
+          },
+          {
+            "word": "speculated",
+            "isCorrect": false,
+            "consequenceTitle": "Careless Guesswork",
+            "whatIfFeedbackEn": "Speculating wildly on regulatory authority causes the stock price to swing wildly in panic-selling.",
+            "nuanceExplanationVi": "Speculate mang nghĩa phỏng đoán mò mẫm, trái ngược với yêu cầu xác minh pháp lý của C2."
+          },
+          {
+            "word": "liquidated",
+            "isCorrect": false,
+            "consequenceTitle": "Premature Dissolution",
+            "whatIfFeedbackEn": "You liquidate the board before negotiations start, leaving no one authorized to sign the contract.",
+            "nuanceExplanationVi": "Liquidate là thanh lý tài sản phá sản, không thể áp dụng cho việc kiểm tra quyền hạn."
+          },
+          {
+            "word": "encroached",
+            "isCorrect": false,
+            "consequenceTitle": "Territorial Encroachment",
+            "whatIfFeedbackEn": "The phrase collapses grammatically into meaning the board infringed on itself.",
+            "nuanceExplanationVi": "Encroach là lấn chiếm ranh giới ngoại lai, không thể làm bổ ngữ cho việc xác minh tính hợp pháp."
+          }
+        ]
+      },
+      {
+        "id": "u1_nar3",
+        "chapterLabel": "Chapter III: The Hostile Threat",
+        "speakerOrMood": "Activist Investor Thorne (Predatory & Unforgiving)",
+        "promptTextBefore": "Thorne leaned forward with a cynical smirk. 'If the board stalls, we will initiate an unconstrained ",
+        "promptTextAfter": " business assault, driving down your bond rating to junk status by morning.'",
+        "correctWord": "cut-throat",
+        "imageSchemaTag": "FORCE_COLLISION",
+        "choices": [
+          {
+            "word": "cut-throat",
+            "isCorrect": true,
+            "consequenceTitle": "The Blood in the Water",
+            "whatIfFeedbackEn": "The threat sends shivers down the spine of the executive committee; capitulation is imminent.",
+            "nuanceExplanationVi": "Cut-throat business miêu tả sự cạnh tranh khốc liệt, triệt hạ đối phương bằng mọi giá."
+          },
+          {
+            "word": "benevolent",
+            "isCorrect": false,
+            "consequenceTitle": "Surprise Charity",
+            "whatIfFeedbackEn": "Threatening them with benevolent business sounds like you are going to give them free cookies.",
+            "nuanceExplanationVi": "Benevolent là nhân từ bác ái, hoàn toàn trái ngược với lời đe dọa của kẻ thâu tóm!"
+          },
+          {
+            "word": "cottage",
+            "isCorrect": false,
+            "consequenceTitle": "Handmade Threat",
+            "whatIfFeedbackEn": "A cottage business threat makes Thorne sound like he is going to bake threatening pastries.",
+            "nuanceExplanationVi": "Cottage business là làm ăn thủ công nhỏ lẻ, không thể làm tính từ cho cuộc tấn công tài chính."
+          },
+          {
+            "word": "indolent",
+            "isCorrect": false,
+            "consequenceTitle": "Lazy Revolution",
+            "whatIfFeedbackEn": "An indolent assault means your attack team falls asleep on the boardroom sofa before noon.",
+            "nuanceExplanationVi": "Indolent mang nghĩa lười biếng, uể oải, mất hết tính răn đe."
+          }
+        ]
+      },
+      {
+        "id": "u1_nar4",
+        "chapterLabel": "Chapter IV: The Unconditional Surrender",
+        "speakerOrMood": "The Outgoing CEO (Exhausted & Resigned)",
+        "promptTextBefore": "Faced with impending insolvency, the chair signed the covenant. 'I have seldom witnessed such an immediate ",
+        "promptTextAfter": " by leadership under external activist pressure.'",
+        "correctWord": "capitulation",
+        "imageSchemaTag": "BALANCE_SHIFT",
+        "choices": [
+          {
+            "word": "capitulation",
+            "isCorrect": true,
+            "consequenceTitle": "The Gavel Falls",
+            "whatIfFeedbackEn": "Control passes smoothly to the consortium, sealing the largest buyout in corporate history.",
+            "nuanceExplanationVi": "Capitulation nghĩa là sự đầu hàng, quy phục và chấp nhận toàn bộ điều kiện của đối phương."
+          },
+          {
+            "word": "meritocracy",
+            "isCorrect": false,
+            "consequenceTitle": "Philosophical Non-Sequitur",
+            "whatIfFeedbackEn": "Saying the board committed immediate meritocracy makes no grammatical or operational sense.",
+            "nuanceExplanationVi": "Meritocracy là chế độ tuyển dụng theo thực tài, không phải hành động đầu hàng."
+          },
+          {
+            "word": "espionage",
+            "isCorrect": false,
+            "consequenceTitle": "Bizarre Confession",
+            "whatIfFeedbackEn": "You accuse the CEO of committing immediate espionage instead of simply handing over power.",
+            "nuanceExplanationVi": "Espionage là gián điệp, không miêu tả hành vi nhượng bộ ký kết nhượng quyền."
+          },
+          {
+            "word": "penetration",
+            "isCorrect": false,
+            "consequenceTitle": "Category Error",
+            "whatIfFeedbackEn": "Market penetration describes consumer adoption, not an executive signing a surrender treaty.",
+            "nuanceExplanationVi": "Penetration không đi kèm nghĩa quy phục chính thức trước đối thủ."
+          }
+        ]
+      }
+    ]
+  }
+}

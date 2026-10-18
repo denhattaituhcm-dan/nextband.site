@@ -1,0 +1,220 @@
+{
+  "unitNumber": 6,
+  "unitCode": "unit_06",
+  "titleEn": "Poverty and Social Issues",
+  "titleVi": "Đói nghèo, Di cư & Bất bình đẳng Xã hội",
+  "themeSummaryVi": "Từ vựng phản ánh nghịch cảnh, vô gia cư, sự hòa nhập, phân biệt giai tầng và các chính sách an sinh xã hội.",
+  "pdfPages": "Trang 24–27",
+  "schemaItems": [
+    {
+      "id": "u6_w1",
+      "word": "destitution",
+      "ipa": "/ˌdes.tɪˈtʃuː.ʃən/",
+      "pos": "n.",
+      "definitionEn": "Poverty so extreme that one lacks the bare means to survive or feed oneself.",
+      "definitionVi": "Cảnh bần cùng khánh kiệt, đói rách cơ cực không còn manh áo túp lều.",
+      "exampleSentence": "Widespread crop failures plunged rural farming communities into unprecedented destitution.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "visualMetaphor": "A bare desiccated crater beneath an ominous descending shadow.",
+      "contrastWord": "opulence",
+      "contrastDefinitionEn": "Great wealth, lavish abundance, or luxurious richness.",
+      "contrastVisualMetaphor": "Radiant fountains cascading golden light into marble basins.",
+      "simulationConfig": {
+        "primaryColor": "#64748B",
+        "secondaryColor": "#334155",
+        "velocityFactor": 1.0,
+        "particleCount": 50,
+        "vectorPattern": "descend"
+      }
+    },
+    {
+      "id": "u6_w2",
+      "word": "marginalize",
+      "ipa": "/ˈmɑː.dʒɪ.nəl.aɪz/",
+      "pos": "v.",
+      "definitionEn": "To treat a person, group, or concept as insignificant or peripheral.",
+      "definitionVi": "Đẩy ra rìa xã hội, cô lập và tước bỏ tiếng nói của các nhóm yếu thế.",
+      "exampleSentence": "Aggressive urban redevelopment schemes risk marginalizing long-standing immigrant communities.",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "visualMetaphor": "Particles being systematically forced outside a glowing central circle.",
+      "contrastWord": "integrate",
+      "contrastDefinitionEn": "To bring into equal participation in or membership of a social group.",
+      "contrastVisualMetaphor": "Diverse light streams weaving seamlessly into a unified luminous cord.",
+      "simulationConfig": {
+        "primaryColor": "#EF4444",
+        "secondaryColor": "#F59E0B",
+        "velocityFactor": 1.5,
+        "particleCount": 65,
+        "vectorPattern": "diverge"
+      }
+    }
+  ],
+  "collocationPairs": [
+    {
+      "id": "u6_col1",
+      "columnA": "hand",
+      "columnB": "to mouth",
+      "fullCollocation": "from hand to mouth",
+      "meaningEn": "Living with only enough money for current basic survival needs without savings.",
+      "meaningVi": "Ăn bữa hôm lo bữa mai, chật vật sống qua ngày đoạn tháng.",
+      "example": "Without state welfare, millions of informal laborers live from hand to mouth.",
+      "imageSchemaTag": "PATH_TRAJECTORY"
+    },
+    {
+      "id": "u6_col2",
+      "columnA": "social",
+      "columnB": "stratification",
+      "fullCollocation": "social stratification",
+      "meaningEn": "The categorization of society into hierarchical socio-economic tiers.",
+      "meaningVi": "Sự phân tầng xã hội sâu sắc giữa các tầng lớp.",
+      "example": "Severe income disparity has hardened social stratification across major metropolises.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY"
+    }
+  ],
+  "domainSortItems": [
+    {
+      "id": "u6_ds1",
+      "term": "destitution",
+      "domain": "Socio-economics",
+      "meaningVi": "Cảnh bần cùng cơ cực",
+      "clueEn": "Extreme poverty lacking basic survival means."
+    },
+    {
+      "id": "u6_ds2",
+      "term": "assimilation",
+      "domain": "Human Rights",
+      "meaningVi": "Sự đồng hóa hòa nhập văn hóa",
+      "clueEn": "The process of absorbing and integrating into a wider society."
+    }
+  ],
+  "triLockPuzzles": [
+    {
+      "id": "u6_tri1",
+      "targetWord": "line",
+      "rootHint": "Boundary line / Breadline poverty / Line of work",
+      "ipa": "/laɪn/",
+      "meaningVi": "Bảo hiểm ranh giới nghèo (poverty line) / Dòng công việc (line of work) / Hàng lối cứu trợ",
+      "imageSchemaTag": "CONTAINER_BOUNDARY",
+      "sentences": [
+        "More than 20% of families currently subsist below the official poverty ___.",
+        "What specific ___ of work are you planning to pursue after completing your master's?",
+        "The destitute queued up patiently in a single ___ outside the soup kitchen."
+      ],
+      "nuanceNotes": [
+        "Demographics: threshold demarcation.",
+        "Vocation: occupational sector.",
+        "Physical queuing: sequential alignment."
+      ]
+    }
+  ],
+  "morphologicalFamilies": [
+    {
+      "id": "u6_mf1",
+      "rootWord": "poverty",
+      "meaningVi": "Nghèo đói, khốn cùng",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "forms": {
+        "noun": [
+          "poverty",
+          "impoverishment"
+        ],
+        "verb": [
+          "impoverish"
+        ],
+        "adjective": [
+          "impoverished"
+        ]
+      },
+      "transformationPrompt": "Decades of severe drought have deeply ___ (poverty) the pastoral tribes.",
+      "targetAnswer": "impoverished",
+      "targetPos": "verb (past participle)",
+      "explanationVi": "Impoverish nghĩa là làm cho kiệt quệ, bần cùng hóa."
+    }
+  ],
+  "personaCards": [
+    {
+      "id": "u6_card1",
+      "word": "philanthropist",
+      "ipa": "/fɪˈlæn.θrə.pɪst/",
+      "archetypeTitle": "The Benevolent Patron",
+      "meaningEn": "A person who seeks to promote the welfare of others, especially by donating funds.",
+      "meaningVi": "Nhà hảo tâm, nhà từ thiện hào hiệp vì cộng đồng.",
+      "imageSchemaTag": "VERTICAL_HIERARCHY",
+      "powerStat": 92,
+      "precisionStat": 94,
+      "semanticOpposite": "miser",
+      "oppositeMeaningEn": "A person who hoards wealth and spends as little money as possible.",
+      "distractors": [
+        "charlatan",
+        "sycophant",
+        "zealot"
+      ],
+      "battleScenario": "The Philanthropist endows university scholarships to lift underprivileged youth out of poverty!",
+      "counterExplanationVi": "Nhà từ thiện hào hiệp (philanthropist) đối lập với kẻ keo kiệt bủn xỉn (miser)."
+    }
+  ],
+  "binaryPrecisionPairs": [
+    {
+      "id": "u6_bin1",
+      "wordA": "destitute",
+      "wordB": "deprived",
+      "contextSentence": "Having lost their dwelling to the floodwaters, the refugees were left entirely ___ and dependent on rations.",
+      "correctWord": "destitute",
+      "distinctionVi": "Destitute là trắng tay không nơi nương tựa; Deprived là chịu thiệt thòi về điều kiện sống."
+    }
+  ],
+  "narrativeChronicle": {
+    "title": "On the Margins of the City",
+    "subtitleVi": "Bên Rìa Đô Thị — Nơi Băng Giá & Tình Người",
+    "settingDescription": "A freezing winter night beneath the concrete flyovers of an affluent metropolis.",
+    "segments": [
+      {
+        "id": "u6_nar1",
+        "chapterLabel": "Chapter I: The Harsh Chill",
+        "speakerOrMood": "Outreach Worker (Compassionate & Urgent)",
+        "promptTextBefore": "Those living on the streets are at their most vulnerable during winter when they are mercilessly ",
+        "promptTextAfter": " to the freezing elements.",
+        "correctWord": "exposed",
+        "imageSchemaTag": "CONTAINER_BOUNDARY",
+        "choices": [
+          {
+            "word": "exposed",
+            "isCorrect": true,
+            "consequenceTitle": "Survival Vigil",
+            "whatIfFeedbackEn": "Volunteers distribute thermal blankets just as hypothermia risk peaks.",
+            "nuanceExplanationVi": "Exposed to the elements là cụm C2 chỉ việc phơi mình trước thời tiết khắc nghiệt."
+          },
+          {
+            "word": "encroached",
+            "isCorrect": false,
+            "consequenceTitle": "Grammar Clash",
+            "whatIfFeedbackEn": "Encroached means encroaching on land, not being chilled by the night wind.",
+            "nuanceExplanationVi": "Encroached không thể dùng cho việc phơi nhiễm thời tiết."
+          },
+          {
+            "word": "subpoenaed",
+            "isCorrect": false,
+            "consequenceTitle": "Legal Frostbite",
+            "whatIfFeedbackEn": "You cannot subpoena someone to the cold snow.",
+            "nuanceExplanationVi": "Subpoena là đòi hầu tòa, hoàn toàn vô nghĩa ở đây."
+          },
+          {
+            "word": "quashed",
+            "isCorrect": false,
+            "consequenceTitle": "Verdict Confusion",
+            "whatIfFeedbackEn": "Quashing a human being against frostbite sounds like smashing a judge's gavel on ice.",
+            "nuanceExplanationVi": "Quash chỉ dùng cho phán quyết của tòa án."
+          }
+        ]
+      }
+    ]
+  },
+  "isFullVerticalSlice": true,
+  "availableDomains": [
+    "Socio-economics",
+    "Urban Geography",
+    "Human Rights",
+    "Public Policy",
+    "Social Mobility"
+  ]
+}
