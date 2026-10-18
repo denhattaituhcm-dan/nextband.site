@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { User, Users, Tag } from "lucide-react";
+import { useMicroTilt } from "@/hooks/useMicroTilt";
 
 interface StudyBuddyPassProps {
   studentName: string;
@@ -18,6 +19,11 @@ export function StudyBuddyPass({
   classNameOverride = "",
 }: StudyBuddyPassProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
+
+  const { ref: passRef } = useMicroTilt<HTMLDivElement>({
+    maxTilt: 6,
+    scale: 1.02,
+  });
 
   const effectiveTargetUrl =
     targetUrl ||
@@ -49,12 +55,26 @@ export function StudyBuddyPass({
   }, [effectiveTargetUrl]);
 
   return (
-    <div
-      className={`relative w-full max-w-[580px] aspect-[1.58/1] bg-[#FCFDFE] text-[#17243A] border-2 border-[#CBD5E1] rounded-[28px] p-5 sm:p-6 flex flex-col justify-between select-none overflow-hidden font-sans shadow-xl shadow-slate-900/10 ${classNameOverride}`}
-    >
-      {/* BACKGROUND DECORATIONS */}
-      {/* 1. Soft Sky Blue Curved Wave on bottom-left with boosted saturation */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[28px]">
+    <div className="perspective-1000 w-full flex justify-center">
+      <div
+        ref={passRef}
+        className={`relative w-full max-w-[580px] aspect-[1.58/1] bg-[#FCFDFE] text-[#17243A] border-2 border-[#CBD5E1] rounded-[28px] p-5 sm:p-6 flex flex-col justify-between select-none overflow-hidden font-sans shadow-2xl shadow-slate-900/15 transform-style-3d will-change-transform group ${classNameOverride}`}
+      >
+        {/* HOLOGRAPHIC REFLECTIVE GLARE OVERLAY */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[28px] z-30"
+          style={{
+            background:
+              "radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.15) 35%, transparent 70%)",
+          }}
+        />
+
+        {/* Ambient Holographic Shimmer Sweep */}
+        <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none holo-shimmer-sweep z-25 opacity-30" />
+
+        {/* BACKGROUND DECORATIONS */}
+        {/* 1. Soft Sky Blue Curved Wave on bottom-left with boosted saturation */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[28px]">
         <svg
           className="absolute -bottom-6 -left-6 w-[360px] sm:w-[420px] h-[240px] sm:h-[280px] opacity-65"
           viewBox="0 0 400 260"
@@ -271,6 +291,7 @@ export function StudyBuddyPass({
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Award, ChevronRight, CheckCircle2, ShieldCheck, Star, Shield, Crown, Sparkles } from "lucide-react";
+import { useMicroTilt } from "@/hooks/useMicroTilt";
 
 export interface AcademicRank {
   rankNumber: number;
@@ -27,6 +28,93 @@ export interface AcademicRank {
     iconColor: string;
     progressBar: string;
   };
+}
+
+interface AcademicRankCrest25DProps {
+  rank: AcademicRank;
+}
+
+/**
+ * 2.5D Gamified Academic Rank Crest Shield
+ * Tách 4 lớp độ sâu theo trục Z:
+ * - Lớp 1 (Nền khiên đa giác / Metal Surface)
+ * - Lớp 2 (Huy hiệu Rank Header Z=15px)
+ * - Lớp 3 (Biểu tượng trung tâm vương miện/khiên Z=30px)
+ * - Lớp 4 (Cụm sao mạ vàng Z=45px)
+ * - Kèm hiệu ứng phản quang ánh kim (Holo Shimmer Glare) khi hover
+ */
+export function AcademicRankCrest25D({ rank }: AcademicRankCrest25DProps) {
+  const { ref: crestRef } = useMicroTilt<HTMLDivElement>({
+    maxTilt: 7,
+    scale: 1.05,
+    perspective: 800,
+  });
+
+  const getRankIcon = (rankNum: number) => {
+    switch (rankNum) {
+      case 9:
+        return <Crown className="w-8 h-8 text-amber-300 drop-shadow-md" />;
+      case 8:
+        return <Shield className="w-8 h-8 text-rose-300 drop-shadow-md" />;
+      case 7:
+        return <Star className="w-8 h-8 text-amber-400 fill-amber-300 drop-shadow-md" />;
+      case 6:
+        return <Award className="w-8 h-8 text-sky-300 drop-shadow-md" />;
+      default:
+        return <ShieldCheck className="w-8 h-8 text-teal-300 drop-shadow-md" />;
+    }
+  };
+
+  const starCount = Math.min(5, Math.max(1, rank.rankNumber - 2));
+
+  return (
+    <div className="perspective-1000 inline-block">
+      <div
+        ref={crestRef}
+        className={cn(
+          "relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl p-3 flex flex-col items-center justify-between shadow-xl cursor-pointer select-none overflow-hidden transform-style-3d will-change-transform group transition-shadow duration-300 border-2",
+          rank.theme.activeBg,
+          rank.theme.activeBorder,
+          rank.theme.activeGlow
+        )}
+      >
+        {/* Holographic Sweep Shimmer Glare */}
+        <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none holo-shimmer-sweep z-20 opacity-40 group-hover:opacity-100" />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"
+          style={{
+            background:
+              "radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, 0.45) 0%, transparent 65%)",
+          }}
+        />
+
+        {/* Layer 1: Shield Inner Inset Frame */}
+        <div className="absolute inset-2 border border-white/20 rounded-2xl pointer-events-none" />
+
+        {/* Layer 2: Rank Header Badge (Z = 15px) */}
+        <div className="relative z-10 translate-z-10 preserve-3d-text pt-0.5">
+          <span className="font-mono font-black text-[10px] sm:text-[11px] uppercase tracking-widest px-2 py-0.5 rounded-md bg-black/25 text-white/95 border border-white/20 shadow-xs">
+            RANK {rank.rankNumber}
+          </span>
+        </div>
+
+        {/* Layer 3: Central Floating Crest Icon Emblem (Z = 30px) */}
+        <div className="relative z-10 translate-z-30 preserve-3d-text flex items-center justify-center p-2 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/20 shadow-lg group-hover:scale-110 transition-transform duration-300">
+          {getRankIcon(rank.rankNumber)}
+        </div>
+
+        {/* Layer 4: Floating Stars Cluster (Z = 45px) */}
+        <div className="relative z-10 translate-z-40 preserve-3d-text flex items-center justify-center gap-1 pb-0.5">
+          {Array.from({ length: starCount }).map((_, i) => (
+            <Star
+              key={i}
+              className="w-3 h-3 text-amber-300 fill-amber-300 drop-shadow-xs"
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export const ACADEMIC_RANKS: AcademicRank[] = [
@@ -224,7 +312,7 @@ export function AcademicRankSystem({
               disabled={!interactive}
               onClick={() => setSelectedRank(rank.rankNumber)}
               className={cn(
-                "group relative p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between min-h-[104px]",
+                "group relative p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[104px] transform-style-3d hover:-translate-y-1 hover:shadow-lg will-change-transform overflow-hidden",
                 isSelected
                   ? cn(rank.theme.activeBg, rank.theme.activeBorder, rank.theme.activeGlow)
                   : cn(
@@ -234,7 +322,10 @@ export function AcademicRankSystem({
                     )
               )}
             >
-              <div className="flex items-center justify-between w-full">
+              {/* Subtle metallic sweep on hover */}
+              <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none holo-shimmer-sweep opacity-0 group-hover:opacity-100 transition-opacity" />
+
+              <div className="flex items-center justify-between w-full relative z-10">
                 <span
                   className={cn(
                     "text-[10px] sm:text-xs font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded-lg border",
@@ -306,20 +397,29 @@ export function AcademicRankSystem({
                 <span>Hệ Thống Phân Cấp Năng Lực ARIS-7</span>
               </div>
 
-              <div className="flex flex-wrap items-baseline gap-3 pt-1">
-                <h3 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
-                  Rank {activeRankData.rankNumber} — {activeRankData.title}
-                </h3>
-                <span
-                  className={cn("text-base font-bold", activeRankData.theme.accentColor)}
-                >
-                  {activeRankData.subtitle}
-                </span>
-              </div>
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-5 pt-1">
+                <div className="space-y-1.5">
+                  <div className="flex flex-wrap items-baseline gap-3">
+                    <h3 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
+                      Rank {activeRankData.rankNumber} — {activeRankData.title}
+                    </h3>
+                    <span
+                      className={cn("text-base font-bold", activeRankData.theme.accentColor)}
+                    >
+                      {activeRankData.subtitle}
+                    </span>
+                  </div>
 
-              <p className="text-sm font-bold text-muted-foreground">
-                {activeRankData.bandPlaceholder}
-              </p>
+                  <p className="text-sm font-bold text-muted-foreground">
+                    {activeRankData.bandPlaceholder}
+                  </p>
+                </div>
+
+                {/* 2.5D Layered Gamification Crest Shield */}
+                <div className="shrink-0 self-start hidden sm:block">
+                  <AcademicRankCrest25D rank={activeRankData} />
+                </div>
+              </div>
             </div>
 
             <p className="text-base text-foreground/85 leading-relaxed font-normal">

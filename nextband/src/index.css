@@ -586,6 +586,10 @@
     perspective: 1000px;
     -webkit-perspective: 1000px;
   }
+  .perspective-1200 {
+    perspective: 1200px;
+    -webkit-perspective: 1200px;
+  }
   .transform-style-3d {
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
@@ -605,6 +609,49 @@
   .flip-face-back {
     transform: rotateY(180deg) translateZ(1px);
     -webkit-transform: rotateY(180deg) translateZ(1px);
+  }
+
+  /* 2.5D Layered Depth & Anti-Aliased Crisp Text Utilities */
+  .translate-z-10 {
+    transform: translateZ(10px);
+    -webkit-transform: translateZ(10px);
+  }
+  .translate-z-20 {
+    transform: translateZ(20px);
+    -webkit-transform: translateZ(20px);
+  }
+  .translate-z-30 {
+    transform: translateZ(30px);
+    -webkit-transform: translateZ(30px);
+  }
+  .translate-z-40 {
+    transform: translateZ(40px);
+    -webkit-transform: translateZ(40px);
+  }
+  .translate-z-50 {
+    transform: translateZ(50px);
+    -webkit-transform: translateZ(50px);
+  }
+  .preserve-3d-text {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+  }
+
+  @keyframes holo-shimmer {
+    0% {
+      transform: translateX(-150%) rotate(25deg);
+    }
+    100% {
+      transform: translateX(250%) rotate(25deg);
+    }
+  }
+  .holo-shimmer-sweep {
+    animation: holo-shimmer 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  .bg-isometric-dots {
+    background-image: radial-gradient(rgba(0, 33, 71, 0.08) 1.2px, transparent 1.2px);
+    background-size: 20px 20px;
   }
 
   /* Kahoot Signature Gradient & Typography System */

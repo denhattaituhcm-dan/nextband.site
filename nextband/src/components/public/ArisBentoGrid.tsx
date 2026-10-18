@@ -11,8 +11,15 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useMicroTilt } from "@/hooks/useMicroTilt";
 
 export function ArisBentoGrid() {
+  const { ref: heroCardRef } = useMicroTilt<HTMLDivElement>({
+    maxTilt: 4,
+    scale: 1.01,
+    flattenOnSelector: "a, button, [data-tilt-flatten='true']",
+  });
+
   return (
     <div className="w-full">
       {/* Bento Grid Container */}
@@ -20,77 +27,83 @@ export function ArisBentoGrid() {
         {/* ========================================================================= */}
         {/* CARD 1 (HERO BENTO - Full width): MOCKUP LINE-BY-LINE FEEDBACK            */}
         {/* ========================================================================= */}
-        <div className="md:col-span-2 lg:col-span-12 rounded-3xl bg-white p-6 sm:p-8 lg:p-10 border border-black/[0.06] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.07)] transition-all duration-300 overflow-hidden relative group">
-          {/* Subtle Ambient Light */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/[0.03] rounded-full blur-3xl pointer-events-none" />
+        <div className="md:col-span-2 lg:col-span-12 perspective-1000">
+          <div
+            ref={heroCardRef}
+            className="rounded-3xl bg-white p-6 sm:p-8 lg:p-10 border border-black/[0.06] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_16px_50px_rgb(0,0,0,0.08)] transition-all duration-300 overflow-hidden relative group transform-style-3d will-change-transform"
+          >
+            {/* Subtle Ambient Light */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-brand-red/[0.04] rounded-full blur-3xl pointer-events-none" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10">
-            <div className="lg:col-span-5 space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-black uppercase tracking-wider">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Công Nghệ Độc Quyền NextBand</span>
-              </div>
-
-              <h3 className="text-2xl sm:text-3xl font-black text-[#1d1d1f] tracking-tight">
-                Line-by-line Feedback™
-              </h3>
-              <p className="text-[#86868b] text-sm sm:text-base leading-relaxed">
-                Chấm chữa bóc tách từng lỗi sai câu chữ. Không nhận xét cảm tính "viết chưa mượt" — chỉ rõ nguyên nhân ngữ pháp, từ vựng và logic lập luận ngay tại vị trí lỗi.
-              </p>
-            </div>
-
-            {/* Realistic Writing Mockup Card (Apple Window Style) */}
-            <div className="lg:col-span-7 rounded-2xl bg-[#FBFBFD] border border-black/[0.08] shadow-inner p-4 sm:p-5 space-y-3.5 font-sans">
-              {/* Window bar */}
-              <div className="flex items-center justify-between border-b border-black/[0.06] pb-3 text-xs text-[#86868b]">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                  <span className="ml-2 font-mono text-[11px] font-semibold text-slate-500">
-                    IELTS_Task2_Essay_Submission.docx
-                  </span>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10 transform-style-3d">
+              {/* Left Details: Z = 15px */}
+              <div className="lg:col-span-5 space-y-3 translate-z-10 preserve-3d-text">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-red/10 text-brand-red text-xs font-black uppercase tracking-wider">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span>Công Nghệ Độc Quyền NextBand</span>
                 </div>
-                <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold text-[11px] border border-emerald-200/60">
-                  Band Dự Phóng: 6.5
-                </span>
-              </div>
 
-              {/* Essay Paragraph with visual annotations */}
-              <div className="text-sm leading-relaxed text-[#1d1d1f] space-y-3 pt-1">
-                <p>
-                  Although some people argue that government funding should focus exclusively on health and education,{" "}
-                  <span className="bg-brand-red/15 text-brand-red font-semibold px-1.5 py-0.5 rounded border-b-2 border-brand-red relative cursor-help">
-                    arts is also important
-                    {/* Floating Correction Tooltip */}
-                    <span className="hidden sm:inline-flex items-center gap-1 ml-1 text-[11px] bg-white shadow-sm border border-brand-red/30 px-1.5 py-0.2 rounded-md text-brand-red font-bold">
-                      → the arts are also vital
-                    </span>
-                  </span>{" "}
-                  for cultural identity. Moreover, investing in public museums{" "}
-                  <span className="bg-brand-blue/15 text-brand-blue font-semibold px-1.5 py-0.5 rounded border-b-2 border-brand-blue relative cursor-help">
-                    brings many good results
-                    <span className="hidden sm:inline-flex items-center gap-1 ml-1 text-[11px] bg-white shadow-sm border border-brand-blue/30 px-1.5 py-0.2 rounded-md text-brand-blue font-bold">
-                      → yields profound societal benefits
-                    </span>
-                  </span>{" "}
-                  for future generations.
+                <h3 className="text-2xl sm:text-3xl font-black text-[#1d1d1f] tracking-tight">
+                  Line-by-line Feedback™
+                </h3>
+                <p className="text-[#86868b] text-sm sm:text-base leading-relaxed">
+                  Chấm chữa bóc tách từng lỗi sai câu chữ. Không nhận xét cảm tính "viết chưa mượt" — chỉ rõ nguyên nhân ngữ pháp, từ vựng và logic lập luận ngay tại vị trí lỗi.
                 </p>
               </div>
 
-              {/* Micro Teacher Feedback Popover Card */}
-              <div className="p-3 rounded-xl bg-white border border-black/[0.08] shadow-xs flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-brand-blue text-white flex items-center justify-center font-black text-xs shrink-0">
-                  8.5
-                </div>
-                <div className="space-y-1 text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-[#1d1d1f]">Giảng Viên ARIS Chuyên Môn</span>
-                    <span className="text-[10px] text-[#86868b]">Line-by-line note</span>
+              {/* Realistic Writing Mockup Card (Apple Window Style): Z = 25px */}
+              <div className="lg:col-span-7 rounded-2xl bg-[#FBFBFD] border border-black/[0.08] shadow-lg p-4 sm:p-5 space-y-3.5 font-sans translate-z-20 transform-style-3d">
+                {/* Window bar */}
+                <div className="flex items-center justify-between border-b border-black/[0.06] pb-3 text-xs text-[#86868b] preserve-3d-text">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                    <span className="ml-2 font-mono text-[11px] font-semibold text-slate-500">
+                      IELTS_Task2_Essay_Submission.docx
+                    </span>
                   </div>
-                  <p className="text-slate-600 leading-snug">
-                    Cụm từ <em>"arts is"</em> vi phạm hòa hợp chủ vị số nhiều. Thay thế <em>"brings many good results"</em> bằng collocation C1 giúp nâng tiêu chí Lexical Resource lên band 7.0+.
+                  <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold text-[11px] border border-emerald-200/60 shadow-2xs">
+                    Band Dự Phóng: 6.5
+                  </span>
+                </div>
+
+                {/* Essay Paragraph with visual annotations */}
+                <div className="text-sm leading-relaxed text-[#1d1d1f] space-y-3 pt-1 preserve-3d-text">
+                  <p>
+                    Although some people argue that government funding should focus exclusively on health and education,{" "}
+                    <span className="bg-brand-red/15 text-brand-red font-semibold px-1.5 py-0.5 rounded border-b-2 border-brand-red relative cursor-help inline-block">
+                      arts is also important
+                      {/* Floating Correction Tooltip: Z = 35px */}
+                      <span className="hidden sm:inline-flex items-center gap-1 ml-1 text-[11px] bg-white shadow-md border border-brand-red/30 px-1.5 py-0.5 rounded-md text-brand-red font-bold translate-z-30 preserve-3d-text">
+                        → the arts are also vital
+                      </span>
+                    </span>{" "}
+                    for cultural identity. Moreover, investing in public museums{" "}
+                    <span className="bg-brand-blue/15 text-brand-blue font-semibold px-1.5 py-0.5 rounded border-b-2 border-brand-blue relative cursor-help inline-block">
+                      brings many good results
+                      <span className="hidden sm:inline-flex items-center gap-1 ml-1 text-[11px] bg-white shadow-md border border-brand-blue/30 px-1.5 py-0.5 rounded-md text-brand-blue font-bold translate-z-30 preserve-3d-text">
+                        → yields profound societal benefits
+                      </span>
+                    </span>{" "}
+                    for future generations.
                   </p>
+                </div>
+
+                {/* Micro Teacher Feedback Popover Card: Z = 45px (Floating Popover) */}
+                <div className="p-3.5 rounded-xl bg-white border border-black/[0.08] shadow-md flex items-start gap-3 translate-z-40 transform-style-3d">
+                  <div className="w-8 h-8 rounded-full bg-brand-blue text-white flex items-center justify-center font-black text-xs shrink-0 shadow-xs">
+                    8.5
+                  </div>
+                  <div className="space-y-1 text-xs preserve-3d-text">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-[#1d1d1f]">Giảng Viên ARIS Chuyên Môn</span>
+                      <span className="text-[10px] text-[#86868b] px-1.5 py-0.2 rounded bg-slate-100">Line-by-line note</span>
+                    </div>
+                    <p className="text-slate-600 leading-snug">
+                      Cụm từ <em>"arts is"</em> vi phạm hòa hợp chủ vị số nhiều. Thay thế <em>"brings many good results"</em> bằng collocation C1 giúp nâng tiêu chí Lexical Resource lên band 7.0+.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

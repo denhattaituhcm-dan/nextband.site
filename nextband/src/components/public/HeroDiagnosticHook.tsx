@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Sparkles, CheckCircle2, ArrowRight, BookOpen, AlertCircle, HelpCircle } from "lucide-react";
+import { useMicroTilt } from "@/hooks/useMicroTilt";
 import { cn } from "@/lib/utils";
 
 interface MicroQuizQuestion {
@@ -81,6 +82,12 @@ export function HeroDiagnosticHook({ onStartFullAssessment }: HeroDiagnosticHook
   const [activeTab, setActiveTab] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
+  const { ref: tiltRef } = useMicroTilt<HTMLDivElement>({
+    maxTilt: 4.5,
+    scale: 1.015,
+    flattenOnSelector: "button, a, input, [data-tilt-flatten='true']",
+  });
+
   const currentQ = SAMPLE_QUESTIONS[activeTab];
   const selectedObj = currentQ.options.find((o) => o.id === selectedOption);
 
@@ -90,9 +97,24 @@ export function HeroDiagnosticHook({ onStartFullAssessment }: HeroDiagnosticHook
   };
 
   return (
-    <div className="relative mx-auto max-w-md lg:max-w-none rounded-3xl border-2 border-white/90 bg-card/95 backdrop-blur-md p-6 sm:p-7 shadow-xl shadow-blue-950/5 space-y-4 text-left transition-all">
-      {/* Top Header */}
-      <div className="flex items-center justify-between border-b border-border/70 pb-3.5">
+    <div className="relative perspective-1000 w-full group/deck">
+      {/* 2.5D Isometric Grounding Shadow & Base Grid Decor */}
+      <div className="absolute -inset-4 bg-gradient-to-tr from-brand-blue/10 via-brand-red/5 to-transparent rounded-[36px] blur-xl opacity-60 pointer-events-none transform translate-y-3" />
+      <div className="absolute -inset-2 bg-isometric-dots opacity-40 rounded-3xl pointer-events-none" />
+
+      {/* Main 2.5D Tilt Deck */}
+      <div
+        ref={tiltRef}
+        className="relative mx-auto max-w-md lg:max-w-none rounded-3xl border-2 border-white/95 bg-card/95 backdrop-blur-md p-6 sm:p-7 shadow-xl shadow-blue-950/10 space-y-4 text-left transition-all transform-style-3d will-change-transform"
+      >
+        {/* Floating 2.5D Badge (Layer Z=30px) */}
+        <div className="absolute -top-3.5 -right-3.5 px-3 py-1 rounded-full bg-gradient-to-r from-brand-red to-[#B71C1C] text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider shadow-md translate-z-30 preserve-3d-text hidden sm:inline-flex items-center gap-1.5 border border-white/30">
+          <Sparkles className="w-3.5 h-3.5 fill-white text-white" />
+          <span>Chẩn đoán tức thì 30s</span>
+        </div>
+
+        {/* Top Header */}
+        <div className="flex items-center justify-between border-b border-border/70 pb-3.5 translate-z-10 preserve-3d-text">
         <div className="space-y-0.5">
           <div className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-brand-blue font-extrabold">
             <Sparkles className="h-3.5 w-3.5 text-amber-500" />
@@ -222,7 +244,7 @@ export function HeroDiagnosticHook({ onStartFullAssessment }: HeroDiagnosticHook
       )}
 
       {/* Mini CTA Footer inside Widget */}
-      <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs">
+      <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs translate-z-10 preserve-3d-text">
         <span className="text-[11px] text-muted-foreground font-medium">
           Muốn bóc tách 4 kỹ năng của bạn?
         </span>
@@ -236,5 +258,6 @@ export function HeroDiagnosticHook({ onStartFullAssessment }: HeroDiagnosticHook
         </button>
       </div>
     </div>
+  </div>
   );
 }
