@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { SchemaVisionItem, ImageSchemaTag } from "@/data/vocab-c2/types";
 import { C2ModeSharedProps } from "./ArenaHeader";
 import { speakC2Word } from "../engine/cognitiveAudio";
+import { useArenaTheme } from "../context/ThemeContext";
 import { Volume2, ChevronLeft, ChevronRight, Sparkles, RefreshCw, Layers } from "lucide-react";
 
 interface Particle {
@@ -15,6 +16,7 @@ interface Particle {
 }
 
 export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordAttempt }) => {
+  const { theme } = useArenaTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isContrastMode, setIsContrastMode] = useState(false);
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<string | null>(null);
@@ -72,46 +74,63 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
     };
     window.addEventListener("resize", handleResize);
 
+    const isPaperTheme = theme === "paper";
+    const isSlateTheme = theme === "slate";
+
     const { primaryColor, secondaryColor, velocityFactor, particleCount, vectorPattern } =
       currentItem.simulationConfig;
 
-    const activeColor = isContrastMode ? secondaryColor : primaryColor;
-    const count = particleCount || 60;
-    const speed = velocityFactor * (isContrastMode ? -1 : 1);
+    const baseColor = isContrastMode ? secondaryColor : primaryColor;
+    // Tinh chỉnh màu cho Paper theme (đậm đà, học thuật, dễ thấy trên nền giấy)
+    const activeColor = isPaperTheme
+      ? (isContrastMode ? "#B45309" : "#0D9488")
+      : baseColor;
+
+    // Giảm số lượng hạt từ 60 xuống 25 để biến thành ambient background tinh tế thay vì pháo hoa
+    const count = Math.min(particleCount ? Math.floor(particleCount * 0.5) : 25, 30);
+    const speed = velocityFactor * (isContrastMode ? -1 : 1) * 0.6; // Giảm tốc độ 40% cho dịu mắt
 
     const particles: Particle[] = [];
     for (let i = 0; i < count; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 2 * Math.abs(speed),
-        vy: (Math.random() - 0.5) * 2 * Math.abs(speed),
-        radius: Math.random() * 2.5 + 1.2,
+        vx: (Math.random() - 0.5) * 1.5 * Math.abs(speed),
+        vy: (Math.random() - 0.5) * 1.5 * Math.abs(speed),
+        radius: Math.random() * 2.0 + 1.0,
         color: activeColor,
-        alpha: Math.random() * 0.7 + 0.3,
+        alpha: isPaperTheme ? Math.random() * 0.4 + 0.2 : Math.random() * 0.35 + 0.15,
       });
     }
     particlesRef.current = particles;
 
     let time = 0;
     const render = () => {
-      time += 0.02;
-      ctx.fillStyle = "rgba(11, 15, 25, 0.25)";
+      time += 0.015;
+
+      // Nền Canvas theo từng theme:
+      if (isPaperTheme) {
+        ctx.fillStyle = "rgba(244, 245, 247, 0.4)";
+      } else if (isSlateTheme) {
+        ctx.fillStyle = "rgba(15, 23, 42, 0.3)";
+      } else {
+        ctx.fillStyle = "rgba(11, 15, 25, 0.25)";
+      }
       ctx.fillRect(0, 0, width, height);
 
       const centerX = width / 2;
       const centerY = height / 2;
 
-      // Draw force-field rings
+      // Draw subtle force-field rings
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 70 + Math.sin(time * 2) * 8, 0, Math.PI * 2);
-      ctx.strokeStyle = `${activeColor}22`;
-      ctx.lineWidth = 1.5;
+      ctx.arc(centerX, centerY, 70 + Math.sin(time * 2) * 6, 0, Math.PI * 2);
+      ctx.strokeStyle = isPaperTheme ? `${activeColor}18` : `${activeColor}22`;
+      ctx.lineWidth = 1;
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 110 + Math.cos(time * 1.5) * 6, 0, Math.PI * 2);
-      ctx.strokeStyle = `${activeColor}11`;
+      ctx.arc(centerX, centerY, 110 + Math.cos(time * 1.5) * 5, 0, Math.PI * 2);
+      ctx.strokeStyle = isPaperTheme ? `${activeColor}0f` : `${activeColor}11`;
       ctx.lineWidth = 1;
       ctx.stroke();
 
@@ -119,18 +138,18 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
         const p = particles[i];
 
         if (vectorPattern === "ascend") {
-          p.y -= Math.abs(speed) * 1.8;
-          p.x += Math.sin(time + i) * 0.5;
+          p.y -= Math.abs(speed) * 1.2;
+          p.x += Math.sin(time + i) * 0.4;
           if (p.y < 0) p.y = height;
         } else if (vectorPattern === "descend") {
-          p.y += Math.abs(speed) * 1.8;
-          p.x += Math.cos(time + i) * 0.5;
+          p.y += Math.abs(speed) * 1.2;
+          p.x += Math.cos(time + i) * 0.4;
           if (p.y > height) p.y = 0;
         } else if (vectorPattern === "converge") {
           const dx = centerX - p.x;
           const dy = centerY - p.y;
-          p.x += dx * 0.02 * Math.abs(speed);
-          p.y += dy * 0.02 * Math.abs(speed);
+          p.x += dx * 0.015 * Math.abs(speed);
+          p.y += dy * 0.015 * Math.abs(speed);
           if (Math.hypot(dx, dy) < 15) {
             p.x = Math.random() * width;
             p.y = Math.random() * height;
@@ -222,18 +241,47 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
     ? currentItem.contrastVisualMetaphor
     : currentItem.visualMetaphor;
 
+  const isPaperTheme = theme === "paper";
+  const isSlateTheme = theme === "slate";
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Simulation Window Card */}
-      <div className="relative rounded-2xl border border-cyan-500/30 bg-[#0B0F19] overflow-hidden shadow-2xl shadow-cyan-950/40">
+      <div
+        className={`relative rounded-2xl overflow-hidden transition-all duration-300 ${
+          isPaperTheme
+            ? "bg-[#FAF7F2] border border-[#E2D9CC] shadow-xl text-[#1E293B]"
+            : isSlateTheme
+            ? "bg-[#0F172A] border border-slate-700/80 shadow-2xl text-slate-100"
+            : "bg-[#0B0F19] border border-cyan-500/30 shadow-2xl shadow-cyan-950/40 text-slate-100"
+        }`}
+      >
         {/* Top Bar Navigation */}
-        <div className="px-5 py-3 border-b border-white/10 flex items-center justify-between bg-black/40 backdrop-blur-md">
+        <div
+          className={`px-5 py-3 border-b flex items-center justify-between backdrop-blur-md ${
+            isPaperTheme
+              ? "bg-[#F3EDE2]/80 border-[#E2D9CC]"
+              : isSlateTheme
+              ? "bg-slate-900/70 border-slate-700/80"
+              : "bg-black/40 border-white/10"
+          }`}
+        >
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+            <span
+              className={`px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider font-mono ${
+                isPaperTheme
+                  ? "bg-[#0F766E]/15 text-[#0F766E] border border-[#0F766E]/30"
+                  : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
+              }`}
+            >
               SCHEMA {currentIndex + 1} / {items.length}
             </span>
-            <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
-              <Layers className="w-3.5 h-3.5 text-cyan-400" />
+            <span
+              className={`text-xs font-mono flex items-center gap-1 ${
+                isPaperTheme ? "text-slate-600 font-medium" : "text-slate-400"
+              }`}
+            >
+              <Layers className={`w-3.5 h-3.5 ${isPaperTheme ? "text-[#0F766E]" : "text-cyan-400"}`} />
               {currentItem.imageSchemaTag}
             </span>
           </div>
@@ -241,9 +289,13 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsContrastMode((prev) => !prev)}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
                 isContrastMode
-                  ? "bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-xs shadow-amber-500/20"
+                  ? isPaperTheme
+                    ? "bg-amber-100 text-amber-900 border-amber-300 shadow-xs"
+                    : "bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-xs shadow-amber-500/20"
+                  : isPaperTheme
+                  ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
                   : "bg-cyan-500/10 text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20"
               }`}
             >
@@ -254,15 +306,27 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
         </div>
 
         {/* Canvas Simulation Viewport */}
-        <div className="relative h-[260px] w-full bg-[#070A12] flex items-center justify-center">
+        <div
+          className={`relative h-[260px] w-full flex items-center justify-center transition-colors ${
+            isPaperTheme ? "bg-[#F7F4EE]" : isSlateTheme ? "bg-[#0A101D]" : "bg-[#070A12]"
+          }`}
+        >
           <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
           {/* Center Dynamic Word Overlay */}
           <div className="relative z-10 text-center pointer-events-none px-4">
-            <div className="inline-flex items-center gap-2 mb-1">
+            <div className="inline-flex items-center gap-2.5 mb-1.5">
               <span
-                className={`text-3xl sm:text-4xl font-black tracking-tight drop-shadow-md transition-colors duration-300 ${
-                  isContrastMode ? "text-amber-400" : "text-cyan-300"
+                className={`text-3xl sm:text-5xl font-black tracking-tight transition-colors duration-300 ${
+                  isPaperTheme
+                    ? isContrastMode
+                      ? "text-amber-800 drop-shadow-xs"
+                      : "text-slate-900 drop-shadow-xs"
+                    : isContrastMode
+                    ? "text-amber-400 drop-shadow-md"
+                    : isSlateTheme
+                    ? "text-sky-300 drop-shadow-md"
+                    : "text-cyan-300 drop-shadow-md"
                 }`}
               >
                 {activeDisplayWord}
@@ -272,14 +336,30 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                   e.stopPropagation();
                   speakC2Word(activeDisplayWord);
                 }}
-                className="pointer-events-auto p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
-                title="Phát âm chuẩn C2"
+                className={`pointer-events-auto p-2 rounded-full transition-all cursor-pointer shadow-sm ${
+                  isPaperTheme
+                    ? "bg-white hover:bg-slate-100 text-slate-800 border border-slate-300"
+                    : "bg-white/10 hover:bg-white/20 text-white"
+                }`}
+                title="Phát âm chuẩn C2 (en-GB)"
               >
-                <Volume2 className="w-4 h-4 text-cyan-300" />
+                <Volume2
+                  className={`w-4 h-4 ${isPaperTheme ? "text-slate-800" : "text-cyan-300"}`}
+                />
               </button>
             </div>
-            <p className="text-xs font-mono text-slate-300">{currentItem.ipa}</p>
-            <p className="text-xs text-cyan-200/80 max-w-md mx-auto mt-2 italic font-serif">
+            <p
+              className={`text-sm font-mono tracking-wide ${
+                isPaperTheme ? "text-slate-600 font-semibold" : "text-slate-300"
+              }`}
+            >
+              {currentItem.ipa}
+            </p>
+            <p
+              className={`text-sm max-w-lg mx-auto mt-2 italic font-serif leading-relaxed ${
+                isPaperTheme ? "text-slate-700 font-medium" : "text-cyan-200/90"
+              }`}
+            >
               "{activeDisplayMetaphor}"
             </p>
           </div>
@@ -287,48 +367,108 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
           {/* Left / Right Nav Arrows */}
           <button
             onClick={handlePrev}
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2 rounded-xl bg-black/60 border border-white/10 text-slate-300 hover:text-white hover:bg-black/90 transition-all cursor-pointer"
+            aria-label="Previous Word"
+            className={`absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-xl transition-all cursor-pointer shadow-md ${
+              isPaperTheme
+                ? "bg-white/90 border border-slate-300 text-slate-700 hover:bg-white hover:text-black"
+                : "bg-black/60 border border-white/10 text-slate-300 hover:text-white hover:bg-black/90"
+            }`}
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={handleNext}
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2 rounded-xl bg-black/60 border border-white/10 text-slate-300 hover:text-white hover:bg-black/90 transition-all cursor-pointer"
+            aria-label="Next Word"
+            className={`absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-xl transition-all cursor-pointer shadow-md ${
+              isPaperTheme
+                ? "bg-white/90 border border-slate-300 text-slate-700 hover:bg-white hover:text-black"
+                : "bg-black/60 border border-white/10 text-slate-300 hover:text-white hover:bg-black/90"
+            }`}
           >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Detailed Linguistic Card Bottom */}
-        <div className="p-5 bg-[#0D1322] border-t border-white/10 space-y-3">
-          <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-sm font-bold text-emerald-400 font-mono">
-              [{currentItem.pos}]
+        {/* Detailed Linguistic Card Bottom - Editorial High Legibility */}
+        <div
+          className={`p-6 border-t space-y-3.5 transition-colors ${
+            isPaperTheme
+              ? "bg-[#FAF7F2] border-[#E2D9CC]"
+              : isSlateTheme
+              ? "bg-[#131C31] border-slate-700/80"
+              : "bg-[#0D1322] border-white/10"
+          }`}
+        >
+          <div className="flex flex-wrap items-baseline gap-2.5">
+            <span
+              className={`text-xs font-black font-mono uppercase px-2 py-0.5 rounded ${
+                isPaperTheme
+                  ? "bg-teal-100 text-teal-800 border border-teal-300"
+                  : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+              }`}
+            >
+              {currentItem.pos}
             </span>
-            <p className="text-sm font-semibold text-white leading-relaxed">
+            <p
+              className={`text-base font-semibold leading-relaxed ${
+                isPaperTheme ? "text-slate-900 font-serif" : "text-white"
+              }`}
+            >
               {currentItem.definitionEn}
             </p>
           </div>
-          <p className="text-xs text-slate-300 bg-white/5 p-2.5 rounded-xl border border-white/5">
-            🇻🇳 <strong className="text-cyan-300 font-bold">Nghĩa tiếng Việt:</strong>{" "}
-            {currentItem.definitionVi}
-          </p>
-          <p className="text-xs text-slate-400 italic font-mono border-l-2 border-cyan-500/50 pl-3">
+
+          <div
+            className={`p-3.5 rounded-xl border text-sm leading-relaxed ${
+              isPaperTheme
+                ? "bg-white border-[#E2D9CC] text-slate-800 shadow-xs"
+                : "bg-white/5 border-white/5 text-slate-200"
+            }`}
+          >
+            🇻🇳{" "}
+            <strong className={isPaperTheme ? "text-slate-900 font-bold" : "text-cyan-300 font-bold"}>
+              Nghĩa tiếng Việt:
+            </strong>{" "}
+            <span>{currentItem.definitionVi}</span>
+          </div>
+
+          {/* Context Example Sentence with High Contrast Callout */}
+          <div
+            className={`text-sm sm:text-base p-3.5 rounded-xl border-l-4 leading-relaxed font-serif ${
+              isPaperTheme
+                ? "bg-slate-100/90 border-teal-600 text-slate-900 italic font-medium"
+                : isSlateTheme
+                ? "bg-slate-900/60 border-sky-400 text-slate-100 italic"
+                : "bg-black/30 border-cyan-400 text-slate-200 italic"
+            }`}
+          >
             "{currentItem.exampleSentence}"
-          </p>
+          </div>
         </div>
       </div>
 
       {/* Spatial Schema Calibration Quiz (Active Retrieval) */}
-      <div className="rounded-2xl border border-white/10 bg-[#0B0F19] p-5 shadow-xl space-y-4">
+      <div
+        className={`rounded-2xl p-5 shadow-lg space-y-4 transition-all ${
+          isPaperTheme
+            ? "bg-[#FAF7F2] border border-[#E2D9CC] text-slate-900"
+            : isSlateTheme
+            ? "bg-[#0F172A] border border-slate-700/80 text-slate-100"
+            : "bg-[#0B0F19] border border-white/10 text-slate-100"
+        }`}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-200">
+            <Sparkles className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-cyan-400"}`} />
+            <h3 className="text-sm font-extrabold uppercase tracking-wider">
               Kiểm Tra Phản Xạ Schema [Active Recall Quiz]
             </h3>
           </div>
-          <span className="text-[11px] text-slate-400 font-mono">
+          <span
+            className={`text-xs font-mono ${
+              isPaperTheme ? "text-slate-600 font-medium" : "text-slate-400"
+            }`}
+          >
             Bấm chọn từ C2 ứng với quỹ đạo không gian trên
           </span>
         </div>
@@ -336,15 +476,23 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           {quizChoices.map((wordOption, idx) => {
             const isTarget = wordOption === currentItem.word;
-            let btnStyle = "bg-white/5 border-white/10 text-slate-200 hover:bg-white/10";
+            let btnStyle = isPaperTheme
+              ? "bg-white border-slate-300 text-slate-800 hover:bg-slate-100 hover:border-slate-400 shadow-xs"
+              : "bg-white/5 border-white/10 text-slate-200 hover:bg-white/10";
 
             if (isQuizAnswered) {
               if (isTarget) {
-                btnStyle = "bg-emerald-500/20 border-emerald-500/60 text-emerald-300 font-black shadow-xs shadow-emerald-500/30";
+                btnStyle = isPaperTheme
+                  ? "bg-emerald-100 border-emerald-500 text-emerald-900 font-black shadow-sm"
+                  : "bg-emerald-500/20 border-emerald-500/60 text-emerald-300 font-black shadow-xs shadow-emerald-500/30";
               } else if (selectedQuizAnswer === wordOption) {
-                btnStyle = "bg-rose-500/20 border-rose-500/60 text-rose-300 font-bold";
+                btnStyle = isPaperTheme
+                  ? "bg-rose-100 border-rose-400 text-rose-900 font-bold"
+                  : "bg-rose-500/20 border-rose-500/60 text-rose-300 font-bold";
               } else {
-                btnStyle = "opacity-40 bg-white/5 border-transparent text-slate-500";
+                btnStyle = isPaperTheme
+                  ? "opacity-40 bg-slate-100 border-transparent text-slate-400"
+                  : "opacity-40 bg-white/5 border-transparent text-slate-500";
               }
             }
 

@@ -14,8 +14,14 @@ import {
   Activity,
   ChevronRight,
   RotateCcw,
+  Sun,
+  Moon,
+  Sparkle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { C2UnitData, ImageSchemaTag } from "@/data/vocab-c2/types";
+import { useArenaTheme } from "../context/ThemeContext";
 
 export type ArenaModeId =
   | "schema"
@@ -331,44 +337,100 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
     }, 900);
   };
 
+  const { theme, setTheme, isZenMode, toggleZenMode } = useArenaTheme();
+  const isPaperTheme = theme === "paper";
+  const isSlateTheme = theme === "slate";
+
   return (
     <>
-      <header className="relative z-30 border-b border-slate-800/80 bg-[#0B0F19]/95 backdrop-blur-xl text-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.65)]">
-        {/* Top ambient cyber line */}
-        <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#00F5D4] to-amber-500 opacity-80" />
+      <header
+        className={`relative z-30 border-b transition-colors duration-300 ${
+          isPaperTheme
+            ? "bg-[#FAF7F2]/95 border-[#E2D9CC] text-slate-900 shadow-sm backdrop-blur-md"
+            : isSlateTheme
+            ? "bg-[#0F172A]/95 border-slate-700/80 text-slate-100 shadow-md backdrop-blur-md"
+            : "bg-[#0B0F19]/95 border-slate-800/80 text-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.65)] backdrop-blur-xl"
+        }`}
+      >
+        {/* Top ambient line */}
+        <div
+          className={`h-[2px] w-full transition-opacity ${
+            isPaperTheme
+              ? "bg-gradient-to-r from-transparent via-[#0F766E] to-amber-600 opacity-60"
+              : "bg-gradient-to-r from-transparent via-[#00F5D4] to-amber-500 opacity-80"
+          }`}
+        />
 
-        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
           {/* Left: Brand + Cultivation Rank Aura + XP Progress */}
           <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             {/* Rank Emblem */}
-            <div className="relative group flex items-center gap-3 px-3.5 py-2 rounded-xl bg-slate-900/90 border border-[#00F5D4]/30 shadow-[0_0_20px_rgba(0,245,212,0.12)]">
+            <div
+              className={`relative group flex items-center gap-3 px-3 py-1.5 rounded-xl border transition-all ${
+                isPaperTheme
+                  ? "bg-white border-[#E2D9CC] shadow-xs"
+                  : isSlateTheme
+                  ? "bg-slate-900/90 border-slate-700"
+                  : "bg-slate-900/90 border-[#00F5D4]/30 shadow-[0_0_20px_rgba(0,245,212,0.12)]"
+              }`}
+            >
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center font-black text-xs tracking-tighter border border-[#00F5D4]/50 bg-gradient-to-br from-[#00F5D4]/25 to-slate-950 text-[#00F5D4] shadow-[0_0_15px_rgba(0,245,212,0.3)]"
+                className={`w-9 h-9 rounded-lg flex items-center justify-center font-black text-xs tracking-tighter border transition-all ${
+                  isPaperTheme
+                    ? "border-teal-300 bg-teal-50 text-teal-800 shadow-xs"
+                    : "border-[#00F5D4]/50 bg-gradient-to-br from-[#00F5D4]/25 to-slate-950 text-[#00F5D4] shadow-[0_0_15px_rgba(0,245,212,0.3)]"
+                }`}
                 style={{
-                  borderColor: activeRank.auraColor || "#00F5D4",
+                  borderColor: isPaperTheme ? undefined : (activeRank.auraColor || "#00F5D4"),
                 }}
               >
-                <Award className="w-5 h-5 text-[#00F5D4]" />
+                <Award className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-[#00F5D4]"}`} />
               </div>
 
-              <div className="min-w-[165px]">
+              <div className="min-w-[155px]">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded bg-[#00F5D4]/15 text-[#00F5D4] border border-[#00F5D4]/30">
+                  <span
+                    className={`text-[9px] font-mono uppercase tracking-widest px-1.5 py-0.2 rounded border ${
+                      isPaperTheme
+                        ? "bg-teal-50 text-teal-800 border-teal-200"
+                        : "bg-[#00F5D4]/15 text-[#00F5D4] border-[#00F5D4]/30"
+                    }`}
+                  >
                     {activeRank.badgeText || "C2 OVERDRIVE"}
                   </span>
-                  <span className="text-xs font-mono text-slate-400">
-                    <strong className="text-white">{xp.toLocaleString()}</strong>
+                  <span
+                    className={`text-xs font-mono ${
+                      isPaperTheme ? "text-slate-600 font-semibold" : "text-slate-400"
+                    }`}
+                  >
+                    <strong className={isPaperTheme ? "text-slate-900" : "text-white"}>
+                      {xp.toLocaleString()}
+                    </strong>
                     {activeNextXp ? ` / ${activeNextXp.toLocaleString()} XP` : " XP"}
                   </span>
                 </div>
-                <div className="text-sm font-bold tracking-tight text-white mt-0.5 flex items-center gap-1.5">
+                <div
+                  className={`text-xs font-bold tracking-tight mt-0.5 flex items-center gap-1.5 ${
+                    isPaperTheme ? "text-slate-900" : "text-white"
+                  }`}
+                >
                   <span>{activeRank.title}</span>
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                  <Sparkles
+                    className={`w-3 h-3 ${isPaperTheme ? "text-amber-600" : "text-amber-400 animate-pulse"}`}
+                  />
                 </div>
                 {/* XP Progress Bar */}
-                <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                <div
+                  className={`w-full h-1.5 rounded-full overflow-hidden mt-1 ${
+                    isPaperTheme ? "bg-slate-200" : "bg-slate-800"
+                  }`}
+                >
                   <div
-                    className="h-full bg-gradient-to-r from-[#00F5D4] via-cyan-400 to-amber-400 transition-all duration-500"
+                    className={`h-full transition-all duration-500 ${
+                      isPaperTheme
+                        ? "bg-gradient-to-r from-teal-600 via-teal-500 to-amber-600"
+                        : "bg-gradient-to-r from-[#00F5D4] via-cyan-400 to-amber-400"
+                    }`}
                     style={{ width: `${activeProgress}%` }}
                   />
                 </div>
@@ -380,32 +442,68 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
               <button
                 type="button"
                 onClick={() => setIsUnitSelectorOpen((prev) => !prev)}
-                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 border border-slate-700/80 hover:border-[#00F5D4]/50 transition-all text-left"
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all text-left cursor-pointer ${
+                  isPaperTheme
+                    ? "bg-white hover:bg-slate-50 border-[#E2D9CC] text-slate-800 shadow-xs"
+                    : "bg-slate-900/80 hover:bg-slate-800/90 border-slate-700/80 hover:border-[#00F5D4]/50"
+                }`}
               >
-                <BookOpen className="w-4 h-4 text-[#00F5D4] shrink-0" />
+                <BookOpen
+                  className={`w-4 h-4 shrink-0 ${isPaperTheme ? "text-teal-700" : "text-[#00F5D4]"}`}
+                />
                 <div>
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                  <div
+                    className={`text-[10px] font-mono uppercase tracking-wider flex items-center gap-1.5 ${
+                      isPaperTheme ? "text-slate-500" : "text-slate-400"
+                    }`}
+                  >
                     <span>{unit.unitCode}</span>
                     <span>•</span>
                     <span>PDF p.{unit.pdfPages}</span>
                     {unit.isFullVerticalSlice && (
-                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                      <span
+                        className={`text-[9px] px-1.5 py-0.2 rounded font-mono ${
+                          isPaperTheme
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                            : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                        }`}
+                      >
                         FULL SLICE
                       </span>
                     )}
                   </div>
-                  <div className="text-xs sm:text-sm font-bold text-slate-100 line-clamp-1">
+                  <div
+                    className={`text-xs sm:text-sm font-bold line-clamp-1 ${
+                      isPaperTheme ? "text-slate-900 font-serif" : "text-slate-100"
+                    }`}
+                  >
                     Unit {unit.unitNumber}: {unit.titleEn}
                   </div>
                 </div>
               </button>
 
               {isUnitSelectorOpen && allUnits.length > 0 && (
-                <div className="absolute left-0 mt-2 w-80 max-h-96 overflow-y-auto rounded-2xl bg-[#0B0F19] border border-slate-700 shadow-2xl p-2 z-50">
-                  <div className="px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider text-slate-400 border-b border-slate-800">
+                <div
+                  className={`absolute left-0 mt-2 w-80 max-h-96 overflow-y-auto rounded-2xl shadow-2xl p-2 z-50 border ${
+                    isPaperTheme
+                      ? "bg-white border-[#E2D9CC] text-slate-900"
+                      : "bg-[#0B0F19] border-slate-700 text-slate-100"
+                  }`}
+                >
+                  <div
+                    className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider border-b ${
+                      isPaperTheme
+                        ? "text-slate-500 border-slate-200"
+                        : "text-slate-400 border-slate-800"
+                    }`}
+                  >
                     Select C2 Cognitive Arena Unit
                   </div>
-                  <div className="divide-y divide-slate-800/60 mt-1">
+                  <div
+                    className={`divide-y mt-1 ${
+                      isPaperTheme ? "divide-slate-100" : "divide-slate-800/60"
+                    }`}
+                  >
                     {allUnits.map((u) => {
                       const isSelected = u.unitNumber === unit.unitNumber;
                       return (
@@ -416,25 +514,39 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
                             onSelectUnit?.(u.unitNumber);
                             setIsUnitSelectorOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2.5 rounded-xl transition-all flex items-center justify-between gap-2 ${
+                          className={`w-full text-left px-3 py-2.5 rounded-xl transition-all flex items-center justify-between gap-2 cursor-pointer ${
                             isSelected
-                              ? "bg-[#00F5D4]/15 border border-[#00F5D4]/40 text-white"
+                              ? isPaperTheme
+                                ? "bg-teal-50 border border-teal-300 text-teal-950 font-bold"
+                                : "bg-[#00F5D4]/15 border border-[#00F5D4]/40 text-white"
+                              : isPaperTheme
+                              ? "hover:bg-slate-100 text-slate-700"
                               : "hover:bg-slate-900 text-slate-300"
                           }`}
                         >
                           <div>
                             <div className="text-xs font-bold flex items-center gap-1.5">
-                              <span className="text-[#00F5D4]">
+                              <span className={isPaperTheme ? "text-teal-700" : "text-[#00F5D4]"}>
                                 U{u.unitNumber}
                               </span>
                               <span>{u.titleEn}</span>
                             </div>
-                            <div className="text-[11px] text-slate-400 line-clamp-1">
+                            <div
+                              className={`text-[11px] line-clamp-1 ${
+                                isPaperTheme ? "text-slate-500" : "text-slate-400"
+                              }`}
+                            >
                               {u.titleVi}
                             </div>
                           </div>
                           {u.isFullVerticalSlice && (
-                            <span className="shrink-0 text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#00F5D4]/15 text-[#00F5D4] border border-[#00F5D4]/30">
+                            <span
+                              className={`shrink-0 text-[9px] font-mono px-1.5 py-0.5 rounded border ${
+                                isPaperTheme
+                                  ? "bg-teal-100 text-teal-800 border-teal-300"
+                                  : "bg-[#00F5D4]/15 text-[#00F5D4] border-[#00F5D4]/30"
+                              }`}
+                            >
                               DEEP C2
                             </span>
                           )}
@@ -447,78 +559,160 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
             </div>
           </div>
 
-          {/* Right: Live Telemetry (Combo, Latency, Mastered, Mistake Heatmap, Sound) */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          {/* Right: Live Telemetry + Ergonomic Theme Controls + Zen Mode */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            {/* Theme Tri-Toggle (Academic Paper | Executive Slate | Cyber Arena) */}
+            <div
+              className={`flex items-center p-1 rounded-xl border ${
+                isPaperTheme
+                  ? "bg-white border-[#E2D9CC] shadow-xs"
+                  : isSlateTheme
+                  ? "bg-slate-900 border-slate-700"
+                  : "bg-slate-900/90 border-slate-800"
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setTheme("paper")}
+                title="Chế độ Academic Paper (Giấy ngà đọc sâu dịu mắt, chống mỏi mắt)"
+                className={`px-2 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                  isPaperTheme
+                    ? "bg-amber-100 text-amber-900 shadow-xs border border-amber-300"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <Sun className="w-3.5 h-3.5 text-amber-600" />
+                <span className="hidden sm:inline">Paper</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTheme("slate")}
+                title="Chế độ Executive Slate (Xám phiến đá tối êm, giảm chói)"
+                className={`px-2 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                  isSlateTheme
+                    ? "bg-slate-800 text-sky-300 shadow-xs border border-slate-600"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <Moon className="w-3.5 h-3.5 text-sky-400" />
+                <span className="hidden sm:inline">Slate</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTheme("cyber")}
+                title="Chế độ Cyber Arena (Phản xạ tốc độ cao / Neon)"
+                className={`px-2 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                  theme === "cyber"
+                    ? "bg-cyan-500/20 text-[#00F5D4] shadow-xs border border-cyan-500/40"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <Sparkle className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="hidden sm:inline">Cyber</span>
+              </button>
+            </div>
+
+            {/* Zen Focus Mode Button */}
+            <button
+              type="button"
+              onClick={toggleZenMode}
+              title={isZenMode ? "Tắt Focus Mode [Phím Z]" : "Bật Focus Mode [Phím Z]"}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                isZenMode
+                  ? "bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-400 shadow-xs"
+                  : isPaperTheme
+                  ? "bg-white border-[#E2D9CC] text-slate-700 hover:bg-slate-100"
+                  : "bg-slate-900/80 border-slate-800 text-slate-300 hover:text-white"
+              }`}
+            >
+              {isZenMode ? (
+                <>
+                  <EyeOff className="w-3.5 h-3.5 text-purple-500" />
+                  <span className="hidden md:inline font-mono">ZEN ON</span>
+                </>
+              ) : (
+                <>
+                  <Eye className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="hidden md:inline font-mono">ZEN [Z]</span>
+                </>
+              )}
+            </button>
+
             {/* Live Combo Counter */}
             <div
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border transition-all ${
                 combo >= 3
-                  ? "bg-amber-500/15 border-amber-500/60 text-amber-300 shadow-[0_0_18px_rgba(245,158,11,0.28)] scale-[1.02]"
+                  ? isPaperTheme
+                    ? "bg-amber-100 border-amber-300 text-amber-900 font-bold shadow-xs"
+                    : "bg-amber-500/15 border-amber-500/60 text-amber-300 shadow-[0_0_18px_rgba(245,158,11,0.28)] scale-[1.02]"
+                  : isPaperTheme
+                  ? "bg-white border-[#E2D9CC] text-slate-700"
                   : "bg-slate-900/80 border-slate-800 text-slate-300"
               }`}
             >
               <Flame
-                className={`w-4 h-4 ${
+                className={`w-3.5 h-3.5 ${
                   combo >= 3
-                    ? "text-amber-400 animate-bounce"
-                    : "text-slate-500"
+                    ? "text-amber-500 animate-bounce"
+                    : "text-slate-400"
                 }`}
               />
               <div className="text-xs font-mono">
-                <span className="font-black text-sm text-amber-400">
+                <span className="font-black text-xs text-amber-600 dark:text-amber-400">
                   x{combo}
                 </span>{" "}
-                <span className="text-[10px] uppercase tracking-wider text-slate-400">
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 hidden sm:inline">
                   COMBO
                 </span>
-                {maxCombo > 0 && (
-                  <span className="ml-1.5 text-[10px] text-slate-500">
-                    (MAX x{maxCombo})
-                  </span>
-                )}
               </div>
             </div>
 
-            {/* Average Latency Reflex Meter */}
+            {/* Mastered Counter */}
             <div
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono ${latencyBadge.color}`}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-mono ${
+                isPaperTheme
+                  ? "bg-white border-[#E2D9CC] text-slate-700"
+                  : "bg-slate-900/80 border-slate-800 text-slate-300"
+              }`}
             >
-              <Activity className="w-3.5 h-3.5 shrink-0" />
-              <span>{latencyBadge.label}</span>
-            </div>
-
-            {/* Mastered C2 Lexicon Counter */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs font-mono text-slate-300">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#00F5D4]" />
+              <CheckCircle2
+                className={`w-3.5 h-3.5 ${isPaperTheme ? "text-teal-700" : "text-[#00F5D4]"}`}
+              />
               <span>
-                <strong className="text-white">{masteredCount}</strong>/
-                {totalUnitWords} Mastered
+                <strong className={isPaperTheme ? "text-slate-900" : "text-white"}>
+                  {masteredCount}
+                </strong>
+                /{totalUnitWords}
               </span>
             </div>
 
-            {/* Interleaved Mistake Heatmap Drawer Trigger */}
+            {/* Interleaved Mistake Heatmap Trigger */}
             <button
               type="button"
               onClick={() => setIsMistakeDrawerOpen(true)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer ${
                 activeMistakes.length > 0
-                  ? "bg-rose-500/15 border-rose-500/60 text-rose-300 hover:bg-rose-500/25 shadow-[0_0_15px_rgba(239,68,68,0.25)]"
-                  : "bg-slate-900/80 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700"
+                  ? "bg-rose-500/15 border-rose-500/60 text-rose-600 dark:text-rose-300 hover:bg-rose-500/25 shadow-xs"
+                  : isPaperTheme
+                  ? "bg-white border-[#E2D9CC] text-slate-500 hover:text-slate-800"
+                  : "bg-slate-900/80 border-slate-800 text-slate-400 hover:text-slate-200"
               }`}
             >
               <ShieldAlert
-                className={`w-4 h-4 ${
+                className={`w-3.5 h-3.5 ${
                   activeMistakes.length > 0
-                    ? "text-rose-400 animate-pulse"
-                    : "text-slate-500"
+                    ? "text-rose-500 animate-pulse"
+                    : "text-slate-400"
                 }`}
               />
-              <span>Heatmap</span>
+              <span className="hidden sm:inline">Heatmap</span>
               <span
                 className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
                   activeMistakes.length > 0
                     ? "bg-rose-500 text-white"
-                    : "bg-slate-800 text-slate-400"
+                    : "bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                 }`}
               >
                 {activeMistakes.length}
@@ -529,13 +723,17 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
             <button
               type="button"
               onClick={onToggleSound}
-              title={soundEnabled ? "Mute Synaptic Audio" : "Enable Synaptic Audio"}
-              className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-[#00F5D4] transition-colors"
+              title={soundEnabled ? "Tắt âm thanh tổng hợp" : "Bật âm thanh tổng hợp"}
+              className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+                isPaperTheme
+                  ? "bg-white hover:bg-slate-100 border-[#E2D9CC] text-slate-700"
+                  : "bg-slate-900/80 hover:bg-slate-800 border-slate-800 text-slate-300 hover:text-[#00F5D4]"
+              }`}
             >
               {soundEnabled ? (
-                <Volume2 className="w-4 h-4 text-[#00F5D4]" />
+                <Volume2 className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-[#00F5D4]"}`} />
               ) : (
-                <VolumeX className="w-4 h-4 text-slate-500" />
+                <VolumeX className="w-4 h-4 text-slate-400" />
               )}
             </button>
           </div>

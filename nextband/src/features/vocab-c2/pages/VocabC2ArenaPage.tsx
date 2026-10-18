@@ -9,13 +9,24 @@ import { ModeDPersonaClash } from "../components/ModeDPersonaClash";
 import { ModeEChroniclesOfFate } from "../components/ModeEChroniclesOfFate";
 import { SemanticGradientLab } from "../components/SemanticGradientLab";
 import { FrameSemanticWebBurst } from "../components/FrameSemanticWebBurst";
-import { Layers, Zap, Key, Swords, BookOpen, Sliders, Network } from "lucide-react";
+import { ThemeProvider, useArenaTheme } from "../context/ThemeContext";
+import {
+  Layers,
+  Zap,
+  Key,
+  Swords,
+  BookOpen,
+  Sliders,
+  Network,
+  EyeOff,
+} from "lucide-react";
 
-export const VocabC2ArenaPage: React.FC = () => {
+const VocabC2ArenaContent: React.FC = () => {
   const [selectedUnitNumber, setSelectedUnitNumber] = useState(1);
   const [activeMode, setActiveMode] = useState<ArenaModeId>("schema");
 
   const currentUnit = getC2UnitByNumber(selectedUnitNumber);
+  const { theme, isZenMode, toggleZenMode } = useArenaTheme();
 
   const {
     state,
@@ -30,74 +41,135 @@ export const VocabC2ArenaPage: React.FC = () => {
   } = useLexiconEngine(selectedUnitNumber);
 
   const avgLatency = useMemoAvgLatency(state.records);
+  const isPaperTheme = theme === "paper";
+  const isSlateTheme = theme === "slate";
 
   return (
-    <div className="min-h-screen bg-[#070A12] text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
-      {/* Cyber-Academic HUD */}
-      <ArenaHeader
-        unit={currentUnit}
-        allUnits={VOCAB_C2_UNITS}
-        onSelectUnit={(num) => setSelectedUnitNumber(num)}
-        xp={state.totalXp}
-        rank={headerRankInfo}
-        nextRankXp={nextRank?.minXp || undefined}
-        rankProgressPercent={rankProgressPercent}
-        combo={state.currentCombo}
-        maxCombo={state.maxCombo}
-        avgLatencyMs={avgLatency}
-        masteredCount={state.masteredWords.length}
-        totalLexiconCount={320}
-        soundEnabled={soundEnabled}
-        onToggleSound={() => setSoundEnabled((prev) => !prev)}
-        mistakes={mistakes}
-        onClearMistake={clearMistake}
-        onRecordAttempt={recordAttempt}
-      />
+    <div
+      className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
+        isPaperTheme
+          ? "bg-[#F4EFEA] text-[#1E293B] selection:bg-amber-200 selection:text-amber-950"
+          : isSlateTheme
+          ? "bg-[#090D16] text-slate-100 selection:bg-sky-500 selection:text-slate-950"
+          : "bg-[#070A12] text-slate-100 selection:bg-cyan-500 selection:text-slate-950"
+      }`}
+    >
+      {/* Cyber-Academic HUD (Tự ẩn khi bật Zen Focus Mode để loại bỏ visual noise) */}
+      {!isZenMode && (
+        <ArenaHeader
+          unit={currentUnit}
+          allUnits={VOCAB_C2_UNITS}
+          onSelectUnit={(num) => setSelectedUnitNumber(num)}
+          xp={state.totalXp}
+          rank={headerRankInfo}
+          nextRankXp={nextRank?.minXp || undefined}
+          rankProgressPercent={rankProgressPercent}
+          combo={state.currentCombo}
+          maxCombo={state.maxCombo}
+          avgLatencyMs={avgLatency}
+          masteredCount={state.masteredWords.length}
+          totalLexiconCount={320}
+          soundEnabled={soundEnabled}
+          onToggleSound={() => setSoundEnabled((prev) => !prev)}
+          mistakes={mistakes}
+          onClearMistake={clearMistake}
+          onRecordAttempt={recordAttempt}
+        />
+      )}
+
+      {/* Floating Zen Mode exit pill when Zen is active */}
+      {isZenMode && (
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={toggleZenMode}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-md cursor-pointer border transition-all ${
+              isPaperTheme
+                ? "bg-white/90 border-[#E2D9CC] text-slate-800 hover:bg-white"
+                : "bg-slate-900/90 border-slate-700 text-slate-200 hover:text-white"
+            }`}
+          >
+            <EyeOff className="w-3.5 h-3.5 text-purple-500" />
+            <span>Thoát Zen Mode [Z]</span>
+          </button>
+        </div>
+      )}
 
       {/* Main Game Stage Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Unit Info Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#0B0F19] border border-white/10">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono">
-                UNIT {currentUnit.unitNumber} • {currentUnit.pdfPages}
-              </span>
-              <h1 className="text-lg font-black text-white">{currentUnit.titleEn}</h1>
-            </div>
-            <p className="text-xs text-slate-400 mt-0.5">{currentUnit.themeSummaryVi}</p>
-          </div>
-
-          {/* Mode Switcher Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-            {[
-              { id: "schema" as ArenaModeId, label: "A: Schema", icon: Layers },
-              { id: "synapse" as ArenaModeId, label: "B: Synapse", icon: Zap },
-              { id: "trilock" as ArenaModeId, label: "C: Tri-Lock", icon: Key },
-              { id: "persona" as ArenaModeId, label: "D: Persona", icon: Swords },
-              { id: "chronicles" as ArenaModeId, label: "E: Chronicles", icon: BookOpen },
-              { id: "gradient" as ArenaModeId, label: "⚡ Gradients (Rosch)", icon: Sliders },
-              { id: "frameweb" as ArenaModeId, label: "🕸️ Frames (Fillmore)", icon: Network },
-            ].map((m) => {
-              const Icon = m.icon;
-              const isActive = activeMode === m.id;
-              return (
-                <button
-                  key={m.id}
-                  onClick={() => setActiveMode(m.id)}
-                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                    isActive
-                      ? "bg-cyan-500 text-slate-950 font-black shadow-md shadow-cyan-500/30"
-                      : "bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 border border-white/5"
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-5">
+        {/* Unit Info Banner & Mode Tabs */}
+        {!isZenMode && (
+          <div
+            className={`flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 p-4 rounded-2xl border transition-all ${
+              isPaperTheme
+                ? "bg-[#FAF7F2] border-[#E2D9CC] shadow-xs text-slate-900"
+                : isSlateTheme
+                ? "bg-[#0F172A] border-slate-700/80 shadow-md text-slate-100"
+                : "bg-[#0B0F19] border-white/10 shadow-lg text-slate-100"
+            }`}
+          >
+            <div>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider font-mono border ${
+                    isPaperTheme
+                      ? "bg-teal-50 text-teal-800 border-teal-200"
+                      : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30"
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{m.label}</span>
-                </button>
-              );
-            })}
+                  UNIT {currentUnit.unitNumber} • {currentUnit.pdfPages}
+                </span>
+                <h1
+                  className={`text-lg font-black tracking-tight ${
+                    isPaperTheme ? "text-slate-900 font-serif" : "text-white"
+                  }`}
+                >
+                  {currentUnit.titleEn}
+                </h1>
+              </div>
+              <p
+                className={`text-xs mt-1 leading-relaxed ${
+                  isPaperTheme ? "text-slate-600 font-normal" : "text-slate-400"
+                }`}
+              >
+                {currentUnit.themeSummaryVi}
+              </p>
+            </div>
+
+            {/* Mode Switcher Tabs */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+              {[
+                { id: "schema" as ArenaModeId, label: "A: Schema", icon: Layers },
+                { id: "synapse" as ArenaModeId, label: "B: Synapse", icon: Zap },
+                { id: "trilock" as ArenaModeId, label: "C: Tri-Lock", icon: Key },
+                { id: "persona" as ArenaModeId, label: "D: Persona", icon: Swords },
+                { id: "chronicles" as ArenaModeId, label: "E: Chronicles", icon: BookOpen },
+                { id: "gradient" as ArenaModeId, label: "⚡ Gradients", icon: Sliders },
+                { id: "frameweb" as ArenaModeId, label: "🕸️ Frames", icon: Network },
+              ].map((m) => {
+                const Icon = m.icon;
+                const isActive = activeMode === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => setActiveMode(m.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                      isActive
+                        ? isPaperTheme
+                          ? "bg-teal-700 text-white font-black shadow-sm"
+                          : "bg-cyan-500 text-slate-950 font-black shadow-md shadow-cyan-500/30"
+                        : isPaperTheme
+                        ? "bg-white text-slate-700 hover:bg-slate-100 hover:text-black border border-slate-200"
+                        : "bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 border border-white/5"
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{m.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Active Mode Render */}
         <div className="w-full">
@@ -125,6 +197,14 @@ export const VocabC2ArenaPage: React.FC = () => {
         </div>
       </main>
     </div>
+  );
+};
+
+export const VocabC2ArenaPage: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <VocabC2ArenaContent />
+    </ThemeProvider>
   );
 };
 
