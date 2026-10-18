@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { LEVEL_1_PUZZLES } from '../data/level-1.data';
+import { LEVEL_2_PUZZLES } from '../data/level-2.data';
 import { PrepositionId, SceneActionState } from '../types';
 import { DioramaCanvas } from './DioramaCanvas';
 import { PrepositionSelector } from './PrepositionSelector';
@@ -9,6 +10,7 @@ import { IeltsMetaphorBridge } from './IeltsMetaphorBridge';
 import { soundEffects } from '../utils/soundEffects';
 
 export const PrepositionLabContainer: React.FC = () => {
+  const [currentLevel, setCurrentLevel] = useState<1 | 2>(1);
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [selectedPreposition, setSelectedPreposition] = useState<PrepositionId | null>(null);
   const [actionState, setActionState] = useState<SceneActionState>('idle');
@@ -20,7 +22,8 @@ export const PrepositionLabContainer: React.FC = () => {
   // Puzzle 1 specific placement state
   const [snapZone, setSnapZone] = useState<'table' | 'rim' | 'cavity'>('cavity');
 
-  const puzzle = LEVEL_1_PUZZLES[currentPuzzleIndex];
+  const puzzleList = currentLevel === 1 ? LEVEL_1_PUZZLES : LEVEL_2_PUZZLES;
+  const puzzle = puzzleList[currentPuzzleIndex];
 
   const selectedOption = useMemo(() => {
     if (!selectedPreposition) return null;
@@ -38,6 +41,20 @@ export const PrepositionLabContainer: React.FC = () => {
     setSelectedPreposition(id);
   };
 
+  // Switch between Level 1 and Level 2
+  const handleSwitchLevel = (level: 1 | 2) => {
+    soundEffects.playPickUp();
+    setCurrentLevel(level);
+    setCurrentPuzzleIndex(0);
+    setSelectedPreposition(null);
+    setActionState('idle');
+    setHasTestedPrediction(false);
+    setShowViInsight(false);
+    setShowHint(false);
+    setIsCompleted(false);
+    setSnapZone('cavity');
+  };
+
   // Test Prediction trigger
   const handleTestPrediction = () => {
     if (!selectedPreposition || !selectedOption) return;
@@ -52,7 +69,7 @@ export const PrepositionLabContainer: React.FC = () => {
 
   // Advance to next puzzle or completion
   const handleNext = () => {
-    if (currentPuzzleIndex < LEVEL_1_PUZZLES.length - 1) {
+    if (currentPuzzleIndex < puzzleList.length - 1) {
       setCurrentPuzzleIndex((prev) => prev + 1);
       setSelectedPreposition(null);
       setActionState('idle');
@@ -80,7 +97,11 @@ export const PrepositionLabContainer: React.FC = () => {
   if (isCompleted) {
     return (
       <div className="w-full min-h-[calc(100vh-80px)] py-8 px-4 flex items-center justify-center bg-slate-50">
-        <CompletionSummary onReplay={handleReplay} />
+        <CompletionSummary
+          onReplay={handleReplay}
+          onSwitchLevel={() => handleSwitchLevel(currentLevel === 1 ? 2 : 1)}
+          currentLevel={currentLevel}
+        />
       </div>
     );
   }
@@ -88,18 +109,40 @@ export const PrepositionLabContainer: React.FC = () => {
   return (
     <div className="w-full min-h-[calc(100vh-80px)] py-6 px-3 sm:px-6 bg-slate-50 text-slate-800 flex flex-col items-center select-none">
       <div className="w-full max-w-2xl flex flex-col gap-4">
-        {/* Top Header & Progression Bar */}
+        {/* Top Header & Level Switcher */}
         <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-md bg-sky-100 text-sky-700 font-mono text-xs font-bold uppercase tracking-wider border border-sky-300">
-                Level 1: Thí nghiệm
-              </span>
+              {/* Level Selector Pills */}
+              <div className="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => handleSwitchLevel(1)}
+                  className={`px-2.5 py-0.5 rounded-md font-mono text-xs font-black tracking-wide transition-all cursor-pointer ${
+                    currentLevel === 1
+                      ? 'bg-sky-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Level 1: IN vs UNDER
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSwitchLevel(2)}
+                  className={`px-2.5 py-0.5 rounded-md font-mono text-xs font-black tracking-wide transition-all cursor-pointer ${
+                    currentLevel === 2
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Level 2: ON vs IN vs AT
+                </button>
+              </div>
               <span className="text-xs text-slate-500 font-medium">
-                Màn {puzzle.order} / {LEVEL_1_PUZZLES.length}
+                Màn {puzzle.order} / {puzzleList.length}
               </span>
             </div>
-            <h1 className="text-lg sm:text-xl font-black text-slate-900 mt-0.5">
+            <h1 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
               {puzzle.title}
             </h1>
             <p className="text-xs text-slate-500">
@@ -125,14 +168,16 @@ export const PrepositionLabContainer: React.FC = () => {
 
         {/* Progress Dots */}
         <div className="flex gap-2 w-full">
-          {LEVEL_1_PUZZLES.map((p, idx) => (
+          {puzzleList.map((p, idx) => (
             <div
               key={p.id}
               className={`h-2 rounded-full flex-1 transition-all ${
                 idx === currentPuzzleIndex
-                  ? 'bg-sky-600 shadow-sm shadow-sky-600/30'
+                  ? currentLevel === 1
+                    ? 'bg-sky-600 shadow-sm shadow-sky-600/30'
+                    : 'bg-indigo-600 shadow-sm shadow-indigo-600/30'
                   : idx < currentPuzzleIndex
-                  ? 'bg-sky-300'
+                  ? currentLevel === 1 ? 'bg-sky-300' : 'bg-indigo-300'
                   : 'bg-slate-200'
               }`}
             />
@@ -231,7 +276,7 @@ export const PrepositionLabContainer: React.FC = () => {
             setHasTestedPrediction(false);
             setActionState('idle');
           }}
-          isLastPuzzle={currentPuzzleIndex === LEVEL_1_PUZZLES.length - 1}
+          isLastPuzzle={currentPuzzleIndex === puzzleList.length - 1}
         />
 
         {/* IELTS 8.5+ Metaphor Bridge (Visible once tested prediction) */}

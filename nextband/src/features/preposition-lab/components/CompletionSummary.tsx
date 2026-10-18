@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { LEVEL_1_PUZZLES } from '../data/level-1.data';
+import { LEVEL_2_PUZZLES } from '../data/level-2.data';
 import { soundEffects } from '../utils/soundEffects';
 
-interface CompletionSummaryProps {
+export interface CompletionSummaryProps {
   onReplay: () => void;
+  onSwitchLevel?: () => void;
+  currentLevel?: 1 | 2;
 }
 
 interface TakeawayCard {
@@ -70,16 +73,75 @@ const LEVEL_1_SUMMARY_CARDS: TakeawayCard[] = [
   }
 ];
 
-export const CompletionSummary: React.FC<CompletionSummaryProps> = ({ onReplay }) => {
-  // Extract all micro-challenges from puzzles and shuffle them once
+const LEVEL_2_SUMMARY_CARDS: TakeawayCard[] = [
+  {
+    order: 1,
+    prep: 'ON',
+    badgeColor: 'bg-indigo-600 text-white',
+    tag: 'Tiếp xúc bề mặt phẳng',
+    icon: '🖼️',
+    rule: 'Tì lên mặt phẳng đứng hoặc ngang để được nâng đỡ.',
+    highlight: 'Mặt phẳng đỡ ➔',
+    example: 'on the wall'
+  },
+  {
+    order: 2,
+    prep: 'ON',
+    badgeColor: 'bg-indigo-600 text-white',
+    tag: 'Mặt phẳng mở rộng',
+    icon: '💧',
+    rule: 'Nước loang tự do trên mặt phẳng không có gờ chắn.',
+    highlight: 'Trải rộng diện tích ➔',
+    example: 'on the desk'
+  },
+  {
+    order: 3,
+    prep: 'IN',
+    badgeColor: 'bg-emerald-600 text-white',
+    tag: 'Góc phòng lòng chảo',
+    icon: '📚',
+    rule: '2 vách tường giao nhau tạo không gian 3D ôm lấy đồ vật.',
+    highlight: 'Góc ôm trọn ➔',
+    example: 'in the corner of the room'
+  },
+  {
+    order: 4,
+    prep: 'ON',
+    badgeColor: 'bg-indigo-600 text-white',
+    tag: 'Mặt sàn có lối đi',
+    icon: '🚌',
+    rule: 'Phương tiện có sàn đứng và đi lại được như bục di động.',
+    highlight: 'Mặt sàn đứng ➔',
+    example: 'on the bus / train'
+  },
+  {
+    order: 5,
+    prep: 'AT',
+    badgeColor: 'bg-rose-600 text-white',
+    tag: 'Toạ độ điểm hội tụ',
+    icon: '📍',
+    rule: 'Xem địa điểm như một điểm chấm toạ độ 0D trên bản đồ.',
+    highlight: 'Điểm toạ độ ➔',
+    example: 'at the checkpoint'
+  }
+];
+
+export const CompletionSummary: React.FC<CompletionSummaryProps> = ({
+  onReplay,
+  onSwitchLevel,
+  currentLevel = 1
+}) => {
+  const currentPuzzles = currentLevel === 1 ? LEVEL_1_PUZZLES : LEVEL_2_PUZZLES;
+  const summaryCards = currentLevel === 1 ? LEVEL_1_SUMMARY_CARDS : LEVEL_2_SUMMARY_CARDS;
+
+  // Extract all micro-challenges from current level puzzles and shuffle them
   const allQuestions = useMemo(() => {
-    const list = LEVEL_1_PUZZLES.map((p) => ({
+    const list = currentPuzzles.map((p) => ({
       puzzleOrder: p.order,
       ...p.ieltsBridge!.microChallenge
     }));
-    // Fisher-Yates shuffle with fixed seed-like behavior per mount
     return [...list].sort(() => Math.random() - 0.5);
-  }, []);
+  }, [currentPuzzles]);
 
   // Track answers for each question index
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
@@ -107,7 +169,9 @@ export const CompletionSummary: React.FC<CompletionSummaryProps> = ({ onReplay }
           🏆
         </div>
         <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-          Bí kíp tóm tắt: Vật chứa vs Nắp đậy
+          {currentLevel === 1
+            ? 'Bí kíp tóm tắt: Vật chứa vs Nắp đậy (IN vs UNDER)'
+            : 'Bí kíp tóm tắt: Bề mặt, Ranh giới & Điểm (ON vs IN vs AT)'}
         </h2>
         <p className="text-xs text-slate-500">
           5 nguyên tắc ghi nhớ nhanh giúp chọn đúng 100% giới từ không gian
@@ -116,7 +180,7 @@ export const CompletionSummary: React.FC<CompletionSummaryProps> = ({ onReplay }
 
       {/* 5 Scannable Visual Cards Grid */}
       <div className="mt-4 space-y-2.5">
-        {LEVEL_1_SUMMARY_CARDS.map((item) => (
+        {summaryCards.map((item) => (
           <div
             key={item.order}
             className="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 hover:bg-slate-50 border border-slate-200/90 flex items-center justify-between gap-3 transition-all shadow-xs"
@@ -159,7 +223,15 @@ export const CompletionSummary: React.FC<CompletionSummaryProps> = ({ onReplay }
         <span className="text-2xl shrink-0">💡</span>
         <div className="leading-snug">
           <span className="font-black text-amber-900 block mb-0.5">Quy tắc vàng bỏ túi:</span>
-          Tiếng Anh chọn <strong className="text-emerald-700 font-black">IN</strong> khi vật thể được <u>nâng đỡ</u>, <u>chặn đường thoát</u> hoặc <u>kẹp giữ cùng chuyển động</u> — không phụ thuộc vào hình dạng hay tỉ lệ nhô ra ngoài!
+          {currentLevel === 1 ? (
+            <>
+              Tiếng Anh chọn <strong className="text-emerald-700 font-black">IN</strong> khi vật thể được <u>nâng đỡ</u>, <u>chặn đường thoát</u> hoặc <u>kẹp giữ cùng chuyển động</u> — không phụ thuộc vào hình dạng hay tỉ lệ nhô ra ngoài!
+            </>
+          ) : (
+            <>
+              Tiếng Anh chọn <strong className="text-indigo-700 font-black">ON</strong> khi có <u>mặt phẳng nâng đỡ tiếp xúc</u> (dù phẳng ngang hay đứng), <strong className="text-emerald-700 font-black">IN</strong> khi có <u>lòng bao bọc</u>, và <strong className="text-rose-700 font-black">AT</strong> khi coi địa điểm như <u>toạ độ điểm không chiều</u>!
+            </>
+          )}
         </div>
       </div>
 
@@ -276,16 +348,19 @@ export const CompletionSummary: React.FC<CompletionSummaryProps> = ({ onReplay }
           className="w-full sm:w-auto px-7 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 active:scale-95 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>🔄</span>
-          <span>Chơi lại thử thách</span>
+          <span>Chơi lại Level {currentLevel}</span>
         </button>
-        <button
-          type="button"
-          disabled
-          className="w-full sm:w-auto px-7 py-3 rounded-xl bg-slate-100 text-slate-400 font-bold text-sm border border-slate-200 cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          <span>Level 2: Quỹ đạo & Góc nhìn (Sắp ra mắt)</span>
-          <span>🔒</span>
-        </button>
+
+        {onSwitchLevel && (
+          <button
+            type="button"
+            onClick={onSwitchLevel}
+            className="w-full sm:w-auto px-7 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 active:scale-95 text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>{currentLevel === 1 ? 'Chuyển sang Level 2: ON vs IN vs AT' : 'Quay lại Level 1: IN vs UNDER'}</span>
+            <span>➔</span>
+          </button>
+        )}
       </div>
     </div>
   );

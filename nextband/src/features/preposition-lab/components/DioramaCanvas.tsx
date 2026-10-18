@@ -572,6 +572,212 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
           </g>
         )}
 
+        {/* SCENARIO LEVEL 2: SCENARIO 1 - THE WALL & THE PICTURE */}
+        {puzzle.id === 'p2-1-wall-and-picture' && (
+          <g>
+            {/* 3D Brick Wall Perspective Section */}
+            <g>
+              {/* Wall Surface (Vertical plane) */}
+              <rect x="140" y="70" width="220" height="150" fill="#f8fafc" stroke="#94a3b8" strokeWidth="2" />
+              {/* Subtle mortar lines */}
+              <line x1="140" y1="120" x2="360" y2="120" stroke="#e2e8f0" strokeWidth="1.5" />
+              <line x1="140" y1="170" x2="360" y2="170" stroke="#e2e8f0" strokeWidth="1.5" />
+              <line x1="250" y1="70" x2="250" y2="120" stroke="#e2e8f0" strokeWidth="1.5" />
+              <line x1="200" y1="120" x2="200" y2="170" stroke="#e2e8f0" strokeWidth="1.5" />
+              <line x1="300" y1="120" x2="300" y2="170" stroke="#e2e8f0" strokeWidth="1.5" />
+            </g>
+
+            {/* The Framed Painting (draggable against the wall) */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={`translate(${dragOffset.x}, ${isManipulated ? -20 : dragOffset.y})`}
+              onPointerDown={handlePointerDown}
+            >
+              {/* Frame Drop Shadow */}
+              <rect x="202" y="97" width="96" height="76" rx="4" fill="rgba(0,0,0,0.15)" />
+              {/* Wooden Frame */}
+              <rect x="200" y="95" width="96" height="76" rx="4" fill="#b45309" stroke="#78350f" strokeWidth="2" />
+              {/* Canvas Art */}
+              <rect x="208" y="103" width="80" height="60" rx="2" fill="#38bdf8" />
+              <circle cx="230" cy="120" r="12" fill="#facc15" />
+              <polygon points="212,158 240,135 260,158" fill="#15803d" />
+              <polygon points="245,158 268,140 286,158" fill="#166534" />
+              {/* Hanging Cord */}
+              <line x1="248" y1="85" x2="235" y2="95" stroke="#475569" strokeWidth="1.5" />
+              <line x1="248" y1="85" x2="261" y2="95" stroke="#475569" strokeWidth="1.5" />
+              <circle cx="248" cy="85" r="3" fill="#334155" />
+            </g>
+
+            {/* Label callout */}
+            <rect x="180" y="235" width="140" height="24" rx="6" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
+            <text x="250" y="251" fill="#475569" fontSize="10" textAnchor="middle" fontWeight="bold">
+              Tì lên bề mặt phẳng (ON)
+            </text>
+          </g>
+        )}
+
+        {/* SCENARIO LEVEL 2: SCENARIO 2 - THE TABLETOP SPILL */}
+        {puzzle.id === 'p2-2-tabletop-spill' && (
+          <g>
+            {/* Table Surface */}
+            <polygon points="80,140 420,140 370,240 130,240" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="1.5" />
+
+            {/* Spilled Glass */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={`translate(${isManipulated ? 40 : dragOffset.x}, 0)`}
+              onPointerDown={handlePointerDown}
+            >
+              {/* Overturned Glass Silhouette */}
+              <path d="M 170,175 L 215,165 L 220,185 L 175,195 Z" fill="url(#glassBowl)" stroke="#0284c7" strokeWidth="1.5" />
+              <ellipse cx="218" cy="175" rx="5" ry="10" fill="#bae6fd" stroke="#0284c7" strokeWidth="1.5" />
+            </g>
+
+            {/* Free Spreading Water Puddle on Flat Table */}
+            <path
+              d={
+                isManipulated
+                  ? "M 220,185 Q 260,175 320,185 Q 360,200 330,215 Q 270,225 230,210 Q 210,195 220,185 Z"
+                  : "M 220,185 Q 240,180 270,185 Q 290,195 270,205 Q 240,210 230,200 Z"
+              }
+              fill="#38bdf8"
+              opacity="0.75"
+              className="transition-all duration-700"
+            />
+            <text x="280" y="200" fill="#0369a1" fontSize="11" fontWeight="bold">
+              {isManipulated ? 'Nước lan trên mặt phẳng (ON)' : 'Vũng nước loang (ON)'}
+            </text>
+          </g>
+        )}
+
+        {/* SCENARIO LEVEL 2: SCENARIO 3 - THE CORNER PARADOX */}
+        {puzzle.id === 'p2-3-corner-paradox' && (
+          <g>
+            {/* 3D Room Corner Walls */}
+            <polygon points="70,50 250,90 250,230 70,190" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="1.5" />
+            <polygon points="250,90 430,50 430,190 250,230" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+            {/* Corner seam line */}
+            <line x1="250" y1="90" x2="250" y2="230" stroke="#94a3b8" strokeWidth="2.5" />
+
+            {/* Bookshelf tucked inside the corner */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={`translate(${isManipulated ? 0 : dragOffset.x}, ${isManipulated ? -15 : dragOffset.y})`}
+              onPointerDown={handlePointerDown}
+            >
+              {/* Bookshelf 3D Box */}
+              <rect x="220" y="110" width="60" height="100" rx="3" fill="#b45309" stroke="#78350f" strokeWidth="2" />
+              {/* Shelves and colorful books */}
+              <rect x="226" y="122" width="48" height="6" fill="#78350f" />
+              <rect x="228" y="128" width="8" height="24" fill="#ef4444" />
+              <rect x="238" y="132" width="8" height="20" fill="#3b82f6" />
+              <rect x="248" y="130" width="8" height="22" fill="#10b981" />
+              <rect x="226" y="156" width="48" height="6" fill="#78350f" />
+              <rect x="230" y="162" width="10" height="26" fill="#eab308" />
+              <rect x="242" y="166" width="10" height="22" fill="#8b5cf6" />
+            </g>
+
+            <rect x="180" y="240" width="140" height="24" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" />
+            <text x="250" y="256" fill="#0369a1" fontSize="10" textAnchor="middle" fontWeight="bold">
+              Góc phòng ôm trọn (IN)
+            </text>
+          </g>
+        )}
+
+        {/* SCENARIO LEVEL 2: SCENARIO 4 - THE COMMUTER'S VEHICLE */}
+        {puzzle.id === 'p2-4-commuters-vehicle' && (
+          <g>
+            {/* The Express Bus Body */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={`translate(${isManipulated ? 50 : dragOffset.x}, 0)`}
+              onPointerDown={handlePointerDown}
+            >
+              {/* Bus Outer Shell */}
+              <rect x="130" y="110" width="250" height="100" rx="16" fill="#0284c7" stroke="#0369a1" strokeWidth="2.5" />
+              {/* Windows & Walkable Aisle Floor */}
+              <rect x="150" y="125" width="210" height="40" rx="4" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="1.5" />
+              {/* Walking Passenger Silhouettes inside */}
+              <circle cx="180" cy="140" r="8" fill="#1e293b" />
+              <rect x="174" y="148" width="12" height="16" rx="3" fill="#1e293b" />
+              <circle cx="230" cy="140" r="8" fill="#1e293b" />
+              <rect x="224" y="148" width="12" height="16" rx="3" fill="#1e293b" />
+              <circle cx="280" cy="140" r="8" fill="#1e293b" />
+              <rect x="274" y="148" width="12" height="16" rx="3" fill="#1e293b" />
+              {/* Walkable aisle floor platform line */}
+              <line x1="150" y1="165" x2="360" y2="165" stroke="#f59e0b" strokeWidth="3" />
+              {/* Wheels */}
+              <circle cx="180" cy="215" r="18" fill="#1e293b" stroke="#64748b" strokeWidth="4" />
+              <circle cx="330" cy="215" r="18" fill="#1e293b" stroke="#64748b" strokeWidth="4" />
+            </g>
+
+            <rect x="160" y="245" width="180" height="24" rx="6" fill="#ffffff" stroke="#f59e0b" strokeWidth="1.5" />
+            <text x="250" y="261" fill="#b45309" fontSize="10" textAnchor="middle" fontWeight="bold">
+              Mặt sàn đứng đi lại được (ON)
+            </text>
+          </g>
+        )}
+
+        {/* SCENARIO LEVEL 2: SCENARIO 5 - THE MAP & THE PIN */}
+        {puzzle.id === 'p2-5-map-and-pin' && (
+          <g>
+            {/* Folded Map Canvas */}
+            <polygon points="110,80 390,80 370,220 90,220" fill="#fef3c7" stroke="#d97706" strokeWidth="2" />
+            {/* Map Roads / Demarcations */}
+            <path d="M 120,150 Q 240,140 370,160" stroke="#cbd5e1" strokeWidth="8" fill="none" />
+            <path d="M 230,80 Q 250,150 240,220" stroke="#f59e0b" strokeWidth="6" fill="none" />
+
+            {/* Target Coordinate Crosshair and Map Pin */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={`translate(${dragOffset.x}, ${isManipulated ? -15 : dragOffset.y})`}
+              onPointerDown={handlePointerDown}
+            >
+              {/* Point Target Pulse */}
+              <circle cx="245" cy="145" r="22" fill="#ef4444" opacity="0.2" className="animate-ping" />
+              <circle cx="245" cy="145" r="6" fill="#ef4444" />
+              {/* Standing Map Pin Marker */}
+              <path d="M 245,145 C 230,120 230,105 245,105 C 260,105 260,120 245,145 Z" fill="#ef4444" stroke="#991b1b" strokeWidth="1.5" />
+              <circle cx="245" cy="115" r="4" fill="#ffffff" />
+            </g>
+
+            <rect x="170" y="235" width="160" height="24" rx="6" fill="#ffffff" stroke="#ef4444" strokeWidth="1.5" />
+            <text x="250" y="251" fill="#991b1b" fontSize="10" textAnchor="middle" fontWeight="bold">
+              Toạ độ điểm hội tụ (AT)
+            </text>
+          </g>
+        )}
+
         {/* Dynamic Elastic Tension Cord when actively dragging */}
         {isDragging && (dragOffset.x !== 0 || dragOffset.y !== 0) && (
           <g className="pointer-events-none opacity-60">
@@ -604,11 +810,16 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
           onClick={onManipulate}
           className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 active:scale-95 text-white font-bold shadow-md hover:shadow-sky-500/20 transition-all flex items-center gap-1.5 text-xs touch-manipulation cursor-pointer"
         >
-          {puzzle.order === 1 && (isManipulated ? 'Đặt lại vị trí' : 'Đẩy trượt cái bát ➔')}
-          {puzzle.order === 2 && (isManipulated ? 'Đặt lại vị trí' : 'Đẩy trượt cái bát ➔')}
-          {puzzle.order === 3 && (isManipulated ? 'Hạ bát xuống' : 'Nhấc bổng bát lên ⬆️')}
-          {puzzle.order === 4 && (isManipulated ? 'Úp kín bát lại' : 'Nhấc nghiêng mép bát ↗️')}
-          {puzzle.order === 5 && (isManipulated ? 'Đặt lại thanh gỗ' : 'Trượt thanh gỗ ➔')}
+          {puzzle.id === 'p1-placement-basics' && (isManipulated ? 'Đặt lại vị trí' : 'Đẩy trượt cái bát ➔')}
+          {puzzle.id === 'p2-overflowing-bowl' && (isManipulated ? 'Đặt lại vị trí' : 'Đẩy trượt cái bát ➔')}
+          {puzzle.id === 'p3-cover-or-container' && (isManipulated ? 'Hạ bát xuống' : 'Nhấc bổng bát lên ⬆️')}
+          {puzzle.id === 'p4-smoke-challenge' && (isManipulated ? 'Úp kín bát lại' : 'Nhấc nghiêng mép bát ↗️')}
+          {puzzle.id === 'p5-transfer-test' && (isManipulated ? 'Đặt lại thanh gỗ' : 'Trượt thanh gỗ ➔')}
+          {puzzle.id === 'p2-1-wall-and-picture' && (isManipulated ? 'Hạ tranh xuống' : 'Nhấc tranh áp tường ➔')}
+          {puzzle.id === 'p2-2-tabletop-spill' && (isManipulated ? 'Lau sạch bàn' : 'Làm đổ cốc nước ➔')}
+          {puzzle.id === 'p2-3-corner-paradox' && (isManipulated ? 'Kéo ra ngoài' : 'Kê sát vào góc tường ➔')}
+          {puzzle.id === 'p2-4-commuters-vehicle' && (isManipulated ? 'Dừng xe buýt' : 'Khởi hành xe buýt ➔')}
+          {puzzle.id === 'p2-5-map-and-pin' && (isManipulated ? 'Thu lại định vị' : 'Ghim toạ độ điểm ➔')}
         </button>
       </div>
 
