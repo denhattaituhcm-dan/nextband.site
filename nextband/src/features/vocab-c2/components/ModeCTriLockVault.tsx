@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { TriLockPuzzle, MorphologicalFamily } from "@/data/vocab-c2/types";
 import { C2ModeSharedProps } from "./ArenaHeader";
+import { useArenaTheme } from "../context/ThemeContext";
 import { Lock, Unlock, Key, ArrowRight, ShieldCheck, Sparkles, BookOpen } from "lucide-react";
 
 export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordAttempt }) => {
+  const { theme } = useArenaTheme();
+  const isPaperTheme = theme === "paper";
+  const isSlateTheme = theme === "slate";
+
   const [activeSubView, setActiveSubView] = useState<"trilock" | "morphology">("trilock");
 
   // Sub-View 1: Tri-Lock Vault
@@ -136,40 +141,72 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Sub-View Switcher Tabs */}
-      <div className="flex items-center gap-2 border-b border-white/10 pb-2">
+      <div
+        className={`flex items-center gap-2 border-b pb-2 ${
+          isPaperTheme ? "border-[#E2D9CC]" : "border-white/10"
+        }`}
+      >
         <button
           onClick={() => setActiveSubView("trilock")}
           className={`px-4 py-2 rounded-xl text-xs font-black tracking-wide uppercase transition-all cursor-pointer flex items-center gap-2 ${
             activeSubView === "trilock"
-              ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-xs shadow-cyan-500/20"
+              ? isPaperTheme
+                ? "bg-teal-100 text-teal-900 border border-teal-300 shadow-xs"
+                : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-xs shadow-cyan-500/20"
+              : isPaperTheme
+              ? "text-slate-600 hover:text-black"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <Key className="w-4 h-4 text-cyan-400" />
+          <Key className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-cyan-400"}`} />
           <span>Sub-View 1: The Tri-Lock Vault [Three of a Kind]</span>
         </button>
         <button
           onClick={() => setActiveSubView("morphology")}
           className={`px-4 py-2 rounded-xl text-xs font-black tracking-wide uppercase transition-all cursor-pointer flex items-center gap-2 ${
             activeSubView === "morphology"
-              ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-xs shadow-amber-500/20"
+              ? isPaperTheme
+                ? "bg-amber-100 text-amber-900 border border-amber-300 shadow-xs"
+                : "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-xs shadow-amber-500/20"
+              : isPaperTheme
+              ? "text-slate-600 hover:text-black"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <BookOpen className="w-4 h-4 text-amber-400" />
+          <BookOpen className={`w-4 h-4 ${isPaperTheme ? "text-amber-700" : "text-amber-400"}`} />
           <span>Sub-View 2: Morphological Root Reactor</span>
         </button>
       </div>
 
       {activeSubView === "trilock" ? (
         currentPuzzle ? (
-          <div className="rounded-3xl p-6 sm:p-8 bg-[#0D1322] border border-cyan-500/30 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div
+            className={`rounded-3xl p-6 sm:p-8 border shadow-xl space-y-6 ${
+              isPaperTheme
+                ? "bg-[#FAF7F2] border-[#E2D9CC] text-slate-900"
+                : isSlateTheme
+                ? "bg-[#0F172A] border-slate-700/80 text-slate-100"
+                : "bg-[#0D1322] border-cyan-500/30 text-slate-100 shadow-2xl"
+            }`}
+          >
+            <div
+              className={`flex items-center justify-between border-b pb-4 ${
+                isPaperTheme ? "border-slate-200" : "border-white/10"
+              }`}
+            >
               <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-cyan-400">
+                <span
+                  className={`text-xs font-mono uppercase tracking-widest ${
+                    isPaperTheme ? "text-teal-800 font-bold" : "text-cyan-400"
+                  }`}
+                >
                   TRI-LOCK CIPHER {triIndex + 1} / {triPuzzles.length}
                 </span>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p
+                  className={`text-xs mt-0.5 ${
+                    isPaperTheme ? "text-slate-600 font-medium" : "text-slate-400"
+                  }`}
+                >
                   1 Từ C2 duy nhất mở khóa đồng thời cả 3 buồng ngữ cảnh!
                 </p>
               </div>
@@ -179,7 +216,11 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                     key={num}
                     className={`p-2 rounded-xl border flex items-center gap-1 font-mono text-xs font-black transition-all ${
                       unlockedStages[i]
-                        ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-xs shadow-cyan-400/30"
+                        ? isPaperTheme
+                          ? "bg-emerald-100 border-emerald-400 text-emerald-900 shadow-xs"
+                          : "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-xs shadow-cyan-400/30"
+                        : isPaperTheme
+                        ? "bg-white border-slate-200 text-slate-400"
                         : "bg-white/5 border-white/10 text-slate-500"
                     }`}
                   >
@@ -203,12 +244,20 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                     key={idx}
                     className={`p-4 rounded-2xl border transition-all ${
                       isVaultCracked
-                        ? "bg-cyan-500/10 border-cyan-500/40 text-white"
+                        ? isPaperTheme
+                          ? "bg-teal-50 border-teal-300 text-slate-900"
+                          : "bg-cyan-500/10 border-cyan-500/40 text-white"
+                        : isPaperTheme
+                        ? "bg-white border-slate-200 text-slate-800 shadow-xs"
                         : "bg-black/30 border-white/10 text-slate-300"
                     }`}
                   >
                     <div className="flex items-baseline gap-2.5">
-                      <span className="text-xs font-mono font-black text-cyan-400 shrink-0">
+                      <span
+                        className={`text-xs font-mono font-black shrink-0 ${
+                          isPaperTheme ? "text-teal-800" : "text-cyan-400"
+                        }`}
+                      >
                         CHAMBER {idx + 1}:
                       </span>
                       <p className="text-sm font-serif leading-relaxed">
@@ -216,7 +265,11 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                         <span
                           className={`font-mono font-black px-2 py-0.5 rounded-lg border mx-1 ${
                             isVaultCracked
-                              ? "bg-cyan-400 text-slate-950 border-cyan-300 shadow-xs shadow-cyan-400/50"
+                              ? isPaperTheme
+                                ? "bg-teal-700 text-white border-teal-800 shadow-xs"
+                                : "bg-cyan-400 text-slate-950 border-cyan-300 shadow-xs shadow-cyan-400/50"
+                              : isPaperTheme
+                              ? "bg-slate-100 text-slate-700 border-slate-300"
                               : "bg-white/10 text-cyan-300 border-cyan-500/30"
                           }`}
                         >
@@ -231,7 +284,13 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             </div>
 
             {/* Root / Semantic Clue */}
-            <div className="flex items-center justify-between text-xs text-slate-400 bg-white/5 p-3 rounded-xl border border-white/5 font-mono">
+            <div
+              className={`flex items-center justify-between text-xs p-3 rounded-xl border font-mono ${
+                isPaperTheme
+                  ? "bg-white border-slate-200 text-slate-700"
+                  : "bg-white/5 border-white/5 text-slate-400"
+              }`}
+            >
               <span>💡 Root Clue: {currentPuzzle.rootHint}</span>
               <span>IPA: {currentPuzzle.ipa}</span>
             </div>
@@ -240,15 +299,23 @@ export const ModeCTriLockVault: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
               {triOptions.map((opt, idx) => {
                 const isTarget = opt.toLowerCase() === currentPuzzle.targetWord.toLowerCase();
-                let style = "bg-white/5 border-white/10 text-white hover:bg-white/15";
+                let style = isPaperTheme
+                  ? "bg-white border-slate-300 text-slate-800 hover:bg-slate-100 hover:border-slate-400 shadow-xs"
+                  : "bg-white/5 border-white/10 text-white hover:bg-white/15";
 
                 if (selectedWord) {
                   if (isTarget) {
-                    style = "bg-cyan-500/30 border-cyan-400 text-cyan-200 font-black shadow-lg shadow-cyan-500/30";
+                    style = isPaperTheme
+                      ? "bg-emerald-100 border-emerald-500 text-emerald-950 font-black shadow-md"
+                      : "bg-cyan-500/30 border-cyan-400 text-cyan-200 font-black shadow-lg shadow-cyan-500/30";
                   } else if (selectedWord === opt) {
-                    style = "bg-rose-500/20 border-rose-400 text-rose-300 font-bold";
+                    style = isPaperTheme
+                      ? "bg-rose-100 border-rose-400 text-rose-950 font-bold"
+                      : "bg-rose-500/20 border-rose-400 text-rose-300 font-bold";
                   } else {
-                    style = "opacity-40 bg-white/5 border-transparent text-slate-500";
+                    style = isPaperTheme
+                      ? "opacity-40 bg-slate-100 border-transparent text-slate-400"
+                      : "opacity-40 bg-white/5 border-transparent text-slate-500";
                   }
                 }
 

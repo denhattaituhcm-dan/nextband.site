@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NarrativeChronicle, NarrativeSegment, NarrativeChoice } from "@/data/vocab-c2/types";
 import { C2ModeSharedProps } from "./ArenaHeader";
+import { useArenaTheme } from "../context/ThemeContext";
 import { BookOpen, AlertOctagon, CheckCircle2, RotateCcw, ArrowRight, Sparkles } from "lucide-react";
 
 export const ModeEChroniclesOfFate: React.FC<C2ModeSharedProps> = ({ unit, onRecordAttempt }) => {
+  const { theme } = useArenaTheme();
+  const isPaperTheme = theme === "paper";
+  const isSlateTheme = theme === "slate";
+
   const chronicle: NarrativeChronicle | undefined = unit.narrativeChronicle;
   const segments: NarrativeSegment[] = chronicle?.segments || [];
 
@@ -87,20 +92,50 @@ export const ModeEChroniclesOfFate: React.FC<C2ModeSharedProps> = ({ unit, onRec
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Novel Setting Header */}
-      <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-[#0D1322] to-[#121A30] border border-cyan-500/20 shadow-2xl relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+      <div
+        className={`rounded-3xl p-6 sm:p-8 border shadow-xl relative overflow-hidden ${
+          isPaperTheme
+            ? "bg-[#FAF7F2] border-[#E2D9CC] text-slate-900"
+            : isSlateTheme
+            ? "bg-[#0F172A] border-slate-700/80 text-slate-100"
+            : "bg-gradient-to-r from-[#0D1322] to-[#121A30] border-cyan-500/20 text-slate-100 shadow-2xl"
+        }`}
+      >
+        <div
+          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 ${
+            isPaperTheme ? "border-slate-200" : "border-white/10"
+          }`}
+        >
           <div className="space-y-1">
-            <span className="text-[11px] font-black uppercase tracking-widest text-cyan-400 font-mono">
+            <span
+              className={`text-[11px] font-black uppercase tracking-widest font-mono ${
+                isPaperTheme ? "text-teal-800" : "text-cyan-400"
+              }`}
+            >
               INTERACTIVE STORY SIMULATION • CHAPTER {currentSegmentIndex + 1} OF {segments.length}
             </span>
-            <h2 className="text-2xl font-black text-white tracking-tight">
+            <h2
+              className={`text-2xl font-black tracking-tight font-serif ${
+                isPaperTheme ? "text-slate-900" : "text-white"
+              }`}
+            >
               {chronicle.title}
             </h2>
-            <p className="text-xs text-slate-300 font-serif italic">
+            <p
+              className={`text-xs font-serif italic ${
+                isPaperTheme ? "text-slate-600 font-medium" : "text-slate-300"
+              }`}
+            >
               {chronicle.subtitleVi}
             </p>
           </div>
-          <div className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-400 font-mono max-w-xs text-right">
+          <div
+            className={`px-3 py-1.5 rounded-xl border text-xs font-mono max-w-xs sm:text-right ${
+              isPaperTheme
+                ? "bg-white border-slate-200 text-slate-600 shadow-xs"
+                : "bg-white/5 border-white/10 text-slate-400"
+            }`}
+          >
             {chronicle.settingDescription}
           </div>
         </div>
@@ -109,20 +144,40 @@ export const ModeEChroniclesOfFate: React.FC<C2ModeSharedProps> = ({ unit, onRec
         {currentSegment && (
           <div className="py-8 space-y-6">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <span
+                className={`px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase border ${
+                  isPaperTheme
+                    ? "bg-amber-100 text-amber-900 border-amber-300"
+                    : "bg-amber-500/20 text-amber-300 border-amber-500/30"
+                }`}
+              >
                 {currentSegment.chapterLabel}
               </span>
-              <span className="text-xs font-serif text-slate-400 italic">
+              <span
+                className={`text-xs font-serif italic ${
+                  isPaperTheme ? "text-slate-600" : "text-slate-400"
+                }`}
+              >
                 [{currentSegment.speakerOrMood}]
               </span>
             </div>
 
-            <div className="p-6 rounded-2xl bg-black/50 border border-white/10 text-lg sm:text-xl font-serif text-slate-100 leading-relaxed shadow-inner">
+            <div
+              className={`p-6 rounded-2xl border text-lg sm:text-xl font-serif leading-relaxed ${
+                isPaperTheme
+                  ? "bg-white border-slate-200 text-slate-900 shadow-xs"
+                  : "bg-black/50 border-white/10 text-slate-100 shadow-inner"
+              }`}
+            >
               {currentSegment.promptTextBefore}
               <span
                 className={`font-mono font-black px-3 py-1 rounded-xl border mx-1.5 transition-all inline-block ${
                   isSegmentSolved
-                    ? "bg-cyan-500/20 text-cyan-300 border-cyan-400 shadow-md shadow-cyan-400/20"
+                    ? isPaperTheme
+                      ? "bg-teal-700 text-white border-teal-800 shadow-sm"
+                      : "bg-cyan-500/20 text-cyan-300 border-cyan-400 shadow-md shadow-cyan-400/20"
+                    : isPaperTheme
+                    ? "bg-slate-100 text-slate-700 border-slate-300 animate-pulse"
                     : "bg-white/10 text-cyan-200 border-cyan-500/40 animate-pulse"
                 }`}
               >
@@ -134,10 +189,14 @@ export const ModeEChroniclesOfFate: React.FC<C2ModeSharedProps> = ({ unit, onRec
             {/* 4 Choices */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto pt-2">
               {currentSegment.choices.map((choice, idx) => {
-                let style = "bg-white/5 border-white/10 text-white hover:bg-white/15 hover:border-cyan-400/40";
+                let style = isPaperTheme
+                  ? "bg-white border-slate-300 text-slate-800 hover:bg-slate-100 hover:border-slate-400 shadow-xs"
+                  : "bg-white/5 border-white/10 text-white hover:bg-white/15 hover:border-cyan-400/40";
 
                 if (isSegmentSolved && choice.isCorrect) {
-                  style = "bg-emerald-500/20 border-emerald-400 text-emerald-300 font-black shadow-lg shadow-emerald-500/20";
+                  style = isPaperTheme
+                    ? "bg-emerald-100 border-emerald-500 text-emerald-950 font-black shadow-md"
+                    : "bg-emerald-500/20 border-emerald-400 text-emerald-300 font-black shadow-lg shadow-emerald-500/20";
                 }
 
                 return (
@@ -152,7 +211,9 @@ export const ModeEChroniclesOfFate: React.FC<C2ModeSharedProps> = ({ unit, onRec
                       <span className="text-base font-black">{choice.word}</span>
                     </div>
                     {isSegmentSolved && choice.isCorrect && (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <CheckCircle2
+                        className={`w-4 h-4 ${isPaperTheme ? "text-emerald-700" : "text-emerald-400"}`}
+                      />
                     )}
                   </button>
                 );

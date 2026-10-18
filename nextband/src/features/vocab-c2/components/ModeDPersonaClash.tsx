@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { PersonaCard, BinaryPrecisionItem } from "@/data/vocab-c2/types";
 import { C2ModeSharedProps } from "./ArenaHeader";
+import { useArenaTheme } from "../context/ThemeContext";
 import { Swords, Shield, Timer, ArrowRight, Sparkles, Scale, RefreshCw } from "lucide-react";
 
 export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordAttempt }) => {
+  const { theme } = useArenaTheme();
+  const isPaperTheme = theme === "paper";
+  const isSlateTheme = theme === "slate";
+
   const [activeSubView, setActiveSubView] = useState<"clash" | "binary">("clash");
 
   // Sub-View 1: Persona Card Clash (5.0s countdown)
@@ -146,47 +151,81 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Sub-View Switcher Tabs */}
-      <div className="flex items-center gap-2 border-b border-white/10 pb-2">
+      <div
+        className={`flex items-center gap-2 border-b pb-2 ${
+          isPaperTheme ? "border-[#E2D9CC]" : "border-white/10"
+        }`}
+      >
         <button
           onClick={() => setActiveSubView("clash")}
           className={`px-4 py-2 rounded-xl text-xs font-black tracking-wide uppercase transition-all cursor-pointer flex items-center gap-2 ${
             activeSubView === "clash"
-              ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-xs shadow-rose-500/20"
+              ? isPaperTheme
+                ? "bg-rose-100 text-rose-950 border border-rose-300 shadow-xs"
+                : "bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-xs shadow-rose-500/20"
+              : isPaperTheme
+              ? "text-slate-600 hover:text-black"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <Swords className="w-4 h-4 text-rose-400" />
+          <Swords className={`w-4 h-4 ${isPaperTheme ? "text-rose-700" : "text-rose-400"}`} />
           <span>Sub-View 1: Persona Clash (5.0s Counter Duel)</span>
         </button>
         <button
           onClick={() => setActiveSubView("binary")}
           className={`px-4 py-2 rounded-xl text-xs font-black tracking-wide uppercase transition-all cursor-pointer flex items-center gap-2 ${
             activeSubView === "binary"
-              ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-xs shadow-cyan-500/20"
+              ? isPaperTheme
+                ? "bg-teal-100 text-teal-900 border border-teal-300 shadow-xs"
+                : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-xs shadow-cyan-500/20"
+              : isPaperTheme
+              ? "text-slate-600 hover:text-black"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <Scale className="w-4 h-4 text-cyan-400" />
+          <Scale className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-cyan-400"}`} />
           <span>Sub-View 2: Fifty-Fifty Binary Precision</span>
         </button>
       </div>
 
       {activeSubView === "clash" ? (
         currentCard ? (
-          <div className="rounded-3xl p-6 sm:p-8 bg-[#0D1322] border border-rose-500/30 shadow-2xl space-y-6">
+          <div
+            className={`rounded-3xl p-6 sm:p-8 border shadow-xl space-y-6 ${
+              isPaperTheme
+                ? "bg-[#FAF7F2] border-[#E2D9CC] text-slate-900"
+                : isSlateTheme
+                ? "bg-[#0F172A] border-slate-700/80 text-slate-100"
+                : "bg-[#0D1322] border-rose-500/30 text-slate-100 shadow-2xl"
+            }`}
+          >
             {/* Countdown Bar */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-rose-400 flex items-center gap-1">
+                <span
+                  className={`flex items-center gap-1 ${
+                    isPaperTheme ? "text-rose-800 font-bold" : "text-rose-400"
+                  }`}
+                >
                   <Timer className="w-3.5 h-3.5" />
                   THỜI GIAN ĐỐI KHÁNG PHẢN XẠ
                 </span>
-                <span className="font-black text-white">{(timeLeftMs / 1000).toFixed(2)}s</span>
+                <span className={`font-black ${isPaperTheme ? "text-slate-900" : "text-white"}`}>
+                  {(timeLeftMs / 1000).toFixed(2)}s
+                </span>
               </div>
-              <div className="h-2 w-full bg-black/60 rounded-full overflow-hidden border border-white/10">
+              <div
+                className={`h-2 w-full rounded-full overflow-hidden border ${
+                  isPaperTheme ? "bg-slate-200 border-slate-300" : "bg-black/60 border-white/10"
+                }`}
+              >
                 <div
                   className={`h-full transition-all duration-75 ${
-                    timerPercent > 40 ? "bg-rose-500" : "bg-red-600 animate-pulse"
+                    timerPercent > 40
+                      ? isPaperTheme
+                        ? "bg-rose-600"
+                        : "bg-rose-500"
+                      : "bg-red-600 animate-pulse"
                   }`}
                   style={{ width: `${timerPercent}%` }}
                 />
@@ -194,35 +233,73 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             </div>
 
             {/* Opponent's Deployed Archetype Card */}
-            <div className="rounded-2xl p-6 bg-gradient-to-b from-rose-950/40 to-black/60 border border-rose-500/40 text-center space-y-3 relative overflow-hidden">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-black uppercase tracking-wider">
+            <div
+              className={`rounded-2xl p-6 border text-center space-y-3 relative overflow-hidden ${
+                isPaperTheme
+                  ? "bg-white border-rose-200 shadow-xs"
+                  : "bg-gradient-to-b from-rose-950/40 to-black/60 border-rose-500/40"
+              }`}
+            >
+              <div
+                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
+                  isPaperTheme
+                    ? "bg-rose-50 border-rose-300 text-rose-900"
+                    : "bg-rose-500/20 border-rose-500/30 text-rose-300"
+                }`}
+              >
                 OPPONENT DEPLOYS: {currentCard.archetypeTitle}
               </div>
 
               <div>
-                <span className="text-4xl sm:text-5xl font-black text-white tracking-tight drop-shadow-md">
+                <span
+                  className={`text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs font-serif ${
+                    isPaperTheme ? "text-slate-900" : "text-white"
+                  }`}
+                >
                   {currentCard.word}
                 </span>
-                <p className="text-xs font-mono text-slate-300 mt-1">{currentCard.ipa}</p>
+                <p
+                  className={`text-xs font-mono mt-1 ${
+                    isPaperTheme ? "text-slate-600 font-semibold" : "text-slate-300"
+                  }`}
+                >
+                  {currentCard.ipa}
+                </p>
               </div>
 
-              <p className="text-sm text-slate-200 max-w-lg mx-auto font-serif">
+              <p
+                className={`text-sm max-w-lg mx-auto font-serif leading-relaxed ${
+                  isPaperTheme ? "text-slate-800" : "text-slate-200"
+                }`}
+              >
                 "{currentCard.meaningEn}"
               </p>
 
-              <div className="flex items-center justify-center gap-6 pt-2 font-mono text-xs text-slate-400">
+              <div
+                className={`flex items-center justify-center gap-6 pt-2 font-mono text-xs ${
+                  isPaperTheme ? "text-slate-600 font-medium" : "text-slate-400"
+                }`}
+              >
                 <span>⚔️ POWER: {currentCard.powerStat}</span>
                 <span>🎯 PRECISION: {currentCard.precisionStat}</span>
               </div>
 
-              <p className="text-xs text-rose-300/80 italic font-mono pt-1">
+              <p
+                className={`text-xs italic font-mono pt-1 ${
+                  isPaperTheme ? "text-rose-900 font-medium" : "text-rose-300/80"
+                }`}
+              >
                 Scenario: {currentCard.battleScenario}
               </p>
             </div>
 
             {/* Instruction */}
             <div className="text-center">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+              <span
+                className={`text-xs font-mono uppercase tracking-widest ${
+                  isPaperTheme ? "text-slate-600 font-semibold" : "text-slate-400"
+                }`}
+              >
                 TRIỂN KHAI THẺ ĐỐI LẬP (SEMANTIC OPPOSITE) ĐỂ BẺ GÃY KHIÊN THỦ!
               </span>
             </div>
@@ -231,15 +308,23 @@ export const ModeDPersonaClash: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {counterOptions.map((opt, idx) => {
                 const isTarget = opt.toLowerCase() === currentCard.semanticOpposite.toLowerCase();
-                let style = "bg-white/5 border-white/10 text-white hover:bg-white/15 hover:border-rose-400/40";
+                let style = isPaperTheme
+                  ? "bg-white border-slate-300 text-slate-800 hover:bg-slate-100 hover:border-slate-400 shadow-xs"
+                  : "bg-white/5 border-white/10 text-white hover:bg-white/15 hover:border-rose-400/40";
 
                 if (isDuelResolved) {
                   if (isTarget) {
-                    style = "bg-emerald-500/20 border-emerald-400 text-emerald-300 font-black shadow-lg shadow-emerald-500/20";
+                    style = isPaperTheme
+                      ? "bg-emerald-100 border-emerald-500 text-emerald-950 font-black shadow-md"
+                      : "bg-emerald-500/20 border-emerald-400 text-emerald-300 font-black shadow-lg shadow-emerald-500/20";
                   } else if (selectedCounter === opt) {
-                    style = "bg-rose-500/20 border-rose-400 text-rose-300 font-bold";
+                    style = isPaperTheme
+                      ? "bg-rose-100 border-rose-400 text-rose-950 font-bold"
+                      : "bg-rose-500/20 border-rose-400 text-rose-300 font-bold";
                   } else {
-                    style = "opacity-40 bg-white/5 border-transparent text-slate-500";
+                    style = isPaperTheme
+                      ? "opacity-40 bg-slate-100 border-transparent text-slate-400"
+                      : "opacity-40 bg-white/5 border-transparent text-slate-500";
                   }
                 }
 

@@ -17,6 +17,7 @@ interface Particle {
 
 export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordAttempt }) => {
   const { theme } = useArenaTheme();
+  const [subTab, setSubTab] = useState<"explore" | "drill">("explore");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isContrastMode, setIsContrastMode] = useState(false);
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<string | null>(null);
@@ -35,7 +36,7 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
     setSelectedQuizAnswer(null);
     setIsQuizAnswered(false);
     setIsContrastMode(false);
-  }, [currentIndex, unit]);
+  }, [currentIndex, unit, subTab]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -447,7 +448,7 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
         </div>
       </div>
 
-      {/* Spatial Schema Calibration Quiz (Active Retrieval) */}
+      {/* Spatial Schema Calibration Quiz (Active Retrieval - Masked Cloze) */}
       <div
         className={`rounded-2xl p-5 shadow-lg space-y-4 transition-all ${
           isPaperTheme
@@ -461,7 +462,7 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
           <div className="flex items-center gap-2">
             <Sparkles className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-cyan-400"}`} />
             <h3 className="text-sm font-extrabold uppercase tracking-wider">
-              Kiểm Tra Phản Xạ Schema [Active Recall Quiz]
+              Thử Thách Truy Hồi Chủ Động [Masked Active Retrieval]
             </h3>
           </div>
           <span
@@ -469,13 +470,41 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
               isPaperTheme ? "text-slate-600 font-medium" : "text-slate-400"
             }`}
           >
-            Bấm chọn từ C2 ứng với quỹ đạo không gian trên
+            Điền từ C2 chính xác vào ngữ cảnh thực tế bên dưới
           </span>
+        </div>
+
+        {/* Masked Contextual Prompt Box */}
+        <div
+          className={`p-4 rounded-xl border leading-relaxed font-serif ${
+            isPaperTheme
+              ? "bg-white border-slate-300 text-slate-900 shadow-xs"
+              : "bg-black/40 border-white/10 text-slate-200"
+          }`}
+        >
+          <div className="flex items-center gap-2 mb-2 text-xs font-mono font-bold">
+            <span
+              className={`px-2 py-0.5 rounded uppercase ${
+                isPaperTheme
+                  ? "bg-teal-100 text-teal-900 border border-teal-200"
+                  : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
+              }`}
+            >
+              Manh mối Quỹ đạo: {currentItem.imageSchemaTag}
+            </span>
+            <span className={isPaperTheme ? "text-slate-600" : "text-slate-400"}>
+              ({currentItem.pos})
+            </span>
+          </div>
+
+          <p className="text-sm sm:text-base italic">
+            "{getMaskedExampleSentence(currentItem.exampleSentence, currentItem.word)}"
+          </p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           {quizChoices.map((wordOption, idx) => {
-            const isTarget = wordOption === currentItem.word;
+            const isTarget = wordOption.toLowerCase() === currentItem.word.toLowerCase();
             let btnStyle = isPaperTheme
               ? "bg-white border-slate-300 text-slate-800 hover:bg-slate-100 hover:border-slate-400 shadow-xs"
               : "bg-white/5 border-white/10 text-slate-200 hover:bg-white/10";
@@ -483,11 +512,11 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             if (isQuizAnswered) {
               if (isTarget) {
                 btnStyle = isPaperTheme
-                  ? "bg-emerald-100 border-emerald-500 text-emerald-900 font-black shadow-sm"
+                  ? "bg-emerald-100 border-emerald-500 text-emerald-950 font-black shadow-sm"
                   : "bg-emerald-500/20 border-emerald-500/60 text-emerald-300 font-black shadow-xs shadow-emerald-500/30";
               } else if (selectedQuizAnswer === wordOption) {
                 btnStyle = isPaperTheme
-                  ? "bg-rose-100 border-rose-400 text-rose-900 font-bold"
+                  ? "bg-rose-100 border-rose-400 text-rose-950 font-bold"
                   : "bg-rose-500/20 border-rose-500/60 text-rose-300 font-bold";
               } else {
                 btnStyle = isPaperTheme
@@ -504,27 +533,33 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                 className={`py-3 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${btnStyle}`}
               >
                 <span className="text-[10px] opacity-60 font-mono">[{idx + 1}]</span>
-                <span className="truncate w-full text-center">{wordOption}</span>
+                <span className="truncate w-full text-center text-sm font-black">{wordOption}</span>
               </button>
             );
           })}
         </div>
 
         {isQuizAnswered && (
-          <div className="pt-2 flex items-center justify-between animate-in fade-in duration-200">
-            <p className="text-xs font-bold text-slate-300">
-              {selectedQuizAnswer === currentItem.word ? (
-                <span className="text-emerald-400">⚡ Xuất sắc! Phản xạ C2 chính xác.</span>
+          <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in duration-200">
+            <p className="text-xs font-bold">
+              {selectedQuizAnswer?.toLowerCase() === currentItem.word.toLowerCase() ? (
+                <span className={isPaperTheme ? "text-emerald-800" : "text-emerald-400"}>
+                  ⚡ Xuất sắc! Phản xạ tri nhận C2 chính xác trong ngữ cảnh.
+                </span>
               ) : (
-                <span className="text-rose-400">
-                  ⚠️ Chưa đúng. Đáp án chuẩn là:{" "}
-                  <strong className="text-white underline">{currentItem.word}</strong>
+                <span className={isPaperTheme ? "text-rose-800" : "text-rose-400"}>
+                  ⚠️ Chưa chính xác. Từ chuẩn xác cho ngữ cảnh trên là:{" "}
+                  <strong className="underline">{currentItem.word}</strong>
                 </span>
               )}
             </p>
             <button
               onClick={handleNext}
-              className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs transition-all shadow-md shadow-cyan-500/20 cursor-pointer flex items-center gap-1.5"
+              className={`px-4 py-2 rounded-xl font-black text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-1.5 ${
+                isPaperTheme
+                  ? "bg-teal-700 hover:bg-teal-800 text-white"
+                  : "bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-cyan-500/20"
+              }`}
             >
               <span>Từ tiếp theo</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -535,3 +570,9 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
     </div>
   );
 };
+
+function getMaskedExampleSentence(sentence: string, targetWord: string): string {
+  if (!sentence || !targetWord) return sentence;
+  const regex = new RegExp(`\\b(${targetWord}[a-z]*)\\b`, "gi");
+  return sentence.replace(regex, " [ ______ ] ");
+}
