@@ -113,7 +113,7 @@ export const ChallengeHubPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {totalUnits.map((u: any) => {
             const isAvailable = !u.isLocked;
-            const hasCustomImage = u.unitNumber <= 18;
+            const hasCustomImage = u.unitNumber <= 20;
             const imageUrl = hasCustomImage
               ? `/images/reading-challenge/unit-${String(u.unitNumber).padStart(2, '0')}.png`
               : null;
