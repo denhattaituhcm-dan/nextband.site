@@ -29,6 +29,8 @@ import unit12Data from "@/data/idioms/unit12";
 import unit13Data from "@/data/idioms/unit13";
 import unit14Data from "@/data/idioms/unit14";
 import unit15Data from "@/data/idioms/unit15";
+import unit16Data from "@/data/idioms/unit16";
+import unit17Data from "@/data/idioms/unit17";
 
 interface UnitCatalogItem {
   id: number;
@@ -466,13 +468,60 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     accent: "UK (Anh)",
     isAvailable: true,
   },
+  {
+    id: 16,
+    unit_number_str: unit16Data.unit_number_str,
+    title_en: unit16Data.unit_title,
+    title_vi: "Chiến tranh & Vũ khí (Xung đột, Bất hòa, Kiên định & Đàm phán)",
+    section: unit16Data.major_section,
+    description_vi:
+      "20 thành ngữ mượn thuật ngữ quân sự, chiến hào, hỏa lực và vũ khí chiến đấu cổ điển để khắc họa sắc sảo các xung đột, sự phản bội, lòng kiên định phòng thủ và nghệ thuật đàm phán.",
+    total_idioms: unit16Data.summary.total_idioms,
+    total_exercises: unit16Data.summary.total_practice_exercises,
+    modules: [
+      {
+        id: "16.1",
+        title: "Idioms using vocabulary about war and weapons",
+        sample: "an ax to grind, loose cannon, stabbed in the back, hold down the fort, long shot, catch off guard...",
+      },
+    ],
+    tags: ["Chiến tranh", "Vũ khí", "Xung đột", "Đàm phán", "IELTS Speaking & Writing"],
+    accent: "US (Mỹ)",
+    isAvailable: true,
+  },
+  {
+    id: 17,
+    unit_number_str: unit17Data.unit_number_str,
+    title_en: unit17Data.unit_title,
+    title_vi: "Số lượng & Khoảng cách (Định lượng, Cự ly & Không gian)",
+    section: unit17Data.major_section,
+    description_vi:
+      "20 thành ngữ phong phú diễn tả các thang bậc số lượng (từ hạt muối bỏ bể đến trọn gói A-Z) và khoảng cách địa lý (từ trong gang tấc bước chân đến chốn khỉ ho cò gáy xa xôi).",
+    total_idioms: unit17Data.summary.total_idioms,
+    total_exercises: unit17Data.summary.total_practice_exercises,
+    modules: [
+      {
+        id: "17.1",
+        title: "Amount",
+        sample: "a drop in the ocean, stacks of, everything but the kitchen sink, tons of, lock, stock, and barrel...",
+      },
+      {
+        id: "17.2",
+        title: "Distance",
+        sample: "a stone's throw, far-flung corner, within walking distance, off the beaten path, middle of nowhere...",
+      },
+    ],
+    tags: ["Số lượng", "Khoảng cách", "Không gian", "Cự ly", "IELTS Speaking & Writing"],
+    accent: "UK (Anh)",
+    isAvailable: true,
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 16, unit_number_str: "16", title_en: "War and weapons", title_vi: "Chiến tranh & Vũ khí" },
-  { id: 17, unit_number_str: "17", title_en: "Amount and distance", title_vi: "Số lượng & Khoảng cách" },
   { id: 18, unit_number_str: "18", title_en: "Beginning and ending", title_vi: "Khởi đầu & Kết thúc" },
   { id: 19, unit_number_str: "19", title_en: "Chance, luck, and probability", title_vi: "Cơ hội, may mắn & xác suất" },
+  { id: 20, unit_number_str: "20", title_en: "Time", title_vi: "Thời gian & Khoảnh khắc" },
+  { id: 21, unit_number_str: "21", title_en: "Communication", title_vi: "Giao tiếp & Truyền đạt" },
 ];
 
 export default function EnglishIdiomsCatalogPage() {
@@ -517,7 +566,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              15 Units Sẵn Sàng (300 Idioms)
+              17 Units Sẵn Sàng (340 Idioms)
             </span>
           </div>
         </div>
@@ -545,11 +594,11 @@ export default function EnglishIdiomsCatalogPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">15</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">17</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">300</div>
+                <div className="text-2xl sm:text-3xl font-black text-sky-200">340</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
@@ -557,7 +606,7 @@ export default function EnglishIdiomsCatalogPage() {
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">75</div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-200">85</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
             </div>

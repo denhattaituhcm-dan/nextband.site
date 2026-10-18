@@ -49,15 +49,19 @@ import unit14Data from "@/data/idioms/unit14";
 import { UNIT_14_ETYMOLOGY } from "@/data/idioms/unit14_etymology";
 import unit15Data from "@/data/idioms/unit15";
 import { UNIT_15_ETYMOLOGY } from "@/data/idioms/unit15_etymology";
+import unit16Data from "@/data/idioms/unit16";
+import { UNIT_16_ETYMOLOGY } from "@/data/idioms/unit16_etymology";
+import unit17Data from "@/data/idioms/unit17";
+import { UNIT_17_ETYMOLOGY } from "@/data/idioms/unit17_etymology";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
 
   const parsedId = unitId ? parseInt(unitId, 10) : 1;
-  const initialUnitId = (parsedId >= 1 && parsedId <= 15 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
+  const initialUnitId = (parsedId >= 1 && parsedId <= 17 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17;
 
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15>(initialUnitId);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -120,8 +124,8 @@ export default function EnglishIdiomsHubPage() {
   useEffect(() => {
     if (unitId) {
       const p = parseInt(unitId, 10);
-      if (p >= 1 && p <= 15 && p !== selectedUnitId) {
-        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15);
+      if (p >= 1 && p <= 17 && p !== selectedUnitId) {
+        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17);
         setActiveModuleFilter("ALL");
         reset13();
         reset14();
@@ -338,7 +342,11 @@ export default function EnglishIdiomsHubPage() {
       ? unit13Data
       : selectedUnitId === 14
       ? unit14Data
-      : unit15Data;
+      : selectedUnitId === 15
+      ? unit15Data
+      : selectedUnitId === 16
+      ? unit16Data
+      : unit17Data;
 
   const currentEtymologyData =
     selectedUnitId === 1
@@ -369,7 +377,11 @@ export default function EnglishIdiomsHubPage() {
       ? UNIT_13_ETYMOLOGY
       : selectedUnitId === 14
       ? UNIT_14_ETYMOLOGY
-      : UNIT_15_ETYMOLOGY;
+      : selectedUnitId === 15
+      ? UNIT_15_ETYMOLOGY
+      : selectedUnitId === 16
+      ? UNIT_16_ETYMOLOGY
+      : UNIT_17_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -1234,7 +1246,7 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry98(false);
   };
 
-  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15) => {
+  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
     reset13();
@@ -1288,16 +1300,16 @@ export default function EnglishIdiomsHubPage() {
               {selectedUnitId > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15)}
+                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   ← Unit {selectedUnitId - 1 < 10 ? `0${selectedUnitId - 1}` : selectedUnitId - 1}
                 </button>
               )}
-              {selectedUnitId < 15 && (
+              {selectedUnitId < 17 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15)}
+                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   Unit {selectedUnitId + 1 < 10 ? `0${selectedUnitId + 1}` : selectedUnitId + 1} →
@@ -1376,7 +1388,11 @@ export default function EnglishIdiomsHubPage() {
                 ? "Khám phá 20 thành ngữ then chốt diễn tả các sắc thái cảm xúc tiêu cực, từ nỗi buồn sâu lắng, cơn giận dữ sôi máu, nỗi khiếp đảm lạnh sống lưng cho đến sự ngượng ngùng muốn độn thổ."
                 : selectedUnitId === 14
                 ? "Khám phá 20 thành ngữ then chốt về trí nhớ và quên lãng, từ hiện tượng 'nằm ngay trên đầu lưỡi', đãng trí như 'cái rây thủng', hồi tưởng xuôi dòng ký ức cho đến nỗ lực vắt kiệt óc để nhớ lại."
-                : "Khám phá 20 thành ngữ kinh điển mượn ẩn dụ các bộ phận cơ thể con người (mắt, tai, tim, vai, cằm, da, dây thần kinh), từ sự hồi hộp bồn chồn, lòng can đảm phút chót đến nghệ thuật tùy cơ ứng biến."}
+                : selectedUnitId === 15
+                ? "Khám phá 20 thành ngữ kinh điển mượn ẩn dụ các bộ phận cơ thể con người (mắt, tai, tim, vai, cằm, da, dây thần kinh), từ sự hồi hộp bồn chồn, lòng can đảm phút chót đến nghệ thuật tùy cơ ứng biến."
+                : selectedUnitId === 16
+                ? "Khám phá 20 thành ngữ mượn thuật ngữ quân sự, chiến hào, hỏa lực và vũ khí chiến đấu cổ điển để khắc họa sắc sảo các xung đột, sự phản bội, lòng kiên định phòng thủ và nghệ thuật đàm phán."
+                : "Khám phá 20 thành ngữ phong phú diễn tả các thang bậc số lượng (từ hạt muối bỏ bể đến trọn gói A-Z) và khoảng cách địa lý (từ trong gang tấc bước chân đến chốn khỉ ho cò gáy xa xôi)."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
