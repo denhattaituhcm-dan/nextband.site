@@ -57,6 +57,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
       { label: "Vocabulary Files C1 (Unit 1 - 12)", href: "/vocab-c1", badge: "C1" },
       { label: "Lexicon Overdrive C2 (Arena)", href: "/vocab-c2", badge: "HOT" },
       { label: "Cambridge Vocab for IELTS (Chọn Unit)", href: "/cambridge-vocab", badge: "20 Units" },
+      { label: "Preposition Lab (Không gian Giới từ)", href: "/preposition-lab", badge: "MỚI" },
       { label: "DIVIDER", href: "", isDivider: true },
       { label: "Phương pháp đọc sâu (Philosophy)", href: "/reading#phuong-phap" },
     ],
@@ -92,7 +93,8 @@ export function PublicHeader() {
         location.pathname.startsWith("/reading-challenge") ||
         location.pathname.startsWith("/vocab-c1") ||
         location.pathname.startsWith("/vocab-c2") ||
-        location.pathname.startsWith("/cambridge-vocab")
+        location.pathname.startsWith("/cambridge-vocab") ||
+        location.pathname.startsWith("/preposition-lab")
       ) {
         return true;
       }
@@ -106,6 +108,7 @@ export function PublicHeader() {
     if (href === "/vocab-c1" && (location.pathname === "/vocab-c1" || location.pathname === "/reading/vocab-c1")) return true;
     if (href === "/vocab-c2" && (location.pathname === "/vocab-c2" || location.pathname === "/reading/vocab-c2")) return true;
     if (href === "/cambridge-vocab" && location.pathname.startsWith("/cambridge-vocab")) return true;
+    if (href === "/preposition-lab" && (location.pathname === "/preposition-lab" || location.pathname === "/reading/preposition-lab")) return true;
     if (href !== "/courses" && location.pathname === href) return true;
     return false;
   };
