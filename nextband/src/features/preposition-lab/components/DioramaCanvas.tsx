@@ -166,6 +166,28 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             <stop offset="75%" stopColor="#dc2626" />
             <stop offset="100%" stopColor="#7f1d1d" />
           </radialGradient>
+          <linearGradient id="deepSeaGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8" />
+            <stop offset="35%" stopColor="#0284c7" stopOpacity="0.85" />
+            <stop offset="70%" stopColor="#0369a1" stopOpacity="0.92" />
+            <stop offset="100%" stopColor="#082f49" stopOpacity="0.98" />
+          </linearGradient>
+          <linearGradient id="subHullGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#94a3b8" />
+            <stop offset="40%" stopColor="#475569" />
+            <stop offset="100%" stopColor="#1e293b" />
+          </linearGradient>
+          <linearGradient id="mountainGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#e2e8f0" />
+            <stop offset="30%" stopColor="#94a3b8" />
+            <stop offset="70%" stopColor="#475569" />
+            <stop offset="100%" stopColor="#334155" />
+          </linearGradient>
+          <linearGradient id="blanketWoolGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#fbbf24" />
+            <stop offset="50%" stopColor="#d97706" />
+            <stop offset="100%" stopColor="#b45309" />
+          </linearGradient>
           <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="3" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
@@ -1182,6 +1204,415 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
           </g>
         )}
 
+        {/* ============================================================== */}
+        {/* LEVEL 3: SCENARIO 1 - THE ARC OF THE JUMPER (OVER THE HURDLE) */}
+        {/* ============================================================== */}
+        {puzzle.id === 'p3-1-arc-of-the-jumper' && (
+          <g>
+            {/* Athletic Running Track Surface (Cinder / Tartan Red) */}
+            <polygon points="30,200 470,200 490,265 10,265" fill="#dc2626" stroke="#b91c1c" strokeWidth="1.5" />
+            {/* White Track Lane Lines */}
+            <line x1="20" y1="230" x2="480" y2="230" stroke="#ffffff" strokeWidth="2.5" opacity="0.9" />
+            <line x1="15" y1="260" x2="485" y2="260" stroke="#ffffff" strokeWidth="3" opacity="0.9" />
+
+            {/* Glowing Parabolic Flight Trajectory Arc */}
+            <path
+              d="M 120,210 Q 250,55 380,210"
+              fill="none"
+              stroke="#fbbf24"
+              strokeWidth="3.5"
+              strokeDasharray={isManipulated ? 'none' : '6 4'}
+              className="drop-shadow-md"
+            />
+            {/* Trajectory Guide Markers */}
+            <circle cx="120" cy="210" r="4" fill="#f59e0b" />
+            <circle cx="250" cy="94" r="5" fill="#fbbf24" className="animate-ping" opacity="0.8" />
+            <circle cx="380" cy="210" r="4" fill="#10b981" />
+
+            {/* The Hurdle (Stationary obstacle at canyon center) */}
+            <g transform="translate(230, 130)">
+              {/* Hurdle Foot Base */}
+              <line x1="-15" y1="85" x2="45" y2="85" stroke="#475569" strokeWidth="3" />
+              {/* Vertical Uprights */}
+              <line x1="0" y1="85" x2="0" y2="15" stroke="#94a3b8" strokeWidth="3.5" />
+              <line x1="30" y1="85" x2="30" y2="15" stroke="#94a3b8" strokeWidth="3.5" />
+              {/* Warning Striped Top Rail */}
+              <rect x="-8" y="10" width="46" height="12" rx="2" fill="#ffffff" stroke="#1e293b" strokeWidth="1.5" />
+              <rect x="0" y="10" width="8" height="12" fill="#0284c7" />
+              <rect x="16" y="10" width="8" height="12" fill="#0284c7" />
+            </g>
+
+            {/* The Jumper Athlete (Parabolic arc trajectory animation) */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={
+                isManipulated
+                  ? 'translate(260, 0)'
+                  : `translate(${dragOffset.x}, ${dragOffset.y})`
+              }
+              onPointerDown={handlePointerDown}
+            >
+              {/* Dynamic Jumper Silhouette */}
+              <g transform={isManipulated ? 'translate(120, 205) rotate(10)' : 'translate(120, 205)'}>
+                {/* Contact / Air Shadow */}
+                <ellipse
+                  cx="0"
+                  cy="10"
+                  rx={isManipulated ? 16 : 14}
+                  ry="4"
+                  fill="rgba(0,0,0,0.25)"
+                />
+                {/* Jumper Figure */}
+                <circle cx="0" cy="-35" r="7" fill="#0284c7" />
+                {/* Torso */}
+                <line x1="0" y1="-28" x2="4" y2="-12" stroke="#0284c7" strokeWidth="4.5" strokeLinecap="round" />
+                {/* Arms */}
+                <line x1="0" y1="-24" x2="-10" y2="-16" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                <line x1="0" y1="-24" x2="12" y2="-30" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                {/* Legs in hurdle clearance posture */}
+                <line x1="4" y1="-12" x2="16" y2="-8" stroke="#0f172a" strokeWidth="3.5" strokeLinecap="round" />
+                <line x1="4" y1="-12" x2="-8" y2="-2" stroke="#0f172a" strokeWidth="3.5" strokeLinecap="round" />
+              </g>
+
+              {/* Mid-flight ghost trail when manipulated */}
+              {isManipulated && (
+                <g opacity="0.4" transform="translate(130, -110)">
+                  <circle cx="0" cy="-35" r="7" fill="#38bdf8" />
+                  <line x1="0" y1="-28" x2="8" y2="-18" stroke="#38bdf8" strokeWidth="4" />
+                </g>
+              )}
+            </g>
+
+            {/* Label callout */}
+            <rect x="150" y="235" width="200" height="26" rx="6" fill="#ffffff" stroke="#d97706" strokeWidth="1.5" className="drop-shadow-sm" />
+            <text x="250" y="252" fill="#b45309" fontSize="11" textAnchor="middle" fontWeight="bold">
+              {isManipulated ? 'Vượt qua rào cản ➔ Dùng OVER (OVER the hurdle)' : 'Quỹ đạo hình vòng cung ➔ OVER'}
+            </text>
+          </g>
+        )}
+
+        {/* ===================================================================== */}
+        {/* LEVEL 3: SCENARIO 2 - THE CLOUD & THE MOUNTAIN PEAK (ABOVE THE PEAK) */}
+        {/* ===================================================================== */}
+        {puzzle.id === 'p3-2-cloud-and-mountain' && (
+          <g>
+            {/* Alpine Sky Gradient Background */}
+            <rect x="40" y="45" width="420" height="210" fill="url(#tableGradient)" stroke="#cbd5e1" strokeWidth="1.5" />
+
+            {/* Snowy Mountain Summit Pyramid */}
+            <polygon points="120,240 250,130 380,240" fill="url(#mountainGradient)" stroke="#334155" strokeWidth="2" />
+            {/* Glacial Snowcap at summit */}
+            <polygon points="215,160 250,130 285,160 270,168 250,162 230,168" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+            {/* Mountain Ridges and Shadow Shading */}
+            <line x1="250" y1="130" x2="250" y2="240" stroke="#1e293b" strokeWidth="2" opacity="0.6" />
+            <polygon points="250,130 380,240 250,240" fill="rgba(0,0,0,0.18)" />
+
+            {/* Altitude Measurement Axis (Vertical Scale) */}
+            <g transform="translate(80, 70)">
+              <line x1="0" y1="10" x2="0" y2="160" stroke="#64748b" strokeWidth="2" strokeDasharray="3 3" />
+              {/* Summit benchmark marker */}
+              <line x1="-6" y1="60" x2="10" y2="60" stroke="#ef4444" strokeWidth="2" />
+              <text x="16" y="64" fill="#dc2626" fontSize="9" fontWeight="bold">Đỉnh núi (3,000m)</text>
+              {/* Cloud altitude indicator */}
+              <line x1="-6" y1={isManipulated ? '15' : '30'} x2="10" y2={isManipulated ? '15' : '30'} stroke="#0284c7" strokeWidth="2" />
+              <text x="16" y={isManipulated ? '19' : '34'} fill="#0284c7" fontSize="9" fontWeight="bold">Đám mây (3,800m)</text>
+            </g>
+
+            {/* Hovering Cloud (Draggable vertically / responds to manipulation) */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={`translate(${dragOffset.x}, ${isManipulated ? -25 : dragOffset.y})`}
+              onPointerDown={handlePointerDown}
+            >
+              {/* Fluffy Cloud Body */}
+              <g transform="translate(250, 85)">
+                <ellipse cx="0" cy="0" rx="42" ry="16" fill="#ffffff" stroke="#bae6fd" strokeWidth="2" className="drop-shadow-sm" />
+                <circle cx="-18" cy="-8" r="16" fill="#ffffff" />
+                <circle cx="10" cy="-10" r="18" fill="#ffffff" />
+                <circle cx="24" cy="-2" r="13" fill="#ffffff" />
+                <circle cx="-25" cy="2" r="12" fill="#ffffff" />
+              </g>
+
+              {/* Vertical separation dotted line down to summit */}
+              <line x1="250" y1="102" x2="250" y2="128" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="3 2" />
+            </g>
+
+            {/* Label callout */}
+            <rect x="150" y="235" width="200" height="26" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
+            <text x="250" y="252" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
+              Độ cao tách biệt trên trục đứng ➔ ABOVE
+            </text>
+          </g>
+        )}
+
+        {/* ====================================================================== */}
+        {/* LEVEL 3: SCENARIO 3 - THE BLANKET & THE SLEEPER (BLANKET OVER SLEEPER) */}
+        {/* ====================================================================== */}
+        {puzzle.id === 'p3-3-blanket-and-sleeper' && (
+          <g>
+            {/* Living Room Cozy Wall Backdrop */}
+            <rect x="50" y="50" width="400" height="175" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="1.5" />
+            {/* Parquet Floor */}
+            <polygon points="40,225 460,225 480,265 20,265" fill="#fef3c7" stroke="#cbd5e1" strokeWidth="1" />
+
+            {/* Modern Living Room Sofa (Landmark for ON the sofa) */}
+            <g transform="translate(130, 140)">
+              {/* Sofa Backrest */}
+              <rect x="0" y="0" width="240" height="50" rx="8" fill="#64748b" stroke="#475569" strokeWidth="2" />
+              {/* Left & Right Armrests */}
+              <rect x="-14" y="15" width="22" height="55" rx="6" fill="#475569" />
+              <rect x="232" y="15" width="22" height="55" rx="6" fill="#475569" />
+              {/* Sofa Seat Cushion (Surface for ON) */}
+              <rect x="4" y="38" width="232" height="36" rx="6" fill="#94a3b8" stroke="#475569" strokeWidth="1.5" />
+              {/* Pillows */}
+              <rect x="12" y="20" width="36" height="26" rx="4" fill="#cbd5e1" transform="rotate(-10 12 20)" />
+              {/* Sofa Base Legs */}
+              <rect x="15" y="74" width="8" height="14" fill="#334155" rx="2" />
+              <rect x="215" y="74" width="8" height="14" fill="#334155" rx="2" />
+
+              {/* Labeled Annotation: Person is ON the sofa */}
+              <text x="120" y="98" fill="#64748b" fontSize="9" textAnchor="middle" fontStyle="italic">
+                Người nằm tiếp xúc bề mặt: ON the sofa
+              </text>
+
+              {/* The Sleeping Person Silhouette on Sofa */}
+              <g transform="translate(45, 24)">
+                {/* Head on pillow */}
+                <circle cx="20" cy="14" r="10" fill="#fde047" stroke="#ca8a04" strokeWidth="1.2" />
+                {/* Sleeping Face closed eyes */}
+                <path d="M 16,15 Q 19,18 22,15" stroke="#713f12" strokeWidth="1.2" fill="none" />
+                {/* Body lying horizontally on cushion */}
+                <ellipse cx="75" cy="22" rx="48" ry="12" fill="#38bdf8" />
+              </g>
+            </g>
+
+            {/* Woollen Blanket (Spreads OVER the sleeping child) */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={`translate(0, ${isManipulated ? 0 : dragOffset.y})`}
+              onPointerDown={handlePointerDown}
+            >
+              {/* Draped Woollen Blanket contour */}
+              <path
+                d={
+                  isManipulated
+                    ? 'M 180,168 C 210,154 260,152 320,162 C 345,168 350,195 330,200 C 270,205 200,202 175,195 C 165,185 170,172 180,168 Z'
+                    : 'M 260,178 C 280,170 320,170 345,178 C 355,185 350,200 335,200 C 300,204 270,202 255,196 Z'
+                }
+                fill="url(#blanketWoolGradient)"
+                stroke="#78350f"
+                strokeWidth="2"
+                className="transition-all duration-700 drop-shadow-md"
+              />
+              {/* Blanket Woolen Texture Stripes */}
+              <path
+                d={
+                  isManipulated
+                    ? 'M 200,165 Q 260,158 315,168'
+                    : 'M 275,176 Q 305,174 335,182'
+                }
+                stroke="#fef3c7"
+                strokeWidth="2"
+                fill="none"
+                opacity="0.8"
+                className="transition-all duration-700"
+              />
+            </g>
+
+            {/* Label callout */}
+            <rect x="145" y="235" width="210" height="26" rx="6" fill="#ffffff" stroke="#d97706" strokeWidth="1.5" className="drop-shadow-sm" />
+            <text x="250" y="252" fill="#b45309" fontSize="11" textAnchor="middle" fontWeight="bold">
+              {isManipulated ? 'Trải trùm phủ kín ➔ Chăn OVER em bé' : 'Kéo chăn che phủ người nằm ➔ OVER'}
+            </text>
+          </g>
+        )}
+
+        {/* ========================================================================= */}
+        {/* LEVEL 3: SCENARIO 4 - THE SUBMERGED SUBMARINE (300M BELOW SEA LEVEL)     */}
+        {/* ========================================================================= */}
+        {puzzle.id === 'p3-4-submerged-submarine' && (
+          <g>
+            {/* Atmosphere Above Sea */}
+            <rect x="40" y="45" width="420" height="75" fill="#f0f9ff" stroke="#cbd5e1" strokeWidth="1" />
+            {/* Dynamic Sea Level Horizon Baseline (0m benchmark) */}
+            <line x1="40" y1="120" x2="460" y2="120" stroke="#0284c7" strokeWidth="3" />
+            {/* Wavy Surface Water Ripples */}
+            <path d="M 40,120 Q 80,116 120,120 T 200,120 T 280,120 T 360,120 T 440,120 T 460,120" fill="none" stroke="#38bdf8" strokeWidth="2" />
+
+            {/* Deep Sea Hydrodynamic Water Column */}
+            <rect x="40" y="120" width="420" height="135" fill="url(#deepSeaGradient)" stroke="#0369a1" strokeWidth="1.5" />
+
+            {/* Depth Metric Ruler Axis at Left */}
+            <g transform="translate(65, 120)">
+              {/* Sea level 0m datum line */}
+              <line x1="-15" y1="0" x2="15" y2="0" stroke="#fbbf24" strokeWidth="3" />
+              <text x="22" y="4" fill="#fbbf24" fontSize="10" fontWeight="black">0m Mực nước biển (Sea Level)</text>
+
+              {/* Depth Ticks */}
+              <line x1="-8" y1="35" x2="8" y2="35" stroke="#94a3b8" strokeWidth="1.5" />
+              <text x="14" y="38" fill="#cbd5e1" fontSize="8">-100m</text>
+
+              <line x1="-8" y1="70" x2="8" y2="70" stroke="#94a3b8" strokeWidth="1.5" />
+              <text x="14" y="73" fill="#cbd5e1" fontSize="8">-200m</text>
+
+              {/* Target Depth -300m */}
+              <line x1="-15" y1="105" x2="15" y2="105" stroke="#38bdf8" strokeWidth="2.5" />
+              <text x="22" y="108" fill="#38bdf8" fontSize="10" fontWeight="bold">-300m (Target Benchmark)</text>
+            </g>
+
+            {/* The Research Submarine Vessel */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={
+                isManipulated
+                  ? 'translate(0, 45)'
+                  : `translate(${dragOffset.x}, ${dragOffset.y})`
+              }
+              onPointerDown={handlePointerDown}
+            >
+              {/* Submarine Hull at coordinate y=180 (dives to y=225 when manipulated) */}
+              <g transform="translate(250, 180)">
+                {/* Conning Tower / Sail */}
+                <rect x="-12" y="-24" width="24" height="16" rx="3" fill="#475569" stroke="#334155" strokeWidth="1.5" />
+                <rect x="-3" y="-32" width="6" height="10" rx="1" fill="#64748b" />
+                {/* Main Cylindrical Hull */}
+                <ellipse cx="0" cy="0" rx="65" ry="18" fill="url(#subHullGradient)" stroke="#0f172a" strokeWidth="2" />
+                {/* Porthole Observation Windows */}
+                <circle cx="-25" cy="0" r="5" fill="#38bdf8" stroke="#e0f2fe" strokeWidth="1.5" />
+                <circle cx="0" cy="0" r="5" fill="#38bdf8" stroke="#e0f2fe" strokeWidth="1.5" />
+                <circle cx="25" cy="0" r="5" fill="#38bdf8" stroke="#e0f2fe" strokeWidth="1.5" />
+                {/* Propeller Blades at Stern */}
+                <rect x="-72" y="-8" width="8" height="16" rx="2" fill="#cbd5e1" />
+                {/* Forward Deepsea Searchlight Beam */}
+                <polygon points="60,-5 160,-35 160,25 60,5" fill="#fef08a" opacity="0.18" />
+              </g>
+
+              {/* Vertical Reference Depth Arrow */}
+              <line x1="250" y1="120" x2="250" y2="162" stroke="#38bdf8" strokeWidth="2" strokeDasharray="4 3" />
+            </g>
+
+            {/* Label callout */}
+            <rect x="145" y="235" width="210" height="26" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
+            <text x="250" y="252" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
+              {isManipulated ? '300m dưới mốc chuẩn ➔ 300m BELOW sea level' : 'Lặn sâu dưới mốc chuẩn thước đo ➔ BELOW'}
+            </text>
+          </g>
+        )}
+
+        {/* ========================================================================= */}
+        {/* LEVEL 3: SCENARIO 5 - THE RADAR ALTITUDE LOCK (RESCUE HELICOPTER OVER GORGE) */}
+        {/* ========================================================================= */}
+        {puzzle.id === 'p3-5-radar-altitude-lock' && (
+          <g>
+            {/* Deep Canyon Landscape (Left Cliff & Right Cliff) */}
+            <rect x="40" y="45" width="420" height="210" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
+
+            {/* Left Precipice Cliff */}
+            <polygon points="40,140 160,140 130,255 40,255" fill="url(#mountainGradient)" stroke="#334155" strokeWidth="2" />
+            <rect x="40" y="135" width="120" height="8" fill="#15803d" />
+
+            {/* Right Precipice Cliff */}
+            <polygon points="340,140 460,140 460,255 370,255" fill="url(#mountainGradient)" stroke="#334155" strokeWidth="2" />
+            <rect x="340" y="135" width="120" height="8" fill="#15803d" />
+
+            {/* The Deep Gorge Abyss in the center */}
+            <polygon points="130,255 160,140 340,140 370,255" fill="#0f172a" />
+            {/* Rushing Mountain River at Gorge Floor */}
+            <path d="M 190,255 Q 250,225 310,255" stroke="#38bdf8" strokeWidth="12" fill="none" opacity="0.8" />
+
+            {/* Stranded Hikers Camp with Campfire Smoke */}
+            <g transform="translate(235, 220)">
+              {/* Emergency Flare / Campfire */}
+              <circle cx="15" cy="10" r="5" fill="#ef4444" className="animate-ping" opacity="0.7" />
+              <polygon points="12,14 15,4 18,14" fill="#f59e0b" />
+              <circle cx="30" cy="12" r="3" fill="#ffffff" />
+            </g>
+
+            {/* Radar Flight Path Corridor across the Gorge */}
+            <line
+              x1="120"
+              y1="90"
+              x2="380"
+              y2="90"
+              stroke="#fbbf24"
+              strokeWidth="2.5"
+              strokeDasharray={isManipulated ? 'none' : '6 4'}
+              opacity="0.85"
+            />
+
+            {/* The Rescue Helicopter (Traversing flight path across the canyon) */}
+            <g
+              className={
+                isDragging
+                  ? ''
+                  : isSpringReleasing
+                  ? 'transition-transform duration-500 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] cursor-grab active:cursor-grabbing'
+                  : 'transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing'
+              }
+              transform={
+                isManipulated
+                  ? 'translate(130, 0)'
+                  : `translate(${dragOffset.x}, ${dragOffset.y})`
+              }
+              onPointerDown={handlePointerDown}
+            >
+              {/* Helicopter Position at x=190, y=85 */}
+              <g transform="translate(190, 85)">
+                {/* Main Rotor Blades (spinning animation indicator) */}
+                <line x1="-38" y1="-18" x2="38" y2="-18" stroke="#334155" strokeWidth="3" strokeLinecap="round" className="animate-pulse" />
+                <rect x="-3" y="-18" width="6" height="6" fill="#0f172a" />
+
+                {/* Aerodynamic Helicopter Cabin */}
+                <ellipse cx="0" cy="0" rx="28" ry="14" fill="#0284c7" stroke="#0369a1" strokeWidth="2" />
+                {/* Cockpit Canopy Windshield */}
+                <path d="M 8,-10 Q 24,-6 24,4 Q 10,12 8,12 Z" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="1.2" />
+
+                {/* Tail Boom & Tail Rotor */}
+                <line x1="-24" y1="0" x2="-52" y2="-4" stroke="#0284c7" strokeWidth="4" strokeLinecap="round" />
+                <line x1="-54" y1="-12" x2="-54" y2="4" stroke="#334155" strokeWidth="2.5" />
+
+                {/* Landing Skids */}
+                <line x1="-16" y1="14" x2="-14" y2="19" stroke="#475569" strokeWidth="2" />
+                <line x1="14" y1="14" x2="16" y2="19" stroke="#475569" strokeWidth="2" />
+                <line x1="-22" y1="19" x2="24" y2="19" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
+
+                {/* Searchlight Cone shining down into gorge */}
+                <polygon points="0,15 -35,120 35,120" fill="#fef08a" opacity="0.25" />
+              </g>
+            </g>
+
+            {/* Label callout */}
+            <rect x="145" y="235" width="210" height="26" rx="6" fill="#ffffff" stroke="#9333ea" strokeWidth="1.5" className="drop-shadow-sm" />
+            <text x="250" y="252" fill="#7e22ce" fontSize="11" textAnchor="middle" fontWeight="bold">
+              {isManipulated ? 'Bay bắc ngang qua hẻm núi ➔ Fly OVER the gorge' : 'Bắc cầu vượt khoảng không ➔ OVER'}
+            </text>
+          </g>
+        )}
+
         {/* Dynamic Elastic Tension Cord when actively dragging */}
         {isDragging && (dragOffset.x !== 0 || dragOffset.y !== 0) && (
           <g className="pointer-events-none opacity-60">
@@ -1224,6 +1655,11 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
           {puzzle.id === 'p2-3-corner-paradox' && (isManipulated ? 'Kéo ra ngoài' : 'Kê sát vào góc tường ➔')}
           {puzzle.id === 'p2-4-commuters-vehicle' && (isManipulated ? 'Dừng xe buýt' : 'Khởi hành xe buýt ➔')}
           {puzzle.id === 'p2-5-map-and-pin' && (isManipulated ? 'Thu lại định vị' : 'Ghim toạ độ điểm ➔')}
+          {puzzle.id === 'p3-1-arc-of-the-jumper' && (isManipulated ? 'Đặt lại vạch xuất phát' : 'Nhảy vượt rào ➔')}
+          {puzzle.id === 'p3-2-cloud-and-mountain' && (isManipulated ? 'Hạ độ cao mây' : 'Nâng mây lên cao ⬆️')}
+          {puzzle.id === 'p3-3-blanket-and-sleeper' && (isManipulated ? 'Gấp chăn lại' : 'Trải chăn đắp ấm ➔')}
+          {puzzle.id === 'p3-4-submerged-submarine' && (isManipulated ? 'Nổi lên mặt nước' : 'Lặn sâu xuống 300m ⬇️')}
+          {puzzle.id === 'p3-5-radar-altitude-lock' && (isManipulated ? 'Quay về vách đá' : 'Bay vượt hẻm núi ➔')}
         </button>
       </div>
 

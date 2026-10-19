@@ -9,6 +9,7 @@ export type PrepositionId =
   | 'under'
   | 'above'
   | 'over'
+  | 'below'
   | 'behind'
   | 'out_of'
   | 'at';

@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { LEVEL_1_PUZZLES } from '../data/level-1.data';
 import { LEVEL_2_PUZZLES } from '../data/level-2.data';
+import { LEVEL_3_PUZZLES } from '../data/level-3.data';
 import { soundEffects } from '../utils/soundEffects';
 
 export interface CompletionSummaryProps {
   onReplay: () => void;
-  onSwitchLevel?: () => void;
-  currentLevel?: 1 | 2;
+  onSwitchLevel?: (targetLevel?: 1 | 2 | 3) => void;
+  currentLevel?: 1 | 2 | 3;
 }
 
 interface TakeawayCard {
@@ -126,13 +127,76 @@ const LEVEL_2_SUMMARY_CARDS: TakeawayCard[] = [
   }
 ];
 
+const LEVEL_3_SUMMARY_CARDS: TakeawayCard[] = [
+  {
+    order: 1,
+    prep: 'OVER',
+    badgeColor: 'bg-amber-600 text-white',
+    tag: 'Quỹ đạo vòng cung',
+    icon: '🏃',
+    rule: 'Chuyển động vượt rào cản từ bên này sang bên kia.',
+    highlight: 'Cung chuyển động ➔',
+    example: 'over the hurdle'
+  },
+  {
+    order: 2,
+    prep: 'ABOVE',
+    badgeColor: 'bg-sky-600 text-white',
+    tag: 'Độ cao tách biệt',
+    icon: '☁️',
+    rule: 'Vị trí cao hơn trên trục đứng, không tiếp xúc hay vắt qua.',
+    highlight: 'Tầng cao tĩnh ➔',
+    example: 'above the peak'
+  },
+  {
+    order: 3,
+    prep: 'OVER',
+    badgeColor: 'bg-amber-600 text-white',
+    tag: 'Bao phủ toàn diện',
+    icon: '🛏️',
+    rule: 'Trải rộng che kín người nằm (người nằm ON the sofa).',
+    highlight: 'Che phủ trùm kín ➔',
+    example: 'blanket over the sleeper'
+  },
+  {
+    order: 4,
+    prep: 'BELOW',
+    badgeColor: 'bg-cyan-700 text-white',
+    tag: 'Mốc đo lường chuẩn',
+    icon: '⚓',
+    rule: 'So sánh thấp hơn mốc chuẩn 0m hoặc vạch chỉ số đo.',
+    highlight: 'Dưới mốc chuẩn ➔',
+    example: 'below sea level'
+  },
+  {
+    order: 5,
+    prep: 'OVER',
+    badgeColor: 'bg-purple-600 text-white',
+    tag: 'Bắc cầu vượt hẻm vực',
+    icon: '🚁',
+    rule: 'Bay vượt qua khoảng không ngăn cách giữa 2 vách vực.',
+    highlight: 'Bắc ngang khoảng hở ➔',
+    example: 'over the gorge'
+  }
+];
+
 export const CompletionSummary: React.FC<CompletionSummaryProps> = ({
   onReplay,
   onSwitchLevel,
   currentLevel = 1
 }) => {
-  const currentPuzzles = currentLevel === 1 ? LEVEL_1_PUZZLES : LEVEL_2_PUZZLES;
-  const summaryCards = currentLevel === 1 ? LEVEL_1_SUMMARY_CARDS : LEVEL_2_SUMMARY_CARDS;
+  const currentPuzzles =
+    currentLevel === 1
+      ? LEVEL_1_PUZZLES
+      : currentLevel === 2
+      ? LEVEL_2_PUZZLES
+      : LEVEL_3_PUZZLES;
+  const summaryCards =
+    currentLevel === 1
+      ? LEVEL_1_SUMMARY_CARDS
+      : currentLevel === 2
+      ? LEVEL_2_SUMMARY_CARDS
+      : LEVEL_3_SUMMARY_CARDS;
 
   // Extract all micro-challenges from current level puzzles and shuffle them
   const allQuestions = useMemo(() => {
@@ -354,10 +418,16 @@ export const CompletionSummary: React.FC<CompletionSummaryProps> = ({
         {onSwitchLevel && (
           <button
             type="button"
-            onClick={onSwitchLevel}
-            className="w-full sm:w-auto px-7 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 active:scale-95 text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+            onClick={() => onSwitchLevel(currentLevel === 1 ? 2 : currentLevel === 2 ? 3 : 1)}
+            className="w-full sm:w-auto px-7 py-3 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-amber-600 hover:from-indigo-500 hover:to-amber-500 active:scale-95 text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            <span>{currentLevel === 1 ? 'Chuyển sang Level 2: ON vs IN vs AT' : 'Quay lại Level 1: IN vs UNDER'}</span>
+            <span>
+              {currentLevel === 1
+                ? 'Chuyển sang Level 2: ON vs IN vs AT'
+                : currentLevel === 2
+                ? 'Tiếp tục Level 3: OVER vs ABOVE vs UNDER vs BELOW'
+                : 'Quay lại Level 1: IN vs UNDER'}
+            </span>
             <span>➔</span>
           </button>
         )}

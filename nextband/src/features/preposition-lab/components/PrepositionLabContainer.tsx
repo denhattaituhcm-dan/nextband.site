@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { LEVEL_1_PUZZLES } from '../data/level-1.data';
 import { LEVEL_2_PUZZLES } from '../data/level-2.data';
+import { LEVEL_3_PUZZLES } from '../data/level-3.data';
 import { PrepositionId, SceneActionState } from '../types';
 import { DioramaCanvas } from './DioramaCanvas';
 import { PrepositionSelector } from './PrepositionSelector';
@@ -10,7 +11,7 @@ import { IeltsMetaphorBridge } from './IeltsMetaphorBridge';
 import { soundEffects } from '../utils/soundEffects';
 
 export const PrepositionLabContainer: React.FC = () => {
-  const [currentLevel, setCurrentLevel] = useState<1 | 2>(1);
+  const [currentLevel, setCurrentLevel] = useState<1 | 2 | 3>(1);
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [selectedPreposition, setSelectedPreposition] = useState<PrepositionId | null>(null);
   const [actionState, setActionState] = useState<SceneActionState>('idle');
@@ -22,7 +23,12 @@ export const PrepositionLabContainer: React.FC = () => {
   // Puzzle 1 specific placement state
   const [snapZone, setSnapZone] = useState<'table' | 'rim' | 'cavity'>('cavity');
 
-  const puzzleList = currentLevel === 1 ? LEVEL_1_PUZZLES : LEVEL_2_PUZZLES;
+  const puzzleList =
+    currentLevel === 1
+      ? LEVEL_1_PUZZLES
+      : currentLevel === 2
+      ? LEVEL_2_PUZZLES
+      : LEVEL_3_PUZZLES;
   const puzzle = puzzleList[currentPuzzleIndex];
 
   const selectedOption = useMemo(() => {
@@ -41,8 +47,8 @@ export const PrepositionLabContainer: React.FC = () => {
     setSelectedPreposition(id);
   };
 
-  // Switch between Level 1 and Level 2
-  const handleSwitchLevel = (level: 1 | 2) => {
+  // Switch between Level 1, Level 2 and Level 3
+  const handleSwitchLevel = (level: 1 | 2 | 3) => {
     soundEffects.playPickUp();
     setCurrentLevel(level);
     setCurrentPuzzleIndex(0);
@@ -99,7 +105,7 @@ export const PrepositionLabContainer: React.FC = () => {
       <div className="w-full min-h-[calc(100vh-80px)] py-8 px-4 flex items-center justify-center bg-slate-50">
         <CompletionSummary
           onReplay={handleReplay}
-          onSwitchLevel={() => handleSwitchLevel(currentLevel === 1 ? 2 : 1)}
+          onSwitchLevel={(target) => handleSwitchLevel(target ?? (currentLevel === 1 ? 2 : currentLevel === 2 ? 3 : 1))}
           currentLevel={currentLevel}
         />
       </div>
@@ -124,7 +130,7 @@ export const PrepositionLabContainer: React.FC = () => {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  Level 1: IN vs UNDER
+                  Level 1
                 </button>
                 <button
                   type="button"
@@ -135,7 +141,18 @@ export const PrepositionLabContainer: React.FC = () => {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  Level 2: ON vs IN vs AT
+                  Level 2
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSwitchLevel(3)}
+                  className={`px-2.5 py-0.5 rounded-md font-mono text-xs font-black tracking-wide transition-all cursor-pointer ${
+                    currentLevel === 3
+                      ? 'bg-amber-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Level 3: OVER vs ABOVE vs UNDER vs BELOW
                 </button>
               </div>
               <span className="text-xs text-slate-500 font-medium">
@@ -175,9 +192,15 @@ export const PrepositionLabContainer: React.FC = () => {
                 idx === currentPuzzleIndex
                   ? currentLevel === 1
                     ? 'bg-sky-600 shadow-sm shadow-sky-600/30'
-                    : 'bg-indigo-600 shadow-sm shadow-indigo-600/30'
+                    : currentLevel === 2
+                    ? 'bg-indigo-600 shadow-sm shadow-indigo-600/30'
+                    : 'bg-amber-600 shadow-sm shadow-amber-600/30'
                   : idx < currentPuzzleIndex
-                  ? currentLevel === 1 ? 'bg-sky-300' : 'bg-indigo-300'
+                  ? currentLevel === 1
+                    ? 'bg-sky-300'
+                    : currentLevel === 2
+                    ? 'bg-indigo-300'
+                    : 'bg-amber-300'
                   : 'bg-slate-200'
               }`}
             />

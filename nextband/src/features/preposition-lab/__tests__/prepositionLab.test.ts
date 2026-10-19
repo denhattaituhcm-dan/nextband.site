@@ -66,3 +66,57 @@ describe('Preposition Lab: Level 1 Data Contract & Cognitive Scenarios', () => {
     expect(inOption?.fit).toBe('canonical');
   });
 });
+
+describe('Preposition Lab: Level 2 & Level 3 Data Contract & Cognitive Scenarios', () => {
+  it('contains exactly five sequential puzzles for Level 2 and Level 3', async () => {
+    const { LEVEL_2_PUZZLES } = await import('../data/level-2.data');
+    const { LEVEL_3_PUZZLES } = await import('../data/level-3.data');
+
+    expect(LEVEL_2_PUZZLES).toHaveLength(5);
+    expect(LEVEL_2_PUZZLES.map((p) => p.order)).toEqual([1, 2, 3, 4, 5]);
+
+    expect(LEVEL_3_PUZZLES).toHaveLength(5);
+    expect(LEVEL_3_PUZZLES.map((p) => p.order)).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it('verifies Level 3 canonical choices and cognitive principles', async () => {
+    const { LEVEL_3_PUZZLES } = await import('../data/level-3.data');
+
+    // Scenario 1: Jumper -> OVER
+    const p1 = LEVEL_3_PUZZLES[0];
+    expect(p1.id).toBe('p3-1-arc-of-the-jumper');
+    expect(p1.options.find((o) => o.id === 'over')?.fit).toBe('canonical');
+    expect(p1.options.find((o) => o.id === 'above')?.fit).toBe('misconception');
+
+    // Scenario 2: Cloud -> ABOVE
+    const p2 = LEVEL_3_PUZZLES[1];
+    expect(p2.id).toBe('p3-2-cloud-and-mountain');
+    expect(p2.options.find((o) => o.id === 'above')?.fit).toBe('canonical');
+
+    // Scenario 3: Blanket -> OVER
+    const p3 = LEVEL_3_PUZZLES[2];
+    expect(p3.id).toBe('p3-3-blanket-and-sleeper');
+    expect(p3.options.find((o) => o.id === 'over')?.fit).toBe('canonical');
+
+    // Scenario 4: Submarine -> BELOW
+    const p4 = LEVEL_3_PUZZLES[3];
+    expect(p4.id).toBe('p3-4-submerged-submarine');
+    expect(p4.options.find((o) => o.id === 'below')?.fit).toBe('canonical');
+
+    // Scenario 5: Helicopter -> OVER
+    const p5 = LEVEL_3_PUZZLES[4];
+    expect(p5.id).toBe('p3-5-radar-altitude-lock');
+    expect(p5.options.find((o) => o.id === 'over')?.fit).toBe('canonical');
+  });
+
+  it('guarantees each Level 3 scenario has valid IELTS bridge and micro-challenge', async () => {
+    const { LEVEL_3_PUZZLES } = await import('../data/level-3.data');
+
+    LEVEL_3_PUZZLES.forEach((puzzle) => {
+      expect(puzzle.ieltsBridge).toBeDefined();
+      expect(puzzle.ieltsBridge?.microChallenge.prompt).toContain('______');
+      expect(puzzle.ieltsBridge?.microChallenge.options.length).toBeGreaterThanOrEqual(3);
+      expect(puzzle.ieltsBridge?.collocationPills.length).toBeGreaterThanOrEqual(3);
+    });
+  });
+});
