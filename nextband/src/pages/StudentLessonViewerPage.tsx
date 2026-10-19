@@ -48,8 +48,11 @@ import {
   LayoutGrid,
   Award,
   Flame,
+  Map as MapIcon,
+  List,
 } from "lucide-react";
 import { HonorReportCardModal } from "@/components/student/HonorReportCardModal";
+import { IsometricLessonMap } from "@/components/student/IsometricLessonMap";
 import { useSeasonalEvent } from "@/features/seasonal/hooks/useSeasonalEvent";
 import { SeasonalCornerDecoration } from "@/features/seasonal/presets/SeasonalCornerDecoration";
 import { TetFallingPetals } from "@/features/seasonal/presets/tet/TetFallingPetals";
@@ -84,6 +87,7 @@ export default function StudentLessonViewerPage() {
   } = useSeasonalEvent();
 
   const activeTab = searchParams.get("tab") || "practice-list";
+  const [practiceViewMode, setPracticeViewMode] = useState<"map" | "list">("map");
 
   useEffect(() => {
     if (searchParams.get("tab") === "attendance-schedule") {
@@ -606,11 +610,43 @@ export default function StudentLessonViewerPage() {
             {/* ERROR INTELLIGENCE: YOUR WEAK ZONE & ERROR BANK */}
             <YourWeakZoneCard />
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <h2 className="text-base sm:text-lg font-bold text-foreground flex items-center gap-2">
                 <Edit3 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 Danh sách Bài tập ({homeworkList.length})
               </h2>
+
+              {/* View Switcher: Isometric Map vs Standard List */}
+              {homeworkList.length > 0 && (
+                <div className="flex items-center p-0.5 rounded-xl bg-muted border border-border shrink-0 self-start sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setPracticeViewMode("map")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      practiceViewMode === "map"
+                        ? "bg-white text-indigo-700 dark:bg-slate-900 dark:text-indigo-400 shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    title="Xem dạng Bản đồ 2.5D Isometric"
+                  >
+                    <MapIcon className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>Bản đồ 2.5D</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPracticeViewMode("list")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      practiceViewMode === "list"
+                        ? "bg-white text-indigo-700 dark:bg-slate-900 dark:text-indigo-400 shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    title="Xem dạng Danh sách truyền thống"
+                  >
+                    <List className="w-3.5 h-3.5" />
+                    <span>Danh sách</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {homeworkList.length === 0 ? (
@@ -628,6 +664,15 @@ export default function StudentLessonViewerPage() {
                   Quay lại Bàn làm việc
                 </Button>
               </Card>
+            ) : practiceViewMode === "map" ? (
+              <IsometricLessonMap
+                homeworkList={homeworkList}
+                onOpenHonorCard={(hw) => {
+                  setSelectedHonorHomework(hw);
+                  setIsHonorCardOpen(true);
+                }}
+                onPrefetchExam={handlePrefetchExam}
+              />
             ) : (
               <div className="grid gap-3">
                 {homeworkList.map((hw) => {
