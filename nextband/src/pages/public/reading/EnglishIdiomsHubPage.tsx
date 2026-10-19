@@ -18,7 +18,10 @@ import {
   FileCheck2,
   ExternalLink,
   Star,
+  Layers,
+  LayoutGrid,
 } from "lucide-react";
+import { IdiomsStackedDeck } from "./IdiomsStackedDeck";
 import unit01Data from "@/data/idioms/unit01";
 import { UNIT_01_ETYMOLOGY } from "@/data/idioms/unit01_etymology";
 import unit02Data from "@/data/idioms/unit02";
@@ -67,6 +70,7 @@ export default function EnglishIdiomsHubPage() {
 
   const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
+  const [learnViewMode, setLearnViewMode] = useState<"deck" | "grid">("deck");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [openDrawers, setOpenDrawers] = useState<Record<string, boolean>>({});
@@ -1458,7 +1462,37 @@ export default function EnglishIdiomsHubPage() {
                 />
               </div>
 
-              <div className="flex flex-wrap gap-2 text-xs">
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                {/* View Mode Toggle: Deck 2.5D vs Grid */}
+                <div className="flex items-center bg-slate-100 p-1 rounded-full border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setLearnViewMode("deck")}
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold transition cursor-pointer ${
+                      learnViewMode === "deck"
+                        ? "bg-[#002147] text-white shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                    title="Chế độ xấp thẻ quạt 2.5D tương tác"
+                  >
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>Card Fan 2.5D</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLearnViewMode("grid")}
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold transition cursor-pointer ${
+                      learnViewMode === "grid"
+                        ? "bg-[#002147] text-white shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                    title="Chế độ danh sách lưới truyền thống"
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>Lưới card</span>
+                  </button>
+                </div>
+
                 <button
                   onClick={() => setActiveModuleFilter("ALL")}
                   className={`px-3 py-1.5 rounded-full font-semibold transition cursor-pointer ${
@@ -1501,8 +1535,40 @@ export default function EnglishIdiomsHubPage() {
               </div>
             </div>
 
-            {/* Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {/* Stacked Deck View vs Grid View */}
+            {learnViewMode === "deck" ? (
+              <IdiomsStackedDeck
+                idioms={filteredIdioms.map((item: any) => ({
+                  id: item.id,
+                  idiom: item.headword || item.idiom || "",
+                  phonetic: item.phonetic,
+                  meaning_vi: item.vietnamese?.meaning || item.meaning_vi || "",
+                  meaning_en: item.definition_en || item.meaning_en || "",
+                  example_sentence: item.context_sentence || item.example_sentence || "",
+                  example_sentence_vi: item.vietnamese?.example_sentence_vi || item.example_sentence_vi,
+                  audio_url: item.audio_url,
+                  register: item.register,
+                  frequency: item.frequency,
+                  moduleId: item.moduleId,
+                  moduleTitle: item.moduleTitle,
+                  origin: item.origin,
+                  metaphor_breakdown: item.metaphor_breakdown,
+                  usage_notes: item.vietnamese?.usage_notes || item.usage_notes,
+                  ielts_speaking_application:
+                    item.vietnamese?.ielts_speaking_tip || item.ielts_speaking_application,
+                  ielts_writing_application: item.ielts_writing_application,
+                  cognitive_anchor: item.cognitive_anchor,
+                  register_info: item.register_info,
+                }))}
+                etymologyData={currentEtymologyData as any}
+                bookmarkedIds={bookmarkedIds}
+                onToggleBookmark={toggleBookmark}
+                listenedIds={listenedIds}
+                currentlyPlayingAudio={currentlyPlayingAudio}
+                onPlayAudio={(url, id) => playAudio(url, id)}
+              />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredIdioms.map((item) => {
                 const isPlaying = currentlyPlayingAudio === item.audio_url;
                 const isOpen = !!openDrawers[item.id];
@@ -1988,7 +2054,8 @@ export default function EnglishIdiomsHubPage() {
                   </div>
                 );
               })}
-            </div>
+              </div>
+            )}
           </div>
         )}
 
