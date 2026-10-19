@@ -6,6 +6,7 @@ import {
   ArrowRight,
   Compass,
 } from "lucide-react";
+import { MasterCuratorShelf } from "@/features/reading/components/MasterCuratorShelf";
 
 export default function ReadingUniversePage() {
   const [popoverOpen, setPopoverOpen] = useState(true);
@@ -149,8 +150,11 @@ export default function ReadingUniversePage() {
           </div>
         </section>
 
+        {/* Master Curator 2.5D Shelf Spotlight */}
+        <MasterCuratorShelf />
+
         {/* Reading Feed Section */}
-        <section id="tu-sach" className="space-y-6 pt-4">
+        <section id="tu-sach" className="space-y-6 pt-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE3D9] pb-4">
             <div>
               <h2 className="font-serif text-2xl sm:text-3xl text-[#241F1C]">
