@@ -227,18 +227,21 @@ export const IsometricLessonMap: React.FC<IsometricLessonMapProps> = ({
         className="relative h-[560px] sm:h-[620px] overflow-auto scroll-smooth scrollbar-thin scrollbar-thumb-indigo-900/50"
         style={{ perspective: "1000px" }}
       >
-        {/* Isometric Grid Background Pattern */}
+        {/* Isometric Archipelago Ocean Background */}
         <div
           ref={mapCanvasRef}
-          className="relative min-w-[750px] min-h-[1000px] py-12 px-6"
+          className="relative min-w-[800px] min-h-[1000px] py-16 px-8"
           style={{
-            height: `${nodePositions[nodePositions.length - 1]?.y + 240}px`,
+            height: `${nodePositions[nodePositions.length - 1]?.y + 260}px`,
+            backgroundColor: "#0d1527",
             backgroundImage: `
-              radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 50% 30%, rgba(30, 58, 138, 0.4) 0%, rgba(13, 21, 39, 0.95) 75%),
+              radial-gradient(circle at 20% 70%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
               linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
               linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
             `,
-            backgroundSize: "100% 100%, 60px 60px, 60px 60px",
+            backgroundSize: "100% 100%, 100% 100%, 100% 100%, 64px 64px, 64px 64px",
           }}
         >
           {/* Animated SVG Path connecting island nodes */}
@@ -287,24 +290,24 @@ export const IsometricLessonMap: React.FC<IsometricLessonMapProps> = ({
             // Fog of war: stations far ahead from active node have fog effect
             const isFoggy = idx > activeIndex + 2;
 
-            // Island 2.5D Styling
-            let islandColorClass = "from-slate-700 to-slate-900 border-slate-600";
-            let glowShadow = "rgba(100, 116, 139, 0.2)";
-            if (isCompleted) {
-              islandColorClass = "from-emerald-500 via-teal-600 to-emerald-800 border-emerald-400";
-              glowShadow = "rgba(16, 185, 129, 0.45)";
-            } else if (isOverdue) {
-              islandColorClass = "from-rose-500 via-red-600 to-rose-800 border-rose-400";
-              glowShadow = "rgba(244, 63, 94, 0.55)";
-            } else if (isRevision) {
-              islandColorClass = "from-amber-500 via-orange-600 to-amber-800 border-amber-400";
-              glowShadow = "rgba(245, 158, 11, 0.5)";
-            } else if (isPending) {
-              islandColorClass = "from-indigo-500 via-blue-600 to-indigo-800 border-indigo-400";
-              glowShadow = "rgba(99, 102, 241, 0.5)";
-            } else if (isCurrent) {
-              islandColorClass = "from-indigo-600 via-violet-600 to-purple-800 border-indigo-300";
-              glowShadow = "rgba(129, 140, 248, 0.65)";
+            // Pick skill landmark image based on skillType or homework title
+            const lowerTitle = (hw.title || "").toLowerCase();
+            const skill = (hw.skillType || "").toLowerCase();
+            let landmarkImg = "/images/game-map/reading-library.png";
+            let landmarkAlt = "Reading Library";
+
+            if (lowerTitle.includes("final") || lowerTitle.includes("test") || hw.hwNum === 999) {
+              landmarkImg = "/images/game-map/final-test.png";
+              landmarkAlt = "Final Test Castle";
+            } else if (skill === "speaking" || lowerTitle.includes("spk") || lowerTitle.includes("nói")) {
+              landmarkImg = "/images/game-map/speaking-mic.png";
+              landmarkAlt = "Speaking Arena";
+            } else if (skill === "listening" || lowerTitle.includes("lis") || lowerTitle.includes("nghe")) {
+              landmarkImg = "/images/game-map/listening-lighthouse.png";
+              landmarkAlt = "Listening Lighthouse";
+            } else if (skill === "writing" || lowerTitle.includes("wri") || lowerTitle.includes("viết")) {
+              landmarkImg = "/images/game-map/reading-library.png";
+              landmarkAlt = "Writing Academy";
             }
 
             return (
@@ -315,7 +318,7 @@ export const IsometricLessonMap: React.FC<IsometricLessonMapProps> = ({
                   if (onPrefetchExam) onPrefetchExam(hw.examId || hw.id);
                 }}
                 className={`absolute transition-all duration-500 cursor-pointer ${
-                  isCurrent ? "z-40 scale-110" : "z-20 hover:scale-105"
+                  isCurrent ? "z-40 scale-120" : "z-20 hover:scale-110"
                 } ${isFoggy ? "opacity-35 blur-[1.5px]" : "opacity-100"}`}
                 style={{
                   left: `${pos.x}px`,
@@ -323,70 +326,93 @@ export const IsometricLessonMap: React.FC<IsometricLessonMapProps> = ({
                   transform: "translate(-50%, -50%)",
                 }}
               >
-                {/* 2.5D Isometric Diamond / Hexagonal Island Platform */}
-                <div className="relative group">
+                {/* 2.5D Isometric Floating Island Unit */}
+                <div className="relative group flex flex-col items-center justify-center">
                   {/* Spotlight Pulsing Beacon Ring for Current Active Station */}
                   {isCurrent && (
-                    <div
-                      className="absolute -inset-6 rounded-full animate-ping opacity-30 pointer-events-none"
-                      style={{ backgroundColor: glowShadow }}
-                    />
+                    <div className="absolute -inset-8 rounded-full animate-ping opacity-25 bg-indigo-500 pointer-events-none" />
                   )}
 
-                  {/* Island 3D Base Thickness Shadow */}
+                  {/* Top Perched Landmark or Victory Flag */}
                   <div
-                    className="w-24 h-24 rounded-3xl bg-slate-950/80 absolute top-3 left-0 right-0 mx-auto blur-[3px]"
-                    style={{ transform: "rotateX(60deg) rotateZ(-45deg)" }}
-                  />
-
-                  {/* Island Top Plate in Isometric projection */}
-                  <div
-                    className={`w-24 h-24 rounded-3xl bg-gradient-to-br ${islandColorClass} border-2 flex items-center justify-center transition-all duration-300 shadow-xl`}
+                    className="relative z-20 flex flex-col items-center transition-transform duration-300 pointer-events-none"
                     style={{
-                      transform: isCurrent
-                        ? "rotateX(60deg) rotateZ(-45deg) translateZ(35px)"
-                        : "rotateX(60deg) rotateZ(-45deg) translateZ(10px)",
-                      boxShadow: `0 15px 30px ${glowShadow}`,
+                      transform: isCurrent ? "translateY(-20px)" : "translateY(-6px)",
                     }}
                   >
-                    {/* Inner Island Texture & Symbol */}
-                    <div className="text-white font-black text-sm tracking-wider font-mono">
+                    {isCompleted ? (
+                      /* Real Victory Flag 2.5D Asset */
+                      <div className="relative flex flex-col items-center">
+                        <img
+                          src="/images/game-map/victory-flag.png"
+                          alt="Victory Flag"
+                          className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-xl animate-pulse"
+                        />
+                        <div className="-mt-2 px-2 py-0.5 rounded-full bg-emerald-600/90 text-white font-extrabold text-[10px] shadow-lg border border-emerald-300 flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-200" />
+                          <span>{hw.scoreDisplay.scoreText}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Real Skill Landmark 2.5D Asset (Lighthouse, Mic, Library, Castle) */
+                      <div className="relative flex flex-col items-center">
+                        <img
+                          src={landmarkImg}
+                          alt={landmarkAlt}
+                          className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-xl"
+                        />
+                        {isOverdue ? (
+                          <div className="-mt-1 px-2 py-0.5 rounded-full bg-rose-600 text-white font-bold text-[10px] shadow-lg border border-rose-300 flex items-center gap-1 animate-bounce">
+                            <AlertTriangle className="w-3 h-3" />
+                            <span>Quá hạn</span>
+                          </div>
+                        ) : isPending ? (
+                          <div className="-mt-1 px-2 py-0.5 rounded-full bg-indigo-600 text-white font-bold text-[10px] shadow-lg border border-indigo-300 flex items-center gap-1">
+                            <Clock className="w-3 h-3 animate-spin" />
+                            <span>Chờ chấm</span>
+                          </div>
+                        ) : isFoggy ? (
+                          <div className="-mt-1 p-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700 shadow-md">
+                            <Lock className="w-3 h-3" />
+                          </div>
+                        ) : (
+                          <div className="-mt-1 px-2 py-0.5 rounded-full bg-slate-900/90 text-indigo-300 font-black text-[10px] border border-indigo-500/40 shadow-md">
+                            {hw.badge.shortLabel}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Real 2.5D Floating Island Meadow Base Asset */}
+                  <div className="relative z-10 -mt-6">
+                    <img
+                      src="/images/game-map/floating-meadow.png"
+                      alt="Floating Island"
+                      className={`w-32 h-24 sm:w-36 sm:h-28 object-contain transition-all duration-300 ${
+                        isCurrent
+                          ? "drop-shadow-[0_15px_25px_rgba(99,102,241,0.6)] brightness-110"
+                          : isCompleted
+                          ? "drop-shadow-[0_10px_20px_rgba(16,185,129,0.5)]"
+                          : isOverdue
+                          ? "drop-shadow-[0_10px_20px_rgba(244,63,94,0.5)]"
+                          : "drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)]"
+                      }`}
+                    />
+                    {/* Station Number Plaque pinned on island */}
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md bg-slate-900/80 border border-slate-700 text-white font-mono text-[10px] font-black shadow-md">
                       #{hw.hwNum}
                     </div>
                   </div>
 
-                  {/* Flag or Badge Pin perched on top of Island */}
-                  <div
-                    className="absolute -top-7 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none transition-transform"
-                    style={{
-                      transform: isCurrent ? "translateY(-18px)" : "translateY(0)",
-                    }}
-                  >
-                    {isCompleted ? (
-                      <div className="px-2 py-0.5 rounded-full bg-emerald-500 text-white font-extrabold text-[10px] shadow-lg flex items-center gap-1 border border-emerald-300">
-                        <Flag className="w-3 h-3 text-emerald-100 fill-emerald-100" />
-                        <span>{hw.scoreDisplay.scoreText}</span>
-                      </div>
-                    ) : isOverdue ? (
-                      <div className="px-2 py-0.5 rounded-full bg-rose-600 text-white font-bold text-[10px] shadow-lg flex items-center gap-1 animate-bounce">
-                        <AlertTriangle className="w-3 h-3" />
-                        <span>Quá hạn</span>
-                      </div>
-                    ) : isPending ? (
-                      <div className="px-2 py-0.5 rounded-full bg-indigo-600 text-white font-bold text-[10px] shadow-lg flex items-center gap-1">
-                        <Clock className="w-3 h-3 animate-spin" />
-                        <span>Chờ chấm</span>
-                      </div>
-                    ) : isFoggy ? (
-                      <div className="p-1 rounded-full bg-slate-800/80 text-slate-400 border border-slate-700">
-                        <Lock className="w-3 h-3" />
-                      </div>
-                    ) : (
-                      <div className="px-2 py-0.5 rounded-full bg-slate-800/90 text-indigo-300 font-bold text-[10px] border border-indigo-500/40 shadow-md">
-                        {hw.badge.shortLabel}
-                      </div>
-                    )}
-                  </div>
+                  {/* 2.5D Fluffy Fog Clouds overlay on future/locked islands */}
+                  {isFoggy && (
+                    <img
+                      src="/images/game-map/cloud.png"
+                      alt="Fog Cloud"
+                      className="absolute -bottom-4 -right-4 w-28 h-20 object-contain opacity-80 pointer-events-none z-30"
+                    />
+                  )}
                 </div>
               </div>
             );
