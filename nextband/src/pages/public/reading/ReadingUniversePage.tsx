@@ -70,10 +70,6 @@ export default function ReadingUniversePage() {
             </em>
           </h1>
 
-          <p className="text-sm sm:text-base text-[#685D55] max-w-xl mx-auto leading-relaxed font-light">
-            Đọc nguyên bản, cảm nhận ngữ cảnh tự nhiên và tích lũy vốn từ học thuật bền vững.
-          </p>
-
           {/* The "Show, Don't Tell" Micro-interactive Box */}
           <div className="bg-white rounded-3xl border border-[#E8E1D5] p-6 sm:p-9 shadow-sm shadow-[#2D2825]/5 text-left relative max-w-3xl mx-auto mt-8">
             <div className="flex items-center justify-between text-xs text-[#A1978E] pb-4 border-b border-[#F2ECE2]">
