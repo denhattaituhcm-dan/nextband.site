@@ -439,8 +439,8 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
               </div>
             </div>
 
-            {/* Active Unit Selector Trigger */}
-            <div className="relative">
+            {/* Active Unit Selector Trigger — hidden to declutter arena UI */}
+            {false && <div className="relative">
               <button
                 type="button"
                 onClick={() => {
@@ -490,7 +490,7 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
                 </div>
               </button>
 
-              {isUnitSelectorOpen && allUnits.length > 0 && (
+              {false && isUnitSelectorOpen && allUnits.length > 0 && (
                 <div
                   className={`absolute left-0 mt-2 w-80 max-h-96 overflow-y-auto rounded-2xl shadow-2xl p-2 z-50 border ${
                     isPaperTheme
@@ -563,8 +563,7 @@ export const ArenaHeader: React.FC<ArenaHeaderProps> = ({
                     })}
                   </div>
                 </div>
-              )}
-            </div>
+              )}\n            </div>}
           </div>
 
           {/* Right: Live Telemetry + Ergonomic Theme Controls + Zen Mode */}
