@@ -49,7 +49,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
     ],
   },
   {
-    label: "Reading",
+    label: "Đọc",
     href: "/reading",
     children: [
       { label: "Reading Challenge", href: "/reading-challenge", badge: "Mới" },
@@ -127,7 +127,7 @@ export function PublicHeader() {
               />
               <div className="flex flex-col justify-center border-l border-white/20 pl-2.5 sm:pl-3 py-0.5">
                 <span className="text-[10px] sm:text-[11px] font-medium tracking-wider text-slate-300 uppercase leading-none">
-                  Developed by
+                  BUILT BY
                 </span>
                 <span className="text-xs sm:text-[13px] font-bold text-white tracking-wide leading-tight mt-1">
                   Anh ngữ Aris
