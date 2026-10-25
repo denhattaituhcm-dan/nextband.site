@@ -27,6 +27,7 @@ interface NavItem {
   label: string;
   href: string;
   badge?: string;
+  isFeatured?: boolean;
   children?: NavSubItem[];
 }
 
@@ -63,7 +64,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
     ],
   },
   { label: "Speaking Forecast", href: "/ielts-speaking-forecast" },
-  { label: "Tự học", href: "https://tuhoc.nextband.vn", badge: "HOT" },
+  { label: "Tự học", href: "https://tuhoc.nextband.vn", isFeatured: true },
   { label: "Tiến bộ", href: "/results" },
   { label: "Giảng viên", href: "/teachers" },
   { label: "Tuyển dụng", href: "/careers" },
@@ -211,6 +212,7 @@ export function PublicHeader() {
               }
 
               if (item.href.startsWith("http")) {
+                const isHighlight = item.isFeatured || !!item.badge;
                 return (
                   <a
                     key={item.href}
@@ -218,31 +220,31 @@ export function PublicHeader() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={cn(
-                      "relative inline-flex items-center gap-1.5 px-3.5 xl:px-4 py-1.5 rounded-full text-xs xl:text-[13px] font-black tracking-wider uppercase whitespace-nowrap transition-all duration-300 group/tuhoc overflow-hidden shadow-md",
-                      item.badge
+                      "relative inline-flex items-center gap-1.5 px-4 xl:px-5 py-1.5 rounded-full text-xs xl:text-[13px] font-black tracking-wider uppercase whitespace-nowrap transition-all duration-300 group/tuhoc overflow-hidden shadow-lg",
+                      isHighlight
                         ? [
-                            // Nền solid gradient rực rỡ đặc trưng của YouPass PRO
-                            "bg-gradient-to-r from-[#ff8541] via-[#ff5b75] via-[#b054ed] to-[#5197f8]",
+                            // Gradient rực rỡ, đậm nét đúng chuẩn nhận diện cam -> hồng đào -> tím sen -> tím neon (#ff6b00 -> #e93e7a -> #a824e8 -> #5b13ec)
+                            "bg-gradient-to-r from-[#ff6b00] via-[#e93e7a] via-[#a824e8] to-[#5b13ec]",
                             "text-white",
-                            "shadow-[0_0_16px_rgba(255,133,65,0.4)] hover:shadow-[0_0_24px_rgba(255,91,117,0.7)]",
-                            "hover:brightness-110 hover:scale-[1.04] active:scale-[0.98]",
-                            "border border-white/25",
+                            "shadow-[0_2px_14px_rgba(233,62,122,0.45)] hover:shadow-[0_4px_22px_rgba(168,36,232,0.65)]",
+                            "hover:brightness-110 hover:scale-[1.05] active:scale-[0.98]",
+                            "border border-white/30",
                           ].join(" ")
                         : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
                     {/* Shimmer sweep effect */}
-                    {item.badge && (
+                    {isHighlight && (
                       <span
                         aria-hidden
                         className="pointer-events-none absolute inset-0 -translate-x-full group-hover/tuhoc:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/30 to-transparent"
                       />
                     )}
 
-                    {item.badge && (
-                      <Sparkles className="h-3.5 w-3.5 text-white drop-shadow-sm shrink-0" />
+                    {isHighlight && (
+                      <Sparkles className="h-3.5 w-3.5 text-amber-200 fill-amber-200/50 drop-shadow-sm shrink-0" />
                     )}
-                    <span className="drop-shadow-sm font-black">{item.label}</span>
+                    <span className="drop-shadow-md font-black tracking-wider">{item.label}</span>
                     {item.badge && (
                       <span className="relative px-1.5 py-[0.5px] rounded-full text-[9px] font-black uppercase tracking-wider bg-white/25 text-white backdrop-blur-xs border border-white/30 shadow-xs">
                         {item.badge}
@@ -448,6 +450,7 @@ export function PublicHeader() {
               }
 
               if (item.href.startsWith("http")) {
+                const isHighlight = item.isFeatured || !!item.badge;
                 return (
                   <a
                     key={item.href}
@@ -456,17 +459,17 @@ export function PublicHeader() {
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-between group/mob overflow-hidden relative shadow-md",
-                      item.badge
-                        ? "bg-gradient-to-r from-[#ff8541] via-[#ff5b75] via-[#b054ed] to-[#5197f8] text-white shadow-[0_0_16px_rgba(255,133,65,0.4)] border border-white/25"
+                      "px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-between group/mob overflow-hidden relative shadow-md",
+                      isHighlight
+                        ? "bg-gradient-to-r from-[#ff6b00] via-[#e93e7a] via-[#a824e8] to-[#5b13ec] text-white shadow-[0_2px_14px_rgba(233,62,122,0.45)] border border-white/30"
                         : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
                     <div className="flex items-center gap-2">
-                      {item.badge && (
-                        <Sparkles className="h-3.5 w-3.5 text-white shrink-0" />
+                      {isHighlight && (
+                        <Sparkles className="h-3.5 w-3.5 text-amber-200 fill-amber-200/50 shrink-0" />
                       )}
-                      <span className="drop-shadow-sm">{item.label}</span>
+                      <span className="drop-shadow-sm font-black tracking-wider">{item.label}</span>
                       {item.badge && (
                         <span className="px-1.5 py-[1px] rounded-full text-[9px] font-black uppercase tracking-wider bg-white/25 text-white border border-white/30 shadow-sm">
                           {item.badge}
