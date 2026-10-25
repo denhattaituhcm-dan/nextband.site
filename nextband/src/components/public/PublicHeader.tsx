@@ -124,9 +124,12 @@ export function PublicHeader() {
                 alt="ARIS IELTS"
                 className="h-9 w-9 sm:h-10 sm:w-10 object-contain transition-transform group-hover:scale-105 shrink-0"
               />
-              <div className="flex items-center border-l border-white/20 pl-2.5 sm:pl-3 h-7 sm:h-8">
-                <span className="font-black tracking-wider text-base sm:text-lg text-white leading-none uppercase whitespace-nowrap">
-                  ARIS IELTS
+              <div className="flex flex-col justify-center border-l border-white/20 pl-2.5 sm:pl-3 py-0.5">
+                <span className="text-[10px] sm:text-[11px] font-medium tracking-wider text-slate-300 uppercase leading-none">
+                  Developed by
+                </span>
+                <span className="text-xs sm:text-[13px] font-bold text-white tracking-wide leading-tight mt-1">
+                  Anh ngữ Aris
                 </span>
               </div>
             </Link>
