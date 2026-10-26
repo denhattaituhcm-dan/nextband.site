@@ -756,6 +756,7 @@ export default function ArenaHostPage() {
   // Điều phối chuyển trạng thái bằng Single Button (Server-Authoritative)
   const handleExecuteCommand = useCallback(
     async (command: HostCommandType) => {
+      if (state === 'PODIUM' && command !== 'RESTART_ARENA') return;
       const hostToken = typeof window !== 'undefined' ? sessionStorage.getItem(`arena_host_token_${pinCode}`) : null;
       let serverQuestion: any = null;
       let serverTotal = totalQuestions;
@@ -1032,7 +1033,7 @@ export default function ArenaHostPage() {
           }
           break;
         case 'NEXT_ROUND': {
-          if (effectiveIsLastRound) {
+          if (state === 'PODIUM' || effectiveIsLastRound || questionIndex >= totalQuestions - 1) {
             stopQuestionSuspense();
             playPodiumSound();
             setState('PODIUM');

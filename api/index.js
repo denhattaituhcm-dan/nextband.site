@@ -119142,17 +119142,14 @@ var ExamSubmissionService = class {
 };
 
 // server/services/geminiWritingDiagnostic.service.ts
+init_env();
 var GeminiWritingDiagnosticService = class {
-  apiKey;
-  model;
-  apiUrl;
-  constructor() {
-    this.apiKey = process.env.GEMINI_API_KEY || null;
-    this.model = process.env.GEMINI_MODEL || "gemini-3.6-flash";
-    this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent`;
+  getApiKey() {
+    return env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || null;
   }
   async diagnoseEssay(req) {
-    if (!this.apiKey) {
+    const apiKey = this.getApiKey();
+    if (!apiKey) {
       return {
         success: false,
         essayDiagnostic: {
@@ -119259,73 +119256,67 @@ ${userPrompt}` }]
         temperature: 0.2
       }
     };
-    try {
-      const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        return {
-          success: false,
-          essayDiagnostic: {
-            bandScores: {},
-            summary: {
-              strengths: [],
-              primaryWeakness: "Gemini API tr\u1EA3 v\u1EC1 l\u1ED7i HTTP " + response.status,
-              actionableAdvice: errorText
-            }
-          },
-          discourseFeedbacks: [],
-          sentenceFeedbacks: [],
-          error: `HTTP ${response.status}: ${errorText}`
-        };
-      }
-      const data = await response.json();
-      const rawJson = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawJson) {
-        return {
-          success: false,
-          essayDiagnostic: {
-            bandScores: {},
-            summary: {
-              strengths: [],
-              primaryWeakness: "Gemini API kh\xF4ng tr\u1EA3 v\u1EC1 n\u1ED9i dung h\u1EE3p l\u1EC7.",
-              actionableAdvice: "Th\u1EED l\u1EA1i sau \xEDt ph\xFAt."
-            }
-          },
-          discourseFeedbacks: [],
-          sentenceFeedbacks: [],
-          error: "Empty candidate response from Gemini"
-        };
-      }
-      const parsed = JSON.parse(rawJson);
-      return {
-        success: true,
-        essayDiagnostic: parsed.essayDiagnostic || {
-          bandScores: parsed.bandScores || {},
-          summary: parsed.summary || { strengths: [], primaryWeakness: "", actionableAdvice: "" }
-        },
-        discourseFeedbacks: Array.isArray(parsed.discourseFeedbacks) ? parsed.discourseFeedbacks : [],
-        sentenceFeedbacks: Array.isArray(parsed.sentenceFeedbacks) ? parsed.sentenceFeedbacks : []
-      };
-    } catch (err) {
-      return {
-        success: false,
-        essayDiagnostic: {
-          bandScores: {},
-          summary: {
-            strengths: [],
-            primaryWeakness: "L\u1ED7i x\u1EED l\xFD khi g\u1ECDi Gemini API.",
-            actionableAdvice: err.message
+    const candidateModels = Array.from(
+      new Set(
+        [
+          process.env.GEMINI_MODEL,
+          "gemini-2.5-flash",
+          "gemini-2.0-flash",
+          "gemini-1.5-flash"
+        ].filter(Boolean)
+      )
+    );
+    let lastError = "";
+    for (const model of candidateModels) {
+      try {
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) {
+          const errorText = await response.text();
+          lastError = `HTTP ${response.status} (${model}): ${errorText}`;
+          if (response.status === 404 || response.status === 400 || response.status === 503) {
+            continue;
           }
-        },
-        discourseFeedbacks: [],
-        sentenceFeedbacks: [],
-        error: err.message
-      };
+          break;
+        }
+        const data = await response.json();
+        const rawJson = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawJson) {
+          lastError = `Empty candidate response from Gemini (${model})`;
+          continue;
+        }
+        const parsed = JSON.parse(rawJson);
+        return {
+          success: true,
+          essayDiagnostic: parsed.essayDiagnostic || {
+            bandScores: parsed.bandScores || {},
+            summary: parsed.summary || { strengths: [], primaryWeakness: "", actionableAdvice: "" }
+          },
+          discourseFeedbacks: Array.isArray(parsed.discourseFeedbacks) ? parsed.discourseFeedbacks : [],
+          sentenceFeedbacks: Array.isArray(parsed.sentenceFeedbacks) ? parsed.sentenceFeedbacks : []
+        };
+      } catch (err) {
+        lastError = err.message || "Unknown error";
+      }
     }
+    return {
+      success: false,
+      essayDiagnostic: {
+        bandScores: {},
+        summary: {
+          strengths: [],
+          primaryWeakness: "L\u1ED7i x\u1EED l\xFD khi g\u1ECDi Gemini API.",
+          actionableAdvice: lastError
+        }
+      },
+      discourseFeedbacks: [],
+      sentenceFeedbacks: [],
+      error: lastError || "Failed to generate diagnostic from all candidate Gemini models"
+    };
   }
 };
 

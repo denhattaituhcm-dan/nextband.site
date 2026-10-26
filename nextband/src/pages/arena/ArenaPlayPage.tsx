@@ -233,6 +233,7 @@ export default function ArenaPlayPage() {
         setIsJoinedAcknowledged(true);
       })
       .on('broadcast', { event: 'arena-countdown' }, ({ payload }) => {
+        if (gameStateRef.current === 'PODIUM') return;
         setIsJoinedAcknowledged(true);
         if (typeof payload?.countdown === 'number') {
           setStartCountdown(payload.countdown);
@@ -271,6 +272,7 @@ export default function ArenaPlayPage() {
         setIsChestModalOpen(false);
       })
       .on('broadcast', { event: 'question-live' }, ({ payload }) => {
+        if (gameStateRef.current === 'PODIUM') return;
         recordHeartbeat('question-live');
         setIsJoinedAcknowledged(true);
         setStartCountdown(null);
@@ -359,9 +361,11 @@ export default function ArenaPlayPage() {
           }
         }
         setShowResult(true);
+        setIsChestModalOpen(false);
         setGameState('ROUND_REVEAL');
       })
       .on('broadcast', { event: 'show-leaderboard' }, ({ payload }) => {
+        setIsChestModalOpen(false);
         setGameState('LEADERBOARD');
         if (payload?.rankings && Array.isArray(payload.rankings)) {
           setTopRankings(payload.rankings.slice(0, 5));
@@ -376,6 +380,8 @@ export default function ArenaPlayPage() {
         }
       })
       .on('broadcast', { event: 'arena-finished' }, ({ payload }) => {
+        setIsChestModalOpen(false);
+        setStartCountdown(null);
         setGameState('PODIUM');
         if (payload?.rankings && Array.isArray(payload.rankings)) {
           setTopRankings(payload.rankings.slice(0, 3));

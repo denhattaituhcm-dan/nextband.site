@@ -116,7 +116,10 @@ export const GoldQuestChestModal: React.FC<GoldQuestChestModalProps> = ({
     });
   };
 
-  const victimsList = players.filter((p) => p.name.trim().toLowerCase() !== myNickname.trim().toLowerCase());
+  // Danh sách học sinh khác có vàng để cướp (phải có vàng > 0)
+  const victimsList = players.filter(
+    (p) => p.name.trim().toLowerCase() !== myNickname.trim().toLowerCase() && (p.gold || 0) > 0
+  );
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 select-none animate-in fade-in duration-200">
