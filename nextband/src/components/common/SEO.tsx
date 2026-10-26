@@ -39,11 +39,14 @@ export function SEO({
   structuredData,
 }: SEOProps) {
   useEffect(() => {
+    // 0. Ensure apple-mobile-web-app-title is always concise Nextband for iOS Add to Home Screen
+    setMetaTag("name", "apple-mobile-web-app-title", "Nextband");
+
     // 1. Dynamic Title
     const formattedTitle = title
       ? title.includes("NextBand")
         ? title
-        : `${title} | NextBand IELTS`
+        : `${title} | Nextband`
       : "NextBand - Nền tảng Luyện thi IELTS Thông minh: Band 7.0+ cấp tốc";
     document.title = formattedTitle;
 

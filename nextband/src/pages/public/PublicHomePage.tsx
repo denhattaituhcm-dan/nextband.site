@@ -37,7 +37,7 @@ export default function PublicHomePage() {
   return (
     <div className="flex flex-col bg-[#FBF9F5]">
       <SEO
-        title="ARIS — Học Tiếng Anh Từ Bản Chất"
+        title="Nextband — Học Tiếng Anh Từ Bản Chất"
         description="ARIS — Học tiếng Anh từ bản chất. Không học mẹo. Không học thuộc bài mẫu. Định vị chính xác năng lực và bóc tách từng lỗi sai để đạt điểm IELTS mong muốn."
       />
 
