@@ -26,6 +26,16 @@ export interface SEOProps {
 const DEFAULT_DOMAIN = "https://nextband.site";
 const DEFAULT_IMAGE = `${DEFAULT_DOMAIN}/logo.png`;
 
+function setMetaTag(attrName: "name" | "property", attrValue: string, content: string) {
+  let tag = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+  if (!tag) {
+    tag = document.createElement("meta");
+    tag.setAttribute(attrName, attrValue);
+    document.head.appendChild(tag);
+  }
+  tag.setAttribute("content", content);
+}
+
 export function SEO({
   title,
   description,
@@ -39,17 +49,6 @@ export function SEO({
   structuredData,
 }: SEOProps) {
   useEffect(() => {
-    // Helper: set or create meta tags
-    const setMetaTag = (attrName: "name" | "property", attrValue: string, content: string) => {
-      let tag = document.querySelector(`meta[${attrName}="${attrValue}"]`);
-      if (!tag) {
-        tag = document.createElement("meta");
-        tag.setAttribute(attrName, attrValue);
-        document.head.appendChild(tag);
-      }
-      tag.setAttribute("content", content);
-    };
-
     // 0. Ensure apple-mobile-web-app-title is always concise Nextband for iOS Add to Home Screen
     setMetaTag("name", "apple-mobile-web-app-title", "Nextband");
 
