@@ -1,10 +1,11 @@
 /**
  * BUILDER ARENA QUESTION BANK - WEEK 2
- * Source: Giáo trình BUILDER 2027 - Đã soát lỗi.docx & Giáo án Builder 2027
- * Target: Band 5.0 IELTS
- * Day 1: Writing (Adjective Clause / Reduced Relative Clause / Conjunctions)
- * Day 2: Reading (Monitoring Comprehension / The Secret of Staying Young - Ants)
- * Day 3: Speaking (Healthy Lifestyles / Back Vowels & Diphthongs / Collocations)
+ * Source: Giáo trình BUILDER 2027 - Đã soát lỗi.docx & Giáo án Builder 2027 (Teacher Guide)
+ * Target: IELTS Band 5.0
+ * 
+ * Day 1: Writing (Defining vs Non-defining Adjective Clause / Reduced Relative Clauses / Adv Clause & Conjunctions / Comma Splice)
+ * Day 2: Reading (Monitoring Comprehension / Deep Reading Facts / The Secret of Staying Young - Ants / Vocabulary)
+ * Day 3: Speaking (Healthy Lifestyles / Back Vowels & Diphthongs / Bad habits & Staying healthy / Speaking Structure)
  */
 
 export const BUILDER_WEEK_2_QUESTIONS: Record<string, any[]> = {
@@ -12,221 +13,221 @@ export const BUILDER_WEEK_2_QUESTIONS: Record<string, any[]> = {
     {
       id: "builder_w2d1_q01",
       roundIndex: 0,
-      prompt: "Người nói có nhiều anh trai. Câu nào dùng mệnh đề quan hệ xác định (Defining Clause) KHÔNG có dấu phẩy để phân biệt rõ người anh được nhắc đến?",
+      prompt: "Hai câu sau đây khác nhau thế nào về mặt ý nghĩa thực tế:\n(1) 'My father who retired last year spends most of his time gardening.'\n(2) 'My father, who retired last year, spends most of his time gardening.'?",
       options: [
-        { id: "opt_A", label: "A", text: "My brother who works as an architect in Da Nang is visiting us tomorrow." },
-        { id: "opt_B", label: "B", text: "My brother, who works as an architect in Da Nang, is visiting us tomorrow." },
-        { id: "opt_C", label: "C", text: "My brother, that works as an architect in Da Nang, is visiting us tomorrow." },
-        { id: "opt_D", label: "D", text: "My brother whom works as an architect in Da Nang is visiting us tomorrow." },
+        { id: "opt_A", label: "A", text: "Câu (1) hàm ý người nói có nhiều người cha và đang phân biệt; Câu (2) người nói chỉ có 1 người cha và việc nghỉ hưu chỉ là thông tin bổ sung." },
+        { id: "opt_B", label: "B", text: "Hai câu hoàn toàn đồng nghĩa trong mọi hoàn cảnh giao tiếp." },
+        { id: "opt_C", label: "C", text: "Câu (2) bị sai ngữ pháp vì không được đặt đại từ 'who' sau dấu phẩy." },
+        { id: "opt_D", label: "D", text: "Câu (1) trang trọng hơn câu (2)." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. My brother who works as an architect in Da Nang is visiting us tomorrow.",
-      correctExplanation: "Khi cần thông tin bắt buộc để xác định đối tượng (trong số nhiều người anh), ta dùng Defining Relative Clause không có dấu phẩy. Nếu đặt dấu phẩy (câu B), câu sẽ ngụ ý người nói chỉ có duy nhất một người anh.",
+      correctAnswerText: "A. Câu (1) hàm ý người nói có nhiều người cha và đang phân biệt; Câu (2) người nói chỉ có 1 người cha và việc nghỉ hưu chỉ là thông tin bổ sung.",
+      correctExplanation: "Bản chất ngữ pháp: 'father' là danh từ đã xác định duy nhất, nên mệnh đề quan hệ phải là Non-defining (có dấu phẩy) như ở câu (2). Nếu viết không dấu phẩy như câu (1), mệnh đề đóng vai trò 'xác định' (defining), ngầm hiểu người nói có nhiều người cha và câu này chỉ nói về 'người cha nghỉ hưu năm ngoái' (vô lý về mặt ngữ nghĩa).",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. My brother, who works as an architect in Da Nang, is visiting us tomorrow.",
-        diagnosticTitle: "Lạm dụng dấu phẩy biến Defining thành Non-defining clause",
-        explanation: "Học sinh thường nghĩ cứ thấy mệnh đề quan hệ là tùy tiện đặt dấu phẩy mà không hiểu dấu phẩy làm thay đổi bản chất xác định của danh từ đứng trước."
+        baitOptionText: "B. Hai câu hoàn toàn đồng nghĩa trong mọi hoàn cảnh giao tiếp.",
+        diagnosticTitle: "Coi nhẹ bản chất giới hạn danh từ của Defining Relative Clause",
+        explanation: "Học sinh thường nghĩ có phẩy hay không có phẩy chỉ là thói quen ngắt nghỉ khi viết, mà không hiểu dấu phẩy quyết định danh từ có bị giới hạn (restrictive) hay không."
       }
     },
     {
       id: "builder_w2d1_q02",
       roundIndex: 1,
-      prompt: "Chọn đại từ quan hệ và dấu câu thích hợp với Danh từ riêng: \"Paris ______ attracts millions of international tourists every year.\"",
+      prompt: "Trong câu: 'Paris, ________ is the capital of France, attracts millions of tourists every year.', từ điền chính xác vào chỗ trống là gì?",
       options: [
-        { id: "opt_A", label: "A", text: ", which is the capital of France," },
-        { id: "opt_B", label: "B", text: "that is the capital of France" },
-        { id: "opt_C", label: "C", text: ", that is the capital of France," },
-        { id: "opt_D", label: "D", text: "which is the capital of France" },
+        { id: "opt_A", label: "A", text: "which" },
+        { id: "opt_B", label: "B", text: "that" },
+        { id: "opt_C", label: "C", text: "where" },
+        { id: "opt_D", label: "D", text: "what" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. , which is the capital of France,",
-      correctExplanation: "'Paris' là danh từ riêng đã được xác định cụ thể, nên mệnh đề bổ nghĩa bắt buộc phải là Non-defining clause (đặt giữa 2 dấu phẩy và dùng đại từ 'which', tuyệt đối không dùng 'that').",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. which",
+      correctExplanation: "Paris là danh từ riêng chỉ vật/địa điểm, mệnh đề có dấu phẩy (Non-defining relative clause). Quy tắc bất di bất dịch: KHÔNG BAO GIỜ dùng 'that' sau dấu phẩy. Ở đây làm chủ ngữ cho 'is' nên dùng 'which' (không dùng 'where' vì 'where' là trạng từ nơi chốn không làm chủ ngữ cho to be).",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. , that is the capital of France,",
-        diagnosticTitle: "Dùng đại từ 'that' trong mệnh đề có dấu phẩy",
-        explanation: "Quy tắc ngữ pháp bắt buộc: Đại từ quan hệ 'that' không bao giờ được phép đứng sau dấu phẩy."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. that",
+        diagnosticTitle: "Lỗi dùng 'that' trong mệnh đề có dấu phẩy",
+        explanation: "Học sinh thường tiện tay dùng 'that' thay thế cho mọi thứ, vi phạm quy tắc cấm dùng 'that' trong mệnh đề quan hệ không xác định."
       }
     },
     {
       id: "builder_w2d1_q03",
       roundIndex: 2,
-      prompt: "Rút gọn mệnh đề quan hệ mang nghĩa chủ động: \"Students who participate in community service develop stronger empathy.\"",
+      prompt: "Rút gọn mệnh đề quan hệ CHỦ ĐỘNG sau đây: 'Students who are studying at this university must wear uniforms.'?",
       options: [
-        { id: "opt_A", label: "A", text: "Students participating in community service develop stronger empathy." },
-        { id: "opt_B", label: "B", text: "Students participated in community service develop stronger empathy." },
-        { id: "opt_C", label: "C", text: "Students are participating in community service develop stronger empathy." },
-        { id: "opt_D", label: "D", text: "Students to participate in community service develop stronger empathy." },
+        { id: "opt_A", label: "A", text: "Students studying at this university must wear uniforms." },
+        { id: "opt_B", label: "B", text: "Students studied at this university must wear uniforms." },
+        { id: "opt_C", label: "C", text: "Students to study at this university must wear uniforms." },
+        { id: "opt_D", label: "D", text: "Students are studying at this university must wear uniforms." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Students participating in community service develop stronger empathy.",
-      correctExplanation: "Mệnh đề quan hệ chủ động (who participate) được rút gọn thành V-ing: 'participating'. Động từ chính của câu là 'develop'.",
+      correctAnswerText: "A. Students studying at this university must wear uniforms.",
+      correctExplanation: "Khi đại từ quan hệ làm Chủ ngữ và mệnh đề mang nghĩa CHỦ ĐỘNG (Active voice: who + V), ta rút gọn bằng cách bỏ đại từ quan hệ và chuyển động từ thành V-ing: 'who are studying' -> 'studying'.",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. Students participated in community service develop stronger empathy.",
-        diagnosticTitle: "Rút gọn nhầm sang dạng V3 mang nghĩa bị động",
-        explanation: "Học sinh nhầm lẫn giữa dạng rút gọn chủ động (V-ing) và bị động (V3/-ed)."
+        baitOptionId: "opt_D",
+        baitOptionText: "D. Students are studying at this university must wear uniforms.",
+        diagnosticTitle: "Lỗi bỏ mỗi đại từ quan hệ sinh ra 2 Finite Verbs",
+        explanation: "Học sinh chỉ bỏ 'who' rồi để nguyên 'are studying', khiến câu có 2 vị ngữ (are studying và must wear) dẫn đến câu sai ngữ pháp nghiêm trọng."
       }
     },
     {
       id: "builder_w2d1_q04",
       roundIndex: 3,
-      prompt: "Rút gọn mệnh đề quan hệ mang nghĩa bị động: \"The residential buildings which were constructed fifty years ago require renovation.\"",
+      prompt: "Rút gọn mệnh đề quan hệ BỊ ĐỘNG sau đây: 'Houses which were built over 100 years ago are still in use.'?",
       options: [
-        { id: "opt_A", label: "A", text: "The residential buildings constructed fifty years ago require renovation." },
-        { id: "opt_B", label: "B", text: "The residential buildings constructing fifty years ago require renovation." },
-        { id: "opt_C", label: "C", text: "The residential buildings were constructed fifty years ago require renovation." },
-        { id: "opt_D", label: "D", text: "The residential buildings to construct fifty years ago require renovation." },
+        { id: "opt_A", label: "A", text: "Houses built over 100 years ago are still in use." },
+        { id: "opt_B", label: "B", text: "Houses building over 100 years ago are still in use." },
+        { id: "opt_C", label: "C", text: "Houses were built over 100 years ago are still in use." },
+        { id: "opt_D", label: "D", text: "Houses to be built over 100 years ago are still in use." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. The residential buildings constructed fifty years ago require renovation.",
-      correctExplanation: "Mệnh đề bị động 'which were constructed' được rút gọn bằng cách bỏ đại từ quan hệ và to be, chỉ giữ lại quá khứ phân từ 'constructed'.",
+      correctAnswerText: "A. Houses built over 100 years ago are still in use.",
+      correctExplanation: "Mệnh đề mang nghĩa BỊ ĐỘNG (Passive voice: which + be + V3): Bỏ đại từ quan hệ và to be, giữ lại Past Participle (V3/-ed): 'built over 100 years ago'.",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. The residential buildings were constructed fifty years ago require renovation.",
-        diagnosticTitle: "Quên bỏ to be gây ra lỗi 2 Finite Verb trong câu",
-        explanation: "Nếu giữ lại 'were constructed' thì câu sẽ có tới 2 động từ chính là 'were constructed' và 'require', gây lỗi cú pháp nghiêm trọng."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Houses building over 100 years ago are still in use.",
+        diagnosticTitle: "Nhầm lẫn giữa rút gọn chủ động (V-ing) và bị động (V3)",
+        explanation: "Học sinh học vẹt công thức rút gọn là thêm '-ing' cho mọi trường hợp mà không xét xem danh từ thực hiện hay chịu tác động của hành động."
       }
     },
     {
       id: "builder_w2d1_q05",
       roundIndex: 4,
-      prompt: "Trong trường hợp nào dưới đây ta có thể LƯỢC BỎ đại từ quan hệ mà không cần biến đổi động từ thành V-ing hay V3?",
+      prompt: "Trong câu: 'The manager who is responsible for the project is currently on leave.', dạng rút gọn đặc biệt là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Khi đại từ quan hệ đóng vai trò Tân ngữ trong mệnh đề quan hệ" },
-        { id: "opt_B", label: "B", text: "Khi đại từ quan hệ đóng vai trò Chủ ngữ chỉ người" },
-        { id: "opt_C", label: "C", text: "Khi mệnh đề quan hệ là mệnh đề không xác định có dấu phẩy" },
-        { id: "opt_D", label: "D", text: "Khi động từ chính của câu được chia ở các thì Hoàn thành" },
+        { id: "opt_A", label: "A", text: "The manager responsible for the project is currently on leave." },
+        { id: "opt_B", label: "B", text: "The manager being responsible for the project is currently on leave." },
+        { id: "opt_C", label: "C", text: "The manager responsibility for the project is currently on leave." },
+        { id: "opt_D", label: "D", text: "The manager is responsible for the project is currently on leave." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Khi đại từ quan hệ đóng vai trò Tân ngữ trong mệnh đề quan hệ",
-      correctExplanation: "Khi đại từ quan hệ (who/whom/which/that) làm tân ngữ (theo sau là S+V), ta có thể lược bỏ trực tiếp. Ví dụ: 'The novel that I bought' -> 'The novel I bought'.",
+      correctAnswerText: "A. The manager responsible for the project is currently on leave.",
+      correctExplanation: "Trường hợp đặc biệt [Relative pronoun + be + Adjective]: Ta có thể lược bỏ cả [who + be] và giữ lại trực tiếp tính từ / cụm tính từ 'responsible for the project' đứng sau danh từ.",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Khi đại từ quan hệ đóng vai trò Chủ ngữ chỉ người",
-        diagnosticTitle: "Tự ý bỏ đại từ quan hệ làm Chủ ngữ",
-        explanation: "Khi đại từ quan hệ làm Chủ ngữ, bắt buộc phải rút gọn động từ thành V-ing hoặc V3, không thể tùy tiện bỏ đại từ mà giữ nguyên động từ."
+        baitOptionText: "B. The manager being responsible for the project is currently on leave.",
+        diagnosticTitle: "Thêm 'being' rườm rà không cần thiết",
+        explanation: "Học sinh hay chêm 'being' vào trước tính từ, làm câu văn học thuật trở nên nặng nề và không tự nhiên."
       }
     },
     {
       id: "builder_w2d1_q06",
       roundIndex: 5,
-      prompt: "Rút gọn câu có tính từ sau to be: \"The engineer who is responsible for the project scheduled a meeting.\"",
+      prompt: "Câu nào dưới đây mắc lỗi cú pháp kinh điển của học sinh Việt Nam khi dùng liên từ nhượng bộ?",
       options: [
-        { id: "opt_A", label: "A", text: "The engineer responsible for the project scheduled a meeting." },
-        { id: "opt_B", label: "B", text: "The engineer being responsible for the project scheduled a meeting." },
-        { id: "opt_C", label: "C", text: "The engineer responsibling for the project scheduled a meeting." },
-        { id: "opt_D", label: "D", text: "The engineer was responsible for the project scheduled a meeting." },
+        { id: "opt_A", label: "A", text: "Although the government has invested a lot of money in education, but the quality of teaching remains poor." },
+        { id: "opt_B", label: "B", text: "Although the government has invested heavily in education, the quality of teaching remains unsatisfactory." },
+        { id: "opt_C", label: "C", text: "The government has invested heavily in education; however, teaching quality remains poor." },
+        { id: "opt_D", label: "D", text: "Despite heavy government investment in education, the quality of teaching remains poor." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. The engineer responsible for the project scheduled a meeting.",
-      correctExplanation: "Cấu trúc 'who/which + be + adjective' được rút gọn bằng cách bỏ cả đại từ quan hệ và to be, giữ lại cụm tính từ 'responsible for the project'.",
+      correctAnswerText: "A. Although the government has invested a lot of money in education, but the quality of teaching remains poor.",
+      correctExplanation: "Lỗi 'Mặc dù ... nhưng ...': Trong tiếng Anh, đã dùng 'Although' thì KHÔNG ĐƯỢC dùng 'but' ở mệnh đề chính. Dùng cả hai sẽ khiến câu bị thừa liên từ và sai cấu trúc mệnh đề.",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. The engineer being responsible for the project scheduled a meeting.",
-        diagnosticTitle: "Lạm dụng từ 'being' khi rút gọn cụm tính từ",
-        explanation: "Trong văn phong học thuật, không cần thiết chèn 'being' trước tính từ trừ khi muốn nhấn mạnh hành vi tạm thời."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. The government has invested heavily in education; however, teaching quality remains poor.",
+        diagnosticTitle: "Chuyển dịch nguyên xi mẫu câu tiếng Việt (Although... but...)",
+        explanation: "Người Việt có phản xạ 'Mặc dù... nhưng...' nên khi viết tiếng Anh thường đưa cả 'Although' và 'but' vào một câu."
       }
     },
     {
       id: "builder_w2d1_q07",
       roundIndex: 6,
-      prompt: "Phát hiện lỗi sai trong câu sau: \"Although the state has subsidized tuition fees, but universities still face budget deficits.\"",
+      prompt: "Điền liên từ học thuật thể hiện sự đối lập giữa hai luồng quan điểm trong IELTS Writing Task 2: '________ some believe that online education is more effective, others argue that traditional classrooms provide better interaction.'?",
       options: [
-        { id: "opt_A", label: "A", text: "Thừa liên từ 'but' khi mệnh đề trước đã có 'Although'" },
-        { id: "opt_B", label: "B", text: "Động từ 'subsidized' phải chia ở thể bị động" },
-        { id: "opt_C", label: "C", text: "Danh từ 'tuition fees' không thể đi với động từ subsidize" },
-        { id: "opt_D", label: "D", text: "Phải đổi 'Although' thành 'In spite of' và giữ nguyên 'but'" },
+        { id: "opt_A", label: "A", text: "While" },
+        { id: "opt_B", label: "B", text: "Because" },
+        { id: "opt_C", label: "C", text: "Therefore" },
+        { id: "opt_D", label: "D", text: "Unless" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Thừa liên từ 'but' khi mệnh đề trước đã có 'Although'",
-      correctExplanation: "Trong tiếng Anh, 'Although' và 'But' không bao giờ xuất hiện đồng thời trong cùng một câu. Đã dùng 'Although' thì phải bỏ 'but'.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. While",
+      correctExplanation: "'While' hoặc 'Whereas' đứng đầu câu để thiết lập mệnh đề trạng ngữ chỉ sự tương phản (contrast), hoàn hảo cho dạng bài Discussion (Thảo luận 2 quan điểm) trong Writing Task 2.",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_D",
-        baitOptionText: "D. Phải đổi 'Although' thành 'In spite of' và giữ nguyên 'but'",
-        diagnosticTitle: "Thói quen dịch 'Mặc dù... nhưng...' từ tiếng Việt",
-        explanation: "Học sinh bị ảnh hưởng bởi cặp liên từ sóng đôi 'Mặc dù ... nhưng ...' trong tiếng Việt nên cố tình giữ lại cả hai liên từ."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. Therefore",
+        diagnosticTitle: "Nhầm trạng từ liên kết (Adverbial connector) với liên từ phụ thuộc",
+        explanation: "'Therefore' là trạng từ nối chỉ kết quả, không thể đứng đầu câu làm liên từ phụ thuộc nối 2 mệnh đề với dấu phẩy."
       }
     },
     {
       id: "builder_w2d1_q08",
       roundIndex: 7,
-      prompt: "Nhận diện lỗi sai trong câu thứ hai: \"Learning foreign languages is beneficial. Because it broadens personal perspectives.\"",
+      prompt: "Chọn câu viết đúng ngữ pháp và không mắc lỗi phân mảnh câu (Sentence Fragment):",
       options: [
-        { id: "opt_A", label: "A", text: "Câu thứ hai là câu cụt Fragment do thiếu mệnh đề độc lập chính" },
-        { id: "opt_B", label: "B", text: "Động từ 'broadens' chia sai số ít với chủ ngữ 'it'" },
-        { id: "opt_C", label: "C", text: "Tính từ 'beneficial' bắt buộc phải có giới từ 'to'" },
-        { id: "opt_D", label: "D", text: "'Learning foreign languages' không thể làm chủ ngữ số ít" },
+        { id: "opt_A", label: "A", text: "Learning English offers multifaceted benefits because mastering the language helps people expand their horizons." },
+        { id: "opt_B", label: "B", text: "Learning English offers multifaceted benefits. Because mastering the language helps people make international friends." },
+        { id: "opt_C", label: "C", text: "Mastering English is beneficial. Which helps people find good employment opportunities." },
+        { id: "opt_D", label: "D", text: "Because the government invested in infrastructure, so citizens enjoy better transport." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Câu thứ hai là câu cụt Fragment do thiếu mệnh đề độc lập chính",
-      correctExplanation: "Mệnh đề bắt đầu bằng 'Because' là Adverbial Subordinate Clause, không thể đứng riêng làm câu hoàn chỉnh. Phải nối liền với mệnh đề trước bằng dấu phẩy.",
+      correctAnswerText: "A. Learning English offers multifaceted benefits because mastering the language helps people expand their horizons.",
+      correctExplanation: "Câu (B) mắc lỗi Sentence Fragment (tách mệnh đề 'Because...' đứng một mình sau dấu chấm khi chưa có mệnh đề chính). Câu (C) tách ', which...' thành một câu độc lập sau dấu chấm là sai. Câu (D) thừa cặp 'Because... so...'. Chỉ có (A) là câu phức trọn vẹn.",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_D",
-        baitOptionText: "D. 'Learning foreign languages' không thể làm chủ ngữ số ít",
-        diagnosticTitle: "Nghi ngờ sự hòa hợp chủ vị của Gerund",
-        explanation: "Gerund 'Learning' luôn là danh động từ số ít (đi với 'is'), học sinh nhìn thấy 'languages' số nhiều nên tưởng câu đầu sai."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Learning English offers multifaceted benefits. Because mastering the language helps people make international friends.",
+        diagnosticTitle: "Lỗi Sentence Fragment (chấm câu ngay trước liên từ phụ thuộc)",
+        explanation: "Học sinh Band 4.5 hay có thói quen chấm câu rồi viết 'Because... / Which...' thành một câu riêng biệt."
       }
     },
     {
       id: "builder_w2d1_q09",
       roundIndex: 8,
-      prompt: "Điền liên từ chỉ điều kiện mang nghĩa 'nếu không': \"Public health will not improve significantly ______ strict food standards are enforced.\"",
+      prompt: "Dịch sang tiếng Anh đạt chuẩn cấu trúc Task 2: 'Chất lượng cuộc sống sẽ không được cải thiện trừ khi có hành động thiết thực từ chính phủ.'?",
       options: [
-        { id: "opt_A", label: "A", text: "unless" },
-        { id: "opt_B", label: "B", text: "if" },
-        { id: "opt_C", label: "C", text: "because" },
-        { id: "opt_D", label: "D", text: "provided that" },
+        { id: "opt_A", label: "A", text: "The quality of life will not improve unless there is concrete action from the government." },
+        { id: "opt_B", label: "B", text: "The quality of life will not improve unless there is not practical action from government." },
+        { id: "opt_C", label: "C", text: "Quality of life won't be improved if not have action from the government." },
+        { id: "opt_D", label: "D", text: "Life quality not improve unless government don't take action." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. unless",
-      correctExplanation: "'Unless' = 'If not' (trừ khi / nếu không). 'Sức khỏe cộng đồng sẽ không cải thiện trừ khi các tiêu chuẩn được thực thi'.",
+      correctAnswerText: "A. The quality of life will not improve unless there is concrete action from the government.",
+      correctExplanation: "'Unless' = If not (trừ khi). Bản thân mệnh đề sau 'unless' luôn ở thể khẳng định: 'unless there is concrete action...' (tránh phủ định kép sai ngữ pháp 'unless there is not').",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. if",
-        diagnosticTitle: "Chọn 'if' làm đảo lộn hoàn toàn logic câu",
-        explanation: "Nếu dùng 'if', câu sẽ thành 'Sức khỏe không cải thiện nếu tiêu chuẩn được thực thi', hoàn toàn trái ngược với thực tế."
+        baitOptionText: "B. The quality of life will not improve unless there is not practical action from government.",
+        diagnosticTitle: "Lỗi phủ định kép sau liên từ 'unless'",
+        explanation: "Học sinh dịch 'trừ khi không có' nên cho cả 'not' vào sau 'unless', biến câu thành sai nghĩa."
       }
     },
     {
       id: "builder_w2d1_q10",
       roundIndex: 9,
-      prompt: "Điền liên từ học thuật nối hai mệnh đề đối lập trong bài luận IELTS: \"______ some individuals favor city life, others choose suburban tranquility.\"",
+      prompt: "Trong câu châm ngôn học thuật: 'What you do speaks so loudly that I cannot hear what you say.', câu này có tất cả bao nhiêu mệnh đề (Clauses)?",
       options: [
-        { id: "opt_A", label: "A", text: "While" },
-        { id: "opt_B", label: "B", text: "Despite" },
-        { id: "opt_C", label: "C", text: "Because" },
-        { id: "opt_D", label: "D", text: "In spite of" },
+        { id: "opt_A", label: "A", text: "3 mệnh đề gồm 2 mệnh đề danh từ và 1 mệnh đề chính chỉ kết quả" },
+        { id: "opt_B", label: "B", text: "1 mệnh đề duy nhất vì chỉ có một dấu chấm cuối câu" },
+        { id: "opt_C", label: "C", text: "2 mệnh đề nối bằng liên từ 'that'" },
+        { id: "opt_D", label: "D", text: "4 mệnh đề hoàn toàn độc lập" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. While",
-      correctExplanation: "'While' hoặc 'Whereas' là liên từ phụ thuộc dùng để nối 2 mệnh đề tương phản (While + Clause 1, Clause 2). 'Despite / In spite of' chỉ đi với Noun Phrase.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. 3 mệnh đề gồm 2 mệnh đề danh từ và 1 mệnh đề chính chỉ kết quả",
+      correctExplanation: "Phân tích cú pháp chuyên sâu: (1) Mệnh đề danh từ 'What you do' làm Chủ ngữ; (2) Mệnh đề kết quả 'that I cannot hear...'; (3) Mệnh đề danh từ 'what you say' làm tân ngữ cho 'hear'. Đây là câu phức đa tầng mẫu mực.",
+      timeLimitSeconds: 25,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Despite",
-        diagnosticTitle: "Dùng 'Despite' trước một mệnh đề trọn vẹn (Clause)",
-        explanation: "Học sinh hay nhầm lẫn chức năng của 'Despite' (giới từ + Noun Phrase) với 'While/Although' (liên từ + Clause)."
+        baitOptionText: "B. 1 mệnh đề duy nhất vì chỉ có một dấu chấm cuối câu",
+        diagnosticTitle: "Nhầm lẫn giữa Câu (Sentence) và Mệnh đề (Clause)",
+        explanation: "Học sinh thường đếm số dấu câu để đếm mệnh đề thay vì đếm số cặp Subject + Finite Verb."
       }
     }
   ],
@@ -235,221 +236,221 @@ export const BUILDER_WEEK_2_QUESTIONS: Record<string, any[]> = {
     {
       id: "builder_w2d2_q01",
       roundIndex: 0,
-      prompt: "Trong nghiên cứu sinh học về sự lão hóa (Aging), thuật ngữ khoa học 'senescence' dùng để chỉ hiện tượng gì?",
+      prompt: "Kỹ năng 'Deep Reading' (Đọc sâu tìm Fact) trong bài thi IELTS Reading đòi hỏi tư duy cốt lõi nào?",
       options: [
-        { id: "opt_A", label: "A", text: "Age-related physical and functional decline" },
-        { id: "opt_B", label: "B", text: "Rapid reproduction in early adulthood" },
-        { id: "opt_C", label: "C", text: "Resistance to fatal contagious diseases" },
-        { id: "opt_D", label: "D", text: "Aggressive hunting behavior against predators" },
+        { id: "opt_A", label: "A", text: "Bám sát thông tin thực tế được nêu trong bài, tuyệt đối không suy diễn chủ quan" },
+        { id: "opt_B", label: "B", text: "Đoán nghĩa và tưởng tượng thêm cảm xúc của tác giả ngoài bài đọc." },
+        { id: "opt_C", label: "C", text: "Chỉ đọc lướt câu đầu và câu cuối của mỗi đoạn văn rồi chọn bừa." },
+        { id: "opt_D", label: "D", text: "Dịch từng từ sang tiếng mẹ đẻ rồi mới chọn đáp án." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Age-related physical and functional decline",
-      correctExplanation: "Theo văn bản bài đọc: 'age-related declines, which biologists call senescence' - sự suy giảm thể lực và chức năng sinh học do tuổi tác.",
+      correctAnswerText: "A. Bám sát thông tin thực tế được nêu trong bài, tuyệt đối không suy diễn chủ quan",
+      correctExplanation: "Trong bài thi IELTS Reading, câu hỏi yêu cầu tìm Fact đòi hỏi thí sinh đối chiếu chính xác từ khóa được đề cập thực tế trong bài đọc (Mentioned vs Not Mentioned), không được suy đoán ngoài dữ liệu.",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Rapid reproduction in early adulthood",
-        diagnosticTitle: "Nhầm lẫn giữa quá trình lão hóa và sinh sản",
-        explanation: "Học sinh không nắm từ vựng học thuật nên đoán mò 'senescence' liên quan đến năng lượng tuổi trẻ."
+        baitOptionText: "B. Đoán nghĩa và tưởng tượng thêm cảm xúc của tác giả ngoài bài đọc.",
+        diagnosticTitle: "Lỗi suy diễn cá nhân (Over-interpretation)",
+        explanation: "Học sinh thường mang hiểu biết bên ngoài đời thực vào trả lời thay vì chỉ dựa vào dữ liệu có trong bài đọc."
       }
     },
     {
       id: "builder_w2d2_q02",
       roundIndex: 1,
-      prompt: "Theo bài đọc, điểm khác biệt đáng kinh ngạc của loài kiến Pheidole dentata là gì?",
+      prompt: "Từ vựng 'symptom' trong câu: 'symptoms of performance stress at the tournament' mang nghĩa là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Older worker ants perform complex tasks just as well as young ants" },
-        { id: "opt_B", label: "B", text: "They are completely immortal and never suffer from natural death" },
-        { id: "opt_C", label: "C", text: "They live completely isolated lives without any social organization" },
-        { id: "opt_D", label: "D", text: "Their brain size expands three times larger when they grow old" },
+        { id: "opt_A", label: "A", text: "Triệu chứng hoặc biểu hiện ra bên ngoài của một vấn đề áp lực thi đấu" },
+        { id: "opt_B", label: "B", text: "Giải pháp điều trị tâm lý" },
+        { id: "opt_C", label: "C", text: "Nguyên nhân gốc rễ gây ra giải đấu" },
+        { id: "opt_D", label: "D", text: "Kết quả bảng điểm cuối cùng của vận động viên" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Older worker ants perform complex tasks just as well as young ants",
-      correctExplanation: "Văn bản khẳng định: 'Old worker ants can do everything just as well as the youngsters, and their brains appear just as sharp'. Chúng không hề bất tử (isn't immortal).",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. Triệu chứng hoặc biểu hiện ra bên ngoài của một vấn đề áp lực thi đấu",
+      correctExplanation: "'Symptom' là triệu chứng, dấu hiệu bên ngoài. Trong bài đọc, biểu hiện căng thẳng của Emma Raducanu là 'difficulty regulating her breathing and heart rate' (khó điều hòa nhịp thở và nhịp tim).",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. They are completely immortal and never suffer from natural death",
-        diagnosticTitle: "Quy chụp kiến không lão hóa là bất tử",
-        explanation: "Tác giả nêu rõ ngay đầu bài: 'Pheidole dentata isn't immortal'. Chúng vẫn chết do kẻ thù hoặc môi trường khắc nghiệt."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. Nguyên nhân gốc rễ gây ra giải đấu",
+        diagnosticTitle: "Nhầm lẫn giữa Triệu chứng (Symptom) và Nguyên nhân (Cause)",
+        explanation: "Học sinh thường nhầm lẫn giữa biểu hiện bề ngoài của sự việc với lý do gốc rễ tạo ra nó."
       }
     },
     {
       id: "builder_w2d2_q03",
       roundIndex: 2,
-      prompt: "Nhà nghiên cứu Ysabel Giraldo đã chia kiến thợ thành bao nhiêu nhóm tuổi chính xác để làm thí nghiệm?",
+      prompt: "Trong bài đọc 'The secret of staying young', loài kiến Pheidole dentata được các nhà khoa học chú ý đặc biệt vì lý do gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Four age ranges" },
-        { id: "opt_B", label: "B", text: "Two age ranges" },
-        { id: "opt_C", label: "C", text: "Six age ranges" },
-        { id: "opt_D", label: "D", text: "Eight age ranges" },
+        { id: "opt_A", label: "A", text: "Chúng dường như không có dấu hiệu lão hóa sinh học; kiến già vẫn hoàn thành nhiệm vụ tốt như kiến trẻ." },
+        { id: "opt_B", label: "B", text: "Chúng là loài côn trùng bất tử không bao giờ chết." },
+        { id: "opt_C", label: "C", text: "Chúng có kích thước cơ thể lớn hơn mọi loài kiến khác." },
+        { id: "opt_D", label: "D", text: "Chúng chỉ sống đơn độc một mình trong rừng sâu." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Four age ranges",
-      correctExplanation: "Văn bản nêu rõ: 'Giraldo focused on ants at four age ranges: 20 to 22 days, 45 to 47 days, 95 to 97 days and 120 to 122 days'.",
+      correctAnswerText: "A. Chúng dường như không có dấu hiệu lão hóa sinh học; kiến già vẫn hoàn thành nhiệm vụ tốt như kiến trẻ.",
+      correctExplanation: "Bài đọc ghi rõ: 'Pheidole dentata isn’t immortal. But scientists have found that it doesn’t seem to show any signs of aging. Old worker ants can do everything just as well as the youngsters...'.",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Two age ranges",
-        diagnosticTitle: "Chỉ chú ý đến 2 nhóm tuổi được so sánh cụ thể",
-        explanation: "Học sinh đọc lướt thấy tác giả so sánh nhóm 20 ngày và 95 ngày nên tưởng thí nghiệm chỉ có 2 nhóm tuổi."
+        baitOptionText: "B. Chúng là loài côn trùng bất tử không bao giờ chết.",
+        diagnosticTitle: "Bẫy từ vựng 'immortal' (bất tử)",
+        explanation: "Bài đọc nêu rõ 'Pheidole dentata ISN'T immortal'. Học sinh đọc lướt thấy chữ immortal liền chọn sai sang bất tử."
       }
     },
     {
       id: "builder_w2d2_q04",
       roundIndex: 3,
-      prompt: "Cấu trúc 'mushroom bodies' trong não bộ của côn trùng có chức năng quan trọng gì?",
+      prompt: "Tại sao loài kiến P. dentata lại hữu ích hơn chuột hay ruồi giấm trong việc nghiên cứu sự lão hóa ở con người?",
       options: [
-        { id: "opt_A", label: "A", text: "Processing information, learning, and memory" },
-        { id: "opt_B", label: "B", text: "Controlling physical growth and exoskeleton hardness" },
-        { id: "opt_C", label: "C", text: "Detecting changes in environmental air pressure" },
-        { id: "opt_D", label: "D", text: "Producing toxic secretions to defend against predators" },
+        { id: "opt_A", label: "A", text: "Vì kiến sống trong bầy đàn có tính tổ chức xã hội phức tạp tương tự con người" },
+        { id: "opt_B", label: "B", text: "Vì bộ gen của kiến giống con người tới 99%." },
+        { id: "opt_C", label: "C", text: "Vì kiến sống lâu hơn chuột và người." },
+        { id: "opt_D", label: "D", text: "Vì kiến không cần thức ăn để duy trì sự sống trong phòng thí nghiệm." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Processing information, learning, and memory",
-      correctExplanation: "Bài đọc nêu rõ: 'structures in their brains called mushroom bodies, which are important for processing information, learning and memory'.",
+      correctAnswerText: "A. Vì kiến sống trong bầy đàn có tính tổ chức xã hội phức tạp tương tự con người",
+      correctExplanation: "Trích dẫn bài đọc: 'Like the naked mole rat, ants are social creatures that usually live in highly organized colonies. It’s this social complexity that makes P. dentata useful for studying aging in people.'",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Controlling physical growth and exoskeleton hardness",
-        diagnosticTitle: "Đoán chức năng sinh học thay vì bám sát bài đọc",
-        explanation: "Học sinh suy diễn 'thể nấm' điều khiển sự phát triển cơ thể thay vì đọc đúng chi tiết xử lý thông tin và trí nhớ."
+        baitOptionText: "B. Vì bộ gen của kiến giống con người tới 99%.",
+        diagnosticTitle: "Suy đoán ngoài văn bản",
+        explanation: "Học sinh tự liên hệ kiến thức sinh học bên ngoài mà không tìm căn cứ từ khóa 'social complexity' trong bài."
       }
     },
     {
       id: "builder_w2d2_q05",
       roundIndex: 4,
-      prompt: "Hai chất dẫn truyền thần kinh trong não kiến KHÔNG hề bị suy giảm khi già đi là gì?",
+      prompt: "Trong thí nghiệm theo dõi hành vi, kiến già 95 ngày tuổi đã làm điều gì vượt trội hơn cả kiến trẻ 20 ngày tuổi?",
       options: [
-        { id: "opt_A", label: "A", text: "Serotonin and dopamine" },
-        { id: "opt_B", label: "B", text: "Melatonin and insulin" },
-        { id: "opt_C", label: "C", text: "Adrenaline and hemoglobin" },
-        { id: "opt_D", label: "D", text: "Endorphin and glucose" },
+        { id: "opt_A", label: "A", text: "Theo dõi vệt mùi dẫn đường tới thức ăn scent trail trong thời gian dài hơn" },
+        { id: "opt_B", label: "B", text: "Sinh sản được nhiều trứng hơn trong tổ." },
+        { id: "opt_C", label: "C", text: "Bay nhanh hơn để tránh kẻ thù." },
+        { id: "opt_D", label: "D", text: "Xây tổ to hơn gấp hai lần." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Serotonin and dopamine",
-      correctExplanation: "Văn bản: 'the old ants didn't experience any drop in the levels of either serotonin or dopamine - brain chemicals whose decline often coincides with aging'.",
+      correctAnswerText: "A. Theo dõi vệt mùi dẫn đường tới thức ăn scent trail trong thời gian dài hơn",
+      correctExplanation: "Bài đọc ghi nhận: 'the 95-day-old ants could track the scent even longer than their younger counterparts.'",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. Adrenaline and hemoglobin",
-        diagnosticTitle: "Nhầm sang các chất sinh học quen thuộc ở người",
-        explanation: "Học sinh nhớ mang máng các chất sinh học nên chọn nhầm chất không được đề cập trong bài đọc."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. Sinh sản được nhiều trứng hơn trong tổ.",
+        diagnosticTitle: "Nhầm kiến thợ (worker ants) với kiến chúa (queen ants)",
+        explanation: "Các cá thể được thí nghiệm là kiến thợ (worker ants), nhiệm vụ của chúng là chăm sóc ấu trùng và kiếm ăn, không phải đẻ trứng."
       }
     },
     {
       id: "builder_w2d2_q06",
       roundIndex: 5,
-      prompt: "Từ 'deteriorate' trong câu 'the vast majority of animals deteriorate with age' có nghĩa là:",
+      prompt: "Nghiên cứu về não bộ của kiến P. dentata phát hiện thấy điều gì ở các hóa chất dẫn truyền thần kinh (serotonin và dopamine)?",
       options: [
-        { id: "opt_A", label: "A", text: "decline in physical condition and health" },
-        { id: "opt_B", label: "B", text: "become more resistant to diseases" },
-        { id: "opt_C", label: "C", text: "grow more aggressive toward rivals" },
-        { id: "opt_D", label: "D", text: "migrate to warmer geographical regions" },
+        { id: "opt_A", label: "A", text: "Kiến già không hề bị suy giảm mức độ của cả serotonin lẫn dopamine." },
+        { id: "opt_B", label: "B", text: "Serotonin bị biến mất hoàn toàn khi kiến bước sang ngày thứ 90." },
+        { id: "opt_C", label: "C", text: "Kiến già tiết ra chất độc gây tổn thương các nơ-ron thần kinh." },
+        { id: "opt_D", label: "D", text: "Dopamine của kiến tăng vọt khiến chúng bị mất trí nhớ." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. decline in physical condition and health",
-      correctExplanation: "'Deteriorate' là động từ học thuật chỉ sự xuống cấp, suy thoái dần về thể lực, sức khỏe hoặc chất lượng theo thời gian.",
+      correctAnswerText: "A. Kiến già không hề bị suy giảm mức độ của cả serotonin lẫn dopamine.",
+      correctExplanation: "Đoạn 5 nêu rõ: 'What was more, the old ants didn’t experience any drop in the levels of either serotonin or dopamine – brain chemicals whose decline often coincides with aging.'",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. become more resistant to diseases",
-        diagnosticTitle: "Hiểu ngược hoàn toàn nghĩa của từ deteriorate",
-        explanation: "Học sinh nhầm tưởng động vật già đi thì có sức đề kháng cao hơn nên chọn nghĩa tích cực."
+        baitOptionText: "B. Serotonin bị biến mất hoàn toàn khi kiến bước sang ngày thứ 90.",
+        diagnosticTitle: "Hiểu sai nghĩa cụm từ 'didn't experience any drop'",
+        explanation: "'didn't experience any drop' nghĩa là không suy giảm. Học sinh nếu không đọc kỹ 'any drop' dễ tưởng lầm là bị sụt giảm hoàn toàn."
       }
     },
     {
       id: "builder_w2d2_q07",
       roundIndex: 6,
-      prompt: "Trong thí nghiệm kiểm tra khứu giác, kiến 95 ngày tuổi thể hiện khả năng lần theo mùi thức ăn như thế nào?",
+      prompt: "Từ học thuật 'senescence' trong câu: 'some studies showed age-related declines, which biologists call senescence' có nghĩa là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "They could track the scent trail even longer than younger ants" },
-        { id: "opt_B", label: "B", text: "They completely lost their sensitivity to scent trails" },
-        { id: "opt_C", label: "C", text: "They were easily confused and walked in circular paths" },
-        { id: "opt_D", label: "D", text: "They followed the trail at exactly half the speed of young ants" },
+        { id: "opt_A", label: "A", text: "Quá trình lão hóa và suy giảm sinh học theo tuổi tác" },
+        { id: "opt_B", label: "B", text: "Sự phân chia bầy đàn của côn trùng" },
+        { id: "opt_C", label: "C", text: "Khả năng săn mồi sống trong tự nhiên" },
+        { id: "opt_D", label: "D", text: "Kỹ năng giao tiếp qua mùi hương" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. They could track the scent trail even longer than younger ants",
-      correctExplanation: "Văn bản nêu rõ bất ngờ của thí nghiệm: 'the 95-day-old ants could track the scent even longer than their younger counterparts'.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. Quá trình lão hóa và suy giảm sinh học theo tuổi tác",
+      correctExplanation: "Theo định nghĩa của tác giả ngay trong văn bản: 'age-related declines, which biologists call senescence'. Đây là từ vựng sinh học cao cấp chỉ sự già đi của tế bào/cơ thể.",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. They completely lost their sensitivity to scent trails",
-        diagnosticTitle: "Định kiến người già/kiến già mất khứu giác",
-        explanation: "Học sinh suy luận theo lẽ thường rằng già đi thì giác quan kém đi, trong khi bài đọc chỉ ra sự vượt trội của kiến già."
+        baitOptionText: "B. Sự phân chia bầy đàn của côn trùng",
+        diagnosticTitle: "Không dùng ngữ cảnh mệnh đề quan hệ để suy đoán nghĩa từ",
+        explanation: "Học sinh thường hoang mang khi gặp từ chuyên ngành lạ, bỏ qua mệnh đề giải thích ngay liền trước 'age-related declines'."
       }
     },
     {
       id: "builder_w2d2_q08",
       roundIndex: 7,
-      prompt: "Tại sao loài kiến P. dentata lại có giá trị đặc biệt đối với các nhà khoa học nghiên cứu sự lão hóa ở người?",
+      prompt: "Xét nhận định dạng TRUE - FALSE - NOT GIVEN: 'Pheidole dentata ants are the only known animals which remain active for almost their whole lives.'? (Đoạn 2 có nhắc đến Naked mole rat sống 30 năm vẫn khỏe mạnh)",
       options: [
-        { id: "opt_A", label: "A", text: "Their complex social colonies resemble human social organization" },
-        { id: "opt_B", label: "B", text: "Their genetic sequence is 99% identical to the human genome" },
-        { id: "opt_C", label: "C", text: "They can easily be trained to respond to human voice commands" },
-        { id: "opt_D", label: "D", text: "They produce antibodies that can immediately cure human cancer" },
+        { id: "opt_A", label: "A", text: "FALSE vì văn bản còn nhắc đến chuột chũi không lông cũng có khả năng tương tự" },
+        { id: "opt_B", label: "B", text: "TRUE vì kiến là loài duy nhất được kiểm chứng bằng thực nghiệm chính xác" },
+        { id: "opt_C", label: "C", text: "NOT GIVEN vì không có thông tin về các loài động vật khác trên thế giới" },
+        { id: "opt_D", label: "D", text: "CANNOT BE DETERMINED" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Their complex social colonies resemble human social organization",
-      correctExplanation: "Văn bản: 'It's this social complexity that makes P. dentata useful for studying aging in people... Humans are also highly social'.",
+      correctAnswerText: "A. FALSE vì văn bản còn nhắc đến chuột chũi không lông cũng có khả năng tương tự",
+      correctExplanation: "Đoạn 2 viết: 'Such age-defying feats are rare... Naked mole rats can live for almost 30 years and stay fit for nearly their entire lives.' Do đó, tuyên bố kiến là loài DUY NHẤT ('the only known animals') mâu thuẫn trực tiếp với bài -> Đáp án là FALSE.",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. Their genetic sequence is 99% identical to the human genome",
-        diagnosticTitle: "Suy diễn vô căn cứ về sự tương đồng ADN",
-        explanation: "Học sinh quen thuộc với thông điệp ADN của tinh tinh nên tự suy diễn kiến cũng có gen giống người."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. NOT GIVEN vì không có thông tin về các loài động vật khác trên thế giới",
+        diagnosticTitle: "Bẫy từ tuyệt đối 'the only' trong dạng bài TFNG",
+        explanation: "Học sinh hay bị nhầm sang NOT GIVEN khi gặp từ so sánh tuyệt đối, bỏ qua bằng chứng Naked mole rat được nêu rõ ràng ở đoạn 2."
       }
     },
     {
       id: "builder_w2d2_q09",
       roundIndex: 8,
-      prompt: "Nếu không bị suy giảm thể lực theo tuổi tác, nguyên nhân chính khiến kiến ngoài tự nhiên vẫn chết là gì?",
+      prompt: "Xét nhận định: 'The ants in Giraldo’s experiments behaved as she had predicted that they would.' (Giraldo dự đoán kiến già sẽ làm bài kiểm tra kém hơn, nhưng thực tế chúng đều làm tốt)?",
       options: [
-        { id: "opt_A", label: "A", text: "Predators, diseases, and harsh outdoor environments" },
-        { id: "opt_B", label: "B", text: "Sudden biological cell death occurring on day 140" },
-        { id: "opt_C", label: "C", text: "Younger worker ants expelling elderly ants from the colony" },
-        { id: "opt_D", label: "D", text: "Extreme exhaustion caused by laying millions of eggs" },
+        { id: "opt_A", label: "A", text: "FALSE vì hành vi thực tế trái ngược hoàn toàn với dự đoán ban đầu của bà" },
+        { id: "opt_B", label: "B", text: "TRUE vì kiến già cư xử đúng như kỳ vọng của bà" },
+        { id: "opt_C", label: "C", text: "NOT GIVEN vì bà không đưa ra bất kỳ dự đoán nào trước khi bắt đầu" },
+        { id: "opt_D", label: "D", text: "PARTIALLY TRUE" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Predators, diseases, and harsh outdoor environments",
-      correctExplanation: "Văn bản nêu: 'Out in the wild, the ants probably don't live for a full 140 days thanks to predators, disease and just being in an environment that's much harsher than the comforts of the lab'.",
+      correctAnswerText: "A. FALSE vì hành vi thực tế trái ngược hoàn toàn với dự đoán ban đầu của bà",
+      correctExplanation: "Đoạn 4 nêu: 'Giraldo expected the older ants to perform poorly in all these tasks. But the elderly insects were all good caretakers and trail-followers...'. Kỳ vọng là làm kém, nhưng thực tế làm tốt -> Đáp án đối lập trực tiếp -> FALSE.",
       timeLimitSeconds: 20,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_D",
-        baitOptionText: "D. Extreme exhaustion caused by laying millions of eggs",
-        diagnosticTitle: "Nhầm lẫn giữa kiến chúa và kiến thợ",
-        explanation: "Kiến trong nghiên cứu là kiến thợ (worker ants), không phải kiến chúa nên không tham gia việc đẻ trứng."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. TRUE vì kiến già cư xử đúng như kỳ vọng của bà",
+        diagnosticTitle: "Bỏ qua liên từ đảo chiều 'But'",
+        explanation: "Học sinh đọc thấy 'Giraldo expected...' rồi đọc lướt không chú ý chữ 'But' đảo ngược kết quả thực tế."
       }
     },
     {
       id: "builder_w2d2_q10",
       roundIndex: 9,
-      prompt: "Thông tin: 'Pheidole dentata ants are the only known animals which remain active for almost their whole lives.' Đánh giá:",
+      prompt: "Nếu loài kiến này không hề suy giảm thể chất khi già đi, tại sao chúng vẫn chết trong tự nhiên?",
       options: [
-        { id: "opt_A", label: "A", text: "FALSE" },
-        { id: "opt_B", label: "B", text: "TRUE" },
-        { id: "opt_C", label: "C", text: "NOT GIVEN" },
-        { id: "opt_D", label: "D", text: "AMBIGUOUS" },
+        { id: "opt_A", label: "A", text: "Do các loài săn mồi, bệnh tật và môi trường sống khắc nghiệt ngoài tự nhiên" },
+        { id: "opt_B", label: "B", text: "Do não bộ của chúng tự động phát nổ sau 140 ngày." },
+        { id: "opt_C", label: "C", text: "Do thiếu hụt nguồn nước sạch trong rừng." },
+        { id: "opt_D", label: "D", text: "Do kiến chúa tiêu diệt toàn bộ kiến thợ lớn tuổi." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. FALSE",
-      correctExplanation: "Bài đọc nêu rõ: 'Naked mole rats can live for almost 30 years and stay fit for nearly their entire lives'. Do đó kiến P. dentata KHÔNG PHẢI loài duy nhất ('only known animals'). Đáp án là FALSE.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. Do các loài săn mồi, bệnh tật và môi trường sống khắc nghiệt ngoài tự nhiên",
+      correctExplanation: "Đoạn 7 chỉ rõ: 'Out in the wild, the ants probably don’t live for a full 140 days thanks to predators, disease and just being in an environment that’s much harsher than the comforts of the lab.'",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. TRUE",
-        diagnosticTitle: "Bỏ sót chi tiết về loài chuột chũi không lông (Naked mole rats)",
-        explanation: "Học sinh chỉ tập trung vào nhân vật chính là loài kiến mà quên rằng tác giả đã đề cập đến loài naked mole rat cũng giữ thể lực suốt đời."
+        baitOptionId: "opt_D",
+        baitOptionText: "D. Do kiến chúa tiêu diệt toàn bộ kiến thợ lớn tuổi.",
+        diagnosticTitle: "Suy diễn tưởng tượng không có trong văn bản",
+        explanation: "Học sinh suy luận theo các bộ phim viễn tưởng về thế giới côn trùng thay vì tìm kiếm 3 từ khóa 'predators, disease, harsher environment'."
       }
     }
   ],
@@ -458,221 +459,221 @@ export const BUILDER_WEEK_2_QUESTIONS: Record<string, any[]> = {
     {
       id: "builder_w2d3_q01",
       roundIndex: 0,
-      prompt: "Từ vựng nào dưới đây có nguyên âm phát âm là âm dài /uː/?",
+      prompt: "Trong chủ đề Speaking 'Healthy Lifestyles', collocation chuẩn để nói về việc duy trì vóc dáng cân đối là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "food" },
-        { id: "opt_B", label: "B", text: "foot" },
-        { id: "opt_C", label: "C", text: "cook" },
-        { id: "opt_D", label: "D", text: "look" },
+        { id: "opt_A", label: "A", text: "Stay in good shape" },
+        { id: "opt_B", label: "B", text: "Keep my body rectangle" },
+        { id: "opt_C", label: "C", text: "Remain good figure shape" },
+        { id: "opt_D", label: "D", text: "Make standard weight" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. food",
-      correctExplanation: "Trong 'food', nguyên âm là /uː/ dài (/fuːd/). Trong khi 'foot', 'cook', 'look' đều phát âm là nguyên âm ngắn /ʊ/.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. Stay in good shape",
+      correctExplanation: "Collocation tự nhiên và phổ biến: 'stay in good shape / keep in shape' (giữ vóc dáng khỏe đẹp cân đối).",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. foot",
-        diagnosticTitle: "Nhầm lẫn cặp âm /uː/ dài và /ʊ/ ngắn",
-        explanation: "Học sinh thấy chữ 'oo' giống nhau nên nghĩ 'foot' và 'food' phát âm giống hệt nhau."
+        baitOptionText: "B. Keep my body rectangle",
+        diagnosticTitle: "Dịch hình thể theo hình học",
+        explanation: "Học sinh hay tự ghép từ tiếng Việt thô kệch thay vì dùng cụm thành ngữ cố định của người bản xứ."
       }
     },
     {
       id: "builder_w2d3_q02",
       roundIndex: 1,
-      prompt: "Từ 'focus' (sự tập trung) có nguyên âm đầu tiên phát âm chuẩn xác là nguyên âm đôi nào?",
+      prompt: "Để diễn đạt ý 'uống đủ 2 lít nước mỗi ngày để giữ cho cơ thể luôn đủ nước', cụm từ chuẩn học thuật là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "/əʊ/" },
-        { id: "opt_B", label: "B", text: "/ɒ/" },
-        { id: "opt_C", label: "C", text: "/ɔː/" },
-        { id: "opt_D", label: "D", text: "/ʌ/" },
+        { id: "opt_A", label: "A", text: "Keep myself hydrated" },
+        { id: "opt_B", label: "B", text: "Keep full water in my body" },
+        { id: "opt_C", label: "C", text: "Save water inside skin" },
+        { id: "opt_D", label: "D", text: "Prevent dryness" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. /əʊ/",
-      correctExplanation: "Từ 'focus' phát âm chuẩn IPA là /ˈfəʊkəs/, nguyên âm đầu là nguyên âm đôi /əʊ/.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. Keep myself hydrated",
+      correctExplanation: "'Hydrated' (/ˈhaɪdreɪtɪd/) là tính từ học thuật chỉ trạng thái cơ thể được cung cấp đủ nước. Cụm 'keep oneself hydrated' ghi điểm từ vựng rất cao ở Band 5.5 - 6.0.",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. /ɒ/",
-        diagnosticTitle: "Phát âm theo thói quen tiếng Việt thành /ˈfɒkəs/",
-        explanation: "Người học Việt Nam hay đọc âm 'o' thành /ɒ/ ngắn ('pho-cớt') thay vì nguyên âm đôi chuẩn /əʊ/."
+        baitOptionText: "B. Keep full water in my body",
+        diagnosticTitle: "Dịch từ vựng theo kiểu 'full water'",
+        explanation: "Học sinh thường chỉ biết từ 'water' và dịch 'giữ đầy nước trong người' thay vì dùng tính từ chuyên biệt 'hydrated'."
       }
     },
     {
       id: "builder_w2d3_q03",
       roundIndex: 2,
-      prompt: "Chọn cụm từ chuẩn xác chỉ các loại đồ ăn chế biến công nghiệp chứa nhiều chất bảo quản và muối:",
+      prompt: "Khi được hỏi về thói quen không lành mạnh trong quá khứ: 'Do you have any unhealthy habit?', cách dùng thì ngữ pháp nào dưới đây là CHUẨN XÁC?",
       options: [
-        { id: "opt_A", label: "A", text: "processed foods" },
-        { id: "opt_B", label: "B", text: "worked foods" },
-        { id: "opt_C", label: "C", text: "treated foods" },
-        { id: "opt_D", label: "D", text: "engineered foods" },
+        { id: "opt_A", label: "A", text: "I used to eat a lot of fast food when I didn't have time to cook." },
+        { id: "opt_B", label: "B", text: "I am used to eat a lot of fast food when I was busy." },
+        { id: "opt_C", label: "C", text: "I use to eating a lot of fast food in the past." },
+        { id: "opt_D", label: "D", text: "I had habit to eat fast food everyday." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. processed foods",
-      correctExplanation: "Collocation chuẩn quốc tế luôn là 'processed foods' (thực phẩm chế biến sẵn/công nghiệp).",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. I used to eat a lot of fast food when I didn't have time to cook.",
+      correctExplanation: "Cấu trúc 'used to + V-infinitive' diễn tả một thói quen trong quá khứ nay không còn nữa. 'Be used to + V-ing' là quen với điều gì ở hiện tại.",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. treated foods",
-        diagnosticTitle: "Dịch thô 'đồ ăn được xử lý' thành 'treated foods'",
-        explanation: "'Treated' thường dùng cho nước thải (treated water) hoặc điều trị y tế, không dùng cho thực phẩm chế biến."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. I am used to eat a lot of fast food when I was busy.",
+        diagnosticTitle: "Nhầm lẫn giữa 'used to V' và 'be used to V-ing'",
+        explanation: "Học sinh rất hay nhầm lẫn 2 cấu trúc này, cho thêm 'am' trước 'used to' mà động từ phía sau lại để nguyên thể."
       }
     },
     {
       id: "builder_w2d3_q04",
       roundIndex: 3,
-      prompt: "Chọn động từ kết hợp tự nhiên nhất: \"Regular physical exercise helps to ______ and alleviate stress.\"",
+      prompt: "Từ vựng diễn tả tình trạng sức khỏe bị suy giảm, tồi tệ đi dần theo thời gian là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "boost my mood" },
-        { id: "opt_B", label: "B", text: "rise my mood" },
-        { id: "opt_C", label: "C", text: "grow my mood" },
-        { id: "opt_D", label: "D", text: "push my mood" },
+        { id: "opt_A", label: "A", text: "deteriorate" },
+        { id: "opt_B", label: "B", text: "improve" },
+        { id: "opt_C", label: "C", text: "strengthen" },
+        { id: "opt_D", label: "D", text: "maintain" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. boost my mood",
-      correctExplanation: "Collocation tự nhiên là 'boost one's mood' (cải thiện tâm trạng, tinh thần phấn chấn hơn).",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. deteriorate",
+      correctExplanation: "'Deteriorate' (/dɪˈtɪəriəreɪt/) = become progressively worse (trở nên tồi tệ hơn). Ví dụ: 'Gradually, my health deteriorated because of a poor diet.'",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. rise my mood",
-        diagnosticTitle: "Dùng nội động từ 'rise' trước tân ngữ",
-        explanation: "'Rise' là nội động từ không bao giờ có tân ngữ trực tiếp (không thể 'rise my mood')."
+        baitOptionText: "B. improve",
+        diagnosticTitle: "Chọn nhầm từ trái nghĩa",
+        explanation: "'Improve' là cải thiện tốt lên, trái ngược hoàn toàn với tình trạng sức khỏe giảm sút do ăn đồ có hại."
       }
     },
     {
       id: "builder_w2d3_q05",
       roundIndex: 4,
-      prompt: "Điền động từ học thuật chuẩn Band 5.0+: \"Participating in outdoor activities helps to ______ social interaction.\"",
+      prompt: "Khi nói về việc từ bỏ một thói quen xấu (hút thuốc, thức khuya, ăn vặt), cụm động từ (Phrasal Verb) tự nhiên là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "foster" },
-        { id: "opt_B", label: "B", text: "force" },
-        { id: "opt_C", label: "C", text: "fetch" },
-        { id: "opt_D", label: "D", text: "fabricate" },
+        { id: "opt_A", label: "A", text: "Kick the habit" },
+        { id: "opt_B", label: "B", text: "Delete the habit" },
+        { id: "opt_C", label: "C", text: "Throw away the habit" },
+        { id: "opt_D", label: "D", text: "Cut off habit" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. foster",
-      correctExplanation: "'Foster social interaction' là collocation đắt giá mang nghĩa nuôi dưỡng, thúc đẩy sự tương tác gắn kết xã hội.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. Kick the habit",
+      correctExplanation: "'Break / Kick a habit' là cụm cố định của người bản xứ chỉ hành động từ bỏ một thói quen xấu. 'I want to kick this unhealthy habit by having a balanced diet.'",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. force",
-        diagnosticTitle: "Nhầm lẫn giữa động từ nuôi dưỡng và ép buộc",
-        explanation: "'Force' mang nghĩa ép buộc khiên cưỡng, hoàn toàn sai lệch ngữ cảnh giao tiếp xã hội tự nguyện."
+        baitOptionText: "B. Delete the habit",
+        diagnosticTitle: "Dùng từ ngữ công nghệ thông tin cho đời sống",
+        explanation: "Học sinh thời đại số hay dùng 'delete / cancel habit' thay vì dùng thành ngữ chuẩn 'kick / break the habit'."
       }
     },
     {
       id: "builder_w2d3_q06",
       roundIndex: 5,
-      prompt: "Cụm từ chuẩn xác trong IELTS Speaking để diễn đạt một chế độ dinh dưỡng cân bằng và lành mạnh là:",
+      prompt: "Trong luyện âm Speaking, cặp từ 'food' (/uː/) và 'foot' (/ʊ/) khác nhau ở đặc tính âm học nào?",
       options: [
-        { id: "opt_A", label: "A", text: "a balanced diet" },
-        { id: "opt_B", label: "B", text: "an equal diet" },
-        { id: "opt_C", label: "C", text: "a flat diet" },
-        { id: "opt_D", label: "D", text: "a uniform diet" },
+        { id: "opt_A", label: "A", text: "'Food' có nguyên âm sau kéo dài hơi, còn 'Foot' có nguyên âm ngắn thả lỏng dứt khoát" },
+        { id: "opt_B", label: "B", text: "Cả 2 từ đều đọc là âm 'u' ngắn như tiếng Việt." },
+        { id: "opt_C", label: "C", text: "'Food' đọc là âm 'o' kéo dài." },
+        { id: "opt_D", label: "D", text: "'Foot' có âm đuôi câm hoàn toàn." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. a balanced diet",
-      correctExplanation: "Cụm danh từ cố định trong tiếng Anh luôn là 'a balanced diet' (chế độ ăn cân đối dưỡng chất).",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. 'Food' có nguyên âm sau kéo dài hơi, còn 'Foot' có nguyên âm ngắn thả lỏng dứt khoát",
+      correctExplanation: "Phân biệt nguyên âm ngắn và dài (/uː/ vs /ʊ/) là bài học bản lề ở Tuần 2 giúp học sinh phát âm chuẩn xác, không bị 'flat intonation' (nói giọng bằng bẹt).",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. an equal diet",
-        diagnosticTitle: "Dịch từ 'chế độ ăn đều' thành 'equal diet'",
-        explanation: "'Equal' chỉ sự ngang bằng về số lượng/toán học, không dùng miêu tả sự cân đối hài hòa về dinh dưỡng."
+        baitOptionText: "B. Cả 2 từ đều đọc là âm 'u' ngắn như tiếng Việt.",
+        diagnosticTitle: "Đồng hóa âm tiếng Anh với âm tiếng Việt",
+        explanation: "Học sinh Việt Nam thường phát âm cả food và foot giống hệt chữ 'phút' trong tiếng Việt mà không kéo dài âm /uː/."
       }
     },
     {
       id: "builder_w2d3_q07",
       roundIndex: 6,
-      prompt: "Chọn giới từ đúng: \"Fast food is harmful because it is exceptionally high ______ saturated fats and sodium.\"",
+      prompt: "Để phát triển câu trả lời Speaking Part 1 đạt chuẩn Fluency & Coherence: 'What do you do to stay healthy?', liên từ nối ý nào dùng tốt nhất để bổ sung thêm ý thứ hai?",
       options: [
-        { id: "opt_A", label: "A", text: "in" },
-        { id: "opt_B", label: "B", text: "with" },
-        { id: "opt_C", label: "C", text: "of" },
-        { id: "opt_D", label: "D", text: "for" },
+        { id: "opt_A", label: "A", text: "Besides that" },
+        { id: "opt_B", label: "B", text: "However" },
+        { id: "opt_C", label: "C", text: "On the other hand" },
+        { id: "opt_D", label: "D", text: "Although" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. in",
-      correctExplanation: "Cấu trúc dinh dưỡng luôn là 'high in calories / fat / salt' hoặc 'low in sugar'.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. Besides that",
+      correctExplanation: "Khi bổ sung thêm một thói quen tốt thứ hai (ví dụ: vừa chơi cầu lông, vừa uống đủ 2 lít nước), liên từ chỉ sự bổ sung 'On top of that / Besides that' giúp câu nói mượt mà và tự nhiên.",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. with",
-        diagnosticTitle: "Dùng giới từ 'with' sau tính từ high",
-        explanation: "Học sinh dịch 'cao với nhiều chất béo' nên chọn nhầm giới từ 'with'."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. On the other hand",
+        diagnosticTitle: "Dùng nhầm liên từ tương phản khi đang muốn bổ sung ý",
+        explanation: "'On the other hand' dùng để nêu mặt trái/ý đối lập, không dùng để bổ sung hai thói quen tốt cùng chiều."
       }
     },
     {
       id: "builder_w2d3_q08",
       roundIndex: 7,
-      prompt: "Chọn cụm thành ngữ thông dụng để nói về việc giữ cơ thể săn chắc, thon gọn và khỏe mạnh:",
+      prompt: "Chọn câu trả lời mở rộng ý tốt nhất cho hoạt động bơi lội: 'I often go swimming because it helps me ________'?",
       options: [
-        { id: "opt_A", label: "A", text: "stay in good shape" },
-        { id: "opt_B", label: "B", text: "remain in good body" },
-        { id: "opt_C", label: "C", text: "keep in good figure" },
-        { id: "opt_D", label: "D", text: "stand in good form" },
+        { id: "opt_A", label: "A", text: "stay flexible, build stamina, and relieve daily stress." },
+        { id: "opt_B", label: "B", text: "touch the water and become wet." },
+        { id: "opt_C", label: "C", text: "spending all money for swimsuit." },
+        { id: "opt_D", label: "D", text: "it make me swimmer very famous." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. stay in good shape",
-      correctExplanation: "Thành ngữ chuẩn xác của người bản ngữ là 'stay in shape' hoặc 'keep in good shape'.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. stay flexible, build stamina, and relieve daily stress.",
+      correctExplanation: "Cụm từ vựng lợi ích sức khỏe phong phú: 'stay flexible' (dẻo dai), 'build stamina' (tăng sức bền), 'relieve stress' (giải tỏa căng thẳng).",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. keep in good figure",
-        diagnosticTitle: "Nhầm lẫn 'figure' (vóc dáng thẩm mỹ) với thành ngữ chỉ sức khỏe",
-        explanation: "'Figure' chỉ đường cong hình thể bên ngoài, còn 'in good shape' diễn đạt cả thể lực và sức khỏe dẻo dai."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. touch the water and become wet.",
+        diagnosticTitle: "Nêu các chi tiết hiển nhiên, thiếu chiều sâu học thuật",
+        explanation: "Học sinh yếu từ vựng thường nêu các đặc điểm hiển nhiên không mang giá trị lập luận trong IELTS."
       }
     },
     {
       id: "builder_w2d3_q09",
       roundIndex: 8,
-      prompt: "Cụm Phrasal Verb chuẩn xác có nghĩa là 'cắt giảm số lượng tiêu thụ thức ăn nhanh hoặc đường' là:",
+      prompt: "Từ vựng 'diet' trong cụm 'a balanced diet' có nghĩa là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "cut down on" },
-        { id: "opt_B", label: "B", text: "cut off from" },
-        { id: "opt_C", label: "C", text: "cut out for" },
-        { id: "opt_D", label: "D", text: "cut away at" },
+        { id: "opt_A", label: "A", text: "Chế độ ăn uống hằng ngày đầy đủ dưỡng chất không chỉ riêng ăn kiêng" },
+        { id: "opt_B", label: "B", text: "Nhịn ăn hoàn toàn để giảm béo cấp tốc" },
+        { id: "opt_C", label: "C", text: "Chỉ ăn thịt và không bao giờ ăn rau củ" },
+        { id: "opt_D", label: "D", text: "Uống thuốc giảm cân theo đơn bác sĩ" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. cut down on",
-      correctExplanation: "'Cut down on something' là cụm động từ quen thuộc mang nghĩa cắt giảm bớt việc sử dụng thứ gì.",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. Chế độ ăn uống hằng ngày đầy đủ dưỡng chất không chỉ riêng ăn kiêng",
+      correctExplanation: "Trong tiếng Anh, 'diet' là chế độ dinh dưỡng/khẩu phần ăn uống thông thường của một người. 'A balanced diet' là chế độ ăn cân bằng dinh dưỡng. (Chỉ khi nói 'go on a diet' mới mang nghĩa ăn kiêng giảm cân).",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. cut off from",
-        diagnosticTitle: "Nhầm lẫn giữa cắt giảm và cắt đứt liên lạc",
-        explanation: "'Cut off' nghĩa là cắt nguồn điện/nước hoặc cô lập hoàn toàn, không phải cắt giảm dần số lượng."
+        baitOptionText: "B. Nhịn ăn hoàn toàn để giảm béo cấp tốc",
+        diagnosticTitle: "Mặc định 'diet' luôn là ăn kiêng giảm béo",
+        explanation: "Học sinh Việt Nam thấy chữ 'diet' là nghĩ ngay đến 'ăn kiêng', dẫn đến hiểu sai câu hỏi của giám khảo về 'daily diet'."
       }
     },
     {
       id: "builder_w2d3_q10",
       roundIndex: 9,
-      prompt: "Khi giám khảo hỏi 'Do you have any unhealthy habit?', cách trả lời nào đạt chuẩn phản xạ Band 5.0+?",
+      prompt: "Khi nói về lợi ích của giấc ngủ ngon đối với hiệu suất làm việc ngày hôm sau: 'Good sleep improves my ________ the next day.'?",
       options: [
-        { id: "opt_A", label: "A", text: "Direct confirmation + Specific habit explanation + Intention to change" },
-        { id: "opt_B", label: "B", text: "Only saying 'Yes, I do' and stopping immediately" },
-        { id: "opt_C", label: "C", text: "Changing the topic to discuss the government's healthcare policy" },
-        { id: "opt_D", label: "D", text: "Saying 'No' and refusing to discuss any lifestyle details" },
+        { id: "opt_A", label: "A", text: "focus and productivity" },
+        { id: "opt_B", label: "B", text: "productive and focused" },
+        { id: "opt_C", label: "C", text: "sleepy and tired" },
+        { id: "opt_D", label: "D", text: "eye sight speed" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Direct confirmation + Specific habit explanation + Intention to change",
-      correctExplanation: "Công thức chuẩn Part 1: Trả lời trực tiếp câu hỏi (Direct answer) -> Triển khai chi tiết thói quen (Explanation) -> Hướng khắc phục (Action/Intention).",
-      timeLimitSeconds: 20,
+      correctAnswerText: "A. focus and productivity",
+      correctExplanation: "Sau tính từ sở hữu 'my' và động từ 'improves' cần cụm danh từ song hành: 'focus' (sự tập trung) and 'productivity' (năng suất làm việc).",
+      timeLimitSeconds: 15,
       points: 1000,
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Only saying 'Yes, I do' and stopping immediately",
-        diagnosticTitle: "Lỗi trả lời cộc lốc (Under-extension) trong IELTS Speaking",
-        explanation: "Thí sinh chỉ trả lời một câu cụt ngủn 'Yes, I do' sẽ bị trừ điểm nặng tiêu chí Fluency & Coherence."
+        baitOptionText: "B. productive and focused",
+        diagnosticTitle: "Lỗi dùng tính từ thay vì danh từ sau tính từ sở hữu",
+        explanation: "Học sinh nhớ từ vựng nhưng không kiểm soát từ loại (Part of Speech), dùng tính từ 'productive' thay vì danh từ 'productivity'."
       }
     }
   ]
