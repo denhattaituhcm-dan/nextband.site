@@ -6,11 +6,25 @@
 
 import { MASTER_WEEK_1_QUESTIONS } from "./master_bank_parts/week1.data.js";
 import { MASTER_WEEK_2_QUESTIONS } from "./master_bank_parts/week2.data.js";
+import { MASTER_WEEK_3_QUESTIONS } from "./master_bank_parts/week3.data.js";
+import { MASTER_WEEK_4_QUESTIONS } from "./master_bank_parts/week4.data.js";
+import { MASTER_WEEK_5_QUESTIONS } from "./master_bank_parts/week5.data.js";
+import { MASTER_WEEK_6_QUESTIONS } from "./master_bank_parts/week6.data.js";
+import { MASTER_WEEK_7_QUESTIONS } from "./master_bank_parts/week7.data.js";
+import { MASTER_WEEK_8_QUESTIONS } from "./master_bank_parts/week8.data.js";
+import { MASTER_WEEK_9_QUESTIONS } from "./master_bank_parts/week9.data.js";
 import { ArenaQuestionItem } from "./doer-questions-bank.data.js";
 
 export const MASTER_ARENA_LESSON_QUESTIONS: Record<string, ArenaQuestionItem[]> = {
   ...MASTER_WEEK_1_QUESTIONS,
   ...MASTER_WEEK_2_QUESTIONS,
+  ...MASTER_WEEK_3_QUESTIONS,
+  ...MASTER_WEEK_4_QUESTIONS,
+  ...MASTER_WEEK_5_QUESTIONS,
+  ...MASTER_WEEK_6_QUESTIONS,
+  ...MASTER_WEEK_7_QUESTIONS,
+  ...MASTER_WEEK_8_QUESTIONS,
+  ...MASTER_WEEK_9_QUESTIONS,
 };
 
 /**

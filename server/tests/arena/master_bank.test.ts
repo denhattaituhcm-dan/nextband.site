@@ -9,9 +9,31 @@ describe("MASTER Arena Question Bank Quality & Integrity Tests", () => {
     "WEEK 2 – DAY 1",
     "WEEK 2 – DAY 2",
     "WEEK 2 – DAY 3",
+    "WEEK 3 – DAY 1",
+    "WEEK 3 – DAY 2",
+    "WEEK 3 – DAY 3",
+    "WEEK 4 – DAY 1",
+    "WEEK 4 – DAY 2",
+    "WEEK 4 – DAY 3",
+    "WEEK 5 – DAY 1",
+    "WEEK 5 – DAY 2",
+    "WEEK 5 – DAY 3",
+    "WEEK 6 – DAY 1",
+    "WEEK 6 – DAY 2",
+    "WEEK 6 – DAY 3",
+    "WEEK 7 – DAY 1",
+    "WEEK 7 – DAY 2",
+    "WEEK 7 – DAY 3",
+    "WEEK 8 – DAY 1",
+    "WEEK 8 – DAY 2",
+    "WEEK 8 – DAY 3",
+    "WEEK 9 – DAY 1",
+    "WEEK 9 – DAY 2",
+    "WEEK 9 – DAY 3",
   ];
 
-  it("chứa đầy đủ các bài học đợt 1 của khóa MASTER (60 câu hỏi chuẩn hóa)", () => {
+  it("chứa đầy đủ toàn bộ 27 bài học của khóa MASTER (270 câu hỏi chuẩn hóa 9 tuần)", () => {
+    expect(Object.keys(MASTER_ARENA_LESSON_QUESTIONS).length).toBe(27);
     for (const key of expectedLessons) {
       expect(MASTER_ARENA_LESSON_QUESTIONS[key]).toBeDefined();
       expect(MASTER_ARENA_LESSON_QUESTIONS[key].length).toBe(10);
