@@ -4,6 +4,7 @@ import { DOER_ARENA_LESSON_QUESTIONS, matchDoerLessonKey, ArenaQuestionItem } fr
 import { BUILDER_ARENA_LESSON_QUESTIONS, matchBuilderLessonKey } from "./builder-questions-bank.data.js";
 import { GRADE8_ARENA_LESSON_QUESTIONS, matchGrade8LessonKey } from "./grade8-questions-bank.data.js";
 import { MASTER_ARENA_LESSON_QUESTIONS, matchMasterLessonKey } from "./master-questions-bank.data.js";
+import { LEADER_ARENA_LESSON_QUESTIONS, matchLeaderLessonKey } from "./leader-questions-bank.data.js";
 
 /**
  * Strips HTML tags and decodes common HTML entities for crisp text display in Arena HUD
@@ -214,15 +215,18 @@ export class ArenaBankService {
         const isGrade8Course = courseTitle.includes("lớp 8") || courseTitle.includes("lop 8") || courseTitle.includes("grade 8");
         const isBuilderCourse = courseTitle.includes("builder");
         const isMasterCourse = courseTitle.includes("master");
+        const isLeaderCourse = courseTitle.includes("leader");
         if (!resolvedKey) {
-          if (isGrade8Course) {
+          if (isLeaderCourse) {
+            resolvedKey = matchLeaderLessonKey(exam.title) || "";
+          } else if (isGrade8Course) {
             resolvedKey = matchGrade8LessonKey(exam.title) || "";
           } else if (isBuilderCourse) {
             resolvedKey = matchBuilderLessonKey(exam.title) || "";
           } else if (isMasterCourse) {
             resolvedKey = matchMasterLessonKey(exam.title) || "";
           } else {
-            resolvedKey = matchGrade8LessonKey(exam.title) || matchMasterLessonKey(exam.title) || matchBuilderLessonKey(exam.title) || matchDoerLessonKey(exam.title) || "";
+            resolvedKey = matchLeaderLessonKey(exam.title) || matchGrade8LessonKey(exam.title) || matchMasterLessonKey(exam.title) || matchBuilderLessonKey(exam.title) || matchDoerLessonKey(exam.title) || "";
           }
         }
       }
@@ -236,6 +240,16 @@ export class ArenaBankService {
         examTitle,
         isCustom: true,
         questions: custom,
+      };
+    }
+
+    // 1.5. Check LEADER questions bank
+    if (resolvedKey && LEADER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
+      return {
+        lessonKey: resolvedKey,
+        examTitle,
+        isCustom: false,
+        questions: LEADER_ARENA_LESSON_QUESTIONS[resolvedKey],
       };
     }
 
@@ -335,11 +349,17 @@ export class ArenaBankService {
       const isGrade8 = courseTitle.includes("lớp 8") || courseTitle.includes("lop 8") || courseTitle.includes("grade 8");
       const isBuilder = courseTitle.includes("builder");
       const isMaster = courseTitle.includes("master");
+      const isLeader = courseTitle.includes("leader");
 
       let resolvedLessonKey: string | null = null;
       let resolvedBankQuestions: ArenaQuestionItem[] | null = null;
 
-      if (isGrade8 && exam?.title) {
+      if (isLeader && exam?.title) {
+        resolvedLessonKey = matchLeaderLessonKey(exam.title);
+        if (resolvedLessonKey && LEADER_ARENA_LESSON_QUESTIONS[resolvedLessonKey]) {
+          resolvedBankQuestions = LEADER_ARENA_LESSON_QUESTIONS[resolvedLessonKey];
+        }
+      } else if (isGrade8 && exam?.title) {
         resolvedLessonKey = matchGrade8LessonKey(exam.title);
         if (resolvedLessonKey && GRADE8_ARENA_LESSON_QUESTIONS[resolvedLessonKey]) {
           resolvedBankQuestions = GRADE8_ARENA_LESSON_QUESTIONS[resolvedLessonKey];
@@ -357,6 +377,11 @@ export class ArenaBankService {
       }
 
       if (!resolvedBankQuestions && exam?.title) {
+        const leaderKey = matchLeaderLessonKey(exam.title);
+        if (leaderKey && LEADER_ARENA_LESSON_QUESTIONS[leaderKey]) {
+          resolvedLessonKey = leaderKey;
+          resolvedBankQuestions = LEADER_ARENA_LESSON_QUESTIONS[leaderKey];
+        }
         const grade8Key = matchGrade8LessonKey(exam.title);
         if (grade8Key && GRADE8_ARENA_LESSON_QUESTIONS[grade8Key]) {
           resolvedLessonKey = grade8Key;

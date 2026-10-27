@@ -115741,6 +115741,7297 @@ var init_master_questions_bank_data = __esm({
   }
 });
 
+// server/services/leader_bank_parts/week1.data.ts
+var LEADER_WEEK_1_QUESTIONS;
+var init_week1_data4 = __esm({
+  "server/services/leader_bank_parts/week1.data.ts"() {
+    LEADER_WEEK_1_QUESTIONS = {
+      "WEEK 1 \u2013 DAY 1": [
+        {
+          id: "leader_w1d1_q01",
+          roundIndex: 0,
+          prompt: "Trong thang \u0111i\u1EC3m IELTS Writing Task 2, ti\xEAu ch\xED Task Response (TR) \u1EDF m\u1EE9c Band 7.0 \u0111\xF2i h\u1ECFi b\xE0i vi\u1EBFt ph\u1EA3i \u0111\xE1p \u1EE9ng y\u1EBFu t\u1ED1 then ch\u1ED1t n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "Gi\u1EA3i quy\u1EBFt \u0111\u1EA7y \u0111\u1EE7 t\u1EA5t c\u1EA3 c\xE1c ph\u1EA7n c\u1EE7a \u0111\u1EC1 b\xE0i, th\u1EC3 hi\u1EC7n r\xF5 l\u1EADp tr\u01B0\u1EDDng xuy\xEAn su\u1ED1t v\xE0 ph\xE1t tri\u1EC3n c\xE1c \xFD t\u01B0\u1EDFng ch\xEDnh c\xF3 chi\u1EC1u s\xE2u" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 c\u1EA7n vi\u1EBFt \u0111\u1EE7 t\u1EEB 250 t\u1EEB tr\u1EDF l\xEAn v\xE0 kh\xF4ng m\u1EAFc l\u1ED7i ch\xEDnh t\u1EA3" },
+            { id: "opt_C", label: "C", text: "S\u1EED d\u1EE5ng \xEDt nh\u1EA5t m\u01B0\u1EDDi c\u1EA5u tr\xFAc \u0111\u1EA3o ng\u1EEF ph\u1EE9c t\u1EA1p" },
+            { id: "opt_D", label: "D", text: "\u0110\u01B0a ra th\u1EADt nhi\u1EC1u v\xED d\u1EE5 c\xE1 nh\xE2n t\u1EEB cu\u1ED9c s\u1ED1ng ri\xEAng c\u1EE7a t\xE1c gi\u1EA3" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Gi\u1EA3i quy\u1EBFt \u0111\u1EA7y \u0111\u1EE7 t\u1EA5t c\u1EA3 c\xE1c ph\u1EA7n c\u1EE7a \u0111\u1EC1 b\xE0i, th\u1EC3 hi\u1EC7n r\xF5 l\u1EADp tr\u01B0\u1EDDng xuy\xEAn su\u1ED1t v\xE0 ph\xE1t tri\u1EC3n c\xE1c \xFD t\u01B0\u1EDFng ch\xEDnh c\xF3 chi\u1EC1u s\xE2u",
+          correctExplanation: "Theo Band Descriptors ch\xEDnh th\u1EE9c c\u1EE7a IELTS: Band 7.0 Task Response y\xEAu c\u1EA7u 'addresses all parts of the task', 'presents a clear position throughout the response', v\xE0 'presents, extends and supports main ideas'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ch\u1EC9 c\u1EA7n vi\u1EBFt \u0111\u1EE7 t\u1EEB 250 t\u1EEB tr\u1EDF l\xEAn v\xE0 kh\xF4ng m\u1EAFc l\u1ED7i ch\xEDnh t\u1EA3",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa y\xEAu c\u1EA7u t\u1ED1i thi\u1EC3u v\u1EC1 s\u1ED1 t\u1EEB v\xE0 ti\xEAu chu\u1EA9n ch\u1EA5m \u0111i\u1EC3m l\u1EADp lu\u1EADn",
+            explanation: "Vi\u1EBFt \u0111\u1EE7 250 t\u1EEB ch\u1EC9 l\xE0 \u0111i\u1EC1u ki\u1EC7n c\u1EA7n \u0111\u1EC3 kh\xF4ng b\u1ECB ph\u1EA1t l\u1ED7i underlength, kh\xF4ng quy\u1EBFt \u0111\u1ECBnh band \u0111i\u1EC3m Task Response."
+          }
+        },
+        {
+          id: "leader_w1d1_q02",
+          roundIndex: 1,
+          prompt: "Theo chu\u1ED7i ph\xE1t tri\u1EC3n lu\u1EADn \u0111i\u1EC3m chu\u1EA9n Leader: Claim -> Why -> Result, ch\u1EE9c n\u0103ng c\u1ED1t l\xF5i c\u1EE7a b\u01B0\u1EDBc 'Why' l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Gi\u1EA3i th\xEDch c\u01A1 ch\u1EBF v\u1EADn h\xE0nh v\xE0 l\xFD gi\u1EA3i nguy\xEAn nh\xE2n c\u1ED1t l\xF5i khi\u1EBFn lu\u1EADn \u0111i\u1EC3m \u0111\xF3 \u0111\xFAng \u0111\u1EAFn" },
+            { id: "opt_B", label: "B", text: "Li\u1EC7t k\xEA danh s\xE1ch c\xE1c n\u01B0\u1EDBc tr\xEAn th\u1EBF gi\u1EDBi \xE1p d\u1EE5ng ch\xEDnh s\xE1ch \u0111\xF3" },
+            { id: "opt_C", label: "C", text: "\u0110\u01B0a ra k\u1EBFt qu\u1EA3 cu\u1ED1i c\xF9ng m\xE0 kh\xF4ng c\u1EA7n gi\u1EA3i th\xEDch" },
+            { id: "opt_D", label: "D", text: "L\u1EB7p l\u1EA1i c\xE2u ch\u1EE7 \u0111\u1EC1 b\u1EB1ng c\xE1ch \u0111\u1EA3o tr\u1EADt t\u1EF1 t\u1EEB" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Gi\u1EA3i th\xEDch c\u01A1 ch\u1EBF v\u1EADn h\xE0nh v\xE0 l\xFD gi\u1EA3i nguy\xEAn nh\xE2n c\u1ED1t l\xF5i khi\u1EBFn lu\u1EADn \u0111i\u1EC3m \u0111\xF3 \u0111\xFAng \u0111\u1EAFn",
+          correctExplanation: "B\u01B0\u1EDBc 'Why' (Mechanism) gi\u1EA3i th\xEDch c\u01A1 ch\u1EBF 'How it works' ho\u1EB7c 'T\u1EA1i sao \u0111i\u1EC1u \u0111\xF3 l\u1EA1i di\u1EC5n ra', ng\u0103n ch\u1EB7n t\xECnh tr\u1EA1ng l\u1EADp lu\u1EADn h\u1EDDi h\u1EE3t nh\u1EA3y c\xF3c t\u1EEB lu\u1EADn \u0111i\u1EC3m sang k\u1EBFt qu\u1EA3.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. L\u1EB7p l\u1EA1i c\xE2u ch\u1EE7 \u0111\u1EC1 b\u1EB1ng c\xE1ch \u0111\u1EA3o tr\u1EADt t\u1EF1 t\u1EEB",
+            diagnosticTitle: "L\u1ED7i l\u1EADp lu\u1EADn v\xF2ng tr\xF2n (Circular Reasoning)",
+            explanation: "L\u1EB7p l\u1EA1i Claim b\u1EB1ng t\u1EEB \u0111\u1ED3ng ngh\u0129a m\xE0 kh\xF4ng gi\u1EA3i th\xEDch c\u01A1 ch\u1EBF l\xE0 l\u1ED7i l\u1EADp lu\u1EADn lu\u1EA9n qu\u1EA9n r\u1EA5t ph\u1ED5 bi\u1EBFn."
+          }
+        },
+        {
+          id: "leader_w1d1_q03",
+          roundIndex: 2,
+          prompt: "\u0110o\u1EA1n v\u0103n sau m\u1EAFc l\u1ED7i l\u1EADp lu\u1EADn n\xE0o: 'The internet helps us update the latest news from around the world. For example, we could watch soccer matches of the 2022 World Cup at home without going to Qatar. As a result, people broaden their knowledge.'?",
+          options: [
+            { id: "opt_A", label: "A", text: "Thi\u1EBFu ph\xE2n t\xEDch c\u01A1 ch\u1EBF Why v\xE0 v\xED d\u1EE5 xem b\xF3ng \u0111\xE1 kh\xF4ng ch\u1EE9ng minh \u0111\u01B0\u1EE3c cho vi\u1EC7c m\u1EDF r\u1ED9ng tri th\u1EE9c nh\xE2n lo\u1EA1i" },
+            { id: "opt_B", label: "B", text: "Sai to\xE0n b\u1ED9 c\u1EA5u tr\xFAc th\xEC hi\u1EC7n t\u1EA1i \u0111\u01A1n" },
+            { id: "opt_C", label: "C", text: "Thi\u1EBFu c\xE1c tr\u1EA1ng t\u1EEB ch\u1EC9 t\u1EA7n su\u1EA5t" },
+            { id: "opt_D", label: "D", text: "\u0110o\u1EA1n v\u0103n qu\xE1 d\xE0i so v\u1EDBi quy \u0111\u1ECBnh" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Thi\u1EBFu ph\xE2n t\xEDch c\u01A1 ch\u1EBF Why v\xE0 v\xED d\u1EE5 xem b\xF3ng \u0111\xE1 kh\xF4ng ch\u1EE9ng minh \u0111\u01B0\u1EE3c cho vi\u1EC7c m\u1EDF r\u1ED9ng tri th\u1EE9c nh\xE2n lo\u1EA1i",
+          correctExplanation: "V\xED d\u1EE5 'xem b\xF3ng \u0111\xE1 t\u1EA1i nh\xE0' ch\u1EC9 ch\u1EE9ng minh cho vi\u1EC7c ti\u1EC7n l\u1EE3i theo d\xF5i gi\u1EA3i tr\xED th\u1EC3 thao, kh\xF4ng t\u1EA1o th\xE0nh c\u1EA7u n\u1ED1i logic ch\u1EE9ng minh cho 'broaden knowledge' (m\u1EDF r\u1ED9ng tri th\u1EE9c h\u1ECDc thu\u1EADt/x\xE3 h\u1ED9i).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Thi\u1EBFu c\xE1c tr\u1EA1ng t\u1EEB ch\u1EC9 t\u1EA7n su\u1EA5t",
+            diagnosticTitle: "B\u1EAFt l\u1ED7i h\xECnh th\u1EE9c ng\u1EEF ph\xE1p v\u1EE5n v\u1EB7t thay v\xEC nh\u1EADn di\u1EC7n g\xE3y \u0111\u1ED5 m\u1EA1ch logic",
+            explanation: "V\u1EA5n \u0111\u1EC1 ch\xED t\u1EED c\u1EE7a \u0111o\u1EA1n v\u0103n l\xE0 g\xE3y \u0111\u1ED5 logic (illogical leap) gi\u1EEFa v\xED d\u1EE5 v\xE0 k\u1EBFt lu\u1EADn, kh\xF4ng ph\u1EA3i thi\u1EBFu tr\u1EA1ng t\u1EEB."
+          }
+        },
+        {
+          id: "leader_w1d1_q04",
+          roundIndex: 3,
+          prompt: "V\u1EDBi \u0111\u1EC1 b\xE0i: 'Some people believe that studying at university is the best route to succeed, while others think it is better to get a job straight after school. Discuss both views and give your opinion.', c\xE2u Thesis Statement n\xE0o sau \u0111\xE2y \u0111\u1EA1t chu\u1EA9n Leader 7.0+?",
+          options: [
+            { id: "opt_A", label: "A", text: "While early employment provides invaluable practical experience and immediate financial independence, I contend that tertiary education remains superior by cultivating specialized expertise essential for long-term career resilience." },
+            { id: "opt_B", label: "B", text: "Some people like universities and others like working, and I will discuss both views in my essay." },
+            { id: "opt_C", label: "C", text: "Going to university is 100% better than getting a job because university students are much smarter." },
+            { id: "opt_D", label: "D", text: "Both views have good points and bad points so everyone can choose freely." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. While early employment provides invaluable practical experience and immediate financial independence, I contend that tertiary education remains superior by cultivating specialized expertise essential for long-term career resilience.",
+          correctExplanation: "Thesis Statement chu\u1EA9n Leader: th\u1EEBa nh\u1EADn gi\xE1 tr\u1ECB c\u1EE7a v\u1EBF \u0111\u1ED1i l\u1EADp ('invaluable practical experience and immediate financial independence') tr\u01B0\u1EDBc khi kh\u1EB3ng \u0111\u1ECBnh l\u1EADp tr\u01B0\u1EDDng c\u1ED1t l\xF5i ('specialized expertise essential for long-term career resilience') v\u1EDBi ng\xF4n ng\u1EEF s\xFAc t\xEDch.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Some people like universities and others like working, and I will discuss both views in my essay.",
+            diagnosticTitle: "M\u1EDF b\xE0i n\u01B0\u1EDBc \u0111\xF4i v\xF4 th\u01B0\u1EDFng v\xF4 ph\u1EA1t thi\u1EBFu l\u1EADp tr\u01B0\u1EDDng (Band 5.0)",
+            explanation: "Vi\u1EBFt 'I will discuss both views' m\xE0 kh\xF4ng n\xEAu r\xF5 l\u1EADp tr\u01B0\u1EDDng ng\u01B0\u1EDDi vi\u1EBFt vi ph\u1EA1m ti\xEAu ch\xED Task Response 7.0."
+          }
+        },
+        {
+          id: "leader_w1d1_q05",
+          roundIndex: 4,
+          prompt: "Ch\u1ECDn c\xE2u ph\xE1t tri\u1EC3n ph\u1EA7n 'Result' (H\u1EC7 qu\u1EA3 s\xE2u s\u1EAFc) cho lu\u1EADn \u0111i\u1EC3m: 'Sinh vi\xEAn t\u1ED1t nghi\u1EC7p \u0111\u1EA1i h\u1ECDc s\u1EDF h\u1EEFu n\u1EC1n t\u1EA3ng t\u01B0 duy ph\u1EA3n bi\u1EC7n v\xE0 kh\u1EA3 n\u0103ng nghi\xEAn c\u1EE9u chuy\xEAn s\xE2u.'?",
+          options: [
+            { id: "opt_A", label: "A", text: "Consequently, these analytical competencies enable professionals to navigate complex industry disruptions and secure sustainable leadership trajectories." },
+            { id: "opt_B", label: "B", text: "So they can easily get rich and buy luxury cars in a few months." },
+            { id: "opt_C", label: "C", text: "Because of that, employers give them high salary without asking any questions." },
+            { id: "opt_D", label: "D", text: "And then, they will be very happy with their lives." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Consequently, these analytical competencies enable professionals to navigate complex industry disruptions and secure sustainable leadership trajectories.",
+          correctExplanation: "T\u1EEB v\u1EF1ng v\xE0 t\u01B0 duy c\u1EA5p cao: 'analytical competencies' (n\u0103ng l\u1EF1c ph\xE2n t\xEDch), 'navigate complex industry disruptions' (l\xE8o l\xE1i tr\u01B0\u1EDBc c\xE1c bi\u1EBFn \u0111\u1ED9ng ng\xE0nh ph\u1EE9c t\u1EA1p), 'sustainable leadership trajectories' (l\u1ED9 tr\xECnh l\xE3nh \u0111\u1EA1o b\u1EC1n v\u1EEFng).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. So they can easily get rich and buy luxury cars in a few months.",
+            diagnosticTitle: "Suy di\u1EC5n th\u1EF1c d\u1EE5ng ng\xE2y ng\xF4 v\xE0 d\xF9ng t\u1EEB n\u1ED1i 'So' \u0111\u1EA7u c\xE2u",
+            explanation: "D\xF9ng 'So' \u1EDF \u0111\u1EA7u c\xE2u v\xE0 quy k\u1EBFt b\u1EB1ng vi\u1EC7c l\xE0m gi\xE0u nhanh l\xE0 l\u1ED1i suy ngh\u0129 thi\u1EBFu t\xEDnh h\u1ECDc thu\u1EADt."
+          }
+        },
+        {
+          id: "leader_w1d1_q06",
+          roundIndex: 5,
+          prompt: "Th\xE0nh ph\u1EA7n 'Limitation / Extension' trong chu\u1ED7i ph\xE1t tri\u1EC3n \u0111o\u1EA1n v\u0103n n\xE2ng cao c\xF3 vai tr\xF2 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "X\xE1c \u0111\u1ECBnh ranh gi\u1EDBi ho\u1EB7c ngo\u1EA1i l\u1EC7 h\u1EE3p l\xFD c\u1EE7a lu\u1EADn \u0111i\u1EC3m, gi\xFAp l\u1EADp lu\u1EADn kh\xF4ng b\u1ECB r\u01A1i v\xE0o b\u1EABy tuy\u1EC7t \u0111\u1ED1i h\xF3a phi\u1EBFn di\u1EC7n" },
+            { id: "opt_B", label: "B", text: "Ph\u1EE7 nh\u1EADn to\xE0n b\u1ED9 nh\u1EEFng g\xEC v\u1EEBa vi\u1EBFt \u1EDF c\xE2u tr\u01B0\u1EDBc" },
+            { id: "opt_C", label: "C", text: "T\u0103ng s\u1ED1 l\u01B0\u1EE3ng t\u1EEB v\u1EF1ng \u0111\u1EC3 v\u01B0\u1EE3t qua m\u1ED1c 350 t\u1EEB" },
+            { id: "opt_D", label: "D", text: "Xin l\u1ED7i ng\u01B0\u1EDDi ch\u1EA5m v\xEC lu\u1EADn \u0111i\u1EC3m ch\u01B0a ho\xE0n h\u1EA3o" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. X\xE1c \u0111\u1ECBnh ranh gi\u1EDBi ho\u1EB7c ngo\u1EA1i l\u1EC7 h\u1EE3p l\xFD c\u1EE7a lu\u1EADn \u0111i\u1EC3m, gi\xFAp l\u1EADp lu\u1EADn kh\xF4ng b\u1ECB r\u01A1i v\xE0o b\u1EABy tuy\u1EC7t \u0111\u1ED1i h\xF3a phi\u1EBFn di\u1EC7n",
+          correctExplanation: "'Limitation/Extension' (v\xED d\u1EE5: 'That being said, this advantage may not apply to specialized vocational trades...') th\u1EC3 hi\u1EC7n t\u01B0 duy h\u1ECDc thu\u1EADt ch\xEDn ch\u1EAFn, bi\u1EBFt nh\xECn nh\u1EADn \u0111a chi\u1EC1u v\xE0 tr\xE1nh l\u1ED7i ng\u1EE5y bi\u1EC7n tuy\u1EC7t \u0111\u1ED1i h\xF3a.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ph\u1EE7 nh\u1EADn to\xE0n b\u1ED9 nh\u1EEFng g\xEC v\u1EEBa vi\u1EBFt \u1EDF c\xE2u tr\u01B0\u1EDBc",
+            diagnosticTitle: "Hi\u1EC3u nh\u1EA7m vi\u1EC7c gi\u1EDBi h\u1EA1n ph\u1EA1m vi th\xE0nh s\u1EF1 t\u1EF1 m\xE2u thu\u1EABn",
+            explanation: "Limitation l\xE0 \u0111\u1EB7t ra bi\xEAn \u0111\u1ED9 \xE1p d\u1EE5ng h\u1EE3p l\xFD cho lu\u1EADn \u0111i\u1EC3m, kh\xF4ng ph\u1EA3i t\u1EF1 ph\u1EA3n b\xE1c ch\xEDnh m\xECnh."
+          }
+        },
+        {
+          id: "leader_w1d1_q07",
+          roundIndex: 6,
+          prompt: "Ch\u1ECDn Topic Sentence ho\xE0n h\u1EA3o m\u1EDF \u0111\u1EA7u \u0111o\u1EA1n th\xE2n b\xE0i v\u1EC1 m\u1EB7t tr\xE1i c\u1EE7a vi\u1EC7c m\xF9 qu\xE1ng tu\xE2n theo c\xE1c h\u1EE7 t\u1EE5c truy\u1EC1n th\u1ED1ng:",
+          options: [
+            { id: "opt_A", label: "A", text: "On the other hand, unquestioning adherence to archaic traditions can stifle social progress and perpetuate systemic discrimination." },
+            { id: "opt_B", label: "B", text: "Secondly, traditional customs have many bad things that make people unhappy." },
+            { id: "opt_C", label: "C", text: "Tradition is old so we must change it immediately." },
+            { id: "opt_D", label: "D", text: "There are some disadvantages of following traditions in human societies." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. On the other hand, unquestioning adherence to archaic traditions can stifle social progress and perpetuate systemic discrimination.",
+          correctExplanation: "T\u1EEB v\u1EF1ng C1/C2 s\u1EAFc b\xE9n: 'unquestioning adherence' (s\u1EF1 tu\xE2n theo m\xF9 qu\xE1ng kh\xF4ng ch\u1EA5t v\u1EA5n), 'archaic traditions' (nh\u1EEFng truy\u1EC1n th\u1ED1ng c\u1ED5 h\u1EE7), 'stifle social progress' (k\xECm h\xE3m ti\u1EBFn b\u1ED9 x\xE3 h\u1ED9i), 'perpetuate systemic discrimination' (duy tr\xEC s\u1EF1 ph\xE2n bi\u1EC7t \u0111\u1ED1i x\u1EED c\xF3 h\u1EC7 th\u1ED1ng).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. There are some disadvantages of following traditions in human societies.",
+            diagnosticTitle: "D\xF9ng khu\xF4n m\u1EABu chung chung thi\u1EBFu s\u1EE9c n\u1EB7ng h\u1ECDc thu\u1EADt",
+            explanation: "Ph\u01B0\u01A1ng \xE1n D l\xE0 c\xE2u m\u1EABu \u1EDF m\u1EE9c Band 5.5, thi\u1EBFu c\xE1c thu\u1EADt ng\u1EEF h\u1ECDc thu\u1EADt c\u1EE5 th\u1EC3 \u0111\u1ECBnh h\u01B0\u1EDBng cho \u0111o\u1EA1n v\u0103n."
+          }
+        },
+        {
+          id: "leader_w1d1_q08",
+          roundIndex: 7,
+          prompt: "Trong ti\xEAu ch\xED Coherence & Cohesion (CC), \u0111i\u1EC1u g\xEC gi\xFAp \u0111o\u1EA1n v\u0103n \u0111\u1EA1t Band 7.0+ thay v\xEC Band 6.0?",
+          options: [
+            { id: "opt_A", label: "A", text: "M\u1EA1ch th\xF4ng tin ti\u1EBFn tri\u1EC3n r\xF5 r\xE0ng xuy\xEAn su\u1ED1t v\u1EDBi s\u1EF1 ph\xE1t tri\u1EC3n logic, s\u1EED d\u1EE5ng linh ho\u1EA1t c\xE1c ph\u01B0\u01A1ng th\u1EE9c quy chi\u1EBFu v\xE0 t\u1EEB n\u1ED1i t\u1EF1 nhi\xEAn m\xE0 kh\xF4ng g\xE2y c\u1EA3m gi\xE1c m\xE1y m\xF3c" },
+            { id: "opt_B", label: "B", text: "Ch\xE8n t\u1ED1i \u0111a c\xE1c li\xEAn t\u1EEB ph\u1EE9c t\u1EA1p nh\u01B0 Furthermore, Moreover, In addition \u1EDF \u0111\u1EA7u m\u1ECDi c\xE2u" },
+            { id: "opt_C", label: "C", text: "Chia b\xE0i vi\u1EBFt th\xE0nh m\u01B0\u1EDDi \u0111o\u1EA1n v\u0103n th\u1EADt ng\u1EAFn" },
+            { id: "opt_D", label: "D", text: "Kh\xF4ng s\u1EED d\u1EE5ng b\u1EA5t k\u1EF3 \u0111\u1EA1i t\u1EEB thay th\u1EBF n\xE0o \u0111\u1EC3 tr\xE1nh g\xE2y hi\u1EC3u l\u1EA7m" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. M\u1EA1ch th\xF4ng tin ti\u1EBFn tri\u1EC3n r\xF5 r\xE0ng xuy\xEAn su\u1ED1t v\u1EDBi s\u1EF1 ph\xE1t tri\u1EC3n logic, s\u1EED d\u1EE5ng linh ho\u1EA1t c\xE1c ph\u01B0\u01A1ng th\u1EE9c quy chi\u1EBFu v\xE0 t\u1EEB n\u1ED1i t\u1EF1 nhi\xEAn m\xE0 kh\xF4ng g\xE2y c\u1EA3m gi\xE1c m\xE1y m\xF3c",
+          correctExplanation: "Ti\xEAu ch\xED Band 7.0 CC: 'logically organises information and ideas; there is clear progression throughout', s\u1EED d\u1EE5ng \u0111a d\u1EA1ng c\xE1c ph\u01B0\u01A1ng th\u1EE9c li\xEAn k\u1EBFt (cohesive devices) t\u1EF1 nhi\xEAn v\xE0 ch\xEDnh x\xE1c.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ch\xE8n t\u1ED1i \u0111a c\xE1c li\xEAn t\u1EEB ph\u1EE9c t\u1EA1p nh\u01B0 Furthermore, Moreover, In addition \u1EDF \u0111\u1EA7u m\u1ECDi c\xE2u",
+            diagnosticTitle: "L\u1ED7i l\u1EA1m d\u1EE5ng li\xEAn t\u1EEB c\u01A1 h\u1ECDc (Over-use of mechanical cohesive devices)",
+            explanation: "L\u1EA1m d\u1EE5ng li\xEAn t\u1EEB \u1EDF \u0111\u1EA7u m\u1ECDi c\xE2u l\xE0 d\u1EA5u hi\u1EC7u \u0111\u1EB7c tr\u01B0ng c\u1EE7a Band 5.5-6.0, b\u1ECB tr\u1EEB \u0111i\u1EC3m Cohesion."
+          }
+        },
+        {
+          id: "leader_w1d1_q09",
+          roundIndex: 8,
+          prompt: "Ch\u1ECDn c\xE2u vi\u1EBFt n\xE2ng c\u1EA5p h\u1ECDc thu\u1EADt di\u1EC5n \u0111\u1EA1t \xFD: 'H\u1ECDc sinh \u0111i l\xE0m s\u1EDBm c\xF3 th\u1EC3 t\u1EF1 l\u1EADp t\xE0i ch\xEDnh tr\u01B0\u1EDBc b\u1EA1n b\xE8 \u0111\u1ED3ng trang l\u1EE9a.'?",
+          options: [
+            { id: "opt_A", label: "A", text: "Direct entrants into the workforce can attain financial self-sufficiency well ahead of their university-attending peers." },
+            { id: "opt_B", label: "B", text: "Early workers have money before their classmates who go to college." },
+            { id: "opt_C", label: "C", text: "Getting jobs fast makes teenagers rich sooner than other students." },
+            { id: "opt_D", label: "D", text: "Young people working early earn salary very quickly." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Direct entrants into the workforce can attain financial self-sufficiency well ahead of their university-attending peers.",
+          correctExplanation: "Chu\u1ED7i t\u1EEB v\u1EF1ng chuy\xEAn nghi\u1EC7p: 'Direct entrants into the workforce' (ng\u01B0\u1EDDi tham gia tr\u1EF1c ti\u1EBFp v\xE0o l\u1EF1c l\u01B0\u1EE3ng lao \u0111\u1ED9ng), 'attain financial self-sufficiency' (\u0111\u1EA1t \u0111\u01B0\u1EE3c s\u1EF1 t\u1EF1 ch\u1EE7 t\xE0i ch\xEDnh), 'well ahead of their university-attending peers' (v\u01B0\u1EE3t tr\u01B0\u1EDBc c\xE1c b\u1EA1n \u0111\u1ED3ng l\u1EE9a h\u1ECDc \u0111\u1EA1i h\u1ECDc).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Early workers have money before their classmates who go to college.",
+            diagnosticTitle: "L\u1ED1i di\u1EC5n \u0111\u1EA1t n\xF4m na c\u1EE7a ti\u1EBFng Anh giao ti\u1EBFp th\xF4ng th\u01B0\u1EDDng",
+            explanation: "'Have money before classmates' l\xE0 l\u1ED1i di\u1EC5n \u0111\u1EA1t v\u0103n n\xF3i \u0111\u1EDDi th\u01B0\u1EDDng, kh\xF4ng \u0111\u1EA1t chu\u1EA9n v\u0103n phong h\u1ECDc thu\u1EADt."
+          }
+        },
+        {
+          id: "leader_w1d1_q10",
+          roundIndex: 9,
+          prompt: "M\u1ED9t ph\u1EA7n M\u1EDF b\xE0i (Introduction) \u0111\u1EA1t chu\u1EA9n t\u1ED1i \u01B0u th\u1EDDi gian v\xE0 t\xEDnh h\u1ECDc thu\u1EADt trong Task 2 n\xEAn bao g\u1ED3m bao nhi\xEAu c\xE2u?",
+          options: [
+            { id: "opt_A", label: "A", text: "\u0110\xFAng 2 c\xE2u: C\xE2u 1 paraphrase l\u1EA1i b\u1ED1i c\u1EA3nh \u0111\u1EC1 b\xE0i; C\xE2u 2 \u0111\u01B0a ra Thesis Statement \u0111\u1ECBnh h\u01B0\u1EDBng quan \u0111i\u1EC3m tr\u1EF1c di\u1EC7n" },
+            { id: "opt_B", label: "B", text: "Kho\u1EA3ng 5 \u0111\u1EBFn 6 c\xE2u gi\u1EA3i th\xEDch c\u1EB7n k\u1EBD m\u1ECDi v\xED d\u1EE5 l\u1ECBch s\u1EED" },
+            { id: "opt_C", label: "C", text: "Ch\u1EC9 \u0111\xFAng 1 c\u1EE5m t\u1EEB ng\u1EAFn g\u1ECDn" },
+            { id: "opt_D", label: "D", text: "C\xE0ng d\xE0i c\xE0ng t\u1ED1t \u0111\u1EC3 g\xE2y \u1EA5n t\u01B0\u1EE3ng v\u1EDBi gi\xE1m kh\u1EA3o" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. \u0110\xFAng 2 c\xE2u: C\xE2u 1 paraphrase l\u1EA1i b\u1ED1i c\u1EA3nh \u0111\u1EC1 b\xE0i; C\xE2u 2 \u0111\u01B0a ra Thesis Statement \u0111\u1ECBnh h\u01B0\u1EDBng quan \u0111i\u1EC3m tr\u1EF1c di\u1EC7n",
+          correctExplanation: "C\xF4ng th\u1EE9c m\u1EDF b\xE0i 2 c\xE2u kinh \u0111i\u1EC3n c\u1EE7a Leader: Sentence 1 Paraphrase prompt + Sentence 2 Clear Thesis Statement. Vi\u1EBFt trong 3-4 ph\xFAt \u0111\u1EC3 d\xE0nh t\u1ED1i \u0111a 30-32 ph\xFAt cho hai \u0111o\u1EA1n th\xE2n b\xE0i.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Kho\u1EA3ng 5 \u0111\u1EBFn 6 c\xE2u gi\u1EA3i th\xEDch c\u1EB7n k\u1EBD m\u1ECDi v\xED d\u1EE5 l\u1ECBch s\u1EED",
+            diagnosticTitle: "Vi\u1EBFt m\u1EDF b\xE0i lan man d\xE0i d\xF2ng l\xE0m ch\xE1y gi\u1EDD vi\u1EBFt th\xE2n b\xE0i",
+            explanation: "M\u1EDF b\xE0i d\xE0i 5-6 c\xE2u khi\u1EBFn th\xED sinh m\u1EA5t 10-12 ph\xFAt, d\u1EABn \u0111\u1EBFn vi\u1EC7c kh\xF4ng k\u1ECBp th\u1EDDi gian ph\xE1t tri\u1EC3n th\xE2n b\xE0i."
+          }
+        }
+      ],
+      "WEEK 1 \u2013 DAY 2": [
+        {
+          id: "leader_w1d2_q01",
+          roundIndex: 0,
+          prompt: "Trong ti\xEAu chu\u1EA9n ch\u1EA5m \u0111i\u1EC3m IELTS Speaking, k\u1EF9 thu\u1EADt 'Acoustic Chunking' (Ng\u1EAFt c\u1EE5m \xE2m h\u1ECDc theo ng\u1EEF ngh\u0129a) mang l\u1EA1i l\u1EE3i \xEDch g\xEC cho \u0111i\u1EC3m Pronunciation v\xE0 Fluency?",
+          options: [
+            { id: "opt_A", label: "A", text: "Gi\xFAp ng\u01B0\u1EDDi n\xF3i ng\u1EAFt ngh\u1EC9 t\u1EF1 nhi\xEAn theo c\xE1c c\u1EE5m \xFD ngh\u0129a ng\u1EEF ph\xE1p, t\u1EA1o nh\u1ECBp \u0111i\u1EC7u sinh \u0111\u1ED9ng v\xE0 ng\u0103n ng\u1EEBa t\xECnh tr\u1EA1ng ng\u1EADp ng\u1EEBng gi\u1EEFa c\xE2u" },
+            { id: "opt_B", label: "B", text: "Bu\u1ED9c th\xED sinh ph\u1EA3i n\xF3i t\u1EEBng t\u1EEB m\u1ED9t th\u1EADt ch\u1EADm r\xE3i v\xE0 d\u1EEBng 2 gi\xE2y sau m\u1ED7i t\u1EEB" },
+            { id: "opt_C", label: "C", text: "T\u1EA1o ra \xE2m thanh gi\u1ED1ng ti\u1EBFng g\xF5 b\xE0n ph\xEDm m\xE1y t\xEDnh" },
+            { id: "opt_D", label: "D", text: "Gi\xFAp th\xED sinh kh\xF4ng c\u1EA7n ph\xE1t \xE2m c\xE1c \xE2m cu\u1ED1i" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Gi\xFAp ng\u01B0\u1EDDi n\xF3i ng\u1EAFt ngh\u1EC9 t\u1EF1 nhi\xEAn theo c\xE1c c\u1EE5m \xFD ngh\u0129a ng\u1EEF ph\xE1p, t\u1EA1o nh\u1ECBp \u0111i\u1EC7u sinh \u0111\u1ED9ng v\xE0 ng\u0103n ng\u1EEBa t\xECnh tr\u1EA1ng ng\u1EADp ng\u1EEBng gi\u1EEFa c\xE2u",
+          correctExplanation: "'Acoustic Chunking' (ph\xE2n c\u1EE5m ng\u1EEF ngh\u0129a khi ph\xE1t \xE2m): gom c\xE1c t\u1EEB b\u1ED5 ngh\u0129a \u0111i li\u1EC1n v\u1EDBi nhau th\xE0nh m\u1ED9t \u0111\u01A1n v\u1ECB \xE2m h\u1ECDc (Sense group) gi\xFAp b\xE0i n\xF3i tr\xF4i ch\u1EA3y, c\xF3 ng\u1EEF \u0111i\u1EC7u t\u1EF1 nhi\xEAn v\xE0 chu\u1EA9n x\xE1c \u1EDF Band 7.0+.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Bu\u1ED9c th\xED sinh ph\u1EA3i n\xF3i t\u1EEBng t\u1EEB m\u1ED9t th\u1EADt ch\u1EADm r\xE3i v\xE0 d\u1EEBng 2 gi\xE2y sau m\u1ED7i t\u1EEB",
+            diagnosticTitle: "Hi\u1EC3u sai vi\u1EC7c ng\u1EAFt c\u1EE5m th\xE0nh vi\u1EC7c \u0111\u1ECDc t\u1EEBng t\u1EEB r\u1EDDi r\u1EA1c",
+            explanation: "\u0110\u1ECDc t\u1EEBng t\u1EEB r\u1EDDi r\u1EA1c l\xE0 l\u1ED7i Robot speech (ph\xE1t \xE2m gi\u1EADt c\u1EE5c), ph\xE1 h\u1EE7y ho\xE0n to\xE0n ti\xEAu ch\xED Fluency."
+          }
+        },
+        {
+          id: "leader_w1d2_q02",
+          roundIndex: 1,
+          prompt: "Khi gi\xE1m kh\u1EA3o h\u1ECFi Part 1: 'Do you work or are you a student?', c\xE2u tr\u1EA3 l\u1EDDi n\xE0o sau \u0111\xE2y th\u1EC3 hi\u1EC7n c\u1EA5u tr\xFAc m\u1EDF r\u1ED9ng \u0111\u1EA1t chu\u1EA9n Fluency Architecture c\u1EE7a Leader?",
+          options: [
+            { id: "opt_A", label: "A", text: "Currently, I am a senior majoring in software engineering at university. Much of my coursework revolves around cloud infrastructure, which I find intellectually stimulating despite the demanding project deadlines." },
+            { id: "opt_B", label: "B", text: "I am a student. I study engineering. It is hard." },
+            { id: "opt_C", label: "C", text: "Well, studying is very important for all people in contemporary society." },
+            { id: "opt_D", label: "D", text: "Neither, I do not like to work or study." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Currently, I am a senior majoring in software engineering at university. Much of my coursework revolves around cloud infrastructure, which I find intellectually stimulating despite the demanding project deadlines.",
+          correctExplanation: "Khung tr\u1EA3 l\u1EDDi chu\u1EA9n: Direct Answer ('senior majoring in software engineering') + Mechanism/Detail ('revolves around cloud infrastructure') + Evaluative Insight ('intellectually stimulating despite demanding deadlines').",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Well, studying is very important for all people in contemporary society.",
+            diagnosticTitle: "N\xF3i tri\u1EBFt l\xFD s\xE1o r\u1ED7ng n\xE9 tr\xE1nh c\xE2u h\u1ECFi tr\u1EF1c ti\u1EBFp",
+            explanation: "Th\xED sinh m\u1EDF \u0111\u1EA7u b\u1EB1ng c\xE2u tri\u1EBFt l\xFD chung chung m\xE0 kh\xF4ng tr\u1EA3 l\u1EDDi th\u1EB3ng t\xECnh tr\u1EA1ng h\u1ECDc t\u1EADp c\u1EE7a b\u1EA3n th\xE2n."
+          }
+        },
+        {
+          id: "leader_w1d2_q03",
+          roundIndex: 2,
+          prompt: "Trong ti\xEAu ch\xED Lexical Resource c\u1EE7a Speaking Band 7.0, vi\u1EC7c s\u1EED d\u1EE5ng Collocations \u0111\u01B0\u1EE3c \u0111\xE1nh gi\xE1 cao khi n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "Khi c\xE1c c\u1EE5m t\u1EEB k\u1EBFt h\u1EE3p t\u1EF1 nhi\xEAn, chu\u1EA9n x\xE1c ng\u1EEF c\u1EA3nh v\xE0 mang t\xEDnh th\xE0nh ng\u1EEF linh ho\u1EA1t m\xE0 kh\xF4ng b\u1ECB g\u01B0\u1EE3ng \xE9p" },
+            { id: "opt_B", label: "B", text: "Khi th\xED sinh ch\xE8n th\u1EADt nhi\u1EC1u th\xE0nh ng\u1EEF c\u1ED5 x\u01B0a m\xE0 ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 hi\u1EC7n \u0111\u1EA1i kh\xF4ng c\xF2n d\xF9ng" },
+            { id: "opt_C", label: "C", text: "Khi m\u1ECDi t\u1EEB ng\u1EEF \u0111\u1EC1u \u0111\u01B0\u1EE3c tra c\u1EE9u t\u1EEB t\u1EEB \u0111i\u1EC3n ti\u1EBFng Anh th\u1EBF k\u1EF7 18" },
+            { id: "opt_D", label: "D", text: "Khi th\xED sinh d\u1ECBch nguy\xEAn v\u0103n c\xE1c c\xE2u t\u1EE5c ng\u1EEF ti\u1EBFng Vi\u1EC7t sang ti\u1EBFng Anh t\u1EEBng ch\u1EEF m\u1ED9t" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Khi c\xE1c c\u1EE5m t\u1EEB k\u1EBFt h\u1EE3p t\u1EF1 nhi\xEAn, chu\u1EA9n x\xE1c ng\u1EEF c\u1EA3nh v\xE0 mang t\xEDnh th\xE0nh ng\u1EEF linh ho\u1EA1t m\xE0 kh\xF4ng b\u1ECB g\u01B0\u1EE3ng \xE9p",
+          correctExplanation: "Band 7.0 y\xEAu c\u1EA7u 'uses some less common and idiomatic vocabulary and shows some awareness of style and collocation, with some inappropriate choices'. T\xEDnh t\u1EF1 nhi\xEAn v\xE0 chu\u1EA9n ng\u1EEF c\u1EA3nh l\xE0 \u01B0u ti\xEAn s\u1ED1 m\u1ED9t.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Khi th\xED sinh ch\xE8n th\u1EADt nhi\u1EC1u th\xE0nh ng\u1EEF c\u1ED5 x\u01B0a m\xE0 ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 hi\u1EC7n \u0111\u1EA1i kh\xF4ng c\xF2n d\xF9ng",
+            diagnosticTitle: "L\u1EA1m d\u1EE5ng th\xE0nh ng\u1EEF l\u1ED7i th\u1EDDi l\u1EA1c \u0111i\u1EC7u (Clunky archaic idioms)",
+            explanation: "Nh\u1ED3i nh\xE9t c\xE1c th\xE0nh ng\u1EEF s\xE1o r\u1ED7ng nh\u01B0 'raining cats and dogs' t\u1EA1o c\u1EA3m gi\xE1c h\u1ECDc v\u1EB9t v\xE0 b\u1ECB tr\u1EEB \u0111i\u1EC3m phong c\xE1ch."
+          }
+        },
+        {
+          id: "leader_w1d2_q04",
+          roundIndex: 3,
+          prompt: "Ch\u1ECDn c\xE2u tr\u1EA3 l\u1EDDi Part 1 cho ch\u1EE7 \u0111\u1EC1 'Morning routine' th\u1EC3 hi\u1EC7n kh\u1EA3 n\u0103ng s\u1EED d\u1EE5ng tr\u1EA1ng t\u1EEB ch\u1EC9 t\u1EA7n su\u1EA5t t\u1EF1 nhi\xEAn nh\u1EA5t:",
+          options: [
+            { id: "opt_A", label: "A", text: "More often than not, I kick off my day with a brisk morning jog, which serves as a cognitive reset before diving into work." },
+            { id: "opt_B", label: "B", text: "Always I run in the morning because running is very healthy." },
+            { id: "opt_C", label: "C", text: "Every morning of my life I must do jogging." },
+            { id: "opt_D", label: "D", text: "I run morning time with high speed." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. More often than not, I kick off my day with a brisk morning jog, which serves as a cognitive reset before diving into work.",
+          correctExplanation: "'More often than not' (th\u01B0\u1EDDng l\xE0 v\u1EADy), 'kick off my day' (b\u1EAFt \u0111\u1EA7u ng\xE0y m\u1EDBi), 'brisk morning jog' (ch\u1EA1y b\u1ED9 nhanh bu\u1ED5i s\xE1ng) v\xE0 'cognitive reset' (thi\u1EBFt l\u1EADp l\u1EA1i tr\u1EA1ng th\xE1i tinh th\u1EA7n) l\xE0 c\xE1c c\u1EE5m t\u1EEB \u0111\u1EA1t chu\u1EA9n Band 7.5.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Always I run in the morning because running is very healthy.",
+            diagnosticTitle: "\u0110\u1EB7t sai v\u1ECB tr\xED tr\u1EA1ng t\u1EEB ch\u1EC9 t\u1EA7n su\u1EA5t 'always' \u1EDF \u0111\u1EA7u c\xE2u",
+            explanation: "Tr\u1EA1ng t\u1EEB ch\u1EC9 t\u1EA7n su\u1EA5t th\u01B0\u1EDDng \u0111\u1EE9ng gi\u1EEFa ch\u1EE7 ng\u1EEF v\xE0 \u0111\u1ED9ng t\u1EEB ch\xEDnh ('I always run'), \u0111\u1EB7t 'Always I run' l\xE0 l\u1ED7i ng\u1EEF ph\xE1p."
+          }
+        },
+        {
+          id: "leader_w1d2_q05",
+          roundIndex: 4,
+          prompt: "Khi g\u1EB7p m\u1ED9t c\xE2u h\u1ECFi Part 1 b\u1EA5t ng\u1EDD m\xE0 th\xED sinh ch\u01B0a chu\u1EA9n b\u1ECB tr\u01B0\u1EDBc, chi\u1EBFn l\u01B0\u1EE3c x\u1EED l\xFD ng\xF4n ng\u1EEF n\xE0o l\xE0 chuy\xEAn nghi\u1EC7p nh\u1EA5t?",
+          options: [
+            { id: "opt_A", label: "A", text: "S\u1EED d\u1EE5ng m\u1ED9t c\u1EE5m di\u1EC5n \u0111\u1EA1t t\u1EF1 nhi\xEAn \u0111\u1EC3 k\xE9o d\xE0i th\u1EDDi gian t\u01B0 duy: 'To be completely honest, that is not something I have reflected on before, but off the top of my head...'" },
+            { id: "opt_B", label: "B", text: "Ng\u1ED3i im l\u1EB7ng 10 gi\xE2y r\u1ED3i n\xF3i 'I don't understand'" },
+            { id: "opt_C", label: "C", text: "L\u1EB7p l\u1EA1i to c\xE2u h\u1ECFi c\u1EE7a gi\xE1m kh\u1EA3o ba l\u1EA7n" },
+            { id: "opt_D", label: "D", text: "\u0110\u1ED5i sang n\xF3i m\u1ED9t ch\u1EE7 \u0111\u1EC1 kh\xE1c m\xE0 m\xECnh \u0111\xE3 h\u1ECDc thu\u1ED9c l\xF2ng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. S\u1EED d\u1EE5ng m\u1ED9t c\u1EE5m di\u1EC5n \u0111\u1EA1t t\u1EF1 nhi\xEAn \u0111\u1EC3 k\xE9o d\xE0i th\u1EDDi gian t\u01B0 duy: 'To be completely honest, that is not something I have reflected on before, but off the top of my head...'",
+          correctExplanation: "K\u1EF9 n\u0103ng 'Conversational Stalling': S\u1EED d\u1EE5ng c\xE1c c\u1EA5u tr\xFAc ng\xF4n ng\u1EEF t\u1EF1 nhi\xEAn nh\u01B0 'To be completely honest, that is not something I have reflected on before, but off the top of my head...' v\u1EEBa duy tr\xEC \u0111i\u1EC3m Fluency v\u1EEBa th\u1EC3 hi\u1EC7n ph\u1EA3n x\u1EA1 giao ti\u1EBFp b\u1EA3n ng\u1EEF.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. L\u1EB7p l\u1EA1i to c\xE2u h\u1ECFi c\u1EE7a gi\xE1m kh\u1EA3o ba l\u1EA7n",
+            diagnosticTitle: "L\u1EB7p l\u1EA1i c\xE2u h\u1ECFi (Parroting examiner's question)",
+            explanation: "L\u1EB7p l\u1EA1i c\xE2u h\u1ECFi c\u1EE7a gi\xE1m kh\u1EA3o b\u1ECB coi l\xE0 thi\u1EBFu v\u1ED1n t\u1EEB v\xE0 gi\u1EA3m \u0111i\u1EC3m tr\xF4i ch\u1EA3y."
+          }
+        },
+        {
+          id: "leader_w1d2_q06",
+          roundIndex: 5,
+          prompt: "T\u1EEB 'intricacies' trong c\xE2u: 'I am fascinated by the intricacies of financial markets' c\xF3 ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Nh\u1EEFng chi ti\u1EBFt tinh vi v\xE0 ph\u1EE9c t\u1EA1p t\u1EA1o n\xEAn c\u1EA5u tr\xFAc t\u1ED5ng th\u1EC3" },
+            { id: "opt_B", label: "B", text: "Nh\u1EEFng r\u1EAFc r\u1ED1i nguy hi\u1EC3m l\xE0m ph\xE1 s\u1EA3n nh\xE0 \u0111\u1EA7u t\u01B0" },
+            { id: "opt_C", label: "C", text: "Nh\u1EEFng kho\u1EA3n ti\u1EC1n l\xE3i kh\u1ED5ng l\u1ED3 h\xE0ng th\xE1ng" },
+            { id: "opt_D", label: "D", text: "C\xE1c ng\xE2n h\xE0ng th\u01B0\u01A1ng m\u1EA1i nh\xE0 n\u01B0\u1EDBc" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Nh\u1EEFng chi ti\u1EBFt tinh vi v\xE0 ph\u1EE9c t\u1EA1p t\u1EA1o n\xEAn c\u1EA5u tr\xFAc t\u1ED5ng th\u1EC3",
+          correctExplanation: "'Intricacies' (nh\u1EEFng n\xE9t tinh vi, ng\xF3c ng\xE1ch ph\u1EE9c t\u1EA1p) l\xE0 danh t\u1EEB tr\u1EEBu t\u01B0\u1EE3ng Band 7.5 r\u1EA5t hay d\xF9ng khi n\xF3i v\u1EC1 ni\u1EC1m \u0111am m\xEA khoa h\u1ECDc ho\u1EB7c ng\xE0nh ngh\u1EC1 chuy\xEAn s\xE2u.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Nh\u1EEFng r\u1EAFc r\u1ED1i nguy hi\u1EC3m l\xE0m ph\xE1 s\u1EA3n nh\xE0 \u0111\u1EA7u t\u01B0",
+            diagnosticTitle: "Hi\u1EC3u nh\u1EA7m 'intricacy' th\xE0nh r\u1EAFc r\u1ED1i ti\xEAu c\u1EF1c",
+            explanation: "'Intricacies' nh\u1EA5n m\u1EA1nh v\xE0o s\u1EF1 tinh x\u1EA3o, ph\u1EE9c t\u1EA1p h\u1EA5p d\u1EABn c\u1EE7a m\u1ED9t h\u1EC7 th\u1ED1ng, kh\xF4ng ph\u1EA3i hi\u1EC3m h\u1ECDa ti\xEAu c\u1EF1c."
+          }
+        },
+        {
+          id: "leader_w1d2_q07",
+          roundIndex: 6,
+          prompt: "Trong ti\xEAu ch\xED Pronunciation, vi\u1EC7c ph\xE1t \xE2m \u0111\xFAng tr\u1ECDng \xE2m c\xE2u (Sentence Stress) \u0111\xF3ng vai tr\xF2 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Nh\u1EA5n m\u1EA1nh v\xE0o c\xE1c t\u1EEB mang n\u1ED9i dung ch\xEDnh nh\u01B0 danh t\u1EEB, \u0111\u1ED9ng t\u1EEB, t\xEDnh t\u1EEB v\xE0 l\u01B0\u1EDBt nh\u1EB9 c\xE1c t\u1EEB ch\u1EE9c n\u0103ng \u0111\u1EC3 t\u1EA1o ng\u1EEF \u0111i\u1EC7u t\u1EF1 nhi\xEAn" },
+            { id: "opt_B", label: "B", text: "Nh\u1EA5n th\u1EADt m\u1EA1nh v\xE0o t\u1EEBng t\u1EEB m\u1ED9t kh\xF4ng b\u1ECF s\xF3t b\u1EA5t k\u1EF3 t\u1EEB n\xE0o" },
+            { id: "opt_C", label: "C", text: "Ch\u1EC9 ph\xE1t \xE2m to c\xE1c t\u1EEB \u1EDF cu\u1ED1i c\xE2u" },
+            { id: "opt_D", label: "D", text: "H\u1EA1 gi\u1ECDng \u0111\u1EC1u \u0111\u1EC1u nh\u01B0 \u0111\u1ECDc m\u1ED9t b\u1EA3n tin th\u1EDDi ti\u1EBFt" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Nh\u1EA5n m\u1EA1nh v\xE0o c\xE1c t\u1EEB mang n\u1ED9i dung ch\xEDnh nh\u01B0 danh t\u1EEB, \u0111\u1ED9ng t\u1EEB, t\xEDnh t\u1EEB v\xE0 l\u01B0\u1EDBt nh\u1EB9 c\xE1c t\u1EEB ch\u1EE9c n\u0103ng \u0111\u1EC3 t\u1EA1o ng\u1EEF \u0111i\u1EC7u t\u1EF1 nhi\xEAn",
+          correctExplanation: "Ti\u1EBFng Anh l\xE0 ng\xF4n ng\u1EEF c\xF3 nh\u1ECBp \u0111i\u1EC7u tr\u1ECDng \xE2m (Stress-timed language). Vi\u1EC7c l\xE0m n\u1ED5i b\u1EADt Content words v\xE0 gi\u1EA3m \xE2m (reduction) c\xE1c Function words l\xE0 ch\xECa kh\xF3a \u0111\u1EA1t Band 7.0+ Pronunciation.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Nh\u1EA5n th\u1EADt m\u1EA1nh v\xE0o t\u1EEBng t\u1EEB m\u1ED9t kh\xF4ng b\u1ECF s\xF3t b\u1EA5t k\u1EF3 t\u1EEB n\xE0o",
+            diagnosticTitle: "Ph\xE1t \xE2m \u0111\u1EC1u ch\u1EB1n ch\u1EB7n theo l\u1ED1i Syllable-timed",
+            explanation: "Nh\u1EA5n \u0111\u1EC1u m\u1ECDi t\u1EEB bi\u1EBFn c\xE2u n\xF3i th\xE0nh gi\u1ECDng \u0111\u1EC1u \u0111\u1EC1u \u0111\u01A1n \u0111i\u1EC7u (monotonous), khi\u1EBFn ng\u01B0\u1EDDi nghe m\u1EC7t m\u1ECFi."
+          }
+        },
+        {
+          id: "leader_w1d2_q08",
+          roundIndex: 7,
+          prompt: "Ch\u1ECDn c\xE2u tr\u1EA3 l\u1EDDi th\u1EC3 hi\u1EC7n c\xE1ch d\xF9ng m\u1EC7nh \u0111\u1EC1 ph\xE2n t\u1EEB r\xFAt g\u1ECDn (Participle Clause) \u0111\u1EC3 n\xE2ng \u0111i\u1EC3m Grammatical Range trong Speaking:",
+          options: [
+            { id: "opt_A", label: "A", text: "Having lived in Da Nang for over a decade, I have witnessed firsthand its incredible transformation into an international tourist hub." },
+            { id: "opt_B", label: "B", text: "I lived in Da Nang ten years, and then I saw Da Nang become big city." },
+            { id: "opt_C", label: "C", text: "Because I am living in Da Nang, so Da Nang is very beautiful city." },
+            { id: "opt_D", label: "D", text: "After live in Da Nang ten years, tourism is growing up." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Having lived in Da Nang for over a decade, I have witnessed firsthand its incredible transformation into an international tourist hub.",
+          correctExplanation: "C\u1EA5u tr\xFAc ho\xE0n th\xE0nh ph\xE2n t\u1EEB 'Having lived in Da Nang for over a decade, I have witnessed...' th\u1EC3 hi\u1EC7n tr\xECnh \u0111\u1ED9 ng\u1EEF ph\xE1p bi\u1EBFn h\xF3a \u0111\u1EC9nh cao c\u1EE7a Band 7.5.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. After live in Da Nang ten years, tourism is growing up.",
+            diagnosticTitle: "L\u1ED7i ph\xE2n t\u1EED l\u01A1 l\u1EEDng sai ch\u1EE7 ng\u1EEF (Dangling participle)",
+            explanation: "Ch\u1EE7 ng\u1EEF c\u1EE7a v\u1EBF sau l\xE0 'tourism', khi\u1EBFn c\xE2u c\xF3 ngh\u0129a v\xF4 l\xFD l\xE0 'ng\xE0nh du l\u1ECBch \u0111\xE3 s\u1ED1ng \u1EDF \u0110\xE0 N\u1EB5ng 10 n\u0103m'."
+          }
+        },
+        {
+          id: "leader_w1d2_q09",
+          roundIndex: 8,
+          prompt: "\u0110\u1ED9 d\xE0i c\xE2u tr\u1EA3 l\u1EDDi l\xFD t\u01B0\u1EDFng cho m\u1ED7i c\xE2u h\u1ECFi trong ph\u1EA7n thi Speaking Part 1 l\xE0 bao nhi\xEAu?",
+          options: [
+            { id: "opt_A", label: "A", text: "Kho\u1EA3ng 2 \u0111\u1EBFn 3 c\xE2u ph\xE1t tri\u1EC3n ho\xE0n ch\u1EC9nh trong v\xF2ng 15-20 gi\xE2y" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 \u0111\xFAng m\u1ED9t t\u1EEB duy nh\u1EA5t: Yes ho\u1EB7c No" },
+            { id: "opt_C", label: "C", text: "N\xF3i li\xEAn t\u1EE5c 2 ph\xFAt nh\u01B0 m\u1ED9t b\xE0i di\u1EC5n v\u0103n Part 2" },
+            { id: "opt_D", label: "D", text: "T\xF9y h\u1EE9ng, th\xEDch n\xF3i d\xE0i bao l\xE2u c\u0169ng \u0111\u01B0\u1EE3c" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Kho\u1EA3ng 2 \u0111\u1EBFn 3 c\xE2u ph\xE1t tri\u1EC3n ho\xE0n ch\u1EC9nh trong v\xF2ng 15-20 gi\xE2y",
+          correctExplanation: "K\u1EF7 lu\u1EADt Part 1 c\u1EE7a Leader: Tr\u1EA3 l\u1EDDi ng\u1EAFn g\u1ECDn, tr\u1EF1c di\u1EC7n, g\u1ED3m 2-3 c\xE2u (Direct Answer + Development + Example/Impact), duy tr\xEC nh\u1ECBp \u0111\u1ED9 \u0111\u1ED1i tho\u1EA1i linh ho\u1EA1t v\u1EDBi gi\xE1m kh\u1EA3o.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. N\xF3i li\xEAn t\u1EE5c 2 ph\xFAt nh\u01B0 m\u1ED9t b\xE0i di\u1EC5n v\u0103n Part 2",
+            diagnosticTitle: "N\xF3i qu\xE1 d\xE0i d\xF2ng l\xE0m gi\xE1m kh\u1EA3o ph\u1EA3i c\u1EAFt l\u1EDDi li\xEAn t\u1EE5c",
+            explanation: "Part 1 l\xE0 ph\u1EA7n kh\u1EDFi \u0111\u1ED9ng, n\xF3i d\xE0i d\xF2ng l\xEA th\xEA s\u1EBD l\xE0m m\u1EA5t th\u1EDDi gian v\xE0 b\u1ECB gi\xE1m kh\u1EA3o ng\u1EAFt l\u1EDDi."
+          }
+        },
+        {
+          id: "leader_w1d2_q10",
+          roundIndex: 9,
+          prompt: "Collocation 'a sedentary lifestyle' th\u01B0\u1EDDng \u0111\u01B0\u1EE3c d\xF9ng trong Speaking \u0111\u1EC3 m\xF4 t\u1EA3 l\u1ED1i s\u1ED1ng n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "L\u1ED1i s\u1ED1ng \xEDt v\u1EADn \u0111\u1ED9ng, ng\u1ED3i nhi\u1EC1u tr\u01B0\u1EDBc m\xE0n h\xECnh m\xE1y t\xEDnh" },
+            { id: "opt_B", label: "B", text: "L\u1ED1i s\u1ED1ng th\u01B0\u1EDDng xuy\xEAn \u0111i du l\u1ECBch th\xE1m hi\u1EC3m v\xF2ng quanh th\u1EBF gi\u1EDBi" },
+            { id: "opt_C", label: "C", text: "L\u1ED1i s\u1ED1ng ti\u1EBFt ki\u1EC7m kh\xF4ng ti\xEAu ti\u1EC1n phung ph\xED" },
+            { id: "opt_D", label: "D", text: "L\u1ED1i s\u1ED1ng th\u1EE9c khuya d\u1EADy s\u1EDBm l\xE0m n\xF4ng nghi\u1EC7p" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. L\u1ED1i s\u1ED1ng \xEDt v\u1EADn \u0111\u1ED9ng, ng\u1ED3i nhi\u1EC1u tr\u01B0\u1EDBc m\xE0n h\xECnh m\xE1y t\xEDnh",
+          correctExplanation: "'Sedentary lifestyle' (l\u1ED1i s\u1ED1ng th\u1EE5 \u0111\u1ED9ng, ng\u1ED3i l\xEC m\u1ED9t ch\u1ED7) l\xE0 collocation h\u1ECDc thu\u1EADt \u0111\u1EAFt gi\xE1 trong c\xE1c ch\u1EE7 \u0111\u1EC1 s\u1EE9c kh\u1ECFe, th\xF3i quen v\xE0 c\xF4ng vi\u1EC7c v\u0103n ph\xF2ng.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. L\u1ED1i s\u1ED1ng ti\u1EBFt ki\u1EC7m kh\xF4ng ti\xEAu ti\u1EC1n phung ph\xED",
+            diagnosticTitle: "Nh\u1EA7m 'sedentary' v\u1EDBi 'frugal/thrifty'",
+            explanation: "'Sedentary' li\xEAn quan \u0111\u1EBFn t\u01B0 th\u1EBF ng\u1ED3i (sedere trong ti\u1EBFng Latin), kh\xF4ng li\xEAn quan \u0111\u1EBFn chi ti\xEAu t\xE0i ch\xEDnh."
+          }
+        }
+      ],
+      "WEEK 1 \u2013 DAY 3": [
+        {
+          id: "leader_w1d3_q01",
+          roundIndex: 0,
+          prompt: "Trong b\xE0i \u0111\u1ECDc 'This Marvellous Machine', c\xE1c nh\xE0 ng\u1EEF ph\xE1p tr\u01B0\u1EDDng ph\xE1i Port-Royal (Port-Royal grammarians) \u0111\xE3 ca ng\u1EE3i kh\u1EA3 n\u0103ng k\u1EF3 di\u1EC7u n\xE0o c\u1EE7a ng\xF4n ng\u1EEF lo\xE0i ng\u01B0\u1EDDi?",
+          options: [
+            { id: "opt_A", label: "A", text: "Kh\u1EA3 n\u0103ng k\u1EBFt h\u1EE3p m\u1ED9t s\u1ED1 l\u01B0\u1EE3ng h\u1EEFu h\u1EA1n c\xE1c \xE2m thanh v\xF4 ngh\u0129a \u0111\u1EC3 bi\u1EC3u \u0111\u1EA1t v\xF4 s\u1ED1 c\xE1c t\u01B0 t\u01B0\u1EDFng, c\u1EA3m x\xFAc v\xE0 kh\xE1i ni\u1EC7m tr\u1EEBu t\u01B0\u1EE3ng s\xE2u s\u1EAFc nh\u1EA5t" },
+            { id: "opt_B", label: "B", text: "Kh\u1EA3 n\u0103ng ch\u1EBF t\u1EA1o ra nh\u1EEFng chi\u1EBFc m\xE1y in c\u01A1 h\u1ECDc ch\u1EA1y b\u1EB1ng h\u01A1i n\u01B0\u1EDBc \u0111\u1EA7u ti\xEAn" },
+            { id: "opt_C", label: "C", text: "Kh\u1EA3 n\u0103ng d\u1ECBch t\u1EF1 \u0111\u1ED9ng gi\u1EEFa ti\u1EBFng Ph\xE1p v\xE0 ti\u1EBFng Latin" },
+            { id: "opt_D", label: "D", text: "Vi\u1EC7c ph\xE1t minh ra b\u1EA3ng ch\u1EEF c\xE1i h\xECnh n\xEAm c\u1EE7a ng\u01B0\u1EDDi Sumer" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Kh\u1EA3 n\u0103ng k\u1EBFt h\u1EE3p m\u1ED9t s\u1ED1 l\u01B0\u1EE3ng h\u1EEFu h\u1EA1n c\xE1c \xE2m thanh v\xF4 ngh\u0129a \u0111\u1EC3 bi\u1EC3u \u0111\u1EA1t v\xF4 s\u1ED1 c\xE1c t\u01B0 t\u01B0\u1EDFng, c\u1EA3m x\xFAc v\xE0 kh\xE1i ni\u1EC7m tr\u1EEBu t\u01B0\u1EE3ng s\xE2u s\u1EAFc nh\u1EA5t",
+          correctExplanation: "\u0110o\u1EA1n B tr\xEDch l\u1EDDi c\xE1c nh\xE0 ng\u1EEF ph\xE1p Port-Royal th\u1EBF k\u1EF7 17: 'this marvellous invention of composing out of twenty-five or thirty sounds that infinite variety of expressions...'. \u0110\xF3 l\xE0 ph\xE9p m\xE0u t\u1EA1o ra v\xF4 t\u1EADn t\u1EEB c\xE1i h\u1EEFu h\u1EA1n.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Kh\u1EA3 n\u0103ng ch\u1EBF t\u1EA1o ra nh\u1EEFng chi\u1EBFc m\xE1y in c\u01A1 h\u1ECDc ch\u1EA1y b\u1EB1ng h\u01A1i n\u01B0\u1EDBc \u0111\u1EA7u ti\xEAn",
+            diagnosticTitle: "Hi\u1EC3u theo ngh\u0129a \u0111en ch\u1EEF 'Marvellous Machine' th\xE0nh c\u1ED7 m\xE1y c\u01A1 kh\xED",
+            explanation: "'C\u1ED7 m\xE1y tuy\u1EC7t di\u1EC7u' \u1EDF \u0111\xE2y l\xE0 m\u1ED9t \u1EA9n d\u1EE5 ng\xF4n ng\u1EEF h\u1ECDc (metaphor) cho h\u1EC7 th\u1ED1ng ng\xF4n ng\u1EEF, kh\xF4ng ph\u1EA3i m\xE1y in v\u1EADt l\xFD."
+          }
+        },
+        {
+          id: "leader_w1d3_q02",
+          roundIndex: 1,
+          prompt: "T\u1EA1i sao t\xE1c gi\u1EA3 l\u1EA1i kh\u1EB3ng \u0111\u1ECBnh ng\xF4n ng\u1EEF l\xE0 'a victim of its own success' (n\u1EA1n nh\xE2n c\u1EE7a ch\xEDnh s\u1EF1 th\xE0nh c\xF4ng c\u1EE7a n\xF3)?",
+          options: [
+            { id: "opt_A", label: "A", text: "V\xEC vi\u1EC7c s\u1EED d\u1EE5ng ng\xF4n ng\u1EEF di\u1EC5n ra qu\xE1 tr\u01A1n tru v\xE0 d\u1EC5 d\xE0ng trong \u0111\u1EDDi s\u1ED1ng h\xE0ng ng\xE0y khi\u1EBFn con ng\u01B0\u1EDDi xem \u0111\xF3 l\xE0 \u0111i\u1EC1u hi\u1EC3n nhi\xEAn m\xE0 qu\xEAn m\u1EA5t s\u1EF1 tinh vi k\u1EF3 v\u0129 c\u1EE7a n\xF3" },
+            { id: "opt_B", label: "B", text: "V\xEC c\xF3 qu\xE1 nhi\u1EC1u ng\u01B0\u1EDDi tr\xEAn th\u1EBF gi\u1EDBi kh\xF4ng bi\u1EBFt \u0111\u1ECDc v\xE0 vi\u1EBFt" },
+            { id: "opt_C", label: "C", text: "V\xEC ng\xF4n ng\u1EEF \u0111ang d\u1EA7n b\u1ECB thay th\u1EBF ho\xE0n to\xE0n b\u1EDFi c\xE1c bi\u1EC3u t\u01B0\u1EE3ng c\u1EA3m x\xFAc emoji" },
+            { id: "opt_D", label: "D", text: "V\xEC c\xE1c cu\u1ED1n t\u1EEB \u0111i\u1EC3n ng\xE0y c\xE0ng tr\u1EDF n\xEAn qu\xE1 d\xE0y v\xE0 \u0111\u1EAFt \u0111\u1ECF" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. V\xEC vi\u1EC7c s\u1EED d\u1EE5ng ng\xF4n ng\u1EEF di\u1EC5n ra qu\xE1 tr\u01A1n tru v\xE0 d\u1EC5 d\xE0ng trong \u0111\u1EDDi s\u1ED1ng h\xE0ng ng\xE0y khi\u1EBFn con ng\u01B0\u1EDDi xem \u0111\xF3 l\xE0 \u0111i\u1EC1u hi\u1EC3n nhi\xEAn m\xE0 qu\xEAn m\u1EA5t s\u1EF1 tinh vi k\u1EF3 v\u0129 c\u1EE7a n\xF3",
+          correctExplanation: "\u0110o\u1EA1n D ph\xE2n t\xEDch s\xE2u s\u1EAFc: 'Yet it is precisely this deceptive ease which makes language a victim of its own success, since in everyday life its triumphs are usually taken for granted'.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. V\xEC ng\xF4n ng\u1EEF \u0111ang d\u1EA7n b\u1ECB thay th\u1EBF ho\xE0n to\xE0n b\u1EDFi c\xE1c bi\u1EC3u t\u01B0\u1EE3ng c\u1EA3m x\xFAc emoji",
+            diagnosticTitle: "Suy di\u1EC5n ngo\xE0i b\xE0i \u0111\u1ECDc d\u1EF1a tr\xEAn xu h\u01B0\u1EDBng m\u1EA1ng x\xE3 h\u1ED9i hi\u1EC7n \u0111\u1EA1i",
+            explanation: "B\xE0i \u0111\u1ECDc h\u1ECDc thu\u1EADt Cambridge kh\xF4ng h\u1EC1 \u0111\u1EC1 c\u1EADp \u0111\u1EBFn emoji; \u0111\xE2y l\xE0 l\u1ED7i suy di\u1EC5n b\xEAn ngo\xE0i v\u0103n b\u1EA3n."
+          }
+        },
+        {
+          id: "leader_w1d3_q03",
+          roundIndex: 2,
+          prompt: "T\u1EEB ti\u1EBFng Th\u1ED5 Nh\u0129 K\u1EF3 c\u1EF1c d\xE0i '\xE7ehirlili\xE7tiremediklerimizdensiniz' \u0111\u01B0\u1EE3c t\xE1c gi\u1EA3 \u0111\u01B0a ra trong \u0111o\u1EA1n E nh\u1EB1m minh h\u1ECDa cho hi\u1EC7n t\u01B0\u1EE3ng ng\xF4n ng\u1EEF n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "Kh\u1EA3 n\u0103ng c\u1EE7a m\u1ED9t s\u1ED1 ng\xF4n ng\u1EEF trong vi\u1EC7c x\xE2y d\u1EF1ng nh\u1EEFng t\u1EEB \u0111\u01A1n c\xF3 \u0111\u1ED9 d\xE0i ngo\u1EA1n m\u1EE5c n\xE9n tr\u1ECDn v\u1EB9n \xFD ngh\u0129a c\u1EE7a c\u1EA3 m\u1ED9t c\xE2u ho\xE0n ch\u1EC9nh trong ti\u1EBFng Anh" },
+            { id: "opt_B", label: "B", text: "S\u1EF1 kh\xF3 ph\xE1t \xE2m c\u1EE7a c\xE1c ng\xF4n ng\u1EEF ph\u01B0\u01A1ng \u0110\xF4ng" },
+            { id: "opt_C", label: "C", text: "L\u1ED7i in \u1EA5n trong c\xE1c t\xE0i li\u1EC7u ng\u1EEF ph\xE1p c\u1ED5" },
+            { id: "opt_D", label: "D", text: "S\u1EF1 suy t\xE0n c\u1EE7a c\xE1c th\xE0nh ph\u1ED1 hi\u1EC7n \u0111\u1EA1i" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Kh\u1EA3 n\u0103ng c\u1EE7a m\u1ED9t s\u1ED1 ng\xF4n ng\u1EEF trong vi\u1EC7c x\xE2y d\u1EF1ng nh\u1EEFng t\u1EEB \u0111\u01A1n c\xF3 \u0111\u1ED9 d\xE0i ngo\u1EA1n m\u1EE5c n\xE9n tr\u1ECDn v\u1EB9n \xFD ngh\u0129a c\u1EE7a c\u1EA3 m\u1ED9t c\xE2u ho\xE0n ch\u1EC9nh trong ti\u1EBFng Anh",
+          correctExplanation: "\u0110o\u1EA1n E gi\u1EA3i th\xEDch: t\u1EEB n\xE0y mang ngh\u0129a 'you are one of those whom we can't turn into a town-dweller'. \u0110\xE2y l\xE0 hi\u1EC7n t\u01B0\u1EE3ng 'build up words of breath-breaking length, and thus express in one word what English takes a whole sentence to say'.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. S\u1EF1 kh\xF3 ph\xE1t \xE2m c\u1EE7a c\xE1c ng\xF4n ng\u1EEF ph\u01B0\u01A1ng \u0110\xF4ng",
+            diagnosticTitle: "T\u1EADp trung v\xE0o c\u1EA3m nh\u1EADn ph\xE1t \xE2m c\xE1 nh\xE2n thay v\xEC c\u1EA5u tr\xFAc h\xECnh th\xE1i h\u1ECDc",
+            explanation: "M\u1EE5c \u0111\xEDch c\u1EE7a t\xE1c gi\u1EA3 l\xE0 m\xF4 t\u1EA3 c\u1EA5u tr\xFAc h\xECnh th\xE1i t\u1EEB gh\xE9p ch\u1EAFp d\xEDnh (agglutinative morphology), kh\xF4ng ph\u1EA3i \u0111\u1EC3 ch\xEA ph\xE1t \xE2m."
+          }
+        },
+        {
+          id: "leader_w1d3_q04",
+          roundIndex: 3,
+          prompt: "\u0110i\u1EC3m \u0111\u1EB7c bi\u1EC7t g\xE2y \u1EA5n t\u01B0\u1EE3ng nh\u1EA5t trong c\u1EA5u tr\xFAc t\u1EEB ti\u1EBFng Sumer 'munintuma'a' \u1EDF \u0111o\u1EA1n F l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "S\u1EF1 s\xFAc t\xEDch c\xF4 \u0111\u1ECDng t\u1ED1i \u0111a, trong \u0111\xF3 ngay c\u1EA3 m\u1ED9t kho\u1EA3ng tr\u1ED1ng im l\u1EB7ng (non-sound) c\u0169ng \u0111\u01B0\u1EE3c g\xE1n cho m\u1ED9t ch\u1EE9c n\u0103ng ng\u1EEF ngh\u0129a c\u1EE5 th\u1EC3" },
+            { id: "opt_B", label: "B", text: "\u0110\u01B0\u1EE3c vi\u1EBFt b\u1EB1ng m\u1EF1c v\xE0ng tr\xEAn da c\u1EEBu" },
+            { id: "opt_C", label: "C", text: "Ch\u1EE9a nhi\u1EC1u ch\u1EEF c\xE1i vi\u1EBFt hoa nh\u1EA5t trong l\u1ECBch s\u1EED" },
+            { id: "opt_D", label: "D", text: "Ch\u1EC9 \u0111\u01B0\u1EE3c ph\xE1t \xE2m b\u1EDFi c\xE1c v\u1ECB vua ch\xFAa Sumer c\u1ED5 \u0111\u1EA1i" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. S\u1EF1 s\xFAc t\xEDch c\xF4 \u0111\u1ECDng t\u1ED1i \u0111a, trong \u0111\xF3 ngay c\u1EA3 m\u1ED9t kho\u1EA3ng tr\u1ED1ng im l\u1EB7ng (non-sound) c\u0169ng \u0111\u01B0\u1EE3c g\xE1n cho m\u1ED9t ch\u1EE9c n\u0103ng ng\u1EEF ngh\u0129a c\u1EE5 th\u1EC3",
+          correctExplanation: "\u0110o\u1EA1n F nh\u1EA5n m\u1EA1nh: 'the technology is so fine-tuned then that even a non-sound, when carefully placed in a particular position, has been invested with a specific function'. \u0110\u1EA1i t\u1EEB 'it' t\u01B0\u01A1ng \u1EE9ng v\u1EDBi m\u1ED9t kho\u1EA3ng tr\u1ED1ng r\u1ED7ng (empty slot / nothing) \u1EDF gi\u1EEFa t\u1EEB.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. \u0110\u01B0\u1EE3c vi\u1EBFt b\u1EB1ng m\u1EF1c v\xE0ng tr\xEAn da c\u1EEBu",
+            diagnosticTitle: "B\u1ECB ph\xE2n t\xE2m b\u1EDFi c\xE1c t\u01B0\u1EDFng t\u01B0\u1EE3ng c\u1ED5 t\xEDch l\u1ECBch s\u1EED",
+            explanation: "B\xE0i \u0111\u1ECDc ph\xE2n t\xEDch c\u01A1 ch\u1EBF \xE2m v\u1ECB h\u1ECDc v\xE0 c\xFA ph\xE1p h\u1ECDc, kh\xF4ng n\xF3i \u0111\u1EBFn m\u1EF1c v\xE0ng hay da c\u1EEBu."
+          }
+        },
+        {
+          id: "leader_w1d3_q05",
+          roundIndex: 4,
+          prompt: "Nh\u1EADn \u0111\u1ECBnh sau l\xE0 YES, NO hay NOT GIVEN theo quan \u0111i\u1EC3m c\u1EE7a t\xE1c gi\u1EA3: 'Human beings might have achieved their present position without language.'?",
+          options: [
+            { id: "opt_A", label: "A", text: "NO" },
+            { id: "opt_B", label: "B", text: "YES" },
+            { id: "opt_C", label: "C", text: "NOT GIVEN" },
+            { id: "opt_D", label: "D", text: "INAPPLICABLE" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. NO",
+          correctExplanation: "\u0110o\u1EA1n A kh\u1EB3ng \u0111\u1ECBnh ng\xF4n ng\u1EEF l\xE0 ph\xE1t minh n\u1EC1n t\u1EA3ng t\u1ED1i th\u01B0\u1EE3ng: kh\xF4ng c\xF3 ng\xF4n ng\u1EEF th\xEC m\u1ECDi th\xE0nh t\u1EF1u kh\xE1c c\u1EE7a v\u0103n minh lo\xE0i ng\u01B0\u1EDDi (k\u1EC3 c\u1EA3 b\xE1nh xe hay n\xF4ng nghi\u1EC7p) \u0111\u1EC1u kh\xF4ng th\u1EC3 h\xECnh th\xE0nh ho\u1EB7c truy\u1EC1n th\u1EEBa. Nh\u1EADn \u0111\u1ECBnh 'con ng\u01B0\u1EDDi c\xF3 th\u1EC3 \u0111\u1EA1t v\u1ECB th\u1EBF hi\u1EC7n t\u1EA1i m\xE0 kh\xF4ng c\u1EA7n ng\xF4n ng\u1EEF' m\xE2u thu\u1EABn tr\u1EF1c ti\u1EBFp v\u1EDBi t\xE1c gi\u1EA3 -> NO.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. NOT GIVEN",
+            diagnosticTitle: "Kh\xF4ng li\xEAn k\u1EBFt \u0111\u01B0\u1EE3c lu\u1EADn \u0111i\u1EC3m m\u1EDF \u0111\u1EA7u \u1EDF \u0111o\u1EA1n A v\u1EDBi c\xE2u h\u1ECFi suy lu\u1EADn",
+            explanation: "T\xE1c gi\u1EA3 n\xEAu r\xF5 ng\xF4n ng\u1EEF l\xE0 \u0111i\u1EC1u ki\u1EC7n ti\xEAn quy\u1EBFt cho s\u1EF1 th\u1ED1ng tr\u1ECB c\u1EE7a lo\xE0i ng\u01B0\u1EDDi, m\xE2u thu\u1EABn ho\xE0n to\xE0n v\u1EDBi c\xE2u nh\u1EADn \u0111\u1ECBnh."
+          }
+        },
+        {
+          id: "leader_w1d3_q06",
+          roundIndex: 5,
+          prompt: "Ti\xEAu \u0111\u1EC1 (Heading) ph\xF9 h\u1EE3p nh\u1EA5t cho Paragraph D (ph\xE2n t\xEDch kh\u1EA3 n\u0103ng s\u1EED d\u1EE5ng ng\xF4n ng\u1EEF k\u1EF3 di\u1EC7u c\u1EE7a b\u1EA5t k\u1EF3 ai, t\u1EEB ng\u01B0\u1EDDi h\xE1i l\u01B0\u1EE3m \u0111\u1EBFn tri\u1EBFt gia) l\xE0:",
+          options: [
+            { id: "opt_A", label: "A", text: "The universal ability to use language" },
+            { id: "opt_B", label: "B", text: "Why the sounds used in different languages are not identical" },
+            { id: "opt_C", label: "C", text: "Even silence can be meaningful" },
+            { id: "opt_D", label: "D", text: "Differences between languages highlight their impressiveness" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. The universal ability to use language",
+          correctExplanation: "\u0110o\u1EA1n D m\u1EDF \u0111\u1EA7u: 'The most extraordinary thing about language... is that one doesn\u2019t have to be a genius to set its wheels in motion. The language machine allows just about everybody...'. Heading chu\u1EA9n x\xE1c l\xE0 'The universal ability to use language' (Kh\u1EA3 n\u0103ng ph\u1ED5 qu\xE1t trong vi\u1EC7c s\u1EED d\u1EE5ng ng\xF4n ng\u1EEF c\u1EE7a nh\xE2n lo\u1EA1i).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Even silence can be meaningful",
+            diagnosticTitle: "Nh\u1EA7m sang Heading c\u1EE7a \u0111o\u1EA1n F v\u1EC1 ti\u1EBFng Sumer",
+            explanation: "S\u1EF1 im l\u1EB7ng mang \xFD ngh\u0129a (Even silence can be meaningful) l\xE0 ti\xEAu \u0111\u1EC1 c\u1EE7a \u0111o\u1EA1n F, kh\xF4ng ph\u1EA3i \u0111o\u1EA1n D."
+          }
+        },
+        {
+          id: "leader_w1d3_q07",
+          roundIndex: 6,
+          prompt: "T\u1EEB 'interminable' trong c\u1EE5m: 'sighing the interminable boredom of existence' \u0111\u1ED3ng ngh\u0129a v\u1EDBi t\u1EEB n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "endless k\xE9o d\xE0i d\u01B0\u1EDDng nh\u01B0 b\u1EA5t t\u1EADn" },
+            { id: "opt_B", label: "B", text: "brief ng\u1EAFn ng\u1EE7i tho\xE1ng qua" },
+            { id: "opt_C", label: "C", text: "entertaining th\xFA v\u1ECB gi\u1EA3i tr\xED" },
+            { id: "opt_D", label: "D", text: "temporary ch\u1EC9 mang t\xEDnh t\u1EA1m th\u1EDDi" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. endless k\xE9o d\xE0i d\u01B0\u1EDDng nh\u01B0 b\u1EA5t t\u1EADn",
+          correctExplanation: "'Interminable' (ti\u1EC1n t\u1ED1 in- ph\u1EE7 \u0111\u1ECBnh k\u1EBFt h\u1EE3p terminate - k\u1EBFt th\xFAc) mang ngh\u0129a k\xE9o d\xE0i li\xEAn mi\xEAn t\u01B0\u1EDFng ch\u1EEBng kh\xF4ng bao gi\u1EDD d\u1EE9t, \u0111\u1ED3ng ngh\u0129a ho\xE0n h\u1EA3o v\u1EDBi 'endless' ho\u1EB7c 'ceaseless'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. brief ng\u1EAFn ng\u1EE7i tho\xE1ng qua",
+            diagnosticTitle: "Hi\u1EC3u ng\u01B0\u1EE3c ngh\u0129a c\u1EE7a t\u1EEB b\u1EA5t t\u1EADn",
+            explanation: "'Brief' (ng\u1EAFn ng\u1EE7i) l\xE0 t\u1EEB tr\xE1i ngh\u0129a \u0111\u1ED1i l\u1EADp c\u1EE7a 'interminable'."
+          }
+        },
+        {
+          id: "leader_w1d3_q08",
+          roundIndex: 7,
+          prompt: "Ch\u1ECDn t\u1EEB trong danh s\xE1ch A-G \u0111\u1EC3 ho\xE0n th\xE0nh c\xE2u t\xF3m t\u1EAFt: 'The wheel is one invention that has had a major impact on [7] aspects of life, but no impact has been as [8] as that of language.'?",
+          options: [
+            { id: "opt_A", label: "A", text: "material and fundamental" },
+            { id: "opt_B", label: "B", text: "difficult and complex" },
+            { id: "opt_C", label: "C", text: "original and admired" },
+            { id: "opt_D", label: "D", text: "easy and complex" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. material and fundamental",
+          correctExplanation: "V\u0103n b\u1EA3n \u0111\u1ED1i chi\u1EBFu t\xE1c \u0111\u1ED9ng c\u1EE7a b\xE1nh xe l\xEAn 'material aspects' (kh\xEDa c\u1EA1nh v\u1EADt ch\u1EA5t th\u1EF1c d\u1EE5ng) v\u1EDBi t\xE1c \u0111\u1ED9ng mang t\xEDnh 'fundamental' (n\u1EC1n t\u1EA3ng c\u0103n c\u1ED1t c\u1EE7a \xFD th\u1EE9c v\xE0 x\xE3 h\u1ED9i) c\u1EE7a ng\xF4n ng\u1EEF.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. difficult and complex",
+            diagnosticTitle: "Ch\u1ECDn c\u1EB7p t\u1EEB kh\xF4ng ph\u1EA3n \xE1nh b\u1EA3n ch\u1EA5t \u0111\u1ED1i chi\u1EBFu v\u1EADt ch\u1EA5t v\xE0 n\u1EC1n t\u1EA3ng",
+            explanation: "'Difficult and complex' kh\xF4ng ph\xF9 h\u1EE3p v\u1EDBi ng\u1EEF c\u1EA3nh so s\xE1nh t\xE1c \u0111\u1ED9ng v\u0103n minh c\u1EE7a hai ph\xE1t minh."
+          }
+        },
+        {
+          id: "leader_w1d3_q09",
+          roundIndex: 8,
+          prompt: "Th\xE0nh ng\u1EEF 'Language conceals art' \u1EDF cu\u1ED1i \u0111o\u1EA1n D mang \xFD ngh\u0129a tri\u1EBFt h\u1ECDc s\xE2u xa g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "\u0110\u1EC9nh cao tinh x\u1EA3o c\u1EE7a ng\xF4n ng\u1EEF n\u1EB1m \u1EDF ch\u1ED7 n\xF3 v\u1EADn h\xE0nh t\u1EF1 nhi\xEAn v\xE0 d\u1EC5 d\xE0ng \u0111\u1EBFn m\u1EE9c che gi\u1EA5u ho\xE0n to\xE0n s\u1EF1 ph\u1EE9c t\u1EA1p k\u1EF3 v\u0129 c\u1EE7a c\u1ED7 m\xE1y b\xEAn trong" },
+            { id: "opt_B", label: "B", text: "Ng\xF4n ng\u1EEF ng\u0103n c\u1EA5m con ng\u01B0\u1EDDi v\u1EBD tranh v\xE0 l\xE0m ngh\u1EC7 thu\u1EADt" },
+            { id: "opt_C", label: "C", text: "C\xE1c h\u1ECDa s\u0129 kh\xF4ng bao gi\u1EDD s\u1EED d\u1EE5ng l\u1EDDi n\xF3i khi v\u1EBD tranh" },
+            { id: "opt_D", label: "D", text: "Ngh\u1EC7 thu\u1EADt lu\xF4n v\u01B0\u1EE3t tr\u1ED9i h\u01A1n ng\xF4n ng\u1EEF trong m\u1ECDi t\xECnh hu\u1ED1ng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. \u0110\u1EC9nh cao tinh x\u1EA3o c\u1EE7a ng\xF4n ng\u1EEF n\u1EB1m \u1EDF ch\u1ED7 n\xF3 v\u1EADn h\xE0nh t\u1EF1 nhi\xEAn v\xE0 d\u1EC5 d\xE0ng \u0111\u1EBFn m\u1EE9c che gi\u1EA5u ho\xE0n to\xE0n s\u1EF1 ph\u1EE9c t\u1EA1p k\u1EF3 v\u0129 c\u1EE7a c\u1ED7 m\xE1y b\xEAn trong",
+          correctExplanation: "'Artis est celare artem' (Ngh\u1EC7 thu\u1EADt ch\xE2n ch\xEDnh l\xE0 gi\u1EA5u \u0111i ch\xEDnh s\u1EF1 g\u1EAFng g\u01B0\u1EE3ng c\u1EE7a ngh\u1EC7 thu\u1EADt): S\u1EF1 tr\u01A1n tru ho\xE0n m\u1EF9 c\u1EE7a ng\xF4n ng\u1EEF khi\u1EBFn ch\xFAng ta t\u01B0\u1EDFng n\xF3 \u0111\u01A1n gi\u1EA3n, nh\u01B0ng th\u1EF1c ch\u1EA5t l\xE0 k\u1EF3 quan k\u1EF9 thu\u1EADt si\xEAu \u0111\u1EB3ng.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ng\xF4n ng\u1EEF ng\u0103n c\u1EA5m con ng\u01B0\u1EDDi v\u1EBD tranh v\xE0 l\xE0m ngh\u1EC7 thu\u1EADt",
+            diagnosticTitle: "D\u1ECBch t\u1EEB 'art' theo ngh\u0129a h\u1EB9p l\xE0 m\xF4n m\u1EF9 thu\u1EADt h\u1ED9i h\u1ECDa",
+            explanation: "'Art' \u1EDF \u0111\xE2y c\xF3 ngh\u0129a c\u1ED5 l\xE0 ngh\u1EC7 thu\u1EADt ch\u1EBF t\xE1c tinh x\u1EA3o (craftsmanship/artistry), kh\xF4ng ph\u1EA3i m\xF4n v\u1EBD tranh."
+          }
+        },
+        {
+          id: "leader_w1d3_q10",
+          roundIndex: 9,
+          prompt: "Ng\u01B0\u1EDDi Sumer s\u1ED1ng ven b\u1EDD s\xF4ng Euphrates c\xE1ch \u0111\xE2y 5.000 n\u0103m gi\u1EEF vai tr\xF2 l\u1ECBch s\u1EED v\u0129 \u0111\u1EA1i n\xE0o \u0111\u01B0\u1EE3c \u0111\u1EC1 c\u1EADp trong b\xE0i?",
+          options: [
+            { id: "opt_A", label: "A", text: "H\u1ECD l\xE0 nh\u1EEFng ng\u01B0\u1EDDi \u0111\u1EA7u ti\xEAn ph\xE1t minh ra ch\u1EEF vi\u1EBFt, t\u1EEB \u0111\xF3 \u0111\u1EB7t n\u1EC1n m\xF3ng cho vi\u1EC7c ghi ch\xE9p l\u1EA1i to\xE0n b\u1ED9 ti\u1EBFn tr\xECnh l\u1ECBch s\u1EED nh\xE2n lo\u1EA1i" },
+            { id: "opt_B", label: "B", text: "H\u1ECD l\xE0 nh\u1EEFng ng\u01B0\u1EDDi \u0111\u1EA7u ti\xEAn ch\u1EBF t\u1EA1o ra t\xEAn l\u1EEDa v\u0169 tr\u1EE5" },
+            { id: "opt_C", label: "C", text: "H\u1ECD l\xE0 nh\u1EEFng ng\u01B0\u1EDDi \u0111\u1EA7u ti\xEAn v\u1EBD b\u1EA3n \u0111\u1ED3 th\u1EBF gi\u1EDBi b\u1EB1ng m\xE1y bay" },
+            { id: "opt_D", label: "D", text: "H\u1ECD ph\xE1t minh ra m\xE1y t\xEDnh \u0111i\u1EC7n t\u1EED \u0111\u1EA7u ti\xEAn" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. H\u1ECD l\xE0 nh\u1EEFng ng\u01B0\u1EDDi \u0111\u1EA7u ti\xEAn ph\xE1t minh ra ch\u1EEF vi\u1EBFt, t\u1EEB \u0111\xF3 \u0111\u1EB7t n\u1EC1n m\xF3ng cho vi\u1EC7c ghi ch\xE9p l\u1EA1i to\xE0n b\u1ED9 ti\u1EBFn tr\xECnh l\u1ECBch s\u1EED nh\xE2n lo\u1EA1i",
+          correctExplanation: "\u0110o\u1EA1n F kh\u1EB3ng \u0111\u1ECBnh r\xF5 r\xE0ng: 'Sumerian, the language spoken on the banks of the Euphrates some 5,000 years ago by the people who invented writing and thus enabled the documentation of history'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. H\u1ECD ph\xE1t minh ra m\xE1y t\xEDnh \u0111i\u1EC7n t\u1EED \u0111\u1EA7u ti\xEAn",
+            diagnosticTitle: "G\xE1n gh\xE9p c\xF4ng ngh\u1EC7 hi\u1EC7n \u0111\u1EA1i v\xE0o n\u1EC1n v\u0103n minh L\u01B0\u1EE1ng H\xE0 c\u1ED5 \u0111\u1EA1i",
+            explanation: "Ng\u01B0\u1EDDi Sumer ph\xE1t minh ra ch\u1EEF vi\u1EBFt cuneiform 5000 n\u0103m tr\u01B0\u1EDBc, kh\xF4ng ph\u1EA3i m\xE1y t\xEDnh \u0111i\u1EC7n t\u1EED."
+          }
+        }
+      ]
+    };
+  }
+});
+
+// server/services/leader_bank_parts/week2.data.ts
+var LEADER_WEEK_2_QUESTIONS;
+var init_week2_data4 = __esm({
+  "server/services/leader_bank_parts/week2.data.ts"() {
+    LEADER_WEEK_2_QUESTIONS = {
+      "WEEK 2 \u2013 DAY 1": [
+        {
+          id: "leader_w2d1_q01",
+          roundIndex: 0,
+          prompt: "Trong d\u1EA1ng b\xE0i Causes - Problems - Solutions c\u1EE7a Task 2, nguy\xEAn t\u1EAFc c\u1ED1t t\u1EED \u0111\u1EC3 \u0111\u1EA1t \u0111i\u1EC3m Task Response 7.0+ \u1EDF ph\u1EA7n Gi\u1EA3i ph\xE1p (Solutions) l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "C\xE1c gi\u1EA3i ph\xE1p \u0111\u1EC1 xu\u1EA5t ph\u1EA3i gi\u1EA3i quy\u1EBFt tr\u1EF1c ti\u1EBFp v\xE0 t\u01B0\u01A1ng \u1EE9ng v\u1EDBi ch\xEDnh nh\u1EEFng nguy\xEAn nh\xE2n v\xE0 v\u1EA5n \u0111\u1EC1 \u0111\xE3 \u0111\u01B0\u1EE3c ph\xE2n t\xEDch \u1EDF \u0111o\u1EA1n tr\u01B0\u1EDBc" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 c\u1EA7n n\xEAu m\u1ED9t gi\u1EA3i ph\xE1p duy nh\u1EA5t v\xE0 k\xEAu g\u1ECDi m\u1ECDi ng\u01B0\u1EDDi t\u1EF1 n\xE2ng cao \xFD th\u1EE9c chung chung" },
+            { id: "opt_C", label: "C", text: "\u0110\u1EC1 xu\u1EA5t c\xE1c gi\u1EA3i ph\xE1p kh\xF4ng t\u01B0\u1EDFng \u0111\xF2i h\u1ECFi ng\xE2n s\xE1ch v\u01B0\u1EE3t qu\xE1 GDP c\u1EE7a c\u1EA3 th\u1EBF gi\u1EDBi" },
+            { id: "opt_D", label: "D", text: "Ch\xE9p l\u1EA1i nguy\xEAn v\u0103n c\xE1c gi\u1EA3i ph\xE1p t\u1EEB m\u1ED9t \u0111\u1EC1 thi v\u1EC1 b\u1EA3o v\u1EC7 m\xF4i tr\u01B0\u1EDDng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. C\xE1c gi\u1EA3i ph\xE1p \u0111\u1EC1 xu\u1EA5t ph\u1EA3i gi\u1EA3i quy\u1EBFt tr\u1EF1c ti\u1EBFp v\xE0 t\u01B0\u01A1ng \u1EE9ng v\u1EDBi ch\xEDnh nh\u1EEFng nguy\xEAn nh\xE2n v\xE0 v\u1EA5n \u0111\u1EC1 \u0111\xE3 \u0111\u01B0\u1EE3c ph\xE2n t\xEDch \u1EDF \u0111o\u1EA1n tr\u01B0\u1EDBc",
+          correctExplanation: "Quy t\u1EAFc v\xE0ng c\u1EE7a Leader: 'Solutions ph\u1EA3i \u0111\u1ED1i s\xE1nh tr\u1EF1c di\u1EC7n v\u1EDBi Causes'. N\u1EBFu nguy\xEAn nh\xE2n l\xE0 th\u1EF1c ph\u1EA9m ch\u1EBF bi\u1EBFn s\u1EB5n nhi\u1EC1u \u0111\u01B0\u1EDDng, th\xEC gi\u1EA3i ph\xE1p ph\u1EA3i l\xE0 \u0111\xE1nh thu\u1EBF n\u01B0\u1EDBc ng\u1ECDt ho\u1EB7c d\xE1n nh\xE3n c\u1EA3nh b\xE1o dinh d\u01B0\u1EE1ng, kh\xF4ng th\u1EC3 \u0111\u01B0a ra gi\u1EA3i ph\xE1p l\u1EC7ch pha kh\xF4ng li\xEAn quan.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ch\u1EC9 c\u1EA7n n\xEAu m\u1ED9t gi\u1EA3i ph\xE1p duy nh\u1EA5t v\xE0 k\xEAu g\u1ECDi m\u1ECDi ng\u01B0\u1EDDi t\u1EF1 n\xE2ng cao \xFD th\u1EE9c chung chung",
+            diagnosticTitle: "L\u1ED7i \u0111\u01B0a gi\u1EA3i ph\xE1p s\xE1o r\u1ED7ng 'n\xE2ng cao \xFD th\u1EE9c' (Vague awareness trap)",
+            explanation: "Ch\u1EC9 n\xF3i 'raise awareness' m\xE0 kh\xF4ng c\xF3 c\u01A1 ch\u1EBF ch\xEDnh s\xE1ch c\u1EE5 th\u1EC3 b\u1ECB gi\xE1m kh\u1EA3o coi l\xE0 l\u1EADp lu\u1EADn h\u1EDDi h\u1EE3t (under-developed)."
+          }
+        },
+        {
+          id: "leader_w2d1_q02",
+          roundIndex: 1,
+          prompt: "V\u1EDBi \u0111\u1EC1 b\xE0i: 'In some countries, the average weight of people is increasing and their health levels are decreasing. What are the causes and what measures can be taken?', c\xE2u m\u1EDF b\xE0i n\xE0o th\u1EC3 hi\u1EC7n s\u1EF1 tinh g\u1ECDn v\xE0 chu\u1EA9n m\u1EF1c h\u1ECDc thu\u1EADt?",
+          options: [
+            { id: "opt_A", label: "A", text: "It is widely observed that obesity rates are escalating while public fitness levels are deteriorating. This alarming trend stems primarily from sedentary work patterns and the ubiquity of fast food, necessitating decisive governmental fiscal and educational interventions." },
+            { id: "opt_B", label: "B", text: "People are getting very fat and sick nowadays. I will tell you why and how to fix this." },
+            { id: "opt_C", label: "C", text: "In some countries weight is increasing and health is decreasing, so I will discuss causes and solutions." },
+            { id: "opt_D", label: "D", text: "Fat people have many problems because eating burgers makes weight go up very high." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. It is widely observed that obesity rates are escalating while public fitness levels are deteriorating. This alarming trend stems primarily from sedentary work patterns and the ubiquity of fast food, necessitating decisive governmental fiscal and educational interventions.",
+          correctExplanation: "Paraphrase \u0111\u1EC9nh cao: 'obesity rates are escalating' (t\u1EF7 l\u1EC7 b\xE9o ph\xEC leo thang), 'public fitness levels are deteriorating' (th\u1EC3 l\u1EF1c c\u1ED9ng \u0111\u1ED3ng suy gi\u1EA3m), t\xF3m l\u01B0\u1EE3c nguy\xEAn nh\xE2n ('sedentary work patterns', 'ubiquity of fast food') v\xE0 \u0111\u1ECBnh h\u01B0\u1EDBng gi\u1EA3i ph\xE1p ('fiscal and educational interventions').",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. People are getting very fat and sick nowadays. I will tell you why and how to fix this.",
+            diagnosticTitle: "D\xF9ng t\u1EEB ng\u1EEF th\xF4 thi\u1EC3n v\xE0 c\u1EA5u tr\xFAc x\u01B0ng h\xF4 v\u0103n n\xF3i",
+            explanation: "'Getting fat and sick' v\xE0 'I will tell you' vi ph\u1EA1m nghi\xEAm tr\u1ECDng t\xEDnh trang tr\u1ECDng c\u1EE7a IELTS Academic."
+          }
+        },
+        {
+          id: "leader_w2d1_q03",
+          roundIndex: 2,
+          prompt: "Ch\u1ECDn c\xE2u ph\xE2n t\xEDch NGUY\xCAN NH\xC2N h\u1ECDc thu\u1EADt v\u1EC1 t\xE1c \u0111\u1ED9ng c\u1EE7a ch\u1EBF \u0111\u1ED9 \u0103n c\xF4ng nghi\u1EC7p \u0111\u1ED1i v\u1EDBi \u0111\u1EA1i d\u1ECBch b\xE9o ph\xEC:",
+          options: [
+            { id: "opt_A", label: "A", text: "Chief among the causes is the omnipresence of ultra-processed foodstuffs saturated with refined sugars and unhealthy fats, which are heavily marketed yet engineered to induce overconsumption." },
+            { id: "opt_B", label: "B", text: "People eat fast food because fast food is very delicious and cheap in supermarkets." },
+            { id: "opt_C", label: "C", text: "Cooking at home takes too much time so people buy burgers every day." },
+            { id: "opt_D", label: "D", text: "Many foods have bad chemicals that make human body grow fat quickly." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Chief among the causes is the omnipresence of ultra-processed foodstuffs saturated with refined sugars and unhealthy fats, which are heavily marketed yet engineered to induce overconsumption.",
+          correctExplanation: "T\u1EEB v\u1EF1ng C1/C2 xu\u1EA5t s\u1EAFc: 'omnipresence of ultra-processed foodstuffs' (s\u1EF1 hi\u1EC7n di\u1EC7n kh\u1EAFp n\u01A1i c\u1EE7a th\u1EF1c ph\u1EA9m si\xEAu ch\u1EBF bi\u1EBFn), 'saturated with refined sugars' (b\xE3o h\xF2a \u0111\u01B0\u1EDDng tinh luy\u1EC7n), 'engineered to induce overconsumption' (\u0111\u01B0\u1EE3c thi\u1EBFt k\u1EBF \u0111\u1EC3 k\xEDch th\xEDch \u0103n qu\xE1 \u0111\u1ED9).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. People eat fast food because fast food is very delicious and cheap in supermarkets.",
+            diagnosticTitle: "Gi\u1EA3i th\xEDch \u0111\u01A1n gi\u1EA3n \u1EDF m\u1EE9c Band 5.0",
+            explanation: "Ph\u01B0\u01A1ng \xE1n B \u0111\xFAng ngh\u0129a \u0111\u1EDDi th\u01B0\u1EDDng nh\u01B0ng ngh\xE8o n\xE0n v\u1EC1 thu\u1EADt ng\u1EEF chuy\xEAn ng\xE0nh dinh d\u01B0\u1EE1ng v\xE0 s\u1EE9c kh\u1ECFe c\xF4ng c\u1ED9ng."
+          }
+        },
+        {
+          id: "leader_w2d1_q04",
+          roundIndex: 3,
+          prompt: "Ch\u1ECDn c\xE2u ph\xE2n t\xEDch GI\u1EA2I PH\xC1P T\xC0I CH\xCDNH (Fiscal Solution) c\xF3 s\u1EE9c thuy\u1EBFt ph\u1EE5c cao nh\u1EA5t \u0111\u1EC3 gi\u1EA3i quy\u1EBFt t\xECnh tr\u1EA1ng l\u1EA1m d\u1EE5ng \u0111\u1ED3 u\u1ED1ng c\xF3 \u0111\u01B0\u1EDDng:",
+          options: [
+            { id: "opt_A", label: "A", text: "To curtail this issue, authorities should implement a progressive tax levy on sugar-sweetened beverages, simultaneously using the accrued revenue to subsidize fresh organic produce." },
+            { id: "opt_B", label: "B", text: "Governments must ban all sweet drinks and close all soda factories immediately." },
+            { id: "opt_C", label: "C", text: "People should stop buying soda because soda is bad for their teeth." },
+            { id: "opt_D", label: "D", text: "Police should arrest anyone who drinks Coca-Cola in public places." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. To curtail this issue, authorities should implement a progressive tax levy on sugar-sweetened beverages, simultaneously using the accrued revenue to subsidize fresh organic produce.",
+          correctExplanation: "Gi\u1EA3i ph\xE1p kinh t\u1EBF h\u1ECDc ch\xEDnh x\xE1c: 'implement a progressive tax levy on sugar-sweetened beverages' (\xE1p thu\u1EBF l\u0169y ti\u1EBFn l\xEAn \u0111\u1ED3 u\u1ED1ng c\xF3 \u0111\u01B0\u1EDDng), k\u1EBFt h\u1EE3p d\xF9ng ngu\u1ED3n thu 'subsidize fresh organic produce' (tr\u1EE3 gi\xE1 n\xF4ng s\u1EA3n t\u01B0\u01A1i s\u1EA1ch).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Governments must ban all sweet drinks and close all soda factories immediately.",
+            diagnosticTitle: "\u0110\u01B0a ra gi\u1EA3i ph\xE1p c\u1EF1c \u0111oan phi th\u1EF1c t\u1EBF trong n\u1EC1n kinh t\u1EBF th\u1ECB tr\u01B0\u1EDDng",
+            explanation: "\u0110\xF2i c\u1EA5m to\xE0n b\u1ED9 v\xE0 \u0111\xF3ng c\u1EEDa nh\xE0 m\xE1y l\xE0 ch\xEDnh s\xE1ch vi\u1EC5n t\u01B0\u1EDFng, th\u1EC3 hi\u1EC7n s\u1EF1 thi\u1EBFu hi\u1EC3u bi\u1EBFt v\u1EC1 v\u1EADn h\xE0nh x\xE3 h\u1ED9i."
+          }
+        },
+        {
+          id: "leader_w2d1_q05",
+          roundIndex: 4,
+          prompt: "Khi ph\xE2n t\xEDch nguy\xEAn nh\xE2n l\u1ED1i s\u1ED1ng \xEDt v\u1EADn \u0111\u1ED9ng (Sedentary lifestyle), c\xE2u n\xE0o sau \u0111\xE2y m\u1ED5 x\u1EBB \u0111\u01B0\u1EE3c c\u01A1 ch\u1EBF t\u1EF1 \u0111\u1ED9ng h\xF3a c\xF4ng vi\u1EC7c?",
+          options: [
+            { id: "opt_A", label: "A", text: "The widespread shift toward desk-bound knowledge economies, combined with automated domestic appliances, has drastically eliminated physical exertion from daily routines." },
+            { id: "opt_B", label: "B", text: "People sit on chairs all day because computers are very interesting." },
+            { id: "opt_C", label: "C", text: "Workers do not walk because cars and motorbikes are everywhere." },
+            { id: "opt_D", label: "D", text: "Offices have air conditioning so workers sleep during working hours." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. The widespread shift toward desk-bound knowledge economies, combined with automated domestic appliances, has drastically eliminated physical exertion from daily routines.",
+          correctExplanation: "T\u1EEB v\u1EF1ng s\u1EAFc s\u1EA3o: 'desk-bound knowledge economies' (n\u1EC1n kinh t\u1EBF tri th\u1EE9c ng\u1ED3i b\xE0n gi\u1EA5y), 'automated domestic appliances' (thi\u1EBFt b\u1ECB gia d\u1EE5ng t\u1EF1 \u0111\u1ED9ng h\xF3a), 'drastically eliminated physical exertion' (tri\u1EC7t ti\xEAu s\u1EF1 v\u1EADn \u0111\u1ED9ng th\u1EC3 ch\u1EA5t kh\u1ECFi th\xF3i quen h\xE0ng ng\xE0y).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. People sit on chairs all day because computers are very interesting.",
+            diagnosticTitle: "Quy k\u1EBFt nguy\xEAn nh\xE2n tr\u1EBB con 'ng\u1ED3i v\xEC m\xE1y t\xEDnh hay'",
+            explanation: "C\xE1ch gi\u1EA3i th\xEDch ng\xE2y ng\xF4 kh\xF4ng ch\u1EA1m \u0111\u1EBFn b\u1EA3n ch\u1EA5t chuy\u1EC3n \u0111\u1ED5i c\u01A1 c\u1EA5u n\u1EC1n kinh t\u1EBF v\xE0 t\u1EF1 \u0111\u1ED9ng h\xF3a."
+          }
+        },
+        {
+          id: "leader_w2d1_q06",
+          roundIndex: 5,
+          prompt: "Ch\u1ECDn Topic Sentence cho Body 2 chuy\u1EC3n ti\u1EBFp m\u01B0\u1EE3t m\xE0 t\u1EEB Nguy\xEAn nh\xE2n sang Gi\u1EA3i ph\xE1p:",
+          options: [
+            { id: "opt_A", label: "A", text: "To reverse these alarming epidemiological trends, a multifaceted approach combining regulatory taxation and urban infrastructure remodeling is imperative." },
+            { id: "opt_B", label: "B", text: "Now I will discuss some solutions that governments should do." },
+            { id: "opt_C", label: "C", text: "Solutions are very important to stop obesity from killing people." },
+            { id: "opt_D", label: "D", text: "There are many ways to make people become thin again." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. To reverse these alarming epidemiological trends, a multifaceted approach combining regulatory taxation and urban infrastructure remodeling is imperative.",
+          correctExplanation: "Topic Sentence \u0111\u1EB3ng c\u1EA5p Leader: 'reverse these alarming epidemiological trends' (\u0111\u1EA3o ng\u01B0\u1EE3c c\xE1c xu h\u01B0\u1EDBng d\u1ECBch t\u1EC5 h\u1ECDc \u0111\xE1ng b\xE1o \u0111\u1ED9ng n\xE0y), 'a multifaceted approach' (c\xE1ch ti\u1EBFp c\u1EADn \u0111a di\u1EC7n), 'regulatory taxation and urban infrastructure remodeling' (thu\u1EBF \u0111i\u1EC1u ti\u1EBFt v\xE0 t\xE1i quy ho\u1EA1ch h\u1EA1 t\u1EA7ng \u0111\xF4 th\u1ECB).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. There are many ways to make people become thin again.",
+            diagnosticTitle: "D\xF9ng t\u1EEB ng\u1EEF b\xECnh d\xE2n 'make people become thin'",
+            explanation: "'Become thin' l\xE0 v\u0103n phong kh\u1EA9u ng\u1EEF, trong y t\u1EBF h\u1ECDc thu\u1EADt ph\u1EA3i d\xF9ng 'curb obesity' ho\u1EB7c 'promote healthy body mass'."
+          }
+        },
+        {
+          id: "leader_w2d1_q07",
+          roundIndex: 6,
+          prompt: "T\u1EEB 'ubiquity' trong c\u1EE5m 'the ubiquity of high-calorie fast food outlets' \u0111\u1ED3ng ngh\u0129a v\u1EDBi t\u1EEB n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "omnipresence s\u1EF1 hi\u1EC7n di\u1EC7n tr\xE0n ng\u1EADp kh\u1EAFp m\u1ECDi n\u01A1i" },
+            { id: "opt_B", label: "B", text: "scarcity s\u1EF1 khan hi\u1EBFm \xEDt \u1ECFi" },
+            { id: "opt_C", label: "C", text: "expensiveness s\u1EF1 \u0111\u1EAFt \u0111\u1ECF xa x\u1EC9" },
+            { id: "opt_D", label: "D", text: "cleanliness s\u1EF1 s\u1EA1ch s\u1EBD v\u1EC7 sinh" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. omnipresence s\u1EF1 hi\u1EC7n di\u1EC7n tr\xE0n ng\u1EADp kh\u1EAFp m\u1ECDi n\u01A1i",
+          correctExplanation: "'Ubiquity' (t\xEDnh ph\u1ED5 bi\u1EBFn c\xF9ng kh\u1EAFp, \u1EDF \u0111\xE2u c\u0169ng th\u1EA5y) \u0111\u1ED3ng ngh\u0129a v\u1EDBi 'omnipresence', l\xE0 danh t\u1EEB C2 \u0111\u1EAFt gi\xE1 trong c\xE1c b\xE0i lu\u1EADn v\u1EC1 v\u0103n h\xF3a \u0111\u1EA1i ch\xFAng v\xE0 ti\xEAu d\xF9ng.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. scarcity s\u1EF1 khan hi\u1EBFm \xEDt \u1ECFi",
+            diagnosticTitle: "Hi\u1EC3u ng\u01B0\u1EE3c ngh\u0129a v\u1EDBi t\u1EEB ph\u1ED5 bi\u1EBFn tr\xE0n ng\u1EADp",
+            explanation: "'Scarcity' (s\u1EF1 khan hi\u1EBFm) l\xE0 t\u1EEB tr\xE1i ngh\u0129a ho\xE0n to\xE0n v\u1EDBi 'ubiquity'."
+          }
+        },
+        {
+          id: "leader_w2d1_q08",
+          roundIndex: 7,
+          prompt: "Khi \u0111\u1EC1 b\xE0i h\u1ECFi s\u1ED1 nhi\u1EC1u: 'What are the causes and what measures can be taken?', th\xED sinh tr\xECnh b\xE0y bao nhi\xEAu \xFD trong m\u1ED7i th\xE2n b\xE0i l\xE0 an to\xE0n v\xE0 t\u1ED1i \u01B0u nh\u1EA5t?",
+          options: [
+            { id: "opt_A", label: "A", text: "\u0110\xFAng 2 nguy\xEAn nh\xE2n \u0111\u01B0\u1EE3c \u0111\xE0o s\xE2u \u1EDF Body 1 v\xE0 \u0111\xFAng 2 gi\u1EA3i ph\xE1p t\u01B0\u01A1ng \u1EE9ng \u0111\u01B0\u1EE3c ph\xE1t tri\u1EC3n \u0111\u1EA7y \u0111\u1EE7 \u1EDF Body 2" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 \u0111\xFAng 1 nguy\xEAn nh\xE2n duy nh\u1EA5t v\xE0 1 gi\u1EA3i ph\xE1p duy nh\u1EA5t" },
+            { id: "opt_C", label: "C", text: "Li\u1EC7t k\xEA 10 nguy\xEAn nh\xE2n th\u1EADt ng\u1EAFn g\u1ECDn th\xE0nh g\u1EA1ch \u0111\u1EA7u d\xF2ng" },
+            { id: "opt_D", label: "D", text: "Kh\xF4ng c\u1EA7n \u0111\u01B0a gi\u1EA3i ph\xE1p n\xE0o c\u1EA3" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. \u0110\xFAng 2 nguy\xEAn nh\xE2n \u0111\u01B0\u1EE3c \u0111\xE0o s\xE2u \u1EDF Body 1 v\xE0 \u0111\xFAng 2 gi\u1EA3i ph\xE1p t\u01B0\u01A1ng \u1EE9ng \u0111\u01B0\u1EE3c ph\xE1t tri\u1EC3n \u0111\u1EA7y \u0111\u1EE7 \u1EDF Body 2",
+          correctExplanation: "C\xF4ng th\u1EE9c t\u1ED1i \u01B0u: \u0110\u1EC1 h\u1ECFi s\u1ED1 nhi\u1EC1u (causes, measures) n\xEAn b\u1EAFt bu\u1ED9c ph\u1EA3i c\xF3 t\u1EEB 2 \xFD tr\u1EDF l\xEAn. C\u1EA5u tr\xFAc 2 Causes + 2 Solutions ph\xE1t tri\u1EC3n theo chu\u1ED7i Claim -> Why -> Result \u0111\u1EA3m b\u1EA3o \u0111\u1ED9 d\xE0i 260-280 t\u1EEB ho\xE0n h\u1EA3o.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ch\u1EC9 \u0111\xFAng 1 nguy\xEAn nh\xE2n duy nh\u1EA5t v\xE0 1 gi\u1EA3i ph\xE1p duy nh\u1EA5t",
+            diagnosticTitle: "L\u1ED7i Under-response khi \u0111\u1EC1 b\xE0i y\xEAu c\u1EA7u s\u1ED1 nhi\u1EC1u",
+            explanation: "\u0110\u1EC1 b\xE0i d\xF9ng danh t\u1EEB s\u1ED1 nhi\u1EC1u (causes, measures), n\u1EBFu ch\u1EC9 n\xEAu 1 \xFD s\u1EBD b\u1ECB tr\u1EEB \u0111i\u1EC3m Task Response v\xEC ch\u01B0a tr\u1EA3 l\u1EDDi tr\u1ECDn v\u1EB9n y\xEAu c\u1EA7u."
+          }
+        },
+        {
+          id: "leader_w2d1_q09",
+          roundIndex: 8,
+          prompt: "Ch\u1ECDn c\xE2u ph\xE2n t\xEDch gi\u1EA3i ph\xE1p gi\xE1o d\u1EE5c h\u1ECDc \u0111\u01B0\u1EDDng nh\u1EB1m ng\u0103n ng\u1EEBa b\xE9o ph\xEC \u1EDF tr\u1EBB em:",
+          options: [
+            { id: "opt_A", label: "A", text: "Furthermore, educational institutions must revise their curricula to mandate rigorous physical education alongside comprehensive nutritional literacy programs." },
+            { id: "opt_B", label: "B", text: "Also, schools should force students to run 10 kilometers every morning without resting." },
+            { id: "opt_C", label: "C", text: "Teachers must not let children eat lunch at school." },
+            { id: "opt_D", label: "D", text: "Schools need to buy expensive sports machines for kids." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Furthermore, educational institutions must revise their curricula to mandate rigorous physical education alongside comprehensive nutritional literacy programs.",
+          correctExplanation: "'Revise curricula' (c\u1EA3i c\xE1ch ch\u01B0\u01A1ng tr\xECnh gi\u1EA3ng d\u1EA1y), 'mandate rigorous physical education' (b\u1EAFt bu\u1ED9c gi\xE1o d\u1EE5c th\u1EC3 ch\u1EA5t b\xE0i b\u1EA3n), 'comprehensive nutritional literacy programs' (ch\u01B0\u01A1ng tr\xECnh ph\u1ED5 c\u1EADp ki\u1EBFn th\u1EE9c dinh d\u01B0\u1EE1ng to\xE0n di\u1EC7n).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Also, schools should force students to run 10 kilometers every morning without resting.",
+            diagnosticTitle: "\u0110\u01B0a ra gi\u1EA3i ph\xE1p b\u1EA1o l\u1EF1c ph\u1EA3n khoa h\u1ECDc",
+            explanation: "B\u1EAFt tr\u1EBB em ch\u1EA1y 10km kh\xF4ng ngh\u1EC9 l\xE0 bi\u1EC7n ph\xE1p v\xF4 l\xFD, ph\u1EA3n t\xE1c d\u1EE5ng trong b\xE0i vi\u1EBFt h\u1ECDc thu\u1EADt."
+          }
+        },
+        {
+          id: "leader_w2d1_q10",
+          roundIndex: 9,
+          prompt: "Ch\u1ECDn c\xE2u K\u1EBFt lu\u1EADn (Conclusion) m\u1EABu m\u1EF1c cho b\xE0i lu\u1EADn v\u1EC1 kh\u1EE7ng ho\u1EA3ng s\u1EE9c kh\u1ECFe v\xE0 c\xE2n n\u1EB7ng:",
+          options: [
+            { id: "opt_A", label: "A", text: "In conclusion, while modern sedentary occupations and processed diets have precipitated widespread physical decline, coordinated efforts encompassing fiscal disincentives on junk food and institutional wellness initiatives can effectively restore public health." },
+            { id: "opt_B", label: "B", text: "In conclusion, fat people must eat vegetables and exercise every day to be healthy." },
+            { id: "opt_C", label: "C", text: "To sum up, obesity is bad and governments will solve it very soon." },
+            { id: "opt_D", label: "D", text: "All in all, weight will decrease if everyone stops eating fast food forever." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. In conclusion, while modern sedentary occupations and processed diets have precipitated widespread physical decline, coordinated efforts encompassing fiscal disincentives on junk food and institutional wellness initiatives can effectively restore public health.",
+          correctExplanation: "K\u1EBFt b\xE0i m\u1EABu m\u1EF1c: n\xE9n to\xE0n b\u1ED9 nguy\xEAn nh\xE2n v\xE0o m\u1EC7nh \u0111\u1EC1 nh\u01B0\u1EE3ng b\u1ED9 'while modern sedentary occupations and processed diets have precipitated...', v\xE0 t\u1ED5ng h\u1EE3p tr\u1ECDn v\u1EB9n c\xE1c gi\u1EA3i ph\xE1p 'fiscal disincentives' v\xE0 'institutional wellness initiatives'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. In conclusion, fat people must eat vegetables and exercise every day to be healthy.",
+            diagnosticTitle: "K\u1EBFt b\xE0i thi\u1EBFu t\xEDnh v\u0129 m\xF4 ch\xEDnh s\xE1ch x\xE3 h\u1ED9i",
+            explanation: "Ph\u01B0\u01A1ng \xE1n B nh\xECn nh\u1EADn v\u1EA5n \u0111\u1EC1 \u1EDF g\xF3c \u0111\u1ED9 c\xE1 nh\xE2n t\u1EA7m th\u01B0\u1EDDng, thi\u1EBFu t\u1EA7m nh\xECn ch\xEDnh s\xE1ch v\u0129 m\xF4."
+          }
+        }
+      ],
+      "WEEK 2 \u2013 DAY 2": [
+        {
+          id: "leader_w2d2_q01",
+          roundIndex: 0,
+          prompt: "Trong Speaking Part 2 v\u1EDBi ch\u1EE7 \u0111\u1EC1: 'Describe a notable building or architectural landmark', c\u1EA5u tr\xFAc tri\u1EC3n khai n\xE0o sau \u0111\xE2y gi\xFAp th\xED sinh ki\u1EC3m so\xE1t tr\u1ECDn v\u1EB9n 2 ph\xFAt b\xE0i n\xF3i?",
+          options: [
+            { id: "opt_A", label: "A", text: "\u0110\u1ECBnh danh c\xF4ng tr\xECnh v\xE0 v\u1ECB tr\xED \u0111\u1ECBa l\xFD -> Phong c\xE1ch ki\u1EBFn tr\xFAc v\xE0 v\u1EADt li\u1EC7u k\u1EBFt c\u1EA5u \u0111\u1EB7c tr\u01B0ng -> Ch\u1EE9c n\u0103ng s\u1EED d\u1EE5ng v\xE0 \xFD ngh\u0129a l\u1ECBch s\u1EED v\u0103n h\xF3a -> Tr\u1EA3i nghi\u1EC7m v\xE0 c\u1EA3m x\xFAc c\xE1 nh\xE2n khi chi\xEAm ng\u01B0\u1EE1ng" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 m\xF4 t\u1EA3 chi ti\u1EBFt chi\u1EC1u cao b\u1EB1ng m\xE9t v\xE0 gi\xE1 v\xE9 v\xE0o c\u1ED5ng" },
+            { id: "opt_C", label: "C", text: "K\u1EC3 v\u1EC1 m\u1ED9t cu\u1ED9c c\xE3i nhau v\u1EDBi nh\xE2n vi\xEAn b\u1EA3o v\u1EC7 c\u1EE7a t\xF2a nh\xE0 \u0111\xF3" },
+            { id: "opt_D", label: "D", text: "Li\u1EC7t k\xEA danh s\xE1ch 20 t\xF2a nh\xE0 kh\xE1c nhau trong th\xE0nh ph\u1ED1" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. \u0110\u1ECBnh danh c\xF4ng tr\xECnh v\xE0 v\u1ECB tr\xED \u0111\u1ECBa l\xFD -> Phong c\xE1ch ki\u1EBFn tr\xFAc v\xE0 v\u1EADt li\u1EC7u k\u1EBFt c\u1EA5u \u0111\u1EB7c tr\u01B0ng -> Ch\u1EE9c n\u0103ng s\u1EED d\u1EE5ng v\xE0 \xFD ngh\u0129a l\u1ECBch s\u1EED v\u0103n h\xF3a -> Tr\u1EA3i nghi\u1EC7m v\xE0 c\u1EA3m x\xFAc c\xE1 nh\xE2n khi chi\xEAm ng\u01B0\u1EE1ng",
+          correctExplanation: "Khung ki\u1EBFn tr\xFAc Part 2 chu\u1EA9n Leader: Location & Identification -> Architectural Facade & Aesthetics -> Historical / Socio-cultural Significance -> Personal Impression & Emotional Resonance.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Li\u1EC7t k\xEA danh s\xE1ch 20 t\xF2a nh\xE0 kh\xE1c nhau trong th\xE0nh ph\u1ED1",
+            diagnosticTitle: "L\u1EA1c \u0111\u1EC1 sang vi\u1EC7c li\u1EC7t k\xEA nhi\u1EC1u t\xF2a nh\xE0 thay v\xEC t\u1EADp trung v\xE0o m\u1ED9t c\xF4ng tr\xECnh duy nh\u1EA5t",
+            explanation: "\u0110\u1EC1 b\xE0i y\xEAu c\u1EA7u 'Describe a building' (s\u1ED1 \xEDt), li\u1EC7t k\xEA nhi\u1EC1u t\xF2a nh\xE0 vi ph\u1EA1m y\xEAu c\u1EA7u tr\u1ECDng t\xE2m."
+          }
+        },
+        {
+          id: "leader_w2d2_q02",
+          roundIndex: 1,
+          prompt: "Ch\u1ECDn c\u1EE5m collocation h\u1ECDc thu\u1EADt mi\xEAu t\u1EA3 v\u1EBB ngo\xE0i nguy nga tr\xE1ng l\u1EC7 c\u1EE7a m\u1ED9t c\xF4ng tr\xECnh ki\u1EBFn tr\xFAc bi\u1EC3u t\u01B0\u1EE3ng:",
+          options: [
+            { id: "opt_A", label: "A", text: "an awe-inspiring edifice characterized by sleek geometric contours and avant-garde glass facades" },
+            { id: "opt_B", label: "B", text: "a very tall house having many big windows with clear glass" },
+            { id: "opt_C", label: "C", text: "a high construction which is very beautiful and nice" },
+            { id: "opt_D", label: "D", text: "an enormous building that looks like a giant box" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. an awe-inspiring edifice characterized by sleek geometric contours and avant-garde glass facades",
+          correctExplanation: "T\u1EEB v\u1EF1ng ki\u1EBFn tr\xFAc \u0111\u1EC9nh cao: 'awe-inspiring edifice' (t\xF2a dinh th\u1EF1 k\u1EF3 v\u0129 truy\u1EC1n c\u1EA3m h\u1EE9ng), 'sleek geometric contours' (nh\u1EEFng \u0111\u01B0\u1EDDng n\xE9t h\xECnh h\u1ECDc b\xF3ng b\u1EA9y), 'avant-garde glass facades' (m\u1EB7t ti\u1EC1n b\u1EB1ng k\xEDnh mang phong c\xE1ch ti\xEAn phong).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. a very tall house having many big windows with clear glass",
+            diagnosticTitle: "D\xF9ng t\u1EEB ng\u1EEF m\xF4 t\u1EA3 s\u01A1 c\u1EA5p \u1EDF m\u1EE9c Band 5.0",
+            explanation: "'Very tall house with big windows' l\xE0 v\u0103n phong c\u1EE7a tr\u1EBB em ti\u1EC3u h\u1ECDc."
+          }
+        },
+        {
+          id: "leader_w2d2_q03",
+          roundIndex: 2,
+          prompt: "Khi n\xF3i v\u1EC1 s\u1EF1 h\xF2a quy\u1EC7n gi\u1EEFa n\xE9t c\u1ED5 k\xEDnh truy\u1EC1n th\u1ED1ng v\xE0 thi\u1EBFt k\u1EBF hi\u1EC7n \u0111\u1EA1i c\u1EE7a m\u1ED9t t\xF2a nh\xE0, c\xE2u n\xE0o th\u1EC3 hi\u1EC7n s\u1EF1 tinh t\u1EBF nh\u1EA5t?",
+          options: [
+            { id: "opt_A", label: "A", text: "What strikes me most is how the architects seamlessly integrated neoclassical colonnades with contemporary sustainable materials." },
+            { id: "opt_B", label: "B", text: "The building has old columns and new plastic materials together which is cool." },
+            { id: "opt_C", label: "C", text: "Old and new styles are mixed like a salad in this house." },
+            { id: "opt_D", label: "D", text: "I like it because it looks both old-fashioned and fashionable at the same time." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. What strikes me most is how the architects seamlessly integrated neoclassical colonnades with contemporary sustainable materials.",
+          correctExplanation: "M\u1EC7nh \u0111\u1EC1 ch\u1EBB 'What strikes me most is...', tr\u1EA1ng t\u1EEB 'seamlessly integrated' (t\xEDch h\u1EE3p m\u1ED9t c\xE1ch li\u1EC1n m\u1EA1ch kh\xF4ng t\xEC v\u1EBFt), 'neoclassical colonnades' (h\xE0ng c\u1ED9t t\xE2n c\u1ED5 \u0111i\u1EC3n) v\xE0 'contemporary sustainable materials' (v\u1EADt li\u1EC7u b\u1EC1n v\u1EEFng \u0111\u01B0\u01A1ng \u0111\u1EA1i).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Old and new styles are mixed like a salad in this house.",
+            diagnosticTitle: "S\u1EED d\u1EE5ng \u1EA9n d\u1EE5 th\xF4 thi\u1EC3n kh\xF4ng ph\xF9 h\u1EE3p v\u0103n c\u1EA3nh",
+            explanation: "So s\xE1nh ki\u1EBFn tr\xFAc v\u1EDBi 'salad' l\xE0 ph\xE9p so s\xE1nh v\u1EE5ng v\u1EC1 l\xE0m m\u1EA5t \u0111i t\xEDnh trang tr\u1ECDng c\u1EE7a b\xE0i n\xF3i."
+          }
+        },
+        {
+          id: "leader_w2d2_q04",
+          roundIndex: 3,
+          prompt: "Trong Part 1, khi \u0111\u01B0\u1EE3c h\u1ECFi: 'Do you prefer living in an old historic house or a modern high-rise apartment?', c\xE1ch tr\u1EA3 l\u1EDDi n\xE0o th\u1EC3 hi\u1EC7n c\u1EA5u tr\xFAc \u0111\u1ED1i chi\u1EBFu c\xF3 chi\u1EC1u s\xE2u?",
+          options: [
+            { id: "opt_A", label: "A", text: "I would lean toward a modern apartment primarily because of state-of-the-art security systems and centralized amenities, though I hold immense appreciation for the rustic charm of heritage homes." },
+            { id: "opt_B", label: "B", text: "I like modern apartment because old houses have ghosts." },
+            { id: "opt_C", label: "C", text: "Both are good. I can live anywhere." },
+            { id: "opt_D", label: "D", text: "Apartments are high, houses are low, so I choose apartments." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. I would lean toward a modern apartment primarily because of state-of-the-art security systems and centralized amenities, though I hold immense appreciation for the rustic charm of heritage homes.",
+          correctExplanation: "L\u1EADp lu\u1EADn hai v\u1EBF c\xE2n b\u1EB1ng: ch\u1ECDn c\u0103n h\u1ED9 hi\u1EC7n \u0111\u1EA1i v\xEC 'state-of-the-art security' v\xE0 'centralized amenities' nh\u01B0ng v\u1EABn tr\xE2n tr\u1ECDng 'the rustic charm of heritage homes' (v\u1EBB duy\xEAn d\xE1ng m\u1ED9c m\u1EA1c c\u1EE7a nh\xE0 c\u1ED5 di s\u1EA3n).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. I like modern apartment because old houses have ghosts.",
+            diagnosticTitle: "\u0110\u01B0a l\xFD do m\xEA t\xEDn d\u1ECB \u0111oan v\xE0o b\xE0i thi h\u1ECDc thu\u1EADt",
+            explanation: "L\xFD do 'nh\xE0 c\u1ED5 c\xF3 ma' th\u1EC3 hi\u1EC7n t\u01B0 duy thi\u1EBFu nghi\xEAm t\xFAc trong ph\xF2ng thi."
+          }
+        },
+        {
+          id: "leader_w2d2_q05",
+          roundIndex: 4,
+          prompt: "C\u1EE5m t\u1EEB 'panoramic vista' trong c\xE2u: 'The observation deck affords a breathtaking panoramic vista of the metropolitan skyline' mang ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "T\u1EA7m nh\xECn to\xE0n c\u1EA3nh g\xF3c r\u1ED9ng bao qu\xE1t to\xE0n b\u1ED9 kh\xF4ng gian xung quanh" },
+            { id: "opt_B", label: "B", text: "M\u1ED9t b\u1EE9c tranh phong c\u1EA3nh v\u1EBD b\u1EB1ng s\u01A1n d\u1EA7u" },
+            { id: "opt_C", label: "C", text: "M\u1ED9t chi\u1EBFc k\xEDnh vi\u1EC5n v\u1ECDng quan s\xE1t c\xE1c v\xEC sao" },
+            { id: "opt_D", label: "D", text: "M\xE0n h\xECnh tivi si\xEAu m\u1ECFng \u0111\u1EB7t \u1EDF s\u1EA3nh ch\u1EDD" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. T\u1EA7m nh\xECn to\xE0n c\u1EA3nh g\xF3c r\u1ED9ng bao qu\xE1t to\xE0n b\u1ED9 kh\xF4ng gian xung quanh",
+          correctExplanation: "'Panoramic vista' (t\u1EA7m nh\xECn to\xE0n c\u1EA3nh tr\u1EA3i d\xE0i ng\xFAt ng\xE0n) l\xE0 collocation C2 sang tr\u1ECDng mi\xEAu t\u1EA3 t\u1EA7m nh\xECn t\u1EEB tr\xEAn c\xE1c \u0111\u1EC9nh th\xE1p cao \u1ED1c.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. M\u1ED9t b\u1EE9c tranh phong c\u1EA3nh v\u1EBD b\u1EB1ng s\u01A1n d\u1EA7u",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa khung c\u1EA3nh th\u1EF1c t\u1EBF v\u1EDBi b\u1EE9c tranh v\u1EBD",
+            explanation: "'Vista' l\xE0 t\u1EA7m nh\xECn quang c\u1EA3nh th\u1EADt m\u1EDF ra tr\u01B0\u1EDBc m\u1EAFt, kh\xF4ng ph\u1EA3i b\u1EE9c tranh treo t\u01B0\u1EDDng."
+          }
+        },
+        {
+          id: "leader_w2d2_q06",
+          roundIndex: 5,
+          prompt: "Ch\u1ECDn c\xE2u di\u1EC5n \u0111\u1EA1t c\u1EA3m x\xFAc ng\u01B0\u1EE1ng m\u1ED9 khi l\u1EA7n \u0111\u1EA7u ti\xEAn \u0111\u1EE9ng tr\u01B0\u1EDBc m\u1ED9t k\u1EF3 quan ki\u1EBFn tr\xFAc:",
+          options: [
+            { id: "opt_A", label: "A", text: "Stepping inside the cathedral, I was utterly overwhelmed by the sheer scale of the soaring vaulted ceilings and stained glass windows." },
+            { id: "opt_B", label: "B", text: "When I went into the church, I felt very surprised because it was very high." },
+            { id: "opt_C", label: "C", text: "The cathedral was big so my eyes became wide." },
+            { id: "opt_D", label: "D", text: "I liked the building so much and took 200 selfies." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Stepping inside the cathedral, I was utterly overwhelmed by the sheer scale of the soaring vaulted ceilings and stained glass windows.",
+          correctExplanation: "T\u1EEB v\u1EF1ng mi\xEAu t\u1EA3 c\u1EA3m x\xFAc s\u1ED1ng \u0111\u1ED9ng: 'utterly overwhelmed by the sheer scale' (ho\xE0n to\xE0n cho\xE1ng ng\u1EE3p tr\u01B0\u1EDBc quy m\xF4 \u0111\u1ED3 s\u1ED9), 'soaring vaulted ceilings' (m\xE1i v\xF2m v\xFAt cao), 'stained glass windows' (nh\u1EEFng \xF4 c\u1EEDa s\u1ED5 k\xEDnh m\xE0u tr\xE1ng l\u1EC7).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. When I went into the church, I felt very surprised because it was very high.",
+            diagnosticTitle: "D\xF9ng t\u1EEB ng\u1EEF b\xECnh d\u1ECB v\xE0 c\u1EA5u tr\xFAc c\xE2u \u0111\u01A1n \u0111i\u1EC7u",
+            explanation: "'Very surprised because it was very high' l\xE0 c\xE2u gh\xE9p \u0111\u01A1n gi\u1EA3n kh\xF4ng t\u1EA1o \u0111\u01B0\u1EE3c c\u1EA3m x\xFAc \u1EA5n t\u01B0\u1EE3ng."
+          }
+        },
+        {
+          id: "leader_w2d2_q07",
+          roundIndex: 6,
+          prompt: "T\u1EEB 'gentrification' trong ch\u1EE7 \u0111\u1EC1 \u0111\xF4 th\u1ECB v\xE0 ki\u1EBFn tr\xFAc ch\u1EC9 hi\u1EC7n t\u01B0\u1EE3ng g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Qu\xE1 tr\xECnh c\u1EA3i t\u1EA1o v\xE0 n\xE2ng c\u1EA5p c\xE1c khu d\xE2n c\u01B0 ngh\xE8o c\u0169 k\u1EF9 th\xE0nh khu \u0111\xF4 th\u1ECB hi\u1EC7n \u0111\u1EA1i, th\u01B0\u1EDDng \u0111\u1EA9y gi\xE1 nh\xE0 l\xEAn cao v\xE0 \u0111\u1EA9y c\u01B0 d\xE2n ngh\xE8o ban \u0111\u1EA7u ra xa" },
+            { id: "opt_B", label: "B", text: "Vi\u1EC7c ph\xE1 h\u1EE7y to\xE0n b\u1ED9 c\xE2y xanh trong c\xF4ng vi\xEAn \u0111\u1EC3 l\xE0m b\xE3i \u0111\u1ED7 xe" },
+            { id: "opt_C", label: "C", text: "Ch\xEDnh s\xE1ch mi\u1EC5n gi\u1EA3m thu\u1EBF cho ng\u01B0\u1EDDi n\xF4ng d\xE2n tr\u1ED3ng l\xFAa" },
+            { id: "opt_D", label: "D", text: "S\u1EF1 s\u1EE5p \u0111\u1ED5 c\u1EE7a th\u1ECB tr\u01B0\u1EDDng ch\u1EE9ng kho\xE1n qu\u1ED1c t\u1EBF" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Qu\xE1 tr\xECnh c\u1EA3i t\u1EA1o v\xE0 n\xE2ng c\u1EA5p c\xE1c khu d\xE2n c\u01B0 ngh\xE8o c\u0169 k\u1EF9 th\xE0nh khu \u0111\xF4 th\u1ECB hi\u1EC7n \u0111\u1EA1i, th\u01B0\u1EDDng \u0111\u1EA9y gi\xE1 nh\xE0 l\xEAn cao v\xE0 \u0111\u1EA9y c\u01B0 d\xE2n ngh\xE8o ban \u0111\u1EA7u ra xa",
+          correctExplanation: "'Gentrification' (ch\u1EC9nh trang \u0111\xF4 th\u1ECB k\xE8m t\u0103ng gi\xE1 b\u1EA5t \u0111\u1ED9ng s\u1EA3n) l\xE0 m\u1ED9t kh\xE1i ni\u1EC7m x\xE3 h\u1ED9i h\u1ECDc \u0111\xF4 th\u1ECB kinh \u0111i\u1EC3n r\u1EA5t th\u01B0\u1EDDng xu\u1EA5t hi\u1EC7n trong Speaking Part 3 v\xE0 Writing Task 2.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Vi\u1EC7c ph\xE1 h\u1EE7y to\xE0n b\u1ED9 c\xE2y xanh trong c\xF4ng vi\xEAn \u0111\u1EC3 l\xE0m b\xE3i \u0111\u1ED7 xe",
+            diagnosticTitle: "\u0110\u1ED3ng nh\u1EA5t ch\u1EC9nh trang \u0111\xF4 th\u1ECB v\u1EDBi n\u1EA1n ph\xE1 r\u1EEBng",
+            explanation: "Gentrification l\xE0 s\u1EF1 thay \u0111\u1ED5i c\u01A1 c\u1EA5u d\xE2n c\u01B0 v\xE0 h\u1EA1 t\u1EA7ng x\xE3 h\u1ED9i, kh\xF4ng ph\u1EA3i l\xE0 vi\u1EC7c ch\u1EB7t c\xE2y l\xE0m b\xE3i xe."
+          }
+        },
+        {
+          id: "leader_w2d2_q08",
+          roundIndex: 7,
+          prompt: "Trong Speaking Part 3, khi \u0111\u01B0\u1EE3c h\u1ECFi: 'Should governments invest heavily in preserving historic buildings or focus on constructing modern infrastructure?', c\u1EA5u tr\xFAc tr\u1EA3 l\u1EDDi n\xE0o th\u1EC3 hi\u1EC7n t\u01B0 duy c\xE2n b\u1EB1ng \u0111\u1EC9nh cao?",
+          options: [
+            { id: "opt_A", label: "A", text: "It is by no means an either-or dichotomy. While cutting-edge transport networks are critical for economic dynamism, historic monuments embody the cultural soul and collective memory of a nation, justifying sustainable conservation budgets." },
+            { id: "opt_B", label: "B", text: "Old buildings are useless, just demolish them all and build modern roads." },
+            { id: "opt_C", label: "C", text: "Keep all old buildings and never build any new roads." },
+            { id: "opt_D", label: "D", text: "I don't know because I am not the prime minister." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. It is by no means an either-or dichotomy. While cutting-edge transport networks are critical for economic dynamism, historic monuments embody the cultural soul and collective memory of a nation, justifying sustainable conservation budgets.",
+          correctExplanation: "B\xE1c b\u1ECF l\u1ED1i t\u01B0 duy nh\u1ECB nguy\xEAn sai l\u1EA7m: 'It is by no means an either-or dichotomy' (\u0111\xE2y ho\xE0n to\xE0n kh\xF4ng ph\u1EA3i s\u1EF1 ph\xE2n \u0111\xF4i \u0111\u01B0\u1EE3c c\xE1i n\xE0y m\u1EA5t c\xE1i kia), 'cultural soul and collective memory' (linh h\u1ED3n v\u0103n h\xF3a v\xE0 k\xFD \u1EE9c t\u1EADp th\u1EC3 c\u1EE7a d\xE2n t\u1ED9c).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Old buildings are useless, just demolish them all and build modern roads.",
+            diagnosticTitle: "L\u1ED1i t\u01B0 duy c\u1EF1c \u0111oan ph\xE1 h\u1EE7y di s\u1EA3n v\u0103n h\xF3a",
+            explanation: "Ph\xE1t bi\u1EC3u ph\xE1 b\u1ECF m\u1ECDi di s\u1EA3n v\u0103n h\xF3a l\xE0 l\u1EADp tr\u01B0\u1EDDng c\u1EF1c \u0111oan thi\u1EBFu chi\u1EC1u s\xE2u x\xE3 h\u1ED9i h\u1ECDc."
+          }
+        },
+        {
+          id: "leader_w2d2_q09",
+          roundIndex: 8,
+          prompt: "Collocation 'architectural marvel' \u0111\u1ED3ng ngh\u0129a v\u1EDBi c\u1EE5m t\u1EEB n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "a masterpiece of design and structural engineering" },
+            { id: "opt_B", label: "B", text: "a poorly built wooden shack" },
+            { id: "opt_C", label: "C", text: "a cheap apartment block" },
+            { id: "opt_D", label: "D", text: "an empty construction site" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. a masterpiece of design and structural engineering",
+          correctExplanation: "'Architectural marvel' (k\u1EF3 quan ki\u1EBFn tr\xFAc) \u0111\u1ED3ng ngh\u0129a v\u1EDBi 'a masterpiece of design and structural engineering' (ki\u1EC7t t\xE1c thi\u1EBFt k\u1EBF v\xE0 k\u1EF9 thu\u1EADt k\u1EBFt c\u1EA5u).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. a poorly built wooden shack",
+            diagnosticTitle: "Ch\u1ECDn c\u1EE5m t\u1EEB tr\xE1i ngh\u0129a ch\u1EC9 t\xFAp l\u1EC1u r\xE1ch n\xE1t",
+            explanation: "'Poorly built shack' (t\xFAp l\u1EC1u \u1ECDp \u1EB9p) tr\xE1i ng\u01B0\u1EE3c ho\xE0n to\xE0n v\u1EDBi k\u1EF3 quan ki\u1EBFn tr\xFAc."
+          }
+        },
+        {
+          id: "leader_w2d2_q10",
+          roundIndex: 9,
+          prompt: "\u0110\u1EC3 k\u1EBFt th\xFAc b\xE0i n\xF3i Part 2 mi\xEAu t\u1EA3 m\u1ED9t t\xF2a nh\xE0 bi\u1EC3u t\u01B0\u1EE3ng, c\xE2u k\u1EBFt n\xE0o sau \u0111\xE2y \u0111\u1EC3 l\u1EA1i \u1EA5n t\u01B0\u1EE3ng t\u1ED1t nh\u1EA5t v\u1EC1 m\u1EB7t Fluency?",
+          options: [
+            { id: "opt_A", label: "A", text: "All in all, this landmark is not merely a testament to human engineering prowess, but a timeless beacon of cultural pride that continues to captivate visitors worldwide." },
+            { id: "opt_B", label: "B", text: "That is all the information about this building, thank you for listening." },
+            { id: "opt_C", label: "C", text: "I finished my talk, now you can ask me questions." },
+            { id: "opt_D", label: "D", text: "I hope you go there one day and buy a souvenir." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. All in all, this landmark is not merely a testament to human engineering prowess, but a timeless beacon of cultural pride that continues to captivate visitors worldwide.",
+          correctExplanation: "M\u1ED9t c\xE1i k\u1EBFt n\xE2ng t\u1EA7m tri\u1EBFt l\xFD: 'testament to human engineering prowess' (b\u1EB1ng ch\u1EE9ng cho n\u0103ng l\u1EF1c k\u1EF9 thu\u1EADt c\u1EE7a con ng\u01B0\u1EDDi) v\xE0 'timeless beacon of cultural pride' (ng\u1ECDn h\u1EA3i \u0111\u0103ng v\u01B0\u1EE3t th\u1EDDi gian c\u1EE7a ni\u1EC1m t\u1EF1 h\xE0o v\u0103n h\xF3a).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. That is all the information about this building, thank you for listening.",
+            diagnosticTitle: "D\xF9ng c\xE2u \u0111\xF3ng b\xE0i m\xE1y m\xF3c ki\u1EC3u thuy\u1EBFt tr\xECnh h\u1ECDc sinh",
+            explanation: "'Thank you for listening' bi\u1EBFn b\xE0i thi n\xF3i t\u01B0\u01A1ng t\xE1c th\xE0nh b\xE0i thuy\u1EBFt tr\xECnh \u0111\u01A1n \u0111i\u1EC7u."
+          }
+        }
+      ],
+      "WEEK 2 \u2013 DAY 3": [
+        {
+          id: "leader_w2d3_q01",
+          roundIndex: 0,
+          prompt: "Trong b\xE0i \u0111\u1ECDc Cambridge 10 v\u1EC1 hi\u1EC7n t\u01B0\u1EE3ng l\u1EA1i gi\u1ED1ng sinh h\u1ECDc (Atavism / Evolutionary throwbacks), \u0111\u1ECBnh lu\u1EADt Dollo (Dollo's Law, \u0111\u1EC1 xu\u1EA5t n\u0103m 1893) kh\u1EB3ng \u0111\u1ECBnh \u0111i\u1EC1u g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Ti\u1EBFn h\xF3a sinh h\u1ECDc l\xE0 m\u1ED9t qu\xE1 tr\xECnh kh\xF4ng th\u1EC3 \u0111\u1EA3o ng\u01B0\u1EE3c, m\u1ED9t khi m\u1ED9t \u0111\u1EB7c t\xEDnh ph\u1EE9c t\u1EA1p \u0111\xE3 b\u1ECB m\u1EA5t \u0111i qua ch\u1ECDn l\u1ECDc t\u1EF1 nhi\xEAn th\xEC n\xF3 s\u1EBD kh\xF4ng bao gi\u1EDD xu\u1EA5t hi\u1EC7n tr\u1EDF l\u1EA1i \u1EDF c\xF9ng m\u1ED9t d\xF2ng d\xF5i" },
+            { id: "opt_B", label: "B", text: "M\u1ECDi lo\xE0i \u0111\u1ED9ng v\u1EADt tr\xEAn c\u1EA1n \u0111\u1EC1u s\u1EBD ti\u1EBFn h\xF3a tr\u1EDF l\u1EA1i th\xE0nh c\xE1 b\u01A1i d\u01B0\u1EDBi \u0111\u1EA1i d\u01B0\u01A1ng" },
+            { id: "opt_C", label: "C", text: "C\xE1c lo\xE0i th\xFA \u0103n c\u1ECF s\u1EBD bi\u1EBFn \u0111\u1ED5i th\xE0nh th\xFA \u0103n th\u1ECBt trong v\xF2ng 100 n\u0103m" },
+            { id: "opt_D", label: "D", text: "\u0110\u1ED9t bi\u1EBFn gen lu\xF4n lu\xF4n mang l\u1EA1i l\u1EE3i \xEDch cho sinh v\u1EADt" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Ti\u1EBFn h\xF3a sinh h\u1ECDc l\xE0 m\u1ED9t qu\xE1 tr\xECnh kh\xF4ng th\u1EC3 \u0111\u1EA3o ng\u01B0\u1EE3c, m\u1ED9t khi m\u1ED9t \u0111\u1EB7c t\xEDnh ph\u1EE9c t\u1EA1p \u0111\xE3 b\u1ECB m\u1EA5t \u0111i qua ch\u1ECDn l\u1ECDc t\u1EF1 nhi\xEAn th\xEC n\xF3 s\u1EBD kh\xF4ng bao gi\u1EDD xu\u1EA5t hi\u1EC7n tr\u1EDF l\u1EA1i \u1EDF c\xF9ng m\u1ED9t d\xF2ng d\xF5i",
+          correctExplanation: "\u0110o\u1EA1n 1 n\xEAu \u0111\u1ECBnh ngh\u0129a c\u1ED1t l\xF5i: Louis Dollo \u0111\u1EC1 xu\u1EA5t r\u1EB1ng 'evolution was irreversible: that an organism, having lost a complex feature through evolution, could never re-evolve that same feature'.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. M\u1ECDi lo\xE0i \u0111\u1ED9ng v\u1EADt tr\xEAn c\u1EA1n \u0111\u1EC1u s\u1EBD ti\u1EBFn h\xF3a tr\u1EDF l\u1EA1i th\xE0nh c\xE1 b\u01A1i d\u01B0\u1EDBi \u0111\u1EA1i d\u01B0\u01A1ng",
+            diagnosticTitle: "Suy di\u1EC5n c\u1EF1c \u0111oan theo h\u01B0\u1EDBng ng\u01B0\u1EE3c l\u1EA1i v\u1EDBi \u0111\u1ECBnh lu\u1EADt Dollo",
+            explanation: "\u0110\u1ECBnh lu\u1EADt Dollo nh\u1EA5n m\u1EA1nh t\xEDnh m\u1ED9t chi\u1EC1u kh\xF4ng th\u1EC3 \u0111\u1EA3o ng\u01B0\u1EE3c (irreversibility), kh\xF4ng n\xF3i lo\xE0i tr\xEAn c\u1EA1n bi\u1EBFn th\xE0nh c\xE1."
+          }
+        },
+        {
+          id: "leader_w2d3_q02",
+          roundIndex: 1,
+          prompt: "S\u1EF1 ki\u1EC7n con c\xE1 voi l\u01B0ng g\xF9 (Humpback whale) b\u1ECB b\u1EAFt ngo\xE0i kh\u01A1i \u0111\u1EA3o Vancouver n\u0103m 1919 \u0111\u01B0\u1EE3c nh\xE0 th\xE1m hi\u1EC3m Roy Chapman Andrews d\u1EABn ch\u1EE9ng nh\u1EB1m m\u1EE5c \u0111\xEDch g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "L\xE0m b\u1EB1ng ch\u1EE9ng ngo\u1EA1i l\u1EC7 th\u1EF1c t\u1EBF ch\u1EE9ng minh cho hi\u1EC7n t\u01B0\u1EE3ng l\u1EA1i gi\u1ED1ng atavism throwback, khi con c\xE1 voi n\xE0y m\u1ECDc m\u1ED9t c\u1EB7p chi sau d\xE0i h\u01A1n 1 m\xE9t c\xF3 \u0111\u1EA7y \u0111\u1EE7 x\u01B0\u01A1ng chi nh\u01B0 t\u1ED5 ti\xEAn tr\xEAn c\u1EA1n" },
+            { id: "opt_B", label: "B", text: "Ch\u1EE9ng minh lo\xE0i c\xE1 voi l\u01B0ng g\xF9 \u0111ang \u0111\u1ED1i m\u1EB7t v\u1EDBi nguy c\u01A1 tuy\u1EC7t ch\u1EE7ng" },
+            { id: "opt_C", label: "C", text: "K\xEAu g\u1ECDi th\xE0nh l\u1EADp c\xE1c khu b\u1EA3o t\u1ED3n sinh v\u1EADt bi\u1EC3n \u1EDF b\u1EDD bi\u1EC3n Canada" },
+            { id: "opt_D", label: "D", text: "Ch\u1EE9ng minh c\xF4ng ngh\u1EC7 s\u0103n b\u1EAFt c\xE1 voi c\u1EE7a th\u1EBF k\u1EF7 20 r\u1EA5t hi\u1EC7n \u0111\u1EA1i" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. L\xE0m b\u1EB1ng ch\u1EE9ng ngo\u1EA1i l\u1EC7 th\u1EF1c t\u1EBF ch\u1EE9ng minh cho hi\u1EC7n t\u01B0\u1EE3ng l\u1EA1i gi\u1ED1ng atavism throwback, khi con c\xE1 voi n\xE0y m\u1ECDc m\u1ED9t c\u1EB7p chi sau d\xE0i h\u01A1n 1 m\xE9t c\xF3 \u0111\u1EA7y \u0111\u1EE7 x\u01B0\u01A1ng chi nh\u01B0 t\u1ED5 ti\xEAn tr\xEAn c\u1EA1n",
+          correctExplanation: "\u0110o\u1EA1n 2 ch\u1EC9 ra: con c\xE1 voi l\u01B0ng g\xF9 c\xF3 'a pair of leglike appendages over a metre long, complete with a full set of limb bones'. \u0110\xE2y l\xE0 b\u1EB1ng ch\u1EE9ng kinh \u0111i\u1EC3n b\xE1c b\u1ECF t\xEDnh b\u1EA5t bi\u1EBFn tuy\u1EC7t \u0111\u1ED1i c\u1EE7a \u0111\u1ECBnh lu\u1EADt Dollo.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ch\u1EE9ng minh lo\xE0i c\xE1 voi l\u01B0ng g\xF9 \u0111ang \u0111\u1ED1i m\u1EB7t v\u1EDBi nguy c\u01A1 tuy\u1EC7t ch\u1EE7ng",
+            diagnosticTitle: "B\u1ECB ph\xE2n t\xE2m b\u1EDFi v\u1EA5n \u0111\u1EC1 b\u1EA3o t\u1ED3n sinh v\u1EADt bi\u1EC3n",
+            explanation: "B\xE0i \u0111\u1ECDc l\xE0 m\u1ED9t nghi\xEAn c\u1EE9u sinh h\u1ECDc ti\u1EBFn h\xF3a (Evolutionary genetics), kh\xF4ng ph\u1EA3i b\xE0i vi\u1EBFt v\u1EC1 b\u1EA3o t\u1ED3n sinh th\xE1i."
+          }
+        },
+        {
+          id: "leader_w2d3_q03",
+          roundIndex: 2,
+          prompt: "Gi\u1EA3 thuy\u1EBFt c\u1EE7a nh\xE0 di truy\u1EC1n h\u1ECDc Rudolf Raff t\u1EA1i \u0110\u1EA1i h\u1ECDc Indiana v\u1EC1 c\u01A1 ch\u1EBF c\u1EE7a c\xE1c gen 'ng\u1EE7 y\xEAn' (Silent genes) l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "M\u1ED9t s\u1ED1 bi\u1EBFn \u0111\u1ED5i ti\u1EBFn h\xF3a kh\xF4ng ph\u1EA3i do m\u1EA5t gen v\u0129nh vi\u1EC5n m\xE0 do gen b\u1ECB 't\u1EAFt \u0111i'; n\u1EBFu c\xE1c gen im l\u1EB7ng n\xE0y \u0111\u01B0\u1EE3c k\xEDch ho\u1EA1t tr\u1EDF l\u1EA1i th\xEC c\xE1c \u0111\u1EB7c t\xEDnh c\u1ED5 x\u01B0a \u0111\xE3 bi\u1EBFn m\u1EA5t c\xF3 th\u1EC3 t\xE1i xu\u1EA5t hi\u1EC7n" },
+            { id: "opt_B", label: "B", text: "C\xE1c gen ng\u1EE7 y\xEAn s\u1EBD bi\u1EBFn \u0111\u1ED5i th\xE0nh c\xE1c kh\u1ED1i u ung th\u01B0 sau 1 tri\u1EC7u n\u0103m" },
+            { id: "opt_C", label: "C", text: "Gen im l\u1EB7ng ch\u1EC9 t\u1ED3n t\u1EA1i \u1EDF c\xE1c lo\xE0i b\xF2 s\xE1t v\xE0 kh\xF4ng c\xF3 \u1EDF \u0111\u1ED9ng v\u1EADt c\xF3 v\xFA" },
+            { id: "opt_D", label: "D", text: "M\u1ECDi gen ng\u1EE7 y\xEAn \u0111\u1EC1u t\u1EF1 h\u1EE7y trong v\xF2ng m\u1ED9t th\u1EBF h\u1EC7" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. M\u1ED9t s\u1ED1 bi\u1EBFn \u0111\u1ED5i ti\u1EBFn h\xF3a kh\xF4ng ph\u1EA3i do m\u1EA5t gen v\u0129nh vi\u1EC5n m\xE0 do gen b\u1ECB 't\u1EAFt \u0111i'; n\u1EBFu c\xE1c gen im l\u1EB7ng n\xE0y \u0111\u01B0\u1EE3c k\xEDch ho\u1EA1t tr\u1EDF l\u1EA1i th\xEC c\xE1c \u0111\u1EB7c t\xEDnh c\u1ED5 x\u01B0a \u0111\xE3 bi\u1EBFn m\u1EA5t c\xF3 th\u1EC3 t\xE1i xu\u1EA5t hi\u1EC7n",
+          correctExplanation: "\u0110o\u1EA1n 3 gi\u1EA3i th\xEDch c\u01A1 ch\u1EBF di truy\u1EC1n: 'others may be the result of genes being switched off. If these silent genes are somehow switched back on... long-lost traits could reappear'.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. M\u1ECDi gen ng\u1EE7 y\xEAn \u0111\u1EC1u t\u1EF1 h\u1EE7y trong v\xF2ng m\u1ED9t th\u1EBF h\u1EC7",
+            diagnosticTitle: "Hi\u1EC3u sai th\u1EDDi gian t\u1ED3n t\u1EA1i c\u1EE7a gen kh\xF4ng ho\u1EA1t \u0111\u1ED9ng",
+            explanation: "Nh\xF3m nghi\xEAn c\u1EE9u c\u1EE7a Raff t\xEDnh to\xE1n gen ng\u1EE7 y\xEAn c\xF3 th\u1EC3 t\u1ED3n t\u1EA1i t\u1EEB 6 \u0111\u1EBFn 10 tri\u1EC7u n\u0103m tr\u01B0\u1EDBc khi b\u1ECB \u0111\u1ED9t bi\u1EBFn ph\xE1 h\u1EE7y ho\xE0n to\xE0n."
+          }
+        },
+        {
+          id: "leader_w2d3_q04",
+          roundIndex: 3,
+          prompt: "Th\u1EDDi gian t\u1ED3n t\u1EA1i t\u1ED1i \u0111a \u01B0\u1EDBc t\xEDnh c\u1EE7a m\u1ED9t gen ng\u1EE7 y\xEAn tr\u01B0\u1EDBc khi c\xE1c \u0111\u1ED9t bi\u1EBFn ng\u1EABu nhi\xEAn t\xEDch t\u1EE5 ph\xE1 h\u1EE7y n\xF3 ho\xE0n to\xE0n l\xE0 bao l\xE2u?",
+          options: [
+            { id: "opt_A", label: "A", text: "Kho\u1EA3ng t\u1EEB 6 \u0111\u1EBFn 10 tri\u1EC7u n\u0103m" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 kho\u1EA3ng 100 n\u0103m" },
+            { id: "opt_C", label: "C", text: "H\u01A1n 500 tri\u1EC7u n\u0103m \u0111\u1ED1i v\u1EDBi m\u1ECDi lo\xE0i" },
+            { id: "opt_D", label: "D", text: "Ch\u1EC9 \u0111\xFAng 1 th\u1EBF h\u1EC7 cha truy\u1EC1n con n\u1ED1i" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Kho\u1EA3ng t\u1EEB 6 \u0111\u1EBFn 10 tri\u1EC7u n\u0103m",
+          correctExplanation: "\u0110o\u1EA1n 4 n\xEAu s\u1ED1 li\u1EC7u c\u1EE5 th\u1EC3: 'silent genes surviving for up to 6 million years in at least a few individuals in a population, and that some might survive as long as 10 million years'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ch\u1EC9 kho\u1EA3ng 100 n\u0103m",
+            diagnosticTitle: "\u01AF\u1EDBc l\u01B0\u1EE3ng th\u1EDDi gian ti\u1EBFn h\xF3a qu\xE1 ng\u1EAFn",
+            explanation: "100 n\u0103m ch\u1EC9 l\xE0 m\u1ED9t kho\u1EA3nh kh\u1EAFc trong ti\u1EBFn h\xF3a; th\u1EDDi gian t\u1ED3n t\u1EA1i c\u1EE7a c\u1EA5u tr\xFAc gen t\xEDnh b\u1EB1ng h\xE0ng tri\u1EC7u n\u0103m."
+          }
+        },
+        {
+          id: "leader_w2d3_q05",
+          roundIndex: 4,
+          prompt: "Nghi\xEAn c\u1EE9u c\u1EE7a nh\xE0 sinh h\u1ECDc Gunter Wagner (\u0110\u1EA1i h\u1ECDc Yale) v\u1EC1 lo\xE0i th\u1EB1n l\u1EB1n Bachia \u1EDF Nam M\u1EF9 \u0111\xE3 ph\xE1 v\u1EE1 gi\u1EDBi h\u1EA1n th\u1EDDi gian 10 tri\u1EC7u n\u0103m c\u1EE7a Raff nh\u01B0 th\u1EBF n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "Ch\u1EE9ng minh r\u1EB1ng lo\xE0i th\u1EB1n l\u1EB1n n\xE0y \u0111\xE3 t\xE1i ti\u1EBFn h\xF3a c\xE1c ng\xF3n ch\xE2n t\u1EEB t\u1ED5 ti\xEAn kh\xF4ng c\xF3 ng\xF3n tr\u1EA3i qua qu\xE3ng th\u1EDDi gian l\xEAn t\u1EDBi h\xE0ng ch\u1EE5c tri\u1EC7u n\u0103m" },
+            { id: "opt_B", label: "B", text: "Ph\xE1t hi\u1EC7n th\u1EB1n l\u1EB1n Bachia c\xF3 th\u1EC3 th\u1EDF d\u01B0\u1EDBi n\u01B0\u1EDBc nh\u01B0 lo\xE0i c\xE1" },
+            { id: "opt_C", label: "C", text: "Kh\u1EB3ng \u0111\u1ECBnh th\u1EB1n l\u1EB1n Bachia l\xE0 lo\xE0i kh\u1EE7ng long bay c\xF2n s\u1ED1ng s\xF3t" },
+            { id: "opt_D", label: "D", text: "Ch\u1EE9ng minh th\u1EB1n l\u1EB1n kh\xF4ng h\u1EC1 c\xF3 c\u1EA5u tr\xFAc ADN" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Ch\u1EE9ng minh r\u1EB1ng lo\xE0i th\u1EB1n l\u1EB1n n\xE0y \u0111\xE3 t\xE1i ti\u1EBFn h\xF3a c\xE1c ng\xF3n ch\xE2n t\u1EEB t\u1ED5 ti\xEAn kh\xF4ng c\xF3 ng\xF3n tr\u1EA3i qua qu\xE3ng th\u1EDDi gian l\xEAn t\u1EDBi h\xE0ng ch\u1EE5c tri\u1EC7u n\u0103m",
+          correctExplanation: "\u0110o\u1EA1n 6 n\xEAu r\xF5: 'the toed species re-evolved toes from toeless ancestors and, what is more, digit loss and gain has occurred on more than one occasion over tens of millions of years', v\u01B0\u1EE3t xa m\u1ED1c 10 tri\u1EC7u n\u0103m.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Kh\u1EB3ng \u0111\u1ECBnh th\u1EB1n l\u1EB1n Bachia l\xE0 lo\xE0i kh\u1EE7ng long bay c\xF2n s\u1ED1ng s\xF3t",
+            diagnosticTitle: "Suy di\u1EC5n gi\u1EA3 t\u01B0\u1EDFng k\u1EF3 d\u1ECB kh\xF4ng c\xF3 trong b\xE0i",
+            explanation: "Th\u1EB1n l\u1EB1n Bachia l\xE0 lo\xE0i b\xF2 s\xE1t nh\u1ECF chi ng\u1EAFn, kh\xF4ng li\xEAn quan \u0111\u1EBFn kh\u1EE7ng long bay."
+          }
+        },
+        {
+          id: "leader_w2d3_q06",
+          roundIndex: 5,
+          prompt: "Chi ti\u1EBFt ph\xF4i thai c\u1EE7a lo\xE0i r\u1EAFn m\u1ECDc m\u1EA7m chi sau (hind limb buds) nh\u01B0ng sau \u0111\xF3 t\u1EF1 ti\xEAu bi\u1EBFn trong b\u1EE5ng m\u1EB9 minh h\u1ECDa cho c\u01A1 ch\u1EBF sinh h\u1ECDc n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "C\xE1c ch\u01B0\u01A1ng tr\xECnh ph\xE1t tri\u1EC3n ph\xF4i thai v\u1EABn l\u01B0u gi\u1EEF b\u1EA3n thi\u1EBFt k\u1EBF c\u1EE7a t\u1ED5 ti\xEAn, v\xE0 n\u1EBFu t\xEDn hi\u1EC7u tri\u1EC7t ti\xEAu b\u1ECB l\u1ED7i th\xEC \u0111\u1EB7c t\xEDnh c\u1ED5 x\u01B0a nh\u01B0 chi sau s\u1EBD xu\u1EA5t hi\u1EC7n \u1EDF con non" },
+            { id: "opt_B", label: "B", text: "R\u1EAFn l\xE0 m\u1ED9t lo\xE0i chim \u0111\xE3 b\u1ECB r\u1EE5ng h\u1EBFt l\xF4ng" },
+            { id: "opt_C", label: "C", text: "R\u1EAFn c\xF3 th\u1EC3 t\u1EF1 m\u1ECDc ch\xE2n b\u1EA5t k\u1EF3 l\xFAc n\xE0o n\u1EBFu th\u1EDDi ti\u1EBFt qu\xE1 n\xF3ng" },
+            { id: "opt_D", label: "D", text: "Ph\xF4i thai r\u1EAFn b\u1ECB nhi\u1EC5m \u0111\u1ED9c ch\u1EA5t ph\xF3ng x\u1EA1 trong t\u1EF1 nhi\xEAn" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. C\xE1c ch\u01B0\u01A1ng tr\xECnh ph\xE1t tri\u1EC3n ph\xF4i thai v\u1EABn l\u01B0u gi\u1EEF b\u1EA3n thi\u1EBFt k\u1EBF c\u1EE7a t\u1ED5 ti\xEAn, v\xE0 n\u1EBFu t\xEDn hi\u1EC7u tri\u1EC7t ti\xEAu b\u1ECB l\u1ED7i th\xEC \u0111\u1EB7c t\xEDnh c\u1ED5 x\u01B0a nh\u01B0 chi sau s\u1EBD xu\u1EA5t hi\u1EC7n \u1EDF con non",
+          correctExplanation: "\u0110o\u1EA1n cu\u1ED1i ph\xE2n t\xEDch: ph\xF4i thai nhi\u1EC1u lo\xE0i t\xE1i hi\u1EC7n \u0111\u1EB7c t\xEDnh t\u1ED5 ti\xEAn; n\u1EBFu ch\u01B0\u01A1ng tr\xECnh ph\xE1t tri\u1EC3n ra l\u1EC7nh 'lose the leg' v\xEC l\xFD do n\xE0o \u0111\xF3 kh\xF4ng ho\u1EA1t \u0111\u1ED9ng, con non sinh ra s\u1EBD c\xF3 ch\xE2n (atavism).",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. R\u1EAFn c\xF3 th\u1EC3 t\u1EF1 m\u1ECDc ch\xE2n b\u1EA5t k\u1EF3 l\xFAc n\xE0o n\u1EBFu th\u1EDDi ti\u1EBFt qu\xE1 n\xF3ng",
+            diagnosticTitle: "Suy di\u1EC5n sai l\u1EA7m v\u1EC1 s\u1EF1 th\xEDch nghi nhi\u1EC7t \u0111\u1ED9 t\u1EE9c th\u1EDDi",
+            explanation: "\u0110\xE2y l\xE0 \u0111\u1ED9t bi\u1EBFn ph\xE1t tri\u1EC3n ph\xF4i h\u1ECDc (embryological development), kh\xF4ng ph\u1EA3i hi\u1EC7n t\u01B0\u1EE3ng th\xEDch nghi th\u1EDDi ti\u1EBFt."
+          }
+        },
+        {
+          id: "leader_w2d3_q07",
+          roundIndex: 6,
+          prompt: "T\u1EEB 'atavism' trong sinh h\u1ECDc ti\u1EBFn h\xF3a \u0111\u1ED3ng ngh\u0129a v\u1EDBi c\u1EE5m t\u1EEB n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "an evolutionary throwback s\u1EF1 t\xE1i hi\u1EC7n \u0111\u1EB7c t\xEDnh c\u1EE7a t\u1ED5 ti\xEAn xa x\u01B0a" },
+            { id: "opt_B", label: "B", text: "a lethal genetic defect m\u1ED9t d\u1ECB t\u1EADt di truy\u1EC1n g\xE2y ch\u1EBFt non" },
+            { id: "opt_C", label: "C", text: "a completely new artificial trait m\u1ED9t \u0111\u1EB7c t\xEDnh nh\xE2n t\u1EA1o ho\xE0n to\xE0n m\u1EDBi" },
+            { id: "opt_D", label: "D", text: "an accelerated extinction s\u1EF1 tuy\u1EC7t ch\u1EE7ng nhanh ch\xF3ng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. an evolutionary throwback s\u1EF1 t\xE1i hi\u1EC7n \u0111\u1EB7c t\xEDnh c\u1EE7a t\u1ED5 ti\xEAn xa x\u01B0a",
+          correctExplanation: "'Atavism' (s\u1EF1 l\u1EA1i gi\u1ED1ng / h\u1ED3i t\u1ED5) ch\xEDnh l\xE0 'evolutionary throwback' - s\u1EF1 t\xE1i xu\u1EA5t hi\u1EC7n b\u1EA5t ng\u1EDD c\u1EE7a m\u1ED9t \u0111\u1EB7c t\xEDnh h\xECnh th\xE1i thu\u1ED9c v\u1EC1 t\u1ED5 ti\xEAn xa x\xF4i v\u1ED1n \u0111\xE3 ti\xEAu bi\u1EBFn t\u1EEB l\xE2u.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. a completely new artificial trait m\u1ED9t \u0111\u1EB7c t\xEDnh nh\xE2n t\u1EA1o ho\xE0n to\xE0n m\u1EDBi",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa \u0111\u1EB7c t\xEDnh t\u1ED5 ti\xEAn c\u1ED5 x\u01B0a v\u1EDBi \u0111\u1EB7c t\xEDnh \u0111\u1ED9t bi\u1EBFn m\u1EDBi",
+            explanation: "'Atavism' b\u1EAFt ngu\u1ED3n t\u1EEB g\u1ED1c t\u1EEB Latin atavus (t\u1ED5 ti\xEAn xa), ch\u1EC9 s\u1EF1 quay l\u1EA1i \u0111\u1EB7c t\xEDnh c\u0169 ch\u1EE9 kh\xF4ng ph\u1EA3i t\u1EA1o ra c\xE1i m\u1EDBi."
+          }
+        },
+        {
+          id: "leader_w2d3_q08",
+          roundIndex: 7,
+          prompt: "K\u1EF9 n\u0103ng 'Simultaneous Multi-Question Tracking' (Theo d\xF5i \u0111\u1ED3ng th\u1EDDi nhi\u1EC1u c\xE2u h\u1ECFi) trong IELTS Reading gi\xFAp gi\u1EA3i quy\u1EBFt v\u1EA5n \u0111\u1EC1 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "\u0110\u1ECDc song song t\u1EEB kh\xF3a c\u1EE7a 2-3 c\xE2u h\u1ECFi c\xF9ng l\xFAc \u0111\u1EC3 tr\xE1nh vi\u1EC7c \u0111\u1ECDc l\u01B0\u1EDBt qua th\xF4ng tin c\u1EE7a c\xE2u sau m\xE0 kh\xF4ng h\u1EC1 hay bi\u1EBFt" },
+            { id: "opt_B", label: "B", text: "L\xE0m c\u1EA3 b\xE0i thi trong v\xF2ng 5 ph\xFAt" },
+            { id: "opt_C", label: "C", text: "H\u1ECDc thu\u1ED9c \u0111\xE1p \xE1n c\u1EE7a c\xE1c k\u1EF3 thi tr\u01B0\u1EDBc" },
+            { id: "opt_D", label: "D", text: "Ch\u1EC9 \u0111\u1ECDc c\xE2u h\u1ECFi cu\u1ED1i c\xF9ng c\u1EE7a b\xE0i thi" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. \u0110\u1ECDc song song t\u1EEB kh\xF3a c\u1EE7a 2-3 c\xE2u h\u1ECFi c\xF9ng l\xFAc \u0111\u1EC3 tr\xE1nh vi\u1EC7c \u0111\u1ECDc l\u01B0\u1EDBt qua th\xF4ng tin c\u1EE7a c\xE2u sau m\xE0 kh\xF4ng h\u1EC1 hay bi\u1EBFt",
+          correctExplanation: "K\u1EF9 thu\u1EADt Leader \u0111\u1ED9c quy\u1EC1n: Khi c\xE1c c\xE2u h\u1ECFi \u0111i theo th\u1EE9 t\u1EF1 b\xE0i \u0111\u1ECDc, vi\u1EC7c neo s\u1EB5n t\u1EEB kh\xF3a c\u1EE7a c\xE2u k\u1EBF ti\u1EBFp s\u1EBD ng\u0103n ng\u1EEBa vi\u1EC7c ng\u01B0\u1EDDi \u0111\u1ECDc b\u1ECB 'tr\xF4i \u0111i\u1EC3m' (overshooting) qua c\xE2u ti\u1EBFp theo m\xE0 v\u1EABn m\u1EA3i m\xEA t\xECm c\xE2u tr\u01B0\u1EDBc.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. L\xE0m c\u1EA3 b\xE0i thi trong v\xF2ng 5 ph\xFAt",
+            diagnosticTitle: "C\u01B0\u1EDDng \u0111i\u1EC7u h\xF3a t\u1ED1c \u0111\u1ED9 l\xE0m b\xE0i phi th\u1EF1c t\u1EBF",
+            explanation: "Ph\u01B0\u01A1ng ph\xE1p \u0111\u1ECDc \u0111a nhi\u1EC7m c\xE2u h\u1ECFi gi\xFAp t\u0103ng \u0111\u1ED9 ch\xEDnh x\xE1c v\xE0 ki\u1EC3m so\xE1t th\u1EDDi gian, kh\xF4ng ph\u1EA3i m\u1EB9o l\xE0m trong 5 ph\xFAt."
+          }
+        },
+        {
+          id: "leader_w2d3_q09",
+          roundIndex: 8,
+          prompt: "T\u1EEB 'appendages' trong c\xE2u: 'a humpback whale with a pair of leglike appendages' mang ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "C\xE1c ph\u1EA7n ph\u1EE5 ho\u1EB7c chi m\u1ECDc ch\xECa ra ngo\xE0i c\u01A1 th\u1EC3" },
+            { id: "opt_B", label: "B", text: "C\xE1c v\u1EBFt s\u1EB9o do c\xE1 m\u1EADp c\u1EAFn" },
+            { id: "opt_C", label: "C", text: "Nh\u1EEFng chi\u1EBFc r\u0103ng nanh kh\u1ED5ng l\u1ED3" },
+            { id: "opt_D", label: "D", text: "Nh\u1EEFng con m\u1EAFt ph\u1EE5 tr\xEAn l\u01B0ng c\xE1 voi" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. C\xE1c ph\u1EA7n ph\u1EE5 ho\u1EB7c chi m\u1ECDc ch\xECa ra ngo\xE0i c\u01A1 th\u1EC3",
+          correctExplanation: "'Appendage' (ph\u1EA7n ph\u1EE5 c\u01A1 th\u1EC3: tay, ch\xE2n, \u0111u\xF4i, r\xE2u) l\xE0 thu\u1EADt ng\u1EEF sinh h\u1ECDc gi\u1EA3i ph\u1EABu ch\u1EC9 c\xE1c c\u1EA5u tr\xFAc c\u01A1 quan g\u1EAFn li\u1EC1n v\xE0o th\xE2n m\xECnh.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. C\xE1c v\u1EBFt s\u1EB9o do c\xE1 m\u1EADp c\u1EAFn",
+            diagnosticTitle: "Hi\u1EC3u nh\u1EA7m ph\u1EA7n chi ph\u1EE5 th\xE0nh v\u1EBFt th\u01B0\u01A1ng t\u1ED5n th\u01B0\u01A1ng",
+            explanation: "B\xE0i \u0111\u1ECDc mi\xEAu t\u1EA3 r\xF5 \u0111\xE2y l\xE0 c\xE1c chi gi\u1ED1ng ch\xE2n c\xF3 x\u01B0\u01A1ng ('limb bones'), kh\xF4ng ph\u1EA3i v\u1EBFt c\u1EAFn s\u1EB9o."
+          }
+        },
+        {
+          id: "leader_w2d3_q10",
+          roundIndex: 9,
+          prompt: "Khi g\u1EB7p d\u1EA1ng c\xE2u h\u1ECFi Multiple Choice c\xF3 \u0111\xE1p \xE1n ch\u1EE9a t\u1EEB ph\u1EE7 \u0111\u1ECBnh tuy\u1EC7t \u0111\u1ED1i nh\u01B0 'never, impossible, completely', th\xED sinh c\u1EA7n l\u01B0u \xFD \u0111i\u1EC1u g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "C\u1EA7n \u0111\u1EB7c bi\u1EC7t c\u1EA3nh gi\xE1c v\xEC c\xE1c kh\u1EB3ng \u0111\u1ECBnh tuy\u1EC7t \u0111\u1ED1i th\u01B0\u1EDDng l\xE0 ph\u01B0\u01A1ng \xE1n b\u1EABy, tr\u1EEB khi b\xE0i \u0111\u1ECDc kh\u1EB3ng \u0111\u1ECBnh ch\xEDnh x\xE1c 100% b\u1EB1ng ch\u1EE9ng t\u01B0\u01A1ng \u0111\u01B0\u01A1ng" },
+            { id: "opt_B", label: "B", text: "Ch\u1EAFc ch\u1EAFn l\xE0 \u0111\xE1p \xE1n \u0111\xFAng trong m\u1ECDi tr\u01B0\u1EDDng h\u1EE3p" },
+            { id: "opt_C", label: "C", text: "B\u1ECF qua kh\xF4ng c\u1EA7n \u0111\u1ECDc c\xE2u h\u1ECFi \u0111\xF3" },
+            { id: "opt_D", label: "D", text: "Ch\u1EC9 ch\u1ECDn n\u1EBFu t\u1EEB \u0111\xF3 vi\u1EBFt b\u1EB1ng m\u1EF1c \u0111\u1ECF" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. C\u1EA7n \u0111\u1EB7c bi\u1EC7t c\u1EA3nh gi\xE1c v\xEC c\xE1c kh\u1EB3ng \u0111\u1ECBnh tuy\u1EC7t \u0111\u1ED1i th\u01B0\u1EDDng l\xE0 ph\u01B0\u01A1ng \xE1n b\u1EABy, tr\u1EEB khi b\xE0i \u0111\u1ECDc kh\u1EB3ng \u0111\u1ECBnh ch\xEDnh x\xE1c 100% b\u1EB1ng ch\u1EE9ng t\u01B0\u01A1ng \u0111\u01B0\u01A1ng",
+          correctExplanation: "B\u1EABy Extreme Qualifiers trong Cambridge: C\xE1c \u0111\xE1p \xE1n ch\u1EE9a t\u1EEB ng\u1EEF tuy\u1EC7t \u0111\u1ED1i h\xF3a th\u01B0\u1EDDng sai l\u1EC7ch s\u1EAFc th\xE1i th\u1EADn tr\u1ECDng c\u1EE7a c\xE1c nh\xE0 khoa h\u1ECDc trong b\xE0i \u0111\u1ECDc h\u1ECDc thu\u1EADt.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Ch\u1EAFc ch\u1EAFn l\xE0 \u0111\xE1p \xE1n \u0111\xFAng trong m\u1ECDi tr\u01B0\u1EDDng h\u1EE3p",
+            diagnosticTitle: "Tin r\u1EB1ng c\xE1c c\xE2u mang t\xEDnh kh\u1EB3ng \u0111\u1ECBnh m\u1EA1nh l\xE0 c\xE2u \u0111\xFAng",
+            explanation: "C\xE1c nh\xE0 khoa h\u1ECDc trong v\u0103n b\u1EA3n h\u1ECDc thu\u1EADt lu\xF4n d\xF9ng Hedging (ng\xF4n ng\u1EEF r\xE0o \u0111\xF3n), c\xE1c c\xE2u kh\u1EB3ng \u0111\u1ECBnh tuy\u1EC7t \u0111\u1ED1i th\u01B0\u1EDDng l\xE0 distractor."
+          }
+        }
+      ]
+    };
+  }
+});
+
+// server/services/leader_bank_parts/week3.data.ts
+var LEADER_WEEK_3_QUESTIONS;
+var init_week3_data4 = __esm({
+  "server/services/leader_bank_parts/week3.data.ts"() {
+    LEADER_WEEK_3_QUESTIONS = {
+      "WEEK 3 \u2013 DAY 1": [
+        {
+          id: "leader_w3d1_q01",
+          roundIndex: 0,
+          prompt: "Trong d\u1EA1ng b\xE0i 'To what extent do you agree or disagree?', c\u1EA5u tr\xFAc l\u1EADp lu\u1EADn 'Qualified Opinion' (Quan \u0111i\u1EC3m c\xF3 \u0111i\u1EC1u ki\u1EC7n / C\xE2n b\u1EB1ng c\xF3 nh\u01B0\u1EE3ng b\u1ED9) mang l\u1EA1i \u01B0u th\u1EBF v\u01B0\u1EE3t tr\u1ED9i n\xE0o so v\u1EDBi l\u1ED1i vi\u1EBFt m\u1ED9t chi\u1EC1u c\u1EF1c \u0111oan?",
+          options: [
+            { id: "opt_A", label: "A", text: "Th\u1EC3 hi\u1EC7n t\u01B0 duy ph\u1EA3n bi\u1EC7n \u0111a chi\u1EC1u, c\xF4ng nh\u1EADn c\xE1c ngo\u1EA1i l\u1EC7 th\u1EF1c t\u1EBF v\xE0 b\u1EA3o v\u1EC7 l\u1EADp tr\u01B0\u1EDDng c\u1ED1t l\xF5i m\u1ED9t c\xE1ch thuy\u1EBFt ph\u1EE5c v\xE0 tinh t\u1EBF" },
+            { id: "opt_B", label: "B", text: "Gi\xFAp th\xED sinh kh\xF4ng c\u1EA7n ph\u1EA3i \u0111\u01B0a ra b\u1EA5t k\u1EF3 k\u1EBFt lu\u1EADn n\xE0o \u1EDF cu\u1ED1i b\xE0i" },
+            { id: "opt_C", label: "C", text: "Cho ph\xE9p th\xED sinh \u0111\u1ED5i \xFD li\xEAn t\u1EE5c gi\u1EEFa c\xE1c \u0111o\u1EA1n v\u0103n \u0111\u1EC3 ng\u01B0\u1EDDi ch\u1EA5m t\u1EF1 \u0111o\xE1n" },
+            { id: "opt_D", label: "D", text: "Gi\u1EA3m \u0111\u1ED9 d\xE0i b\xE0i thi xu\u1ED1ng d\u01B0\u1EDBi 150 t\u1EEB" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Th\u1EC3 hi\u1EC7n t\u01B0 duy ph\u1EA3n bi\u1EC7n \u0111a chi\u1EC1u, c\xF4ng nh\u1EADn c\xE1c ngo\u1EA1i l\u1EC7 th\u1EF1c t\u1EBF v\xE0 b\u1EA3o v\u1EC7 l\u1EADp tr\u01B0\u1EDDng c\u1ED1t l\xF5i m\u1ED9t c\xE1ch thuy\u1EBFt ph\u1EE5c v\xE0 tinh t\u1EBF",
+          correctExplanation: "Qualified Opinion (Band 7.0+): Tr\xE1nh b\u1EABy tuy\u1EC7t \u0111\u1ED1i h\xF3a phi\u1EBFn di\u1EC7n. Ng\u01B0\u1EDDi vi\u1EBFt th\u1EEBa nh\u1EADn t\xEDnh h\u1EE3p l\xFD trong m\u1ED9t s\u1ED1 tr\u01B0\u1EDDng h\u1EE3p nh\u1EA5t \u0111\u1ECBnh (40%), nh\u01B0ng v\u1EABn kh\u1EB3ng \u0111\u1ECBnh l\u1EADp tr\u01B0\u1EDDng tr\u1ECDng t\xE2m (60%) v\u1EDBi l\u1EADp lu\u1EADn ch\u1EB7t ch\u1EBD.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Cho ph\xE9p th\xED sinh \u0111\u1ED5i \xFD li\xEAn t\u1EE5c gi\u1EEFa c\xE1c \u0111o\u1EA1n v\u0103n \u0111\u1EC3 ng\u01B0\u1EDDi ch\u1EA5m t\u1EF1 \u0111o\xE1n",
+            diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEFa quan \u0111i\u1EC3m \u0111a chi\u1EC1u v\xE0 s\u1EF1 m\xE2u thu\u1EABn l\u1EADp tr\u01B0\u1EDDng",
+            explanation: "Qualified Opinion v\u1EABn ph\u1EA3i c\xF3 l\u1EADp tr\u01B0\u1EDDng nh\u1EA5t qu\xE1n xuy\xEAn su\u1ED1t (clear position throughout), kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1ED5i \xFD m\xE2u thu\u1EABn."
+          }
+        },
+        {
+          id: "leader_w3d1_q02",
+          roundIndex: 1,
+          prompt: "V\u1EDBi \u0111\u1EC1 b\xE0i: 'Some people believe that older people should continue to work if it is possible. Do the advantages outweigh the disadvantages?', c\xE2u m\u1EDF b\xE0i n\xE0o th\u1EC3 hi\u1EC7n s\u1EF1 c\xE2n b\u1EB1ng nh\u01B0\u1EE3ng b\u1ED9 (40-60) chu\u1EA9n x\xE1c?",
+          options: [
+            { id: "opt_A", label: "A", text: "While prolonging the retirement age may occasionally hinder youth employment, I maintain that retaining senior workers offers far greater merits by mitigating national pension deficits and preserving invaluable institutional knowledge." },
+            { id: "opt_B", label: "B", text: "Old people working has many good and bad points, and I will discuss both in this essay." },
+            { id: "opt_C", label: "C", text: "Old people must stop working right now because young people need jobs." },
+            { id: "opt_D", label: "D", text: "There are several advantages and disadvantages of old people working in companies." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. While prolonging the retirement age may occasionally hinder youth employment, I maintain that retaining senior workers offers far greater merits by mitigating national pension deficits and preserving invaluable institutional knowledge.",
+          correctExplanation: "Thesis Statement xu\u1EA5t s\u1EAFc: M\u1EC7nh \u0111\u1EC1 nh\u01B0\u1EE3ng b\u1ED9 'While prolonging the retirement age may occasionally hinder youth employment' (40%), v\u1EBF ch\xEDnh kh\u1EB3ng \u0111\u1ECBnh 'retaining senior workers offers far greater merits' (60%) k\xE8m 2 tr\u1EE5 c\u1ED9t lu\u1EADn \u0111i\u1EC3m s\u1EAFc b\xE9n.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Old people working has many good and bad points, and I will discuss both in this essay.",
+            diagnosticTitle: "M\u1EDF b\xE0i chung chung thi\u1EBFu nh\u1EADn \u0111\u1ECBnh t\u1EF7 tr\u1ECDng (Outweigh)",
+            explanation: "\u0110\u1EC1 b\xE0i h\u1ECFi 'Do advantages outweigh disadvantages', n\u1EBFu ch\u1EC9 n\xF3i 'c\xF3 m\u1EB7t t\u1ED1t v\xE0 x\u1EA5u' m\xE0 kh\xF4ng tr\u1EA3 l\u1EDDi b\xEAn n\xE0o n\u1EB7ng h\u01A1n l\xE0 ch\u01B0a ho\xE0n th\xE0nh nhi\u1EC7m v\u1EE5 \u0111\u1EC1 b\xE0i."
+          }
+        },
+        {
+          id: "leader_w3d1_q03",
+          roundIndex: 2,
+          prompt: "Ch\u1ECDn lu\u1EADn \u0111i\u1EC3m ph\xE2n t\xEDch M\u1EB6T L\u1EE2I KINH T\u1EBE V\u0128 M\xD4 c\u1EE7a vi\u1EC7c khuy\u1EBFn kh\xEDch lao \u0111\u1ED9ng cao tu\u1ED5i ti\u1EBFp t\u1EE5c c\u1ED1ng hi\u1EBFn:",
+          options: [
+            { id: "opt_A", label: "A", text: "From a macroeconomic perspective, an active elderly workforce bolsters national tax revenues and significantly eases the burgeoning fiscal strain on public state pensions." },
+            { id: "opt_B", label: "B", text: "Old people have fun when working and they don't stay at home watching TV." },
+            { id: "opt_C", label: "C", text: "Companies can pay very cheap salaries to old workers to save cash." },
+            { id: "opt_D", label: "D", text: "Old workers can cook good lunch for their younger colleagues in offices." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. From a macroeconomic perspective, an active elderly workforce bolsters national tax revenues and significantly eases the burgeoning fiscal strain on public state pensions.",
+          correctExplanation: "Thu\u1EADt ng\u1EEF kinh t\u1EBF h\u1ECDc cao c\u1EA5p: 'macroeconomic perspective' (g\xF3c nh\xECn kinh t\u1EBF v\u0129 m\xF4), 'bolsters national tax revenues' (gia t\u0103ng ngu\u1ED3n thu thu\u1EBF qu\u1ED1c gia), 'eases the burgeoning fiscal strain on public state pensions' (gi\u1EA3m b\u1EDBt g\xE1nh n\u1EB7ng t\xE0i kh\xF3a ng\xE0y c\xE0ng l\u1EDBn l\xEAn qu\u1EF9 h\u01B0u tr\xED c\xF4ng).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. Companies can pay very cheap salaries to old workers to save cash.",
+            diagnosticTitle: "L\u1EADp lu\u1EADn phi \u0111\u1EA1o \u0111\u1EE9c kinh doanh v\xE0 thi\u1EBFu c\u01A1 s\u1EDF ph\xE1p l\xFD",
+            explanation: "B\xF3c l\u1ED9t l\u01B0\u01A1ng ng\u01B0\u1EDDi cao tu\u1ED5i l\xE0 l\u1EADp lu\u1EADn ti\xEAu c\u1EF1c, vi ph\u1EA1m lu\u1EADt lao \u0111\u1ED9ng v\xE0 \u0111\u1EA1o \u0111\u1EE9c x\xE3 h\u1ED9i."
+          }
+        },
+        {
+          id: "leader_w3d1_q04",
+          roundIndex: 3,
+          prompt: "K\u1EF9 thu\u1EADt 'Horizontal Brainstorming' (\u0110\u1ED9ng n\xE3o theo chi\u1EC1u ngang) trong gi\xE1o \xE1n Leader gi\xFAp th\xED sinh \u0111i\u1EC1u g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Qu\xE9t nhanh c\xE1c kh\xEDa c\u1EA1nh ph\xE2n t\xEDch qua l\u0103ng k\xEDnh c\xE1c b\xEAn li\xEAn quan nh\u01B0 c\xE1 nh\xE2n, doanh nghi\u1EC7p, x\xE3 h\u1ED9i, m\xF4i tr\u01B0\u1EDDng \u0111\u1EC3 t\xECm ra c\xE1c g\xF3c nh\xECn \u0111a d\u1EA1ng" },
+            { id: "opt_B", label: "B", text: "Vi\u1EBFt c\xE1c c\xE2u v\u0103n theo chi\u1EC1u ngang t\u1EEB l\u1EC1 tr\xE1i sang l\u1EC1 ph\u1EA3i th\u1EADt nhanh" },
+            { id: "opt_C", label: "C", text: "Ch\u1EC9 t\xECm ki\u1EBFm duy nh\u1EA5t m\u1ED9t \xFD t\u01B0\u1EDFng v\xE0 l\u1EB7p l\u1EA1i su\u1ED1t 4 \u0111o\u1EA1n v\u0103n" },
+            { id: "opt_D", label: "D", text: "V\u1EBD s\u01A1 \u0111\u1ED3 t\u01B0 duy b\u1EB1ng nhi\u1EC1u m\xE0u s\u1EAFc r\u1EF1c r\u1EE1 trong ph\xF2ng thi" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Qu\xE9t nhanh c\xE1c kh\xEDa c\u1EA1nh ph\xE2n t\xEDch qua l\u0103ng k\xEDnh c\xE1c b\xEAn li\xEAn quan nh\u01B0 c\xE1 nh\xE2n, doanh nghi\u1EC7p, x\xE3 h\u1ED9i, m\xF4i tr\u01B0\u1EDDng \u0111\u1EC3 t\xECm ra c\xE1c g\xF3c nh\xECn \u0111a d\u1EA1ng",
+          correctExplanation: "Horizontal Brainstorming (Stakeholder Analysis): Ti\u1EBFp c\u1EADn v\u1EA5n \u0111\u1EC1 theo chi\u1EC1u ngang qua c\xE1c nh\xF3m \u0111\u1ED1i t\u01B0\u1EE3ng (Individuals, Corporations, Governments, Society) gi\xFAp ng\u01B0\u1EDDi vi\u1EBFt kh\xF4ng bao gi\u1EDD b\u1ECB c\u1EA1n ki\u1EC7t \xFD t\u01B0\u1EDFng.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Vi\u1EBFt c\xE1c c\xE2u v\u0103n theo chi\u1EC1u ngang t\u1EEB l\u1EC1 tr\xE1i sang l\u1EC1 ph\u1EA3i th\u1EADt nhanh",
+            diagnosticTitle: "Hi\u1EC3u ch\u1EEF 'Horizontal' theo ngh\u0129a v\u1EADt l\xFD c\u1EE7a trang gi\u1EA5y",
+            explanation: "'Horizontal' \u1EDF \u0111\xE2y l\xE0 m\u1EDF r\u1ED9ng ph\u1EA1m vi \u0111\u1ED1i t\u01B0\u1EE3ng v\xE0 l\u0129nh v\u1EF1c t\u01B0 duy, kh\xF4ng ph\u1EA3i h\u01B0\u1EDBng vi\u1EBFt ch\u1EEF."
+          }
+        },
+        {
+          id: "leader_w3d1_q05",
+          roundIndex: 4,
+          prompt: "V\u1EDBi \u0111\u1EC1 b\xE0i: 'It is now possible for tourists to travel to remote environments, such as the South Pole. Do the advantages outweigh the disadvantages?', c\xE2u Topic Sentence n\xE0o cho Body 1 (Disadvantages - 40%) th\u1EC3 hi\u1EC7n s\u1EF1 nh\xECn nh\u1EADn s\u1EAFc b\xE9n?",
+          options: [
+            { id: "opt_A", label: "A", text: "Admittedly, the commercialization of polar tourism poses grave ecological hazards, including the disruption of fragile habitats and heightened carbon footprints from long-haul expeditions." },
+            { id: "opt_B", label: "B", text: "Traveling to the South Pole is very cold and tourists can get frozen easily." },
+            { id: "opt_C", label: "C", text: "First, going to remote places is bad because airplane tickets are very expensive." },
+            { id: "opt_D", label: "D", text: "There are some negative things when tourists visit Antarctica in the winter." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Admittedly, the commercialization of polar tourism poses grave ecological hazards, including the disruption of fragile habitats and heightened carbon footprints from long-haul expeditions.",
+          correctExplanation: "T\u1EEB v\u1EF1ng m\xF4i tr\u01B0\u1EDDng C1: 'commercialization of polar tourism' (th\u01B0\u01A1ng m\u1EA1i h\xF3a du l\u1ECBch v\xF9ng c\u1EF1c), 'grave ecological hazards' (hi\u1EC3m h\u1ECDa sinh th\xE1i nghi\xEAm tr\u1ECDng), 'disruption of fragile habitats' (ph\xE1 v\u1EE1 m\xF4i tr\u01B0\u1EDDng s\u1ED1ng mong manh), 'heightened carbon footprints' (d\u1EA5u ch\xE2n carbon t\u0103ng v\u1ECDt).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Traveling to the South Pole is very cold and tourists can get frozen easily.",
+            diagnosticTitle: "T\u1EADp trung v\xE0o s\u1EF1 b\u1EA5t ti\u1EC7n th\u1EC3 ch\u1EA5t c\xE1 nh\xE2n thay v\xEC t\xE1c \u0111\u1ED9ng sinh th\xE1i v\u0129 m\xF4",
+            explanation: "'Tr\u1EDDi l\u1EA1nh b\u1ECB \u0111\xF3ng b\u0103ng' l\xE0 chi ti\u1EBFt tr\u1EA3i nghi\u1EC7m c\xE1 nh\xE2n t\u1EA7m th\u01B0\u1EDDng, thi\u1EBFu t\u1EA7m nh\xECn m\xF4i tr\u01B0\u1EDDng h\u1ECDc thu\u1EADt."
+          }
+        },
+        {
+          id: "leader_w3d1_q06",
+          roundIndex: 5,
+          prompt: "Ch\u1ECDn c\xE2u m\u1EDF \u0111o\u1EA1n cho Body 2 (Advantages - 60%) \u0111\u1EC3 ch\u1EE9ng minh l\u1EE3i \xEDch v\u01B0\u1EE3t tr\u1ED9i c\u1EE7a th\xE1m hi\u1EC3m v\xF9ng c\u1EF1c:",
+          options: [
+            { id: "opt_A", label: "A", text: "Nonetheless, expeditions to extreme frontiers yield transformative benefits that eclipse these drawbacks, particularly in advancing scientific climate research and fostering deep environmental stewardship." },
+            { id: "opt_B", label: "B", text: "However, going to South Pole is cool and people can take beautiful photos with penguins." },
+            { id: "opt_C", label: "C", text: "On the other hand, rich people have money so they should travel wherever they like." },
+            { id: "opt_D", label: "D", text: "Secondly, advantages are bigger than disadvantages for several reasons." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Nonetheless, expeditions to extreme frontiers yield transformative benefits that eclipse these drawbacks, particularly in advancing scientific climate research and fostering deep environmental stewardship.",
+          correctExplanation: "T\u1EEB v\u1EF1ng ph\u1EA3n bi\u1EC7n xu\u1EA5t ch\xFAng: 'yield transformative benefits that eclipse these drawbacks' (mang l\u1EA1i nh\u1EEFng l\u1EE3i \xEDch mang t\xEDnh bi\u1EBFn \u0111\u1ED5i v\u01B0\u1EE3t xa c\xE1c nh\u01B0\u1EE3c \u0111i\u1EC3m n\xE0y), 'advancing scientific climate research' (th\xFAc \u0111\u1EA9y nghi\xEAn c\u1EE9u kh\xED h\u1EADu khoa h\u1ECDc), 'fostering deep environmental stewardship' (nu\xF4i d\u01B0\u1EE1ng \xFD th\u1EE9c qu\u1EA3n tr\u1ECB b\u1EA3o v\u1EC7 m\xF4i tr\u01B0\u1EDDng s\xE2u s\u1EAFc).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. However, going to South Pole is cool and people can take beautiful photos with penguins.",
+            diagnosticTitle: "L\u1ED1i t\u01B0 duy du l\u1ECBch ch\u1EE5p \u1EA3nh 's\u1ED1ng \u1EA3o' n\xF4ng c\u1EA1n",
+            explanation: "Ch\u1EE5p \u1EA3nh v\u1EDBi chim c\xE1nh c\u1EE5t l\xE0 l\u1EE3i \xEDch gi\u1EA3i tr\xED t\u1EA7m th\u01B0\u1EDDng, kh\xF4ng th\u1EC3 l\xE0m \u0111\u1ED1i tr\u1ECDng v\u01B0\u1EE3t tr\u1ED9i v\u1EDBi hi\u1EC3m h\u1ECDa m\xF4i tr\u01B0\u1EDDng."
+          }
+        },
+        {
+          id: "leader_w3d1_q07",
+          roundIndex: 6,
+          prompt: "C\u1EE5m t\u1EEB 'institutional knowledge' trong ng\u1EEF c\u1EA3nh qu\u1EA3n tr\u1ECB nh\xE2n l\u1EF1c ch\u1EC9 \u0111i\u1EC1u g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Kho t\xE0ng tri th\u1EE9c, kinh nghi\u1EC7m th\u1EF1c ti\u1EC5n v\xE0 b\xED quy\u1EBFt v\u1EADn h\xE0nh qu\xFD b\xE1u \u0111\u01B0\u1EE3c t\xEDch l\u0169y l\xE2u n\u0103m b\u1EDFi c\xE1c nh\xE2n s\u1EF1 k\u1EF3 c\u1EF1u trong t\u1ED5 ch\u1EE9c" },
+            { id: "opt_B", label: "B", text: "Nh\u1EEFng cu\u1ED1n s\xE1ch gi\xE1o khoa \u0111\u01B0\u1EE3c l\u01B0u gi\u1EEF trong th\u01B0 vi\u1EC7n tr\u01B0\u1EDDng \u0111\u1EA1i h\u1ECDc" },
+            { id: "opt_C", label: "C", text: "C\xE1c v\u0103n b\u1EA3n quy ph\u1EA1m ph\xE1p lu\u1EADt do ch\xEDnh ph\u1EE7 ban h\xE0nh" },
+            { id: "opt_D", label: "D", text: "M\u1EADt kh\u1EA9u m\xE1y t\xEDnh c\u1EE7a ph\xF2ng c\xF4ng ngh\u1EC7 th\xF4ng tin" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Kho t\xE0ng tri th\u1EE9c, kinh nghi\u1EC7m th\u1EF1c ti\u1EC5n v\xE0 b\xED quy\u1EBFt v\u1EADn h\xE0nh qu\xFD b\xE1u \u0111\u01B0\u1EE3c t\xEDch l\u0169y l\xE2u n\u0103m b\u1EDFi c\xE1c nh\xE2n s\u1EF1 k\u1EF3 c\u1EF1u trong t\u1ED5 ch\u1EE9c",
+          correctExplanation: "'Institutional knowledge' (tri th\u1EE9c t\u1ED5 ch\u1EE9c / v\u1ED1n kinh nghi\u1EC7m n\u1ED9i b\u1ED9 t\xEDch l\u0169y) l\xE0 kh\xE1i ni\u1EC7m qu\u1EA3n tr\u1ECB nh\xE2n s\u1EF1 cao c\u1EA5p \u0111\u1EC3 gi\u1EA3i th\xEDch t\u1EA1i sao kh\xF4ng th\u1EC3 t\xF9y ti\u1EC7n sa th\u1EA3i ho\u1EB7c cho ngh\u1EC9 h\u01B0u s\u1EDBm c\xE1c chuy\xEAn gia k\u1EF3 c\u1EF1u.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Nh\u1EEFng cu\u1ED1n s\xE1ch gi\xE1o khoa \u0111\u01B0\u1EE3c l\u01B0u gi\u1EEF trong th\u01B0 vi\u1EC7n tr\u01B0\u1EDDng \u0111\u1EA1i h\u1ECDc",
+            diagnosticTitle: "D\u1ECBch t\u1EEB ch\u1EEF 'institution' theo ngh\u0129a h\u1EB9p l\xE0 tr\u01B0\u1EDDng h\u1ECDc hay th\u01B0 vi\u1EC7n",
+            explanation: "Trong b\u1ED1i c\u1EA3nh doanh nghi\u1EC7p v\xE0 t\u1ED5 ch\u1EE9c, 'institutional knowledge' l\xE0 t\xE0i s\u1EA3n tr\xED tu\u1EC7 v\xF4 h\xECnh c\u1EE7a \u0111\u1ED9i ng\u0169."
+          }
+        },
+        {
+          id: "leader_w3d1_q08",
+          roundIndex: 7,
+          prompt: "Ch\u1ECDn c\xE2u vi\u1EBFt l\u1EA1i chu\u1EA9n h\u1ECDc thu\u1EADt cho: 'Banning smoking in public places helps protect non-smokers from getting sick.'?",
+          options: [
+            { id: "opt_A", label: "A", text: "Prohibiting tobacco smoking in communal spaces shields non-smokers from the proven carcinogens of passive inhalation." },
+            { id: "opt_B", label: "B", text: "Stopping cigarettes in public makes other people do not breathe bad smoke and get ill." },
+            { id: "opt_C", label: "C", text: "Smoking ban is good so people who do not smoke stay healthy." },
+            { id: "opt_D", label: "D", text: "If smokers are banned, non-smokers will not go to hospitals." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Prohibiting tobacco smoking in communal spaces shields non-smokers from the proven carcinogens of passive inhalation.",
+          correctExplanation: "T\u1EEB v\u1EF1ng y khoa ch\xEDnh x\xE1c: 'shields non-smokers' (b\u1EA3o v\u1EC7 ng\u01B0\u1EDDi kh\xF4ng h\xFAt thu\u1ED1c), 'proven carcinogens' (c\xE1c ch\u1EA5t sinh ung th\u01B0 \u0111\xE3 \u0111\u01B0\u1EE3c ch\u1EE9ng minh), 'passive inhalation' (vi\u1EC7c h\xEDt ph\u1EA3i kh\xF3i thu\u1ED1c th\u1EE5 \u0111\u1ED9ng).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Stopping cigarettes in public makes other people do not breathe bad smoke and get ill.",
+            diagnosticTitle: "D\xF9ng t\u1EEB ng\u1EEF v\u1EE5ng v\u1EC1 'bad smoke' thay v\xEC thu\u1EADt ng\u1EEF khoa h\u1ECDc",
+            explanation: "'Bad smoke' l\xE0 t\u1EEB v\u1EF1ng tr\u1EBB con; v\u0103n phong h\u1ECDc thu\u1EADt ph\u1EA3i d\xF9ng 'passive smoking' ho\u1EB7c 'second-hand smoke'."
+          }
+        },
+        {
+          id: "leader_w3d1_q09",
+          roundIndex: 8,
+          prompt: "Trong c\u1EA5u tr\xFAc b\xE0i lu\u1EADn 40-60, t\u1EF7 l\u1EC7 \u0111\u1ED9 d\xE0i v\xE0 chi\u1EC1u s\xE2u gi\u1EEFa Body 1 v\xE0 Body 2 n\xEAn \u0111\u01B0\u1EE3c ph\xE2n b\u1ED5 nh\u01B0 th\u1EBF n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "Body 2 (60% l\u1EADp tr\u01B0\u1EDDng ch\xEDnh) ph\u1EA3i d\xE0i h\u01A1n, ph\xE2n t\xEDch s\xE2u s\u1EAFc h\u01A1n v\xE0 c\xF3 b\u1EB1ng ch\u1EE9ng thuy\u1EBFt ph\u1EE5c v\u01B0\u1EE3t tr\u1ED9i so v\u1EDBi \u0111o\u1EA1n nh\u01B0\u1EE3ng b\u1ED9 Body 1 (40%)" },
+            { id: "opt_B", label: "B", text: "Body 1 d\xE0i g\u1EA5p ba l\u1EA7n Body 2" },
+            { id: "opt_C", label: "C", text: "C\u1EA3 hai Body ph\u1EA3i \u0111\u1EBFm \u0111\xFAng t\u1EEBng ch\u1EEF b\u1EB1ng nhau 100%" },
+            { id: "opt_D", label: "D", text: "Body 2 ch\u1EC9 c\u1EA7n vi\u1EBFt \u0111\xFAng m\u1ED9t c\xE2u c\u1EA3m th\xE1n ng\u1EAFn" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Body 2 (60% l\u1EADp tr\u01B0\u1EDDng ch\xEDnh) ph\u1EA3i d\xE0i h\u01A1n, ph\xE2n t\xEDch s\xE2u s\u1EAFc h\u01A1n v\xE0 c\xF3 b\u1EB1ng ch\u1EE9ng thuy\u1EBFt ph\u1EE5c v\u01B0\u1EE3t tr\u1ED9i so v\u1EDBi \u0111o\u1EA1n nh\u01B0\u1EE3ng b\u1ED9 Body 1 (40%)",
+          correctExplanation: "Quy t\u1EAFc ki\u1EBFn tr\xFAc Leader: \u0110o\u1EA1n b\u1EA3o v\u1EC7 quan \u0111i\u1EC3m ch\xEDnh (60%) b\u1EAFt bu\u1ED9c ph\u1EA3i chi\u1EBFm t\u1EF7 tr\u1ECDng l\u1EDBn h\u01A1n v\u1EC1 dung l\u01B0\u1EE3ng t\u1EEB (kho\u1EA3ng 110-130 t\u1EEB so v\u1EDBi 80-90 t\u1EEB c\u1EE7a Body 1) v\xE0 c\xF3 chu\u1ED7i l\u1EADp lu\u1EADn Why -> Result s\xE2u s\u1EAFc h\u01A1n.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. C\u1EA3 hai Body ph\u1EA3i \u0111\u1EBFm \u0111\xFAng t\u1EEBng ch\u1EEF b\u1EB1ng nhau 100%",
+            diagnosticTitle: "\xC1m \u1EA3nh h\xECnh th\u1EE9c \u0111\u1ED1i x\u1EE9ng c\u01A1 h\u1ECDc c\u1EE9ng nh\u1EAFc",
+            explanation: "Vi\u1EBFt b\u1EB1ng nhau ch\u1EB1n ch\u1EB7n khi\u1EBFn b\xE0i lu\u1EADn thi\u1EBFu tr\u1ECDng t\xE2m, kh\xF4ng l\xE0m n\u1ED5i b\u1EADt \u0111\u01B0\u1EE3c b\xEAn n\xE0o l\xE0 quan \u0111i\u1EC3m \xE1p \u0111\u1EA3o."
+          }
+        },
+        {
+          id: "leader_w3d1_q10",
+          roundIndex: 9,
+          prompt: "Ch\u1ECDn c\xE2u K\u1EBFt lu\u1EADn (Conclusion) chu\u1EA9n Leader kh\u1EB3ng \u0111\u1ECBnh s\u1EF1 v\u01B0\u1EE3t tr\u1ED9i c\u1EE7a l\u1EE3i \xEDch du l\u1ECBch v\xF9ng c\u1EF1c:",
+          options: [
+            { id: "opt_A", label: "A", text: "In conclusion, while polar tourism undeniably incurs environmental footprints, its indispensable role in raising global ecological consciousness and funding vital scientific endeavors renders its advantages substantially more pronounced." },
+            { id: "opt_B", label: "B", text: "In conclusion, going to the South Pole is dangerous but tourists should keep going there." },
+            { id: "opt_C", label: "C", text: "To sum up, benefits are bigger than drawbacks and Antarctica is very beautiful." },
+            { id: "opt_D", label: "D", text: "All in all, tourism at remote places is good and bad at the same time." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. In conclusion, while polar tourism undeniably incurs environmental footprints, its indispensable role in raising global ecological consciousness and funding vital scientific endeavors renders its advantages substantially more pronounced.",
+          correctExplanation: "K\u1EBFt b\xE0i m\u1EABu m\u1EF1c: T\xF3m t\u1EAFt nh\u01B0\u1EE3ng b\u1ED9 'while polar tourism undeniably incurs environmental footprints', kh\u1EB3ng \u0111\u1ECBnh s\u1EF1 \xE1p \u0111\u1EA3o 'renders its advantages substantially more pronounced' th\xF4ng qua hai tr\u1EE5 c\u1ED9t 'raising global ecological consciousness' v\xE0 'funding vital scientific endeavors'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. All in all, tourism at remote places is good and bad at the same time.",
+            diagnosticTitle: "K\u1EBFt b\xE0i ba ph\u1EA3i kh\xF4ng gi\u1EA3i quy\u1EBFt c\xE2u h\u1ECFi Outweigh",
+            explanation: "N\xF3i 'v\u1EEBa t\u1ED1t v\u1EEBa x\u1EA5u c\xF9ng m\u1ED9t l\xFAc' l\xE0 th\u1EA5t b\u1EA1i trong vi\u1EC7c ch\u1ED1t h\u1EA1 c\xE2u h\u1ECFi 'Do advantages outweigh disadvantages'."
+          }
+        }
+      ],
+      "WEEK 3 \u2013 DAY 2": [
+        {
+          id: "leader_w3d2_q01",
+          roundIndex: 0,
+          prompt: "S\u1EF1 kh\xE1c bi\u1EC7t b\u1EA3n ch\u1EA5t mang t\xEDnh quy\u1EBFt \u0111\u1ECBnh gi\u1EEFa c\xE2u h\u1ECFi Speaking Part 1 v\xE0 Speaking Part 3 l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Part 1 t\u1EADp trung v\xE0o tr\u1EA3i nghi\u1EC7m v\xE0 th\xF3i quen c\xE1 nh\xE2n mang t\xEDnh \u0111\u1EDDi th\u01B0\u1EDDng; c\xF2n Part 3 y\xEAu c\u1EA7u th\u1EA3o lu\u1EADn c\xE1c v\u1EA5n \u0111\u1EC1 tr\u1EEBu t\u01B0\u1EE3ng mang t\u1EA7m v\xF3c x\xE3 h\u1ED9i h\u1ECDc s\xE2u r\u1ED9ng" },
+            { id: "opt_B", label: "B", text: "Part 3 y\xEAu c\u1EA7u th\xED sinh n\xF3i nh\u1ECF h\u01A1n Part 1" },
+            { id: "opt_C", label: "C", text: "Part 1 n\xF3i v\u1EC1 t\u01B0\u01A1ng lai, c\xF2n Part 3 n\xF3i v\u1EC1 qu\xE1 kh\u1EE9" },
+            { id: "opt_D", label: "D", text: "Hai ph\u1EA7n n\xE0y ho\xE0n to\xE0n gi\u1ED1ng h\u1EC7t nhau v\u1EC1 n\u1ED9i dung v\xE0 ti\xEAu ch\xED" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Part 1 t\u1EADp trung v\xE0o tr\u1EA3i nghi\u1EC7m v\xE0 th\xF3i quen c\xE1 nh\xE2n mang t\xEDnh \u0111\u1EDDi th\u01B0\u1EDDng; c\xF2n Part 3 y\xEAu c\u1EA7u th\u1EA3o lu\u1EADn c\xE1c v\u1EA5n \u0111\u1EC1 tr\u1EEBu t\u01B0\u1EE3ng mang t\u1EA7m v\xF3c x\xE3 h\u1ED9i h\u1ECDc s\xE2u r\u1ED9ng",
+          correctExplanation: "B\u1EA3n ch\u1EA5t Part 3: Gi\xE1m kh\u1EA3o \u0111\xE1nh gi\xE1 kh\u1EA3 n\u0103ng tranh lu\u1EADn h\u1ECDc thu\u1EADt tr\u1EEBu t\u01B0\u1EE3ng. Th\xED sinh Band 5.5 ch\u1EC9 bi\u1EBFt tr\u1EA3 l\u1EDDi 'I, my family', trong khi th\xED sinh Band 7.0+ bi\u1EBFt kh\xE1i qu\xE1t h\xF3a v\u1EA5n \u0111\u1EC1 d\u01B0\u1EDBi g\xF3c nh\xECn 'society, demographic groups, governance'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Hai ph\u1EA7n n\xE0y ho\xE0n to\xE0n gi\u1ED1ng h\u1EC7t nhau v\u1EC1 n\u1ED9i dung v\xE0 ti\xEAu ch\xED",
+            diagnosticTitle: "\xC1p d\u1EE5ng th\xF3i quen tr\u1EA3 l\u1EDDi Part 1 c\xE1 nh\xE2n v\xE0o c\xE2u h\u1ECFi Part 3",
+            explanation: "Tr\u1EA3 l\u1EDDi Part 3 b\u1EB1ng chuy\u1EC7n c\xE1 nh\xE2n c\u1EE7a t\xF4i ('When I eat, I like...') s\u1EBD b\u1ECB tr\u1EEB \u0111i\u1EC3m v\xEC kh\xF4ng \u0111\u1EA1t t\xEDnh kh\xE1i qu\xE1t x\xE3 h\u1ED9i."
+          }
+        },
+        {
+          id: "leader_w3d2_q02",
+          roundIndex: 1,
+          prompt: "Khi nh\u1EADn c\xE2u h\u1ECFi Part 3: 'Is food served in restaurants better than homemade food?', c\xE2u tr\u1EA3 l\u1EDDi n\xE0o sau \u0111\xE2y \xE1p d\u1EE5ng t\u01B0 duy c\xE1c b\xEAn li\xEAn quan (Stakeholder & Contextual thinking) \u0111\u1EA1t chu\u1EA9n 7.0+?",
+          options: [
+            { id: "opt_A", label: "A", text: "It depends largely on whether one prioritizes culinary craftsmanship or nutritional integrity. While upscale eateries offer sophisticated gastronomic experiences, home-cooked meals remain unrivaled in terms of wholesome ingredients and tailored dietary control." },
+            { id: "opt_B", label: "B", text: "Restaurant food is better because restaurants have famous chefs and pizza is very delicious." },
+            { id: "opt_C", label: "C", text: "I like my mom's cooking because my mom cooks very well." },
+            { id: "opt_D", label: "D", text: "Both are okay, food is food and we eat to survive." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. It depends largely on whether one prioritizes culinary craftsmanship or nutritional integrity. While upscale eateries offer sophisticated gastronomic experiences, home-cooked meals remain unrivaled in terms of wholesome ingredients and tailored dietary control.",
+          correctExplanation: "T\u01B0 duy ph\xE2n t\xEDch b\u1ED1i c\u1EA3nh \u0111\u1EC9nh cao: \u0111\u1ED1i s\xE1nh 'culinary craftsmanship' (tay ngh\u1EC1 \u1EA9m th\u1EF1c) t\u1EA1i c\xE1c nh\xE0 h\xE0ng cao c\u1EA5p v\u1EDBi 'nutritional integrity and tailored dietary control' (t\xEDnh nguy\xEAn b\u1EA3n dinh d\u01B0\u1EE1ng v\xE0 s\u1EF1 ki\u1EC3m so\xE1t kh\u1EA9u ph\u1EA7n) c\u1EE7a b\u1EEFa c\u01A1m gia \u0111\xECnh.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. I like my mom's cooking because my mom cooks very well.",
+            diagnosticTitle: "B\u1EABy c\xE1 nh\xE2n h\xF3a c\xE2u h\u1ECFi x\xE3 h\u1ED9i trong Part 3",
+            explanation: "\u0110\u1EC1 h\u1ECFi b\u1EE9c tranh chung c\u1EE7a x\xE3 h\u1ED9i, tr\u1EA3 l\u1EDDi 't\xF4i th\xEDch c\u01A1m m\u1EB9 n\u1EA5u' th\u1EC3 hi\u1EC7n s\u1EF1 non n\u1EDBt \u1EDF Band 5.0."
+          }
+        },
+        {
+          id: "leader_w3d2_q03",
+          roundIndex: 2,
+          prompt: "Trong Speaking Part 2 v\u1EDBi ch\u1EE7 \u0111\u1EC1: 'Describe an inspiring leader or role model who has positively influenced you', ph\u1EA9m ch\u1EA5t l\xE3nh \u0111\u1EA1o n\xE0o sau \u0111\xE2y \u0111\u01B0\u1EE3c di\u1EC5n \u0111\u1EA1t b\u1EB1ng ng\xF4n ng\u1EEF h\u1ECDc thu\u1EADt s\u1EAFc n\xE9t nh\u1EA5t?",
+          options: [
+            { id: "opt_A", label: "A", text: "She possesses an extraordinary visionary acumen coupled with empathetic tenacity, which galvanizes the entire team to surmount unprecedented challenges." },
+            { id: "opt_B", label: "B", text: "He is a very good boss who gives us a lot of money and never shouts at staff." },
+            { id: "opt_C", label: "C", text: "She is a beautiful leader having modern clothes and expensive cars." },
+            { id: "opt_D", label: "D", text: "He speaks very loudly so all employees must listen carefully." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. She possesses an extraordinary visionary acumen coupled with empathetic tenacity, which galvanizes the entire team to surmount unprecedented challenges.",
+          correctExplanation: "Collocation C2 \u0111\u1EC9nh cao v\u1EC1 l\xE3nh \u0111\u1EA1o: 'visionary acumen' (s\u1EF1 nh\u1EA1y b\xE9n c\xF3 t\u1EA7m nh\xECn xa tr\xF4ng r\u1ED9ng), 'empathetic tenacity' (s\u1EF1 b\u1EC1n b\u1EC9 \u0111\u1EA7y th\u1EA5u c\u1EA3m), 'galvanizes the entire team to surmount unprecedented challenges' (truy\u1EC1n c\u1EA3m h\u1EE9ng th\xFAc \u0111\u1EA9y to\xE0n \u0111\u1ED9i v\u01B0\u1EE3t qua nh\u1EEFng th\u1EED th\xE1ch ch\u01B0a t\u1EEBng c\xF3).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. He is a very good boss who gives us a lot of money and never shouts at staff.",
+            diagnosticTitle: "M\xF4 t\u1EA3 t\xEDnh c\xE1ch l\xE3nh \u0111\u1EA1o b\u1EB1ng l\u1ED1i n\xF3i n\xF4m na v\u1EE5ng v\u1EC1",
+            explanation: "'Gives money and never shouts' l\xE0 g\xF3c nh\xECn c\u1EE7a nh\xE2n vi\xEAn b\xECnh d\xE2n, kh\xF4ng l\xE0m n\u1ED5i b\u1EADt \u0111\u01B0\u1EE3c ph\u1EA9m ch\u1EA5t l\xE3nh \u0111\u1EA1o h\u1ECDc thu\u1EADt."
+          }
+        },
+        {
+          id: "leader_w3d2_q04",
+          roundIndex: 3,
+          prompt: "Khi gi\xE1m kh\u1EA3o h\u1ECFi Part 3: 'What qualities make an effective leader in the 21st century?', c\xE2u tr\u1EA3 l\u1EDDi n\xE0o sau \u0111\xE2y ch\u1EC9 ra s\u1EF1 chuy\u1EC3n d\u1ECBch t\u1EEB phong c\xE1ch chuy\xEAn quy\u1EC1n sang l\xE3nh \u0111\u1EA1o th\u1EA5u c\u1EA3m?",
+          options: [
+            { id: "opt_A", label: "A", text: "In this era of rapid disruption, authoritarian hierarchy has become obsolete. Contemporary leaders must cultivate high emotional intelligence and agile decision-making to foster psychological safety within diverse teams." },
+            { id: "opt_B", label: "B", text: "Leaders must be very strict and punish anyone who makes mistakes." },
+            { id: "opt_C", label: "C", text: "A leader just needs to have high degrees from Harvard University." },
+            { id: "opt_D", label: "D", text: "Leaders in the 21st century only need to know how to use computers." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. In this era of rapid disruption, authoritarian hierarchy has become obsolete. Contemporary leaders must cultivate high emotional intelligence and agile decision-making to foster psychological safety within diverse teams.",
+          correctExplanation: "T\u01B0 duy l\xE3nh \u0111\u1EA1o hi\u1EC7n \u0111\u1EA1i: 'authoritarian hierarchy has become obsolete' (h\u1EC7 th\u1ED1ng th\u1EE9 b\u1EADc chuy\xEAn quy\u1EC1n \u0111\xE3 l\u1ED7i th\u1EDDi), 'high emotional intelligence and agile decision-making' (tr\xED tu\u1EC7 c\u1EA3m x\xFAc cao v\xE0 kh\u1EA3 n\u0103ng ra quy\u1EBFt \u0111\u1ECBnh linh ho\u1EA1t), 'foster psychological safety' (ki\u1EBFn t\u1EA1o s\u1EF1 an to\xE0n t\xE2m l\xFD cho \u0111\u1ED9i nh\xF3m).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Leaders must be very strict and punish anyone who makes mistakes.",
+            diagnosticTitle: "C\u1ED5 s\xFAy m\xF4 h\xECnh qu\u1EA3n l\xFD chuy\xEAn quy\u1EC1n c\u1ED5 h\u1EE7",
+            explanation: "M\xF4 h\xECnh tr\u1EEBng ph\u1EA1t kh\u1EAFt khe \u0111i ng\u01B0\u1EE3c l\u1EA1i l\xFD thuy\u1EBFt qu\u1EA3n tr\u1ECB hi\u1EC7n \u0111\u1EA1i trong c\xE1c t\xE0i li\u1EC7u Cambridge."
+          }
+        },
+        {
+          id: "leader_w3d2_q05",
+          roundIndex: 4,
+          prompt: "T\u1EEB 'galvanize' trong c\xE2u: 'Her impassioned speech served to galvanize the community into taking collective environmental action' mang ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "K\xEDch ho\u1EA1t, truy\u1EC1n c\u1EA3m h\u1EE9ng v\xE0 th\xF4i th\xFAc m\u1ECDi ng\u01B0\u1EDDi c\xF9ng \u0111\u1ED3ng l\xF2ng h\xE0nh \u0111\u1ED9ng ngay l\u1EADp t\u1EE9c" },
+            { id: "opt_B", label: "B", text: "M\u1EA1 m\u1ED9t l\u1EDBp k\u1EBDm kim lo\u1EA1i l\xEAn b\u1EC1 m\u1EB7t s\u1EAFt th\xE9p" },
+            { id: "opt_C", label: "C", text: "L\xE0m cho \u0111\xE1m \u0111\xF4ng tr\u1EDF n\xEAn s\u1EE3 h\xE3i v\xE0 b\u1ECF ch\u1EA1y" },
+            { id: "opt_D", label: "D", text: "L\xE0m d\u1ECBu c\u01A1n gi\u1EADn d\u1EEF c\u1EE7a \u0111\u1ED1i ph\u01B0\u01A1ng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. K\xEDch ho\u1EA1t, truy\u1EC1n c\u1EA3m h\u1EE9ng v\xE0 th\xF4i th\xFAc m\u1ECDi ng\u01B0\u1EDDi c\xF9ng \u0111\u1ED3ng l\xF2ng h\xE0nh \u0111\u1ED9ng ngay l\u1EADp t\u1EE9c",
+          correctExplanation: "'Galvanize' trong ng\u1EEF c\u1EA3nh l\xE3nh \u0111\u1EA1o v\xE0 x\xE3 h\u1ED9i mang ngh\u0129a b\xF3ng: \u0111\xE1nh th\u1EE9c ng\u1ECDn l\u1EEDa nhi\u1EC7t huy\u1EBFt, k\xEDch th\xEDch m\u1ED9t t\u1EADp th\u1EC3 h\xE0nh \u0111\u1ED9ng quy\u1EBFt li\u1EC7t (inspire to immediate action).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. M\u1EA1 m\u1ED9t l\u1EDBp k\u1EBDm kim lo\u1EA1i l\xEAn b\u1EC1 m\u1EB7t s\u1EAFt th\xE9p",
+            diagnosticTitle: "D\u1ECBch theo ngh\u0129a k\u1EF9 thu\u1EADt h\xF3a h\u1ECDc thu\u1EA7n t\xFAy",
+            explanation: "Trong v\u0103n c\u1EA3nh x\xE3 h\u1ED9i h\u1ECDc, 'galvanize' l\xE0 \u0111\u1ED9ng t\u1EEB bi\u1EC3u t\u01B0\u1EE3ng, kh\xF4ng ph\u1EA3i k\u1EF9 thu\u1EADt m\u1EA1 k\u1EBDm."
+          }
+        },
+        {
+          id: "leader_w3d2_q06",
+          roundIndex: 5,
+          prompt: "Ch\u1ECDn c\xE2u tr\u1EA3 l\u1EDDi Part 3 v\u1EC1 ch\u1EE7 \u0111\u1EC1 'Life goals' th\u1EC3 hi\u1EC7n kh\u1EA3 n\u0103ng s\u1EED d\u1EE5ng m\u1EC7nh \u0111\u1EC1 danh t\u1EEB (Noun Clause) xu\u1EA5t s\u1EAFc:",
+          options: [
+            { id: "opt_A", label: "A", text: "What shifted most fundamentally between my childhood and adulthood is how I define success; I no longer equate it with material accumulation, but rather with personal fulfillment and societal contribution." },
+            { id: "opt_B", label: "B", text: "My goals changed because when I was young I wanted toys, now I want money." },
+            { id: "opt_C", label: "C", text: "I have changed my goals many times in my life." },
+            { id: "opt_D", label: "D", text: "Children and adults have different goals because of age." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. What shifted most fundamentally between my childhood and adulthood is how I define success; I no longer equate it with material accumulation, but rather with personal fulfillment and societal contribution.",
+          correctExplanation: "C\u1EA5u tr\xFAc k\xE9p m\u1EC7nh \u0111\u1EC1 danh ng\u1EEF: 'What shifted most fundamentally... is how I define success', k\u1EBFt h\u1EE3p c\u1EA5u tr\xFAc t\u01B0\u01A1ng ph\u1EA3n tinh t\u1EBF 'no longer equate with material accumulation, but rather with personal fulfillment'.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. My goals changed because when I was young I wanted toys, now I want money.",
+            diagnosticTitle: "C\xE1ch di\u1EC5n \u0111\u1EA1t th\xF4 s\u01A1 v\xE0 t\u01B0 duy v\u1EADt ch\u1EA5t v\u1EE5n v\u1EB7t",
+            explanation: "'Mu\u1ED1n \u0111\u1ED3 ch\u01A1i -> mu\u1ED1n ti\u1EC1n' l\xE0 l\u1ED1i t\u01B0 duy tr\u1EBB con \u1EDF m\u1EE9c Band 5.0."
+          }
+        },
+        {
+          id: "leader_w3d2_q07",
+          roundIndex: 6,
+          prompt: "Khi n\xF3i v\u1EC1 s\u1EF1 \u1EA3nh h\u01B0\u1EDFng c\u1EE7a m\u1ED9t ng\u01B0\u1EDDi l\xE3nh \u0111\u1EA1o truy\u1EC1n c\u1EA3m h\u1EE9ng l\xEAn phong c\xE1ch l\xE0m vi\u1EC7c c\u1EE7a b\u1EA3n th\xE2n, c\u1EE5m th\xE0nh ng\u1EEF n\xE0o th\u1EC3 hi\u1EC7n s\u1EF1 noi g\u01B0\u01A1ng r\xF5 nh\u1EA5t?",
+          options: [
+            { id: "opt_A", label: "A", text: "I continually strive to emulate her exemplary work ethic and composure under immense pressure." },
+            { id: "opt_B", label: "B", text: "I copy everything she does like a photocopy machine." },
+            { id: "opt_C", label: "C", text: "I try to be her twin sister in the office." },
+            { id: "opt_D", label: "D", text: "I follow her steps on the ground every day." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. I continually strive to emulate her exemplary work ethic and composure under immense pressure.",
+          correctExplanation: "'Strive to emulate' (n\u1ED7 l\u1EF1c h\u1ECDc t\u1EADp v\xE0 noi g\u01B0\u01A1ng), 'exemplary work ethic' (\u0111\u1EA1o \u0111\u1EE9c ngh\u1EC1 nghi\u1EC7p m\u1EABu m\u1EF1c), 'composure under immense pressure' (s\u1EF1 \u0111i\u1EC1m t\u0129nh v\u1EEFng v\xE0ng d\u01B0\u1EDBi \xE1p l\u1EF1c ng\xFAt ng\xE0n).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. I copy everything she does like a photocopy machine.",
+            diagnosticTitle: "D\xF9ng t\u1EEB ng\u1EEF th\xF4 thi\u1EC3n 'copy like a photocopy machine'",
+            explanation: "So s\xE1nh sao ch\xE9p nh\u01B0 m\xE1y photocopy l\xE0m m\u1EA5t \u0111i t\xEDnh trang tr\u1ECDng v\xE0 gi\xE1 tr\u1ECB tinh th\u1EA7n c\u1EE7a vi\u1EC7c noi g\u01B0\u01A1ng."
+          }
+        },
+        {
+          id: "leader_w3d2_q08",
+          roundIndex: 7,
+          prompt: "Trong Part 3, khi gi\xE1m kh\u1EA3o h\u1ECFi c\xE2u h\u1ECFi \u0111\u1ED1i s\xE1nh: 'Do men and women possess different leadership styles?', c\xE1ch tr\u1EA3 l\u1EDDi n\xE0o tr\xE1nh \u0111\u01B0\u1EE3c b\u1EABy \u0111\u1ECBnh ki\u1EBFn gi\u1EDBi t\xEDnh l\u1ED7i th\u1EDDi (Gender stereotyping)?",
+          options: [
+            { id: "opt_A", label: "A", text: "Rather than inherent gender biological traits, leadership approaches are largely dictated by organizational culture and individual personality; effective governance transcends gender boundaries." },
+            { id: "opt_B", label: "B", text: "Yes, women are always too emotional and men are always strong and aggressive." },
+            { id: "opt_C", label: "C", text: "Men are naturally born to lead, women are born to follow." },
+            { id: "opt_D", label: "D", text: "Women cannot be leaders because they have to take care of babies." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Rather than inherent gender biological traits, leadership approaches are largely dictated by organizational culture and individual personality; effective governance transcends gender boundaries.",
+          correctExplanation: "Quan \u0111i\u1EC3m ti\u1EBFn b\u1ED9 h\u1ECDc thu\u1EADt: B\xE1c b\u1ECF \u0111\u1ECBnh ki\u1EBFn gi\u1EDBi l\u1ED7i th\u1EDDi, ch\u1EC9 ra r\u1EB1ng phong c\xE1ch l\xE3nh \u0111\u1EA1o ph\u1EE5 thu\u1ED9c v\xE0o 'organizational culture and individual personality' v\xE0 'effective governance transcends gender boundaries' (n\u0103ng l\u1EF1c qu\u1EA3n tr\u1ECB v\u01B0\u1EE3t qua ranh gi\u1EDBi gi\u1EDBi t\xEDnh).",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Yes, women are always too emotional and men are always strong and aggressive.",
+            diagnosticTitle: "S\u1EADp b\u1EABy \u0111\u1ECBnh ki\u1EBFn gi\u1EDBi t\xEDnh ti\xEAu c\u1EF1c (Sexist stereotyping)",
+            explanation: "Ph\xE1t bi\u1EC3u ph\u1EE5 n\u1EEF qu\xE1 c\u1EA3m t\xEDnh v\xE0 \u0111\xE0n \xF4ng lu\xF4n hung h\u0103ng l\xE0 \u0111\u1ECBnh ki\u1EBFn n\xF4ng c\u1EA1n, b\u1ECB coi l\xE0 thi\u1EBFu t\u01B0 duy v\u0103n minh trong b\xE0i thi qu\u1ED1c t\u1EBF."
+          }
+        },
+        {
+          id: "leader_w3d2_q09",
+          roundIndex: 8,
+          prompt: "C\u1EE5m t\u1EEB 'servant leadership' trong khoa h\u1ECDc qu\u1EA3n tr\u1ECB hi\u1EC7n \u0111\u1EA1i c\xF3 ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Tri\u1EBFt l\xFD l\xE3nh \u0111\u1EA1o ph\u1EE5c v\u1EE5, trong \u0111\xF3 nh\xE0 l\xE3nh \u0111\u1EA1o \u0111\u1EB7t nhu c\u1EA7u ph\xE1t tri\u1EC3n v\xE0 ph\xFAc l\u1EE3i c\u1EE7a \u0111\u1ED9i ng\u0169 nh\xE2n vi\xEAn l\xEAn tr\u01B0\u1EDBc l\u1EE3i \xEDch c\xE1 nh\xE2n" },
+            { id: "opt_B", label: "B", text: "Vi\u1EC7c ng\u01B0\u1EDDi l\xE3nh \u0111\u1EA1o ph\u1EA3i ki\xEAm lu\xF4n c\xF4ng vi\u1EC7c d\u1ECDn d\u1EB9p v\u1EC7 sinh ph\xF2ng l\xE0m vi\u1EC7c" },
+            { id: "opt_C", label: "C", text: "M\u1ED9t h\u1EC7 th\u1ED1ng n\u01A1i nh\xE2n vi\xEAn b\u1ECB \u0111\u1ED1i x\u1EED nh\u01B0 ng\u01B0\u1EDDi h\u1EA7u trong cung \u0111i\u1EC7n" },
+            { id: "opt_D", label: "D", text: "L\xE3nh \u0111\u1EA1o c\u1EE7a m\u1ED9t c\xF4ng ty chuy\xEAn cung c\u1EA5p d\u1ECBch v\u1EE5 ng\u01B0\u1EDDi gi\xFAp vi\u1EC7c" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Tri\u1EBFt l\xFD l\xE3nh \u0111\u1EA1o ph\u1EE5c v\u1EE5, trong \u0111\xF3 nh\xE0 l\xE3nh \u0111\u1EA1o \u0111\u1EB7t nhu c\u1EA7u ph\xE1t tri\u1EC3n v\xE0 ph\xFAc l\u1EE3i c\u1EE7a \u0111\u1ED9i ng\u0169 nh\xE2n vi\xEAn l\xEAn tr\u01B0\u1EDBc l\u1EE3i \xEDch c\xE1 nh\xE2n",
+          correctExplanation: "'Servant leadership' (L\xE3nh \u0111\u1EA1o ph\u1EE5c v\u1EE5) l\xE0 m\u1ED9t tr\u01B0\u1EDDng ph\xE1i qu\u1EA3n tr\u1ECB ti\xEAn ti\u1EBFn do Robert K. Greenleaf s\xE1ng l\u1EADp, \u0111\u1EC1 cao s\u1EF1 n\xE2ng \u0111\u1EE1, trao quy\u1EC1n v\xE0 ph\u1EE5c v\u1EE5 c\u1ED9ng \u0111\u1ED3ng.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Vi\u1EC7c ng\u01B0\u1EDDi l\xE3nh \u0111\u1EA1o ph\u1EA3i ki\xEAm lu\xF4n c\xF4ng vi\u1EC7c d\u1ECDn d\u1EB9p v\u1EC7 sinh ph\xF2ng l\xE0m vi\u1EC7c",
+            diagnosticTitle: "D\u1ECBch t\u1EEB ch\u1EEF 'servant' theo ngh\u0129a \u0111en ng\u01B0\u1EDDi qu\xE9t d\u1ECDn",
+            explanation: "\u0110\xE2y l\xE0 thu\u1EADt ng\u1EEF \u1EA9n d\u1EE5 qu\u1EA3n tr\u1ECB h\u1ECDc, kh\xF4ng ph\u1EA3i c\xF4ng vi\u1EC7c t\u1EA1p v\u1EE5."
+          }
+        },
+        {
+          id: "leader_w3d2_q10",
+          roundIndex: 9,
+          prompt: "\u0110\u1EC3 t\u1EA1o s\u1EF1 li\xEAn k\u1EBFt t\u1EF1 nhi\xEAn khi chuy\u1EC3n \xFD trong Speaking Part 3, c\u1EE5m li\xEAn t\u1EEB n\xE0o sau \u0111\xE2y mang t\xEDnh h\u1ECDc thu\u1EADt trang tr\u1ECDng nh\u1EA5t?",
+          options: [
+            { id: "opt_A", label: "A", text: "Taking that into consideration, another dimension worth exploring is..." },
+            { id: "opt_B", label: "B", text: "And then, I also want to tell you that..." },
+            { id: "opt_C", label: "C", text: "Next idea in my brain is..." },
+            { id: "opt_D", label: "D", text: "Plus that, hear me say this..." }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Taking that into consideration, another dimension worth exploring is...",
+          correctExplanation: "'Taking that into consideration, another dimension worth exploring is...' (C\xE2n nh\u1EAFc y\u1EBFu t\u1ED1 \u0111\xF3, m\u1ED9t kh\xEDa c\u1EA1nh kh\xE1c r\u1EA5t \u0111\xE1ng \u0111\u1EC3 \u0111\xE0o s\xE2u ph\xE2n t\xEDch l\xE0...) th\u1EC3 hi\u1EC7n s\u1EF1 uy\u1EC3n chuy\u1EC3n v\xE0 phong th\xE1i \u0111\u0129nh \u0111\u1EA1c c\u1EE7a m\u1ED9t h\u1ECDc gi\u1EA3 Band 7.5+.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. And then, I also want to tell you that...",
+            diagnosticTitle: "D\xF9ng t\u1EEB n\u1ED1i kh\u1EA9u ng\u1EEF v\xE0 x\u01B0ng h\xF4 giao ti\u1EBFp",
+            explanation: "'And then I want to tell you' l\xE0 c\xE2u n\xF3i chuy\u1EC7n th\xE2n m\u1EADt, kh\xF4ng ph\xF9 h\u1EE3p cho ph\u1EA7n th\u1EA3o lu\u1EADn chuy\xEAn s\xE2u Part 3."
+          }
+        }
+      ],
+      "WEEK 3 \u2013 DAY 3": [
+        {
+          id: "leader_w3d3_q01",
+          roundIndex: 0,
+          prompt: "Trong b\xE0i \u0111\u1ECDc v\u1EC1 nghi\xEAn c\u1EE9u ngu\u1ED3n g\u1ED1c truy\u1EC7n c\u1ED5 t\xEDch c\u1EE7a nh\xE0 nh\xE2n ch\u1EE7ng h\u1ECDc Jamie Tehrani, \xF4ng \u0111\xE3 \xE1p d\u1EE5ng ph\u01B0\u01A1ng ph\xE1p nghi\xEAn c\u1EE9u n\xE0o v\u1ED1n thu\u1ED9c v\u1EC1 ng\xE0nh Sinh h\u1ECDc?",
+          options: [
+            { id: "opt_A", label: "A", text: "Ph\u01B0\u01A1ng ph\xE1p ph\xE2n t\xEDch ph\xE1t sinh lo\xE0i h\u1ECDc Phylogenetic analysis d\u1EF1a tr\xEAn c\xE2y ti\u1EBFn h\xF3a sinh h\u1ECDc \u0111\u1EC3 truy v\u1EBFt ngu\u1ED3n g\u1ED1c v\xE0 s\u1EF1 bi\u1EBFn \u0111\u1ED5i c\u1EE7a c\xE1c c\xE2u chuy\u1EC7n d\xE2n gian qua h\xE0ng ngh\xECn n\u0103m" },
+            { id: "opt_B", label: "B", text: "K\u1EF9 thu\u1EADt t\xE1ch chi\u1EBFt ADN t\u1EEB c\xE1c trang s\xE1ch c\u1ED5" },
+            { id: "opt_C", label: "C", text: "K\xEDnh hi\u1EC3n vi \u0111i\u1EC7n t\u1EED \u0111\u1EC3 qu\xE9t b\u1EE5i tr\xEAn c\xE1c b\u1EA3n th\u1EA3o vi\u1EBFt tay" },
+            { id: "opt_D", label: "D", text: "Nu\xF4i c\u1EA5y vi khu\u1EA9n tr\xEAn c\xE1c cu\u1ED1n truy\u1EC7n tranh c\u1ED5 t\xEDch" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Ph\u01B0\u01A1ng ph\xE1p ph\xE2n t\xEDch ph\xE1t sinh lo\xE0i h\u1ECDc Phylogenetic analysis d\u1EF1a tr\xEAn c\xE2y ti\u1EBFn h\xF3a sinh h\u1ECDc \u0111\u1EC3 truy v\u1EBFt ngu\u1ED3n g\u1ED1c v\xE0 s\u1EF1 bi\u1EBFn \u0111\u1ED5i c\u1EE7a c\xE1c c\xE2u chuy\u1EC7n d\xE2n gian qua h\xE0ng ngh\xECn n\u0103m",
+          correctExplanation: "V\u0103n b\u1EA3n gi\u1EA3i th\xEDch: Jamie Tehrani \u0111\xE3 m\u01B0\u1EE3n 'phylogenetic methods' (ph\xE2n t\xEDch ph\xE1t sinh lo\xE0i) c\u1EE7a c\xE1c nh\xE0 sinh h\u1ECDc ti\u1EBFn h\xF3a, coi c\xE1c d\u1ECB b\u1EA3n truy\u1EC7n d\xE2n gian nh\u01B0 c\xE1c lo\xE0i sinh v\u1EADt \u0111\u1EC3 x\xE2y d\u1EF1ng c\xE2y ti\u1EBFn h\xF3a ph\u1EA3 h\u1EC7.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. K\u1EF9 thu\u1EADt t\xE1ch chi\u1EBFt ADN t\u1EEB c\xE1c trang s\xE1ch c\u1ED5",
+            diagnosticTitle: "Hi\u1EC3u theo ngh\u0129a \u0111en k\u1EF9 thu\u1EADt sinh h\u1ECDc ph\xE2n t\u1EED ph\xF2ng th\xED nghi\u1EC7m",
+            explanation: "Ph\u01B0\u01A1ng ph\xE1p \u0111\u01B0\u1EE3c \u1EE9ng d\u1EE5ng l\xE0 m\xF4 h\xECnh thu\u1EADt to\xE1n to\xE1n h\u1ECDc th\u1ED1ng k\xEA c\xE2y ph\u1EA3 h\u1EC7, kh\xF4ng ph\u1EA3i vi\u1EC7c tr\xEDch ADN v\u1EADt l\xFD t\u1EEB gi\u1EA5y s\xE1ch."
+          }
+        },
+        {
+          id: "leader_w3d3_q02",
+          roundIndex: 1,
+          prompt: "Nghi\xEAn c\u1EE9u c\u1EE7a Tehrani v\u1EC1 c\xE2u chuy\u1EC7n 'C\xF4 b\xE9 qu\xE0ng kh\u0103n \u0111\u1ECF' (Little Red Riding Hood) \u0111\xE3 b\xE1c b\u1ECF gi\u1EA3 thuy\u1EBFt ph\u1ED5 bi\u1EBFn n\xE0o tr\u01B0\u1EDBc \u0111\xF3?",
+          options: [
+            { id: "opt_A", label: "A", text: "B\xE1c b\u1ECF gi\u1EA3 thuy\u1EBFt cho r\u1EB1ng c\xE2u chuy\u1EC7n n\xE0y c\xF3 ngu\u1ED3n g\u1ED1c xu\u1EA5t ph\xE1t t\u1EEB ph\u01B0\u01A1ng \u0110\xF4ng nh\u01B0 Trung Qu\u1ED1c tr\u01B0\u1EDBc khi du nh\u1EADp sang ch\xE2u \xC2u" },
+            { id: "opt_B", label: "B", text: "B\xE1c b\u1ECF nh\u1EADn \u0111\u1ECBnh r\u1EB1ng c\xE2u chuy\u1EC7n n\xE0y c\xF3 s\u1EF1 xu\u1EA5t hi\u1EC7n c\u1EE7a ch\xF3 s\xF3i" },
+            { id: "opt_C", label: "C", text: "Kh\u1EB3ng \u0111\u1ECBnh r\u1EB1ng tr\u1EBB em ng\xE0y nay kh\xF4ng c\xF2n th\xEDch \u0111\u1ECDc truy\u1EC7n c\u1ED5 t\xEDch" },
+            { id: "opt_D", label: "D", text: "B\xE1c b\u1ECF vi\u1EC7c truy\u1EC7n c\u1ED5 t\xEDch \u0111\u01B0\u1EE3c truy\u1EC1n mi\u1EC7ng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. B\xE1c b\u1ECF gi\u1EA3 thuy\u1EBFt cho r\u1EB1ng c\xE2u chuy\u1EC7n n\xE0y c\xF3 ngu\u1ED3n g\u1ED1c xu\u1EA5t ph\xE1t t\u1EEB ph\u01B0\u01A1ng \u0110\xF4ng nh\u01B0 Trung Qu\u1ED1c tr\u01B0\u1EDBc khi du nh\u1EADp sang ch\xE2u \xC2u",
+          correctExplanation: "Ph\xE2n t\xEDch ph\xE1t sinh lo\xE0i ch\u1EE9ng minh d\u1ECB b\u1EA3n ch\xE2u \xC1 (The Tiger Grandmother) th\u1EF1c ch\u1EA5t b\u1EAFt ngu\u1ED3n t\u1EEB ch\xE2u \xC2u truy\u1EC1n sang qua Con \u0111\u01B0\u1EDDng T\u01A1 l\u1EE5a, ch\u1EE9 kh\xF4ng ph\u1EA3i truy\u1EC7n ch\xE2u \xC2u b\u1EAFt ngu\u1ED3n t\u1EEB Trung Qu\u1ED1c nh\u01B0 nhi\u1EC1u h\u1ECDc gi\u1EA3 t\u1EEBng l\u1EA7m t\u01B0\u1EDFng.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. B\xE1c b\u1ECF nh\u1EADn \u0111\u1ECBnh r\u1EB1ng c\xE2u chuy\u1EC7n n\xE0y c\xF3 s\u1EF1 xu\u1EA5t hi\u1EC7n c\u1EE7a ch\xF3 s\xF3i",
+            diagnosticTitle: "Hi\u1EC3u sai c\u1ED1t truy\u1EC7n v\u0103n h\u1ECDc c\u01A1 b\u1EA3n",
+            explanation: "Nh\xE2n v\u1EADt ch\xF3 s\xF3i hay th\xFA d\u1EEF l\xE0 trung t\xE2m c\u1EE7a c\xE2u chuy\u1EC7n, kh\xF4ng h\u1EC1 b\u1ECB b\xE1c b\u1ECF."
+          }
+        },
+        {
+          id: "leader_w3d3_q03",
+          roundIndex: 2,
+          prompt: "Trong b\xE0i thi Listening v\xE0 Reading, b\u1EABy Distractor 'Half-truth' (N\u1EEDa s\u1EF1 th\u1EADt) \u0111\u01B0\u1EE3c ng\u01B0\u1EDDi ra \u0111\u1EC1 thi\u1EBFt k\u1EBF tinh vi nh\u01B0 th\u1EBF n\xE0o?",
+          options: [
+            { id: "opt_A", label: "A", text: "M\u1ED9t n\u1EEDa c\xE2u tr\xF9ng kh\u1EDBp 100% v\u1EDBi b\xE0i nghe ho\u1EB7c \u0111\u1ECDc, nh\u01B0ng n\u1EEDa c\xF2n l\u1EA1i b\u1ECB \u0111\u1EA3o l\u1ED9n \u0111i\u1EC1u ki\u1EC7n nguy\xEAn nh\xE2n, th\u1EDDi gian ho\u1EB7c \u0111\u1ED1i t\u01B0\u1EE3ng th\u1EE5 h\u01B0\u1EDFng" },
+            { id: "opt_B", label: "B", text: "T\u1EA5t c\u1EA3 c\xE1c t\u1EEB trong \u0111\xE1p \xE1n \u0111\u1EC1u l\xE0 ti\u1EBFng n\u01B0\u1EDBc ngo\xE0i" },
+            { id: "opt_C", label: "C", text: "\u0110\xE1p \xE1n ch\u1EC9 c\xF3 \u0111\xFAng hai ch\u1EEF c\xE1i" },
+            { id: "opt_D", label: "D", text: "\u0110\xE1p \xE1n b\u1ECB l\xE0m m\u1EDD m\u1EF1c in" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. M\u1ED9t n\u1EEDa c\xE2u tr\xF9ng kh\u1EDBp 100% v\u1EDBi b\xE0i nghe ho\u1EB7c \u0111\u1ECDc, nh\u01B0ng n\u1EEDa c\xF2n l\u1EA1i b\u1ECB \u0111\u1EA3o l\u1ED9n \u0111i\u1EC1u ki\u1EC7n nguy\xEAn nh\xE2n, th\u1EDDi gian ho\u1EB7c \u0111\u1ED1i t\u01B0\u1EE3ng th\u1EE5 h\u01B0\u1EDFng",
+          correctExplanation: "B\u1EABy Half-truth kinh \u0111i\u1EC3n: Ng\u01B0\u1EDDi ra \u0111\u1EC1 m\u01B0\u1EE3n 80% t\u1EEB ng\u1EEF trong b\xE0i \u0111\u1EC3 ru ng\u1EE7 th\xED sinh, nh\u01B0ng v\u1EBF sau l\xE9n thay \u0111\u1ED5i m\u1ED9t h\u1EA1n \u0111\u1ECBnh (v\xED d\u1EE5: 'for adults' thay v\xEC 'for children') khi\u1EBFn c\xE2u tr\u1EDF n\xEAn sai ho\xE0n to\xE0n.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_C",
+            baitOptionText: "C. \u0110\xE1p \xE1n ch\u1EC9 c\xF3 \u0111\xFAng hai ch\u1EEF c\xE1i",
+            diagnosticTitle: "Suy \u0111o\xE1n h\xECnh th\u1EE9c c\u01A1 h\u1ECDc",
+            explanation: "B\u1EABy n\u1EB1m \u1EDF b\u1EA3n ch\u1EA5t logic ng\u1EEF ngh\u0129a, kh\xF4ng ph\u1EA3i s\u1ED1 l\u01B0\u1EE3ng ch\u1EEF c\xE1i."
+          }
+        },
+        {
+          id: "leader_w3d3_q04",
+          roundIndex: 3,
+          prompt: "Theo l\xFD thuy\u1EBFt c\u1EE7a nh\xE0 nghi\xEAn c\u1EE9u Jack Zipes \u0111\u01B0\u1EE3c \u0111\u1EC1 c\u1EADp trong b\xE0i, gi\xE1 tr\u1ECB ti\u1EBFn h\xF3a x\xE3 h\u1ED9i c\u1ED1t l\xF5i c\u1EE7a c\xE1c c\xE2u chuy\u1EC7n c\u1ED5 t\xEDch d\xE2n gian \u0111\u1ED1i v\u1EDBi tr\u1EBB nh\u1ECF l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Ch\xFAng cung c\u1EA5p m\u1ED9t m\xF4i tr\u01B0\u1EDDng t\xE2m l\xFD an to\xE0n gi\xFAp tr\u1EBB em h\u1ECDc c\xE1ch nh\u1EADn di\u1EC7n m\u1ED1i nguy hi\u1EC3m v\xE0 t\xF4i luy\u1EC7n kh\u1EA3 n\u0103ng \u0111\u1ED1i m\u1EB7t v\u1EDBi n\u1ED7i s\u1EE3 h\xE3i" },
+            { id: "opt_B", label: "B", text: "Gi\xFAp tr\u1EBB em ng\u1EE7 nhanh h\u01A1n v\xE0o bu\u1ED5i t\u1ED1i \u0111\u1EC3 cha m\u1EB9 l\xE0m vi\u1EC7c" },
+            { id: "opt_C", label: "C", text: "D\u1EA1y tr\u1EBB em k\u1EF9 thu\u1EADt s\u0103n b\u1EAFn \u0111\u1ED9ng v\u1EADt hoang d\xE3 trong r\u1EEBng" },
+            { id: "opt_D", label: "D", text: "Khuy\u1EBFn kh\xEDch tr\u1EBB em b\u1ECF nh\xE0 \u0111i kh\xE1m ph\xE1 m\u1ED9t m\xECnh" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Ch\xFAng cung c\u1EA5p m\u1ED9t m\xF4i tr\u01B0\u1EDDng t\xE2m l\xFD an to\xE0n gi\xFAp tr\u1EBB em h\u1ECDc c\xE1ch nh\u1EADn di\u1EC7n m\u1ED1i nguy hi\u1EC3m v\xE0 t\xF4i luy\u1EC7n kh\u1EA3 n\u0103ng \u0111\u1ED1i m\u1EB7t v\u1EDBi n\u1ED7i s\u1EE3 h\xE3i",
+          correctExplanation: "V\u0103n b\u1EA3n kh\u1EB3ng \u0111\u1ECBnh: truy\u1EC7n c\u1ED5 t\xEDch kh\xF4ng \u0111\u01A1n thu\u1EA7n l\xE0 gi\u1EA3i tr\xED m\xE0 l\xE0 'a safe way of learning to deal with fear' - c\xF4ng c\u1EE5 gi\xE1o d\u1EE5c sinh t\u1ED3n t\xE2m l\xFD gi\xFAp tr\u1EBB r\xE8n luy\u1EC7n ph\u1EA3n \u1EE9ng tr\u01B0\u1EDBc hi\u1EC3m h\u1ECDa gi\u1EA3 \u0111\u1ECBnh.",
+          timeLimitSeconds: 25,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Gi\xFAp tr\u1EBB em ng\u1EE7 nhanh h\u01A1n v\xE0o bu\u1ED5i t\u1ED1i \u0111\u1EC3 cha m\u1EB9 l\xE0m vi\u1EC7c",
+            diagnosticTitle: "\u0110\xE1nh \u0111\u1ED3ng truy\u1EC7n c\u1ED5 t\xEDch v\u1EDBi c\xF4ng c\u1EE5 ru ng\u1EE7 \u0111\u01A1n thu\u1EA7n",
+            explanation: "Nghi\xEAn c\u1EE9u h\u1ECDc thu\u1EADt ph\xE2n t\xEDch gi\xE1 tr\u1ECB t\xE2m l\xFD h\u1ECDc ti\u1EBFn h\xF3a, kh\xF4ng ph\u1EA3i vi\u1EC7c ru ng\u1EE7."
+          }
+        },
+        {
+          id: "leader_w3d3_q05",
+          roundIndex: 4,
+          prompt: "Trong ph\u1EA7n thi Listening Section 3 ho\u1EB7c 4, khi ng\u01B0\u1EDDi n\xF3i d\xF9ng t\u1EEB chuy\u1EC3n h\u01B0\u1EDBng 'However, on closer inspection...', th\xF4ng tin ph\xE1t ra ngay sau \u0111\xF3 th\u01B0\u1EDDng l\xE0:",
+          options: [
+            { id: "opt_A", label: "A", text: "Th\xF4ng tin \u0111\xEDnh ch\xEDnh ho\u1EB7c s\u1EF1 th\u1EADt ch\xEDnh x\xE1c l\u1EADt ng\u01B0\u1EE3c l\u1EA1i nh\u1EADn \u0111\u1ECBnh ban \u0111\u1EA7u, th\u01B0\u1EDDng ch\u1EE9a \u0111\xE1p \xE1n \u0111\xFAng" },
+            { id: "opt_B", label: "B", text: "M\u1ED9t c\xE2u n\xF3i \u0111\xF9a vui kh\xF4ng quan tr\u1ECDng" },
+            { id: "opt_C", label: "C", text: "D\u1EA5u hi\u1EC7u th\xF4ng b\xE1o b\xE0i thi k\u1EBFt th\xFAc" },
+            { id: "opt_D", label: "D", text: "T\xEAn c\u1EE7a ng\u01B0\u1EDDi d\u1EABn ch\u01B0\u01A1ng tr\xECnh" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Th\xF4ng tin \u0111\xEDnh ch\xEDnh ho\u1EB7c s\u1EF1 th\u1EADt ch\xEDnh x\xE1c l\u1EADt ng\u01B0\u1EE3c l\u1EA1i nh\u1EADn \u0111\u1ECBnh ban \u0111\u1EA7u, th\u01B0\u1EDDng ch\u1EE9a \u0111\xE1p \xE1n \u0111\xFAng",
+          correctExplanation: "Quy lu\u1EADt 'Auditory Self-Correction Trap': Ng\u01B0\u1EDDi n\xF3i th\u01B0\u1EDDng \u0111\u01B0a ra th\xF4ng tin b\u1EABy \u1EDF c\xE2u \u0111\u1EA7u, sau \u0111\xF3 d\xF9ng c\xE1c c\u1EE5m l\u1EADt h\u01B0\u1EDBng nh\u01B0 'on closer inspection', 'actually', 'in fact' \u0111\u1EC3 ch\u1ED1t h\u1EA1 \u0111\xE1p \xE1n th\u1EADt.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. M\u1ED9t c\xE2u n\xF3i \u0111\xF9a vui kh\xF4ng quan tr\u1ECDng",
+            diagnosticTitle: "B\u1ECF l\u1EE1 t\xEDn hi\u1EC7u \u0111\u1ED5i h\u01B0\u1EDBng then ch\u1ED1t trong b\xE0i nghe",
+            explanation: "B\u1ECF qua c\xE1c t\xEDn hi\u1EC7u chuy\u1EC3n h\u01B0\u1EDBng l\xE0 l\xFD do ch\xEDnh khi\u1EBFn th\xED sinh b\u1ECB l\u1EE1 m\u1EA5t \u0111\xE1p \xE1n sau khi v\u1EEBa nghe th\u1EA5y t\u1EEB kh\xF3a quen thu\u1ED9c \u1EDF v\u1EBF tr\u01B0\u1EDBc."
+          }
+        },
+        {
+          id: "leader_w3d3_q06",
+          roundIndex: 5,
+          prompt: "T\u1EEB 'phylogenetic' trong c\u1EE5m 'phylogenetic tree of folklore' c\xF3 ngu\u1ED3n g\u1ED1c t\u1EEB ti\u1EBFng Hy L\u1EA1p ch\u1EC9 \u0111i\u1EC1u g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "C\xE2y ph\xE1t sinh lo\xE0i th\u1EC3 hi\u1EC7n m\u1ED1i quan h\u1EC7 ti\u1EBFn h\xF3a v\xE0 ngu\u1ED3n g\u1ED1c l\u1ECBch s\u1EED gi\u1EEFa c\xE1c nh\xE1nh" },
+            { id: "opt_B", label: "B", text: "M\u1ED9t lo\xE0i c\xE2y l\u1EA5y g\u1ED7 qu\xFD hi\u1EBFm trong r\u1EEBng Amazon" },
+            { id: "opt_C", label: "C", text: "Cu\u1ED1n s\xE1ch t\u1EADp h\u1EE3p c\xE1c b\xE0i th\u01A1 t\xECnh c\u1ED5 \u0111i\u1EC3n" },
+            { id: "opt_D", label: "D", text: "H\u1EC7 th\u1ED1ng t\u01B0\u1EDBi n\u01B0\u1EDBc t\u1EF1 \u0111\u1ED9ng trong n\xF4ng nghi\u1EC7p" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. C\xE2y ph\xE1t sinh lo\xE0i th\u1EC3 hi\u1EC7n m\u1ED1i quan h\u1EC7 ti\u1EBFn h\xF3a v\xE0 ngu\u1ED3n g\u1ED1c l\u1ECBch s\u1EED gi\u1EEFa c\xE1c nh\xE1nh",
+          correctExplanation: "'Phylogenetic' (phylum - nh\xE1nh/lo\xE0i + genesis - ngu\u1ED3n g\u1ED1c sinh th\xE0nh) l\xE0 thu\u1EADt ng\u1EEF ch\u1EC9 l\u1ECBch s\u1EED ph\xE1t sinh lo\xE0i v\xE0 m\u1ED1i quan h\u1EC7 ti\u1EBFn h\xF3a gi\u1EEFa c\xE1c nh\xE1nh sinh h\u1ECDc.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. M\u1ED9t lo\xE0i c\xE2y l\u1EA5y g\u1ED7 qu\xFD hi\u1EBFm trong r\u1EEBng Amazon",
+            diagnosticTitle: "D\u1ECBch ch\u1EEF 'tree' theo ngh\u0129a c\xE1i c\xE2y g\u1ED7 th\u1EF1c v\u1EADt",
+            explanation: "'Phylogenetic tree' l\xE0 s\u01A1 \u0111\u1ED3 ph\xE2n nh\xE1nh h\xECnh c\xE2y (dendrogram), kh\xF4ng ph\u1EA3i c\xE2y l\u1EA5y g\u1ED7 th\u1EF1c v\u1EADt."
+          }
+        },
+        {
+          id: "leader_w3d3_q07",
+          roundIndex: 6,
+          prompt: "Khi l\xE0m b\xE0i thi Reading v\u1EDBi c\xE2u h\u1ECFi Multiple Choice c\xF3 4 l\u1EF1a ch\u1ECDn, chi\u1EBFn thu\u1EADt x\u1EED l\xFD t\u1ED1i \u01B0u c\u1EE7a h\u1ECDc vi\xEAn Leader l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "\u0110\u1ECDc hi\u1EC3u c\xE2u h\u1ECFi, qu\xE9t v\u0103n b\u1EA3n \u0111\u1EC3 n\u1EAFm v\u1EEFng \xFD ngh\u0129a g\u1ED1c, sau \u0111\xF3 ch\u1EE7 \u0111\u1ED9ng lo\u1EA1i tr\u1EEB 3 ph\u01B0\u01A1ng \xE1n nhi\u1EC5u b\u1EB1ng ch\u1EE9ng c\u1EE9 r\xF5 r\xE0ng tr\u01B0\u1EDBc khi ch\u1ED1t \u0111\xE1p \xE1n" },
+            { id: "opt_B", label: "B", text: "Nh\xECn v\xE0o 4 l\u1EF1a ch\u1ECDn tr\u01B0\u1EDBc v\xE0 ch\u1ECDn ngay ph\u01B0\u01A1ng \xE1n n\xE0o c\xF3 t\u1EEB ng\u1EEF gi\u1ED1ng h\u1EC7t b\xE0i \u0111\u1ECDc" },
+            { id: "opt_C", label: "C", text: "Ch\u1ECDn ph\u01B0\u01A1ng \xE1n B cho t\u1EA5t c\u1EA3 c\xE1c c\xE2u \u0111\u1EC3 \u0111\u1EA3m b\u1EA3o x\xE1c su\u1EA5t" },
+            { id: "opt_D", label: "D", text: "\u0110\u1EBFm s\u1ED1 l\u01B0\u1EE3ng ch\u1EEF c\xE1i c\u1EE7a t\u1EEBng \u0111\xE1p \xE1n v\xE0 ch\u1ECDn c\xE2u d\xE0i nh\u1EA5t" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. \u0110\u1ECDc hi\u1EC3u c\xE2u h\u1ECFi, qu\xE9t v\u0103n b\u1EA3n \u0111\u1EC3 n\u1EAFm v\u1EEFng \xFD ngh\u0129a g\u1ED1c, sau \u0111\xF3 ch\u1EE7 \u0111\u1ED9ng lo\u1EA1i tr\u1EEB 3 ph\u01B0\u01A1ng \xE1n nhi\u1EC5u b\u1EB1ng ch\u1EE9ng c\u1EE9 r\xF5 r\xE0ng tr\u01B0\u1EDBc khi ch\u1ED1t \u0111\xE1p \xE1n",
+          correctExplanation: "Ph\u01B0\u01A1ng ph\xE1p 'Process of Elimination': T\xECm ra l\u1ED7i sai c\u1EE5 th\u1EC3 c\u1EE7a 3 ph\u01B0\u01A1ng \xE1n b\u1EABy (sai th\xF4ng tin, kh\xF4ng \u0111\u01B0\u1EE3c nh\u1EAFc \u0111\u1EBFn, ho\u1EB7c suy di\u1EC5n qu\xE1 \u0111\xE0) l\xE0 con \u0111\u01B0\u1EDDng duy nh\u1EA5t \u0111\u1EA1t \u0111\u1ED9 ch\xEDnh x\xE1c 100% trong Multiple Choice.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Nh\xECn v\xE0o 4 l\u1EF1a ch\u1ECDn tr\u01B0\u1EDBc v\xE0 ch\u1ECDn ngay ph\u01B0\u01A1ng \xE1n n\xE0o c\xF3 t\u1EEB ng\u1EEF gi\u1ED1ng h\u1EC7t b\xE0i \u0111\u1ECDc",
+            diagnosticTitle: "M\u1EAFc b\u1EABy t\u1EEB kh\xF3a b\u1EC1 m\u1EB7t (Superficial word-matching trap)",
+            explanation: "Ph\u01B0\u01A1ng \xE1n c\xF3 ch\u1EEF gi\u1ED1ng h\u1EC7t b\xE0i \u0111\u1ECDc th\u01B0\u1EDDng l\xE0 b\u1EABy m\u01B0\u1EE3n t\u1EEB ng\u1EEF (word trap) c\u1EE7a ng\u01B0\u1EDDi ra \u0111\u1EC1 Cambridge."
+          }
+        },
+        {
+          id: "leader_w3d3_q08",
+          roundIndex: 7,
+          prompt: "T\u1EEB 'oral tradition' trong nghi\xEAn c\u1EE9u v\u0103n h\u1ECDc d\xE2n gian c\xF3 ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "Truy\u1EC1n th\u1ED1ng truy\u1EC1n mi\u1EC7ng, n\u01A1i tri th\u1EE9c v\xE0 c\xE2u chuy\u1EC7n \u0111\u01B0\u1EE3c truy\u1EC1n qua c\xE1c th\u1EBF h\u1EC7 b\u1EB1ng l\u1EDDi n\xF3i m\xE0 kh\xF4ng qua v\u0103n b\u1EA3n in \u1EA5n" },
+            { id: "opt_B", label: "B", text: "Vi\u1EC7c kh\xE1m v\xE0 ch\u1EEFa b\u1EC7nh r\u0103ng mi\u1EC7ng c\u1EE7a c\xE1c nha s\u0129" },
+            { id: "opt_C", label: "C", text: "M\u1ED9t cu\u1ED9c thi h\xF9ng bi\u1EC7n ti\u1EBFng Anh h\xE0ng n\u0103m" },
+            { id: "opt_D", label: "D", text: "Th\xF3i quen \u0103n u\u1ED1ng trong c\xE1c d\u1ECBp l\u1EC5 h\u1ED9i truy\u1EC1n th\u1ED1ng" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. Truy\u1EC1n th\u1ED1ng truy\u1EC1n mi\u1EC7ng, n\u01A1i tri th\u1EE9c v\xE0 c\xE2u chuy\u1EC7n \u0111\u01B0\u1EE3c truy\u1EC1n qua c\xE1c th\u1EBF h\u1EC7 b\u1EB1ng l\u1EDDi n\xF3i m\xE0 kh\xF4ng qua v\u0103n b\u1EA3n in \u1EA5n",
+          correctExplanation: "'Oral tradition' (v\u0103n h\u1ECDc truy\u1EC1n mi\u1EC7ng / truy\u1EC1n th\u1ED1ng truy\u1EC1n kh\u1EA9u) l\xE0 kh\xE1i ni\u1EC7m nh\xE2n ch\u1EE7ng h\u1ECDc ch\u1EC9 v\u0103n h\xF3a truy\u1EC1n th\u1EEBa qua l\u1EDDi k\u1EC3, ca dao, huy\u1EC1n tho\u1EA1i t\u1EEB \u0111\u1EDDi n\xE0y sang \u0111\u1EDDi kh\xE1c.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. Vi\u1EC7c kh\xE1m v\xE0 ch\u1EEFa b\u1EC7nh r\u0103ng mi\u1EC7ng c\u1EE7a c\xE1c nha s\u0129",
+            diagnosticTitle: "D\u1ECBch t\u1EEB 'oral' theo ngh\u0129a y t\u1EBF r\u0103ng mi\u1EC7ng",
+            explanation: "'Oral' trong ng\xF4n ng\u1EEF h\u1ECDc v\xE0 nh\xE2n ch\u1EE7ng h\u1ECDc mang ngh\u0129a b\u1EB1ng l\u1EDDi n\xF3i/truy\u1EC1n mi\u1EC7ng, \u0111\u1ED1i l\u1EADp v\u1EDBi 'written' (b\u1EB1ng ch\u1EEF vi\u1EBFt)."
+          }
+        },
+        {
+          id: "leader_w3d3_q09",
+          roundIndex: 8,
+          prompt: "Trong c\xE2u h\u1ECFi t\xF3m t\u1EAFt, khi b\xE0i \u0111\u1ECDc vi\u1EBFt: 'Folktales are remarkably resilient, constantly adapting to shifting cultural landscapes while preserving their core narrative backbone', t\u1EEB 'resilient' mang ngh\u0129a l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "C\xF3 s\u1EE9c s\u1ED1ng b\u1EC1n b\u1EC9 d\u1EBBo dai, d\u1EC5 d\xE0ng th\xEDch \u1EE9ng tr\u01B0\u1EDBc nh\u1EEFng bi\u1EBFn thi\xEAn m\xE0 kh\xF4ng b\u1ECB mai m\u1ED9t" },
+            { id: "opt_B", label: "B", text: "R\u1EA5t d\u1EC5 v\u1EE1 v\xE0 nhanh ch\xF3ng b\u1ECB l\xE3ng qu\xEAn" },
+            { id: "opt_C", label: "C", text: "Ho\xE0n to\xE0n b\u1EA5t bi\u1EBFn v\xE0 kh\xF4ng bao gi\u1EDD thay \u0111\u1ED5i d\xF9 m\u1ED9t t\u1EEB" },
+            { id: "opt_D", label: "D", text: "\u0110\u01B0\u1EE3c s\xE1ng t\xE1c b\u1EDFi c\xE1c v\u1ECB vua ch\xFAa c\u1ED5 \u0111\u1EA1i" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. C\xF3 s\u1EE9c s\u1ED1ng b\u1EC1n b\u1EC9 d\u1EBBo dai, d\u1EC5 d\xE0ng th\xEDch \u1EE9ng tr\u01B0\u1EDBc nh\u1EEFng bi\u1EBFn thi\xEAn m\xE0 kh\xF4ng b\u1ECB mai m\u1ED9t",
+          correctExplanation: "'Resilient' (ki\xEAn c\u01B0\u1EDDng, c\xF3 kh\u1EA3 n\u0103ng ph\u1EE5c h\u1ED3i v\xE0 th\xEDch \u1EE9ng b\u1EC1n b\u1EC9) l\xE0 t\xEDnh t\u1EEB Band 7.5 mi\xEAu t\u1EA3 s\u1EE9c s\u1ED1ng m\xE3nh li\u1EC7t c\u1EE7a truy\u1EC7n c\u1ED5 t\xEDch qua h\xE0ng ngh\xECn n\u0103m l\u1ECBch s\u1EED.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_B",
+            baitOptionText: "B. R\u1EA5t d\u1EC5 v\u1EE1 v\xE0 nhanh ch\xF3ng b\u1ECB l\xE3ng qu\xEAn",
+            diagnosticTitle: "Hi\u1EC3u ng\u01B0\u1EE3c ngh\u0129a v\u1EDBi t\u1EEB b\u1EC1n b\u1EC9",
+            explanation: "'Fragile' (d\u1EC5 v\u1EE1) m\u1EDBi l\xE0 t\u1EEB tr\xE1i ngh\u0129a \u0111\u1ED1i l\u1EADp c\u1EE7a 'resilient'."
+          }
+        },
+        {
+          id: "leader_w3d3_q10",
+          roundIndex: 9,
+          prompt: "Trong b\xE0i thi IELTS Listening, khi g\u1EB7p d\u1EA1ng c\xE2u h\u1ECFi nhi\u1EC1u ng\u01B0\u1EDDi n\xF3i tranh lu\u1EADn (Section 3), ch\xECa kh\xF3a \u0111\u1EC3 kh\xF4ng b\u1ECB l\u1EA1c m\u1EA1ch l\xE0 g\xEC?",
+          options: [
+            { id: "opt_A", label: "A", text: "X\xE1c \u0111\u1ECBnh r\xF5 ng\u01B0\u1EDDi n\xF3i \u0111ang \u0111\u1ED3ng t\xECnh hay ph\u1EA3n b\xE1c \xFD ki\u1EBFn c\u1EE7a b\u1EA1n m\xECnh qua c\xE1c t\u1EEB n\u1ED1i nh\u01B0 'I take your point, but...' ho\u1EB7c 'I wouldn't go that far'" },
+            { id: "opt_B", label: "B", text: "Ch\u1EC9 nghe m\u1ED9t ng\u01B0\u1EDDi duy nh\u1EA5t v\xE0 b\u1ECBt tai khi ng\u01B0\u1EDDi kia n\xF3i" },
+            { id: "opt_C", label: "C", text: "Ch\u1EDD ng\u01B0\u1EDDi n\xF3i th\u1EE9 ba xu\u1EA5t hi\u1EC7n m\u1EDBi ghi \u0111\xE1p \xE1n" },
+            { id: "opt_D", label: "D", text: "Ghi l\u1EA1i m\u1ECDi t\u1EEB xu\u1EA5t hi\u1EC7n trong b\xE0i nghe v\xE0o gi\u1EA5y nh\xE1p" }
+          ],
+          correctOptionId: "opt_A",
+          correctAnswerText: "A. X\xE1c \u0111\u1ECBnh r\xF5 ng\u01B0\u1EDDi n\xF3i \u0111ang \u0111\u1ED3ng t\xECnh hay ph\u1EA3n b\xE1c \xFD ki\u1EBFn c\u1EE7a b\u1EA1n m\xECnh qua c\xE1c t\u1EEB n\u1ED1i nh\u01B0 'I take your point, but...' ho\u1EB7c 'I wouldn't go that far'",
+          correctExplanation: "Trong Section 3, hai sinh vi\xEAn ho\u1EB7c gi\xE1o s\u01B0 th\u01B0\u1EDDng th\u1EA3o lu\u1EADn v\xE0 thay \u0111\u1ED5i quan \u0111i\u1EC3m li\xEAn t\u1EE5c. Th\xED sinh ph\u1EA3i theo d\xF5i s\xE1t th\xE1i \u0111\u1ED9 \u0111\u1ED3ng t\xECnh hay b\xE1c b\u1ECF (Agreement / Disagreement cues) \u0111\u1EC3 ch\u1ECDn \u0111\xFAng k\u1EBFt lu\u1EADn cu\u1ED1i c\xF9ng.",
+          timeLimitSeconds: 20,
+          points: 1e3,
+          misconception: {
+            baitOptionId: "opt_D",
+            baitOptionText: "D. Ghi l\u1EA1i m\u1ECDi t\u1EEB xu\u1EA5t hi\u1EC7n trong b\xE0i nghe v\xE0o gi\u1EA5y nh\xE1p",
+            diagnosticTitle: "Th\xF3i quen ch\xE9p ch\xEDnh t\u1EA3 m\xF9 qu\xE1ng l\xE0m m\u1EA5t m\u1EA1ch nghe",
+            explanation: "C\u1ED1 ch\xE9p m\u1ECDi t\u1EEB s\u1EBD khi\u1EBFn n\xE3o b\u1ED9 b\u1ECB qu\xE1 t\u1EA3i v\xE0 b\u1ECF l\u1EE1 \u0111\xE1p \xE1n c\u1EE7a c\xE1c c\xE2u h\u1ECFi ti\u1EBFp theo."
+          }
+        }
+      ]
+    };
+  }
+});
+
+// server/services/leader_bank_parts/week4.data.ts
+var LEADER_WEEK_4_QUESTIONS;
+var init_week4_data4 = __esm({
+  "server/services/leader_bank_parts/week4.data.ts"() {
+    LEADER_WEEK_4_QUESTIONS = [
+      // ==========================================
+      // WEEK 4 – DAY 1: ACADEMIC PARAPHRASING, 40-60 APPROACH & COHESION MASTERY
+      // ==========================================
+      {
+        id: "L70-W04-D1-Q01",
+        prompt: 'According to the Band 7.0 "40-60 Paraphrasing Paradigm", which strategy yields the most natural academic transformation of the source sentence: "Governments should spend more money on public transport to stop traffic jams"?',
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Authorities ought to expend greater funds on collective transit to halt automotive blockages" },
+          { id: "B", text: "Allocating increased state funding to public transit infrastructure would significantly alleviate urban traffic congestion" },
+          { id: "C", text: "If administrations expend capital into communal locomotives, gridlocks will definitely disappear" },
+          { id: "D", text: "Public transportation should be financed by authorities so that vehicle jamming ceases permanently" }
+        ],
+        correctOptionId: "B",
+        correctAnswerText: "Allocating increased state funding to public transit infrastructure would significantly alleviate urban traffic congestion",
+        correctExplanation: "The 40-60 approach preserves core domain vocabulary (public transit, infrastructure, traffic congestion) while transforming 60% of grammar via nominalization (allocating increased state funding) and sophisticated verbs (alleviate).",
+        misconception: {
+          baitOptionId: "A",
+          baitOptionText: "A. Authorities ought to expend greater funds on collective transit to halt automotive blockages",
+          diagnosticTitle: "Mechanical Thesaurus Substitution",
+          explanation: "Replacing words one-by-one with obscure synonyms (collective transit, automotive blockages) produces unnatural, distorted collocations penalized under Lexical Resource."
+        }
+      },
+      {
+        id: "L70-W04-D1-Q02",
+        prompt: 'Which revision transforms the clause "When tourism develops too rapidly, it damages the local environment" into an elegant nominalized C1 structure?',
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Rapid tourism expansion frequently inflicts severe ecological degradation upon local habitats" },
+          { id: "B", text: "Because of fast developing tourists, environment around here is ruined terribly" },
+          { id: "C", text: "Tourism developing very speedy results into nature being broken down by travelers" },
+          { id: "D", text: "The fact that tourism expands swiftly makes the local green surroundings collapse" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Rapid tourism expansion frequently inflicts severe ecological degradation upon local habitats",
+        correctExplanation: 'Nominalization shifts active verbs into compact noun phrases: "tourism develops rapidly" becomes "Rapid tourism expansion", and "damages the environment" becomes "inflicts severe ecological degradation".',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Because of fast developing tourists, environment around here is ruined terribly",
+          diagnosticTitle: "Informal Spoken Register",
+          explanation: 'Phrases like "fast developing tourists" and "ruined terribly" use casual spoken syntax and weak lexical choices unsuitable for academic Task 2.'
+        }
+      },
+      {
+        id: "L70-W04-D1-Q03",
+        prompt: 'In Band 7.0+ Cohesion, why is transitioning with demonstrative determiners such as "This disparity..." or "Such regulatory measures..." preferred over mechanical transitional adverbs?',
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Demonstrative determiners directly encapsulate preceding arguments into a noun phrase, creating organic flow without formulaic front-linking" },
+          { id: "B", text: "Mechanical transitions like Furthermore and In addition are strictly forbidden by Cambridge examiners" },
+          { id: "C", text: "Using demonstratives automatically increases sentence word count to satisfy the minimum length" },
+          { id: "D", text: "Demonstrative pronouns ensure that every sentence starts with an identical subject structure" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Demonstrative determiners directly encapsulate preceding arguments into a noun phrase, creating organic flow without formulaic front-linking",
+        correctExplanation: "Demonstrative reference (this trend, such policies) achieves seamless conceptual cohesion by summarizing prior clauses into topic nouns, avoiding repetitive, mechanical linkers.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Mechanical transitions like Furthermore and In addition are strictly forbidden by Cambridge examiners",
+          diagnosticTitle: "Absolute Rule Fallacy",
+          explanation: "Examiners do not forbid transitions like Furthermore; rather, overusing them mechanically at the start of every sentence caps Coherence and Cohesion at Band 6."
+        }
+      },
+      {
+        id: "L70-W04-D1-Q04",
+        prompt: 'Identify the sentence that suffers from the "Mechanical Linker Stacking" pitfall.',
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "First of all, pollution is rising. Moreover, factories release fumes. In addition, cars emit carbon. Furthermore, governments do nothing" },
+          { id: "B", text: "Rising urban pollution stems largely from unregulated industrial emissions and escalating vehicular density" },
+          { id: "C", text: "Unchecked industrial activity exacerbates airborne pollutants, a problem compounded by private vehicular reliance" },
+          { id: "D", text: "While industrial manufacturing accounts for substantial emissions, private transportation represents an equally pressing challenge" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "First of all, pollution is rising. Moreover, factories release fumes. In addition, cars emit carbon. Furthermore, governments do nothing",
+        correctExplanation: "Beginning every short clause with an overt coordinating linker (First of all, Moreover, In addition, Furthermore) is a textbook symptom of Band 5.5 to 6.0 mechanical cohesion.",
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. While industrial manufacturing accounts for substantial emissions, private transportation represents an equally pressing challenge",
+          diagnosticTitle: "Subordination Confusion",
+          explanation: 'Subordinating with "While" introduces a balanced complex clause, demonstrating natural Band 7.5 syntactical flexibility rather than mechanical listing.'
+        }
+      },
+      {
+        id: "L70-W04-D1-Q05",
+        prompt: 'Which revision replaces the informal phrase "Companies should put money into training their workers" with precise C1 nominalized vocabulary?',
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Enterprises ought to direct capital investment toward workforce upskilling and professional development" },
+          { id: "B", text: "Big companies should give dollars to teach their employees how to work better" },
+          { id: "C", text: "Firms need to pay tuition fees so staff become smarter at their jobs" },
+          { id: "D", text: "Throwing money into worker learning courses must be done by modern corporate entities" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Enterprises ought to direct capital investment toward workforce upskilling and professional development",
+        correctExplanation: '"Direct capital investment toward workforce upskilling and professional development" uses precise academic collocations that elevate the register to Band 7.5+.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Throwing money into worker learning courses must be done by modern corporate entities",
+          diagnosticTitle: "Colloquial Metaphor Contamination",
+          explanation: '"Throwing money" is an informal idiomatic idiom unsuitable for formal academic writing, despite the fancy appearance of "modern corporate entities".'
+        }
+      },
+      {
+        id: "L70-W04-D1-Q06",
+        prompt: 'What is the primary danger of replacing "environmental pollution" with "nature contamination" or "biosphere poisoning" in IELTS Writing Task 2?',
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "It creates non-standard collocations that sound artificial and show a lack of awareness of standard academic terminology" },
+          { id: "B", text: "Examiners deduct one whole band score for every repeated academic phrase" },
+          { id: "C", text: "Nature contamination is a British English term that American examiners penalize" },
+          { id: "D", text: "It violates the 250-word minimum requirement by shortening technical jargon" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "It creates non-standard collocations that sound artificial and show a lack of awareness of standard academic terminology",
+        correctExplanation: 'Standard collocations (environmental pollution, ecological degradation) are recognized academic terms. Forcing unnatural substitutes like "nature contamination" signals dictionary-swapping.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Examiners deduct one whole band score for every repeated academic phrase",
+          diagnosticTitle: "Myth of Zero Repetition",
+          explanation: "Repeating established technical terms (e.g. environmental pollution, renewable energy) when grammatically appropriate is preferred over inventing bizarre pseudo-synonyms."
+        }
+      },
+      {
+        id: "L70-W04-D1-Q07",
+        prompt: 'Transform the clause "People eat too much fast food, which causes many health problems" using a participial clause and nominalization.',
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Excessive consumption of processed foods precipitates numerous chronic ailments, undermining long-term public health" },
+          { id: "B", text: "People who eat fast foods a lot are having health issues occurring every single day" },
+          { id: "C", text: "Fast food eating by individuals results in diseases coming up unexpectedly" },
+          { id: "D", text: "Since people ingest junk food continually, health troubles are caused severely" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Excessive consumption of processed foods precipitates numerous chronic ailments, undermining long-term public health",
+        correctExplanation: '"Excessive consumption of processed foods" (nominalization) + "precipitates numerous chronic ailments, undermining..." (participial clause) achieves Band 8.0 grammatical density and precision.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Fast food eating by individuals results in diseases coming up unexpectedly",
+          diagnosticTitle: "Awkward Gerund Construction",
+          explanation: '"Fast food eating by individuals" is awkward phrasing; formal English uses "consumption of processed foods" or "dietary reliance on convenience meals".'
+        }
+      },
+      {
+        id: "L70-W04-D1-Q08",
+        prompt: 'How does the phrase "This shift in consumer behavior..." function cohesively in a body paragraph discussing eco-friendly purchasing?',
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "It acts as an anaphoric summary noun, encapsulating the preceding sentence without needing a conjunction" },
+          { id: "B", text: "It introduces a completely unrelated counter-argument to meet Band 7 Task Achievement" },
+          { id: "C", text: "It serves as a decorative transition that disguises grammatical inaccuracies" },
+          { id: "D", text: "It signals that the writer is quoting an academic journal verbatim" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "It acts as an anaphoric summary noun, encapsulating the preceding sentence without needing a conjunction",
+        correctExplanation: "Summary nouns preceded by demonstratives (This shift, Such developments) perform anaphoric reference, tying previous narrative points into the subject of the next clause effortlessly.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. It serves as a decorative transition that disguises grammatical inaccuracies",
+          diagnosticTitle: "Superficial Stylistic View",
+          explanation: "Cohesive devices are functional semantic links, not decorative flourishes; they clarify the logical hierarchy of the argument."
+        }
+      },
+      {
+        id: "L70-W04-D1-Q09",
+        prompt: 'Choose the best paraphrase for: "Many graduates cannot find work after university because they lack practical skills."',
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Widespread post-graduate unemployment frequently stems from a pronounced deficit in vocational competencies" },
+          { id: "B", text: "Lots of degree holders fail to get hired because their hands-on capabilities are completely zero" },
+          { id: "C", text: "Due to absent realistic talent, former college attendees cannot locate career opportunities" },
+          { id: "D", text: "University finishers are suffering worklessness owing to having no real workplace know-how" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Widespread post-graduate unemployment frequently stems from a pronounced deficit in vocational competencies",
+        correctExplanation: 'This version replaces vague words with precise academic equivalents: "post-graduate unemployment" (nominalization) and "deficit in vocational competencies" (formal C1 collocation).',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Due to absent realistic talent, former college attendees cannot locate career opportunities",
+          diagnosticTitle: "Literal Inappropriate Synonymy",
+          explanation: '"Absent realistic talent" and "former college attendees" sound bizarre in academic English; practical skills are termed "vocational competencies" or "applied skills".'
+        }
+      },
+      {
+        id: "L70-W04-D1-Q10",
+        prompt: "In the Three-Button Revision Protocol for academic essays, which check specifically targets cohesion and coherence?",
+        lesson: "WEEK 4 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Checking whether sentence-initial connectives are varied and whether demonstrative referencing binds adjacent ideas smoothly" },
+          { id: "B", text: "Counting the exact number of words in each body paragraph to ensure identical length" },
+          { id: "C", text: "Ensuring that every verb is converted into the past perfect continuous tense" },
+          { id: "D", text: "Verifying that at least five proverbs or idiomatic expressions are included per page" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Checking whether sentence-initial connectives are varied and whether demonstrative referencing binds adjacent ideas smoothly",
+        correctExplanation: 'Cohesion checks verify reference chains, pronouns, demonstratives, and sentence openings to eliminate robotic "Furthermore/Moreover" repetition.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Counting the exact number of words in each body paragraph to ensure identical length",
+          diagnosticTitle: "Symmetry Obsession",
+          explanation: "Paragraphs do not need identical word counts; coherence is judged on logical progression, topic sentence clarity, and balanced idea development."
+        }
+      },
+      // ==========================================
+      // WEEK 4 – DAY 2: BASIC INTONATION, ACOUSTIC CHUNKING & FLUENCY RHYTHMS
+      // ==========================================
+      {
+        id: "L70-W04-D2-Q01",
+        prompt: 'What constitutes a "Thought Group" (Acoustic Chunk) in IELTS Speaking, and why is it vital for Band 7.0+ Pronunciation and Fluency?',
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "A syntactically coherent cluster of words spoken as a single rhythmic unit with a distinct intonation contour and tonic stress" },
+          { id: "B", text: "A memorized paragraph recited in one single breath without taking any pauses" },
+          { id: "C", text: "Speaking every individual syllable with equal length and high volume to project confidence" },
+          { id: "D", text: "Pausing after every second word to allow the examiner to write notes" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "A syntactically coherent cluster of words spoken as a single rhythmic unit with a distinct intonation contour and tonic stress",
+        correctExplanation: "A thought group (chunk) is a grammatical and meaningful grouping of words pronounced together, allowing natural breathing pauses at syntactic boundaries rather than mid-clause.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. A memorized paragraph recited in one single breath without taking any pauses",
+          diagnosticTitle: "Breathless Delivery Fallacy",
+          explanation: "Speaking continuously without pauses distorts rhythm, flattens intonation, and signals rote memorization, which severely damages Pronunciation and Fluency scores."
+        }
+      },
+      {
+        id: "L70-W04-D2-Q02",
+        prompt: 'Where should natural micro-pauses occur in the sentence: "From my perspective / investing in renewable energy / is the most viable path / toward environmental recovery"?',
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "At major syntactic boundaries dividing introductory phrases, gerund subjects, verb phrases, and prepositional complements" },
+          { id: "B", text: "Directly between the preposition and its immediate object noun" },
+          { id: "C", text: "Between the auxiliary verb and the main participle verb" },
+          { id: "D", text: "Randomly whenever the speaker runs out of air regardless of clause grammar" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "At major syntactic boundaries dividing introductory phrases, gerund subjects, verb phrases, and prepositional complements",
+        correctExplanation: "Native English acoustic chunking places brief cognitive pauses at clause and phrase boundaries (adverbial marker, subject noun phrase, verb phrase, prepositional complement).",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Directly between the preposition and its immediate object noun",
+          diagnosticTitle: "Mid-Constituent Hesitation",
+          explanation: "Pausing between a preposition and its noun (investing in ... pause ... renewable energy) fractures the syntactic unit and sounds like hesitant searching for vocabulary."
+        }
+      },
+      {
+        id: "L70-W04-D2-Q03",
+        prompt: 'In native English prosody, what is "Nuclear Stress" (Tonic Prominence)?',
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The most prominent pitch change and elongated syllable placed on the key content word within an acoustic chunk" },
+          { id: "B", text: "Shouting the final word of every sentence to sound enthusiastic and assertive" },
+          { id: "C", text: "Placing heavy primary stress exclusively on grammatical function words like prepositions and articles" },
+          { id: "D", text: "A military pronunciation drill that eliminates accents from non-native speakers" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The most prominent pitch change and elongated syllable placed on the key content word within an acoustic chunk",
+        correctExplanation: "Nuclear stress (tonic accent) is the focal pitch glide on the most critical informational word in a tone unit, guiding the listener to the core message.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Placing heavy primary stress exclusively on grammatical function words like prepositions and articles",
+          diagnosticTitle: "Function Word Over-Stressing",
+          explanation: "Function words (the, of, to, in) are typically unstressed and weakened in connected speech; stressing them sounds robotic and jarring."
+        }
+      },
+      {
+        id: "L70-W04-D2-Q04",
+        prompt: 'Which intonation contour is typically expected when listing multiple items in IELTS Speaking (for example: "I enjoy visiting art galleries, historic museums, and local botanical gardens")?',
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Rising intonation on non-final listed items, followed by a definitive falling intonation on the final item" },
+          { id: "B", text: "A sharp falling intonation on every item to indicate certainty after each noun" },
+          { id: "C", text: "Monotone flat pitch throughout the entire sentence to sound objective" },
+          { id: "D", text: "Continuous high rising intonation on every word to mimic questioning tone" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Rising intonation on non-final listed items, followed by a definitive falling intonation on the final item",
+        correctExplanation: "In list intonation, non-final items take a rise or fall-rise to signal that more items follow, while the final item takes a decisive terminal fall indicating completion.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. A sharp falling intonation on every item to indicate certainty after each noun",
+          diagnosticTitle: "False Finality Trap",
+          explanation: "Dropping the pitch on each item sounds like a series of separate aborted sentences rather than an integrated communicative list."
+        }
+      },
+      {
+        id: "L70-W04-D2-Q05",
+        prompt: 'How does effective chunking prevent the "Machine-Gun Syllable-Timed Delivery" common among Vietnamese candidates?',
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "It creates a stress-timed cadence where unstressed syllables compress and content words receive rhythmic elongation" },
+          { id: "B", text: "It forces candidates to translate every Vietnamese word into English before speaking" },
+          { id: "C", text: "It speeds up overall speaking rate to over 250 words per minute" },
+          { id: "D", text: "It makes all vowels pronounced with an identical short duration" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "It creates a stress-timed cadence where unstressed syllables compress and content words receive rhythmic elongation",
+        correctExplanation: "Vietnamese is syllable-timed, where each syllable gets roughly equal time. English is stress-timed; chunking enables the reduction of weak syllables (schwa) between stressed beats.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. It speeds up overall speaking rate to over 250 words per minute",
+          diagnosticTitle: "Speed Equated with Fluency",
+          explanation: "Speaking too rapidly causes slurred articulation and phonological breakdown. Fluency is rhythm, flow, and smooth chunking, not raw speed."
+        }
+      },
+      {
+        id: "L70-W04-D2-Q06",
+        prompt: 'When expressing a contrast in Speaking Part 3 (e.g., "Older generations prefer printed books, whereas younger people lean toward digital media"), where should contrastive stress fall?',
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'On the parallel contrasting elements: "Older" vs "younger", and "printed" vs "digital"' },
+          { id: "B", text: 'Solely on the conjunction "whereas" with extra loud volume' },
+          { id: "C", text: 'On the verbs "prefer" and "lean" while whispering the nouns' },
+          { id: "D", text: "Evenly distributed across every single word without distinction" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'On the parallel contrasting elements: "Older" vs "younger", and "printed" vs "digital"',
+        correctExplanation: "Contrastive focus highlights the paired divergent lexical terms in the antithesis, sharpening the logical contrast for the examiner.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: 'B. Solely on the conjunction "whereas" with extra loud volume',
+          diagnosticTitle: "Connector Overemphasis",
+          explanation: "Conjunctions signal logical connections, but the semantic weight lies on the contrasting ideas themselves, not the grammatical glue."
+        }
+      },
+      {
+        id: "L70-W04-D2-Q07",
+        prompt: 'What acoustic cue indicates an "Incomplete Thought" or open clause in English discourse?',
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "A slight pitch rise or non-falling level pitch at the end of the clause" },
+          { id: "B", text: "A deep low drop in pitch accompanied by a long vocal fry" },
+          { id: "C", text: "An abrupt cessation of vocalization followed by rapid coughing" },
+          { id: "D", text: "Speaking with an immediate whisper" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "A slight pitch rise or non-falling level pitch at the end of the clause",
+        correctExplanation: 'A rising or level tone at clause boundaries signals syntactic dependency ("there is more to come"), keeping the listener engaged across complex sentence structures.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. A deep low drop in pitch accompanied by a long vocal fry",
+          diagnosticTitle: "Terminal Drop Misplacement",
+          explanation: "A deep low drop signals finality (period/full stop). Using it in the middle of a complex sentence creates a disjointed, fragmented impression."
+        }
+      },
+      {
+        id: "L70-W04-D2-Q08",
+        prompt: 'In connected speech, what happens in the phrase "pick it up" during fluent natural acoustic delivery?',
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Consonant-to-vowel catenation and linking connects the final consonant of each word to the initial vowel of the next" },
+          { id: "B", text: "Glottal stops are aggressively inserted between each word to preserve separation" },
+          { id: "C", text: 'The word "it" is entirely omitted to save pronunciation effort' },
+          { id: "D", text: "Every word is enunciated in isolation with a distinct half-second gap" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Consonant-to-vowel catenation and linking connects the final consonant of each word to the initial vowel of the next",
+        correctExplanation: 'Catenation links final consonants to following vowels: "pick it up" sounds like "pi-ki-tup", which is a hallmark of natural English connected speech.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Glottal stops are aggressively inserted between each word to preserve separation",
+          diagnosticTitle: "Choppy Word Separation",
+          explanation: "Inserting glottal stops between words fragments fluent speech and creates a staccato cadence characteristic of low-band phonological delivery."
+        }
+      },
+      {
+        id: "L70-W04-D2-Q09",
+        prompt: `Why does "Upspeak" (ending declarative factual statements with a questioning high rise) harm a candidate's speaking performance?`,
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "It conveys insecurity, uncertainty, and hesitation, sounding as if the speaker is asking the examiner for validation" },
+          { id: "B", text: "It causes the recording microphone to produce digital feedback" },
+          { id: "C", text: "Examiners are instructed to award an automatic zero if upspeak is detected" },
+          { id: "D", text: "It transforms English into a tonal language like Mandarin" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "It conveys insecurity, uncertainty, and hesitation, sounding as if the speaker is asking the examiner for validation",
+        correctExplanation: "Upspeak (high rising terminal on statements) projects a lack of conviction or mastery over the topic, undermining the authoritative stance required for high bands.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Examiners are instructed to award an automatic zero if upspeak is detected",
+          diagnosticTitle: "Penalty Exaggeration",
+          explanation: "There is no automatic zero rule; upspeak affects the communicative effect and range of intonation under the Pronunciation descriptor."
+        }
+      },
+      {
+        id: "L70-W04-D2-Q10",
+        prompt: "Which practice drill is most effective for developing acoustic chunking and tonic stress before the IELTS Speaking test?",
+        lesson: "WEEK 4 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Shadowing native audio transcripts while marking thought group slashes and capitalizing nuclear stress syllables" },
+          { id: "B", text: "Reading a bilingual dictionary aloud from letter A to Z" },
+          { id: "C", text: "Memorizing 100 idioms and reciting them as fast as possible" },
+          { id: "D", text: "Writing out answers fifty times on paper without uttering any sound" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Shadowing native audio transcripts while marking thought group slashes and capitalizing nuclear stress syllables",
+        correctExplanation: "Active shadowing with visual prosody annotations trains neuromuscular motor coordination, intonation contours, and breath control simultaneously.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Memorizing 100 idioms and reciting them as fast as possible",
+          diagnosticTitle: "Idiom Memorization Delusion",
+          explanation: "Rapid idiom recitation reinforces unnatural rhythm and inappropriate word choices without cultivating communicative phonology or discourse rhythm."
+        }
+      },
+      // ==========================================
+      // WEEK 4 – DAY 3: LOOKING FOR PARAPHRASE & SYSTEMATIC SEMANTIC TRACKING
+      // ==========================================
+      {
+        id: "L70-W04-D3-Q01",
+        prompt: 'In IELTS Reading, what is the fundamental difference between a "Hard Anchor" and a "Soft Paraphrase Target"?',
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Hard anchors are unchangeable proper nouns, dates, or numbers that guide navigation; soft targets are conceptual words transformed by synonyms" },
+          { id: "B", text: "Hard anchors are always false in True or False tasks, while soft targets are always true" },
+          { id: "C", text: "Hard anchors appear only in the first paragraph, while soft targets appear only in the conclusion" },
+          { id: "D", text: "Hard anchors must be memorized before entering the test room" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Hard anchors are unchangeable proper nouns, dates, or numbers that guide navigation; soft targets are conceptual words transformed by synonyms",
+        correctExplanation: 'Hard anchors (e.g. "2004", "Dr. Watson", "Amazon Basin") do not change and pinpoint location in seconds. Soft targets (e.g. "financial support" -> "monetary allocations") confirm the answer.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Hard anchors are always false in True or False tasks, while soft targets are always true",
+          diagnosticTitle: "Arbitrary Heuristic Fallacy",
+          explanation: "Anchors are navigational coordinates, not indicators of truth values."
+        }
+      },
+      {
+        id: "L70-W04-D3-Q02",
+        prompt: 'Examine this question from the Coursebook Reading: "What primary catalyst sparked the regional ecological transition?" Paragraph 2 states: "The rampant clearance of indigenous timberlands precipitated an unprecedented environmental crisis." What is the correct short answer (NO MORE THAN THREE WORDS)?',
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "expert",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "uncontrolled deforestation" },
+          { id: "B", text: "rampant clearance" },
+          { id: "C", text: "indigenous timberlands" },
+          { id: "D", text: "timberlands precipitated" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "uncontrolled deforestation",
+        correctExplanation: 'In the Coursebook answer key (Teacher Guide Week 4 Day 3), "uncontrolled deforestation" (or "rampant clearance") directly matches the catalyst that precipitated the ecological crisis.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. indigenous timberlands",
+          diagnosticTitle: "Incomplete Subject Error",
+          explanation: '"Indigenous timberlands" names the forest itself, not the action or catalyst ("rampant clearance" / "uncontrolled deforestation") that sparked the transition.'
+        }
+      },
+      {
+        id: "L70-W04-D3-Q03",
+        prompt: 'Question asks: "Which demographic experienced the most severe economic displacement?" Text reads: "Traditional coastal fishers suffered catastrophic income collapse following the depletion of inshore habitats." What is the precise answer in the coursebook key?',
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "artisanal fishermen" },
+          { id: "B", text: "commercial trawlers" },
+          { id: "C", text: "marine scientists" },
+          { id: "D", text: "coastal tourists" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "artisanal fishermen",
+        correctExplanation: '"Traditional coastal fishers" is directly paraphrased in academic literature and the Teacher Guide key as "artisanal fishermen", who suffered catastrophic income collapse.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. commercial trawlers",
+          diagnosticTitle: "Antonym Distractor Trap",
+          explanation: "Commercial trawlers were the cause of overfishing, not the displaced local demographic experiencing economic collapse."
+        }
+      },
+      {
+        id: "L70-W04-D3-Q04",
+        prompt: 'The question asks: "What statutory measure was implemented in 2004?" Text reads: "The enactment of a strict navigational quota system in 2004 curtailed unauthorized maritime incursions." What was the statutory measure?',
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "protective maritime quota" },
+          { id: "B", text: "unauthorized maritime incursions" },
+          { id: "C", text: "strict commercial embargo" },
+          { id: "D", text: "penal servitude law" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "protective maritime quota",
+        correctExplanation: 'The text notes "The enactment of a strict navigational quota system in 2004", corresponding to "protective maritime quota" (enactment = statutory measure implemented).',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. unauthorized maritime incursions",
+          diagnosticTitle: "Object of Action Confusion",
+          explanation: '"Unauthorized maritime incursions" was what the law curtailed, not the statutory measure itself.'
+        }
+      },
+      {
+        id: "L70-W04-D3-Q05",
+        prompt: `Statement: "Indigenous communities opposed the establishment of the marine reserve." Passage states: "Local tribal councils enthusiastically endorsed and participated in the sanctuary's demarcation." Is the statement TRUE, FALSE, or NOT GIVEN?`,
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "FALSE" },
+          { id: "B", text: "TRUE" },
+          { id: "C", text: "NOT GIVEN" },
+          { id: "D", text: "CANNOT BE DETERMINED" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "FALSE",
+        correctExplanation: 'The statement asserts they "opposed" the reserve, whereas the passage directly contradicts this by stating they "enthusiastically endorsed and participated in" its demarcation. Therefore, it is FALSE.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. NOT GIVEN",
+          diagnosticTitle: "False vs Not Given Confusion",
+          explanation: "The statement is not Not Given because the passage explicitly addresses tribal attitudes and directly contradicts the assertion."
+        }
+      },
+      {
+        id: "L70-W04-D3-Q06",
+        prompt: 'Statement: "Commercial vessels circumvented radar surveillance using foreign flags." Passage states: "Authorities reported recurrent instances of illicit night-time trawling beyond the radar perimeter." Is the statement TRUE, FALSE, or NOT GIVEN?',
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "expert",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "NOT GIVEN" },
+          { id: "B", text: "TRUE" },
+          { id: "C", text: "FALSE" },
+          { id: "D", text: "PARTIALLY TRUE" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "NOT GIVEN",
+        correctExplanation: 'While the passage discusses illicit night trawling beyond radar, there is zero mention of vessels "using foreign flags" to circumvent radar. Hence, the specific fact is NOT GIVEN.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. TRUE",
+          diagnosticTitle: "Plausible World Knowledge Inference",
+          explanation: "Test takers often assume commercial poachers fly foreign flags in real life, but IELTS demands strict textual verification; unmentioned facts are NOT GIVEN."
+        }
+      },
+      {
+        id: "L70-W04-D3-Q07",
+        prompt: 'Statement: "Fish stock densities demonstrated measurable recovery within three years." Passage states: "Biomass surveys confirmed a remarkable forty percent resurgence across key species inside thirty-six months." Is the statement TRUE, FALSE, or NOT GIVEN?',
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "TRUE" },
+          { id: "B", text: "FALSE" },
+          { id: "C", text: "NOT GIVEN" },
+          { id: "D", text: "INCONCLUSIVE" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "TRUE",
+        correctExplanation: '"Biomass surveys confirmed a remarkable forty percent resurgence" = "measurable recovery", and "inside thirty-six months" = "within three years". All propositions align 100%.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. NOT GIVEN",
+          diagnosticTitle: "Numeral Paraphrase Oversight",
+          explanation: "Thirty-six months is an exact semantic equivalent of three years; failing to recognize this simple conversion leads to choosing Not Given."
+        }
+      },
+      {
+        id: "L70-W04-D3-Q08",
+        prompt: 'When tracking paraphrased vocabulary across a C1 academic text, which pair represents a valid "Verb-to-Noun" nominalized transformation?',
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The population declined sharply matched with The species experienced a steep drop" },
+          { id: "B", text: "The population declined sharply matched with The animals ran away quickly" },
+          { id: "C", text: "The population declined sharply matched with People hunted the animals down" },
+          { id: "D", text: "The population declined sharply matched with Birds stopped singing in trees" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The population declined sharply matched with The species experienced a steep drop",
+        correctExplanation: '"Declined sharply" (verb + adverb) is converted into "experienced a steep drop" (verb + adjective + noun), maintaining precise lexical correspondence.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The population declined sharply matched with The animals ran away quickly",
+          diagnosticTitle: "Gross Semantic Drift",
+          explanation: "Running away describes movement, whereas declining sharply describes a quantitative reduction in demographic numbers."
+        }
+      },
+      {
+        id: "L70-W04-D3-Q09",
+        prompt: 'Question asks: "Who provided the empirical data for the final environmental report?" Passage: "A multidisciplinary team of external marine scientists supplied verified telemetry datasets to the oversight commission." What is the answer?',
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "independent oceanographers" },
+          { id: "B", text: "oversight commission" },
+          { id: "C", text: "maritime enforcement" },
+          { id: "D", text: "local timberlands" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "independent oceanographers",
+        correctExplanation: 'In the Teacher Guide key, "external marine scientists" who supplied datasets corresponds directly to "independent oceanographers".',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. oversight commission",
+          diagnosticTitle: "Recipient vs Provider Confusion",
+          explanation: "The oversight commission received the datasets; the external scientists (independent oceanographers) provided them."
+        }
+      },
+      {
+        id: "L70-W04-D3-Q10",
+        prompt: "What systematic trap causes candidates to select NOT GIVEN when the correct answer is FALSE?",
+        lesson: "WEEK 4 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Failing to realize that the passage makes a direct claim that contradicts or precludes the statement, not merely omission" },
+          { id: "B", text: "Reading the entire paragraph backwards line by line" },
+          { id: "C", text: "Not noticing that the word NOT is capitalized in the instructions" },
+          { id: "D", text: "Confusing British spellings with American spellings" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Failing to realize that the passage makes a direct claim that contradicts or precludes the statement, not merely omission",
+        correctExplanation: "FALSE requires a factual contradiction (Passage says X; Statement says opposite of X). Candidates mistake contradictory evidence for absent evidence when they scan without analyzing the verb polarity.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Not noticing that the word NOT is capitalized in the instructions",
+          diagnosticTitle: "Superficial Distractor",
+          explanation: "Capitalization in instructions does not alter the underlying logical distinction between mutual exclusion (False) and lack of verification (Not Given)."
+        }
+      }
+    ];
+  }
+});
+
+// server/services/leader_bank_parts/week5.data.ts
+var LEADER_WEEK_5_QUESTIONS;
+var init_week5_data4 = __esm({
+  "server/services/leader_bank_parts/week5.data.ts"() {
+    LEADER_WEEK_5_QUESTIONS = [
+      // ==========================================
+      // WEEK 5 – DAY 1: PREPOSITIONAL COLLOCATIONS & GENERALIZED TASK 2 BLUEPRINT
+      // ==========================================
+      {
+        id: "L70-W05-D1-Q01",
+        prompt: 'Which sentence correctly demonstrates the academic prepositional collocation for "contribute" and "impact" in IELTS Writing Task 2?',
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Excessive smartphone usage contributes to sedentary habits and exerts an adverse impact on adolescent sleep cycles" },
+          { id: "B", text: "Excessive smartphone usage contributes for sedentary habits and exerts an adverse impact to adolescent sleep cycles" },
+          { id: "C", text: "Excessive smartphone usage contributes in sedentary habits and exerts an adverse impact with adolescent sleep cycles" },
+          { id: "D", text: "Excessive smartphone usage contributes toward sedentary habits and exerts an adverse impact at adolescent sleep cycles" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Excessive smartphone usage contributes to sedentary habits and exerts an adverse impact on adolescent sleep cycles",
+        correctExplanation: 'The standard academic collocations are "contribute TO something" and "have or exert an impact ON something". Confusing these with "for" or "to" is a typical L1 transfer error.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Excessive smartphone usage contributes for sedentary habits and exerts an adverse impact to adolescent sleep cycles",
+          diagnosticTitle: "L1 Direct Translation Trap",
+          explanation: 'Vietnamese speakers often translate "\u1EA3nh h\u01B0\u1EDFng \u0111\u1EBFn" as "impact to" and "\u0111\xF3ng g\xF3p cho" as "contribute for", producing invalid English collocations.'
+        }
+      },
+      {
+        id: "L70-W05-D1-Q02",
+        prompt: 'Select the sentence that accurately uses prepositional collocations for "allocate" and "attribute".',
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Municipalities must allocate adequate budget to green initiatives, as scholars attribute urban wellness to accessible parklands" },
+          { id: "B", text: "Municipalities must allocate adequate budget for green initiatives, as scholars attribute urban wellness from accessible parklands" },
+          { id: "C", text: "Municipalities must allocate adequate budget into green initiatives, as scholars attribute urban wellness with accessible parklands" },
+          { id: "D", text: "Municipalities must allocate adequate budget toward green initiatives, as scholars attribute urban wellness at accessible parklands" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Municipalities must allocate adequate budget to green initiatives, as scholars attribute urban wellness to accessible parklands",
+        correctExplanation: 'Both verbs govern the preposition "to": "allocate something TO something" and "attribute X TO Y" (meaning X is caused by Y).',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Municipalities must allocate adequate budget for green initiatives, as scholars attribute urban wellness from accessible parklands",
+          diagnosticTitle: "Faulty Causal Preposition",
+          explanation: '"Attribute X from Y" is ungrammatical; English requires "attribute X to Y" or "derive X from Y".'
+        }
+      },
+      {
+        id: "L70-W05-D1-Q03",
+        prompt: "Which common error violates standard English collocation rules when writing about social issues?",
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Writing "This essay will discuss about the environmental consequences" instead of "discuss the environmental consequences"' },
+          { id: "B", text: 'Writing "The committee agreed upon the proposed legislation"' },
+          { id: "C", text: 'Writing "Citizens depend on public infrastructure"' },
+          { id: "D", text: 'Writing "Subsidies are invested in renewable energy"' }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Writing "This essay will discuss about the environmental consequences" instead of "discuss the environmental consequences"',
+        correctExplanation: '"Discuss" is a transitive verb that takes a direct object without the preposition "about". Writing "discuss about" is a chronic Band 6 grammatical error.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: 'C. Writing "Citizens depend on public infrastructure"',
+          diagnosticTitle: "False Error Identification",
+          explanation: '"Depend on" is entirely standard and correct; "discuss about" is the erroneous transitive verb error.'
+        }
+      },
+      {
+        id: "L70-W05-D1-Q04",
+        prompt: 'In the "Universal Task 2 Blueprint", how should a balanced 4-paragraph essay be structurally proportioned for maximum Task Achievement?',
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Introduction (approx 45 words), Body Paragraph 1 (approx 90-100 words), Body Paragraph 2 (approx 90-100 words), Conclusion (approx 35-40 words)" },
+          { id: "B", text: "Introduction (120 words), Body 1 (40 words), Body 2 (40 words), Conclusion (100 words)" },
+          { id: "C", text: "Introduction (20 words), Body 1 (250 words), no Body 2, Conclusion (10 words)" },
+          { id: "D", text: "Seven micro-paragraphs containing two sentences each" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Introduction (approx 45 words), Body Paragraph 1 (approx 90-100 words), Body Paragraph 2 (approx 90-100 words), Conclusion (approx 35-40 words)",
+        correctExplanation: "The 4-paragraph blueprint balances concise contextualization in the introduction and conclusion with deep, well-developed core arguments in two substantial body paragraphs totalling 260-280 words.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Introduction (120 words), Body 1 (40 words), Body 2 (40 words), Conclusion (100 words)",
+          diagnosticTitle: "Inverted Priority Trap",
+          explanation: "Overloading the introduction and conclusion while leaving body arguments undeveloped results in an automatic Band 5.5 in Task Achievement."
+        }
+      },
+      {
+        id: "L70-W05-D1-Q05",
+        prompt: 'Fill in the correct prepositions: "Vulnerable households rely heavily ___ state welfare, yet policymakers hesitate to invest ___ preventative healthcare programs."',
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "on, in" },
+          { id: "B", text: "of, to" },
+          { id: "C", text: "with, for" },
+          { id: "D", text: "at, into" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "on, in",
+        correctExplanation: 'Standard verb preposition pairings are "rely ON" and "invest IN". Any other combination deviates from standard academic usage.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. of, to",
+          diagnosticTitle: "Preposition Confusion",
+          explanation: '"Rely of" does not exist in English, and "invest to" is incorrect when followed by a noun phrase.'
+        }
+      },
+      {
+        id: "L70-W05-D1-Q06",
+        prompt: "Which topic sentence best initiates Body Paragraph 1 on the premise that automation threatens white-collar employment?",
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The foremost concern regarding rapid automation is its unprecedented capacity to displace skilled knowledge workers" },
+          { id: "B", text: "First of all, computers and robots will take all jobs because they are smarter than people" },
+          { id: "C", text: "I want to write about machines in this paragraph because machines are everywhere today" },
+          { id: "D", text: "Secondly, technology is good but sometimes robots can replace clerical staff in modern firms" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The foremost concern regarding rapid automation is its unprecedented capacity to displace skilled knowledge workers",
+        correctExplanation: 'This sentence establishes a clear controlling idea using academic register ("foremost concern", "unprecedented capacity", "displace skilled knowledge workers") without colloquialisms.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. First of all, computers and robots will take all jobs because they are smarter than people",
+          diagnosticTitle: "Unhedged Informal Assertion",
+          explanation: 'Overgeneralizing with "take all jobs" and conversational vocabulary limits the band score to 5.5 for Task Achievement and Lexical Resource.'
+        }
+      },
+      {
+        id: "L70-W05-D1-Q07",
+        prompt: "What grammatical structure allows an IELTS candidate to connect an action to its consequence smoothly in a single compound-complex sentence?",
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "An active main clause followed by a non-finite present participial clause of result" },
+          { id: "B", text: "Three independent clauses joined by exclamation points" },
+          { id: "C", text: "A series of rhetorical questions followed by a single adjective" },
+          { id: "D", text: "Beginning every clause with the word because without an independent clause" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "An active main clause followed by a non-finite present participial clause of result",
+        correctExplanation: 'Using an -ing participial clause of result (e.g., "...thereby precipitating a drop in living standards") compresses cause and effect into an advanced C1 syntactic structure.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Beginning every clause with the word because without an independent clause",
+          diagnosticTitle: "Sentence Fragment Error",
+          explanation: 'Starting with "Because" without providing an independent main clause results in a fragmented clause, heavily penalized in Grammatical Range and Accuracy.'
+        }
+      },
+      {
+        id: "L70-W05-D1-Q08",
+        prompt: "Which prepositional phrase is correctly formed to indicate attribution of blame in academic discourse?",
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Economists attribute the widening wage gap to structural changes in international trade" },
+          { id: "B", text: "Economists attribute the widening wage gap for structural changes in international trade" },
+          { id: "C", text: "Economists attribute the widening wage gap into structural changes in international trade" },
+          { id: "D", text: "Economists attribute the widening wage gap on structural changes in international trade" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Economists attribute the widening wage gap to structural changes in international trade",
+        correctExplanation: 'The verb "attribute" requires the preposition "to": attribute [effect] TO [cause].',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Economists attribute the widening wage gap on structural changes in international trade",
+          diagnosticTitle: "Collocation Contamination from Blame",
+          explanation: 'Learners confuse "attribute X to Y" with "blame X on Y", producing the hybrid error "attribute X on Y".'
+        }
+      },
+      {
+        id: "L70-W05-D1-Q09",
+        prompt: "In a Task 2 concluding paragraph, what should NEVER be introduced according to the Universal Blueprint?",
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Brand new arguments, novel evidence, or unrelated sub-topics not analyzed in the body paragraphs" },
+          { id: "B", text: "A paraphrased restatement of the central thesis" },
+          { id: "C", text: "A brief synthesis of the primary supporting arguments" },
+          { id: "D", text: "A concluding forward-looking thought or recommendation" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Brand new arguments, novel evidence, or unrelated sub-topics not analyzed in the body paragraphs",
+        correctExplanation: "The conclusion must synthesize and close existing arguments. Introducing novel unelaborated ideas violates paragraph unity and lowers Task Achievement.",
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. A concluding forward-looking thought or recommendation",
+          diagnosticTitle: "Recommendation Restriction Myth",
+          explanation: "A forward-looking recommendation or prospective summary based on earlier points is acceptable and encouraged; only novel unsupported arguments are forbidden."
+        }
+      },
+      {
+        id: "L70-W05-D1-Q10",
+        prompt: 'What is the role of the "Three-Button Checklist" at the end of the writing process?',
+        lesson: "WEEK 5 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "A systematic 3-minute final scan focusing on subject-verb agreement, preposition accuracy, and singular-plural noun countability" },
+          { id: "B", text: "A method for erasing half the essay and starting over if the word count is too high" },
+          { id: "C", text: "A scoring calculator used by examiners to determine spelling penalties" },
+          { id: "D", text: "A proofreading technique restricted exclusively to computer-delivered IELTS tests" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "A systematic 3-minute final scan focusing on subject-verb agreement, preposition accuracy, and singular-plural noun countability",
+        correctExplanation: "The 3-button checklist directs the candidate's remaining minutes toward high-frequency mechanical errors (agreement, prepositions, plurals) that drag Band 7.5 down to Band 6.5.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. A method for erasing half the essay and starting over if the word count is too high",
+          diagnosticTitle: "Drastic Erasure Panic",
+          explanation: "Erasing paragraphs in the final minutes ruins time management and leaves incomplete essays. Targeted editing of high-frequency errors is the correct practice."
+        }
+      },
+      // ==========================================
+      // WEEK 5 – DAY 2: TECHNOLOGY, AUTOMATION & DIGITAL SOCIETY MONOLOGUES
+      // ==========================================
+      {
+        id: "L70-W05-D2-Q01",
+        prompt: 'In IELTS Speaking Part 2, when answering the prompt "Describe an application or digital innovation you find indispensable", which strategic framework ensures a coherent 2-minute response?',
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The Chronological Narrative Arc: Initial adoption context, core functional utility, a memorable dilemma resolved, and reflective long-term impact" },
+          { id: "B", text: "Listing thirty technical specifications and RAM requirements of your smartphone" },
+          { id: "C", text: "Reciting the full commercial advertisement transcript from memory" },
+          { id: "D", text: "Repeating the name of the app forty times to fill the full two minutes" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The Chronological Narrative Arc: Initial adoption context, core functional utility, a memorable dilemma resolved, and reflective long-term impact",
+        correctExplanation: "Following a structured progression (context -> utility -> narrative anecdote -> personal reflection) ensures smooth transitions and sustains fluent delivery for the full 120 seconds.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Listing thirty technical specifications and RAM requirements of your smartphone",
+          diagnosticTitle: "Spec Sheet Monologue",
+          explanation: "Listing hardware specs turns the monologue into a dry, disconnected inventory with zero narrative development or communicative range."
+        }
+      },
+      {
+        id: "L70-W05-D2-Q02",
+        prompt: "Which advanced collocation elevates a discussion regarding the impact of artificial intelligence on white-collar jobs?",
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Automating routine cognitive tasks while necessitating robust human oversight and ethical governance" },
+          { id: "B", text: "Making computers do hard thinking so people do not have to work anymore" },
+          { id: "C", text: "Robots stealing the bread and butter of common office workers" },
+          { id: "D", text: "Using intelligent software to delete annoying office assignments completely" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Automating routine cognitive tasks while necessitating robust human oversight and ethical governance",
+        correctExplanation: 'Phrases such as "routine cognitive tasks", "robust human oversight", and "ethical governance" display native-like C1 register appropriate for high-scoring speaking performance.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Robots stealing the bread and butter of common office workers",
+          diagnosticTitle: "Informal Idiom Inappropriateness",
+          explanation: 'Idioms like "stealing the bread and butter" sound overly folksy and clich\xE9d, failing to provide the analytical nuance of academic Band 7.5 discourse.'
+        }
+      },
+      {
+        id: "L70-W05-D2-Q03",
+        prompt: 'In Speaking Part 3, how should a candidate structure a nuanced response to: "Will automated algorithms eventually replace human educators?"',
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Acknowledge diagnostic efficiency in customized content delivery, followed by highlighting the irreplaceable human elements of empathy, moral mentorship, and emotional resonance" },
+          { id: "B", text: 'Give a categorical one-word answer of "Yes" and wait silently for the next question' },
+          { id: "C", text: "Argue that teachers are useless because internet search engines have all the answers" },
+          { id: "D", text: "Describe what your favorite teacher wore in elementary school" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Acknowledge diagnostic efficiency in customized content delivery, followed by highlighting the irreplaceable human elements of empathy, moral mentorship, and emotional resonance",
+        correctExplanation: "A Band 7.5+ answer examines both the strengths of algorithmic systems and the irreplaceable socio-emotional mentorship provided by human educators.",
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Describe what your favorite teacher wore in elementary school",
+          diagnosticTitle: "Part 1 Personal Anecdote in Part 3",
+          explanation: "Speaking Part 3 requires abstract societal analysis, not personal autobiographical anecdotes from childhood."
+        }
+      },
+      {
+        id: "L70-W05-D2-Q04",
+        prompt: "Which phrase demonstrates effective epistemic hedging when evaluating technological forecasts in Speaking Part 3?",
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "It is plausible that generative systems will streamline clerical workflows, though complete workforce obsolescence remains highly improbable" },
+          { id: "B", text: "All humans will 100% lose their jobs by next year without any doubt whatsoever" },
+          { id: "C", text: "I am totally sure that robots will rule the universe soon" },
+          { id: "D", text: "Computers will definitely make humans extinct in the next few months" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "It is plausible that generative systems will streamline clerical workflows, though complete workforce obsolescence remains highly improbable",
+        correctExplanation: 'Modal hedging ("It is plausible that...", "remains highly improbable") demonstrates sophisticated academic stance, avoiding juvenile absolutism.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. All humans will 100% lose their jobs by next year without any doubt whatsoever",
+          diagnosticTitle: "Absolutist Assertion Trap",
+          explanation: "Overconfident assertions without nuance indicate weak critical thinking, dragging down both Fluency and Lexical Resource ratings."
+        }
+      },
+      {
+        id: "L70-W05-D2-Q05",
+        prompt: "When asked about privacy concerns surrounding smart home devices, which response displays the strongest Lexical Resource?",
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Constant ambient voice recording poses grave threats regarding unauthorized data harvesting and corporate surveillance" },
+          { id: "B", text: "Devices listen to talk in the house which is very scary and bad for people" },
+          { id: "C", text: "Big companies hear what we say in bedroom and take our secrets" },
+          { id: "D", text: "Smart gadgets are annoying because they always record sound without asking nicely" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Constant ambient voice recording poses grave threats regarding unauthorized data harvesting and corporate surveillance",
+        correctExplanation: '"Ambient voice recording", "unauthorized data harvesting", and "corporate surveillance" represent precise, context-specific C1/C2 collocations.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Devices listen to talk in the house which is very scary and bad for people",
+          diagnosticTitle: "Elementary Lexical Range",
+          explanation: 'Words like "scary", "bad", and "talk in the house" reflect A2/B1 vocabulary, failing to satisfy the lexical demands of Band 7.0+.'
+        }
+      },
+      {
+        id: "L70-W05-D2-Q06",
+        prompt: "What discourse signpost should be deployed when introducing a counterbalancing consideration in Speaking Part 3?",
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Having said that, one cannot disregard the psychological toll of digital hyper-connectivity" },
+          { id: "B", text: "On the other face of the coin, people get sad because of internet" },
+          { id: "C", text: "But another point I want to tell you is that phone is bad" },
+          { id: "D", text: "Moreover, in addition, furthermore, phones make stress" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Having said that, one cannot disregard the psychological toll of digital hyper-connectivity",
+        correctExplanation: '"Having said that, one cannot disregard..." is an idiomatic, natural academic concession marker that introduces nuance effortlessly.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. On the other face of the coin, people get sad because of internet",
+          diagnosticTitle: "Distorted Idiom Error",
+          explanation: 'The idiom is "on the other side of the coin", not "other face". Distorting fixed idioms damages lexical accuracy.'
+        }
+      },
+      {
+        id: "L70-W05-D2-Q07",
+        prompt: "In Speaking Part 2, what technique prevents running out of ideas before the 2-minute timer elapses?",
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Unpacking sensory details and contrasting the situation with what life was like prior to adopting the technology" },
+          { id: "B", text: "Pausing for thirty seconds in complete silence to think of vocabulary" },
+          { id: "C", text: "Asking the examiner to repeat the question five times" },
+          { id: "D", text: "Switching to your native language to explain the complex technical features" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Unpacking sensory details and contrasting the situation with what life was like prior to adopting the technology",
+        correctExplanation: 'Contrasting "before vs after" provides a rich narrative reservoir, allowing candidates to demonstrate multiple tenses (used to, had been, currently) smoothly.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Asking the examiner to repeat the question five times",
+          diagnosticTitle: "Stalling Tactic Fallacy",
+          explanation: "The examiner cannot answer questions during your Part 2 monologue; stalling attempts lead to an immediate score downgrade."
+        }
+      },
+      {
+        id: "L70-W05-D2-Q08",
+        prompt: 'Which expression best articulates the concept of "information overload" in contemporary digital society?',
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Experiencing cognitive fatigue due to the incessant barrage of algorithmic notifications and fragmented data streams" },
+          { id: "B", text: "Having too much internet stuff entering the brain so it gets tired quickly" },
+          { id: "C", text: "Looking at screens until eyes hurt and brain explodes with information" },
+          { id: "D", text: "Reading too many news articles on mobile phones during lunch" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Experiencing cognitive fatigue due to the incessant barrage of algorithmic notifications and fragmented data streams",
+        correctExplanation: 'Collocations such as "cognitive fatigue", "incessant barrage", and "fragmented data streams" showcase native-like conceptual depth.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Looking at screens until eyes hurt and brain explodes with information",
+          diagnosticTitle: "Hyperbolic Colloquialism",
+          explanation: 'Hyperbolic statements like "brain explodes" are too informal and childish for an advanced academic assessment.'
+        }
+      },
+      {
+        id: "L70-W05-D2-Q09",
+        prompt: "How should a candidate handle unfamiliarity with a specific high-tech topic in Speaking Part 3?",
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Use a metacognitive hedge acknowledging non-expertise, then extrapolate from general principles or public debate" },
+          { id: "B", text: "Refuse to answer and instruct the examiner to change the subject" },
+          { id: "C", text: "Fabricate false statistics about computer microchips with complete conviction" },
+          { id: "D", text: `Say "I don't know" and stare blankly at the table` }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Use a metacognitive hedge acknowledging non-expertise, then extrapolate from general principles or public debate",
+        correctExplanation: 'Phrases like "While I am not an expert in quantum mechanics, from what I have gathered in mainstream reporting..." demonstrate fluent conversational maneuvering.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: `D. Say "I don't know" and stare blankly at the table`,
+          diagnosticTitle: "Defeatist Shutdown",
+          explanation: "IELTS tests communicative English, not technical expertise; shutting down forfeits your opportunity to demonstrate fluency and grammar."
+        }
+      },
+      {
+        id: "L70-W05-D2-Q10",
+        prompt: "Which sentence demonstrates natural prosodic intonation when summarizing the double-edged nature of technology?",
+        lesson: "WEEK 5 \u2013 DAY 2",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "While technology undeniably enhances connectivity, it paradoxically fosters social isolation" },
+          { id: "B", text: "Technology is good. Technology is bad. Technology makes us lonely. That is all" },
+          { id: "C", text: "Technology good and bad because of computers and internet phones" },
+          { id: "D", text: "Because connectivity is higher, therefore we are completely alone forever" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "While technology undeniably enhances connectivity, it paradoxically fosters social isolation",
+        correctExplanation: 'This sentence establishes sophisticated antithesis with a subordinate concessive clause ("While... connectivity") leading to the main clause ("paradoxically fosters social isolation").',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Technology is good. Technology is bad. Technology makes us lonely. That is all",
+          diagnosticTitle: "Choppy Elementary Syntax",
+          explanation: "Short, fragmented simple sentences lack syntactic complexity and prosodic rhythm, keeping the score around Band 5.0."
+        }
+      },
+      // ==========================================
+      // WEEK 5 – DAY 3: INFORMATION COMPRESSION & CORE CLAUSE EXTRACTION IN ACADEMIC TEXTS
+      // ==========================================
+      {
+        id: "L70-W05-D3-Q01",
+        prompt: 'In academic IELTS Reading, what is the core purpose of "Clause Stripping" (Information Compression)?',
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Temporarily discarding parenthetical clauses, relative clauses, and non-essential modifiers to isolate the central Subject-Verb-Object proposition" },
+          { id: "B", text: "Crossing out all adjectives in the reading passage permanently with a black marker" },
+          { id: "C", text: "Reading only the vowels in each paragraph to locate key terminology faster" },
+          { id: "D", text: "Deleting paragraph headings to test whether the text still makes sense" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Temporarily discarding parenthetical clauses, relative clauses, and non-essential modifiers to isolate the central Subject-Verb-Object proposition",
+        correctExplanation: "Academic sentences often span 40+ words with nested modifiers. Stripping non-essential clauses reveals the underlying assertion and eliminates syntactic confusion.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Crossing out all adjectives in the reading passage permanently with a black marker",
+          diagnosticTitle: "Literal Physical Destruction",
+          explanation: "Clause stripping is a mental cognitive filtering technique, not a destructive physical marking of the booklet."
+        }
+      },
+      {
+        id: "L70-W05-D3-Q02",
+        prompt: 'Coursebook Reading Passage on Hydrothermal Vents: Paragraph A details extreme benthic environments where "thermal equilibrium is rigidly preserved across all seasons." Statement 33 asks: "The water temperature remains constant throughout the year." What is the correct answer?',
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "YES" },
+          { id: "B", text: "NO" },
+          { id: "C", text: "NOT GIVEN" },
+          { id: "D", text: "INCONCLUSIVE" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "YES",
+        correctExplanation: '"Thermal equilibrium is rigidly preserved" directly matches "temperature remains constant", and "across all seasons" directly corresponds to "throughout the year". Therefore, the statement is YES.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. NOT GIVEN",
+          diagnosticTitle: "Specialized Jargon Hesitation",
+          explanation: 'Candidates unfamiliar with "thermal equilibrium" often assume temperature is Not Given, failing to recognize it as a scientific synonym for temperature stability.'
+        }
+      },
+      {
+        id: "L70-W05-D3-Q03",
+        prompt: 'Passage on Hydrothermal Vents (Paragraph B): "Unlike phototrophic organisms that harness sunlight, vent-dwelling archaebacteria rely exclusively on sulfur compounds to fuel chemosynthesis." Question 4 asks to complete the sentence (ONE WORD ONLY): "Vent archaebacteria generate energy primarily by metabolizing _____."',
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "sulfur" },
+          { id: "B", text: "sunlight" },
+          { id: "C", text: "compounds" },
+          { id: "D", text: "phototrophic" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "sulfur",
+        correctExplanation: 'The passage explicitly states that the archaebacteria "rely exclusively on sulfur compounds to fuel chemosynthesis". The required single word is "sulfur".',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. sunlight",
+          diagnosticTitle: "Antithesis Distractor Trap",
+          explanation: 'Sunlight is what "phototrophic organisms" use, which the text explicitly contrasts with vent archaebacteria ("Unlike phototrophic organisms...").'
+        }
+      },
+      {
+        id: "L70-W05-D3-Q04",
+        prompt: 'Passage notes: "To survive boiling hydrostatic pressures, these extremophiles possess specialized thermal-resistant enzymes that maintain catalytic stability." Question 5 asks (ONE WORD ONLY): "The survival of extremophiles at extreme depths is facilitated by unique _____."',
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "enzymes" },
+          { id: "B", text: "pressures" },
+          { id: "C", text: "extremophiles" },
+          { id: "D", text: "depths" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "enzymes",
+        correctExplanation: 'The text attributes catalytic stability and survival to "specialized thermal-resistant enzymes". "Unique" paraphrases "specialized", yielding the single noun "enzymes".',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. pressures",
+          diagnosticTitle: "Environmental Factor vs Biological Mechanism",
+          explanation: "Hydrostatic pressure is the hostile environmental condition, not the biological feature that facilitates survival."
+        }
+      },
+      {
+        id: "L70-W05-D3-Q05",
+        prompt: 'Statement 34: "Microbial samples replicated faster in laboratory cultures than in nature." Passage (Paragraph B) states: "Subsequent in-vitro replication rates were significantly sluggish compared to natural habitat metrics." Is the statement YES, NO, or NOT GIVEN?',
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "NO" },
+          { id: "B", text: "YES" },
+          { id: "C", text: "NOT GIVEN" },
+          { id: "D", text: "UNCERTAIN" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "NO",
+        correctExplanation: 'The passage asserts in-vitro (laboratory) replication was "significantly sluggish" (slower) than natural habitat metrics. The statement claims they replicated "faster", directly contradicting the text.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. YES",
+          diagnosticTitle: "Vocabulary Antonym Confusion",
+          explanation: 'Failing to understand that "sluggish" means slow leads candidates to guess YES.'
+        }
+      },
+      {
+        id: "L70-W05-D3-Q06",
+        prompt: 'Statement 35: "Governmental agencies have monopolized patent rights on enzymes extracted from deep-sea vent microbes." Passage (Paragraph E) states: "International consortium agreements ensure that all genetic sequencing and patenting protocols remain open-source." Is the statement YES, NO, or NOT GIVEN?',
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "NO" },
+          { id: "B", text: "YES" },
+          { id: "C", text: "NOT GIVEN" },
+          { id: "D", text: "PARTIALLY TRUE" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "NO",
+        correctExplanation: `If patenting protocols "remain open-source", governmental agencies have NOT monopolized them. The statement contradicts the author's assertion directly, so the answer is NO.`,
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. NOT GIVEN",
+          diagnosticTitle: "Term Not Found Trap",
+          explanation: 'Candidates who search only for the word "monopolized" and miss "open-source" mistakenly conclude the information is Not Given.'
+        }
+      },
+      {
+        id: "L70-W05-D3-Q07",
+        prompt: 'Statement 32: "Initial deep-sea expeditions failed due to inadequate underwater equipment." Passage states: "The inaugural dive was conducted in 1977, revealing hydrothermal plumes hitherto unrecorded in oceanographic logs." What is the correct answer?',
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "expert",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "NOT GIVEN" },
+          { id: "B", text: "YES" },
+          { id: "C", text: "NO" },
+          { id: "D", text: "IRRELEVANT" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "NOT GIVEN",
+        correctExplanation: "The passage describes the 1977 dive and its discoveries, but makes no mention of whether earlier expeditions failed or suffered from equipment inadequacy. The statement is NOT GIVEN.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. NO",
+          diagnosticTitle: "Extrapolated Assumption",
+          explanation: "Because the 1977 dive revealed plumes, candidates might assume earlier expeditions didn't fail, but the passage never discusses prior equipment failures at all."
+        }
+      },
+      {
+        id: "L70-W05-D3-Q08",
+        prompt: "Which heading corresponds to Paragraph A, which begins with unexpected temperature spikes and anomalous mineral formations that puzzled geologists?",
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 25,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Anomalous empirical observations challenging initial models" },
+          { id: "B", text: "Commercial harvesting of oceanic minerals" },
+          { id: "C", text: "Extinction events in terrestrial ecosystems" },
+          { id: "D", text: "Government legislation on deep-sea tourism" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Anomalous empirical observations challenging initial models",
+        correctExplanation: '"Anomalous empirical observations" precisely summarizes unexpected temperature readings and bizarre mineral formations that contradicted pre-existing geophysical theories.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Commercial harvesting of oceanic minerals",
+          diagnosticTitle: "Keyword Glimpse Distractor",
+          explanation: "While minerals are mentioned, there is no discussion of commercial harvesting operations in Paragraph A."
+        }
+      },
+      {
+        id: "L70-W05-D3-Q09",
+        prompt: 'When extracting the core clause from: "Despite extensive preliminary field calibrations conducted across six research vessels, the primary telemetry sensor malfunctioned", what is the grammatical core?',
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The primary telemetry sensor malfunctioned" },
+          { id: "B", text: "Extensive preliminary calibrations were conducted" },
+          { id: "C", text: "Across six research vessels" },
+          { id: "D", text: "Despite calibrations" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The primary telemetry sensor malfunctioned",
+        correctExplanation: 'The entire first clause is a prepositional concession modifier. The grammatical core of the sentence is the main clause: "the primary telemetry sensor (Subject) malfunctioned (Verb)".',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Extensive preliminary calibrations were conducted",
+          diagnosticTitle: "Subordinate Modifier Primacy Error",
+          explanation: "The concessive phrase provides background context; the main informational weight and syntactic spine resides in the independent clause."
+        }
+      },
+      {
+        id: "L70-W05-D3-Q10",
+        prompt: "In List of Headings tasks, why should candidates avoid matching solely based on an isolated keyword found in the first sentence?",
+        lesson: "WEEK 5 \u2013 DAY 3",
+        part: "READING & LISTENING",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Examiners frequently place distractor keywords in opening sentences to introduce a counter-point before pivoting to the paragraph's true main idea" },
+          { id: "B", text: "The first sentence of an IELTS paragraph is never related to the heading" },
+          { id: "C", text: "Headings only match words found in the exact middle of the paragraph" },
+          { id: "D", text: "First sentences in academic texts are always direct quotes from other books" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Examiners frequently place distractor keywords in opening sentences to introduce a counter-point before pivoting to the paragraph's true main idea",
+        correctExplanation: `Academic paragraphs frequently use contrastive discourse: opening with a commonly held view (the distractor) before introducing the paragraph's true thesis via "However" or "Nonetheless".`,
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The first sentence of an IELTS paragraph is never related to the heading",
+          diagnosticTitle: "Opposite Extreme Generalization",
+          explanation: "First sentences often contain topic sentences; however, blind keyword matching without reading the full sentence and pivot words causes heading mismatches."
+        }
+      }
+    ];
+  }
+});
+
+// server/services/leader_bank_parts/week6.data.ts
+var LEADER_WEEK_6_QUESTIONS;
+var init_week6_data4 = __esm({
+  "server/services/leader_bank_parts/week6.data.ts"() {
+    LEADER_WEEK_6_QUESTIONS = [
+      // ==========================================
+      // WEEK 6 – DAY 1: FULL ESSAY TIMED MASTERCLASS: STRICT ENVIRONMENTAL REGULATIONS VS ECONOMY
+      // ==========================================
+      {
+        id: "L70-W06-D1-Q01",
+        prompt: 'In the "5-30-5 Pacing Strategy" for IELTS Writing Task 2, how should the first 5 minutes be strategically allocated?',
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Analyzing the prompt parameters, committing to a clear thesis stance, and mapping out a two-point core outline with supporting links" },
+          { id: "B", text: "Writing the full introduction and half of the first body paragraph as fast as possible" },
+          { id: "C", text: "Memorizing the entire scoring rubric to mentally prepare for the examiner" },
+          { id: "D", text: "Counting the lines on the answer sheet to establish physical paragraph margins" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Analyzing the prompt parameters, committing to a clear thesis stance, and mapping out a two-point core outline with supporting links",
+        correctExplanation: "The first 5 minutes must be dedicated to deconstructing the prompt, establishing an unambiguous thesis, and drafting a logical outline to avoid getting stranded mid-essay.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Writing the full introduction and half of the first body paragraph as fast as possible",
+          diagnosticTitle: "Premature Writing Panic",
+          explanation: "Beginning to write without an outline leads to disjointed progression, idea repetition, and contradictions, severely harming Task Achievement and Cohesion."
+        }
+      },
+      {
+        id: "L70-W06-D1-Q02",
+        prompt: 'On the topic "Strict environmental regulations hinder economic competitiveness", which thesis statement maintains an authoritative Band 7.5+ qualified perspective?',
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "While stringent ecological mandates may impose short-term operational costs, they ultimately drive green technological innovation and safeguard long-term economic resilience" },
+          { id: "B", text: "I completely agree that trees are more important than factories because money is dirty" },
+          { id: "C", text: "Some people say yes and other people say no, but I will talk about both in this essay" },
+          { id: "D", text: "Regulations are 100% harmful and governments should abolish all green laws tomorrow" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "While stringent ecological mandates may impose short-term operational costs, they ultimately drive green technological innovation and safeguard long-term economic resilience",
+        correctExplanation: "This qualified thesis acknowledges short-term compliance costs (concession) while firmly asserting long-term technological and economic benefits, demonstrating mature academic depth.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Some people say yes and other people say no, but I will talk about both in this essay",
+          diagnosticTitle: "Empty Delayed Stance",
+          explanation: "Announcing a balanced discussion without stating your clear position in the introduction fails to present a clear position throughout the response, capping Task Achievement at Band 6."
+        }
+      },
+      {
+        id: "L70-W06-D1-Q03",
+        prompt: "In the final 5 minutes of the 5-30-5 protocol, what should a candidate explicitly avoid doing?",
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Drafting an entirely new argument or erasing a complete body paragraph in a panic" },
+          { id: "B", text: "Scanning for subject-verb agreement discrepancies" },
+          { id: "C", text: "Verifying that singular and plural noun endings are accurate" },
+          { id: "D", text: "Checking for missing articles before singular countable nouns" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Drafting an entirely new argument or erasing a complete body paragraph in a panic",
+        correctExplanation: "Introducing new arguments or erasing sections in the final minutes results in truncated, unfinished essays. The final 5 minutes must be reserved exclusively for micro-editing and proofreading.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Scanning for subject-verb agreement discrepancies",
+          diagnosticTitle: "Misidentifying Healthy Proofreading",
+          explanation: "Proofreading for agreement, articles, and spelling is precisely what the final 5 minutes are designed for."
+        }
+      },
+      {
+        id: "L70-W06-D1-Q04",
+        prompt: "Which sentence best exemplifies an academic counter-argument refutation regarding environmental protection costs?",
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Although critics contend that emissions caps suppress corporate profitability, empirical evidence indicates that green subsidies foster market leadership in sustainable technologies" },
+          { id: "B", text: "Opponents say it is too expensive, but they are totally wrong because clean air is priceless" },
+          { id: "C", text: "Maybe businesses spend money on filters, but that is their own problem for polluting nature" },
+          { id: "D", text: "Environmental rules cost money, however nobody cares about corporate profits anyway" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Although critics contend that emissions caps suppress corporate profitability, empirical evidence indicates that green subsidies foster market leadership in sustainable technologies",
+        correctExplanation: 'This sentence articulates the counter-claim objectively ("critics contend that emissions caps suppress corporate profitability") and counters it with analytical evidence ("empirical evidence indicates... market leadership").',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Opponents say it is too expensive, but they are totally wrong because clean air is priceless",
+          diagnosticTitle: "Emotional Dismissal",
+          explanation: 'Dismissing economic arguments with emotional, non-academic phrases like "they are totally wrong" undermines the objective tone expected in Band 7.5+ essays.'
+        }
+      },
+      {
+        id: "L70-W06-D1-Q05",
+        prompt: 'What constitutes "Thesis Drift" across an IELTS Writing Task 2 essay?',
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Stating one stance in the introduction but gradually shifting to an opposing or ambiguous stance in the body paragraphs or conclusion" },
+          { id: "B", text: "Using synonyms to restate the main argument in the conclusion" },
+          { id: "C", text: "Writing an introduction that exceeds forty words in length" },
+          { id: "D", text: "Including a concession before presenting your primary viewpoint" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Stating one stance in the introduction but gradually shifting to an opposing or ambiguous stance in the body paragraphs or conclusion",
+        correctExplanation: "Thesis drift occurs when a writer promises to defend Side A in the introduction, devotes the majority of the body to praising Side B, and delivers an inconclusive ending, dropping Task Achievement to Band 6.",
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Including a concession before presenting your primary viewpoint",
+          diagnosticTitle: "Concession Misunderstanding",
+          explanation: "Concession is an advanced argumentative device that strengthens an essay, provided the primary stance remains steady throughout."
+        }
+      },
+      {
+        id: "L70-W06-D1-Q06",
+        prompt: "Which vocabulary cluster demonstrates the most sophisticated lexical precision for an essay on industrial pollution?",
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Effluent discharge, carbon offsets, ecological footprint, statutory compliance, circular economy" },
+          { id: "B", text: "Dirty rivers, bad smoke, green lifestyle, government police, recycle things" },
+          { id: "C", text: "Factory poisons, toxic junk, clean environment, big money penalties, saving animals" },
+          { id: "D", text: "Nature hurt, air troubles, cleaning programs, eco rules, city waste" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Effluent discharge, carbon offsets, ecological footprint, statutory compliance, circular economy",
+        correctExplanation: "These terms reflect specialized academic environmental economics vocabulary (Band 7.5 to 8.5), elevating the precision of the analysis.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Factory poisons, toxic junk, clean environment, big money penalties, saving animals",
+          diagnosticTitle: "Informal Sensationalist Vocabulary",
+          explanation: 'Sensationalist terms like "factory poisons" and "toxic junk" lack formal academic register.'
+        }
+      },
+      {
+        id: "L70-W06-D1-Q07",
+        prompt: "How many body paragraphs should ideally be written for a standard 40-minute IELTS Task 2 essay to ensure depth without risking time overrun?",
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Exactly two well-developed body paragraphs of 90-110 words each" },
+          { id: "B", text: "Five short body paragraphs containing one single idea each" },
+          { id: "C", text: "A single unbroken block paragraph of 250 words" },
+          { id: "D", text: "Eight bulleted lists of relevant points" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Exactly two well-developed body paragraphs of 90-110 words each",
+        correctExplanation: "Two substantive body paragraphs permit deep, three-step logical chains (Claim -> Explanation -> Concrete Evidence/Result) within the 30-minute writing window.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Five short body paragraphs containing one single idea each",
+          diagnosticTitle: "Fragmentation Fallacy",
+          explanation: 'Writing five tiny paragraphs produces superficial, underdeveloped arguments that fail the Band 7 "fully extended and well-supported ideas" criterion.'
+        }
+      },
+      {
+        id: "L70-W06-D1-Q08",
+        prompt: "In evaluating economic trade-offs, which phrase correctly expresses a causal consequence using advanced syntax?",
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Enforcing strict carbon taxation compels corporations to optimize energy efficiency, thereby curtailing aggregate greenhouse gas emissions" },
+          { id: "B", text: "Strict carbon taxation is enforced, because of this corporations optimize energy efficiency and aggregate greenhouse gas emissions fall" },
+          { id: "C", text: "When carbon tax is very high, companies save power so that bad gases are not going into the sky" },
+          { id: "D", text: "Carbon taxation forces companies to spend less electricity, which means air is much cleaner" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Enforcing strict carbon taxation compels corporations to optimize energy efficiency, thereby curtailing aggregate greenhouse gas emissions",
+        correctExplanation: 'The structure uses a gerund subject ("Enforcing strict carbon taxation"), a strong transitive verb ("compels"), and an adverbial participial result clause ("thereby curtailing..."), reflecting Band 8.0 grammar.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Strict carbon taxation is enforced, because of this corporations optimize energy efficiency and aggregate greenhouse gas emissions fall",
+          diagnosticTitle: "Run-on Comma Splice with Weak Linker",
+          explanation: 'Using "because of this" to join independent clauses creates a comma splice and informal coordination.'
+        }
+      },
+      {
+        id: "L70-W06-D1-Q09",
+        prompt: "What is the target word count range for an IELTS Writing Task 2 essay to ensure thorough development without elevating error probability?",
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "260 to 290 words" },
+          { id: "B", text: "150 to 180 words" },
+          { id: "C", text: "450 to 600 words" },
+          { id: "D", text: "Exactly 250 words, not one word more or less" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "260 to 290 words",
+        correctExplanation: "Writing 260-290 words comfortably surpasses the 250-word minimum, permits rigorous explanation, and leaves 5 minutes for proofreading without inviting careless mistakes.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. 450 to 600 words",
+          diagnosticTitle: "Length Equated with Band Score",
+          explanation: "Overwriting beyond 350 words invariably leads to time fatigue, superficial repetition, and increased grammatical errors under timed conditions."
+        }
+      },
+      {
+        id: "L70-W06-D1-Q10",
+        prompt: `How does checking "Singular vs Plural Noun Countability" during the Three-Button audit directly protect a candidate's Grammatical Accuracy rating?`,
+        lesson: "WEEK 6 \u2013 DAY 1",
+        part: "WRITING TASK 2",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'It catches pervasive errors like "researches", "informations", and bare singular countable nouns like "student must study" that plague non-native writing' },
+          { id: "B", text: "It converts every common noun into a proper noun with capital letters" },
+          { id: "C", text: "It ensures that all nouns are transformed into pronouns" },
+          { id: "D", text: "It checks whether words are written in calligraphy" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'It catches pervasive errors like "researches", "informations", and bare singular countable nouns like "student must study" that plague non-native writing',
+        correctExplanation: 'Uncountable nouns with plural -s and bare singular countables ("government must", "child needs") are the most frequent slips in Vietnamese test-taker scripts.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. It converts every common noun into a proper noun with capital letters",
+          diagnosticTitle: "Nonsensical Grammar Rule",
+          explanation: "Capitalizing common nouns is a punctuation error; countability checks ensure correct determiners and number morphology."
+        }
+      },
+      // ==========================================
+      // WEEK 6 – DAY 2: INTRODUCTION + OVERVIEW TASK 1 ARCHITECTURE & 5-MIN TASK 2 FLASH-DRILL
+      // ==========================================
+      {
+        id: "L70-W06-D2-Q01",
+        prompt: 'What is the core pedagogical objective of the "5-Minute Task 2 Flash-Drill" conducted at the start of Task 1 lessons in Week 6?',
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "To maintain rapid macro-planning reflexes and prevent Task 2 thesis formulation skills from degrading during intensive Task 1 study" },
+          { id: "B", text: "To write an entire 250-word Task 2 essay in under five minutes" },
+          { id: "C", text: "To test whether candidates can recite the dictionary from memory" },
+          { id: "D", text: "To substitute Task 2 homework assignments entirely" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "To maintain rapid macro-planning reflexes and prevent Task 2 thesis formulation skills from degrading during intensive Task 1 study",
+        correctExplanation: "The 5-minute Flash-Drill requires students to produce 3 prompt lines (Thesis + 2 Core Arguments) in 5 minutes, keeping argumentative thinking active throughout the 9-day Task 1 sprint.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. To write an entire 250-word Task 2 essay in under five minutes",
+          diagnosticTitle: "Unrealistic Word Sprint",
+          explanation: "Writing 250 words in 5 minutes is physiologically impossible; the drill trains rapid conceptual structuring, not physical speed-writing."
+        }
+      },
+      {
+        id: "L70-W06-D2-Q02",
+        prompt: "What four components must be paraphrased to construct a bulletproof Band 7.0+ Task 1 Introduction sentence?",
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Visual Type such as the line graph, Reporting Verb such as illustrates, Subject Parameter such as carbon emissions, and Timeframe Geography such as the UK between 2000 and 2020" },
+          { id: "B", text: "Personal opinion, historical background, future predictions, and mathematical formulas" },
+          { id: "C", text: "Examiner name, exam center code, candidate number, and current date" },
+          { id: "D", text: "Detailed numbers from every single year shown on the horizontal axis" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Visual Type such as the line graph, Reporting Verb such as illustrates, Subject Parameter such as carbon emissions, and Timeframe Geography such as the UK between 2000 and 2020",
+        correctExplanation: "A complete Task 1 Introduction rephrases: [1] Diagram type, [2] Action verb, [3] Measured variables, and [4] Scope / timeframe, achieving precision in a single sentence.",
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Detailed numbers from every single year shown on the horizontal axis",
+          diagnosticTitle: "Premature Data Dumping",
+          explanation: "Putting specific raw numbers in the introduction ruins structural progression and violates Task 1 conventions."
+        }
+      },
+      {
+        id: "L70-W06-D2-Q03",
+        prompt: 'What constitutes the "Overview Rule" in IELTS Writing Task 1 according to official Band 7 Descriptors?',
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The overview must present clear overarching trends and major differences, strictly WITHOUT citing specific raw data figures or percentages" },
+          { id: "B", text: "The overview must list all raw data points in chronological order with exact decimal precision" },
+          { id: "C", text: "The overview should explain the sociological reasons why people generated those numbers" },
+          { id: "D", text: "The overview must be placed at the very end of the essay as a one-sentence personal opinion" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The overview must present clear overarching trends and major differences, strictly WITHOUT citing specific raw data figures or percentages",
+        correctExplanation: "An Overview summarizes broad patterns (general trajectories and extremes) without data points. Including raw figures degrades the overview into a body paragraph, capping Task Achievement at Band 6.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The overview must list all raw data points in chronological order with exact decimal precision",
+          diagnosticTitle: "Data Contamination in Overview",
+          explanation: "Citing specific numbers in the overview is an error; numbers belong exclusively in the detailed body paragraphs."
+        }
+      },
+      {
+        id: "L70-W06-D2-Q04",
+        prompt: 'Examine this Task 1 Overview sentence: "Overall, while automobile reliance surged over the two decades, cycling experienced a steady decline; additionally, private cars remained the predominant transport mode throughout." Why is this an exemplary Band 7.5 Overview?',
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "It encapsulates both the macro-directional trajectory and the dominant category without mentioning a single raw statistic" },
+          { id: "B", text: "It explains that cars are bad for the environment because of greenhouse emissions" },
+          { id: "C", text: "It quotes the exact starting and ending percentages for both vehicles" },
+          { id: "D", text: "It proves that cycling will be completely abandoned by the year 2050" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "It encapsulates both the macro-directional trajectory and the dominant category without mentioning a single raw statistic",
+        correctExplanation: "An ideal 2-part overview covers: [1] The macro trend/direction of change, and [2] The highest/lowest dominant standout, completely free of raw data.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. It explains that cars are bad for the environment because of greenhouse emissions",
+          diagnosticTitle: "External Speculation Trap",
+          explanation: "Task 1 requires reporting only the facts presented in the graphic; adding external opinions or explanations is penalized."
+        }
+      },
+      {
+        id: "L70-W06-D2-Q05",
+        prompt: 'Which reporting verb best substitutes for "shows" when paraphrasing a complex multi-line graph?',
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "illustrates, depicts, or delineates" },
+          { id: "B", text: "proves, convinces, or demands" },
+          { id: "C", text: "imagines, guesses, or suspects" },
+          { id: "D", text: "believes, feels, or desires" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "illustrates, depicts, or delineates",
+        correctExplanation: 'Verbs like "illustrates", "depicts", and "delineates" are formal, objective reporting verbs suited for academic data presentation.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. proves, convinces, or demands",
+          diagnosticTitle: "Argumentative Verb Error",
+          explanation: 'Graphs illustrate data; they do not "prove" or "convince" in an argumentative sense. Using argumentative verbs reflects poor task understanding.'
+        }
+      },
+      {
+        id: "L70-W06-D2-Q06",
+        prompt: 'How should the phrase "the number of people who visited museums" be paraphrased using nominalization?',
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "museum attendance figures or museum patronage" },
+          { id: "B", text: "how many humans stepped into museums" },
+          { id: "C", text: "the amount of persons walking to museum halls" },
+          { id: "D", text: "museum goer individuals count" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "museum attendance figures or museum patronage",
+        correctExplanation: '"Museum attendance figures" and "museum patronage" replace the relative clause with concise, high-level nominalized collocations.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. the amount of persons walking to museum halls",
+          diagnosticTitle: "Amount with Countable Noun Error",
+          explanation: '"Amount" cannot be used with countable persons; additionally, "walking to museum halls" is colloquial and imprecise.'
+        }
+      },
+      {
+        id: "L70-W06-D2-Q07",
+        prompt: "Where is the optimal placement for the Overview paragraph in IELTS Writing Task 1?",
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Immediately following the introduction paragraph, creating a logical "Top-Down" hierarchy from macro-summary to micro-details' },
+          { id: "B", text: "Scattered randomly as single bullet points across the body paragraphs" },
+          { id: "C", text: "Inside the introduction sentence using three sets of brackets" },
+          { id: "D", text: "On a separate piece of draft paper that is not submitted" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Immediately following the introduction paragraph, creating a logical "Top-Down" hierarchy from macro-summary to micro-details',
+        correctExplanation: "Placing the Overview directly after the Introduction ensures the examiner immediately spots the required macro-summary and guarantees a coherent top-down structure.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Inside the introduction sentence using three sets of brackets",
+          diagnosticTitle: "Paragraph Merging Confusion",
+          explanation: "The Overview should stand as a distinct paragraph to make the macro-overview visually and structurally prominent."
+        }
+      },
+      {
+        id: "L70-W06-D2-Q08",
+        prompt: "Which sentence correctly combines two contrasting overview trends in a single compound sentence?",
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Overall, while solar and wind energy witnessed substantial expansion, fossil fuel consumption underwent a progressive contraction over the period" },
+          { id: "B", text: "Overall, solar energy went up a lot, but oil went down and nobody liked coal anymore" },
+          { id: "C", text: "Overall, green power increased very fast, however fossil fuels was decreasing terribly" },
+          { id: "D", text: "Overall, there was much energy changes happening everywhere in the entire nation" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Overall, while solar and wind energy witnessed substantial expansion, fossil fuel consumption underwent a progressive contraction over the period",
+        correctExplanation: 'This sentence contrasts the two main energy groups with sophisticated nominalized phrases ("witnessed substantial expansion", "underwent a progressive contraction") and clear subordination.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Overall, solar energy went up a lot, but oil went down and nobody liked coal anymore",
+          diagnosticTitle: "Informal Speculative Clich\xE9",
+          explanation: '"Nobody liked coal anymore" is an unsourced colloquial speculation, violating academic neutrality.'
+        }
+      },
+      {
+        id: "L70-W06-D2-Q09",
+        prompt: "What happens if a candidate writes an entire Task 1 report with accurate data in the body paragraphs, but completely omits an Overview?",
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Task Achievement is capped at Band 5.0, regardless of the quality of grammar and vocabulary" },
+          { id: "B", text: "The examiner automatically awards a Band 7.0 if grammar is error-free" },
+          { id: "C", text: "The candidate is asked to sit for a supplementary speaking interview" },
+          { id: "D", text: "No penalty is applied because the body paragraphs contain all the details" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Task Achievement is capped at Band 5.0, regardless of the quality of grammar and vocabulary",
+        correctExplanation: 'Under official public descriptors for Task 1, omitting an overview restricts Task Achievement to a maximum of Band 5.0 ("presents no overview").',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. No penalty is applied because the body paragraphs contain all the details",
+          diagnosticTitle: "Data Completeness Myth",
+          explanation: "A candidate can report every single number accurately, but without synthesizing them into an overview, the core descriptive requirement is unfulfilled."
+        }
+      },
+      {
+        id: "L70-W06-D2-Q10",
+        prompt: 'Choose the most precise paraphrase of: "The chart shows how much meat was consumed in four countries between 1990 and 2010."',
+        lesson: "WEEK 6 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The bar chart delineates the per capita consumption of various types of meat across four separate nations over a 20-year span from 1990 to 2010" },
+          { id: "B", text: "The picture explains how many animals people ate in four lands during twenty years" },
+          { id: "C", text: "The chart gives numbers of butcher shop meat sold to buyers in four places" },
+          { id: "D", text: "The visual diagram shows meat eating habits of people living in four areas" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The bar chart delineates the per capita consumption of various types of meat across four separate nations over a 20-year span from 1990 to 2010",
+        correctExplanation: '"Per capita consumption", "four separate nations", and "over a 20-year span from 1990 to 2010" represent standard C1 Task 1 reporting formulas.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The picture explains how many animals people ate in four lands during twenty years",
+          diagnosticTitle: "Childish Register Substitution",
+          explanation: '"How many animals people ate" is colloquial and inaccurate; data measures meat by mass (kilograms/grams), not whole animal counts.'
+        }
+      },
+      // ==========================================
+      // WEEK 6 – DAY 3: BOOKS, CINEMA & CULTURAL MEDIA MONOLOGUES
+      // ==========================================
+      {
+        id: "L70-W06-D3-Q01",
+        prompt: 'In IELTS Speaking Part 2, when responding to "Describe a book or film that made a profound impression on you", what pitfall must candidates avoid regarding plot summary?',
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The Plot-Spoiling Trap: Reciting minute scene-by-scene plot twists instead of focusing on thematic depth, aesthetic qualities, and personal resonance" },
+          { id: "B", text: "Mentioning the name of the director or author in the first twenty seconds" },
+          { id: "C", text: "Using past tenses to describe the narrative background of the story" },
+          { id: "D", text: "Speaking for the full two minutes allocated by the examiner" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The Plot-Spoiling Trap: Reciting minute scene-by-scene plot twists instead of focusing on thematic depth, aesthetic qualities, and personal resonance",
+        correctExplanation: 'Candidates often get bogged down narrating complex plot lines ("and then he went to the house, and then she called him..."), wasting time on low-level sequencing rather than evaluating themes and character development.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Mentioning the name of the director or author in the first twenty seconds",
+          diagnosticTitle: "Attribution Hesitation",
+          explanation: "Naming the director or author immediately contextualizes the monologue and is natural discourse practice."
+        }
+      },
+      {
+        id: "L70-W06-D3-Q02",
+        prompt: "Which lexical set provides the most sophisticated critical appraisal of a cinematic work in Speaking Part 2?",
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Compelling storyline, stellar acting performance, nuanced character arc, thought-provoking existential message, immersive cinematography" },
+          { id: "B", text: "Nice film, good actors, very funny moments, loud sound effects, happy ending" },
+          { id: "C", text: "Scary ghost scenes, huge explosions, interesting movie, great popcorn experience" },
+          { id: "D", text: "Pretty pictures, wonderful talking by characters, cool music in the background" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Compelling storyline, stellar acting performance, nuanced character arc, thought-provoking existential message, immersive cinematography",
+        correctExplanation: 'Collocations like "compelling storyline", "nuanced character arc", and "immersive cinematography" showcase Band 8.0 critical vocabulary.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Nice film, good actors, very funny moments, loud sound effects, happy ending",
+          diagnosticTitle: "Generic Elementary Lexis",
+          explanation: 'Overusing generic adjectives like "nice", "good", and "funny" reflects basic language skills that limit Lexical Resource to Band 5.5.'
+        }
+      },
+      {
+        id: "L70-W06-D3-Q03",
+        prompt: 'In Speaking Part 3, how should a candidate address: "Do you think digital e-readers will lead to the total extinction of printed books?"',
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Acknowledge e-readers' unparalleled portability and convenience, while highlighting the enduring tactile aesthetics, collectible value, and sensory pleasure of physical paper" },
+          { id: "B", text: "Predict that every paper book will be burned in bonfires by 2030" },
+          { id: "C", text: "State that you personally never read books so you cannot answer" },
+          { id: "D", text: "Recite the price of your tablet computer in local currency" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Acknowledge e-readers' unparalleled portability and convenience, while highlighting the enduring tactile aesthetics, collectible value, and sensory pleasure of physical paper",
+        correctExplanation: "A Band 7.5+ response explores the coexistence of media: pragmatic digital convenience alongside the unique tactile and cultural appeal of physical books.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Predict that every paper book will be burned in bonfires by 2030",
+          diagnosticTitle: "Absurdist Hyperbole",
+          explanation: "Making bizarre apocalyptic claims demonstrates immature reasoning rather than balanced academic argument."
+        }
+      },
+      {
+        id: "L70-W06-D3-Q04",
+        prompt: "Which phrase effectively analyzes the role of government funding in supporting cultural cinema and arts?",
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Public subsidies are essential to preserve indigenous storytelling that might otherwise be marginalized by Hollywood commercial blockbusters" },
+          { id: "B", text: "Governments should give dollars to movie makers because going to cinema is fun for citizens" },
+          { id: "C", text: "Movies cost too much money so authorities must pay for cameras and tickets" },
+          { id: "D", text: "Commercial films are always evil and state films are always holy" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Public subsidies are essential to preserve indigenous storytelling that might otherwise be marginalized by Hollywood commercial blockbusters",
+        correctExplanation: 'Terms such as "public subsidies", "indigenous storytelling", and "marginalized by commercial blockbusters" represent precise academic discourse on cultural policy.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Governments should give dollars to movie makers because going to cinema is fun for citizens",
+          diagnosticTitle: "Trivial Simplification",
+          explanation: 'Reducing cultural policy to "giving dollars for fun" misses the socio-cultural significance of national heritage and media diversity.'
+        }
+      },
+      {
+        id: "L70-W06-D3-Q05",
+        prompt: "When describing an author's writing style in Speaking Part 2, which phrase indicates Band 7.5+ sophistication?",
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The author employs evocative prose and allegorical symbolism to explore human vulnerability" },
+          { id: "B", text: "The writer wrote the book using very long sentences with hard words" },
+          { id: "C", text: "Her writing is super awesome and I loved reading every single chapter" },
+          { id: "D", text: "The vocabulary inside the pages was really fancy and poetic-like" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The author employs evocative prose and allegorical symbolism to explore human vulnerability",
+        correctExplanation: '"Evocative prose", "allegorical symbolism", and "explore human vulnerability" demonstrate mature literary appreciation and precision.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. The vocabulary inside the pages was really fancy and poetic-like",
+          diagnosticTitle: "Vague Colloquial Description",
+          explanation: 'Using expressions like "fancy" and "poetic-like" reveals limited stylistic vocabulary.'
+        }
+      },
+      {
+        id: "L70-W06-D3-Q06",
+        prompt: "In Speaking Part 3, what phrase should be used to introduce an analogy between literary classics and modern cinema?",
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Much like enduring literary classics, cinematic masterpieces serve as mirrors reflecting societal anxieties and moral dilemmas" },
+          { id: "B", text: "Books and movies are the same thing because both have stories and people talking" },
+          { id: "C", text: "If you read a book, it is exactly equal to sitting in front of a cinema screen" },
+          { id: "D", text: "Classic books are just old-fashioned movies that people did not film with cameras" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Much like enduring literary classics, cinematic masterpieces serve as mirrors reflecting societal anxieties and moral dilemmas",
+        correctExplanation: 'Drawing an analytical parallel ("serve as mirrors reflecting societal anxieties") illustrates abstract reasoning and fluent academic discourse.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Books and movies are the same thing because both have stories and people talking",
+          diagnosticTitle: "Crude Equivalence",
+          explanation: 'Collapsing distinct artistic mediums into "the same thing" ignores artistic medium specificity and lowers communicative subtlety.'
+        }
+      },
+      {
+        id: "L70-W06-D3-Q07",
+        prompt: "How can a candidate avoid rambling during the final 30 seconds of a Speaking Part 2 response about a book?",
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Pivot deliberately to the lasting impact: summarize why the literary message continues to shape your worldview or creative thinking" },
+          { id: "B", text: "Repeat the first sentence of the monologue word for word" },
+          { id: "C", text: "Start recounting a different movie that you saw three years ago" },
+          { id: "D", text: "Tell the examiner you have finished and ask them how many points you got" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Pivot deliberately to the lasting impact: summarize why the literary message continues to shape your worldview or creative thinking",
+        correctExplanation: "Wrapping up with personal philosophical resonance or long-term cognitive impact provides a natural, authoritative conclusion that brings the monologue to a complete, rounded close.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Repeat the first sentence of the monologue word for word",
+          diagnosticTitle: "Rote Circularity",
+          explanation: "Repeating your opening sentence exposes an absence of concluding thoughts and signals conversational exhaustion."
+        }
+      },
+      {
+        id: "L70-W06-D3-Q08",
+        prompt: "Which question type in Speaking Part 3 requires a candidate to assess the future of libraries in the digital era?",
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "A speculative prediction question requiring future modals and evolutionary redefinition of public spaces" },
+          { id: "B", text: "A simple past tense autobiographical inquiry" },
+          { id: "C", text: "A multiple-choice grammar question" },
+          { id: "D", text: "A factual dictionary definition check" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "A speculative prediction question requiring future modals and evolutionary redefinition of public spaces",
+        correctExplanation: 'Speculative Part 3 questions require hypothesis formulation ("Libraries will likely morph into community digital hubs..."), demonstrating predictive tenses and conditional structures.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. A simple past tense autobiographical inquiry",
+          diagnosticTitle: "Genre Confusion",
+          explanation: "Speculating about the future of institutions requires future conditional language, not past personal narrative."
+        }
+      },
+      {
+        id: "L70-W06-D3-Q09",
+        prompt: "Which collocation correctly characterizes an unpredictable, thrilling storyline?",
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "A gripping narrative replete with unexpected twists and turns" },
+          { id: "B", text: "A story that jumps around with crazy happenings all over" },
+          { id: "C", text: "An unexpected movie doing weird things to surprise eyes" },
+          { id: "D", text: "A drama holding exciting tricks inside every chapter" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "A gripping narrative replete with unexpected twists and turns",
+        correctExplanation: '"Gripping narrative" and "replete with unexpected twists and turns" are native-like collocations that vividly convey dramatic suspense.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. A story that jumps around with crazy happenings all over",
+          diagnosticTitle: "Conversational Slang",
+          explanation: 'Phrases like "crazy happenings all over" lack the precision and register expected at Band 7.5+.'
+        }
+      },
+      {
+        id: "L70-W06-D3-Q10",
+        prompt: "In Speaking Part 3, what is the best strategy when the examiner asks an abstract philosophical question about the moral responsibility of artists?",
+        lesson: "WEEK 6 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Anchor the response in two competing perspectives: unconditional creative autonomy versus the imperative to avoid inciting societal discord" },
+          { id: "B", text: "Dismiss the question as irrelevant to everyday life" },
+          { id: "C", text: "Recite a poem in your native tongue" },
+          { id: "D", text: "Give a 2-second answer saying artists should only paint flowers" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Anchor the response in two competing perspectives: unconditional creative autonomy versus the imperative to avoid inciting societal discord",
+        correctExplanation: "Framing philosophical dilemmas around competing core values (creative freedom vs social harm) demonstrates high-level critical thinking and balanced rhetorical competence.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Dismiss the question as irrelevant to everyday life",
+          diagnosticTitle: "Question Evasion",
+          explanation: "Refusing to tackle abstract questions guarantees a low score in Fluency and Coherence because Part 3 is specifically designed to assess abstract discourse."
+        }
+      }
+    ];
+  }
+});
+
+// server/services/leader_bank_parts/week7.data.ts
+var LEADER_WEEK_7_QUESTIONS;
+var init_week7_data4 = __esm({
+  "server/services/leader_bank_parts/week7.data.ts"() {
+    LEADER_WEEK_7_QUESTIONS = [
+      // ==========================================
+      // WEEK 7 – DAY 1: GROUPING & SIGNPOSTING: NAME FIRST VS FEATURE FIRST & 5-MIN TASK 2 FLASH-DRILL
+      // ==========================================
+      {
+        id: "L70-W07-D1-Q01",
+        prompt: 'In IELTS Writing Task 1, what is the core architectural difference between the "Name-First" (Category-Based) and "Feature-First" (Trend-Based) grouping strategies?',
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Name-First allocates body paragraphs by specific entities or countries, whereas Feature-First clusters categories sharing similar trajectories such as upward surges versus downward declines" },
+          { id: "B", text: "Name-First is used only for maps, while Feature-First is used exclusively for pie charts" },
+          { id: "C", text: "Name-First requires alphabetical sorting of words, whereas Feature-First requires reverse alphabetical sorting" },
+          { id: "D", text: "Name-First is penalized by examiners, whereas Feature-First guarantees a score of 9.0" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Name-First allocates body paragraphs by specific entities or countries, whereas Feature-First clusters categories sharing similar trajectories such as upward surges versus downward declines",
+        correctExplanation: "Name-First organizes by entity (e.g. Body 1: UK and France; Body 2: Germany and Italy), while Feature-First organizes by behavior (e.g. Body 1: Entities showing upward trajectories; Body 2: Entities showing downward or static trends).",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Name-First is used only for maps, while Feature-First is used exclusively for pie charts",
+          diagnosticTitle: "Visual Typology Restriction",
+          explanation: "Both grouping models apply universally across dynamic line graphs, bar charts, and data tables."
+        }
+      },
+      {
+        id: "L70-W07-D1-Q02",
+        prompt: 'Why is "Fragmented Item-by-Item Reporting" (describing Category A in 2000, Category B in 2000, then Category A in 2005, etc.) heavily penalized under Coherence and Cohesion?',
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "It presents disjointed mechanical data points without synthesis, failing to illuminate comparative relationships or overarching patterns" },
+          { id: "B", text: "It requires too many commas, which examiners count as grammatical errors" },
+          { id: "C", text: "It automatically makes the report exceed 500 words in length" },
+          { id: "D", text: "It violates the chronological progression requirement of the Gregorian calendar" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "It presents disjointed mechanical data points without synthesis, failing to illuminate comparative relationships or overarching patterns",
+        correctExplanation: "Listing figures point-by-point without grouping creates a mechanical catalog rather than an analytical summary, capping Coherence & Cohesion and Task Achievement at Band 5.5.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. It requires too many commas, which examiners count as grammatical errors",
+          diagnosticTitle: "Punctuation Counting Myth",
+          explanation: "The issue is lack of macro-logical synthesis and thematic grouping, not the mechanical frequency of punctuation marks."
+        }
+      },
+      {
+        id: "L70-W07-D1-Q03",
+        prompt: 'Which signposting topic sentence effectively launches a "Feature-First" body paragraph clustering upward trending categories?',
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Turning to the categories that exhibited an upward trajectory, both solar and wind power witnessed substantial expansion over the period" },
+          { id: "B", text: "Now I want to talk about solar energy because it is green and nice" },
+          { id: "C", text: "Solar was 10 in 1990 and wind was 15 in 1990 and both went up" },
+          { id: "D", text: "Look at the chart and you will see higher lines for these two things" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Turning to the categories that exhibited an upward trajectory, both solar and wind power witnessed substantial expansion over the period",
+        correctExplanation: '"Turning to the categories that exhibited an upward trajectory..." immediately signposts the thematic grouping criterion before synthesizing specific figures.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Solar was 10 in 1990 and wind was 15 in 1990 and both went up",
+          diagnosticTitle: "Data-First Abruptness",
+          explanation: "Starting directly with raw numbers without an organizing signpost leaves the paragraph without a clear topic sentence."
+        }
+      },
+      {
+        id: "L70-W07-D1-Q04",
+        prompt: "In a 6-line graph with 3 rising lines and 3 falling lines, which grouping strategy produces the cleanest logical structure?",
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Feature-First: Body Paragraph 1 synthesizes the 3 rising lines; Body Paragraph 2 synthesizes the 3 declining lines" },
+          { id: "B", text: "Writing six separate one-sentence paragraphs for each individual line" },
+          { id: "C", text: "Describing all six lines at the starting year, then all six at the ending year" },
+          { id: "D", text: "Selecting only one line to describe and discarding the other five lines entirely" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Feature-First: Body Paragraph 1 synthesizes the 3 rising lines; Body Paragraph 2 synthesizes the 3 declining lines",
+        correctExplanation: "Clustering by directional feature (rising vs falling) creates two balanced, logically coherent paragraphs that facilitate natural comparative sentence structures.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Describing all six lines at the starting year, then all six at the ending year",
+          diagnosticTitle: "Chronological Slice Confusion",
+          explanation: "Slicing by time creates two static snapshots rather than tracing the dynamic trajectory of each line, making trend tracking chaotic."
+        }
+      },
+      {
+        id: "L70-W07-D1-Q05",
+        prompt: "Which cohesive device creates an organic transition when moving from Body Paragraph 1 (growth trends) to Body Paragraph 2 (decline trends)?",
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "In sharp contrast to the aforementioned growth, fossil fuel consumption underwent a consistent contraction" },
+          { id: "B", text: "On the other side of things, oil was going down terribly" },
+          { id: "C", text: "Secondly, let me mention coal because coal is also in the chart" },
+          { id: "D", text: "However, moreover, furthermore, petrol decreased" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "In sharp contrast to the aforementioned growth, fossil fuel consumption underwent a consistent contraction",
+        correctExplanation: '"In sharp contrast to the aforementioned growth..." links back anaphorically to Body 1 while introducing the contrasting dynamic of Body 2 with academic poise.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. On the other side of things, oil was going down terribly",
+          diagnosticTitle: "Colloquial Transition Slip",
+          explanation: '"On the other side of things" is casual spoken English unsuitable for academic Task 1 reporting.'
+        }
+      },
+      {
+        id: "L70-W07-D1-Q06",
+        prompt: "What is the role of the 5-Minute Flash-Slip executed at the start of Day 1 in Week 7?",
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "To spend five minutes formulating a Task 2 thesis statement and two main supporting pillars for a fresh essay topic" },
+          { id: "B", text: "To draw a bar chart from memory using colored pencils" },
+          { id: "C", text: "To read the coursebook syllabus backwards" },
+          { id: "D", text: "To practice cursive handwriting speed on blank sheets" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "To spend five minutes formulating a Task 2 thesis statement and two main supporting pillars for a fresh essay topic",
+        correctExplanation: "The 5-min Flash-Slip maintains Task 2 cognitive reflexes during Task 1 units, ensuring candidates never lose thesis-building speed.",
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. To practice cursive handwriting speed on blank sheets",
+          diagnosticTitle: "Handwriting Mechanics Distraction",
+          explanation: "The Flash-Slip is an intellectual brainstorming and argument-structuring exercise, not a penmanship test."
+        }
+      },
+      {
+        id: "L70-W07-D1-Q07",
+        prompt: "In Name-First grouping for a comparative chart of 4 countries across 3 categories, how are the body paragraphs organized?",
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Body 1 examines the primary pair of countries across all 3 categories; Body 2 examines the remaining pair across the same metrics" },
+          { id: "B", text: "Body 1 lists all data for Country 1; Body 2 lists Country 2; Body 3 lists Country 3; Body 4 lists Country 4" },
+          { id: "C", text: "Body 1 discusses the year 2000; Body 2 discusses the year 2010; Body 3 discusses the year 2020" },
+          { id: "D", text: "All four countries are combined into one massive sentence with forty numbers" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Body 1 examines the primary pair of countries across all 3 categories; Body 2 examines the remaining pair across the same metrics",
+        correctExplanation: "Grouping by paired entities (e.g. developed economies vs emerging economies) allows direct side-by-side comparison across all metrics within each paragraph.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Body 1 lists all data for Country 1; Body 2 lists Country 2; Body 3 lists Country 3; Body 4 lists Country 4",
+          diagnosticTitle: "Over-Segmentation Pitfall",
+          explanation: "Creating four single-country body paragraphs fragments the essay and prevents comparative cross-analysis."
+        }
+      },
+      {
+        id: "L70-W07-D1-Q08",
+        prompt: "Which sentence integrates three data points into a single cohesive C1 comparative structure?",
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Commencing at 25 percent in 2010, renewable energy adoption surged to 42 percent by 2015, before stabilizing at 45 percent at the end of the period" },
+          { id: "B", text: "In 2010 it was 25 percent. Then in 2015 it was 42 percent. And then in the end it was 45 percent" },
+          { id: "C", text: "Renewable energy was 25 percent, 42 percent, and 45 percent across those three separate dates" },
+          { id: "D", text: "The number jumped up and up from 25 to 42 and then stopped at 45" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Commencing at 25 percent in 2010, renewable energy adoption surged to 42 percent by 2015, before stabilizing at 45 percent at the end of the period",
+        correctExplanation: 'This structure uses a participial opener ("Commencing at..."), a dynamic action verb ("surged to..."), and a subordinate temporal clause ("before stabilizing at..."), compressing three data points seamlessly.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. In 2010 it was 25 percent. Then in 2015 it was 42 percent. And then in the end it was 45 percent",
+          diagnosticTitle: "Kindergarten Repetitive Syntax",
+          explanation: 'Three repetitive simple sentences linked by "then" display Band 4.5 grammatical range.'
+        }
+      },
+      {
+        id: "L70-W07-D1-Q09",
+        prompt: "What signpost signals that a writer is turning to examine the secondary or outlier category in a chart?",
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "With regards to the remaining outlier, nuclear power maintained a negligible share of under 3 percent throughout" },
+          { id: "B", text: "Another thing we must see is nuclear because it is small" },
+          { id: "C", text: "And nuclear power was also there at the bottom of the picture" },
+          { id: "D", text: "Lastly, let me tell you about nuclear power" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "With regards to the remaining outlier, nuclear power maintained a negligible share of under 3 percent throughout",
+        correctExplanation: '"With regards to the remaining outlier..." and "maintained a negligible share of under 3 percent throughout" establish academic signposting and precise reporting.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Lastly, let me tell you about nuclear power",
+          diagnosticTitle: "Conversational First-Person Intrusion",
+          explanation: 'Using first-person conversational phrases ("let me tell you") breaches the objective third-person register mandatory in Task 1.'
+        }
+      },
+      {
+        id: "L70-W07-D1-Q10",
+        prompt: "When deciding between Name-First and Feature-First grouping, what is the best decision rule?",
+        lesson: "WEEK 7 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "If lines exhibit sharply divergent trajectories with clear rises versus drops, choose Feature-First; if categories share identical trajectories and natural geographical or sectoral pairings, choose Name-First" },
+          { id: "B", text: "Always choose Feature-First because examiners penalize Name-First automatically" },
+          { id: "C", text: "Flip a coin during the first minute of the test" },
+          { id: "D", text: "Use Name-First for even-numbered years and Feature-First for odd-numbered years" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "If lines exhibit sharply divergent trajectories with clear rises versus drops, choose Feature-First; if categories share identical trajectories and natural geographical or sectoral pairings, choose Name-First",
+        correctExplanation: "Data geometry dictates structure: divergent trends naturally group into Feature-First (growth vs decline), while clustered trends across distinct entities group cleanly into Name-First.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Always choose Feature-First because examiners penalize Name-First automatically",
+          diagnosticTitle: "Dogmatic Method Bias",
+          explanation: "Both methods are fully endorsed by Cambridge examiners; the choice depends purely on the cleanest logical grouping for that specific dataset."
+        }
+      },
+      // ==========================================
+      // WEEK 7 – DAY 2: BODY CONSTRUCTION FOR DYNAMIC VS STATIC CHARTS & 5-MIN TASK 2 FLASH-DRILL
+      // ==========================================
+      {
+        id: "L70-W07-D2-Q01",
+        prompt: 'What constitutes the critical fatal error in writing a report for a "Static Chart" depicting data for a single year (e.g., 2022)?',
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Using time-based dynamic verbs such as "increased", "decreased", "soared", or "plummeted" when no chronological movement has occurred' },
+          { id: "B", text: 'Using comparative structures like "higher than" or "twice as much as"' },
+          { id: "C", text: "Stating the exact year 2022 in the introduction" },
+          { id: "D", text: "Writing body paragraphs organized by ranking" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Using time-based dynamic verbs such as "increased", "decreased", "soared", or "plummeted" when no chronological movement has occurred',
+        correctExplanation: 'A static chart records a single snapshot in time. There is no passage of time, so claiming that figures "increased" or "plummeted" is factually false and severely penalizes Task Achievement and Lexical Resource.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: 'B. Using comparative structures like "higher than" or "twice as much as"',
+          diagnosticTitle: "Static Language Inversion",
+          explanation: 'Comparative structures ("higher than", "twice as much as") are the EXACT appropriate linguistic tools for static charts.'
+        }
+      },
+      {
+        id: "L70-W07-D2-Q02",
+        prompt: "Which linguistic toolbox is strictly required when describing a Static Chart?",
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The Language of Comparison and Proportion: superlatives, multipliers, ranking phrases, and percentage shares" },
+          { id: "B", text: "The Language of Change: fluctuated wildly, dipped sharply, leveled off, surged" },
+          { id: "C", text: "Future continuous conditional verb forms" },
+          { id: "D", text: "First-person personal reflections on consumer lifestyle choices" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The Language of Comparison and Proportion: superlatives, multipliers, ranking phrases, and percentage shares",
+        correctExplanation: 'Static charts demand comparative grammar: "accounted for the largest share", "threefold greater than", "in descending order", and "closely trailed by".',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The Language of Change: fluctuated wildly, dipped sharply, leveled off, surged",
+          diagnosticTitle: "Dynamic vs Static Confusion",
+          explanation: "Trend verbs describe change over time (dynamic); using them in static data demonstrates a failure to understand data representation."
+        }
+      },
+      {
+        id: "L70-W07-D2-Q03",
+        prompt: 'Examine this static data point: "In 2022, Country A consumed 60 liters of water per capita, while Country B consumed 20 liters." Which sentence frames this comparison with Band 7.5+ precision?',
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Per capita water consumption in Country A stood at 60 liters, precisely three times the volume recorded for Country B" },
+          { id: "B", text: "Country A increased by 40 liters more than Country B in the year 2022" },
+          { id: "C", text: "Water consumption soared up to 60 liters in Country A, but Country B plummeted to 20" },
+          { id: "D", text: "Country A had 60 liters, which was bigger than Country B which had 20 liters" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Per capita water consumption in Country A stood at 60 liters, precisely three times the volume recorded for Country B",
+        correctExplanation: '"Precisely three times the volume recorded for Country B" demonstrates sophisticated proportional comparison without any inappropriate dynamic change verbs.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Water consumption soared up to 60 liters in Country A, but Country B plummeted to 20",
+          diagnosticTitle: "False Dynamic Projection",
+          explanation: 'Using "soared" and "plummeted" invents chronological movement where only a static cross-sectional difference exists.'
+        }
+      },
+      {
+        id: "L70-W07-D2-Q04",
+        prompt: "Which ranking structure correctly reports the top three categories in a static table for 2023?",
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Engineering constituted the predominant major, accounting for 38 percent of enrollments, closely trailed by Business at 32 percent and Humanities at 18 percent" },
+          { id: "B", text: "Engineering was first. Then Business went down to second. And then Humanities was third" },
+          { id: "C", text: "Engineering won the golden medal with 38 percent, defeating Business and Humanities" },
+          { id: "D", text: "Engineering increased to 38 percent, followed by Business which dropped to 32 percent" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Engineering constituted the predominant major, accounting for 38 percent of enrollments, closely trailed by Business at 32 percent and Humanities at 18 percent",
+        correctExplanation: '"Constituted the predominant major", "accounting for 38 percent", and "closely trailed by..." illustrate advanced static ranking without dynamic misnomers.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Engineering won the golden medal with 38 percent, defeating Business and Humanities",
+          diagnosticTitle: "Sporting Clich\xE9 Inappropriateness",
+          explanation: 'Metaphors like "won the golden medal" and "defeating" belong to sports journalism, not academic statistical reporting.'
+        }
+      },
+      {
+        id: "L70-W07-D2-Q05",
+        prompt: 'In a dynamic line graph from 2000 to 2020, what is the correct usage of the verb "fluctuate"?',
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Oil prices fluctuated erratically between 40 dollars and 75 dollars per barrel throughout the first decade" },
+          { id: "B", text: "Oil prices fluctuated from 40 dollars in 2000 down to 20 dollars in 2020 in a straight line" },
+          { id: "C", text: "Oil prices fluctuated upward continuously without ever going down" },
+          { id: "D", text: "Oil prices were fluctuated by the OPEC ministers in 2005" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Oil prices fluctuated erratically between 40 dollars and 75 dollars per barrel throughout the first decade",
+        correctExplanation: '"Fluctuate" denotes continuous irregular movement up and down within a bounded range; stating that it "fluctuated between X and Y" captures this perfectly.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Oil prices fluctuated from 40 dollars in 2000 down to 20 dollars in 2020 in a straight line",
+          diagnosticTitle: "Linear Movement Contradiction",
+          explanation: 'A straight steady decline is a drop or contraction, not a fluctuation. Using "fluctuate" for a monotonic trend reveals vocabulary misunderstanding.'
+        }
+      },
+      {
+        id: "L70-W07-D2-Q06",
+        prompt: "Which prepositional phrase accurately describes reaching an all-time maximum in a dynamic chart?",
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "reaching a peak of 85 percent in 2018" },
+          { id: "B", text: "reaching at a peak of 85 percent in 2018" },
+          { id: "C", text: "peaking on 85 percent in 2018" },
+          { id: "D", text: "getting a peak to 85 percent in 2018" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "reaching a peak of 85 percent in 2018",
+        correctExplanation: 'The standard collocations are "reach a peak OF [figure]" or "peak AT [figure]". "Reach at a peak" is an erroneous double-preposition construction.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. reaching at a peak of 85 percent in 2018",
+          diagnosticTitle: "Preposition Redundancy",
+          explanation: '"Reach" is a transitive verb taking an immediate noun phrase ("reach a peak"); inserting "at" is ungrammatical.'
+        }
+      },
+      {
+        id: "L70-W07-D2-Q07",
+        prompt: "How should a candidate handle a static chart with 12 distinct categories?",
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Synthesize by clustering into top performers, intermediate cluster, and negligible minority, reporting key numerical anchors selectively" },
+          { id: "B", text: "Devote twelve separate sentences to listing every single number sequentially" },
+          { id: "C", text: "Refuse to write the essay because twelve categories is too many" },
+          { id: "D", text: "Invent random percentages for the missing numbers" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Synthesize by clustering into top performers, intermediate cluster, and negligible minority, reporting key numerical anchors selectively",
+        correctExplanation: "Official descriptors reward selecting significant features and grouping data logically. Listing 12 data points mechanically is penalized under Task Achievement.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Devote twelve separate sentences to listing every single number sequentially",
+          diagnosticTitle: "Exhaustive Cataloging Trap",
+          explanation: 'Task 1 explicitly instructs candidates to "summarize by selecting and reporting the main features, and make comparisons where relevant", not transcribe all raw data.'
+        }
+      },
+      {
+        id: "L70-W07-D2-Q08",
+        prompt: 'Which sentence correctly expresses a static difference using the noun "margin"?',
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Expenditure on food exceeded that on clothing by a substantial margin of 25 percentage points" },
+          { id: "B", text: "Expenditure on food exceeded clothing with a margin of 25 percentage points" },
+          { id: "C", text: "Expenditure on food increased a margin of 25 percentage points than clothing" },
+          { id: "D", text: "Food expenditure had a margin gap growing bigger over clothing" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Expenditure on food exceeded that on clothing by a substantial margin of 25 percentage points",
+        correctExplanation: '"Exceeded that on clothing BY a substantial margin of..." demonstrates flawless academic comparison and accurate pronoun substitution ("that on clothing").',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Expenditure on food exceeded clothing with a margin of 25 percentage points",
+          diagnosticTitle: "Illogical Comparison (Faulty Parallelism)",
+          explanation: 'Saying "expenditure exceeded clothing" compares money with physical garments; formal English requires comparing "expenditure on food with that on clothing".'
+        }
+      },
+      {
+        id: "L70-W07-D2-Q09",
+        prompt: 'What is the distinction between "percent" and "percentage points"?',
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Percentage points measure the absolute arithmetic difference between two percentages, whereas percent measures the relative proportional change" },
+          { id: "B", text: "Percent is American English and percentage points is British English" },
+          { id: "C", text: "They are identical and can be swapped freely in any sentence" },
+          { id: "D", text: "Percentage points is used only when numbers are smaller than five" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Percentage points measure the absolute arithmetic difference between two percentages, whereas percent measures the relative proportional change",
+        correctExplanation: "If a rate moves from 10% to 15%, it has increased by 5 percentage points, but by 50 percent. Confusing these terms indicates statistical innumeracy.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. They are identical and can be swapped freely in any sentence",
+          diagnosticTitle: "Terminology Equivalence Fallacy",
+          explanation: 'Claiming an increase from 10% to 15% is a "5 percent increase" is a mathematical error that lowers Task Achievement.'
+        }
+      },
+      {
+        id: "L70-W07-D2-Q10",
+        prompt: "In a dynamic line graph where a figure stays flat between 2005 and 2012, which expression is academically accurate?",
+        lesson: "WEEK 7 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The figure plateaued at approximately 45 percent, remaining virtually unchanged over the seven-year interval" },
+          { id: "B", text: "The number was sleeping and took a rest between 2005 and 2012" },
+          { id: "C", text: "The line froze dead at 45 percent because nobody was buying products" },
+          { id: "D", text: "A zero movement action happened to the percentage from 2005 to 2012" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The figure plateaued at approximately 45 percent, remaining virtually unchanged over the seven-year interval",
+        correctExplanation: '"Plateaued at approximately 45 percent" and "remaining virtually unchanged over the seven-year interval" reflect precise academic trend descriptions.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The number was sleeping and took a rest between 2005 and 2012",
+          diagnosticTitle: "Anthropomorphic Metaphor",
+          explanation: 'Numbers do not "sleep" or "take a rest"; personifying data points sounds juvenile in formal academic writing.'
+        }
+      },
+      // ==========================================
+      // WEEK 7 – DAY 3: PART 2: MEMORABLE EVENTS / EXPERIENCES & NARRATIVE ARC ARCHITECTURE
+      // ==========================================
+      {
+        id: "L70-W07-D3-Q01",
+        prompt: 'What four sequential stages compose the "Narrative Arc Architecture" for IELTS Speaking Part 2 event monologues?',
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Orientation setting the context, Complication introducing the unexpected challenge, Climax marking the pivotal turning point, and Resolution providing the enduring reflective insight" },
+          { id: "B", text: "Introduction, Definition, Five synonyms, and Goodbye statement" },
+          { id: "C", text: "Speaking about Monday, Tuesday, Wednesday, and Thursday in order" },
+          { id: "D", text: "Reciting a poem, telling a joke, singing a song, and asking for a high score" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Orientation setting the context, Complication introducing the unexpected challenge, Climax marking the pivotal turning point, and Resolution providing the enduring reflective insight",
+        correctExplanation: "Structuring personal narratives around Orientation -> Complication -> Climax -> Resolution creates dramatic momentum, sustains fluency, and demonstrates a broad range of narrative tenses.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Introduction, Definition, Five synonyms, and Goodbye statement",
+          diagnosticTitle: "Robotic Speech Formula",
+          explanation: "Speaking Part 2 is a personal monologue, not a dictionary definition exercise; narrative arc frameworks keep stories engaging and natural."
+        }
+      },
+      {
+        id: "L70-W07-D3-Q02",
+        prompt: "Which sentence demonstrates sophisticated narrative past tenses (Past Perfect Continuous and Past Simple) during the Complication stage?",
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "We had been driving through the mountain pass for over four hours when torrential rain suddenly washed out the access bridge" },
+          { id: "B", text: "We drove on the mountain and rain came down very fast and bridge broke" },
+          { id: "C", text: "We were drive cars and rain was fall and bridge was broken down" },
+          { id: "D", text: "We drive, rain falls, and bridge breaks down completely" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "We had been driving through the mountain pass for over four hours when torrential rain suddenly washed out the access bridge",
+        correctExplanation: '"Had been driving" (Past Perfect Continuous for background duration) combined with "suddenly washed out" (Past Simple for the disruptive event) showcases Band 8.0 grammatical range.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. We drove on the mountain and rain came down very fast and bridge broke",
+          diagnosticTitle: "Monotonous Past Simple Stacking",
+          explanation: 'Relying exclusively on simple past verbs linked by "and" demonstrates limited syntactic range (Band 5.5).'
+        }
+      },
+      {
+        id: "L70-W07-D3-Q03",
+        prompt: 'How can a candidate incorporate "Sensory Descriptive Details" into a monologue about an outdoor festival without sounding rehearsed?',
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Weave in vivid acoustic, olfactory, or visual impressions that convey the atmosphere: "the pungent aroma of street food mingled with the thunderous resonance of live acoustic percussion"' },
+          { id: "B", text: 'State: "I used my five senses: eye, ear, nose, tongue, and skin to experience the event"' },
+          { id: "C", text: "List the colors of the clothes worn by twenty different spectators" },
+          { id: "D", text: "Explain the chemical composition of outdoor soundwaves" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Weave in vivid acoustic, olfactory, or visual impressions that convey the atmosphere: "the pungent aroma of street food mingled with the thunderous resonance of live acoustic percussion"',
+        correctExplanation: 'Evocative sensory language ("pungent aroma", "mingled with", "thunderous resonance") paints an authentic mental image, boosting Lexical Resource to Band 8.0.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: 'B. State: "I used my five senses: eye, ear, nose, tongue, and skin to experience the event"',
+          diagnosticTitle: "Pedantic Literalism",
+          explanation: "Naming the five senses explicitly sounds awkward and juvenile rather than descriptive and immersive."
+        }
+      },
+      {
+        id: "L70-W07-D3-Q04",
+        prompt: 'In Speaking Part 2, what is the best strategy for the "Resolution and Reflection" stage of a story about a personal setback?',
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Reflect philosophically on emotional growth, stating how navigating the ordeal fostered greater adaptability and psychological fortitude" },
+          { id: "B", text: "Complain that life is completely unfair and blame family members for the failure" },
+          { id: "C", text: "Ask the examiner whether they have ever had a similar terrible experience" },
+          { id: "D", text: 'End abruptly with "That is all I can remember today"' }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Reflect philosophically on emotional growth, stating how navigating the ordeal fostered greater adaptability and psychological fortitude",
+        correctExplanation: 'Closing with self-reflection and personal maturity ("fostered adaptability", "psychological fortitude") brings the monologue to an intellectually rich, authoritative finish.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: 'D. End abruptly with "That is all I can remember today"',
+          diagnosticTitle: "Abrupt Discourse Collapse",
+          explanation: "Ending abruptly reveals conversational exhaustion and a lack of discourse management strategies."
+        }
+      },
+      {
+        id: "L70-W07-D3-Q05",
+        prompt: "Which idiomatic phrase naturally conveys overcoming intense nervousness before a public event?",
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "I had severe butterflies in my stomach initially, but once I took the stage, my composure completely crystallized" },
+          { id: "B", text: "My heart was jumping like a kangaroo in Australia because I was so terrified" },
+          { id: "C", text: "I had cold feet in my shoes and hot head in my brain" },
+          { id: "D", text: "I died a thousand deaths and then came back alive to speak" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "I had severe butterflies in my stomach initially, but once I took the stage, my composure completely crystallized",
+        correctExplanation: '"Butterflies in my stomach" is an idiomatic English expression for anticipatory nervousness, paired with "composure crystallized" for a smooth transition.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. I had cold feet in my shoes and hot head in my brain",
+          diagnosticTitle: "Distorted Idiom Mixing",
+          explanation: 'Mashing together idioms like "cold feet" with invented phrases ("hot head in my brain") results in awkward language errors.'
+        }
+      },
+      {
+        id: "L70-W07-D3-Q06",
+        prompt: 'In Speaking Part 3, how should a candidate answer: "Why do people attach such profound emotional significance to national anniversary celebrations?"',
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Highlight collective historical memory, national cohesion, and the ritualistic reaffirmation of shared civic values across generations" },
+          { id: "B", text: "Because people get a free day off from work and can go shopping at the mall" },
+          { id: "C", text: "I only like fireworks because they make loud noise in the sky" },
+          { id: "D", text: "Governments force everyone to celebrate anniversaries by law" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Highlight collective historical memory, national cohesion, and the ritualistic reaffirmation of shared civic values across generations",
+        correctExplanation: 'Analyzing sociological phenomena through "collective historical memory", "national cohesion", and "shared civic values" demonstrates mature, Band 8.0 reasoning.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Because people get a free day off from work and can go shopping at the mall",
+          diagnosticTitle: "Superficial Pragmatism",
+          explanation: "Focusing exclusively on pragmatic perks like a day off misses the profound cultural significance of national commemorations."
+        }
+      },
+      {
+        id: "L70-W07-D3-Q07",
+        prompt: "Which discourse marker indicates an unexpected plot turn during a personal story?",
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Much to our astonishment or Against all foreseeable odds" },
+          { id: "B", text: "In conclusion or To sum up everything" },
+          { id: "C", text: "Firstly or In the first place" },
+          { id: "D", text: "According to Cambridge statistics" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Much to our astonishment or Against all foreseeable odds",
+        correctExplanation: '"Much to our astonishment" and "Against all foreseeable odds" inject narrative color and build suspense at the climax of the story.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. In conclusion or To sum up everything",
+          diagnosticTitle: "Essay Linker Misuse in Spoken Story",
+          explanation: '"In conclusion" is an essay wrap-up marker, not a narrative device for introducing unexpected events.'
+        }
+      },
+      {
+        id: "L70-W07-D3-Q08",
+        prompt: "What grammatical structure allows a candidate to highlight a specific moment as the most memorable element of an event?",
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'A Cleft Sentence: "What struck me most profoundly about the ceremony was the dignified humility of the keynote speaker"' },
+          { id: "B", text: "A simple list of nouns separated by dashes" },
+          { id: "C", text: "A passive voice sentence missing a grammatical agent" },
+          { id: "D", text: 'Starting a sentence with the word "So" followed by five exclamation marks' }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'A Cleft Sentence: "What struck me most profoundly about the ceremony was the dignified humility of the keynote speaker"',
+        correctExplanation: 'Pseudo-cleft sentences ("What struck me most was...") provide dramatic focus and syntactic complexity, scoring high in Grammatical Range.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. A simple list of nouns separated by dashes",
+          diagnosticTitle: "Syntactic Incompleteness",
+          explanation: "Listing nouns without complete clause architecture fails to fulfill grammatical range criteria."
+        }
+      },
+      {
+        id: "L70-W07-D3-Q09",
+        prompt: "In Speaking Part 3, what is the best approach when evaluating the commercialization of cultural festivals?",
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Contrast economic sustainability and tourism revenue against the danger of cultural commodification and spiritual dilution" },
+          { id: "B", text: "Argue that money is evil and all festivals should be completely free with zero vendors" },
+          { id: "C", text: "Say you enjoy eating cotton candy at festivals whenever you have cash" },
+          { id: "D", text: "Describe what your grandparents ate during the New Year festival fifty years ago" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Contrast economic sustainability and tourism revenue against the danger of cultural commodification and spiritual dilution",
+        correctExplanation: 'Weighing economic revitalization against "cultural commodification" and "spiritual dilution" demonstrates mature analytical ability.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Say you enjoy eating cotton candy at festivals whenever you have cash",
+          diagnosticTitle: "Trivial Consumer Focus",
+          explanation: "Focusing on snacks treats an institutional policy question as a personal dining preference, dropping the answer out of Part 3 register."
+        }
+      },
+      {
+        id: "L70-W07-D3-Q10",
+        prompt: "Why should candidates avoid fabricating an outlandish, impossible story (e.g. meeting an astronaut on Mars) in Speaking Part 2?",
+        lesson: "WEEK 7 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Unrealistic fabricated scenarios require immense cognitive load to maintain consistency, causing frequent hesitations, unnatural pauses, and vocabulary breakdowns" },
+          { id: "B", text: "The examiner will call the police to verify your passport records" },
+          { id: "C", text: "Examiners subtract ten points for every sci-fi movie reference" },
+          { id: "D", text: "Personal stories must be verified by a notary public before the test" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Unrealistic fabricated scenarios require immense cognitive load to maintain consistency, causing frequent hesitations, unnatural pauses, and vocabulary breakdowns",
+        correctExplanation: "Inventing wild lies creates high mental friction: candidates spend their cognitive bandwidth fabricating plot details rather than focusing on English fluency, intonation, and grammar.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The examiner will call the police to verify your passport records",
+          diagnosticTitle: "Institutional Paranoia Myth",
+          explanation: "Examiners assess language, not truthfulness; the danger is communicative collapse due to cognitive overload, not legal consequences."
+        }
+      }
+    ];
+  }
+});
+
+// server/services/leader_bank_parts/week8.data.ts
+var LEADER_WEEK_8_QUESTIONS;
+var init_week8_data4 = __esm({
+  "server/services/leader_bank_parts/week8.data.ts"() {
+    LEADER_WEEK_8_QUESTIONS = [
+      // ==========================================
+      // WEEK 8 – DAY 1: DYNAMIC CHART: ABSOLUTE VS PROPORTIONAL GROWTH & 5-MIN TASK 2 FLASH-DRILL
+      // ==========================================
+      {
+        id: "L70-W08-D1-Q01",
+        prompt: "In a dynamic line graph, if an unemployment rate rises from 10% in 2010 to 20% in 2020, which statement is mathematically and grammatically accurate?",
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The unemployment rate surged by 10 percentage points, representing a two-fold increase over the decade" },
+          { id: "B", text: "The unemployment rate increased by 10% from 2010 to 2020" },
+          { id: "C", text: "The unemployment rate experienced a 10 percent elevation to reach 20 percentage points" },
+          { id: "D", text: "Unemployment doubled by 10 percent points across ten years" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The unemployment rate surged by 10 percentage points, representing a two-fold increase over the decade",
+        correctExplanation: 'Moving from 10% to 20% is an absolute arithmetic increase of 10 percentage points (or a relative increase of 100%, doubling the initial rate). Calling it "increased by 10%" is statistically inaccurate.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The unemployment rate increased by 10% from 2010 to 2020",
+          diagnosticTitle: "Percent vs Percentage Point Confusion",
+          explanation: "An increase of 10% on a base of 10% would only reach 11%, not 20%. The correct term for the subtraction of two percentages is percentage points."
+        }
+      },
+      {
+        id: "L70-W08-D1-Q02",
+        prompt: "Which sentence correctly demonstrates the use of a multiplier in academic Task 1 reporting?",
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Car production grew threefold, escalating from 50,000 units in 2005 to 150,000 units by 2015" },
+          { id: "B", text: "Car production tripled by three times from 50,000 to 150,000 units" },
+          { id: "C", text: "Car production increased threefold times between 2005 and 2015" },
+          { id: "D", text: "Car production had a three times growth up to 150,000" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Car production grew threefold, escalating from 50,000 units in 2005 to 150,000 units by 2015",
+        correctExplanation: '"Grew threefold" or "tripled" is the standard academic multiplier structure. Combining "tripled" with "by three times" is redundant.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Car production tripled by three times from 50,000 to 150,000 units",
+          diagnosticTitle: "Tautological Multiplier Redundancy",
+          explanation: 'Writing "tripled by three times" repeats the same mathematical concept twice within one predicate.'
+        }
+      },
+      {
+        id: "L70-W08-D1-Q03",
+        prompt: "Examine this trend: A metric drops from 80% to 40%, stays flat for three years, and then climbs back to 65%. Which sentence encapsulates this trajectory?",
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Having halved to 40 percent and plateaued for three years, the figure staged a marked rebound to 65 percent" },
+          { id: "B", text: "The figure dropped down to 40, slept for three years, and woke up to 65" },
+          { id: "C", text: "First it went to 40 then it stopped and then it increased up again to 65 percent" },
+          { id: "D", text: "The rate was reduced 40 percent points before bouncing up like a ball" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Having halved to 40 percent and plateaued for three years, the figure staged a marked rebound to 65 percent",
+        correctExplanation: 'This sentence compresses three stages into a single elegant structure using a perfect participial opener ("Having halved... and plateaued..."), followed by the main action ("staged a marked rebound").',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. First it went to 40 then it stopped and then it increased up again to 65 percent",
+          diagnosticTitle: "Pedestrian Sequential Coordination",
+          explanation: 'Linking actions with "first... then... and then" reflects basic Band 5.0 phrasing.'
+        }
+      },
+      {
+        id: "L70-W08-D1-Q04",
+        prompt: 'What is the grammatical distinction between "increased by 20%" and "increased to 20%"?',
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Increased by indicates the margin of change, whereas increased to indicates the final terminal destination figure" },
+          { id: "B", text: "Increased by is used for numbers under one hundred, while increased to is used for numbers over one thousand" },
+          { id: "C", text: "Increased by is active voice, while increased to is passive voice" },
+          { id: "D", text: "They are completely interchangeable in all contexts" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Increased by indicates the margin of change, whereas increased to indicates the final terminal destination figure",
+        correctExplanation: '"By" indicates the numerical distance traversed (the margin of change); "to" identifies the final level reached. Confusing them distorts the data completely.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. They are completely interchangeable in all contexts",
+          diagnosticTitle: "Preposition Interchangeability Myth",
+          explanation: "If a value moves from 10 to 30, it increased BY 20, but increased TO 30. Swapping them turns a true statement into a factual falsehood."
+        }
+      },
+      {
+        id: "L70-W08-D1-Q05",
+        prompt: "Which phrase describes a sudden, sharp downward plunge followed by immediate stability in a dynamic chart?",
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "plummeted abruptly before leveling off at 15 percent" },
+          { id: "B", text: "sank down slowly and died at 15 percent" },
+          { id: "C", text: "jumped down terribly and stayed there forever" },
+          { id: "D", text: "was falling with high speed to reach 15" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "plummeted abruptly before leveling off at 15 percent",
+        correctExplanation: '"Plummeted abruptly" captures the rapid decline, and "leveling off at [figure]" describes the stabilization phase using academic collocations.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. sank down slowly and died at 15 percent",
+          diagnosticTitle: "Morbid Figurative Language",
+          explanation: 'Describing numbers as having "died" is inappropriately emotional and informal for IELTS Task 1.'
+        }
+      },
+      {
+        id: "L70-W08-D1-Q06",
+        prompt: "How should a candidate describe an erratic movement that oscillates between 30 and 50 units throughout a 15-year period?",
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "exhibited volatile fluctuations within a 20-unit corridor between 30 and 50 units" },
+          { id: "B", text: "was crazy going up and down every single day" },
+          { id: "C", text: "changed a lot because the line was unstable" },
+          { id: "D", text: "increased and decreased fifty times continuously" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "exhibited volatile fluctuations within a 20-unit corridor between 30 and 50 units",
+        correctExplanation: '"Exhibited volatile fluctuations within a 20-unit corridor" combines nominalization with precise quantitative parameters.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. was crazy going up and down every single day",
+          diagnosticTitle: "Hyperbolic Slang",
+          explanation: 'Describing data as "crazy going up and down" violates the academic objectivity required by Cambridge assessment criteria.'
+        }
+      },
+      {
+        id: "L70-W08-D1-Q07",
+        prompt: "In the 5-Minute Task 2 Flash-Drill, why is writing a full conclusion discouraged?",
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The drill is designed specifically to test rapid thesis generation and core argument mapping within five minutes, not full essay completion" },
+          { id: "B", text: "Conclusions are not scored in Task 2" },
+          { id: "C", text: "Writing a conclusion in under five minutes causes automatic test disqualification" },
+          { id: "D", text: "The coursebook instructs students to leave essays unfinished" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The drill is designed specifically to test rapid thesis generation and core argument mapping within five minutes, not full essay completion",
+        correctExplanation: "The 5-min drill tests cognitive agility at the top of the essay hierarchy: decomposing the prompt, taking a stand, and drafting two structural pillars.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Conclusions are not scored in Task 2",
+          diagnosticTitle: "Component Neglect Myth",
+          explanation: "Conclusions are vital in full Task 2 essays; they are omitted in the 5-minute Flash-Drill only because it is a micro-planning exercise."
+        }
+      },
+      {
+        id: "L70-W08-D1-Q08",
+        prompt: "Which adverbial phrase indicates an upward trend that occurred steadily without sharp interruptions?",
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "advanced at a steady, incremental pace" },
+          { id: "B", text: "shot up like a rocket" },
+          { id: "C", text: "blew up into big numbers" },
+          { id: "D", text: "went up without thinking" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "advanced at a steady, incremental pace",
+        correctExplanation: '"Advanced at a steady, incremental pace" accurately describes continuous, gradual growth using formal register.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. shot up like a rocket",
+          diagnosticTitle: "Sensational Simile",
+          explanation: 'Similes like "shot up like a rocket" are journalistic and informal, unsuited for objective statistical reporting.'
+        }
+      },
+      {
+        id: "L70-W08-D1-Q09",
+        prompt: 'Examine this data pair: In 2000, Solar = 5%, Wind = 10%. In 2020, Solar = 30%, Wind = 25%. Which sentence articulates the "Overtaking" event with Band 8.0 precision?',
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Despite trailing wind generation at the start of the timeframe, solar energy experienced exponential growth to overtake it by 2020" },
+          { id: "B", text: "Wind was winning in 2000, but Solar ran faster and beat Wind in 2020" },
+          { id: "C", text: "Solar was smaller than wind, but then Solar grew bigger and wind was defeated" },
+          { id: "D", text: "At 2000 wind was 10 and solar was 5, then solar overtook wind to become 30" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Despite trailing wind generation at the start of the timeframe, solar energy experienced exponential growth to overtake it by 2020",
+        correctExplanation: 'This sentence contrasts the initial positions using a concessive participial phrase ("Despite trailing..."), followed by the overtaking event described with formal academic vocabulary.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Wind was winning in 2000, but Solar ran faster and beat Wind in 2020",
+          diagnosticTitle: "Athletic Competition Metaphor",
+          explanation: 'Describing energy sources as "running faster" and "beating" competitors treats energy generation like an athletic race.'
+        }
+      },
+      {
+        id: "L70-W08-D1-Q10",
+        prompt: 'What is the correct preposition in: "Sales peaked ___ 500 units in July, an increase ___ 150 units over June"?',
+        lesson: "WEEK 8 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "at, of" },
+          { id: "B", text: "in, to" },
+          { id: "C", text: "on, by" },
+          { id: "D", text: "to, for" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "at, of",
+        correctExplanation: 'The verb "peak" takes the preposition "at" ("peaked AT 500 units"), and the noun "increase" takes "of" when specifying the margin ("an increase OF 150 units").',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. on, by",
+          diagnosticTitle: "Verb vs Noun Preposition Mismatch",
+          explanation: 'While the verb form takes "by" (increased BY 150), the noun form takes "of" (an increase OF 150).'
+        }
+      },
+      // ==========================================
+      // WEEK 8 – DAY 2: SENTENCE CONDENSATION & COMPLEX MIXED CHARTS & 5-MIN TASK 2 FLASH-DRILL
+      // ==========================================
+      {
+        id: "L70-W08-D2-Q01",
+        prompt: 'In IELTS Task 1 Sentence Condensation, how should the adverb "respectively" be correctly positioned to report data for three countries?',
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The recycling rates in France, Germany, and the UK stood at 35 percent, 48 percent, and 52 percent, respectively" },
+          { id: "B", text: "Respectively, France was 35 percent, Germany was 48 percent, and the UK was 52 percent" },
+          { id: "C", text: "France, respectively Germany, and the UK had recycling numbers of 35, 48, and 52" },
+          { id: "D", text: "The rates stood at 35, 48, and 52 percent respectively for France and Germany" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The recycling rates in France, Germany, and the UK stood at 35 percent, 48 percent, and 52 percent, respectively",
+        correctExplanation: '"Respectively" is placed at the end of the clause (preceded by a comma) to clarify that the sequence of numbers corresponds one-to-one with the previously listed sequence of entities.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Respectively, France was 35 percent, Germany was 48 percent, and the UK was 52 percent",
+          diagnosticTitle: "Clause-Initial Misplacement",
+          explanation: 'Placing "respectively" at the front of a sentence is ungrammatical because it requires an established sequence to refer back to.'
+        }
+      },
+      {
+        id: "L70-W08-D2-Q02",
+        prompt: 'When condensing three separate simple sentences: "Car ownership was 40% in 2000. It rose to 55% in 2010. It reached 70% in 2020", which compound-complex structure demonstrates Band 8.0 efficiency?',
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Starting at 40 percent in 2000, car ownership rose steadily to 55 percent by 2010, before culminating at 70 percent at the close of the period" },
+          { id: "B", text: "Car ownership was 40% in 2000, and it rose to 55% in 2010, and then it reached 70% in 2020" },
+          { id: "C", text: "Car ownership was 40% in 2000, which increased to 55% in 2010, which reached 70% in 2020" },
+          { id: "D", text: "Car ownership in 2000, 2010, and 2020 had numbers of 40%, 55%, and 70%" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Starting at 40 percent in 2000, car ownership rose steadily to 55 percent by 2010, before culminating at 70 percent at the close of the period",
+        correctExplanation: 'This structure uses a participial introductory clause ("Starting at..."), an active main clause ("rose steadily to..."), and a prepositional temporal closure ("before culminating at..."), packaging three years into one fluid sentence.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Car ownership was 40% in 2000, which increased to 55% in 2010, which reached 70% in 2020",
+          diagnosticTitle: "Stacked Relative Clause Trap",
+          explanation: 'Stacking nested "which" clauses back-to-back creates clumsy, awkward syntax that degrades Grammatical Range.'
+        }
+      },
+      {
+        id: "L70-W08-D2-Q03",
+        prompt: 'In a "Mixed Chart" comprising a Pie Chart showing energy sources in 2020 and a Bar Chart showing greenhouse gas emissions by sector, how should the body paragraphs be logically partitioned?',
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Body 1 synthesizes the energy distribution from the Pie Chart; Body 2 analyzes sectoral emissions from the Bar Chart, highlighting any cross-chart correlations" },
+          { id: "B", text: "Describe one slice of the pie, then one bar from the chart, alternating back and forth sentence by sentence" },
+          { id: "C", text: "Combine all numbers into a single massive 150-word sentence" },
+          { id: "D", text: "Ignore the Pie Chart completely and focus entirely on the Bar Chart" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Body 1 synthesizes the energy distribution from the Pie Chart; Body 2 analyzes sectoral emissions from the Bar Chart, highlighting any cross-chart correlations",
+        correctExplanation: "Dedication of one body paragraph to each distinct visual representation establishes clear structural boundaries while enabling cross-referencing in the overview and second body.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Describe one slice of the pie, then one bar from the chart, alternating back and forth sentence by sentence",
+          diagnosticTitle: "Alternating Fragmented Structure",
+          explanation: "Jumping back and forth between different visual formats confuses the reader and destroys paragraph coherence."
+        }
+      },
+      {
+        id: "L70-W08-D2-Q04",
+        prompt: "What is the optimal length target for an IELTS Task 1 report to maximize data precision and grammatical accuracy?",
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "160 to 190 words" },
+          { id: "B", text: "90 to 110 words" },
+          { id: "C", text: "350 to 400 words" },
+          { id: "D", text: "Exactly 150 words" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "160 to 190 words",
+        correctExplanation: "Writing 160-190 words satisfies the 150-word minimum, permits thorough data reporting and comparison, and takes roughly 15-18 minutes, leaving ample time for Task 2.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. 350 to 400 words",
+          diagnosticTitle: "Task 1 Overwriting Trap",
+          explanation: "Task 1 counts for only one-third of the total writing mark; spending 30 minutes to write 350 words deprives Task 2 of essential development time."
+        }
+      },
+      {
+        id: "L70-W08-D2-Q05",
+        prompt: "Which sentence integrates two parallel statistics using a subordinating concessive clause?",
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "While agriculture accounted for the lion's share of freshwater withdrawal at 68 percent, industrial applications absorbed a modest 12 percent" },
+          { id: "B", text: "Agriculture had 68 percent. However, industry had only 12 percent" },
+          { id: "C", text: "Agriculture was 68 percent and industry was 12 percent because water is used differently" },
+          { id: "D", text: "Although agriculture used 68 percent, but industry used 12 percent" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "While agriculture accounted for the lion's share of freshwater withdrawal at 68 percent, industrial applications absorbed a modest 12 percent",
+        correctExplanation: '"While [Clause 1], [Clause 2]" balances two contrasting statistics cleanly within a single complex sentence.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Although agriculture used 68 percent, but industry used 12 percent",
+          diagnosticTitle: "Double Conjunction Error",
+          explanation: 'Using "Although" and "but" in the same sentence is a severe grammatical error typical of direct L1 translation.'
+        }
+      },
+      {
+        id: "L70-W08-D2-Q06",
+        prompt: "In a mixed visual prompt with a dynamic line graph and a static table, how should the Overview be structured?",
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "A two-sentence overview: Sentence 1 captures the macro trend of the dynamic line graph, and Sentence 2 summarizes the dominant category or outlier in the static table" },
+          { id: "B", text: "A single sentence describing only the line graph and ignoring the table completely" },
+          { id: "C", text: "A list of every number from both visuals combined into a single paragraph" },
+          { id: "D", text: "An overview stating that both graphics are too complex to summarize" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "A two-sentence overview: Sentence 1 captures the macro trend of the dynamic line graph, and Sentence 2 summarizes the dominant category or outlier in the static table",
+        correctExplanation: "For mixed charts, the overview must synthesize the overarching message of BOTH graphics to achieve Band 7+ in Task Achievement.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. A single sentence describing only the line graph and ignoring the table completely",
+          diagnosticTitle: "Incomplete Overview Trap",
+          explanation: "Omitting one visual from the overview prevents the response from presenting a comprehensive summary, capping Task Achievement at Band 6."
+        }
+      },
+      {
+        id: "L70-W08-D2-Q07",
+        prompt: 'Which phrase avoids the clumsy repetition of "the percentage of" across consecutive sentences?',
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "the proportion of, the relative share of, or the fraction of" },
+          { id: "B", text: "the amount of numbers of or the quantity of percentages" },
+          { id: "C", text: "how much persons or the counted total" },
+          { id: "D", text: "the math calculation of or the percent size" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "the proportion of, the relative share of, or the fraction of",
+        correctExplanation: '"The proportion of", "the relative share of", and "the fraction of" are accurate academic synonyms for "the percentage of".',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. the amount of numbers of or the quantity of percentages",
+          diagnosticTitle: "Awkward Invented Phrasing",
+          explanation: '"The quantity of percentages" is unidiomatic and confusing in statistical analysis.'
+        }
+      },
+      {
+        id: "L70-W08-D2-Q08",
+        prompt: 'Transform this wordy sentence: "There were 15% of students who chose French and there were 25% of students who chose Spanish and there were 40% of students who chose German" into a condensed C1 sentence.',
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "French, Spanish, and German were selected by 15 percent, 25 percent, and 40 percent of students, respectively" },
+          { id: "B", text: "There were students choosing French at 15% and Spanish at 25% and German at 40%" },
+          { id: "C", text: "Language choices had 15% for French, 25% for Spanish, and German got 40%" },
+          { id: "D", text: "Students took French, Spanish, German which were 15, 25, and 40 percent" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "French, Spanish, and German were selected by 15 percent, 25 percent, and 40 percent of students, respectively",
+        correctExplanation: 'Using passive voice with "respectively" reduces 27 bloated words to 18 precise, academically balanced words.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Language choices had 15% for French, 25% for Spanish, and German got 40%",
+          diagnosticTitle: "Asymmetrical Coordination",
+          explanation: 'Shifting from "had 15% for..." to "German got 40%" breaks syntactic parallelism and sounds informal.'
+        }
+      },
+      {
+        id: "L70-W08-D2-Q09",
+        prompt: "What cohesive phrase can introduce an analytical comparison between the findings of two charts?",
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "This high level of fossil fuel consumption aligns directly with the elevated emission levels documented in the second chart" },
+          { id: "B", text: "If you look at Chart 1 and then turn your head to Chart 2, both have big numbers" },
+          { id: "C", text: "Chart 1 and Chart 2 are best friends because they tell the same story" },
+          { id: "D", text: "Now let us see what the other picture wants to say to us" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "This high level of fossil fuel consumption aligns directly with the elevated emission levels documented in the second chart",
+        correctExplanation: '"Aligns directly with the elevated emission levels documented in the second chart" links the two visuals with sophisticated analytical signposting.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. If you look at Chart 1 and then turn your head to Chart 2, both have big numbers",
+          diagnosticTitle: "Physical Directive Clich\xE9",
+          explanation: 'Telling the examiner to "turn your head" is colloquial and inappropriate for formal academic writing.'
+        }
+      },
+      {
+        id: "L70-W08-D2-Q10",
+        prompt: "In Writing Task 1, why is citing raw figures without comparative analysis penalized?",
+        lesson: "WEEK 8 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'The prompt explicitly requires candidates to "make comparisons where relevant"; listing figures in isolation fails to fulfill this core criterion' },
+          { id: "B", text: "Raw numbers must be written out in Latin numerals" },
+          { id: "C", text: "Examiners subtract points if more than three numbers appear in a report" },
+          { id: "D", text: "Raw figures are protected by international copyright laws" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'The prompt explicitly requires candidates to "make comparisons where relevant"; listing figures in isolation fails to fulfill this core criterion',
+        correctExplanation: "Task 1 requires candidates to summarize and compare data points, not merely transcribe numbers into prose.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Examiners subtract points if more than three numbers appear in a report",
+          diagnosticTitle: "Arbitrary Number Cap Myth",
+          explanation: "Data reporting is essential in Task 1 body paragraphs; the requirement is that numbers must support comparative analysis rather than stand as isolated data dumps."
+        }
+      },
+      // ==========================================
+      // WEEK 8 – DAY 3: PART 3: WH-FRAMEWORK & COUNTER-ARGUMENT SYNTHESIS
+      // ==========================================
+      {
+        id: "L70-W08-D3-Q01",
+        prompt: 'In IELTS Speaking Part 3, how does the "WH-Framework" expand an answer into a comprehensive 40-45 second response?',
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Direct Claim, followed by Underlying Rationale, Impacted Demographic, Concrete Real-World Mechanism, and Qualified Caveat" },
+          { id: "B", text: "Asking the examiner Where, When, and Who they are before answering" },
+          { id: "C", text: "Listing seven questions without providing any answers" },
+          { id: "D", text: "Speaking only in questions to keep the examiner guessing" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Direct Claim, followed by Underlying Rationale, Impacted Demographic, Concrete Real-World Mechanism, and Qualified Caveat",
+        correctExplanation: "The WH-Framework structures extended discourse systematically: What (stance), Why (cause), Who (stakeholder), How (implementation), and a concession, sustaining fluent 45-second responses without hesitation.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Asking the examiner Where, When, and Who they are before answering",
+          diagnosticTitle: "Interviewer Role Reversal",
+          explanation: "Candidates should not cross-examine the examiner; the WH framework is a personal ideation tool for structuring answers."
+        }
+      },
+      {
+        id: "L70-W08-D3-Q02",
+        prompt: "Which opening formula executes a two-sided concession in Speaking Part 3?",
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "At first glance, it is easy to assume that [X]... However, upon closer scrutiny, one must also account for [Y]..." },
+          { id: "B", text: "I agree 100% and anyone who disagrees is completely mistaken" },
+          { id: "C", text: "Yes, no, maybe, perhaps, I don't really care" },
+          { id: "D", text: "First thing is good, second thing is bad, thank you" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "At first glance, it is easy to assume that [X]... However, upon closer scrutiny, one must also account for [Y]...",
+        correctExplanation: '"At first glance, it is easy to assume that... However, upon closer scrutiny..." provides a sophisticated framework for introducing nuance and critical depth.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. I agree 100% and anyone who disagrees is completely mistaken",
+          diagnosticTitle: "Dogmatic Polarized Stance",
+          explanation: "Part 3 questions assess balanced evaluation; aggressive, dogmatic responses lack the analytical depth of Band 7.5+ discourse."
+        }
+      },
+      {
+        id: "L70-W08-D3-Q03",
+        prompt: 'When asked: "Should historic buildings be demolished to construct modern high-rise housing?", which response displays Band 8.0 stakeholder analysis?',
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "While urban planners face urgent pressures to alleviate housing shortages, flattening historic architecture risks eroding cultural identity; adaptive reuse provides a more balanced compromise" },
+          { id: "B", text: "Demolish all old houses because new buildings look shinier and have elevators" },
+          { id: "C", text: "Keep all old houses forever and let people live on the streets if there is no room" },
+          { id: "D", text: "Old buildings are haunted so nobody should live in them anyway" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "While urban planners face urgent pressures to alleviate housing shortages, flattening historic architecture risks eroding cultural identity; adaptive reuse provides a more balanced compromise",
+        correctExplanation: 'This answer addresses the tension between urban housing pressure and cultural heritage, proposing "adaptive reuse" as a mature policy solution.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Demolish all old houses because new buildings look shinier and have elevators",
+          diagnosticTitle: "Brutalist Simplification",
+          explanation: 'Ignoring architectural heritage in favor of superficial traits ("shinier") reflects low-band simplistic reasoning.'
+        }
+      },
+      {
+        id: "L70-W08-D3-Q04",
+        prompt: 'In Speaking Part 3, why is giving a purely personal autobiographical answer ("Well, in my house, my brother likes...") often inappropriate?',
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Part 3 questions examine broad societal patterns, global trends, and general human behavior, requiring macro-level sociological perspectives rather than individual domestic anecdotes" },
+          { id: "B", text: "Examiners are legally prohibited from hearing about candidates' families" },
+          { id: "C", text: "Personal pronouns like I, my, and we are strictly banned in IELTS Speaking" },
+          { id: "D", text: "Candidates are required to pretend they are government ministers" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Part 3 questions examine broad societal patterns, global trends, and general human behavior, requiring macro-level sociological perspectives rather than individual domestic anecdotes",
+        correctExplanation: "Part 3 tests abstract discussion. Shifting to trivial family anecdotes reduces the response to Part 1 level, capping Fluency & Coherence.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Personal pronouns like I, my, and we are strictly banned in IELTS Speaking",
+          diagnosticTitle: "Pronoun Prohibition Myth",
+          explanation: 'First-person framing ("In my view...", "From what I have observed...") is natural; the issue is discussing domestic anecdotes instead of societal issues.'
+        }
+      },
+      {
+        id: "L70-W08-D3-Q05",
+        prompt: 'Which phrase effectively articulates the concept of "Adaptive Reuse" in urban redevelopment?',
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Repurposing decommissioned industrial heritage structures into vibrant community hubs while preserving their architectural fa\xE7ade" },
+          { id: "B", text: "Painting old walls with new colors so they look like modern shops" },
+          { id: "C", text: "Knocking down old factories and building giant parking lots" },
+          { id: "D", text: "Letting historic buildings decay naturally until they collapse" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Repurposing decommissioned industrial heritage structures into vibrant community hubs while preserving their architectural fa\xE7ade",
+        correctExplanation: '"Repurposing decommissioned industrial heritage structures" and "preserving their architectural fa\xE7ade" showcase technical C1 urban planning collocations.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Painting old walls with new colors so they look like modern shops",
+          diagnosticTitle: "Cosmetic Trivialization",
+          explanation: "Describing adaptive reuse as merely painting walls trivializes an important architectural and engineering discipline."
+        }
+      },
+      {
+        id: "L70-W08-D3-Q06",
+        prompt: "How can a candidate maintain fluency when formulating a response to an unexpected abstract question?",
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Deploying a natural conversational stalling phrase: "That is an intriguing multifaceted issue; looking at it from an economic angle..."' },
+          { id: "B", text: "Remaining totally silent for 15 seconds while tapping the desk" },
+          { id: "C", text: 'Saying "Repeat, repeat, please repeat" repeatedly' },
+          { id: "D", text: "Pretending not to hear the question and coughing loudly" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Deploying a natural conversational stalling phrase: "That is an intriguing multifaceted issue; looking at it from an economic angle..."',
+        correctExplanation: "Using natural conversational openers gives the speaker 3-4 seconds of planning time while demonstrating sophisticated discourse management.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Remaining totally silent for 15 seconds while tapping the desk",
+          diagnosticTitle: "Dead Air Panic",
+          explanation: "Long silences over 5 seconds signal communicative breakdown and severely damage Fluency scores."
+        }
+      },
+      {
+        id: "L70-W08-D3-Q07",
+        prompt: "Which sentence synthesizes both environmental sustainability and corporate profitability in an answer about green business practices?",
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Adopting sustainable practices should not be viewed as a drain on resources; rather, it often unlocks operational efficiencies and appeals to eco-conscious consumers" },
+          { id: "B", text: "Companies must choose between making dollars or saving baby seals" },
+          { id: "C", text: "Green business is just marketing lies to take more cash from poor shoppers" },
+          { id: "D", text: "Businesses should spend all their profits on trees until they go bankrupt" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Adopting sustainable practices should not be viewed as a drain on resources; rather, it often unlocks operational efficiencies and appeals to eco-conscious consumers",
+        correctExplanation: 'This answer synthesizes environmental and commercial goals, noting how green practices "unlock operational efficiencies and appeal to eco-conscious consumers".',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Companies must choose between making dollars or saving baby seals",
+          diagnosticTitle: "False Dichotomy Trap",
+          explanation: "Framing complex business ethics as a cartoonish either-or choice reflects simplistic thinking."
+        }
+      },
+      {
+        id: "L70-W08-D3-Q08",
+        prompt: "In Speaking Part 3, how should a candidate respond when asked to suggest solutions for urban traffic congestion?",
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Propose a dual-pronged strategy: implementing congestion pricing to disincentivize private car use, while simultaneously expanding high-capacity mass transit systems" },
+          { id: "B", text: "Ban all cars immediately and make everyone walk twenty miles to work" },
+          { id: "C", text: "Build fifty-story highway bridges over every house" },
+          { id: "D", text: "Tell people to stay home and never leave their bedrooms" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Propose a dual-pronged strategy: implementing congestion pricing to disincentivize private car use, while simultaneously expanding high-capacity mass transit systems",
+        correctExplanation: 'A "dual-pronged strategy" (congestion pricing disincentive + mass transit incentive) demonstrates pragmatic, structured problem-solving.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Ban all cars immediately and make everyone walk twenty miles to work",
+          diagnosticTitle: "Extreme Unrealistic Mandate",
+          explanation: "Proposing unrealistic, authoritarian extremes shows poor real-world analysis."
+        }
+      },
+      {
+        id: "L70-W08-D3-Q09",
+        prompt: "Which connective marker is best suited to introduce an illustrative real-world case study in Speaking Part 3?",
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "A quintessential illustration of this dynamic can be observed in..." },
+          { id: "B", text: "For example, my uncle who lives next door told me that..." },
+          { id: "C", text: "Like what happens in movies sometimes..." },
+          { id: "D", text: "Example number one is here..." }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "A quintessential illustration of this dynamic can be observed in...",
+        correctExplanation: '"A quintessential illustration of this dynamic can be observed in..." provides an academic, sophisticated lead-in for concrete case evidence.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. For example, my uncle who lives next door told me that...",
+          diagnosticTitle: "Domestic Hearsay Trap",
+          explanation: "Citing personal hearsay about family members in Part 3 lowers the register from academic discussion to casual gossip."
+        }
+      },
+      {
+        id: "L70-W08-D3-Q10",
+        prompt: "What tone should a candidate maintain throughout Speaking Part 3 to achieve Band 7.5+ in Fluency and Coherence?",
+        lesson: "WEEK 8 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "An analytical, objective, and conversational academic tone that balances assertiveness with intellectual humility" },
+          { id: "B", text: "An aggressive, combative tone that seeks to argue with the examiner" },
+          { id: "C", text: "A submissive, timid whisper that constantly apologizes for bad English" },
+          { id: "D", text: "A theatrical dramatic performance featuring exaggerated emotional gestures" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "An analytical, objective, and conversational academic tone that balances assertiveness with intellectual humility",
+        correctExplanation: "Part 3 is an intellectual discussion among peers; an analytical yet engaging tone establishes the candidate as a capable academic communicator.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. An aggressive, combative tone that seeks to argue with the examiner",
+          diagnosticTitle: "Confrontational Misconception",
+          explanation: "Being overly confrontational or argumentative with the examiner harms the interactive quality of the test without adding value."
+        }
+      }
+    ];
+  }
+});
+
+// server/services/leader_bank_parts/week9.data.ts
+var LEADER_WEEK_9_QUESTIONS;
+var init_week9_data4 = __esm({
+  "server/services/leader_bank_parts/week9.data.ts"() {
+    LEADER_WEEK_9_QUESTIONS = [
+      // ==========================================
+      // WEEK 9 – DAY 1: LINE GRAPH SYNTHESIS & MULTI-LINE TREND CLUSTERING & 5-MIN TASK 2 FLASH-DRILL
+      // ==========================================
+      {
+        id: "L70-W09-D1-Q01",
+        prompt: "When confronted with a chaotic line graph featuring five intersecting trajectories from 1970 to 2020, what is the most effective Band 7.5+ grouping methodology?",
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Trend Clustering: Partitioning the dataset into two coherent clusters representing predominantly upward trajectories versus downward or stagnant trajectories" },
+          { id: "B", text: "Chronological Diary: Describing what happened to every single line in 1970, then in 1980, continuing through 2020" },
+          { id: "C", text: "Writing one sentence per line and leaving the body paragraphs unstructured" },
+          { id: "D", text: "Reporting only the line that finishes at the highest level and ignoring the other four entirely" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Trend Clustering: Partitioning the dataset into two coherent clusters representing predominantly upward trajectories versus downward or stagnant trajectories",
+        correctExplanation: "Trend clustering simplifies visual noise by grouping entities according to net directional movement (growth cluster in Body 1, decline cluster in Body 2), highlighting key crossovers and intersections.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Chronological Diary: Describing what happened to every single line in 1970, then in 1980, continuing through 2020",
+          diagnosticTitle: "Diary-Style Listing Error",
+          explanation: "Tracking year by year for all lines creates an unreadable data inventory, dropping Coherence and Cohesion to Band 5."
+        }
+      },
+      {
+        id: "L70-W09-D1-Q02",
+        prompt: 'Which sentence describes a dynamic "crossover or overtaking" event with academic precision?',
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Although Country A initially trailed Country B, its per capita emissions surged dramatically to surpass those of Country B in 2005" },
+          { id: "B", text: "Country A ran past Country B in 2005 and became the champion" },
+          { id: "C", text: "Country A intersected Country B like two roads crossing each other" },
+          { id: "D", text: "Country A was lower than B, but in 2005 Country A jumped over B" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Although Country A initially trailed Country B, its per capita emissions surged dramatically to surpass those of Country B in 2005",
+        correctExplanation: '"Surged dramatically to surpass those of Country B in 2005" captures the crossover using standard demographic terminology and correct pronoun substitution ("those of").',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Country A intersected Country B like two roads crossing each other",
+          diagnosticTitle: "Literal Visual Simile",
+          explanation: 'Lines intersect on paper, but the real-world metrics they represent "surpass", "overtake", or "eclipse" one another.'
+        }
+      },
+      {
+        id: "L70-W09-D1-Q03",
+        prompt: "Examine this trend: A category starts at 10 tons in 1980, grows steadily to 35 tons in 2010, and finishes at 38 tons in 2020. Which participial structure condenses this history efficiently?",
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Having commenced at a modest 10 tons in 1980, emissions rose steadily to 35 tons by 2010, before plateauing at 38 tons at the end of the period" },
+          { id: "B", text: "Emissions started at 10 tons, after that it climbed to 35 tons, and then it finished at 38 tons in 2020" },
+          { id: "C", text: "At 10 tons in 1980, emissions were rising to 35 tons in 2010 and then 38 tons was reached" },
+          { id: "D", text: "Because emissions were 10 tons in 1980, they increased to 35 tons and then 38 tons" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Having commenced at a modest 10 tons in 1980, emissions rose steadily to 35 tons by 2010, before plateauing at 38 tons at the end of the period",
+        correctExplanation: 'Using a perfect participial opener ("Having commenced at...") combined with a main clause and temporal prepositional phrase creates an advanced C1 sentence structure.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Emissions started at 10 tons, after that it climbed to 35 tons, and then it finished at 38 tons in 2020",
+          diagnosticTitle: "Repetitive Compound Linking",
+          explanation: 'Stringing clauses together with "after that" and "and then" reflects elementary narrative sequencing rather than academic data synthesis.'
+        }
+      },
+      {
+        id: "L70-W09-D1-Q04",
+        prompt: 'What constitutes the "Visual Noise Filtering" technique in multi-line graph analysis?',
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Focusing on start points, end points, major peaks, troughs, and significant crossovers while omitting insignificant minor zigzag fluctuations" },
+          { id: "B", text: "Wearing dark sunglasses to dim the brightness of the exam paper" },
+          { id: "C", text: "Describing every micro-variation from month to month in exhaustive detail" },
+          { id: "D", text: "Erasing three of the five lines with an eraser before writing" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Focusing on start points, end points, major peaks, troughs, and significant crossovers while omitting insignificant minor zigzag fluctuations",
+        correctExplanation: "Academic reporting requires abstracting overall patterns. Omitting minor zigzags to highlight structural turning points demonstrates data analysis competence.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Describing every micro-variation from month to month in exhaustive detail",
+          diagnosticTitle: "Exhaustive Micro-Tracking Trap",
+          explanation: "Micro-tracking every dip and spike bloats the report with trivial detail and obscures overarching trends."
+        }
+      },
+      {
+        id: "L70-W09-D1-Q05",
+        prompt: "Which signpost transitions smoothly from the rising cluster in Body 1 to the declining cluster in Body 2?",
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Conversely, a completely divergent trend was evident among the remaining two nations, both of which registered substantial declines" },
+          { id: "B", text: "Now let us turn to the other lines because they went down very fast" },
+          { id: "C", text: "On the other side of things, two countries lost all their numbers" },
+          { id: "D", text: "Second part is about the bad countries that could not increase" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Conversely, a completely divergent trend was evident among the remaining two nations, both of which registered substantial declines",
+        correctExplanation: '"Conversely, a completely divergent trend was evident..." establishes a clear contrastive topic sentence that prepares the reader for the declining dataset.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Second part is about the bad countries that could not increase",
+          diagnosticTitle: "Evaluative Bias in Task 1",
+          explanation: 'Calling declining countries "bad" introduces subjective judgment; Task 1 demands neutral, objective reporting.'
+        }
+      },
+      {
+        id: "L70-W09-D1-Q06",
+        prompt: 'In a dynamic line graph, what does "trough" mean and how should it be collocated?',
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The lowest numerical point reached before a recovery, collocated as hit a trough of X in Year" },
+          { id: "B", text: "The highest point on the graph, collocated as peaked at a trough" },
+          { id: "C", text: "A flat line that never changes, collocated as troughing horizontally" },
+          { id: "D", text: "A broken line on the diagram, collocated as troughing across years" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The lowest numerical point reached before a recovery, collocated as hit a trough of X in Year",
+        correctExplanation: '"Trough" represents the lowest point in a cyclical or fluctuating curve; the standard collocation is "hit a low of" or "hit a trough of [figure]".',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The highest point on the graph, collocated as peaked at a trough",
+          diagnosticTitle: "Antonym Contradiction",
+          explanation: 'Peak is the highest point; trough is the lowest point. Pairing "peaked" with "trough" is an oxymoron.'
+        }
+      },
+      {
+        id: "L70-W09-D1-Q07",
+        prompt: "How should a candidate handle two lines that follow virtually identical trajectories throughout the thirty-year timeframe?",
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Synthesize them together using parallel comparative language: "Both Country X and Country Y followed nearly identical trajectories, climbing steadily..."' },
+          { id: "B", text: "Describe Country X completely, then repeat the exact same sentences for Country Y with different names" },
+          { id: "C", text: "Ignore Country Y because Country X already represents it" },
+          { id: "D", text: "Claim that the two countries merged into one single state" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Synthesize them together using parallel comparative language: "Both Country X and Country Y followed nearly identical trajectories, climbing steadily..."',
+        correctExplanation: 'Combining parallel lines into a single comparative sentence ("Both Country X and Country Y followed nearly identical trajectories...") showcases high-level data synthesis and prevents tedious repetition.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Describe Country X completely, then repeat the exact same sentences for Country Y with different names",
+          diagnosticTitle: "Duplicative Description Trap",
+          explanation: "Writing identical sentences for paired lines wastes time and exposes limited grammatical flexibility."
+        }
+      },
+      {
+        id: "L70-W09-D1-Q08",
+        prompt: 'Which sentence correctly demonstrates the noun form of "fluctuate" in a Task 1 report?',
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Despite recurrent fluctuations between 20 and 35 percent, the figure ended the timeframe on an upward trajectory" },
+          { id: "B", text: "There was a lot of fluctuates occurring on the chart" },
+          { id: "C", text: "The fluctuation was fluctuating very fast up and down" },
+          { id: "D", text: "Fluctuating numbers had an increase in their fluctuating state" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Despite recurrent fluctuations between 20 and 35 percent, the figure ended the timeframe on an upward trajectory",
+        correctExplanation: '"Despite recurrent fluctuations between 20 and 35 percent..." uses the noun form inside an academic prepositional concession, demonstrating natural grammatical range.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. There was a lot of fluctuates occurring on the chart",
+          diagnosticTitle: "Morphological Inflection Error",
+          explanation: 'Using the verb "fluctuates" after "a lot of" is a fundamental part-of-speech error.'
+        }
+      },
+      {
+        id: "L70-W09-D1-Q09",
+        prompt: "What is the role of the 5-Minute Task 2 Flash-Drill at the start of Week 9 Day 1?",
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "To maintain Task 2 argument mapping speed and prevent cognitive atrophy during late-stage Task 1 instruction" },
+          { id: "B", text: "To grade other students' handwriting styles" },
+          { id: "C", text: "To write out twenty irregular verbs from memory" },
+          { id: "D", text: "To copy a model essay onto tracing paper" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "To maintain Task 2 argument mapping speed and prevent cognitive atrophy during late-stage Task 1 instruction",
+        correctExplanation: "Regular 5-minute flash drills ensure that students remain primed for Task 2 throughout the course.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. To write out twenty irregular verbs from memory",
+          diagnosticTitle: "Mechanical Rote Drill Misconception",
+          explanation: "The Flash-Drill exercises conceptual argument generation, not isolated verb conjugation."
+        }
+      },
+      {
+        id: "L70-W09-D1-Q10",
+        prompt: "In a dynamic line graph spanning 1990 to 2020, what is the best phrasing for an initial baseline figure?",
+        lesson: "WEEK 9 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Standing at an initial baseline of 12 percent in 1990" },
+          { id: "B", text: "Born at 12 percent when the chart started in 1990" },
+          { id: "C", text: "Waking up at 12 percent in the year 1990" },
+          { id: "D", text: "Being alive at 12 percent in the starting moment" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Standing at an initial baseline of 12 percent in 1990",
+        correctExplanation: '"Standing at an initial baseline of 12 percent in 1990" is standard academic terminology for benchmark figures.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Born at 12 percent when the chart started in 1990",
+          diagnosticTitle: "Personification of Data Points",
+          explanation: 'Data points are not living organisms; using "born" or "waking up" is unacademic and penalized.'
+        }
+      },
+      // ==========================================
+      // WEEK 9 – DAY 2: DYNAMIC & STATIC TABLES: RAW DATA SYNTHESIS & 5-MIN TASK 2 FLASH-DRILL
+      // ==========================================
+      {
+        id: "L70-W09-D2-Q01",
+        prompt: 'In a complex data table containing 20 cells across 5 countries and 3 spending categories, what is "Row Dominance" grouping?',
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Organizing the body paragraphs by expenditure sector (e.g. Body 1: Food/Drinks; Body 2: Clothing and Leisure) rather than listing each country one by one" },
+          { id: "B", text: "Writing about each country in alphabetical order across five separate paragraphs" },
+          { id: "C", text: "Calculating the mathematical standard deviation of every column" },
+          { id: "D", text: "Reporting only the numbers in the first column and discarding the remaining columns" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Organizing the body paragraphs by expenditure sector (e.g. Body 1: Food/Drinks; Body 2: Clothing and Leisure) rather than listing each country one by one",
+        correctExplanation: "Row Dominance structures paragraphs by sectoral category (the rows), allowing the writer to compare all 5 countries side-by-side within each sector without repetitive paragraphing.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Writing about each country in alphabetical order across five separate paragraphs",
+          diagnosticTitle: "Country-by-Country Fragmentation",
+          explanation: "Organizing by country results in 5 tiny, repetitive paragraphs that prevent comparative analysis across sectors."
+        }
+      },
+      {
+        id: "L70-W09-D2-Q02",
+        prompt: "In a static consumer expenditure table for 2002 across 5 European nations, what constitutes the two essential components of an effective Overview?",
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Identifying the universally dominant spending sector across all nations (Food/Drink/Tobacco) and the country exhibiting the highest aggregate expenditure overall" },
+          { id: "B", text: "Listing the exact spending percentages for all five countries in Food and Drinks" },
+          { id: "C", text: "Explaining that European citizens enjoy eating out on weekends" },
+          { id: "D", text: "Calculating the total gross domestic product of the European Union in 2002" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Identifying the universally dominant spending sector across all nations (Food/Drink/Tobacco) and the country exhibiting the highest aggregate expenditure overall",
+        correctExplanation: "A Band 7+ Overview highlights: [1] The sector with the highest proportion in every country, and [2] The nation with the highest overall spending level, without citing raw numbers.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Listing the exact spending percentages for all five countries in Food and Drinks",
+          diagnosticTitle: "Data Contamination in Overview",
+          explanation: "Including raw percentages in the overview violates Task 1 conventions and limits Task Achievement to Band 6."
+        }
+      },
+      {
+        id: "L70-W09-D2-Q03",
+        prompt: "Which sentence presents comparative spending data across two countries without committing grammatical errors?",
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "National expenditure on clothing in Italy stood at 9.00 percent, which was considerably higher than the 5.40 percent documented for Sweden" },
+          { id: "B", text: "National expenditure on clothing in Italy stood at 9.00 percent, which was considerably higher than Sweden" },
+          { id: "C", text: "Italian clothing spending was 9.00 percent, higher than Sweden clothes" },
+          { id: "D", text: "Italy spent 9.00 percent on clothes, comparing with Sweden had 5.40 percent" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "National expenditure on clothing in Italy stood at 9.00 percent, which was considerably higher than the 5.40 percent documented for Sweden",
+        correctExplanation: 'Comparing "the percentage in Italy" with "the 5.40 percent documented for Sweden" maintains grammatical parallelism and avoids comparing money to a country.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. National expenditure on clothing in Italy stood at 9.00 percent, which was considerably higher than Sweden",
+          diagnosticTitle: "Illogical Comparison (Faulty Parallelism)",
+          explanation: 'Saying "expenditure was higher than Sweden" compares a monetary percentage directly to a nation, a common grammatical error.'
+        }
+      },
+      {
+        id: "L70-W09-D2-Q04",
+        prompt: "In a dynamic data table showing figures for 2000, 2010, and 2020, what is the best strategy to prevent excessive data reporting?",
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Selectively reporting initial baselines, final terminal figures, and the overall net change, focusing on standout anomalies" },
+          { id: "B", text: "Transcribing every single number in all 30 cells of the table into consecutive sentences" },
+          { id: "C", text: "Reporting only the even-numbered years and skipping odd-numbered years" },
+          { id: "D", text: "Writing about one cell per paragraph for thirty paragraphs" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Selectively reporting initial baselines, final terminal figures, and the overall net change, focusing on standout anomalies",
+        correctExplanation: "Candidates must summarize by reporting key features and trends, not transcribe every cell in the table.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Transcribing every single number in all 30 cells of the table into consecutive sentences",
+          diagnosticTitle: "Table Transcription Pitfall",
+          explanation: "Transcribing all cells produces a tedious, mechanical catalog that fails the summary requirement of Task 1."
+        }
+      },
+      {
+        id: "L70-W09-D2-Q05",
+        prompt: "Which phrase describes a category that accounts for the smallest proportion across all measured entities in a table?",
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "constituted the lowest expenditure category across all five nations, never exceeding 3.5 percent in any individual country" },
+          { id: "B", text: "was the dead bottom loser category for every single land" },
+          { id: "C", text: "was so tiny that nobody cared to buy anything in that section" },
+          { id: "D", text: "dropped into zero percent because it was completely useless" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "constituted the lowest expenditure category across all five nations, never exceeding 3.5 percent in any individual country",
+        correctExplanation: '"Constituted the lowest expenditure category across all five nations, never exceeding 3.5 percent..." provides an objective, analytical synthesis of the lowest cluster.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. was the dead bottom loser category for every single land",
+          diagnosticTitle: "Colloquial Slang Inappropriateness",
+          explanation: '"Dead bottom loser" is slang, violating academic style guidelines.'
+        }
+      },
+      {
+        id: "L70-W09-D2-Q06",
+        prompt: "How should a candidate describe an outlier cell that is significantly higher than all other entries in a table?",
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Turkey stood out as a noticeable exception, allocating a striking 32.14 percent of total outlays to food and beverages, nearly double the proportion observed in the UK" },
+          { id: "B", text: "Turkey went crazy on food and ate up 32.14 percent of the whole money" },
+          { id: "C", text: "Turkey had an unexpected monster number that shocked all economists" },
+          { id: "D", text: "Look at Turkey because its number is bigger than everyone else" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Turkey stood out as a noticeable exception, allocating a striking 32.14 percent of total outlays to food and beverages, nearly double the proportion observed in the UK",
+        correctExplanation: '"Stood out as a noticeable exception, allocating a striking 32.14 percent..." highlights the anomaly with academic precision and comparative context.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Turkey went crazy on food and ate up 32.14 percent of the whole money",
+          diagnosticTitle: "Conversational Exaggeration",
+          explanation: 'Phrases like "went crazy on food" and "ate up money" are too informal for IELTS academic reports.'
+        }
+      },
+      {
+        id: "L70-W09-D2-Q07",
+        prompt: "What grammatical structure allows a candidate to summarize the middle ranks in a static data table efficiently?",
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'A clustered range sentence: "The corresponding figures for the remaining three nations occupied an intermediate bracket, ranging between 15.6 percent and 18.8 percent"' },
+          { id: "B", text: 'Three identical sentences repeating "The number was X" three times' },
+          { id: "C", text: "A mathematical formula written in algebraic symbols" },
+          { id: "D", text: "A statement saying that middle numbers do not matter" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'A clustered range sentence: "The corresponding figures for the remaining three nations occupied an intermediate bracket, ranging between 15.6 percent and 18.8 percent"',
+        correctExplanation: 'Clustering intermediate values into a bounded range ("occupied an intermediate bracket, ranging between X and Y") demonstrates sophisticated data synthesis.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: 'B. Three identical sentences repeating "The number was X" three times',
+          diagnosticTitle: "Monotonous List Stacking",
+          explanation: "Repeating simple sentences lowers Grammatical Range and shows a lack of syntactical variety."
+        }
+      },
+      {
+        id: "L70-W09-D2-Q08",
+        prompt: 'When describing a table measuring percentages of national income, which term correctly substitutes for "money spent"?',
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "budgetary allocation, consumer expenditure, or financial outlays" },
+          { id: "B", text: "cash throwing, coin giving, or wallet emptying" },
+          { id: "C", text: "monetary losing, dollar spending, or bill paying" },
+          { id: "D", text: "price buying or wealth moving" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "budgetary allocation, consumer expenditure, or financial outlays",
+        correctExplanation: '"Budgetary allocation", "consumer expenditure", and "financial outlays" are precise formal economic terms appropriate for Task 1.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. cash throwing, coin giving, or wallet emptying",
+          diagnosticTitle: "Colloquial Invented Phrases",
+          explanation: 'Casual expressions like "wallet emptying" are unsuitable for academic Task 1 discourse.'
+        }
+      },
+      {
+        id: "L70-W09-D2-Q09",
+        prompt: 'What is the primary danger of using "Column Dominance" when the table has 8 columns and only 2 rows?',
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "It forces the writer to divide the text into eight micro-paragraphs or constantly repeat the two row labels eight times, resulting in extreme structural fragmentation" },
+          { id: "B", text: "It causes the ink to bleed through the test paper" },
+          { id: "C", text: "Examiners are instructed to award zero for column-first writing" },
+          { id: "D", text: "It turns the table into a line graph" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "It forces the writer to divide the text into eight micro-paragraphs or constantly repeat the two row labels eight times, resulting in extreme structural fragmentation",
+        correctExplanation: "Structuring along the 8 columns fragments the essay into 8 disconnected units; organizing along the 2 rows allows 2 coherent, comprehensive body paragraphs.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Examiners are instructed to award zero for column-first writing",
+          diagnosticTitle: "Rule Exaggeration",
+          explanation: "Examiners do not award zero; rather, poor organization lowers Coherence and Cohesion due to fragmentation."
+        }
+      },
+      {
+        id: "L70-W09-D2-Q10",
+        prompt: "Choose the most cohesive sentence to report consumer expenditure on leisure and education in Germany (2.21%) and Spain (1.98%).",
+        lesson: "WEEK 9 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Germany and Spain recorded marginally lower allocations for leisure and education, at 2.21 percent and 1.98 percent, respectively" },
+          { id: "B", text: "Germany was 2.21% on leisure and education and Spain was 1.98% on leisure and education" },
+          { id: "C", text: "Leisure and education in Germany took 2.21%, but Spain took 1.98% of the money" },
+          { id: "D", text: "Both Germany with Spain spent 2.21% and 1.98% on having fun and learning" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Germany and Spain recorded marginally lower allocations for leisure and education, at 2.21 percent and 1.98 percent, respectively",
+        correctExplanation: '"Recorded marginally lower allocations for..., at X and Y, respectively" packs the data into a concise, formal academic structure.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Germany was 2.21% on leisure and education and Spain was 1.98% on leisure and education",
+          diagnosticTitle: "Redundant Repetitive Parallelism",
+          explanation: 'Repeating "on leisure and education" in both clauses creates clunky, unedited phrasing.'
+        }
+      },
+      // ==========================================
+      // WEEK 9 – DAY 3: HANDLING ABSTRACT & COMPLEX TOPICS IN SPEAKING (ART, ETHICS & SOCIAL RESPONSIBILITIES)
+      // ==========================================
+      {
+        id: "L70-W09-D3-Q01",
+        prompt: 'In IELTS Speaking Part 3, why should candidates avoid deploying overly pretentious, obscure C2 philosophical jargon (e.g. "ontological alienation", "existential catharsis") when answering questions about art and society?',
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Obscure philosophical terms often sound memorized, unnatural, and impede communicative clarity; practical C1 collocations such as relieve stress and cultural heritage are far more natural and effective" },
+          { id: "B", text: "Using philosophy terms results in automatic disqualification by Cambridge regulations" },
+          { id: "C", text: "Examiners are not allowed to possess university degrees in humanities" },
+          { id: "D", text: "Philosophy words are exclusively reserved for written essays, not speech" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Obscure philosophical terms often sound memorized, unnatural, and impede communicative clarity; practical C1 collocations such as relieve stress and cultural heritage are far more natural and effective",
+        correctExplanation: "Forcing high-level philosophical jargon creates unnatural delivery and obscures communication. Candidates score higher using pragmatic, well-contextualized C1 language naturally.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Using philosophy terms results in automatic disqualification by Cambridge regulations",
+          diagnosticTitle: "Disqualification Myth",
+          explanation: "There is no disqualification; the penalty arises from unnatural delivery, poor collocation, and reduced communicative clarity."
+        }
+      },
+      {
+        id: "L70-W09-D3-Q02",
+        prompt: 'When responding to the Part 2 prompt "Describe an artwork or traditional craft that you admire", which introductory formulation establishes an authoritative C1 context?',
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "I would like to share my appreciation for traditional lacquerware, an exquisite handicraft deeply intertwined with our cultural heritage" },
+          { id: "B", text: "I want to talk about a pretty painting on the wall in my dining room" },
+          { id: "C", text: "Art is good and I saw one craft last Sunday when I walked around" },
+          { id: "D", text: "Today I will tell you about an artwork because the card told me to do so" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "I would like to share my appreciation for traditional lacquerware, an exquisite handicraft deeply intertwined with our cultural heritage",
+        correctExplanation: '"Traditional lacquerware", "exquisite handicraft", and "deeply intertwined with our cultural heritage" set an elevated, authentic tone for the monologue.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Today I will tell you about an artwork because the card told me to do so",
+          diagnosticTitle: "Meta-Discourse Cue Card Echo",
+          explanation: "Announcing that you are speaking because the cue card instructed you sounds rehearsed and lacks genuine communicative initiative."
+        }
+      },
+      {
+        id: "L70-W09-D3-Q03",
+        prompt: "In Speaking Part 3, how should a candidate analyze whether governments should subsidize modern public art installations?",
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Weigh public funding for civic beautification and communal well-being against the counter-argument that tax revenues should prioritize essential healthcare and infrastructure" },
+          { id: "B", text: "Argue that governments should spend 100% of national budgets on giant metal statues" },
+          { id: "C", text: "State that modern art is ugly and nobody should ever look at it" },
+          { id: "D", text: "Refuse to answer because you do not work for the ministry of finance" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Weigh public funding for civic beautification and communal well-being against the counter-argument that tax revenues should prioritize essential healthcare and infrastructure",
+        correctExplanation: "Balancing the cultural and civic benefits of art with public spending priorities demonstrates balanced, Band 8.0 critical analysis.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. State that modern art is ugly and nobody should ever look at it",
+          diagnosticTitle: "Subjective Aesthetic Dismissal",
+          explanation: 'Dismissing public art as "ugly" fails to engage with the socio-economic and policy dimensions of public arts funding.'
+        }
+      },
+      {
+        id: "L70-W09-D3-Q04",
+        prompt: "Which practical C1 collocation pair effectively explains the psychological value of engaging with creative arts?",
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "alleviating mental strain and fostering emotional resilience" },
+          { id: "B", text: "making brain stop hurting and feeling super happy" },
+          { id: "C", text: "curing all human mental diseases instantly" },
+          { id: "D", text: "giving happy thoughts so sadness goes away forever" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "alleviating mental strain and fostering emotional resilience",
+        correctExplanation: '"Alleviating mental strain" and "fostering emotional resilience" are precise, idiomatic academic collocations for psychological health.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. making brain stop hurting and feeling super happy",
+          diagnosticTitle: "Informal Colloquial Redundancy",
+          explanation: 'Conversational phrases like "making brain stop hurting" reflect low-level language unsuited for Part 3 discussion.'
+        }
+      },
+      {
+        id: "L70-W09-D3-Q05",
+        prompt: 'When asked: "Do corporate enterprises have an ethical responsibility to protect local communities?", which response provides the most nuanced perspective?',
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "While the primary objective of commercial enterprises is shareholder profitability, neglecting corporate social responsibility risks consumer boycotts and reputational damage" },
+          { id: "B", text: "Businesses exist only to steal money and do not care about anyone at all" },
+          { id: "C", text: "Companies should give away all their factory machines to poor villagers" },
+          { id: "D", text: "Yes, because being nice is the best thing in the whole world" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "While the primary objective of commercial enterprises is shareholder profitability, neglecting corporate social responsibility risks consumer boycotts and reputational damage",
+        correctExplanation: "Acknowledging shareholder obligations while emphasizing the practical risks of neglecting social responsibility demonstrates balanced economic reasoning.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Businesses exist only to steal money and do not care about anyone at all",
+          diagnosticTitle: "Cynical Oversimplification",
+          explanation: "Cynical oversimplifications lack academic objectivity and fail to engage with corporate governance realities."
+        }
+      },
+      {
+        id: "L70-W09-D3-Q06",
+        prompt: "Which discourse marker indicates an ethical dilemma where two valid principles conflict with each other?",
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "This presents an acute ethical conundrum where individual liberties clash with collective welfare" },
+          { id: "B", text: "Both things fight each other and make a big headache" },
+          { id: "C", text: "It is a boxing match between two different opinions" },
+          { id: "D", text: "First one is good, second one is bad, but I don't know" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "This presents an acute ethical conundrum where individual liberties clash with collective welfare",
+        correctExplanation: '"An acute ethical conundrum where individual liberties clash with collective welfare" showcases high-level analytical phrasing.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. It is a boxing match between two different opinions",
+          diagnosticTitle: "Inappropriate Combat Metaphor",
+          explanation: 'Describing ethical dilemmas as "a boxing match" is overly colloquial and reduces complex ethics to a sport clich\xE9.'
+        }
+      },
+      {
+        id: "L70-W09-D3-Q07",
+        prompt: "In Speaking Part 2, what technique ensures vivid narration when describing the craftsmanship of a traditional object?",
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Detailing the artisanal technique: intricate hand-carved patterns, organic natural pigments, and months of meticulous refinement" },
+          { id: "B", text: "Repeating that the craftsman was very talented and worked really hard" },
+          { id: "C", text: "Listing the price tag and the store discount receipt" },
+          { id: "D", text: "Explaining how many liters of wood glue were purchased" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Detailing the artisanal technique: intricate hand-carved patterns, organic natural pigments, and months of meticulous refinement",
+        correctExplanation: 'Terms like "intricate hand-carved patterns", "organic natural pigments", and "meticulous refinement" showcase rich descriptive vocabulary.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Repeating that the craftsman was very talented and worked really hard",
+          diagnosticTitle: "Generic Quality Repetition",
+          explanation: 'Repeating that someone is "talented" provides no visual or technical detail, keeping Lexical Resource at Band 5.5.'
+        }
+      },
+      {
+        id: "L70-W09-D3-Q08",
+        prompt: 'How should a candidate tackle the abstract question: "Can artificial intelligence ever produce genuine art?"',
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Distinguish between generative algorithmic pattern imitation and authentic human intentionality rooted in conscious emotional struggle" },
+          { id: "B", text: "Say that computers do not have hands, so they cannot paint" },
+          { id: "C", text: "Predict that AI will become President of the United States" },
+          { id: "D", text: "State that you hate computers and prefer walking in forests" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Distinguish between generative algorithmic pattern imitation and authentic human intentionality rooted in conscious emotional struggle",
+        correctExplanation: "Distinguishing between pattern imitation and human intentionality provides an intellectually nuanced foundation for discussing generative AI in art.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Say that computers do not have hands, so they cannot paint",
+          diagnosticTitle: "Literal Physicality Fallacy",
+          explanation: "Saying computers lack hands ignores digital art entirely, reflecting a superficial understanding of technology."
+        }
+      },
+      {
+        id: "L70-W09-D3-Q09",
+        prompt: "Which phrase expresses the social responsibility of citizens in environmental stewardship?",
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Civic responsibility entails conscientious consumption habits and active engagement in community recycling initiatives" },
+          { id: "B", text: "People should just be nice and pick up garbage on the street sometimes" },
+          { id: "C", text: "Citizens must never throw anything away and keep all trash in their homes" },
+          { id: "D", text: "Everyone must pay fifty dollars every morning to clean trees" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Civic responsibility entails conscientious consumption habits and active engagement in community recycling initiatives",
+        correctExplanation: '"Civic responsibility entails conscientious consumption habits..." demonstrates academic precision and natural register.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. People should just be nice and pick up garbage on the street sometimes",
+          diagnosticTitle: "Informal Colloquial Register",
+          explanation: 'Using phrases like "just be nice" lacks the formal precision required for Band 7.5+ discourse.'
+        }
+      },
+      {
+        id: "L70-W09-D3-Q10",
+        prompt: "In Speaking Part 3, what is the best strategy if you need 2-3 seconds to gather your thoughts on a complex ethical question?",
+        lesson: "WEEK 9 \u2013 DAY 3",
+        part: "SPEAKING & PRONUNCIATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Paraphrase the core tension of the question: "That raises a delicate balance between personal freedom and public accountability; from my perspective..."' },
+          { id: "B", text: "Stare at the ceiling in complete silence" },
+          { id: "C", text: "Ask the examiner to explain what ethics means" },
+          { id: "D", text: "Pretend your throat hurts and request water" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Paraphrase the core tension of the question: "That raises a delicate balance between personal freedom and public accountability; from my perspective..."',
+        correctExplanation: "Reflecting the core tension buys cognitive time while immediately demonstrating sophisticated vocabulary and natural discourse fluency.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Stare at the ceiling in complete silence",
+          diagnosticTitle: "Hesitation Void",
+          explanation: "Silent staring damages Fluency scores; filler phrases maintaining communicative contact are standard native strategies."
+        }
+      }
+    ];
+  }
+});
+
+// server/services/leader_bank_parts/week10.data.ts
+var LEADER_WEEK_10_QUESTIONS;
+var init_week10_data = __esm({
+  "server/services/leader_bank_parts/week10.data.ts"() {
+    LEADER_WEEK_10_QUESTIONS = [
+      // ==========================================
+      // WEEK 10 – DAY 1: MAPS & SPATIAL TRANSFORMATION & 5-MIN TASK 2 FLASH-DRILL
+      // ==========================================
+      {
+        id: "L70-W10-D1-Q01",
+        prompt: "In IELTS Writing Task 1 Map descriptions, which grammatical voice is mandatory when describing anthropogenic urban redevelopment (e.g. constructing buildings or roads)?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Passive voice: "A modern commercial plaza was erected" or "The derelict warehouse was demolished"' },
+          { id: "B", text: 'Active voice with vague personal subjects: "People built a plaza" or "They knocked down the warehouse"' },
+          { id: "C", text: "Future continuous tense exclusively" },
+          { id: "D", text: 'First-person active voice: "I planned the city roads"' }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Passive voice: "A modern commercial plaza was erected" or "The derelict warehouse was demolished"',
+        correctExplanation: 'Because the architectural and town planning changes are carried out by unseen municipal agents, formal passive constructions ("was constructed", "was demolished", "was repurposed") are the academic standard.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: 'B. Active voice with vague personal subjects: "People built a plaza" or "They knocked down the warehouse"',
+          diagnosticTitle: "Vague Agent Intrusion",
+          explanation: 'Using "They built" or "People made" introduces informal, conversational phrasing inappropriate for academic reports.'
+        }
+      },
+      {
+        id: "L70-W10-D1-Q02",
+        prompt: "Which directional phrase correctly describes the relative location of a newly built amenity?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Situated to the northeast of the town center, adjacent to the railway line" },
+          { id: "B", text: "Standing on the upper right corner of the paper" },
+          { id: "C", text: "Located in the north-east side from the town center" },
+          { id: "D", text: "Placed near the top right hand near the train" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Situated to the northeast of the town center, adjacent to the railway line",
+        correctExplanation: 'Using compass coordinates with correct prepositions ("to the northeast of...", "adjacent to...") reflects professional spatial cartography.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Standing on the upper right corner of the paper",
+          diagnosticTitle: "Page-Based Spatial Reference",
+          explanation: 'Referring to the physical page ("upper right corner") is a common error; candidates must describe the geographical landscape itself using cardinal directions.'
+        }
+      },
+      {
+        id: "L70-W10-D1-Q03",
+        prompt: "Which verb pair accurately describes replacing an old industrial facility with residential housing?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The obsolete factory was demolished to make way for a modern residential complex" },
+          { id: "B", text: "The old factory was murdered and houses were born in its spot" },
+          { id: "C", text: "The factory died so that people can live in new buildings" },
+          { id: "D", text: "The industrial area was disappeared to give apartments" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The obsolete factory was demolished to make way for a modern residential complex",
+        correctExplanation: '"Was demolished to make way for a modern residential complex" pairs standard urban planning vocabulary with passive syntax.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. The industrial area was disappeared to give apartments",
+          diagnosticTitle: "Ergative Verb Passive Error",
+          explanation: '"Disappear" is an intransitive verb that cannot be made passive ("was disappeared" is ungrammatical).'
+        }
+      },
+      {
+        id: "L70-W10-D1-Q04",
+        prompt: "How should the body paragraphs of a comparative Map task (e.g. a town in 1995 vs today) be logically organized?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Geographical division: Body 1 covers redevelopments in the northern and eastern zones; Body 2 covers redevelopments in the southern and western zones" },
+          { id: "B", text: "Writing one sentence for every single tree and house visible on the map" },
+          { id: "C", text: "Describing only the old map in Body 1 and forgetting to mention the new map" },
+          { id: "D", text: "Writing about roads in Body 1 and colors in Body 2" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Geographical division: Body 1 covers redevelopments in the northern and eastern zones; Body 2 covers redevelopments in the southern and western zones",
+        correctExplanation: "Dividing the town by geographical sector (e.g. North/East vs South/West) enables structured, side-by-side comparison of past and present configurations in each area.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Describing only the old map in Body 1 and forgetting to mention the new map",
+          diagnosticTitle: "Comparative Omission Error",
+          explanation: "Omitting the modern map fails the prompt's comparative requirement, capping Task Achievement at Band 5."
+        }
+      },
+      {
+        id: "L70-W10-D1-Q05",
+        prompt: "What constitutes an effective Overview sentence for an urban development Map?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Overall, the rural settlement underwent a comprehensive modernization, transforming from a predominantly agrarian community into a commercial and residential hub" },
+          { id: "B", text: "Overall, there were five houses in 1995 and seven houses in 2020 on the map" },
+          { id: "C", text: "Overall, the town changed because people wanted more concrete and less trees" },
+          { id: "D", text: "Overall, the map is very interesting and has many black lines drawn on it" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Overall, the rural settlement underwent a comprehensive modernization, transforming from a predominantly agrarian community into a commercial and residential hub",
+        correctExplanation: "An ideal Map Overview synthesizes the macro-transformation (agrarian to commercial/residential modernization) without getting bogged down in individual buildings.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Overall, there were five houses in 1995 and seven houses in 2020 on the map",
+          diagnosticTitle: "Micro-Detail Counting in Overview",
+          explanation: "Counting individual houses treats micro-details as the overview, failing to convey the overarching transformation."
+        }
+      },
+      {
+        id: "L70-W10-D1-Q06",
+        prompt: "Which preposition correctly indicates that a road runs alongside a river?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "A newly constructed dual carriageway runs parallel to the river" },
+          { id: "B", text: "A newly constructed dual carriageway runs perpendicular inside the river" },
+          { id: "C", text: "A newly constructed dual carriageway runs across parallel the water" },
+          { id: "D", text: "A newly constructed dual carriageway runs opposite against the river" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "A newly constructed dual carriageway runs parallel to the river",
+        correctExplanation: '"Runs parallel to [feature]" is the standard geographical expression for roads running alongside waterways or railway tracks.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. A newly constructed dual carriageway runs perpendicular inside the river",
+          diagnosticTitle: "Geometric Term Confusion",
+          explanation: '"Perpendicular" means at a 90-degree right angle (crossing it), not alongside it.'
+        }
+      },
+      {
+        id: "L70-W10-D1-Q07",
+        prompt: "Which verb indicates that an existing airport runway was made longer?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "lengthened or extended" },
+          { id: "B", text: "magnified or inflated" },
+          { id: "C", text: "widened or thickened" },
+          { id: "D", text: "multiplied or duplicated" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "lengthened or extended",
+        correctExplanation: 'Linear extensions of runways, roads, or railway tracks use "extended" or "lengthened". "Magnified" or "inflated" are lexical errors.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. magnified or inflated",
+          diagnosticTitle: "Inappropriate Dimension Verb",
+          explanation: '"Inflate" applies to balloons or currency, and "magnify" applies to optical lenses; neither applies to physical infrastructure length.'
+        }
+      },
+      {
+        id: "L70-W10-D1-Q08",
+        prompt: "In a Map report, which expression accurately describes the total removal of woodland to make space for a car park?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The forested area in the south was completely cleared to facilitate the construction of an expansive vehicle car park" },
+          { id: "B", text: "Trees were killed in the south so cars can park their wheels" },
+          { id: "C", text: "Woodland was cut off down to become an asphalt field" },
+          { id: "D", text: "Nature was destroyed by humans to put fifty automobiles" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The forested area in the south was completely cleared to facilitate the construction of an expansive vehicle car park",
+        correctExplanation: '"Was completely cleared to facilitate the construction of..." uses precise academic register and passive voice.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Trees were killed in the south so cars can park their wheels",
+          diagnosticTitle: "Inappropriate Animate Lexis",
+          explanation: 'Describing tree felling as "trees were killed" is melodramatic and unacademic.'
+        }
+      },
+      {
+        id: "L70-W10-D1-Q09",
+        prompt: "What signpost smoothly moves the reader from the northern half of the town to the southern sector?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Shifting attention to the southern perimeter of the settlement, notable infrastructural alterations were also implemented" },
+          { id: "B", text: "Now look at the bottom of the picture to see more things" },
+          { id: "C", text: "And also down here there were other changes happening" },
+          { id: "D", text: "Let me jump to the south side now" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Shifting attention to the southern perimeter of the settlement, notable infrastructural alterations were also implemented",
+        correctExplanation: '"Shifting attention to the southern perimeter..." provides an elegant geographical transition between body paragraphs.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Now look at the bottom of the picture to see more things",
+          diagnosticTitle: "Visual Page Directive",
+          explanation: 'Referring to the "bottom of the picture" is unacademic; directional analysis must refer to the cardinal geography ("southern perimeter").'
+        }
+      },
+      {
+        id: "L70-W10-D1-Q10",
+        prompt: "When describing a facility that was converted from a school into a community museum, which verb structure is best?",
+        lesson: "WEEK 10 \u2013 DAY 1",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The former secondary school building was repurposed into a community heritage museum" },
+          { id: "B", text: "The school changed its mind and became a museum" },
+          { id: "C", text: "They swapped the school inside out to display old things" },
+          { id: "D", text: "The school was transformed into being a museum by builders" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The former secondary school building was repurposed into a community heritage museum",
+        correctExplanation: '"Was repurposed into a community heritage museum" precisely captures functional architectural conversion in formal English.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. The school changed its mind and became a museum",
+          diagnosticTitle: "Anthropomorphic Building Fallacy",
+          explanation: "Buildings do not have minds; personifying infrastructure is unacceptable in formal writing."
+        }
+      },
+      // ==========================================
+      // WEEK 10 – DAY 2: PROCESS & MANUFACTURING CYCLES & 5-MIN TASK 2 FLASH-DRILL
+      // ==========================================
+      {
+        id: "L70-W10-D2-Q01",
+        prompt: "In IELTS Writing Task 1 Process Diagrams, what is the fundamental grammatical distinction between a man-made manufacturing process and a natural life cycle?",
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Man-made manufacturing processes predominantly require passive voice such as the olives are crushed, whereas natural life cycles predominantly require active voice such as the salmon migrates" },
+          { id: "B", text: "Man-made processes require future tense, while natural cycles require past tense" },
+          { id: "C", text: "Natural cycles do not require an Overview paragraph" },
+          { id: "D", text: "Both processes must be written in the first person plural using pronouns like we wash the olives" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Man-made manufacturing processes predominantly require passive voice such as the olives are crushed, whereas natural life cycles predominantly require active voice such as the salmon migrates",
+        correctExplanation: "In manufacturing, human agents perform mechanical operations on raw materials (requiring passive voice); in natural cycles, biological organisms perform actions spontaneously (requiring active voice).",
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Both processes must be written in the first person plural using pronouns like we wash the olives",
+          diagnosticTitle: "First-Person Operator Trap",
+          explanation: 'Using "we" or "you" in Task 1 violates academic objectivity; impersonal passive constructions must be used instead.'
+        }
+      },
+      {
+        id: "L70-W10-D2-Q02",
+        prompt: 'Which sequential sentence avoids mechanical "Then / Next" repetition by using a perfect passive participle?',
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Having been thoroughly rinsed in vibrating vats, the harvested olives are subsequently transferred to a mechanical press" },
+          { id: "B", text: "Then the olives are washed. Next they go to the machine" },
+          { id: "C", text: "After washing olives, then next step is pressing them with heavy stone" },
+          { id: "D", text: "Olives are washed and then next they are pressed immediately" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Having been thoroughly rinsed in vibrating vats, the harvested olives are subsequently transferred to a mechanical press",
+        correctExplanation: '"Having been thoroughly rinsed in vibrating vats..." uses a past participial clause to express temporal completion, demonstrating Band 8.0 syntactical complexity.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Then the olives are washed. Next they go to the machine",
+          diagnosticTitle: "Choppy Sequential Coordination",
+          explanation: 'Stacking "Then... Next..." produces childish, fragmented clauses that limit Grammatical Range to Band 5.0.'
+        }
+      },
+      {
+        id: "L70-W10-D2-Q03",
+        prompt: "What constitutes an exemplary Overview for a 7-stage Olive Oil Manufacturing process diagram?",
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Overall, the production cycle comprises seven sequential stages, commencing with manual olive harvesting and culminating in commercial bottling and distribution" },
+          { id: "B", text: "Overall, olive oil is very delicious and healthy for cooking Mediterranean food" },
+          { id: "C", text: "Overall, there are seven arrows and six square boxes drawn in this diagram" },
+          { id: "D", text: "Overall, step one is harvesting and step seven is drinking the oil" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Overall, the production cycle comprises seven sequential stages, commencing with manual olive harvesting and culminating in commercial bottling and distribution",
+        correctExplanation: "A Band 7+ Process Overview summarizes: [1] Total number of distinct stages, [2] The initial starting input, and [3] The final commercial output.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Overall, olive oil is very delicious and healthy for cooking Mediterranean food",
+          diagnosticTitle: "Culinary Opinion Intrusion",
+          explanation: "Task 1 requires reporting the diagram's technical stages, not personal culinary evaluations of olive oil."
+        }
+      },
+      {
+        id: "L70-W10-D2-Q04",
+        prompt: "Which signpost introduces the culminating final phase of an industrial process?",
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "In the final phase of production, the refined oil is packaged into airtight glass bottles before being dispatched to retailers" },
+          { id: "B", text: "At last the factory finishes its work and workers go home" },
+          { id: "C", text: "Finally, the oil is ready to be sold for money" },
+          { id: "D", text: "Lastly, end of the diagram has arrived" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "In the final phase of production, the refined oil is packaged into airtight glass bottles before being dispatched to retailers",
+        correctExplanation: '"In the final phase of production...", "refined oil is packaged into...", and "dispatched to retailers" use formal manufacturing collocations.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. At last the factory finishes its work and workers go home",
+          diagnosticTitle: "Narrative Storytelling Shift",
+          explanation: "Mentioning workers going home treats the technical process diagram like a fictional narrative."
+        }
+      },
+      {
+        id: "L70-W10-D2-Q05",
+        prompt: "When two stages occur simultaneously in a manufacturing cycle, which structure expresses this relationship accurately?",
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Simultaneously, while the liquid extract undergoes centrifugal separation, the solid pomace is diverted for biofuel conversion" },
+          { id: "B", text: "At the same time, liquid goes left and solid goes right together" },
+          { id: "C", text: "Liquid and solid do their jobs at once like two brothers" },
+          { id: "D", text: "Together both steps happen at the identical second" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Simultaneously, while the liquid extract undergoes centrifugal separation, the solid pomace is diverted for biofuel conversion",
+        correctExplanation: '"Simultaneously, while... undergoes centrifugal separation, the solid pomace is diverted..." captures concurrent technical processes with advanced vocabulary.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Liquid and solid do their jobs at once like two brothers",
+          diagnosticTitle: "Informal Personification",
+          explanation: 'Using familial similes like "two brothers" is completely inappropriate in an academic technical report.'
+        }
+      },
+      {
+        id: "L70-W10-D2-Q06",
+        prompt: 'In a process diagram, what should a candidate do if an unfamiliar technical term appears (e.g. "centrifuge" or "pasteurization chamber")?',
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Retain the exact technical term and integrate it into a grammatically accurate passive sentence: "the mixture is directed into a centrifuge"' },
+          { id: "B", text: "Attempt to guess a bizarre synonym like spinning metallic soup bowl" },
+          { id: "C", text: "Omit that entire stage from the essay to avoid making a mistake" },
+          { id: "D", text: "Draw a sketch of the machine on the answer sheet" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Retain the exact technical term and integrate it into a grammatically accurate passive sentence: "the mixture is directed into a centrifuge"',
+        correctExplanation: "Examiners expect candidates to use specific technical labels from the diagram (centrifuge, kiln, hopper) accurately within grammatically sound sentences; paraphrasing established technical terms often creates nonsensical phrasing.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Attempt to guess a bizarre synonym like spinning metallic soup bowl",
+          diagnosticTitle: "Obsessive Paraphrase Trap",
+          explanation: "Attempting to paraphrase specialized machinery names creates laughable, non-standard descriptions."
+        }
+      },
+      {
+        id: "L70-W10-D2-Q07",
+        prompt: "Which verb accurately describes the action of heating a liquid to eliminate pathogens in a food production process?",
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "pasteurized or sterilized" },
+          { id: "B", text: "burned or roasted" },
+          { id: "C", text: "fried or baked" },
+          { id: "D", text: "toasted or melted" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "pasteurized or sterilized",
+        correctExplanation: '"Pasteurized" and "sterilized" are the precise scientific verbs for treating liquids with controlled heat to destroy harmful microbes.',
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. burned or roasted",
+          diagnosticTitle: "Cooking Term Distortion",
+          explanation: '"Burned" or "roasted" indicates cooking solid food at high temperatures, which would ruin liquid milk or juice.'
+        }
+      },
+      {
+        id: "L70-W10-D2-Q08",
+        prompt: "How should a candidate partition the body paragraphs of an 8-stage manufacturing process?",
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Divide logically at the primary transformation milestone: Body 1 covers stages 1-4 for raw material processing; Body 2 covers stages 5-8 for refinement, packaging, and shipping" },
+          { id: "B", text: "Write one paragraph for each individual stage, producing an eight-paragraph report" },
+          { id: "C", text: "Combine all eight stages into a single run-on sentence without punctuation" },
+          { id: "D", text: "Describe only stages 1 and 8 and ignore stages 2 through 7" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Divide logically at the primary transformation milestone: Body 1 covers stages 1-4 for raw material processing; Body 2 covers stages 5-8 for refinement, packaging, and shipping",
+        correctExplanation: "Splitting an 8-stage process into two balanced paragraphs at a logical milestone (e.g., raw preparation vs chemical/mechanical refinement) creates clear paragraph coherence.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Write one paragraph for each individual stage, producing an eight-paragraph report",
+          diagnosticTitle: "Micro-Paragraphing Trap",
+          explanation: "Writing eight single-sentence paragraphs fragments the report and lowers Coherence and Cohesion."
+        }
+      },
+      {
+        id: "L70-W10-D2-Q09",
+        prompt: "Which phrase links two continuous stages where one product directly becomes the raw material for the next stage?",
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The resulting pulp subsequently serves as the raw input for the second stage of crushing" },
+          { id: "B", text: "The stuff made before now goes to be crushed again" },
+          { id: "C", text: "First thing finished so second thing can start right now" },
+          { id: "D", text: "Then next the machine takes the material inside its mouth" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The resulting pulp subsequently serves as the raw input for the second stage of crushing",
+        correctExplanation: '"The resulting pulp subsequently serves as the raw input for..." articulates material continuity with academic elegance.',
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Then next the machine takes the material inside its mouth",
+          diagnosticTitle: "Childish Personification",
+          explanation: 'Machines do not have "mouths"; formal English describes material being "fed into a hopper" or "directed into a chamber".'
+        }
+      },
+      {
+        id: "L70-W10-D2-Q10",
+        prompt: "In a natural lifecycle (e.g. the life cycle of a frog), why is the passive voice generally inappropriate for biological maturation?",
+        lesson: "WEEK 10 \u2013 DAY 2",
+        part: "WRITING TASK 1",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Biological metamorphosis is an autonomous natural process; saying "the tadpole is grown into a frog" falsely implies an external human agent physically altered the creature' },
+          { id: "B", text: "Frogs are legally protected under wildlife conservation treaties" },
+          { id: "C", text: "Passive voice can only be used with machines made of steel" },
+          { id: "D", text: "Examiners forbid passive verbs when discussing amphibians" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Biological metamorphosis is an autonomous natural process; saying "the tadpole is grown into a frog" falsely implies an external human agent physically altered the creature',
+        correctExplanation: 'Natural growth occurs spontaneously. Using passive voice ("is grown", "is hatched by humans") misrepresents natural development as artificial human manufacturing.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Passive voice can only be used with machines made of steel",
+          diagnosticTitle: "Arbitrary Material Myth",
+          explanation: "Passive voice depends on whether an agent performs the action on a patient, not on the physical material involved."
+        }
+      },
+      // ==========================================
+      // WEEK 10 – DAY 3: FINAL EXAM MASTERCLASS: FULL SIMULATION & 5 HARD QA GATES VERIFICATION
+      // ==========================================
+      {
+        id: "L70-W10-D3-Q01",
+        prompt: "In the official IELTS Academic Writing test (60 minutes total for Task 1 and Task 2), what is the gold-standard time allocation rule?",
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Dedicate exactly 20 minutes to Task 1 (150+ words) and 40 minutes to Task 2 (250+ words), prioritizing Task 2 because it carries double the weight of Task 1" },
+          { id: "B", text: "Spend 50 minutes on Task 1 and 10 minutes on Task 2" },
+          { id: "C", text: "Divide the time equally: 30 minutes for each task" },
+          { id: "D", text: "Write Task 2 only and leave Task 1 completely blank" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Dedicate exactly 20 minutes to Task 1 (150+ words) and 40 minutes to Task 2 (250+ words), prioritizing Task 2 because it carries double the weight of Task 1",
+        correctExplanation: "Task 2 accounts for 66.7% (two-thirds) of the writing score. Spending more than 20 minutes on Task 1 robs Task 2 of essential development time, almost guaranteeing a lower overall score.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Divide the time equally: 30 minutes for each task",
+          diagnosticTitle: "Equal Weight Fallacy",
+          explanation: "The tasks are not weighted equally. Giving 30 minutes to Task 1 leaves only 30 minutes for Task 2, which requires substantially more depth and word count."
+        }
+      },
+      {
+        id: "L70-W10-D3-Q02",
+        prompt: 'What are the "Five Hard QA Gates" verified before a candidate is declared Band 7.0+ ready in the LEADER curriculum?',
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "expert",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Gate 1: Clear position throughout; Gate 2: Well-supported ideas without overgeneralization; Gate 3: Structural Cohesion & no mechanical linking; Gate 4: Precise C1 academic collocations; Gate 5: Strict grammatical accuracy under 60-min timed pressure" },
+          { id: "B", text: "Gate 1: Memorizing 100 quotes; Gate 2: Writing with black ink only; Gate 3: Filling every blank line; Gate 4: Writing cursive letters; Gate 5: Smiling at the examiner" },
+          { id: "C", text: "Gate 1: Using five exclamation marks; Gate 2: Using ten idioms; Gate 3: Writing 500 words; Gate 4: Mentioning Oxford University; Gate 5: Drawing diagrams" },
+          { id: "D", text: "Gate 1: British accent; Gate 2: American spelling; Gate 3: Canadian vocabulary; Gate 4: Australian slang; Gate 5: Irish idioms" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Gate 1: Clear position throughout; Gate 2: Well-supported ideas without overgeneralization; Gate 3: Structural Cohesion & no mechanical linking; Gate 4: Precise C1 academic collocations; Gate 5: Strict grammatical accuracy under 60-min timed pressure",
+        correctExplanation: "The 5 QA Gates correspond directly to the official Band 7.0+ descriptors across Task Achievement, Coherence & Cohesion, Lexical Resource, and Grammatical Range & Accuracy.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Gate 1: Using five exclamation marks; Gate 2: Using ten idioms; Gate 3: Writing 500 words; Gate 4: Mentioning Oxford University; Gate 5: Drawing diagrams",
+          diagnosticTitle: "Superficial Checklist Gimmick",
+          explanation: "Exclamation marks and word count padding are penalized; high band scores require academic rigor and logical argument structure."
+        }
+      },
+      {
+        id: "L70-W10-D3-Q03",
+        prompt: "In Speaking Part 2, what should a candidate do if the examiner lets them continue speaking past the 2-minute mark?",
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Keep speaking smoothly and developing your final reflective thoughts until the examiner politely interrupts you with "Thank you"' },
+          { id: "B", text: 'Panic and yell "Time is up! Stop your timer!" at the examiner' },
+          { id: "C", text: "Immediately stop talking mid-sentence and freeze in silence" },
+          { id: "D", text: "Start singing the national anthem to fill remaining seconds" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Keep speaking smoothly and developing your final reflective thoughts until the examiner politely interrupts you with "Thank you"',
+        correctExplanation: 'Examiners are required to let candidates speak for up to 2 minutes and will say "Thank you" when time expires. Candidates should never stop themselves abruptly before being signaled.',
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Immediately stop talking mid-sentence and freeze in silence",
+          diagnosticTitle: "Premature Self-Termination",
+          explanation: "Cutting yourself off mid-sentence signals conversational anxiety; continuing fluently until interrupted maximizes your Fluency rating."
+        }
+      },
+      {
+        id: "L70-W10-D3-Q04",
+        prompt: "Which strategy ensures a candidate maintains a consistent thesis position throughout Writing Task 2 under intense exam pressure?",
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Drafting an explicit thesis in the introduction and using topic sentences in both body paragraphs that directly echo and develop that specific thesis" },
+          { id: "B", text: "Waiting until the final sentence of the conclusion to decide which side you support" },
+          { id: "C", text: "Praising both sides equally without expressing any personal stance anywhere in the essay" },
+          { id: "D", text: "Writing two separate essays on two sheets of paper" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Drafting an explicit thesis in the introduction and using topic sentences in both body paragraphs that directly echo and develop that specific thesis",
+        correctExplanation: "A clear position presented throughout the response is the explicit threshold requirement for Band 7 in Task Achievement.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Waiting until the final sentence of the conclusion to decide which side you support",
+          diagnosticTitle: "Delayed Stance Pitfall",
+          explanation: "Revealing your opinion only in the conclusion fails the criterion of presenting a clear position throughout the response."
+        }
+      },
+      {
+        id: "L70-W10-D3-Q05",
+        prompt: "During the 5-minute proofreading stage of Task 2, which high-frequency error should candidates actively hunt for first?",
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Subject-verb agreement discrepancies (e.g. "this trend lead to") and missing plural markers on countable nouns' },
+          { id: "B", text: "Whether the font size is too small" },
+          { id: "C", text: "Checking if any sentences could be translated into French" },
+          { id: "D", text: 'Counting if the letter "e" appears more than 100 times' }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Subject-verb agreement discrepancies (e.g. "this trend lead to") and missing plural markers on countable nouns',
+        correctExplanation: "Subject-verb agreement and bare singular countables are the most common mechanical slips that drag an otherwise strong Band 7 essay down to Band 6 in Grammatical Accuracy.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Whether the font size is too small",
+          diagnosticTitle: "Typographical Irrelevance",
+          explanation: "Handwritten test scripts are assessed on linguistic accuracy and legibility, not typography."
+        }
+      },
+      {
+        id: "L70-W10-D3-Q06",
+        prompt: "In Speaking Part 3, how should a candidate react if the examiner challenges their opinion with a strong counter-question?",
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: 'Embrace the counter-perspective analytically: "That is a valid counter-argument; nonetheless, when we examine the empirical evidence..."' },
+          { id: "B", text: "Get offended and tell the examiner they are being disrespectful" },
+          { id: "C", text: "Immediately abandon your entire argument and agree with everything the examiner said" },
+          { id: "D", text: "Cover your ears and refuse to listen" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: 'Embrace the counter-perspective analytically: "That is a valid counter-argument; nonetheless, when we examine the empirical evidence..."',
+        correctExplanation: "Part 3 is an interactive intellectual discussion; examiner push-back is an invitation to demonstrate concession, hedging, and high-level debate skills.",
+        misconception: {
+          baitOptionId: "C",
+          baitOptionText: "C. Immediately abandon your entire argument and agree with everything the examiner said",
+          diagnosticTitle: "Instant Capitulation",
+          explanation: "Collapsing your argument immediately suggests weak reasoning; intellectual balance means engaging with the counter-point while maintaining your thesis."
+        }
+      },
+      {
+        id: "L70-W10-D3-Q07",
+        prompt: "What is the consequence of failing to write at least 150 words in Task 1 or 250 words in Task 2?",
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Underlength penalties are directly applied to Task Achievement, typically capping the criterion at Band 5.0 or lower" },
+          { id: "B", text: "The candidate is fined money by the British Council" },
+          { id: "C", text: "The test paper is burned in front of the candidate" },
+          { id: "D", text: "No penalty exists because quality is more important than quantity" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Underlength penalties are directly applied to Task Achievement, typically capping the criterion at Band 5.0 or lower",
+        correctExplanation: "Writing under 250 words in Task 2 or under 150 words in Task 1 restricts the candidate's ability to fully develop arguments, penalizing Task Achievement heavily.",
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. No penalty exists because quality is more important than quantity",
+          diagnosticTitle: "Underlength Immunity Myth",
+          explanation: "While raw word counting penalties have been integrated into Task Achievement, an underlength essay cannot sufficiently answer the prompt, capping the score."
+        }
+      },
+      {
+        id: "L70-W10-D3-Q08",
+        prompt: "Which strategy best prevents candidate fatigue during the intensive 3-hour IELTS test session?",
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Practicing full-length timed mock simulations under identical test conditions to build intellectual endurance and pacing habits" },
+          { id: "B", text: "Drinking four energy drinks right before entering the exam room" },
+          { id: "C", text: "Staying awake all night before the test to memorize essays" },
+          { id: "D", text: "Sleeping during the listening section to save energy for writing" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Practicing full-length timed mock simulations under identical test conditions to build intellectual endurance and pacing habits",
+        correctExplanation: "Endurance is built through realistic timed simulations. Repeated practice conditions the mind to maintain focus across the full testing sequence.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Drinking four energy drinks right before entering the exam room",
+          diagnosticTitle: "Chemical Stimulant Crash Trap",
+          explanation: "Excessive caffeine induces jitteriness, elevates anxiety, and causes an energy crash mid-test."
+        }
+      },
+      {
+        id: "L70-W10-D3-Q09",
+        prompt: 'What distinguishes an authentic Band 7.5 Task 2 essay from an over-rehearsed Band 6.0 "Template Essay"?',
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "The Band 7.5 essay engages directly and deeply with the specific nuances of the prompt using natural collocations, whereas the template essay pastes generic formulaic sentences that loosely skirt the topic" },
+          { id: "B", text: "The Band 7.5 essay uses at least fifty French loan words" },
+          { id: "C", text: "The template essay is always written in green pen" },
+          { id: "D", text: "Examiners cannot distinguish between authentic writing and memorized templates" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "The Band 7.5 essay engages directly and deeply with the specific nuances of the prompt using natural collocations, whereas the template essay pastes generic formulaic sentences that loosely skirt the topic",
+        correctExplanation: `Trained examiners immediately detect generic boilerplate ("In this modern era of globalization..."). High-band writing responds organically to the prompt's specific parameters.`,
+        misconception: {
+          baitOptionId: "D",
+          baitOptionText: "D. Examiners cannot distinguish between authentic writing and memorized templates",
+          diagnosticTitle: "Examiner Naivety Myth",
+          explanation: "Examiners read thousands of essays and are specifically trained to identify memorized templates, discounting them under Task Achievement and Lexical Resource."
+        }
+      },
+      {
+        id: "L70-W10-D3-Q10",
+        prompt: "As a graduating LEADER candidate aiming for Band 7.0-7.5, what is your mindset when walking into the IELTS test room?",
+        lesson: "WEEK 10 \u2013 DAY 3",
+        part: "REVISION & EXAM SIMULATION",
+        difficulty: "hard",
+        timeLimitSeconds: 20,
+        points: 1e3,
+        options: [
+          { id: "A", text: "Disciplined academic execution: Apply the 5-30-5 pacing protocol, maintain consistent thesis architecture, deploy precise C1 collocations, and proofread relentlessly" },
+          { id: "B", text: "Hope for pure luck and pray that the examiner is having a good day" },
+          { id: "C", text: "Try to remember every single sentence from the coursebook word for word" },
+          { id: "D", text: "Rush through all tasks as quickly as possible to leave early" }
+        ],
+        correctOptionId: "A",
+        correctAnswerText: "Disciplined academic execution: Apply the 5-30-5 pacing protocol, maintain consistent thesis architecture, deploy precise C1 collocations, and proofread relentlessly",
+        correctExplanation: "Success at Band 7.0+ is a result of methodical academic discipline: structured planning, consistent argumentation, precise vocabulary, and error elimination.",
+        misconception: {
+          baitOptionId: "B",
+          baitOptionText: "B. Hope for pure luck and pray that the examiner is having a good day",
+          diagnosticTitle: "Fatalistic Passive Mindset",
+          explanation: "IELTS is a standardized proficiency test evaluated against rigorous criteria; success depends on acquired competence and systematic technique, not luck."
+        }
+      }
+    ];
+  }
+});
+
+// server/services/leader-questions-bank.data.ts
+function toArenaQuestionItem(q, idx) {
+  const options = (q.options || []).map((opt, oIdx) => {
+    const label = opt.label || opt.id.replace("opt_", "") || ["A", "B", "C", "D"][oIdx];
+    const id = opt.id.startsWith("opt_") ? opt.id : `opt_${label}`;
+    return {
+      id,
+      label,
+      text: opt.text
+    };
+  });
+  const correctOptionId = q.correctOptionId.startsWith("opt_") ? q.correctOptionId : `opt_${q.correctOptionId}`;
+  let misconception = void 0;
+  if (q.misconception) {
+    const baitId = q.misconception.baitOptionId.startsWith("opt_") ? q.misconception.baitOptionId : `opt_${q.misconception.baitOptionId}`;
+    misconception = {
+      baitOptionId: baitId,
+      baitOptionText: q.misconception.baitOptionText,
+      diagnosticTitle: q.misconception.diagnosticTitle,
+      explanation: q.misconception.explanation
+    };
+  }
+  return {
+    id: q.id,
+    roundIndex: typeof q.roundIndex === "number" ? q.roundIndex : idx,
+    prompt: q.prompt,
+    options,
+    correctOptionId,
+    timeLimitSeconds: q.timeLimitSeconds || 20,
+    points: q.points || 1e3,
+    explanation: q.correctExplanation || q.explanation || "",
+    misconception
+  };
+}
+function matchLeaderLessonKey(title) {
+  if (!title) return null;
+  const upper = title.toUpperCase().trim();
+  const l70Match = upper.match(/L70[-_]W0?(\d{1,2})[-_]D0?(\d)/);
+  if (l70Match) {
+    const w = parseInt(l70Match[1], 10);
+    const d = parseInt(l70Match[2], 10);
+    const key = `WEEK ${w} \u2013 DAY ${d}`;
+    if (LEADER_ARENA_LESSON_QUESTIONS[key]) return key;
+  }
+  const wMatch = upper.match(/W(?:EEK)?\s*0?(\d{1,2})\s*[-_–—\s]?\s*D(?:AY)?\s*0?(\d)/);
+  if (wMatch) {
+    const w = parseInt(wMatch[1], 10);
+    const d = parseInt(wMatch[2], 10);
+    const key = `WEEK ${w} \u2013 DAY ${d}`;
+    if (LEADER_ARENA_LESSON_QUESTIONS[key]) return key;
+  }
+  const weekDayMatch = upper.match(/WEEK\s*0?(\d{1,2}).*?DAY\s*0?(\d)/);
+  if (weekDayMatch) {
+    const w = parseInt(weekDayMatch[1], 10);
+    const d = parseInt(weekDayMatch[2], 10);
+    const key = `WEEK ${w} \u2013 DAY ${d}`;
+    if (LEADER_ARENA_LESSON_QUESTIONS[key]) return key;
+  }
+  return null;
+}
+var lessonsMap, LEADER_ARENA_LESSON_QUESTIONS;
+var init_leader_questions_bank_data = __esm({
+  "server/services/leader-questions-bank.data.ts"() {
+    init_week1_data4();
+    init_week2_data4();
+    init_week3_data4();
+    init_week4_data4();
+    init_week5_data4();
+    init_week6_data4();
+    init_week7_data4();
+    init_week8_data4();
+    init_week9_data4();
+    init_week10_data();
+    lessonsMap = {};
+    [LEADER_WEEK_1_QUESTIONS, LEADER_WEEK_2_QUESTIONS, LEADER_WEEK_3_QUESTIONS].forEach((wkRecord) => {
+      for (const [lessonKey, qList] of Object.entries(wkRecord)) {
+        lessonsMap[lessonKey] = qList.map((q, idx) => toArenaQuestionItem(q, idx));
+      }
+    });
+    [
+      LEADER_WEEK_4_QUESTIONS,
+      LEADER_WEEK_5_QUESTIONS,
+      LEADER_WEEK_6_QUESTIONS,
+      LEADER_WEEK_7_QUESTIONS,
+      LEADER_WEEK_8_QUESTIONS,
+      LEADER_WEEK_9_QUESTIONS,
+      LEADER_WEEK_10_QUESTIONS
+    ].forEach((wkArr) => {
+      wkArr.forEach((q) => {
+        const lessonKey = q.lesson.trim();
+        if (!lessonsMap[lessonKey]) {
+          lessonsMap[lessonKey] = [];
+        }
+        lessonsMap[lessonKey].push(toArenaQuestionItem(q, lessonsMap[lessonKey].length));
+      });
+    });
+    LEADER_ARENA_LESSON_QUESTIONS = lessonsMap;
+  }
+});
+
 // server/services/arena-bank.service.ts
 var arena_bank_service_exports = {};
 __export(arena_bank_service_exports, {
@@ -115821,6 +123112,7 @@ var init_arena_bank_service = __esm({
     init_builder_questions_bank_data();
     init_grade8_questions_bank_data();
     init_master_questions_bank_data();
+    init_leader_questions_bank_data();
     ArenaBankService = class {
       constructor(prisma) {
         this.prisma = prisma;
@@ -115914,15 +123206,18 @@ var init_arena_bank_service = __esm({
             const isGrade8Course = courseTitle.includes("l\u1EDBp 8") || courseTitle.includes("lop 8") || courseTitle.includes("grade 8");
             const isBuilderCourse = courseTitle.includes("builder");
             const isMasterCourse = courseTitle.includes("master");
+            const isLeaderCourse = courseTitle.includes("leader");
             if (!resolvedKey) {
-              if (isGrade8Course) {
+              if (isLeaderCourse) {
+                resolvedKey = matchLeaderLessonKey(exam.title) || "";
+              } else if (isGrade8Course) {
                 resolvedKey = matchGrade8LessonKey(exam.title) || "";
               } else if (isBuilderCourse) {
                 resolvedKey = matchBuilderLessonKey(exam.title) || "";
               } else if (isMasterCourse) {
                 resolvedKey = matchMasterLessonKey(exam.title) || "";
               } else {
-                resolvedKey = matchGrade8LessonKey(exam.title) || matchMasterLessonKey(exam.title) || matchBuilderLessonKey(exam.title) || matchDoerLessonKey(exam.title) || "";
+                resolvedKey = matchLeaderLessonKey(exam.title) || matchGrade8LessonKey(exam.title) || matchMasterLessonKey(exam.title) || matchBuilderLessonKey(exam.title) || matchDoerLessonKey(exam.title) || "";
               }
             }
           }
@@ -115934,6 +123229,14 @@ var init_arena_bank_service = __esm({
             examTitle,
             isCustom: true,
             questions: custom2
+          };
+        }
+        if (resolvedKey && LEADER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
+          return {
+            lessonKey: resolvedKey,
+            examTitle,
+            isCustom: false,
+            questions: LEADER_ARENA_LESSON_QUESTIONS[resolvedKey]
           };
         }
         if (resolvedKey && GRADE8_ARENA_LESSON_QUESTIONS[resolvedKey]) {
@@ -116019,9 +123322,15 @@ var init_arena_bank_service = __esm({
           const isGrade8 = courseTitle.includes("l\u1EDBp 8") || courseTitle.includes("lop 8") || courseTitle.includes("grade 8");
           const isBuilder = courseTitle.includes("builder");
           const isMaster = courseTitle.includes("master");
+          const isLeader = courseTitle.includes("leader");
           let resolvedLessonKey = null;
           let resolvedBankQuestions = null;
-          if (isGrade8 && exam?.title) {
+          if (isLeader && exam?.title) {
+            resolvedLessonKey = matchLeaderLessonKey(exam.title);
+            if (resolvedLessonKey && LEADER_ARENA_LESSON_QUESTIONS[resolvedLessonKey]) {
+              resolvedBankQuestions = LEADER_ARENA_LESSON_QUESTIONS[resolvedLessonKey];
+            }
+          } else if (isGrade8 && exam?.title) {
             resolvedLessonKey = matchGrade8LessonKey(exam.title);
             if (resolvedLessonKey && GRADE8_ARENA_LESSON_QUESTIONS[resolvedLessonKey]) {
               resolvedBankQuestions = GRADE8_ARENA_LESSON_QUESTIONS[resolvedLessonKey];
@@ -116038,6 +123347,11 @@ var init_arena_bank_service = __esm({
             }
           }
           if (!resolvedBankQuestions && exam?.title) {
+            const leaderKey = matchLeaderLessonKey(exam.title);
+            if (leaderKey && LEADER_ARENA_LESSON_QUESTIONS[leaderKey]) {
+              resolvedLessonKey = leaderKey;
+              resolvedBankQuestions = LEADER_ARENA_LESSON_QUESTIONS[leaderKey];
+            }
             const grade8Key = matchGrade8LessonKey(exam.title);
             if (grade8Key && GRADE8_ARENA_LESSON_QUESTIONS[grade8Key]) {
               resolvedLessonKey = grade8Key;
