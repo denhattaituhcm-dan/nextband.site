@@ -39,17 +39,6 @@ export function SEO({
   structuredData,
 }: SEOProps) {
   useEffect(() => {
-    // 0. Ensure apple-mobile-web-app-title is always concise Nextband for iOS Add to Home Screen
-    setMetaTag("name", "apple-mobile-web-app-title", "Nextband");
-
-    // 1. Dynamic Title
-    const formattedTitle = title
-      ? title.includes("NextBand")
-        ? title
-        : `${title} | Nextband`
-      : "NextBand - Nền tảng Luyện thi IELTS Thông minh: Band 7.0+ cấp tốc";
-    document.title = formattedTitle;
-
     // Helper: set or create meta tags
     const setMetaTag = (attrName: "name" | "property", attrValue: string, content: string) => {
       let tag = document.querySelector(`meta[${attrName}="${attrValue}"]`);
@@ -60,6 +49,17 @@ export function SEO({
       }
       tag.setAttribute("content", content);
     };
+
+    // 0. Ensure apple-mobile-web-app-title is always concise Nextband for iOS Add to Home Screen
+    setMetaTag("name", "apple-mobile-web-app-title", "Nextband");
+
+    // 1. Dynamic Title
+    const formattedTitle = title
+      ? title.includes("NextBand")
+        ? title
+        : `${title} | Nextband`
+      : "NextBand - Nền tảng Luyện thi IELTS Thông minh: Band 7.0+ cấp tốc";
+    document.title = formattedTitle;
 
     // 2. Meta Description
     if (description) {

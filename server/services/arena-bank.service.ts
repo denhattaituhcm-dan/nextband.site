@@ -3,6 +3,7 @@ import { ARENA_STANDARD_QUESTIONS, ArenaQuestion, ArenaQuestionOption } from "./
 import { DOER_ARENA_LESSON_QUESTIONS, matchDoerLessonKey, ArenaQuestionItem } from "./doer-questions-bank.data.js";
 import { BUILDER_ARENA_LESSON_QUESTIONS, matchBuilderLessonKey } from "./builder-questions-bank.data.js";
 import { GRADE8_ARENA_LESSON_QUESTIONS, matchGrade8LessonKey } from "./grade8-questions-bank.data.js";
+import { MASTER_ARENA_LESSON_QUESTIONS, matchMasterLessonKey } from "./master-questions-bank.data.js";
 
 /**
  * Strips HTML tags and decodes common HTML entities for crisp text display in Arena HUD
@@ -212,13 +213,16 @@ export class ArenaBankService {
         const courseTitle = (exam.course?.title || "").toLowerCase();
         const isGrade8Course = courseTitle.includes("lớp 8") || courseTitle.includes("lop 8") || courseTitle.includes("grade 8");
         const isBuilderCourse = courseTitle.includes("builder");
+        const isMasterCourse = courseTitle.includes("master");
         if (!resolvedKey) {
           if (isGrade8Course) {
             resolvedKey = matchGrade8LessonKey(exam.title) || "";
           } else if (isBuilderCourse) {
             resolvedKey = matchBuilderLessonKey(exam.title) || "";
+          } else if (isMasterCourse) {
+            resolvedKey = matchMasterLessonKey(exam.title) || "";
           } else {
-            resolvedKey = matchGrade8LessonKey(exam.title) || matchDoerLessonKey(exam.title) || matchBuilderLessonKey(exam.title) || "";
+            resolvedKey = matchGrade8LessonKey(exam.title) || matchMasterLessonKey(exam.title) || matchBuilderLessonKey(exam.title) || matchDoerLessonKey(exam.title) || "";
           }
         }
       }
@@ -245,7 +249,17 @@ export class ArenaBankService {
       };
     }
 
-    // 3. Check BUILDER questions bank
+    // 3. Check MASTER questions bank
+    if (resolvedKey && MASTER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
+      return {
+        lessonKey: resolvedKey,
+        examTitle,
+        isCustom: false,
+        questions: MASTER_ARENA_LESSON_QUESTIONS[resolvedKey],
+      };
+    }
+
+    // 3.1. Check BUILDER questions bank
     if (resolvedKey && BUILDER_ARENA_LESSON_QUESTIONS[resolvedKey]) {
       return {
         lessonKey: resolvedKey,
@@ -320,6 +334,7 @@ export class ArenaBankService {
       const courseTitle = (exam?.course?.title || "").toLowerCase();
       const isGrade8 = courseTitle.includes("lớp 8") || courseTitle.includes("lop 8") || courseTitle.includes("grade 8");
       const isBuilder = courseTitle.includes("builder");
+      const isMaster = courseTitle.includes("master");
 
       let resolvedLessonKey: string | null = null;
       let resolvedBankQuestions: ArenaQuestionItem[] | null = null;
@@ -328,6 +343,11 @@ export class ArenaBankService {
         resolvedLessonKey = matchGrade8LessonKey(exam.title);
         if (resolvedLessonKey && GRADE8_ARENA_LESSON_QUESTIONS[resolvedLessonKey]) {
           resolvedBankQuestions = GRADE8_ARENA_LESSON_QUESTIONS[resolvedLessonKey];
+        }
+      } else if (isMaster && exam?.title) {
+        resolvedLessonKey = matchMasterLessonKey(exam.title);
+        if (resolvedLessonKey && MASTER_ARENA_LESSON_QUESTIONS[resolvedLessonKey]) {
+          resolvedBankQuestions = MASTER_ARENA_LESSON_QUESTIONS[resolvedLessonKey];
         }
       } else if (isBuilder && exam?.title) {
         resolvedLessonKey = matchBuilderLessonKey(exam.title);
