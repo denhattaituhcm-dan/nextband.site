@@ -3,7 +3,7 @@ import { SchemaVisionItem, ImageSchemaTag } from "@/data/vocab-c2/types";
 import { C2ModeSharedProps } from "./ArenaHeader";
 import { speakC2Word } from "../engine/cognitiveAudio";
 import { useArenaTheme } from "../context/ThemeContext";
-import { Volume2, ChevronLeft, ChevronRight, Sparkles, RefreshCw, Layers } from "lucide-react";
+import { Volume2, ChevronLeft, ChevronRight, Sparkles, RefreshCw, Layers, Image as ImageIcon } from "lucide-react";
 
 interface Particle {
   x: number;
@@ -22,6 +22,8 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
   const [isContrastMode, setIsContrastMode] = useState(false);
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<string | null>(null);
   const [isQuizAnswered, setIsQuizAnswered] = useState(false);
+  const [visualMode, setVisualMode] = useState<"image" | "particle">("image");
+  const [imageError, setImageError] = useState(false);
   const quizStartTimeRef = useRef<number>(Date.now());
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -36,6 +38,7 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
     setSelectedQuizAnswer(null);
     setIsQuizAnswered(false);
     setIsContrastMode(false);
+    setImageError(false);
   }, [currentIndex, unit, subTab]);
 
   // Keyboard navigation
@@ -288,6 +291,33 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Toggle giữa Hình minh họa Split-Screen và Particle Forcefield */}
+            <button
+              onClick={() => setVisualMode((prev) => (prev === "image" ? "particle" : "image"))}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
+                visualMode === "image"
+                  ? isPaperTheme
+                    ? "bg-teal-50 text-teal-800 border-teal-300 shadow-xs"
+                    : "bg-cyan-500/20 text-cyan-300 border-cyan-500/40"
+                  : isPaperTheme
+                  ? "bg-white text-slate-600 border-slate-300"
+                  : "bg-white/5 text-slate-400 border-white/10"
+              }`}
+              title="Chuyển đổi giữa Tranh minh họa trực quan và Hạt chuyển động"
+            >
+              {visualMode === "image" ? (
+                <>
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Ảnh trực quan</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Hạt động lực</span>
+                </>
+              )}
+            </button>
+
             <button
               onClick={() => setIsContrastMode((prev) => !prev)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
@@ -306,13 +336,37 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
           </div>
         </div>
 
-        {/* Canvas Simulation Viewport */}
+        {/* Visual Simulation / Editorial Image Viewport */}
         <div
-          className={`relative h-[260px] w-full flex items-center justify-center transition-colors ${
+          className={`relative h-[280px] sm:h-[300px] w-full flex items-center justify-center transition-colors overflow-hidden ${
             isPaperTheme ? "bg-[#F7F4EE]" : isSlateTheme ? "bg-[#0A101D]" : "bg-[#070A12]"
           }`}
         >
-          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+          {/* Background Illustration if in Image mode and file exists */}
+          {visualMode === "image" && !imageError && (
+            <div className="absolute inset-0 w-full h-full">
+              <img
+                src={`/images/vocab-c2/schema/${currentItem.id}.jpg`}
+                alt={`${currentItem.word} vs ${currentItem.contrastWord}`}
+                onError={() => setImageError(true)}
+                className="w-full h-full object-cover opacity-85 transition-opacity duration-500"
+              />
+              <div
+                className={`absolute inset-0 ${
+                  isPaperTheme
+                    ? "bg-gradient-to-t from-[#FAF7F2] via-white/40 to-[#FAF7F2]/60"
+                    : isSlateTheme
+                    ? "bg-gradient-to-t from-[#0F172A] via-black/40 to-[#0F172A]/70"
+                    : "bg-gradient-to-t from-[#0B0F19] via-black/50 to-[#0B0F19]/70"
+                }`}
+              />
+            </div>
+          )}
+
+          {/* Fallback hoặc Chế độ Particle Simulation */}
+          {(visualMode === "particle" || imageError) && (
+            <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+          )}
 
           {/* Center Dynamic Word Overlay */}
           <div className="relative z-10 text-center pointer-events-none px-4">
@@ -321,8 +375,8 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                 className={`text-3xl sm:text-5xl font-black tracking-tight transition-colors duration-300 ${
                   isPaperTheme
                     ? isContrastMode
-                      ? "text-amber-800 drop-shadow-xs"
-                      : "text-slate-900 drop-shadow-xs"
+                      ? "text-amber-800 drop-shadow-sm"
+                      : "text-slate-900 drop-shadow-sm"
                     : isContrastMode
                     ? "text-amber-400 drop-shadow-md"
                     : isSlateTheme
@@ -337,10 +391,10 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
                   e.stopPropagation();
                   speakC2Word(activeDisplayWord);
                 }}
-                className={`pointer-events-auto p-2 rounded-full transition-all cursor-pointer shadow-sm ${
+                className={`pointer-events-auto p-2 rounded-full transition-all cursor-pointer shadow-md ${
                   isPaperTheme
-                    ? "bg-white hover:bg-slate-100 text-slate-800 border border-slate-300"
-                    : "bg-white/10 hover:bg-white/20 text-white"
+                    ? "bg-white/95 hover:bg-white text-slate-800 border border-slate-300 backdrop-blur-xs"
+                    : "bg-black/60 hover:bg-black/80 text-white backdrop-blur-xs border border-white/20"
                 }`}
                 title="Phát âm chuẩn C2 (en-GB)"
               >
@@ -351,14 +405,16 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             </div>
             <p
               className={`text-sm font-mono tracking-wide ${
-                isPaperTheme ? "text-slate-600 font-semibold" : "text-slate-300"
+                isPaperTheme ? "text-slate-700 font-bold" : "text-slate-200"
               }`}
             >
               {currentItem.ipa}
             </p>
             <p
-              className={`text-sm max-w-lg mx-auto mt-2 italic font-serif leading-relaxed ${
-                isPaperTheme ? "text-slate-700 font-medium" : "text-cyan-200/90"
+              className={`text-sm max-w-lg mx-auto mt-2 italic font-serif leading-relaxed px-3 py-1 rounded-xl backdrop-blur-xs ${
+                isPaperTheme
+                  ? "text-slate-800 font-semibold bg-white/60 border border-black/5"
+                  : "text-cyan-200 bg-black/40 border border-white/10"
               }`}
             >
               "{activeDisplayMetaphor}"
