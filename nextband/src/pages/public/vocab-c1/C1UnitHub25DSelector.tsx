@@ -86,29 +86,16 @@ export const C1UnitHub25DSelector: React.FC<C1UnitHub25DSelectorProps> = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="flex-1 w-full max-w-6xl mx-auto flex flex-col justify-between py-4 sm:py-6 px-3 sm:px-8 select-none overflow-hidden"
+      className="flex-1 w-full max-w-7xl mx-auto flex flex-col justify-between py-2 sm:py-4 px-3 sm:px-8 select-none overflow-hidden"
     >
-      {/* Top Header & Instruction */}
-      <div className="w-full text-center max-w-2xl mx-auto mb-2 shrink-0">
-        <span className="inline-block text-xs font-mono font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full mb-2">
-          CEFR LEVEL C1 • 2.5D CAROUSEL HUB
-        </span>
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-          The Vocabulary Files — Level C1
-        </h1>
-        <p className="text-slate-600 text-xs sm:text-sm mt-1">
-          Vuốt trên điện thoại hoặc dùng phím <kbd className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-200 font-bold">←</kbd> <kbd className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-200 font-bold">→</kbd> để đổi Unit, nhấn <kbd className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-200 font-bold">Enter</kbd> để vào học.
-        </p>
-      </div>
-
       {/* 2.5D Cylindrical Carousel Viewport */}
-      <div className="relative w-full h-[450px] sm:h-[490px] flex items-center justify-center perspective-[1200px] my-auto">
+      <div className="relative w-full flex-1 min-h-[480px] sm:min-h-[550px] flex items-center justify-center perspective-[1300px] my-auto">
         {/* Navigation Left Arrow */}
         <button
           type="button"
           onClick={prevUnit}
           aria-label="Previous Unit"
-          className="absolute left-1 sm:left-4 z-30 p-3 sm:p-3.5 rounded-full border border-slate-200 bg-white/95 text-slate-800 shadow-xl cursor-pointer hover:scale-110 active:scale-95 hover:bg-white transition-all backdrop-blur-md"
+          className="absolute left-1 sm:left-4 z-30 p-3 sm:p-4 rounded-full border border-slate-200 bg-white/95 text-slate-800 shadow-xl cursor-pointer hover:scale-110 active:scale-95 hover:bg-white transition-all backdrop-blur-md"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
@@ -118,7 +105,7 @@ export const C1UnitHub25DSelector: React.FC<C1UnitHub25DSelectorProps> = ({
           type="button"
           onClick={nextUnit}
           aria-label="Next Unit"
-          className="absolute right-1 sm:right-4 z-30 p-3 sm:p-3.5 rounded-full border border-slate-200 bg-white/95 text-slate-800 shadow-xl cursor-pointer hover:scale-110 active:scale-95 hover:bg-white transition-all backdrop-blur-md"
+          className="absolute right-1 sm:right-4 z-30 p-3 sm:p-4 rounded-full border border-slate-200 bg-white/95 text-slate-800 shadow-xl cursor-pointer hover:scale-110 active:scale-95 hover:bg-white transition-all backdrop-blur-md"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
@@ -133,14 +120,14 @@ export const C1UnitHub25DSelector: React.FC<C1UnitHub25DSelectorProps> = ({
             const isCenter = offset === 0;
             const meta = getUnitMeta(unit.unitId);
             const cleanTitle = unit.title.replace(/^Unit \d+:\s*/i, "");
-            const previewWords = unit.wordsInAction.slice(0, 4);
+            const previewWords = unit.wordsInAction.slice(0, 5);
 
             // 2.5D Transform Matrix Calculation
-            const translateX = offset * 220; // spread spacing
-            const translateZ = -Math.abs(offset) * 160; // depth
-            const rotateY = offset * -26; // 3D angle
-            const scale = 1 - Math.abs(offset) * 0.12;
-            const opacity = isCenter ? 1 : Math.max(0.25, 1 - Math.abs(offset) * 0.38);
+            const translateX = offset * 255; // wider spread spacing for larger cards
+            const translateZ = -Math.abs(offset) * 165; // depth
+            const rotateY = offset * -25; // 3D angle
+            const scale = 1 - Math.abs(offset) * 0.11;
+            const opacity = isCenter ? 1 : Math.max(0.28, 1 - Math.abs(offset) * 0.36);
             const zIndex = 20 - Math.abs(offset) * 5;
 
             return (
@@ -161,7 +148,7 @@ export const C1UnitHub25DSelector: React.FC<C1UnitHub25DSelectorProps> = ({
                     ? "0 25px 50px -12px rgba(79, 70, 229, 0.25), 0 0 0 2px rgba(99, 102, 241, 0.4)"
                     : "0 10px 25px -5px rgba(0, 0, 0, 0.08)",
                 }}
-                className={`absolute w-[300px] sm:w-[360px] h-[410px] sm:h-[450px] rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-500 ease-out cursor-pointer select-none border ${
+                className={`absolute w-[330px] sm:w-[420px] h-[460px] sm:h-[525px] rounded-3xl overflow-hidden flex flex-col justify-between transition-all duration-500 ease-out cursor-pointer select-none border ${
                   isCenter
                     ? "bg-white border-indigo-300 text-slate-900 shadow-2xl"
                     : "bg-[#FAFBFD] border-slate-200 text-slate-600 hover:border-slate-300"
@@ -169,9 +156,9 @@ export const C1UnitHub25DSelector: React.FC<C1UnitHub25DSelectorProps> = ({
               >
                 <div>
                   {/* Top Header Row with Badges */}
-                  <div className="p-4 pb-2.5 flex items-center justify-between">
+                  <div className="p-5 pb-3 flex items-center justify-between">
                     <span
-                      className={`px-3 py-1 rounded-xl text-xs font-mono font-black border flex items-center gap-1.5 ${
+                      className={`px-3.5 py-1 rounded-xl text-xs sm:text-sm font-mono font-black border flex items-center gap-1.5 ${
                         isCenter
                           ? "bg-indigo-50 border-indigo-200 text-indigo-700"
                           : "bg-slate-100 border-slate-200 text-slate-500"
@@ -180,13 +167,13 @@ export const C1UnitHub25DSelector: React.FC<C1UnitHub25DSelectorProps> = ({
                       <span>UNIT {unit.unitId < 10 ? `0${unit.unitId}` : unit.unitId}</span>
                     </span>
 
-                    <span className="text-[11px] font-mono font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                    <span className="text-xs font-mono font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg">
                       {meta.pages}
                     </span>
                   </div>
 
                   {/* 16:9 Cover Image */}
-                  <div className="relative aspect-[16/9] w-[calc(100%-2rem)] mx-auto overflow-hidden rounded-2xl bg-slate-100 shadow-md border border-slate-100">
+                  <div className="relative aspect-[16/9] w-[calc(100%-2.5rem)] mx-auto overflow-hidden rounded-2xl bg-slate-100 shadow-md border border-slate-100">
                     <img
                       src={`/images/vocab-c1/unit-${unit.unitId < 10 ? `0${unit.unitId}` : unit.unitId}.webp`}
                       alt={cleanTitle}
@@ -196,34 +183,34 @@ export const C1UnitHub25DSelector: React.FC<C1UnitHub25DSelectorProps> = ({
                         (e.currentTarget as HTMLElement).style.display = "none";
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent flex items-end p-3">
-                      <span className="text-white text-xs font-bold drop-shadow-sm line-clamp-1">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-transparent to-transparent flex items-end p-3.5">
+                      <span className="text-white text-xs sm:text-sm font-bold drop-shadow-sm line-clamp-1">
                         {meta.themeVi}
                       </span>
                     </div>
                   </div>
 
                   {/* Card Content */}
-                  <div className="p-4 pt-3">
-                    <h2 className="text-base sm:text-lg font-black text-slate-900 line-clamp-1 mb-1">
+                  <div className="p-5 pt-4">
+                    <h2 className="text-lg sm:text-xl font-black text-slate-900 line-clamp-1 mb-1.5">
                       {cleanTitle}
                     </h2>
-                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">
+                    <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed mb-3.5">
                       {meta.descVi}
                     </p>
 
                     {/* Word Tags preview */}
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {previewWords.map((w) => (
                         <span
                           key={w.id}
-                          className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-mono text-[11px] font-semibold"
+                          className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-mono text-xs font-semibold"
                         >
                           {w.word}
                         </span>
                       ))}
                       {unit.wordsInAction.length > previewWords.length && (
-                        <span className="px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-600 font-mono text-[10px] font-bold">
+                        <span className="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-600 font-mono text-xs font-bold">
                           +{unit.wordsInAction.length - previewWords.length} từ
                         </span>
                       )}
@@ -232,7 +219,7 @@ export const C1UnitHub25DSelector: React.FC<C1UnitHub25DSelectorProps> = ({
                 </div>
 
                 {/* Bottom Action Button */}
-                <div className="p-4 pt-2 border-t border-slate-100">
+                <div className="p-5 pt-3 border-t border-slate-100">
                   {isCenter ? (
                     <button
                       type="button"
@@ -240,14 +227,14 @@ export const C1UnitHub25DSelector: React.FC<C1UnitHub25DSelectorProps> = ({
                         e.stopPropagation();
                         onSelectUnit(index);
                       }}
-                      className="w-full py-2.5 px-4 rounded-xl font-black text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white shadow-emerald-700/20 active:scale-98"
+                      className="w-full py-3 px-4 rounded-xl font-black text-xs sm:text-sm transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white shadow-emerald-700/20 active:scale-98"
                     >
-                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <Play className="w-4 h-4 fill-current" />
                       <span>VÀO HỌC & CHINH PHỤC BÀI NÀY</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-4 h-4" />
                     </button>
                   ) : (
-                    <div className="w-full py-2 rounded-xl text-center text-xs font-bold text-slate-400">
+                    <div className="w-full py-2.5 rounded-xl text-center text-xs sm:text-sm font-bold text-slate-400">
                       Nhấn để xem bài này
                     </div>
                   )}
