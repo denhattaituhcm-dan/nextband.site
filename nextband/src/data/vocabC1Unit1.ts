@@ -1,6 +1,20 @@
+export interface ContrastWordItem {
+  word: string;
+  distinction: string;
+}
+
+export interface ContrastiveRecallItem {
+  scenarioEn: string;
+  scenarioVi: string;
+  options: string[];
+  correctWord: string;
+  explanationVi: string;
+}
+
 export interface WordInAction {
   id: string;
   word: string;
+  pos?: string;
   ipa: string;
   nuance: string;
   register?: string;
@@ -9,6 +23,14 @@ export interface WordInAction {
   viDef: string;
   example: string;
   targetKeyword: string;
+  coreNuanceVi?: string;
+  microSceneEn?: string;
+  microSceneVi?: string;
+  contrastWords?: ContrastWordItem[];
+  usageConnotationVi?: string;
+  visualCueUrl?: string;
+  visualCueCaptionVi?: string;
+  contrastiveRecall?: ContrastiveRecallItem;
 }
 
 export interface WordFormationItem {
@@ -100,134 +122,321 @@ export const VOCAB_C1_UNIT_1: VocabC1Unit = {
     {
       id: "wia-1",
       word: "adventurous",
+      pos: "Adjective · C1",
       ipa: "/ədˈven.tʃər.əs/",
-      nuance: "[Looks for adventure]",
+      nuance: "[Eager for new & exciting experiences]",
       register: "General / Neutral",
-      collocations: ["adventurous spirit", "adventurous journey", "adventurous cook"],
-      enDef: "An adventurous person is eager to visit new places and have new or exciting experiences.",
-      viDef: "Thích phiêu lưu, ưa mạo hiểm, luôn tìm kiếm những trải nghiệm mới lạ.",
-      example: "An **adventurous** explorer who ventured deep into uncharted territory.",
-      targetKeyword: "adventurous"
+      collocations: ["adventurous spirit", "adventurous journey", "adventurous palate"],
+      enDef: "Willing to try new or difficult things, or exciting and often dangerous things.",
+      viDef: "Thích phiêu lưu, ưa khám phá; sẵn sàng thử nghiệm cái mới lạ hoặc mạo hiểm.",
+      example: "An **adventurous** traveler who backpacked across uncharted mountain trails.",
+      targetKeyword: "adventurous",
+      coreNuanceVi: "Nhấn mạnh sự hào hứng chủ động tìm kiếm trải nghiệm mới (du lịch, ẩm thực, ý tưởng), không nhất thiết phải đang đối mặt với mối đe dọa sinh tử.",
+      microSceneEn: "A diner enthusiastically orders an exotic local dish that none of the other tourists dare to try.",
+      microSceneVi: "Một thực khách hào hứng gọi món đặc sản bản địa kỳ lạ mà không du khách nào khác trong đoàn dám thử.",
+      contrastWords: [
+        { word: "brave", distinction: "đối mặt với hiểm nguy, nỗi sợ hoặc đau đớn thực sự." },
+        { word: "daring", distinction: "dám làm việc gay cấn, mạo hiểm cao và gây ấn tượng mạnh." },
+        { word: "adventurous", distinction: "cởi mở với trải nghiệm mới lạ, thích khám phá." }
+      ],
+      usageConnotationVi: "Mang sắc thái tích cực; dùng rộng rãi cho cả con người, hành trình lẫn gu thưởng thức (adventurous eater/design).",
+      contrastiveRecall: {
+        scenarioEn: "I'm trying to be more ________ with my cooking by experimenting with Middle Eastern spices.",
+        scenarioVi: "Tôi đang cố gắng đổi mới hơn trong việc nấu nướng bằng cách thử nghiệm các loại gia vị Trung Đông.",
+        options: ["adventurous", "brave", "valiant", "chivalrous"],
+        correctWord: "adventurous",
+        explanationVi: "Chọn 'adventurous' vì ngữ cảnh nói về sự cởi mở thử nghiệm cái mới lạ trong nấu ăn. 'Brave' hay 'valiant' dùng cho hiểm nguy/thử thách khắc nghiệt, còn 'chivalrous' là hào hiệp lịch thiệp."
+      }
     },
     {
       id: "wia-2",
       word: "brave",
+      pos: "Adjective · B2/C1",
       ipa: "/breɪv/",
-      nuance: "[Self-confident in danger]",
+      nuance: "[Showing no fear of dangerous or difficult things]",
       register: "General / Universal",
       collocations: ["brave face", "brave decision", "put on a brave front"],
-      enDef: "Self-confident in the presence of danger and ready to suffer pain.",
-      viDef: "Can đảm, tự tin đối mặt hiểm nguy và sẵn sàng đón nhận đau đớn.",
-      example: "A **brave** firefighter who ran into the inferno to rescue trapped victims.",
-      targetKeyword: "brave"
+      enDef: "Showing no fear of dangerous or difficult things; ready to face danger or pain.",
+      viDef: "Can đảm, dũng cảm; sẵn sàng đối diện với nguy hiểm, khó khăn hoặc đau đớn.",
+      example: "A **brave** firefighter who entered the burning building to rescue trapped residents.",
+      targetKeyword: "brave",
+      coreNuanceVi: "Từ phổ quát nhất để chỉ lòng dũng cảm trực diện trước mối nguy hiểm, nghịch cảnh hoặc nỗi đau thể xác/tinh thần.",
+      microSceneEn: "A child holds back tears and stays calm while receiving a painful medical treatment at the clinic.",
+      microSceneVi: "Một đứa trẻ nén nước mắt, giữ bình tĩnh khi trải qua ca điều trị gây đau đớn tại phòng khám.",
+      contrastWords: [
+        { word: "brave", distinction: "từ chuẩn phổ quát khi đối diện nguy hiểm, khó khăn hoặc đau đớn." },
+        { word: "bold", distinction: "tự tin quyết đoán, không e dè khi hành động hoặc phát biểu." },
+        { word: "audacious", distinction: "táo bạo khác thường, đôi khi gây sốc hoặc bị coi là liều lĩnh." }
+      ],
+      usageConnotationVi: "Tích cực, tự nhiên trong mọi văn cảnh từ đời sống hàng ngày đến trang trọng (put on a brave face).",
+      contrastiveRecall: {
+        scenarioEn: "Despite the painful progression of her illness, she always put on a ________ smile for her family.",
+        scenarioVi: "Bất chấp căn bệnh tiến triển đau đớn, cô ấy luôn nở một nụ cười kiên cường trước gia đình.",
+        options: ["brave", "audacious", "adventurous", "daring"],
+        correctWord: "brave",
+        explanationVi: "Chọn 'brave' (collocation: put on a brave face/smile) khi nén chịu đau đớn hoặc nghịch cảnh. 'Audacious' và 'daring' thiên về hành động mạo hiểm/táo bạo gây chú ý."
+      }
     },
     {
       id: "wia-3",
       word: "chivalrous",
+      pos: "Adjective · C1",
       ipa: "/ˈʃɪv.əl.rəs/",
-      nuance: "[+ Moral element & Protective]",
+      nuance: "[Polite, honorable & protective of others]",
       register: "Literary / Formal",
       collocations: ["chivalrous conduct", "chivalrous gesture", "chivalrous gentleman"],
-      enDef: "Puts himself in danger for the protection of others (noble, respectful of the weak).",
-      viDef: "Hào hiệp, trượng nghĩa; sẵn sàng xả thân che chở người khác, đặc biệt là phái yếu.",
-      example: "His **chivalrous** conduct won him the respect and admiration of everyone in town.",
-      targetKeyword: "chivalrous"
+      enDef: "Very polite, honest, and kind, especially toward women; willing to protect the weak.",
+      viDef: "Hào hiệp, lịch thiệp và trọng danh dự; sẵn sàng che chở hoặc nhường nhịn người khác.",
+      example: "His **chivalrous** gesture of offering his coat in the pouring rain was deeply appreciated.",
+      targetKeyword: "chivalrous",
+      coreNuanceVi: "Gắn liền với tinh thần hiệp sĩ (chivalry): kết hợp giữa lòng vị tha, sự che chở người yếu thế và phong thái lịch lãm, nhã nhặn.",
+      microSceneEn: "During a sudden downpour, a man steps out into the rain so an elderly passenger can wait under the narrow shelter.",
+      microSceneVi: "Giữa cơn mưa lớn bất chợt, một người đàn ông bước ra ngoài mưa để nhường chỗ đứng dưới mái hiên hẹp cho một hành khách lớn tuổi.",
+      contrastWords: [
+        { word: "chivalrous", distinction: "hào hiệp, lịch thiệp, che chở người khác theo chuẩn mực danh dự." },
+        { word: "gallant", distinction: "quả cảm hào hoa giữa nguy nan, hoặc ga-lăng chu đáo với phụ nữ." },
+        { word: "fearless", distinction: "chỉ thuần túy trạng thái không biết sợ hãi, không hàm ý lịch thiệp." }
+      ],
+      usageConnotationVi: "Tích cực, mang âm hưởng văn chương hoặc ca ngợi phẩm cách cao thượng, đôi khi gợi nét cổ điển.",
+      contrastiveRecall: {
+        scenarioEn: "In an age of fierce self-interest, his ________ defense of the unfairly accused clerk stood out.",
+        scenarioVi: "Trong thời đại ai cũng chỉ lo thân mình, hành động hào hiệp đứng ra bảo vệ người thư ký bị kết tội oan của ông thật nổi bật.",
+        options: ["chivalrous", "audacious", "adventurous", "intrepid"],
+        correctWord: "chivalrous",
+        explanationVi: "Chọn 'chivalrous' vì hành động mang tính trượng nghĩa, bảo vệ người yếu thế. 'Intrepid' dùng cho thám hiểm/nguy hiểm, 'audacious' là táo bạo gây sốc."
+      }
     },
     {
       id: "wia-4",
       word: "bold",
+      pos: "Adjective · B2/C1",
       ipa: "/boʊld/",
-      nuance: "[Stands out & Unhesitating]",
+      nuance: "[Confident, decisive & not afraid to take risks]",
       register: "Formal / Written & Spoken",
-      collocations: ["bold move", "bold step", "bold statement", "bold stroke"],
-      enDef: "Stands out and faces danger bravely, willing to take prominent risks.",
-      viDef: "Táo bạo, dũng cảm nổi trội; dám đứng mũi chịu sào không chùn bước.",
-      example: "She took a **bold** stand against corruption in her department.",
-      targetKeyword: "bold"
+      collocations: ["bold move", "bold step", "bold statement", "bold initiative"],
+      enDef: "Not frightened of danger; confident and not shy or hesitant to take decisive action.",
+      viDef: "Táo bạo, tự tin quyết đoán; không ngần ngại thực hiện bước đi lớn hoặc phát biểu thẳng thắn.",
+      example: "The new CEO made a **bold** move by restructuring the entire product line.",
+      targetKeyword: "bold",
+      coreNuanceVi: "Nhấn mạnh sự tự tin, quyết đoán, dám bước ra khỏi vùng an toàn để hành động hoặc đưa ra quyết sách rõ nét (cả nghĩa bóng cho màu sắc/nét chữ đậm).",
+      microSceneEn: "At a town hall meeting, a young architect steps up to the microphone to propose a radical redesign of the city center.",
+      microSceneVi: "Tại cuộc họp thành phố, một kiến trúc sư trẻ tự tin bước lên micro đề xuất phương án quy hoạch lại toàn bộ khu trung tâm.",
+      contrastWords: [
+        { word: "brave", distinction: "chịu đựng hoặc đối mặt với nguy hiểm, nỗi sợ thực tế." },
+        { word: "bold", distinction: "tự tin, quyết đoán, không rụt rè khi đưa ra quyết định hoặc ý kiến." },
+        { word: "audacious", distinction: "táo bạo đến mức khác thường, gây kinh ngạc hoặc bị coi là quá trớn." }
+      ],
+      usageConnotationVi: "Thường tích cực trong kinh doanh, chính sách, nghệ thuật (bold move/vision); đôi khi trung tính nếu chỉ sự bạo dạn.",
+      contrastiveRecall: {
+        scenarioEn: "Transitioning completely to renewable energy within five years is a ________ economic strategy.",
+        scenarioVi: "Chuyển đổi hoàn toàn sang năng lượng tái tạo trong vòng 5 năm là một chiến lược kinh tế đầy quyết đoán và táo bạo.",
+        options: ["bold", "chivalrous", "valiant", "gallant"],
+        correctWord: "bold",
+        explanationVi: "Chọn 'bold' (bold strategy/move/step) cho các quyết sách tự tin, đột phá. 'Chivalrous', 'valiant', 'gallant' dùng cho phẩm chất con người trong chiến đấu hoặc ứng xử."
+      }
     },
     {
       id: "wia-5",
       word: "daring",
+      pos: "Adjective · C1",
       ipa: "/ˈdeə.rɪŋ/",
-      nuance: "[Defies any dangers]",
+      nuance: "[Brave & taking high-stakes risks]",
       register: "Written / Expressive",
-      collocations: ["daring raid", "daring rescue", "daring feat", "daring innovation"],
-      enDef: "Defies any dangers; bold in taking perilous or audacious chances.",
-      viDef: "Liều lĩnh, quả cảm; sẵn sàng thách thức bất kỳ hiểm nguy nào.",
-      example: "The paratroopers mounted a **daring** raid under the cover of night.",
-      targetKeyword: "daring"
+      collocations: ["daring rescue", "daring raid", "daring feat", "daring escape"],
+      enDef: "Brave and taking risks; willing to do dangerous or exciting things that impress others.",
+      viDef: "Quả cảm, liều lĩnh một cách ngoạn mục; dám thực hiện những pha mạo hiểm có độ rủi ro cao.",
+      example: "The mountain rescue team carried out a **daring** helicopter evacuation in zero visibility.",
+      targetKeyword: "daring",
+      coreNuanceVi: "Gợi hình ảnh hành động thực tế có độ rủi ro cao, gay cấn, đòi hỏi kỹ năng và sự gan dạ khiến người chứng kiến phải hồi hộp thán phục.",
+      microSceneEn: "A rescue pilot maneuvers a helicopter inches away from a jagged cliff face to lift stranded climbers.",
+      microSceneVi: "Một phi công cứu hộ điều khiển trực thăng áp sát vách đá dựng đứng chỉ vài tấc để giải cứu những người leo núi mắc kẹt.",
+      contrastWords: [
+        { word: "bold", distinction: "tự tin, quyết đoán (thường dùng cho kế hoạch, quyết định, phát ngôn)." },
+        { word: "daring", distinction: "hành động mạo hiểm gay cấn, chấp nhận rủi ro cao (daring rescue/escape)." },
+        { word: "courageous", distinction: "vững vàng vượt qua nghịch cảnh lớn hoặc đòi hỏi nghị lực sâu sắc." }
+      ],
+      usageConnotationVi: "Sắc thái sống động, giàu kịch tính; rất hay đi với các danh từ chỉ chiến dịch giải cứu, đột kích, biểu diễn hoặc thiết kế phá cách.",
+      contrastiveRecall: {
+        scenarioEn: "The coast guard pulled off a ________ midnight rescue amidst ten-meter storm waves.",
+        scenarioVi: "Lực lượng tuần duyên đã thực hiện thành công một cuộc giải cứu nửa đêm đầy ngoạn mục giữa những con sóng bão cao 10 mét.",
+        options: ["daring", "chivalrous", "adventurous", "polite"],
+        correctWord: "daring",
+        explanationVi: "Chọn 'daring' (daring rescue) vì đây là một pha hành động mạo hiểm, kịch tính với rủi ro cực cao."
+      }
     },
     {
       id: "wia-6",
       word: "fearless",
+      pos: "Adjective · B2/C1",
       ipa: "/ˈfɪə.ləs/",
-      nuance: "[Shows no fear]",
+      nuance: "[Having no fear of danger or intimidation]",
       register: "General / Written & Spoken",
-      collocations: ["fearless fighter", "fearless reporting", "fearless advocacy"],
-      enDef: "Shows no fear whatsoever; completely immune to fright or terror.",
-      viDef: "Không hề biết sợ hãi; gan góc, can trường tuyệt đối.",
-      example: "A **fearless** investigative journalist uncovering cartel activities.",
-      targetKeyword: "fearless"
+      collocations: ["fearless leader", "fearless reporting", "fearless competitor"],
+      enDef: "Having no fear; not afraid of anything, especially in intimidating or dangerous situations.",
+      viDef: "Không hề sợ hãi, gan dạ; không bị khuất phục trước sự đe dọa hay hiểm nguy.",
+      example: "She is a **fearless** investigative reporter who has exposed major corporate fraud.",
+      targetKeyword: "fearless",
+      coreNuanceVi: "Tập trung trực tiếp vào trạng thái tâm lý không bị nỗi sợ hay sự đe dọa chi phối (hậu tố -less = không có nỗi sợ).",
+      microSceneEn: "A wildlife photographer stands calmly on the riverbank as a grizzly bear fishes just a few meters away.",
+      microSceneVi: "Một nhiếp ảnh gia động vật hoang dã đứng tác nghiệp bình tĩnh bên bờ sông khi một con gấu xám đang bắt cá cách đó vài mét.",
+      contrastWords: [
+        { word: "brave", distinction: "có thể vẫn cảm thấy sợ nhưng vượt qua nỗi sợ để hành động." },
+        { word: "fearless", distinction: "hoàn toàn không biểu lộ nỗi sợ trước nguy hiểm hay áp lực đe dọa." },
+        { word: "chivalrous", distinction: "hào hiệp bảo vệ người khác theo chuẩn mực đạo lý." }
+      ],
+      usageConnotationVi: "Tích cực, mạnh mẽ; dùng để khen ngợi vận động viên, nhà báo điều tra, nhà lãnh đạo hoặc người bảo vệ công lý.",
+      contrastiveRecall: {
+        scenarioEn: "Known for her ________ journalism, she continued publishing investigative reports despite repeated threats.",
+        scenarioVi: "Nổi tiếng với ngòi bút không biết sợ hãi, cô tiếp tục công bố các phóng sự điều tra bất chấp những lời đe dọa liên tiếp.",
+        options: ["fearless", "adventurous", "chivalrous", "gallant"],
+        correctWord: "fearless",
+        explanationVi: "Chọn 'fearless' (fearless journalism/reporting) để nhấn mạnh thái độ không hề nao núng trước sự đe dọa."
+      }
     },
     {
       id: "wia-7",
       word: "intrepid",
+      pos: "Adjective · C1/C2",
       ipa: "/ɪnˈtrep.ɪd/",
-      nuance: "[Possesses unshakable nerves]",
+      nuance: "[Extremely brave & showing no fear of dangerous situations]",
       register: "Formal / Journalistic",
       collocations: ["intrepid explorer", "intrepid traveler", "intrepid reporter"],
-      enDef: "Possesses unshakable nerves; calmly resolute in the most terrifying conditions.",
-      viDef: "Kiên cường bất khuất; sở hữu tinh thần thép, vững vàng không nao núng.",
-      example: "The **intrepid** mountaineer reached the summit despite the howling blizzard.",
-      targetKeyword: "intrepid"
+      enDef: "Extremely brave and showing no fear of dangerous situations, especially in exploration or journalism.",
+      viDef: "Kiên cường, gan dạ trước hiểm nguy; không chùn bước trong những hành trình hay nhiệm vụ khắc nghiệt.",
+      example: "An **intrepid** team of volcanologists descended toward the rim of the active crater.",
+      targetKeyword: "intrepid",
+      coreNuanceVi: "Theo từ điển Cambridge, 'intrepid' chỉ sự cực kỳ dũng cảm, không sợ các tình huống nguy hiểm; trong thực tế ngôn ngữ, từ này đặc biệt gắn kết (collocate) với nhà thám hiểm, phóng viên chiến trường hoặc lữ khách dấn thân vào nơi hiểm trở.",
+      microSceneEn: "A documentary crew treks through a remote conflict zone to interview witnesses on the ground.",
+      microSceneVi: "Một đoàn làm phim tài liệu băng qua vùng xung đột hẻo lánh để phỏng vấn các nhân chứng tại hiện trường.",
+      contrastWords: [
+        { word: "adventurous", distinction: "thích trải nghiệm mới mẻ, có thể chỉ là chuyến đi thú vị thông thường." },
+        { word: "intrepid", distinction: "cực kỳ gan dạ khi dấn thân vào những hành trình, vùng đất hoặc nhiệm vụ đầy hiểm nguy." },
+        { word: "bold", distinction: "tự tin, quyết đoán trong hành động hoặc quyết định nói chung." }
+      ],
+      usageConnotationVi: "Trang trọng, báo chí (journalistic); đôi khi cũng được dùng với sắc thái hơi hài hước nhẹ để khen những du khách chịu khó vượt gian khổ.",
+      contrastiveRecall: {
+        scenarioEn: "Only the most ________ travelers venture into this remote desert region during the peak summer heat.",
+        scenarioVi: "Chỉ những lữ khách gan dạ nhất mới dám dấn thân vào vùng sa mạc hẻo lánh này giữa cái nắng đỉnh điểm mùa hè.",
+        options: ["intrepid", "chivalrous", "audacious", "polite"],
+        correctWord: "intrepid",
+        explanationVi: "Chọn 'intrepid' (intrepid travelers/explorers) vì ngữ cảnh nói về sự gan dạ, bền bỉ dấn thân vào hoàn cảnh thực địa nguy hiểm, khắc nghiệt."
+      }
     },
     {
       id: "wia-8",
       word: "courageous",
+      pos: "Adjective · C1",
       ipa: "/kəˈreɪ.dʒəs/",
-      nuance: "[+ Moral purpose & Conviction]",
+      nuance: "[Having or showing deep mental or moral strength to face difficulty/danger]",
       register: "Formal / Academic",
-      collocations: ["courageous decision", "courageous stand", "courageous leadership"],
-      enDef: "More than brave, adding a strong moral conviction and spiritual fortitude to his/her deeds.",
-      viDef: "Dũng cảm vì lý tưởng đạo đức; can trường đấu tranh cho chính nghĩa.",
-      example: "A **courageous** decision to speak the truth even when facing dismissal.",
-      targetKeyword: "courageous"
+      collocations: ["courageous decision", "courageous stand", "courageous struggle"],
+      enDef: "Having or showing courage; able to face and deal with danger, fear, or severe difficulty with inner strength.",
+      viDef: "Can trường, giàu nghị lực; có sức mạnh nội tâm vững vàng để đối diện hiểm nguy, nghịch cảnh hoặc lựa chọn khó khăn.",
+      example: "It was a **courageous** decision to resign in protest rather than sign the misleading report.",
+      targetKeyword: "courageous",
+      coreNuanceVi: "Trang trọng và sâu sắc hơn 'brave'; nhấn mạnh nghị lực tinh thần bền bỉ khi đối mặt với biến cố lớn (bệnh tật, áp lực xã hội, quyết định khó khăn) chứ không bắt buộc chỉ giới hạn ở lý tưởng đạo đức.",
+      microSceneEn: "A whistleblower testifies calmly before a parliamentary inquiry despite knowing it may cost him his career.",
+      microSceneVi: "Một người tố giác bình tĩnh ra làm chứng trước ủy ban điều tra quốc hội dù biết việc đó có thể khiến mình mất cả sự nghiệp.",
+      contrastWords: [
+        { word: "brave", distinction: "từ đa dụng hàng ngày, thiên về hành động trực diện trước nguy hiểm." },
+        { word: "courageous", distinction: "trang trọng hơn, nhấn mạnh bản lĩnh và sức mạnh nội tâm trước thử thách lớn." },
+        { word: "daring", distinction: "thiên về sự liều lĩnh, ưa mạo hiểm trong các pha hành động gay cấn." }
+      ],
+      usageConnotationVi: "Trang trọng, giàu tính tôn vinh (courageous battle against cancer / courageous decision).",
+      contrastiveRecall: {
+        scenarioEn: "The documentary honors her ________ ten-year battle for justice on behalf of the affected community.",
+        scenarioVi: "Bộ phim tài liệu tôn vinh cuộc đấu tranh bền bỉ và đầy nghị lực suốt 10 năm đòi công lý cho cộng đồng bị ảnh hưởng của bà.",
+        options: ["courageous", "adventurous", "audacious", "daring"],
+        correctWord: "courageous",
+        explanationVi: "Chọn 'courageous' vì ngữ cảnh tôn vinh bản lĩnh và nghị lực tinh thần bền bỉ suốt 10 năm trước thử thách lớn."
+      }
     },
     {
       id: "wia-9",
       word: "audacious",
+      pos: "Adjective · C1/C2",
       ipa: "/ɔːˈdeɪ.ʃəs/",
-      nuance: "[Defiant of law or decorum]",
+      nuance: "[Showing a willingness to take surprisingly bold risks]",
       register: "Formal / Sophisticated",
-      collocations: ["audacious plan", "audacious claim", "audacious move", "audacious audacity"],
-      enDef: "Exhibits a fearless spirit, defiant even of established laws, protocol, or decorum.",
-      viDef: "Táo tợn, ngang tàng; dám vượt qua mọi khuôn khổ, luật lệ hay lề thói thường tình.",
-      example: "An **audacious** escape plan that defied all security measures of the prison.",
-      targetKeyword: "audacious"
+      collocations: ["audacious plan", "audacious goal", "audacious claim", "audacious heist"],
+      enDef: "Showing a willingness to take risks or offend people; surprisingly bold and unconventional.",
+      viDef: "Táo bạo đến mức gây ngạc nhiên; đôi khi bị xem là liều lĩnh, ngang tàng hoặc thiếu kiêng dè.",
+      example: "The startup unveiled an **audacious** plan to challenge the industry's largest monopoly.",
+      targetKeyword: "audacious",
+      coreNuanceVi: "Không chỉ dám đối mặt với nguy hiểm hay khó khăn; thường nhấn mạnh mức độ táo bạo khác thường, vượt khỏi giới hạn hay kỳ vọng thông thường (không nhất thiết là vi phạm pháp luật).",
+      microSceneEn: "A junior researcher challenges the assumptions of a prestigious scientific institution with evidence that contradicts its established position.",
+      microSceneVi: "Một nhà nghiên cứu trẻ thách thức những giả định của một tổ chức khoa học danh tiếng bằng bằng chứng trái với quan điểm đã được thiết lập.",
+      contrastWords: [
+        { word: "brave", distinction: "đối mặt với nguy hiểm hoặc khó khăn." },
+        { word: "bold", distinction: "tự tin, không ngại hành động hoặc phát biểu." },
+        { word: "audacious", distinction: "táo bạo khác thường, có thể gây sốc hoặc bị coi là liều lĩnh." }
+      ],
+      usageConnotationVi: "Có thể mang nghĩa tích cực khi nói về sự táo bạo đáng khâm phục (audacious vision), hoặc tiêu cực khi hành động bị xem là quá trớn, ngạo mạn.",
+      contrastiveRecall: {
+        scenarioEn: "Critics were stunned by the young director's ________ attempt to rewrite a classic masterpiece from the villain's perspective.",
+        scenarioVi: "Giới phê bình sửng sốt trước nỗ lực táo bạo khác thường của vị đạo diễn trẻ khi viết lại một kiệt tác kinh điển từ góc nhìn của nhân vật phản diện.",
+        options: ["audacious", "brave", "chivalrous", "valiant"],
+        correctWord: "audacious",
+        explanationVi: "Chọn 'audacious' vì hành động phá vỡ khuôn mẫu thông thường đến mức gây sửng sốt. 'Brave' hay 'valiant' thiên về chống chọi hiểm nguy."
+      }
     },
     {
       id: "wia-10",
       word: "gallant",
+      pos: "Adjective · C1",
       ipa: "/ˈɡæl.ənt/",
-      nuance: "[Dashing & Showy courage]",
-      register: "Literary / Historical",
-      collocations: ["gallant attempt", "gallant effort", "gallant defender"],
-      enDef: "Brave in a dashing, chivalric, and showy way; heroic and attentive.",
-      viDef: "Quả cảm hào hoa, phong nhã; dũng cảm một cách đĩnh đạc và rực rỡ.",
-      example: "The soldiers made a **gallant** attempt to hold off the advancing enemy battalion.",
-      targetKeyword: "gallant"
+      nuance: "[Showing bravery in a dangerous/difficult situation, or polite to women]",
+      register: "Literary / Formal",
+      collocations: ["gallant effort", "gallant defender", "gallant loser", "gallant attempt"],
+      enDef: "Showing no fear of dangerous or difficult things, especially in a noble or admirable way; or polite and attentive to women.",
+      viDef: "Quả cảm đáng kính trọng giữa tình thế hiểm nghèo (dù có thể thất bại); hoặc hào hoa, ga-lăng.",
+      example: "Despite playing with an injury, she made a **gallant** effort to defend her championship title.",
+      targetKeyword: "gallant",
+      coreNuanceVi: "Ca ngợi vẻ đẹp đĩnh đạc, đáng kính của sự nỗ lực hết mình trong thế yếu hoặc nghịch cảnh (rất hay dùng trong cụm 'gallant effort/loser' — thua cuộc nhưng đầy kiêu hãnh).",
+      microSceneEn: "An outnumbered team fights with dignity and determination until the final whistle against the reigning world champions.",
+      microSceneVi: "Một đội bóng yếu thế hơn hẳn vẫn thi đấu đĩnh đạc và kiên cường đến tiếng còi mãn cuộc trước nhà đương kim vô địch thế giới.",
+      contrastWords: [
+        { word: "gallant", distinction: "quả cảm đĩnh đạc, đáng kính trọng (thường dùng cho nỗ lực đẹp đẽ dù ở thế bất lợi)." },
+        { word: "audacious", distinction: "táo bạo gây bất ngờ, phá vỡ giới hạn thông thường." },
+        { word: "adventurous", distinction: "ham thích khám phá và trải nghiệm mới." }
+      ],
+      usageConnotationVi: "Tích cực, trang trọng; mang sắc thái tôn vinh danh dự của người nỗ lực chiến đấu.",
+      contrastiveRecall: {
+        scenarioEn: "The underdog challenger put up a ________ fight against the world champion before losing in the final round.",
+        scenarioVi: "Kẻ thách đấu chiếu dưới đã cống hiến một trận đấu đầy quả cảm và kiêu hãnh trước nhà vô địch thế giới trước khi chịu thua ở hiệp cuối.",
+        options: ["gallant", "audacious", "adventurous", "reckless"],
+        correctWord: "gallant",
+        explanationVi: "Chọn 'gallant' (put up a gallant fight / gallant effort) khi ca ngợi nỗ lực chiến đấu đáng kính trọng dù cuối cùng không thắng."
+      }
     },
     {
       id: "wia-11",
       word: "valiant",
+      pos: "Adjective · C1",
       ipa: "/ˈvæl.i.ənt/",
-      nuance: "[Faces danger & Achieves results]",
+      nuance: "[Very brave & determined, especially when things are very difficult]",
       register: "Literary / Formal",
-      collocations: ["valiant effort", "valiant battle", "valiant struggle"],
-      enDef: "Not only faces great dangers successfully but also achieves heroic, enduring results.",
-      viDef: "Anh dũng hiển hách; chiến đấu kiên cường và gặt hái thành quả vẻ vang.",
-      example: "Despite their **valiant** efforts, the small garrison was eventually overpowered.",
-      targetKeyword: "valiant"
+      collocations: ["valiant effort", "valiant attempt", "valiant struggle"],
+      enDef: "Very brave and determined, especially when conditions are extremely difficult or victory is uncertain.",
+      viDef: "Anh dũng, kiên cường quyết tâm cao độ trong hoàn cảnh vô cùng ngặt nghèo.",
+      example: "Paramedics made a **valiant** attempt to resuscitate the patient during the storm.",
+      targetKeyword: "valiant",
+      coreNuanceVi: "Theo từ điển Cambridge, 'valiant' nhấn mạnh sự dũng cảm đi kèm lòng quyết tâm sắt đá (determined) trong tình thế cực kỳ gian nan — dù kết quả có thành công hay không (rất hay đi với 'valiant effort/attempt').",
+      microSceneEn: "Volunteers work tirelessly through the night stacking sandbags to hold back rising floodwaters.",
+      microSceneVi: "Các tình nguyện viên làm việc không mệt mỏi xuyên đêm chất bao cát để ngăn dòng nước lũ đang dâng cao.",
+      contrastWords: [
+        { word: "valiant", distinction: "kiên cường và quyết tâm cao độ trong hoàn cảnh ngặt nghèo (valiant effort/attempt)." },
+        { word: "bold", distinction: "tự tin quyết đoán khi đưa ra hành động hay ý tưởng." },
+        { word: "adventurous", distinction: "thích phiêu lưu, tìm kiếm trải nghiệm mới." }
+      ],
+      usageConnotationVi: "Trang trọng, giàu sức nặng biểu cảm khi ghi nhận sự nỗ lực phi thường không bỏ cuộc.",
+      contrastiveRecall: {
+        scenarioEn: "Firefighters made a ________ effort to save the historic library from the spreading wildfire.",
+        scenarioVi: "Lực lượng cứu hỏa đã nỗ lực hết sức kiên cường để cứu thư viện lịch sử khỏi đám cháy rừng đang lan rộng.",
+        options: ["valiant", "audacious", "chivalrous", "adventurous"],
+        correctWord: "valiant",
+        explanationVi: "Chọn 'valiant' (make a valiant effort/attempt) để nhấn mạnh sự dũng cảm và quyết tâm cao độ trong tình huống cực kỳ khó khăn."
+      }
     }
   ],
 

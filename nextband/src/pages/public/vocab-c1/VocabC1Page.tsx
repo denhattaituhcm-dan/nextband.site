@@ -26,6 +26,7 @@ import {
   SpeedBlitzQuestion
 } from "@/data/vocabC1Unit1";
 import { C1UnitHub25DSelector } from "./C1UnitHub25DSelector";
+import { SemanticNuanceCard } from "./SemanticNuanceCard";
 
 export interface MistakeItem {
   id: string;
@@ -819,15 +820,18 @@ export const VocabC1Page: React.FC = () => {
 
           {/* STAGE 1: WORDS IN ACTION (ACTIVE RECALL) */}
           {!isUnitCompleted && currentStage === 1 && (
-          <div className="w-full max-w-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-200 min-h-[460px]">
+          <div className="w-full max-w-3xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 rounded-2xl p-5 sm:p-7 flex flex-col justify-between transition-all duration-200 min-h-[480px] max-h-[calc(100vh-120px)]">
             {/* Header info */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-mono font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 shrink-0">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="text-xs sm:text-sm font-mono font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">
                   WORD {stage1Index + 1} / {VOCAB_C1_UNIT_1.wordsInAction.length}
                 </span>
+                <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200">
+                  {currentWia.pos || "Vocabulary · C1"}
+                </span>
                 {currentWia.register && (
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200">
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-600 border border-slate-200">
                     {currentWia.register}
                   </span>
                 )}
@@ -844,27 +848,28 @@ export const VocabC1Page: React.FC = () => {
             </div>
 
             {/* Card Body: CSS 3D Flip Card (both faces always in DOM) */}
-            <div className="mb-6 flex-1 flex flex-col justify-center" style={{ perspective: '1200px' }}>
+            <div className="mb-4 flex-1 flex flex-col justify-center min-h-0" style={{ perspective: '1200px' }}>
               <div
                 style={{
                   position: 'relative',
-                  minHeight: '340px',
+                  minHeight: '380px',
+                  height: '100%',
                   transformStyle: 'preserve-3d',
                   transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   transform: stage1IsFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
                 }}
               >
-                {/* FRONT FACE */}
+                {/* FRONT FACE (Step 1: Pure Retrieval) */}
                 <div
                   style={{ backfaceVisibility: 'hidden', position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
                   className="text-center py-6"
                 >
-                  <div className="inline-block px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-xs font-bold font-mono uppercase tracking-wider mb-4">
-                    Active Recall Mode
+                  <div className="inline-block mx-auto px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-xs font-bold font-mono uppercase tracking-wider mb-4">
+                    Step 1 • Retrieval (Tự truy xuất nghĩa & sắc thái)
                   </div>
 
                   {/* Living Word on Click / Pronounce */}
-                  <div className="mb-3">
+                  <div className="mb-2">
                     <h2
                       onClick={() => triggerLivingAudio(currentWia.word)}
                       className="text-5xl sm:text-6xl font-black tracking-tight font-mono inline-block cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 select-none"
@@ -903,105 +908,26 @@ export const VocabC1Page: React.FC = () => {
                       }}
                       className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base shadow-lg shadow-indigo-500/25 transition-all transform active:scale-95 cursor-pointer"
                     >
-                      <span>Lật thẻ để kiểm tra nghĩa</span>
+                      <span>Lật thẻ đối chiếu sắc thái</span>
                       <kbd className="text-xs font-mono bg-white/20 text-white px-2 py-0.5 rounded">Space</kbd>
                     </button>
-                    <p className="text-xs text-slate-400 mt-3">Thử nhớ lại sắc thái và nghĩa của từ trước khi bấm lật (hoặc click vào từ để nghe âm thanh)</p>
+                    <p className="text-xs text-slate-400 mt-3">
+                      Thử tự nhớ nghĩa, sắc thái cốt lõi và ngữ cảnh dùng từ trước khi lật thẻ
+                    </p>
                   </div>
                 </div>
 
-                {/* BACK FACE — rotated 180deg so it faces away by default */}
+                {/* BACK FACE (Steps 2-4: Multi-dimensional Semantic Nuance & Contrastive Recall) */}
                 <div
                   style={{ backfaceVisibility: 'hidden', position: 'absolute', inset: 0, transform: 'rotateY(180deg)', overflowY: 'auto' }}
                 >
-                  <div className="flex items-baseline justify-between mb-2">
-                    <div className="flex items-baseline gap-3">
-                      <h2
-                        onClick={() => triggerLivingAudio(currentWia.word)}
-                        className="text-3xl sm:text-4xl font-black tracking-tight font-mono cursor-pointer transition-all hover:scale-105 active:scale-95 select-none"
-                        title="Bấm vào để nghe lại phát âm"
-                      >
-                        {isWordPronouncing ? (
-                          <span
-                            className="inline-flex whitespace-nowrap"
-                            style={{ '--total-chars': currentWia.word.length } as React.CSSProperties}
-                          >
-                            {Array.from(currentWia.word).map((char, cIdx) => (
-                              <span
-                                key={cIdx}
-                                className="academic-char-living"
-                                style={{ '--char-index': cIdx } as React.CSSProperties}
-                              >
-                                {char}
-                              </span>
-                            ))}
-                          </span>
-                        ) : (
-                          <span className="text-slate-900 hover:text-indigo-600 transition-colors">
-                            {currentWia.word}
-                          </span>
-                        )}
-                      </h2>
-                      <span className="font-mono text-slate-500 text-base">{currentWia.ipa}</span>
-                    </div>
-                    <span className="text-xs font-bold px-3 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300">
-                      {currentWia.nuance}
-                    </span>
-                  </div>
-
-                  <p className="text-emerald-700 font-bold text-base sm:text-lg mb-3">
-                    {currentWia.viDef}
-                  </p>
-
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5 text-sm sm:text-base mb-4">
-                    <p className="text-slate-800 leading-relaxed">
-                      <strong className="text-slate-950 font-bold mr-2 font-mono">EN:</strong>
-                      {currentWia.enDef}
-                    </p>
-                    <p className="text-slate-700 italic border-t border-slate-200 pt-2">
-                      <strong className="text-indigo-700 font-bold mr-2 not-italic font-mono">VD:</strong>
-                      {currentWia.example.split("**").map((chunk, i) =>
-                        i % 2 === 1 ? (
-                          <span key={i} className="text-indigo-800 font-bold underline decoration-indigo-400 not-italic">
-                            {chunk}
-                          </span>
-                        ) : (
-                          chunk
-                        )
-                      )}
-                    </p>
-                    {currentWia.collocations && currentWia.collocations.length > 0 && (
-                      <div className="border-t border-slate-200 pt-2 flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-mono font-bold text-slate-500">Collocations:</span>
-                        {currentWia.collocations.map((col, idx) => (
-                          <span key={idx} className="text-xs font-mono bg-white px-2 py-0.5 rounded border border-slate-300 text-slate-800 font-medium">
-                            {col}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Active Recall Self-Assessment Buttons */}
-                  <div className="p-3.5 bg-indigo-50/60 rounded-xl border border-indigo-100 flex items-center justify-between">
-                    <span className="text-xs font-bold text-indigo-950">Đánh giá khả năng ghi nhớ:</span>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleStage1SelfAssess("review")}
-                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition-all cursor-pointer"
-                      >
-                        <span>✗ Chưa nhớ (Cần ôn)</span>
-                        <kbd className="font-mono text-2xs bg-white px-1.5 py-0.5 rounded border border-rose-300">[1]</kbd>
-                      </button>
-                      <button
-                        onClick={() => handleStage1SelfAssess("mastered")}
-                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
-                      >
-                        <span>✓ Đã thuộc từ này</span>
-                        <kbd className="font-mono text-2xs bg-emerald-800 text-white px-1.5 py-0.5 rounded">[2]</kbd>
-                      </button>
-                    </div>
-                  </div>
+                  <SemanticNuanceCard
+                    item={currentWia}
+                    unitWords={VOCAB_C1_UNIT_1.wordsInAction}
+                    isWordPronouncing={isWordPronouncing}
+                    onPronounce={triggerLivingAudio}
+                    onSelfAssess={handleStage1SelfAssess}
+                  />
                 </div>
               </div>
             </div>
