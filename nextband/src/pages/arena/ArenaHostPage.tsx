@@ -26,7 +26,7 @@ import { PlayerReactionPayload } from '@/lib/arena/types';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy, Maximize, Minimize, Flame, Zap, Users, BookOpen, HelpCircle, Shield, Heart } from 'lucide-react';
+import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Maximize, Minimize, Flame, Zap, Users, BookOpen, Shield } from 'lucide-react';
 
 interface PlayerAnswerRecord {
   playerId: string;
@@ -102,6 +102,7 @@ export default function ArenaHostPage() {
   // Auto-skip dead air notice state & guard ref
   const [isAllAnsweredNotice, setIsAllAnsweredNotice] = useState<boolean>(false);
   const autoSkipTriggeredRef = useRef<number>(-1);
+  const autoSkipTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Live Reactions & Comeback / Highest Climber
   const [latestReaction, setLatestReaction] = useState<PlayerReactionPayload | null>(null);
@@ -142,6 +143,9 @@ export default function ArenaHostPage() {
     return () => {
       if (countdownTimerRef.current) {
         clearInterval(countdownTimerRef.current);
+      }
+      if (autoSkipTimerRef.current) {
+        clearTimeout(autoSkipTimerRef.current);
       }
     };
   }, []);
@@ -532,7 +536,7 @@ export default function ArenaHostPage() {
     channelRef.current = channel;
 
     channel.subscribe((status) => {
-      console.log(`[ArenaHost] Channel arena-room-${pinCode} status:`, status);
+      // Channel connected
       if (status === 'SUBSCRIBED') {
         // Báo cho mọi học sinh đang chờ biết Host đã sẵn sàng tiếp nhận
         try {
@@ -811,7 +815,14 @@ export default function ArenaHostPage() {
 
   // Triệt tiêu thời gian chết (Auto-skip Dead Air): Khi 100% học sinh đã nộp bài
   useEffect(() => {
-    if (state !== 'QUESTION_LIVE') return;
+    if (state !== 'QUESTION_LIVE') {
+      if (autoSkipTimerRef.current) {
+        clearTimeout(autoSkipTimerRef.current);
+        autoSkipTimerRef.current = null;
+      }
+      setIsAllAnsweredNotice(false);
+      return;
+    }
     const answeredCount = Object.keys(answers).length;
     const totalPlayers = players.length;
 
@@ -820,10 +831,14 @@ export default function ArenaHostPage() {
       setIsAllAnsweredNotice(true);
       playFastLockSound();
 
-      const timer = setTimeout(() => {
+      if (autoSkipTimerRef.current) {
+        clearTimeout(autoSkipTimerRef.current);
+      }
+      autoSkipTimerRef.current = setTimeout(() => {
         stopQuestionSuspense();
         setState('ANSWER_LOCKED');
         setIsAllAnsweredNotice(false);
+        autoSkipTimerRef.current = null;
         if (channelRef.current) {
           channelRef.current.send({
             type: 'broadcast',
@@ -831,8 +846,6 @@ export default function ArenaHostPage() {
           });
         }
       }, 1200);
-
-      return () => clearTimeout(timer);
     }
   }, [state, answers, players.length, questionIndex, playFastLockSound, stopQuestionSuspense]);
 

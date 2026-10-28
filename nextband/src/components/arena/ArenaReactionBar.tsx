@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 
 interface ArenaReactionBarProps {
   onSendReaction: (emoji: string) => void;
@@ -19,6 +19,13 @@ export const ArenaReactionBar: React.FC<ArenaReactionBarProps> = React.memo(({
 }) => {
   const [activeEmoji, setActiveEmoji] = useState<string | null>(null);
   const lastSentRef = useRef<number>(0);
+  const bounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (bounceTimerRef.current) clearTimeout(bounceTimerRef.current);
+    };
+  }, []);
 
   const handleTrigger = useCallback((emoji: string) => {
     if (disabled) return;
@@ -28,7 +35,11 @@ export const ArenaReactionBar: React.FC<ArenaReactionBarProps> = React.memo(({
     lastSentRef.current = now;
 
     setActiveEmoji(emoji);
-    setTimeout(() => setActiveEmoji(null), 250);
+    if (bounceTimerRef.current) clearTimeout(bounceTimerRef.current);
+    bounceTimerRef.current = setTimeout(() => {
+      setActiveEmoji(null);
+      bounceTimerRef.current = null;
+    }, 250);
 
     // Haptic vi-rung nhẹ nhàng trên điện thoại học sinh
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {

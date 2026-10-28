@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Sparkles, Shield, Zap, Swords } from 'lucide-react';
+import { Swords } from 'lucide-react';
 import { LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
 
 interface ArenaTeamTugOfWarProps {

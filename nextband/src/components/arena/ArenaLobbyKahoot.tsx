@@ -8,7 +8,7 @@
  */
 
 import React, { useState } from 'react';
-import { Users, UserCheck, Sparkles, QrCode, Maximize2, X, UserX, BookOpen, HelpCircle } from 'lucide-react';
+import { Users, UserCheck, Sparkles, QrCode, Maximize2, X, BookOpen } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { getCharacterBySeed } from '@/lib/arena/characterCatalog';
 

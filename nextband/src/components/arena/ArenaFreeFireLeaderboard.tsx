@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy, Zap, Crown, Flame, ChevronRight, Award } from 'lucide-react';
+import { Zap, Crown, Flame } from 'lucide-react';
 import { PlayerPublicRank } from '@/lib/arena/types';
 import { LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
 import { ArenaGameMode } from '@/components/arena/HostSettingsModal';

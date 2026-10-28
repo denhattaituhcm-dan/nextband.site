@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { X, Clock, Award, Users, Check, Gamepad2, Shield, Heart } from 'lucide-react';
+import { X, Clock, Users, Check, Gamepad2, Shield, Heart } from 'lucide-react';
 
 export type ArenaGameMode = 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100' | 'TEAM_BATTLE';
 

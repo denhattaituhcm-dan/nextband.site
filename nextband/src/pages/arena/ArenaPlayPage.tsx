@@ -6,7 +6,7 @@
  * - 'GOLD_QUEST': Trả lời đúng -> Hiện 3 Rương Kho Báu -> Mở rương / Cướp vàng bạn cùng lớp!
  */
 
-import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
@@ -17,7 +17,7 @@ import { GoldQuestChestModal } from '@/components/arena/GoldQuestChestModal';
 import { QuestionTypeRevengeModal, RevengeQuestionItem } from '@/components/arena/QuestionTypeRevengeModal';
 import { ArenaQuestionOption, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { CheckCircle2, XCircle, Trophy, Sparkles, Medal, Crown, BookOpen, Flame, Zap, Clock } from 'lucide-react';
+import { CheckCircle2, XCircle, Trophy, Sparkles, Crown, BookOpen, Flame, Zap, Clock } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
 import { ArenaErrorBoundary } from '@/components/arena/ArenaErrorBoundary';

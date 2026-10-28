@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { PlayerReactionPayload } from '@/lib/arena/types';
 
 interface FloatingReaction extends PlayerReactionPayload {
@@ -12,6 +12,14 @@ interface ArenaReactionOverlayProps {
 
 export const ArenaReactionOverlay: React.FC<ArenaReactionOverlayProps> = React.memo(({ latestReaction }) => {
   const [particles, setParticles] = useState<FloatingReaction[]>([]);
+  const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current.clear();
+    };
+  }, []);
 
   useEffect(() => {
     if (!latestReaction) return;
@@ -30,9 +38,10 @@ export const ArenaReactionOverlay: React.FC<ArenaReactionOverlayProps> = React.m
 
     const timer = setTimeout(() => {
       setParticles((prev) => prev.filter((p) => p.id !== latestReaction.id));
+      timeoutsRef.current.delete(timer);
     }, durationMs);
 
-    return () => clearTimeout(timer);
+    timeoutsRef.current.add(timer);
   }, [latestReaction]);
 
   if (particles.length === 0) return null;
