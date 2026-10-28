@@ -855,11 +855,30 @@ export const VocabC1Page: React.FC = () => {
               </button>
             </div>
 
-            {/* Card Body: Responsive Flip Container (No absolute height overflow) */}
-            <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-              {!stage1IsFlipped ? (
-                /* FRONT FACE (Step 1: Pure Retrieval) */
-                <div className="flex-1 flex flex-col items-center justify-center text-center py-4 animate-in fade-in duration-200">
+            {/* Card Body: CSS 3D Flip Card (both faces always in DOM, exact viewport fit) */}
+            <div className="flex-1 min-h-0 relative" style={{ perspective: '1200px' }}>
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '100%',
+                  transformStyle: 'preserve-3d',
+                  transition: 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transform: stage1IsFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                }}
+              >
+                {/* FRONT FACE (Step 1: Pure Retrieval) */}
+                <div
+                  style={{
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    position: 'absolute',
+                    inset: 0,
+                  }}
+                  className={`flex flex-col items-center justify-center text-center py-4 bg-white ${
+                    stage1IsFlipped ? "pointer-events-none" : ""
+                  }`}
+                >
                   <div className="flex items-center justify-center gap-2 flex-wrap mb-4">
                     <div className="px-3 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-full text-xs font-bold font-mono uppercase tracking-wider">
                       Step 1 • Retrieval (Tự truy xuất nghĩa &amp; sắc thái)
@@ -920,9 +939,20 @@ export const VocabC1Page: React.FC = () => {
                     </p>
                   </div>
                 </div>
-              ) : (
-                /* BACK FACE (Steps 2-4: Multi-dimensional Semantic Nuance & Contrastive Recall) */
-                <div className="flex-1 min-h-0 overflow-y-auto pr-1 animate-in fade-in duration-200">
+
+                {/* BACK FACE (Steps 2-4: Multi-dimensional Semantic Nuance & Contrastive Recall) */}
+                <div
+                  style={{
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    position: 'absolute',
+                    inset: 0,
+                    transform: 'rotateY(180deg)',
+                  }}
+                  className={`overflow-y-auto pr-1 bg-white ${
+                    !stage1IsFlipped ? "pointer-events-none" : ""
+                  }`}
+                >
                   <SemanticNuanceCard
                     item={currentWia}
                     unitWords={VOCAB_C1_UNIT_1.wordsInAction}
@@ -931,7 +961,7 @@ export const VocabC1Page: React.FC = () => {
                     onSelfAssess={handleStage1SelfAssess}
                   />
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Navigation Stepper buttons inside card */}
