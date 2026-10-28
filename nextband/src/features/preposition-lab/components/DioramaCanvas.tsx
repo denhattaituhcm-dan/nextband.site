@@ -437,7 +437,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
               <g className="transition-opacity duration-500">
                 <rect x="170" y="85" width="160" height="26" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
                 <text x="250" y="102" fill="#0284c7" fontSize="11" textAnchor="middle" fontWeight="bold">
-                  Bát nhấc lên ➔ Táo ở lại bàn (UNDER)
+                  {hasTestedPrediction ? 'Bát nhấc lên ➔ Táo ở lại bàn (UNDER)' : 'Bát nhấc lên ➔ Táo vẫn nằm yên trên bàn'}
                 </text>
               </g>
             )}
@@ -529,7 +529,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
               <g>
                 <rect x="175" y="98" width="150" height="26" rx="8" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
                 <text x="250" y="115" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
-                  Bát úp kín: Khói bị nhốt (IN)
+                  {hasTestedPrediction ? 'Bát úp kín: Khói bị nhốt (IN)' : 'Bát úp kín: Khói bị giam giữ'}
                 </text>
               </g>
             )}
@@ -619,7 +619,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
 
                 <line x1="180" y1="184" x2="222" y2="184" stroke="#fbbf24" strokeWidth="1" />
                 <text x="201" y="178" fill="#fbbf24" fontSize="10" textAnchor="middle" fontWeight="bold">
-                  Khóa chặt (IN)
+                  {hasTestedPrediction ? 'Khóa chặt (IN)' : '30% cắm sâu trong gỗ'}
                 </text>
               </g>
             )}
@@ -649,7 +649,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
               <circle cx="9" cy="23" r="1.5" fill="#475569" />
               <circle cx="17" cy="23" r="1.5" fill="#475569" />
               <text x="13" y="46" fill="#94a3b8" fontSize="8" textAnchor="middle">
-                (IN the wall)
+                {hasTestedPrediction ? '(IN the wall)' : 'Ổ điện âm tường'}
               </text>
             </g>
 
@@ -686,7 +686,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Label callout */}
             <rect x="155" y="235" width="190" height="26" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
             <text x="250" y="252" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
-              Bức tranh tì trên mặt phẳng (ON the wall)
+              {hasTestedPrediction ? 'Bức tranh tì trên mặt phẳng (ON the wall)' : 'Bức tranh áp sát trên mặt phẳng tường'}
             </text>
           </g>
         )}
@@ -939,7 +939,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
                 className="drop-shadow-sm"
               />
               <text x="300" y="115" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
-                {isManipulated ? '💧 Nước loang rộng trên mặt bàn (ON)' : '💧 Cốc đổ nước tràn trên bàn (ON)'}
+                {hasTestedPrediction
+                  ? isManipulated
+                    ? '💧 Nước loang rộng trên mặt bàn (ON)'
+                    : '💧 Cốc đổ nước tràn trên bàn (ON)'
+                  : isManipulated
+                  ? '💧 Nước loang rộng trên mặt phẳng bàn'
+                  : '💧 Cốc đổ nước tràn trên mặt phẳng bàn'}
               </text>
             </g>
           </g>
@@ -1004,7 +1010,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Label callout */}
             <rect x="160" y="235" width="180" height="26" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
             <text x="250" y="252" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
-              Góc phòng 3D ôm trọn (IN the corner)
+              {hasTestedPrediction ? 'Góc phòng 3D ôm trọn (IN the corner)' : 'Góc phòng 3D hai bức tường khép lại'}
             </text>
           </g>
         )}
@@ -1085,7 +1091,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Label callout */}
             <rect x="150" y="235" width="200" height="26" rx="6" fill="#ffffff" stroke="#f59e0b" strokeWidth="1.5" className="drop-shadow-sm" />
             <text x="250" y="252" fill="#b45309" fontSize="11" textAnchor="middle" fontWeight="bold">
-              Mặt sàn đứng đi lại được ➔ Dùng ON (ON the bus)
+              {hasTestedPrediction ? 'Mặt sàn đứng đi lại được ➔ Dùng ON (ON the bus)' : 'Mặt sàn xe rộng rãi đứng đi lại được'}
             </text>
           </g>
         )}
@@ -1136,13 +1142,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
               strokeDasharray="4 3"
             />
             <text x="155" y="112" fill="#047857" fontSize="8" fontWeight="bold" textAnchor="middle">
-              Khu vực kiểm soát (IN)
+              {hasTestedPrediction ? 'Khu vực kiểm soát (IN)' : 'Khu vực kiểm soát'}
             </text>
 
             {/* International Border Trajectory Line (Demonstrating ON the border line) */}
             <line x1="330" y1="72" x2="330" y2="244" stroke="#6366f1" strokeWidth="2" strokeDasharray="5 3" />
             <text x="335" y="105" fill="#4f46e5" fontSize="8" fontWeight="bold">
-              Đường biên (ON)
+              {hasTestedPrediction ? 'Đường biên (ON)' : 'Đường biên giới'}
             </text>
 
             {/* Two Major Intersecting Arterial Highways */}
@@ -1199,7 +1205,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Label callout */}
             <rect x="150" y="235" width="200" height="26" rx="6" fill="#ffffff" stroke="#ef4444" strokeWidth="1.5" className="drop-shadow-sm" />
             <text x="250" y="252" fill="#991b1b" fontSize="11" textAnchor="middle" fontWeight="bold">
-              Toạ độ điểm hội tụ 0-D ➔ Dùng AT (AT the border)
+              {hasTestedPrediction ? 'Toạ độ điểm hội tụ 0-D ➔ Dùng AT (AT the border)' : 'Toạ độ điểm giao cắt 0-D trên bản đồ'}
             </text>
           </g>
         )}
@@ -1292,7 +1298,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Label callout */}
             <rect x="150" y="235" width="200" height="26" rx="6" fill="#ffffff" stroke="#d97706" strokeWidth="1.5" className="drop-shadow-sm" />
             <text x="250" y="252" fill="#b45309" fontSize="11" textAnchor="middle" fontWeight="bold">
-              {isManipulated ? 'Vượt qua rào cản ➔ Dùng OVER (OVER the hurdle)' : 'Quỹ đạo hình vòng cung ➔ OVER'}
+              {hasTestedPrediction
+                ? isManipulated
+                  ? 'Vượt qua rào cản ➔ Dùng OVER (OVER the hurdle)'
+                  : 'Quỹ đạo hình vòng cung ➔ OVER'
+                : isManipulated
+                ? 'Vận động viên nhảy vọt qua rào cản'
+                : 'Quỹ đạo hình vòng cung vượt qua rào'}
             </text>
           </g>
         )}
@@ -1352,7 +1364,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Label callout */}
             <rect x="150" y="235" width="200" height="26" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
             <text x="250" y="252" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
-              Độ cao tách biệt trên trục đứng ➔ ABOVE
+              {hasTestedPrediction ? 'Độ cao tách biệt trên trục đứng ➔ ABOVE' : 'Độ cao tách biệt trên trục thẳng đứng'}
             </text>
           </g>
         )}
@@ -1384,7 +1396,7 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
 
               {/* Labeled Annotation: Person is ON the sofa */}
               <text x="120" y="98" fill="#64748b" fontSize="9" textAnchor="middle" fontStyle="italic">
-                Người nằm tiếp xúc bề mặt: ON the sofa
+                {hasTestedPrediction ? 'Người nằm tiếp xúc bề mặt: ON the sofa' : 'Người đang nằm ngủ trên đệm ghế sofa'}
               </text>
 
               {/* The Sleeping Person Silhouette on Sofa */}
@@ -1440,7 +1452,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Label callout */}
             <rect x="145" y="235" width="210" height="26" rx="6" fill="#ffffff" stroke="#d97706" strokeWidth="1.5" className="drop-shadow-sm" />
             <text x="250" y="252" fill="#b45309" fontSize="11" textAnchor="middle" fontWeight="bold">
-              {isManipulated ? 'Trải trùm phủ kín ➔ Chăn OVER em bé' : 'Kéo chăn che phủ người nằm ➔ OVER'}
+              {hasTestedPrediction
+                ? isManipulated
+                  ? 'Trải trùm phủ kín ➔ Chăn OVER em bé'
+                  : 'Kéo chăn che phủ người nằm ➔ OVER'
+                : isManipulated
+                ? 'Chăn đã trải trùm phủ kín người nằm'
+                : 'Kéo chăn đắp trùm phủ kín người nằm'}
             </text>
           </g>
         )}
@@ -1518,7 +1536,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Label callout */}
             <rect x="145" y="235" width="210" height="26" rx="6" fill="#ffffff" stroke="#0284c7" strokeWidth="1.5" className="drop-shadow-sm" />
             <text x="250" y="252" fill="#0369a1" fontSize="11" textAnchor="middle" fontWeight="bold">
-              {isManipulated ? '300m dưới mốc chuẩn ➔ 300m BELOW sea level' : 'Lặn sâu dưới mốc chuẩn thước đo ➔ BELOW'}
+              {hasTestedPrediction
+                ? isManipulated
+                  ? '300m dưới mốc chuẩn ➔ 300m BELOW sea level'
+                  : 'Lặn sâu dưới mốc chuẩn thước đo ➔ BELOW'
+                : isManipulated
+                ? 'Tàu ngầm ở độ sâu 300m so với mực nước biển'
+                : 'Lặn sâu xuống dưới mốc chuẩn mực nước biển'}
             </text>
           </g>
         )}
@@ -1608,7 +1632,13 @@ export const DioramaCanvas: React.FC<DioramaCanvasProps> = ({
             {/* Label callout */}
             <rect x="145" y="235" width="210" height="26" rx="6" fill="#ffffff" stroke="#9333ea" strokeWidth="1.5" className="drop-shadow-sm" />
             <text x="250" y="252" fill="#7e22ce" fontSize="11" textAnchor="middle" fontWeight="bold">
-              {isManipulated ? 'Bay bắc ngang qua hẻm núi ➔ Fly OVER the gorge' : 'Bắc cầu vượt khoảng không ➔ OVER'}
+              {hasTestedPrediction
+                ? isManipulated
+                  ? 'Bay bắc ngang qua hẻm núi ➔ Fly OVER the gorge'
+                  : 'Bắc cầu vượt khoảng không ➔ OVER'
+                : isManipulated
+                ? 'Trực thăng bay bắc ngang qua hai bờ hẻm núi'
+                : 'Đường bay bắc ngang qua khoảng không hẻm núi'}
             </text>
           </g>
         )}
