@@ -25,6 +25,7 @@ import {
   ClozePassage,
   SpeedBlitzQuestion
 } from "@/data/vocabC1Unit1";
+import { C1UnitHub25DSelector } from "./C1UnitHub25DSelector";
 
 export interface MistakeItem {
   id: string;
@@ -722,109 +723,15 @@ export const VocabC1Page: React.FC = () => {
       </header>
 
       {/* ============================================================ */}
-      {/* 2A. UNIT SELECTION HUB SCREEN                                */}
+      {/* 2A. UNIT SELECTION HUB SCREEN (2.5D Carousel)                */}
       {/* ============================================================ */}
       {isSelectingUnit ? (
-        <main className="flex-1 overflow-y-auto px-4 sm:px-8 py-8 sm:py-12 relative z-10">
-          <div className="max-w-6xl mx-auto">
-            {/* Hero Header */}
-            <div className="text-center max-w-2xl mx-auto mb-10">
-              <span className="inline-block text-xs font-mono font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 border border-indigo-200 px-3.5 py-1 rounded-full mb-3">
-                CEFR LEVEL C1 • ACADEMIC LEXICON
-              </span>
-              <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">
-                The Vocabulary Files — Level C1
-              </h1>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                Chọn bài học (Unit) để bước vào lộ trình 6 chặng phản xạ từ vựng học thuật: <span className="font-semibold text-slate-800">Words in Action</span>, <span className="font-semibold text-slate-800">Word Formation</span>, <span className="font-semibold text-slate-800">Confusable Words</span>, <span className="font-semibold text-slate-800">Synonym Filter</span>, <span className="font-semibold text-slate-800">Smart Cloze</span> và <span className="font-semibold text-slate-800">Speed Blitz</span>.
-              </p>
-            </div>
-
-            {/* Grid of Unit Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pb-10">
-              {VOCAB_C1_UNITS.map((unit, idx) => {
-                const meta = getUnitMeta(unit.unitId);
-                const cleanTitle = unit.title.replace(/^Unit \d+:\s*/i, "");
-                const previewWords = unit.wordsInAction.slice(0, 5);
-                const remainingCount = Math.max(0, unit.wordsInAction.length - previewWords.length);
-
-                return (
-                  <div
-                    key={unit.unitId}
-                    onClick={() => handleSelectUnit(idx)}
-                    className="group bg-white border border-slate-200 hover:border-indigo-400 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-200 flex flex-col justify-between cursor-pointer"
-                  >
-                    <div>
-                      {/* Unit Card Cover Image */}
-                      <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100 border-b border-slate-100">
-                        <img
-                          src={`/images/vocab-c1/unit-${unit.unitId < 10 ? `0${unit.unitId}` : unit.unitId}.webp`}
-                          alt={cleanTitle}
-                          loading="lazy"
-                          className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-                          onError={(e) => {
-                            (e.currentTarget as HTMLElement).style.display = 'none';
-                          }}
-                        />
-                        <div className="absolute top-3 left-3">
-                          <span className="px-2.5 py-1 rounded-lg bg-indigo-600/90 backdrop-blur-xs text-white font-mono text-xs font-bold tracking-wider shadow-sm">
-                            UNIT {unit.unitId < 10 ? `0${unit.unitId}` : unit.unitId}
-                          </span>
-                        </div>
-                        <div className="absolute top-3 right-3">
-                          <span className="px-2 py-0.5 rounded-md bg-slate-900/70 backdrop-blur-xs text-white font-mono text-[11px] font-semibold">
-                            {meta.pages}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Card Body */}
-                      <div className="p-5">
-                        {/* Unit Title & Vietnamese Subtitle */}
-                        <h2 className="text-lg font-black text-slate-900 group-hover:text-indigo-700 transition-colors mb-1 line-clamp-1">
-                          {cleanTitle}
-                        </h2>
-                        <p className="text-xs font-bold text-indigo-600 mb-2">
-                          {meta.themeVi}
-                        </p>
-                        <p className="text-xs text-slate-600 leading-relaxed mb-4 line-clamp-2">
-                          {meta.descVi}
-                        </p>
-
-                        {/* Sample Words Pills */}
-                        <div className="flex flex-wrap gap-1.5 mb-2">
-                          {previewWords.map((w) => (
-                            <span
-                              key={w.id}
-                              className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 font-mono text-xs font-semibold"
-                            >
-                              {w.word}
-                            </span>
-                          ))}
-                          {remainingCount > 0 && (
-                            <span className="px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-100 text-indigo-600 font-mono text-xs font-bold">
-                              +{remainingCount} từ
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Card Footer */}
-                    <div className="px-5 pb-5 pt-3 border-t border-slate-100 flex items-center justify-between">
-                      <span className="text-xs font-mono text-slate-500 font-semibold">
-                        {unit.wordsInAction.length} từ • 6 chặng
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-indigo-700 group-hover:translate-x-1 transition-transform">
-                        <span>Vào học</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+        <main className="flex-1 flex flex-col items-center justify-center relative z-10 overflow-hidden">
+          <C1UnitHub25DSelector
+            onSelectUnit={handleSelectUnit}
+            getUnitMeta={getUnitMeta}
+            initialUnitIndex={selectedUnitIndex}
+          />
         </main>
       ) : (
         <>
