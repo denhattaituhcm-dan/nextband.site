@@ -47,6 +47,3 @@ export function getUnitByNumber(unitNumber: number): UnitConfig | undefined {
   return UNITS_CATALOG.find((u) => u.unitNumber === unitNumber);
 }
 
-export function getUnitBySlug(slug: string): UnitConfig | undefined {
-  return UNITS_CATALOG.find((u) => u.slug === slug);
-}

@@ -1,15 +1,13 @@
-import { supabase } from "../../supabase";
-import { API_BASE_URL } from "../client";
+import { API_BASE_URL, getAuthToken } from "../client";
 
 export const invitationsApi = {
   joinByCode: async (payload: { code: string }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
+    const token = await getAuthToken();
     const response = await fetch(`${API_BASE_URL}/invitations/join`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: token ? `Bearer ${token}` : "",
       },
       body: JSON.stringify({ inviteCode: payload.code.trim().toUpperCase() }),
     });
@@ -19,13 +17,12 @@ export const invitationsApi = {
   },
 
   generate: async (payload: { classId: string; inviteCode?: string }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
+    const token = await getAuthToken();
     const response = await fetch(`${API_BASE_URL}/invitations/generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: token ? `Bearer ${token}` : "",
       },
       body: JSON.stringify(payload),
     });

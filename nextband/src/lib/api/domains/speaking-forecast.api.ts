@@ -1,5 +1,4 @@
-import { supabase } from "../../supabase";
-import { API_BASE_URL } from "../client";
+import { API_BASE_URL, getAuthToken } from "../client";
 
 export const speakingForecastApi = {
   getPublicData: async () => {
@@ -9,11 +8,10 @@ export const speakingForecastApi = {
   },
 
   getAdminData: async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
+    const token = await getAuthToken();
     const response = await fetch(`${API_BASE_URL}/speaking-forecast/admin`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: token ? `Bearer ${token}` : "",
       },
     });
     if (!response.ok) throw new Error("Không thể tải dữ liệu Speaking Forecast (Admin)");
@@ -21,13 +19,12 @@ export const speakingForecastApi = {
   },
 
   saveAdminData: async (payload: { seasons: any[]; topics: any[]; selectedSeasonId?: string }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
+    const token = await getAuthToken();
     const response = await fetch(`${API_BASE_URL}/speaking-forecast/admin`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: token ? `Bearer ${token}` : "",
       },
       body: JSON.stringify(payload),
     });

@@ -39,40 +39,6 @@ export interface CourseData {
   theme: CourseTheme;
 }
 
-export interface TrustPoint {
-  key: string;
-  title: string;
-  description: string;
-  iconName: "Users" | "GraduationCap" | "ShieldCheck" | "Gift";
-}
-
-export const TRUST_POINTS: TrustPoint[] = [
-  {
-    key: "class-size",
-    title: "SĨ SỐ TỐI ĐA 8",
-    description: "Lớp nhỏ, giáo viên có thể theo sát từng học viên.",
-    iconName: "Users",
-  },
-  {
-    key: "teacher",
-    title: "100% GV IELTS 8.0+",
-    description: "Giáo viên trực tiếp đứng lớp.",
-    iconName: "GraduationCap",
-  },
-  {
-    key: "trial",
-    title: "HỌC THỬ 02 BUỔI",
-    description: "Trải nghiệm trước khi quyết định.",
-    iconName: "ShieldCheck",
-  },
-  {
-    key: "scholarship",
-    title: "HỌC BỔNG ĐẾN 10%",
-    description: "Áp dụng theo điều kiện chương trình.",
-    iconName: "Gift",
-  },
-];
-
 export const COURSE_CATALOG: Record<string, CourseData> = {
   starter: {
     id: "c1000000-0000-0000-0000-000000000007",

@@ -46,23 +46,6 @@ export function computeServerOffset(
 }
 
 /**
- * Gets the current active clock calibration.
- */
-export function getActiveCalibration(): ClockCalibration {
-  return activeCalibration;
-}
-
-/**
- * Sets clock calibration directly (e.g. from persisted session metadata).
- */
-export function setCalibration(calibration: Partial<ClockCalibration>) {
-  activeCalibration = {
-    ...activeCalibration,
-    ...calibration,
-  };
-}
-
-/**
  * Computes trusted current exam time (UTC Epoch Ms).
  */
 export function getTrustedNow(serverOffsetMs = activeCalibration.serverOffsetMs): number {
