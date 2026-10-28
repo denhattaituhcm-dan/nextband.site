@@ -336,170 +336,277 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
           </div>
         </div>
 
-        {/* Visual Simulation / Editorial Image Viewport */}
-        <div
-          className={`relative h-[280px] sm:h-[300px] w-full flex items-center justify-center transition-colors overflow-hidden ${
-            isPaperTheme ? "bg-[#F7F4EE]" : isSlateTheme ? "bg-[#0A101D]" : "bg-[#070A12]"
-          }`}
-        >
-          {/* Background Illustration if in Image mode and file exists */}
-          {visualMode === "image" && !imageError && (
-            <div className="absolute inset-0 w-full h-full">
-              <img
-                src={`/images/vocab-c2/schema/${currentItem.id}.jpg`}
-                alt={`${currentItem.word} vs ${currentItem.contrastWord}`}
-                onError={() => setImageError(true)}
-                className="w-full h-full object-cover opacity-85 transition-opacity duration-500"
-              />
+        {/* 2-Column Visual Codex Split Layout (Left: Pure Interactive Artwork | Right: Lexical Profile) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12">
+          {/* LEFT COLUMN (5/12): Pure Interactive Split-Screen Illustration or Particle Canvas */}
+          <div
+            className={`lg:col-span-5 relative min-h-[260px] sm:min-h-[320px] w-full flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-r ${
+              isPaperTheme
+                ? "bg-[#F3EFE6] border-[#E2D9CC]"
+                : isSlateTheme
+                ? "bg-[#0A101D] border-slate-700/80"
+                : "bg-[#070A12] border-white/10"
+            }`}
+          >
+            {visualMode === "image" && !imageError ? (
+              <div className="relative w-full h-full min-h-[260px] sm:min-h-[320px] select-none">
+                <img
+                  src={`/images/vocab-c2/schema/${currentItem.id}.jpg`}
+                  alt={`${currentItem.word} vs ${currentItem.contrastWord}`}
+                  onError={() => setImageError(true)}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500"
+                />
+
+                {/* Interactive Split-Zone Overlay: Click Left for Primary Word, Click Right for Contrast Word */}
+                <div className="absolute inset-0 grid grid-cols-2 z-10">
+                  {/* Left Half Zone: Primary Word */}
+                  <div
+                    onClick={() => setIsContrastMode(false)}
+                    title={`Nhấn để soi từ chính: ${currentItem.word}`}
+                    className={`relative cursor-pointer transition-all duration-300 flex flex-col justify-between p-3 border-r border-white/25 ${
+                      !isContrastMode
+                        ? "bg-transparent ring-2 ring-inset ring-teal-400/70"
+                        : "bg-black/55 hover:bg-black/35 backdrop-blur-[1px]"
+                    }`}
+                  >
+                    <span
+                      className={`self-start px-2 py-0.5 rounded-md text-[10px] font-mono font-black uppercase tracking-wider shadow-sm backdrop-blur-md border ${
+                        !isContrastMode
+                          ? "bg-teal-600/90 text-white border-teal-300"
+                          : "bg-black/60 text-slate-300 border-white/15"
+                      }`}
+                    >
+                      {!isContrastMode ? "● ĐANG SOI" : "CLICK ĐỂ SOI"}
+                    </span>
+                    <span className="self-start px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-white font-black text-xs sm:text-sm tracking-tight border border-white/15 shadow-md">
+                      {currentItem.word}
+                    </span>
+                  </div>
+
+                  {/* Right Half Zone: Contrast Word */}
+                  <div
+                    onClick={() => setIsContrastMode(true)}
+                    title={`Nhấn để soi từ đối lập: ${currentItem.contrastWord}`}
+                    className={`relative cursor-pointer transition-all duration-300 flex flex-col justify-between items-end p-3 ${
+                      isContrastMode
+                        ? "bg-transparent ring-2 ring-inset ring-amber-400/80"
+                        : "bg-black/55 hover:bg-black/35 backdrop-blur-[1px]"
+                    }`}
+                  >
+                    <span
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-black uppercase tracking-wider shadow-sm backdrop-blur-md border ${
+                        isContrastMode
+                          ? "bg-amber-500/95 text-slate-950 border-amber-300"
+                          : "bg-black/60 text-slate-300 border-white/15"
+                      }`}
+                    >
+                      {isContrastMode ? "● CONTRAST" : "CONTRAST"}
+                    </span>
+                    <span className="px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-amber-300 font-black text-xs sm:text-sm tracking-tight border border-amber-400/30 shadow-md">
+                      {currentItem.contrastWord}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Particle Simulation Mode or Image Fallback */
+              <div className="relative w-full h-full min-h-[260px] sm:min-h-[320px] flex items-center justify-center">
+                <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+                <div className="relative z-10 text-center px-4 pointer-events-none">
+                  <span
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-mono font-bold border mb-2 ${
+                      isPaperTheme
+                        ? "bg-white/90 text-teal-800 border-teal-300 shadow-xs"
+                        : "bg-black/60 text-cyan-300 border-cyan-500/30"
+                    }`}
+                  >
+                    {currentItem.simulationConfig.vectorPattern.toUpperCase()} FORCEFIELD
+                  </span>
+                  <p
+                    className={`text-xs italic font-serif max-w-xs mx-auto ${
+                      isPaperTheme ? "text-slate-700 font-medium" : "text-slate-300"
+                    }`}
+                  >
+                    "{activeDisplayMetaphor}"
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT COLUMN (7/12): Clean Unobstructed Lexical Dossier & Typography */}
+          <div
+            className={`lg:col-span-7 p-5 sm:p-6 flex flex-col justify-between space-y-4 transition-colors ${
+              isPaperTheme
+                ? "bg-[#FAF7F2]"
+                : isSlateTheme
+                ? "bg-[#131C31]"
+                : "bg-[#0D1322]"
+            }`}
+          >
+            {/* Top Word Header + Audio + Prev/Next Navigation */}
+            <div className="space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center flex-wrap gap-2.5">
+                    <h2
+                      className={`text-3xl sm:text-4xl font-black tracking-tight transition-colors ${
+                        isPaperTheme
+                          ? isContrastMode
+                            ? "text-amber-800"
+                            : "text-slate-900"
+                          : isContrastMode
+                          ? "text-amber-400"
+                          : isSlateTheme
+                          ? "text-sky-300"
+                          : "text-cyan-300"
+                      }`}
+                    >
+                      {activeDisplayWord}
+                    </h2>
+                    <button
+                      onClick={() => speakC2Word(activeDisplayWord)}
+                      className={`p-2 rounded-full transition-all cursor-pointer shadow-xs border ${
+                        isPaperTheme
+                          ? "bg-white hover:bg-slate-100 text-slate-800 border-slate-300"
+                          : "bg-white/10 hover:bg-white/20 text-white border-white/15"
+                      }`}
+                      title="Phát âm chuẩn C2 (en-GB)"
+                    >
+                      <Volume2
+                        className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-cyan-300"}`}
+                      />
+                    </button>
+                    {!isContrastMode && (
+                      <span
+                        className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-md border ${
+                          isPaperTheme
+                            ? "bg-slate-100 text-slate-700 border-slate-300"
+                            : "bg-white/5 text-slate-300 border-white/10"
+                        }`}
+                      >
+                        {currentItem.ipa}
+                      </span>
+                    )}
+                    <span
+                      className={`text-xs font-black font-mono uppercase px-2 py-0.5 rounded ${
+                        isContrastMode
+                          ? isPaperTheme
+                            ? "bg-amber-100 text-amber-900 border border-amber-300"
+                            : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                          : isPaperTheme
+                          ? "bg-teal-100 text-teal-800 border border-teal-300"
+                          : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      }`}
+                    >
+                      {isContrastMode ? "CONTRAST" : currentItem.pos}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Prev / Next Word Buttons neatly aligned in the header */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={handlePrev}
+                    aria-label="Previous Word"
+                    title="Từ trước [←]"
+                    className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                      isPaperTheme
+                        ? "bg-white border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-black shadow-2xs"
+                        : "bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/15"
+                    }`}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    aria-label="Next Word"
+                    title="Từ tiếp theo [→]"
+                    className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                      isPaperTheme
+                        ? "bg-white border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-black shadow-2xs"
+                        : "bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/15"
+                    }`}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Visual Metaphor Box */}
               <div
-                className={`absolute inset-0 ${
-                  isPaperTheme
-                    ? "bg-gradient-to-t from-[#FAF7F2] via-white/40 to-[#FAF7F2]/60"
-                    : isSlateTheme
-                    ? "bg-gradient-to-t from-[#0F172A] via-black/40 to-[#0F172A]/70"
-                    : "bg-gradient-to-t from-[#0B0F19] via-black/50 to-[#0B0F19]/70"
-                }`}
-              />
-            </div>
-          )}
-
-          {/* Fallback hoặc Chế độ Particle Simulation */}
-          {(visualMode === "particle" || imageError) && (
-            <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
-          )}
-
-          {/* Center Dynamic Word Overlay */}
-          <div className="relative z-10 text-center pointer-events-none px-4">
-            <div className="inline-flex items-center gap-2.5 mb-1.5">
-              <span
-                className={`text-3xl sm:text-5xl font-black tracking-tight transition-colors duration-300 ${
+                className={`p-3 rounded-xl border text-xs sm:text-sm italic font-serif leading-relaxed ${
                   isPaperTheme
                     ? isContrastMode
-                      ? "text-amber-800 drop-shadow-sm"
-                      : "text-slate-900 drop-shadow-sm"
+                      ? "bg-amber-50/80 border-amber-200 text-amber-950"
+                      : "bg-teal-50/60 border-teal-200/80 text-teal-950"
                     : isContrastMode
-                    ? "text-amber-400 drop-shadow-md"
-                    : isSlateTheme
-                    ? "text-sky-300 drop-shadow-md"
-                    : "text-cyan-300 drop-shadow-md"
+                    ? "bg-amber-500/10 border-amber-500/30 text-amber-200"
+                    : "bg-cyan-500/10 border-cyan-500/25 text-cyan-200"
                 }`}
               >
-                {activeDisplayWord}
-              </span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  speakC2Word(activeDisplayWord);
-                }}
-                className={`pointer-events-auto p-2 rounded-full transition-all cursor-pointer shadow-md ${
-                  isPaperTheme
-                    ? "bg-white/95 hover:bg-white text-slate-800 border border-slate-300 backdrop-blur-xs"
-                    : "bg-black/60 hover:bg-black/80 text-white backdrop-blur-xs border border-white/20"
+                💡 <strong>Hình ảnh tri nhận:</strong> "{activeDisplayMetaphor}"
+              </div>
+
+              {/* English Definition */}
+              <p
+                className={`text-sm sm:text-base font-semibold leading-relaxed ${
+                  isPaperTheme ? "text-slate-900 font-serif" : "text-white"
                 }`}
-                title="Phát âm chuẩn C2 (en-GB)"
               >
-                <Volume2
-                  className={`w-4 h-4 ${isPaperTheme ? "text-slate-800" : "text-cyan-300"}`}
-                />
-              </button>
+                {isContrastMode ? currentItem.contrastDefinitionEn : currentItem.definitionEn}
+              </p>
+
+              {/* Vietnamese Meaning (shown for primary word, or contrast indicator) */}
+              {!isContrastMode ? (
+                <div
+                  className={`p-3 rounded-xl border text-sm leading-relaxed ${
+                    isPaperTheme
+                      ? "bg-white border-[#E2D9CC] text-slate-800 shadow-2xs"
+                      : "bg-white/5 border-white/5 text-slate-200"
+                  }`}
+                >
+                  🇻🇳{" "}
+                  <strong
+                    className={isPaperTheme ? "text-slate-900 font-bold" : "text-cyan-300 font-bold"}
+                  >
+                    Nghĩa tiếng Việt:
+                  </strong>{" "}
+                  <span>{currentItem.definitionVi}</span>
+                </div>
+              ) : (
+                <div
+                  className={`p-3 rounded-xl border text-xs leading-relaxed flex items-center justify-between ${
+                    isPaperTheme
+                      ? "bg-amber-50 border-amber-200 text-amber-900"
+                      : "bg-amber-500/10 border-amber-500/20 text-amber-200"
+                  }`}
+                >
+                  <span>
+                    ⚖️ Đang xem từ đối lập với <strong>{currentItem.word}</strong> ({currentItem.definitionVi})
+                  </span>
+                  <button
+                    onClick={() => setIsContrastMode(false)}
+                    className="underline font-bold cursor-pointer ml-2 shrink-0"
+                  >
+                    Quay lại từ chính
+                  </button>
+                </div>
+              )}
             </div>
-            <p
-              className={`text-sm font-mono tracking-wide ${
-                isPaperTheme ? "text-slate-700 font-bold" : "text-slate-200"
-              }`}
-            >
-              {currentItem.ipa}
-            </p>
-            <p
-              className={`text-sm max-w-lg mx-auto mt-2 italic font-serif leading-relaxed px-3 py-1 rounded-xl backdrop-blur-xs ${
+
+            {/* Context Example Sentence */}
+            <div
+              className={`text-xs sm:text-sm p-3.5 rounded-xl border-l-4 leading-relaxed font-serif ${
                 isPaperTheme
-                  ? "text-slate-800 font-semibold bg-white/60 border border-black/5"
-                  : "text-cyan-200 bg-black/40 border border-white/10"
+                  ? "bg-slate-100/90 border-teal-600 text-slate-900 italic font-medium"
+                  : isSlateTheme
+                  ? "bg-slate-900/60 border-sky-400 text-slate-100 italic"
+                  : "bg-black/30 border-cyan-400 text-slate-200 italic"
               }`}
             >
-              "{activeDisplayMetaphor}"
-            </p>
-          </div>
-
-          {/* Left / Right Nav Arrows */}
-          <button
-            onClick={handlePrev}
-            aria-label="Previous Word"
-            className={`absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-xl transition-all cursor-pointer shadow-md ${
-              isPaperTheme
-                ? "bg-white/90 border border-slate-300 text-slate-700 hover:bg-white hover:text-black"
-                : "bg-black/60 border border-white/10 text-slate-300 hover:text-white hover:bg-black/90"
-            }`}
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            onClick={handleNext}
-            aria-label="Next Word"
-            className={`absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-xl transition-all cursor-pointer shadow-md ${
-              isPaperTheme
-                ? "bg-white/90 border border-slate-300 text-slate-700 hover:bg-white hover:text-black"
-                : "bg-black/60 border border-white/10 text-slate-300 hover:text-white hover:bg-black/90"
-            }`}
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Detailed Linguistic Card Bottom - Editorial High Legibility */}
-        <div
-          className={`p-6 border-t space-y-3.5 transition-colors ${
-            isPaperTheme
-              ? "bg-[#FAF7F2] border-[#E2D9CC]"
-              : isSlateTheme
-              ? "bg-[#131C31] border-slate-700/80"
-              : "bg-[#0D1322] border-white/10"
-          }`}
-        >
-          <div className="flex flex-wrap items-baseline gap-2.5">
-            <span
-              className={`text-xs font-black font-mono uppercase px-2 py-0.5 rounded ${
-                isPaperTheme
-                  ? "bg-teal-100 text-teal-800 border border-teal-300"
-                  : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-              }`}
-            >
-              {currentItem.pos}
-            </span>
-            <p
-              className={`text-base font-semibold leading-relaxed ${
-                isPaperTheme ? "text-slate-900 font-serif" : "text-white"
-              }`}
-            >
-              {currentItem.definitionEn}
-            </p>
-          </div>
-
-          <div
-            className={`p-3.5 rounded-xl border text-sm leading-relaxed ${
-              isPaperTheme
-                ? "bg-white border-[#E2D9CC] text-slate-800 shadow-xs"
-                : "bg-white/5 border-white/5 text-slate-200"
-            }`}
-          >
-            🇻🇳{" "}
-            <strong className={isPaperTheme ? "text-slate-900 font-bold" : "text-cyan-300 font-bold"}>
-              Nghĩa tiếng Việt:
-            </strong>{" "}
-            <span>{currentItem.definitionVi}</span>
-          </div>
-
-          {/* Context Example Sentence with High Contrast Callout */}
-          <div
-            className={`text-sm sm:text-base p-3.5 rounded-xl border-l-4 leading-relaxed font-serif ${
-              isPaperTheme
-                ? "bg-slate-100/90 border-teal-600 text-slate-900 italic font-medium"
-                : isSlateTheme
-                ? "bg-slate-900/60 border-sky-400 text-slate-100 italic"
-                : "bg-black/30 border-cyan-400 text-slate-200 italic"
-            }`}
-          >
-            "{currentItem.exampleSentence}"
+              "{currentItem.exampleSentence}"
+            </div>
           </div>
         </div>
       </div>
