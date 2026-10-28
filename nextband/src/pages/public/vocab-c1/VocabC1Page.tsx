@@ -741,7 +741,7 @@ export const VocabC1Page: React.FC = () => {
           {/* ============================================================ */}
           {/* 2B. MAIN STUDY STAGE (Single Viewport)                       */}
           {/* ============================================================ */}
-          <main className="flex-1 flex items-center justify-center p-4 sm:p-6 relative z-10 overflow-hidden">
+          <main className="flex-1 min-h-0 flex items-center justify-center p-2.5 sm:p-4 relative z-10 overflow-y-auto">
           
           {/* UNIT COMPLETE SCREEN */}
           {isUnitCompleted ? (
@@ -823,14 +823,14 @@ export const VocabC1Page: React.FC = () => {
           {/* STAGE 1: WORDS IN ACTION (ACTIVE RECALL) */}
           {!isUnitCompleted && currentStage === 1 && (
           <div
-            className={`w-full max-w-3xl bg-white rounded-2xl p-5 sm:p-7 flex flex-col justify-between transition-all duration-300 min-h-[480px] max-h-[calc(100vh-120px)] ${
+            className={`w-full max-w-3xl bg-white rounded-2xl p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 h-full max-h-[calc(100vh-88px)] ${
               hasCurrentVisualCue
                 ? "border-2 border-amber-400 ring-4 ring-amber-400/15 shadow-xl shadow-amber-500/15"
                 : "border border-slate-200 shadow-xl shadow-slate-200/60"
             }`}
           >
             {/* Header info */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 shrink-0">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3 shrink-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs sm:text-sm font-mono font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">
                   WORD {stage1Index + 1} / {VOCAB_C1_UNIT_1.wordsInAction.length}
@@ -843,26 +843,10 @@ export const VocabC1Page: React.FC = () => {
                     {currentWia.register}
                   </span>
                 )}
-                {hasCurrentVisualCue ? (
-                  <span
-                    className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs"
-                    title="Thẻ này có gợi ý trực quan (Visual Cue) ở mặt sau để phân biệt sắc thái hành động/tình huống"
-                  >
-                    <Eye className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Có gợi ý trực quan (Visual Cue)</span>
-                  </span>
-                ) : (
-                  <span
-                    className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500 border border-slate-200"
-                    title="Thẻ này phân biệt sắc thái qua ngữ cảnh, collocation và ma trận từ gần nghĩa"
-                  >
-                    <span>Ngữ cảnh &amp; Đối chiếu từ</span>
-                  </span>
-                )}
               </div>
               <button
                 onClick={() => triggerLivingAudio(currentWia.word)}
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-semibold border border-indigo-200 transition-all cursor-pointer shadow-xs active:scale-95"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-semibold border border-indigo-200 transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
                 title="Phát âm từ vựng (phím Space hoặc click trực tiếp vào từ)"
               >
                 <Volume2 className={`w-4 h-4 ${isWordPronouncing ? "text-indigo-600 animate-bounce" : ""}`} />
@@ -871,23 +855,11 @@ export const VocabC1Page: React.FC = () => {
               </button>
             </div>
 
-            {/* Card Body: CSS 3D Flip Card (both faces always in DOM) */}
-            <div className="mb-4 flex-1 flex flex-col justify-center min-h-0" style={{ perspective: '1200px' }}>
-              <div
-                style={{
-                  position: 'relative',
-                  minHeight: '380px',
-                  height: '100%',
-                  transformStyle: 'preserve-3d',
-                  transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  transform: stage1IsFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                }}
-              >
-                {/* FRONT FACE (Step 1: Pure Retrieval) */}
-                <div
-                  style={{ backfaceVisibility: 'hidden', position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-                  className="text-center py-6"
-                >
+            {/* Card Body: Responsive Flip Container (No absolute height overflow) */}
+            <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+              {!stage1IsFlipped ? (
+                /* FRONT FACE (Step 1: Pure Retrieval) */
+                <div className="flex-1 flex flex-col items-center justify-center text-center py-4 animate-in fade-in duration-200">
                   <div className="flex items-center justify-center gap-2 flex-wrap mb-4">
                     <div className="px-3 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-full text-xs font-bold font-mono uppercase tracking-wider">
                       Step 1 • Retrieval (Tự truy xuất nghĩa &amp; sắc thái)
@@ -930,7 +902,7 @@ export const VocabC1Page: React.FC = () => {
                     </h2>
                   </div>
 
-                  <p className="font-mono text-slate-500 text-xl font-medium mb-8">{currentWia.ipa}</p>
+                  <p className="font-mono text-slate-500 text-xl font-medium mb-6">{currentWia.ipa}</p>
 
                   <div>
                     <button
@@ -938,21 +910,19 @@ export const VocabC1Page: React.FC = () => {
                         setStage1IsFlipped(true);
                         triggerLivingAudio(currentWia.word);
                       }}
-                      className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base shadow-lg shadow-indigo-500/25 transition-all transform active:scale-95 cursor-pointer"
+                      className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base shadow-lg shadow-indigo-500/25 transition-all transform active:scale-95 cursor-pointer"
                     >
                       <span>Lật thẻ đối chiếu sắc thái</span>
                       <kbd className="text-xs font-mono bg-white/20 text-white px-2 py-0.5 rounded">Space</kbd>
                     </button>
-                    <p className="text-xs text-slate-400 mt-3">
+                    <p className="text-xs text-slate-400 mt-2.5">
                       Thử tự nhớ nghĩa, sắc thái cốt lõi và ngữ cảnh dùng từ trước khi lật thẻ
                     </p>
                   </div>
                 </div>
-
-                {/* BACK FACE (Steps 2-4: Multi-dimensional Semantic Nuance & Contrastive Recall) */}
-                <div
-                  style={{ backfaceVisibility: 'hidden', position: 'absolute', inset: 0, transform: 'rotateY(180deg)', overflowY: 'auto' }}
-                >
+              ) : (
+                /* BACK FACE (Steps 2-4: Multi-dimensional Semantic Nuance & Contrastive Recall) */
+                <div className="flex-1 min-h-0 overflow-y-auto pr-1 animate-in fade-in duration-200">
                   <SemanticNuanceCard
                     item={currentWia}
                     unitWords={VOCAB_C1_UNIT_1.wordsInAction}
@@ -961,11 +931,11 @@ export const VocabC1Page: React.FC = () => {
                     onSelfAssess={handleStage1SelfAssess}
                   />
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Navigation Stepper buttons inside card */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 shrink-0">
               <button
                 onClick={() => {
                   if (stage1Index > 0) {

@@ -54,9 +54,9 @@ export const SemanticNuanceCard: React.FC<SemanticNuanceCardProps> = ({
     selectedRecallOption?.toLowerCase() === recallQuiz.correctWord.toLowerCase();
 
   return (
-    <div className="space-y-3.5 text-left pr-1">
-      {/* 1. Header: Word, POS, IPA & Primary Nuance Pill */}
-      <div className="flex flex-wrap items-baseline justify-between gap-2 pb-2.5 border-b border-slate-200">
+    <div className="space-y-3 text-left pr-1">
+      {/* 1. Header: Word, IPA & Primary Nuance Pill */}
+      <div className="flex flex-wrap items-baseline justify-between gap-2 pb-2 border-b border-slate-200">
         <div>
           <div className="flex items-baseline gap-2.5 flex-wrap">
             <h2
@@ -86,9 +86,6 @@ export const SemanticNuanceCard: React.FC<SemanticNuanceCardProps> = ({
               )}
             </h2>
             <span className="font-mono text-slate-500 text-sm">{item.ipa}</span>
-            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">
-              {item.pos || "Vocabulary · C1"}
-            </span>
           </div>
           <p className="text-emerald-700 font-bold text-sm sm:text-base mt-1 leading-snug">
             {item.viDef}
