@@ -14,7 +14,8 @@ import {
   Layers,
   Zap,
   RotateCcw,
-  Trophy
+  Trophy,
+  Eye
 } from "lucide-react";
 import {
   VOCAB_C1_UNITS,
@@ -242,6 +243,7 @@ export const VocabC1Page: React.FC = () => {
 
   // Navigation handlers
   const currentWia = VOCAB_C1_UNIT_1.wordsInAction[stage1Index] || VOCAB_C1_UNIT_1.wordsInAction[0];
+  const hasCurrentVisualCue = Boolean(currentWia?.visualCueUrl || currentWia?.visualCueType);
   const currentWf = VOCAB_C1_UNIT_1.wordFormation[stage2Index] || VOCAB_C1_UNIT_1.wordFormation[0];
   const currentCw = VOCAB_C1_UNIT_1.confusableWords[stage3Index] || VOCAB_C1_UNIT_1.confusableWords[0];
   const currentSf = VOCAB_C1_UNIT_1.synonymFilter[stage4ChallengeIndex] || VOCAB_C1_UNIT_1.synonymFilter[0];
@@ -820,10 +822,16 @@ export const VocabC1Page: React.FC = () => {
 
           {/* STAGE 1: WORDS IN ACTION (ACTIVE RECALL) */}
           {!isUnitCompleted && currentStage === 1 && (
-          <div className="w-full max-w-3xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 rounded-2xl p-5 sm:p-7 flex flex-col justify-between transition-all duration-200 min-h-[480px] max-h-[calc(100vh-120px)]">
+          <div
+            className={`w-full max-w-3xl bg-white rounded-2xl p-5 sm:p-7 flex flex-col justify-between transition-all duration-300 min-h-[480px] max-h-[calc(100vh-120px)] ${
+              hasCurrentVisualCue
+                ? "border-2 border-amber-400 ring-4 ring-amber-400/15 shadow-xl shadow-amber-500/15"
+                : "border border-slate-200 shadow-xl shadow-slate-200/60"
+            }`}
+          >
             {/* Header info */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 shrink-0">
-              <div className="flex items-center gap-2.5 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs sm:text-sm font-mono font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">
                   WORD {stage1Index + 1} / {VOCAB_C1_UNIT_1.wordsInAction.length}
                 </span>
@@ -833,6 +841,22 @@ export const VocabC1Page: React.FC = () => {
                 {currentWia.register && (
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-600 border border-slate-200">
                     {currentWia.register}
+                  </span>
+                )}
+                {hasCurrentVisualCue ? (
+                  <span
+                    className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs"
+                    title="Thẻ này có gợi ý trực quan (Visual Cue) ở mặt sau để phân biệt sắc thái hành động/tình huống"
+                  >
+                    <Eye className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Có gợi ý trực quan (Visual Cue)</span>
+                  </span>
+                ) : (
+                  <span
+                    className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500 border border-slate-200"
+                    title="Thẻ này phân biệt sắc thái qua ngữ cảnh, collocation và ma trận từ gần nghĩa"
+                  >
+                    <span>Ngữ cảnh &amp; Đối chiếu từ</span>
                   </span>
                 )}
               </div>
@@ -864,8 +888,16 @@ export const VocabC1Page: React.FC = () => {
                   style={{ backfaceVisibility: 'hidden', position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
                   className="text-center py-6"
                 >
-                  <div className="inline-block mx-auto px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-xs font-bold font-mono uppercase tracking-wider mb-4">
-                    Step 1 • Retrieval (Tự truy xuất nghĩa & sắc thái)
+                  <div className="flex items-center justify-center gap-2 flex-wrap mb-4">
+                    <div className="px-3 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-full text-xs font-bold font-mono uppercase tracking-wider">
+                      Step 1 • Retrieval (Tự truy xuất nghĩa &amp; sắc thái)
+                    </div>
+                    {hasCurrentVisualCue && (
+                      <div className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-bold">
+                        <Eye className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Kèm Visual Cue ở mặt sau</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Living Word on Click / Pronounce */}
@@ -949,10 +981,13 @@ export const VocabC1Page: React.FC = () => {
                 <kbd className="font-mono text-xs bg-white px-2 py-0.5 rounded border border-slate-300">←</kbd>
               </button>
 
-              <div className="flex flex-wrap justify-center gap-1.5 max-w-xs sm:max-w-md px-2">
+              <div className="flex flex-wrap justify-center items-center gap-1.5 max-w-xs sm:max-w-md px-2">
                 {VOCAB_C1_UNIT_1.wordsInAction.map((w, idx) => {
                   const assessment = stage1SelfAssessments[w.id];
-                  let dotColor = "bg-slate-300 hover:bg-slate-400";
+                  const wordHasVisualCue = Boolean(w.visualCueUrl || w.visualCueType);
+                  let dotColor = wordHasVisualCue
+                    ? "bg-amber-400 hover:bg-amber-500 ring-2 ring-amber-300/60"
+                    : "bg-slate-300 hover:bg-slate-400";
                   if (assessment === "mastered") dotColor = "bg-emerald-500";
                   if (assessment === "review") dotColor = "bg-rose-400";
 
@@ -964,9 +999,17 @@ export const VocabC1Page: React.FC = () => {
                         setStage1IsFlipped(false);
                       }}
                       className={`h-2.5 rounded-full cursor-pointer transition-all ${
-                        idx === stage1Index ? "w-6 bg-indigo-600" : `w-2.5 ${dotColor}`
+                        idx === stage1Index
+                          ? wordHasVisualCue
+                            ? "w-6 bg-amber-500 ring-2 ring-amber-300"
+                            : "w-6 bg-indigo-600"
+                          : `w-2.5 ${dotColor}`
                       }`}
-                      title={w.word}
+                      title={
+                        wordHasVisualCue
+                          ? `${w.word} (Có gợi ý trực quan - Visual Cue)`
+                          : w.word
+                      }
                     />
                   );
                 })}

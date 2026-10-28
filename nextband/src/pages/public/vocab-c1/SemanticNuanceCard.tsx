@@ -212,26 +212,114 @@ export const SemanticNuanceCard: React.FC<SemanticNuanceCardProps> = ({
       )}
 
       {/* 4. Optional Visual Cue (Only rendered when pedagogical visual cue is provided) */}
-      {item.visualCueUrl && (
-        <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-          {!showVisualCue ? (
+      {(item.visualCueUrl || item.visualCueType) && (
+        <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50/90 via-orange-50/60 to-amber-50/90 border-2 border-amber-300 shadow-xs space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-[11px] font-mono font-black uppercase tracking-wider text-amber-900">
+              <Eye className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span>Step 3 • Visual Cue — Gợi ý trực quan phân biệt sắc thái</span>
+            </div>
             <button
               type="button"
-              onClick={() => setShowVisualCue(true)}
-              className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 cursor-pointer"
+              onClick={() => setShowVisualCue((prev) => !prev)}
+              className="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white shadow-2xs transition-all cursor-pointer shrink-0"
             >
-              <Eye className="w-3.5 h-3.5" />
-              <span>Xem gợi ý trực quan (Visual Cue)</span>
+              {showVisualCue ? "Ẩn minh họa" : "Mở minh họa trực quan"}
             </button>
-          ) : (
-            <div className="space-y-1.5">
-              <img
-                src={item.visualCueUrl}
-                alt={item.word}
-                className="w-full max-h-40 object-cover rounded-lg border border-slate-200"
-              />
+          </div>
+
+          {showVisualCue && (
+            <div className="pt-1 space-y-2">
+              {item.visualCueUrl ? (
+                <img
+                  src={item.visualCueUrl}
+                  alt={item.word}
+                  className="w-full max-h-44 object-cover rounded-lg border border-amber-200 bg-white"
+                />
+              ) : (
+                <div className="w-full rounded-lg border border-amber-200 bg-slate-900 p-3 flex items-center justify-center overflow-hidden">
+                  {item.visualCueType === "shield-shelter" && (
+                    <svg viewBox="0 0 360 110" className="w-full max-h-32">
+                      {/* Rain lines */}
+                      <g stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.55">
+                        <line x1="40" y1="5" x2="25" y2="95" />
+                        <line x1="75" y1="5" x2="60" y2="95" />
+                        <line x1="110" y1="5" x2="95" y2="95" />
+                        <line x1="145" y1="5" x2="130" y2="95" />
+                        <line x1="310" y1="5" x2="295" y2="95" />
+                      </g>
+                      {/* Shelter canopy */}
+                      <path d="M175 20 L285 20 L295 36 L165 36 Z" fill="#f59e0b" />
+                      <rect x="275" y="36" width="6" height="64" fill="#94a3b8" />
+                      {/* Chivalrous figure stepping into rain holding umbrella/coat toward shelter */}
+                      <circle cx="135" cy="48" r="9" fill="#38bdf8" />
+                      <path d="M123 60 Q135 56 147 60 L152 98 L118 98 Z" fill="#0284c7" />
+                      {/* Shield/Umbrella arc protecting the other person */}
+                      <path d="M160 28 Q215 12 255 34" stroke="#fbbf24" strokeWidth="4" fill="none" />
+                      {/* Protected elderly passenger under dry shelter */}
+                      <circle cx="225" cy="52" r="8.5" fill="#fde68a" />
+                      <path d="M213 63 Q225 60 237 63 L240 98 L210 98 Z" fill="#10b981" />
+                      <text x="18" y="22" fill="#bae6fd" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                        CHIVALROUS: Nhường chỗ che chở người yếu thế
+                      </text>
+                    </svg>
+                  )}
+                  {item.visualCueType === "cliff-helicopter" && (
+                    <svg viewBox="0 0 360 110" className="w-full max-h-32">
+                      {/* Jagged cliff on right */}
+                      <polygon points="245,5 360,5 360,105 220,105 250,70 230,45" fill="#475569" />
+                      {/* Helicopter hovering inches from cliff */}
+                      <rect x="75" y="20" width="95" height="3.5" fill="#fbbf24" />
+                      <rect x="120" y="23" width="5" height="8" fill="#94a3b8" />
+                      <ellipse cx="125" cy="42" rx="34" ry="14" fill="#f97316" />
+                      <path d="M60 42 L92 42" stroke="#f97316" strokeWidth="5" />
+                      {/* Rescue cable & climber near cliff edge */}
+                      <line x1="145" y1="55" x2="215" y2="82" stroke="#38bdf8" strokeWidth="2" strokeDasharray="3 2" />
+                      <circle cx="218" cy="84" r="6" fill="#38bdf8" />
+                      <text x="16" y="96" fill="#fed7aa" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                        DARING: Pha cứu hộ sát vách đá rủi ro cực cao
+                      </text>
+                    </svg>
+                  )}
+                  {item.visualCueType === "arctic-summit" && (
+                    <svg viewBox="0 0 360 110" className="w-full max-h-32">
+                      {/* Jagged volcano/arctic peaks */}
+                      <polygon points="20,105 95,25 170,105" fill="#334155" />
+                      <polygon points="130,105 235,14 335,105" fill="#475569" />
+                      <polygon points="212,38 235,14 258,38 245,42 225,36" fill="#f97316" />
+                      {/* Intrepid explorer marching forward with flag/gear */}
+                      <path d="M55 95 Q135 80 210 42" stroke="#fbbf24" strokeWidth="2.5" strokeDasharray="4 3" fill="none" />
+                      <circle cx="205" cy="42" r="6.5" fill="#38bdf8" />
+                      <line x1="214" y1="30" x2="214" y2="52" stroke="#f8fafc" strokeWidth="2" />
+                      <polygon points="214,30 232,35 214,40" fill="#10b981" />
+                      <text x="16" y="20" fill="#a7f3d0" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                        INTREPID: Bền bỉ dấn thân vào vùng hiểm địa
+                      </text>
+                    </svg>
+                  )}
+                  {item.visualCueType === "monolith-challenge" && (
+                    <svg viewBox="0 0 360 110" className="w-full max-h-32">
+                      {/* Giant institutional monolith */}
+                      <rect x="215" y="10" width="110" height="92" rx="4" fill="#334155" stroke="#64748b" strokeWidth="2" />
+                      <text x="232" y="55" fill="#94a3b8" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        ORTHODOXY
+                      </text>
+                      {/* Small individual projecting a bold shockwave/beam challenging the monolith */}
+                      <circle cx="72" cy="64" r="8" fill="#fbbf24" />
+                      <path d="M62 74 L82 74 L86 102 L58 102 Z" fill="#f59e0b" />
+                      <path d="M88 64 L210 36 L210 88 Z" fill="#f59e0b" opacity="0.28" />
+                      <line x1="88" y1="64" x2="212" y2="58" stroke="#fbbf24" strokeWidth="3" />
+                      <text x="16" y="22" fill="#fde68a" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                        AUDACIOUS: Thách thức táo bạo vượt chuẩn mực
+                      </text>
+                    </svg>
+                  )}
+                </div>
+              )}
               {item.visualCueCaptionVi && (
-                <p className="text-[11px] text-slate-600 italic">{item.visualCueCaptionVi}</p>
+                <p className="text-xs text-amber-950 font-medium leading-snug">
+                  {item.visualCueCaptionVi}
+                </p>
               )}
             </div>
           )}

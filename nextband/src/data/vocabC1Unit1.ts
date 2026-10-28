@@ -29,6 +29,7 @@ export interface WordInAction {
   contrastWords?: ContrastWordItem[];
   usageConnotationVi?: string;
   visualCueUrl?: string;
+  visualCueType?: "shield-shelter" | "cliff-helicopter" | "arctic-summit" | "monolith-challenge" | "image";
   visualCueCaptionVi?: string;
   contrastiveRecall?: ContrastiveRecallItem;
 }
@@ -198,6 +199,8 @@ export const VOCAB_C1_UNIT_1: VocabC1Unit = {
         { word: "fearless", distinction: "chỉ thuần túy trạng thái không biết sợ hãi, không hàm ý lịch thiệp." }
       ],
       usageConnotationVi: "Tích cực, mang âm hưởng văn chương hoặc ca ngợi phẩm cách cao thượng, đôi khi gợi nét cổ điển.",
+      visualCueType: "shield-shelter",
+      visualCueCaptionVi: "Minh họa trực quan: Nhường mái hiên che mưa để bảo vệ người yếu thế — cốt lõi của 'chivalrous' là sự hào hiệp, vị tha và nhã nhặn.",
       contrastiveRecall: {
         scenarioEn: "In an age of fierce self-interest, his ________ defense of the unfairly accused clerk stood out.",
         scenarioVi: "Trong thời đại ai cũng chỉ lo thân mình, hành động hào hiệp đứng ra bảo vệ người thư ký bị kết tội oan của ông thật nổi bật.",
@@ -256,6 +259,8 @@ export const VOCAB_C1_UNIT_1: VocabC1Unit = {
         { word: "courageous", distinction: "vững vàng vượt qua nghịch cảnh lớn hoặc đòi hỏi nghị lực sâu sắc." }
       ],
       usageConnotationVi: "Sắc thái sống động, giàu kịch tính; rất hay đi với các danh từ chỉ chiến dịch giải cứu, đột kích, biểu diễn hoặc thiết kế phá cách.",
+      visualCueType: "cliff-helicopter",
+      visualCueCaptionVi: "Minh họa trực quan: Trực thăng áp sát vách đá dựng đứng trong pha cứu hộ rủi ro cao — khắc họa hành động gay cấn của 'daring'.",
       contrastiveRecall: {
         scenarioEn: "The coast guard pulled off a ________ midnight rescue amidst ten-meter storm waves.",
         scenarioVi: "Lực lượng tuần duyên đã thực hiện thành công một cuộc giải cứu nửa đêm đầy ngoạn mục giữa những con sóng bão cao 10 mét.",
@@ -314,6 +319,8 @@ export const VOCAB_C1_UNIT_1: VocabC1Unit = {
         { word: "bold", distinction: "tự tin, quyết đoán trong hành động hoặc quyết định nói chung." }
       ],
       usageConnotationVi: "Trang trọng, báo chí (journalistic); đôi khi cũng được dùng với sắc thái hơi hài hước nhẹ để khen những du khách chịu khó vượt gian khổ.",
+      visualCueType: "arctic-summit",
+      visualCueCaptionVi: "Minh họa trực quan: Đoàn thám hiểm/phóng viên tiến bước vững vàng giữa địa hình hiểm trở — sắc thái thực địa đặc trưng của 'intrepid'.",
       contrastiveRecall: {
         scenarioEn: "Only the most ________ travelers venture into this remote desert region during the peak summer heat.",
         scenarioVi: "Chỉ những lữ khách gan dạ nhất mới dám dấn thân vào vùng sa mạc hẻo lánh này giữa cái nắng đỉnh điểm mùa hè.",
@@ -372,6 +379,8 @@ export const VOCAB_C1_UNIT_1: VocabC1Unit = {
         { word: "audacious", distinction: "táo bạo khác thường, có thể gây sốc hoặc bị coi là liều lĩnh." }
       ],
       usageConnotationVi: "Có thể mang nghĩa tích cực khi nói về sự táo bạo đáng khâm phục (audacious vision), hoặc tiêu cực khi hành động bị xem là quá trớn, ngạo mạn.",
+      visualCueType: "monolith-challenge",
+      visualCueCaptionVi: "Minh họa trực quan: Một cá nhân dám thách thức khối định kiến khổng lồ của định chế lâu đời — sự táo bạo khác thường của 'audacious'.",
       contrastiveRecall: {
         scenarioEn: "Critics were stunned by the young director's ________ attempt to rewrite a classic masterpiece from the villain's perspective.",
         scenarioVi: "Giới phê bình sửng sốt trước nỗ lực táo bạo khác thường của vị đạo diễn trẻ khi viết lại một kiệt tác kinh điển từ góc nhìn của nhân vật phản diện.",
