@@ -67,7 +67,7 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
   onPlayAudio,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [deckList, setDeckList] = useState<IdiomItemForDeck[]>([]);
+  const [deckList, setDeckList] = useState<IdiomItemForDeck[]>(() => idioms ?? []);
   const [isFlipped, setIsFlipped] = useState(false);
   const [cardTab, setCardTab] = useState<"front" | "context" | "etymology" | "exam">("front");
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -169,16 +169,6 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
     }
   };
 
-  if (!deckList || deckList.length === 0) {
-    return (
-      <div className="py-16 text-center bg-white rounded-3xl border border-[#EAE3D9] p-8 shadow-xs">
-        <Layers className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-        <h3 className="text-lg font-bold text-slate-800">Không tìm thấy thẻ thành ngữ nào</h3>
-        <p className="text-sm text-slate-500 mt-1">Vui lòng điều chỉnh bộ lọc hoặc chọn Unit khác.</p>
-      </div>
-    );
-  }
-
   // Visible cards in fan/stack (up to 4 cards)
   const stackCards = useMemo(() => {
     const list: { item: IdiomItemForDeck; offset: number }[] = [];
@@ -190,6 +180,16 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
     }
     return list;
   }, [currentIndex, deckList]);
+
+  if (!deckList || deckList.length === 0) {
+    return (
+      <div className="py-16 text-center bg-white rounded-3xl border border-[#EAE3D9] p-8 shadow-xs">
+        <Layers className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+        <h3 className="text-lg font-bold text-slate-800">Không tìm thấy thẻ thành ngữ nào</h3>
+        <p className="text-sm text-slate-500 mt-1">Vui lòng điều chỉnh bộ lọc hoặc chọn Unit khác.</p>
+      </div>
+    );
+  }
 
   const progressPercent = Math.round(((currentIndex + 1) / deckList.length) * 100);
 
