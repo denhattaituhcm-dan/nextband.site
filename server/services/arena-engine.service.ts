@@ -282,7 +282,43 @@ export class ArenaEngineService {
     const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
 
     let scoreAwarded = 0;
+    let currentStreak = 0;
+    let streakMultiplier = 1.0;
+
     if (isCorrect) {
+      // 3.1. Tính chuỗi trả lời đúng liên tiếp (Streak) của học viên
+      const previousAnswers = await this.prisma.arenaAnswer.findMany({
+        where: {
+          roomId: room.id,
+          participantId: participant.id,
+          roundIndex: { lt: roundIndex },
+        },
+        orderBy: { roundIndex: "desc" },
+        select: { isCorrect: true, roundIndex: true },
+      });
+
+      let streakCount = 1; // Bao gồm cả câu đúng hiện tại
+      for (const prev of previousAnswers) {
+        if (prev.isCorrect) {
+          streakCount++;
+        } else {
+          break;
+        }
+      }
+      currentStreak = streakCount;
+
+      // 3.2. Hệ số thưởng Combo Multiplier:
+      // streak >= 5: x1.5 (Super Streak ⚡)
+      // streak >= 3: x1.2 (On Fire 🔥)
+      // streak >= 2: x1.1 (Warming Up 📈)
+      if (currentStreak >= 5) {
+        streakMultiplier = 1.5;
+      } else if (currentStreak >= 3) {
+        streakMultiplier = 1.2;
+      } else if (currentStreak >= 2) {
+        streakMultiplier = 1.1;
+      }
+
       const timeLeftSeconds = room.roundDeadlineAt
         ? Math.max(0, Math.ceil((room.roundDeadlineAt.getTime() - serverReceivedAt.getTime()) / 1000))
         : 1;
@@ -293,9 +329,9 @@ export class ArenaEngineService {
       const isFinalQuestion = totalQuestions > 0 && roundIndex >= totalQuestions - 1;
       const roomConfig = (room.config && typeof room.config === "object") ? (room.config as Record<string, any>) : {};
       const isClassicMode = !roomConfig.gameMode || roomConfig.gameMode === "CLASSIC";
-      const multiplier = (isClassicMode && isFinalQuestion) ? 2 : 1;
+      const finalQuestionMultiplier = (isClassicMode && isFinalQuestion) ? 2 : 1;
 
-      scoreAwarded = baseScore * multiplier;
+      scoreAwarded = Math.round(baseScore * finalQuestionMultiplier * streakMultiplier);
     }
 
     // 4. Transaction ghi nhận vào DB: Chống nộp kép bằng Unique Constraint
@@ -327,6 +363,8 @@ export class ArenaEngineService {
         isCorrect: answerRecord.isCorrect,
         scoreAwarded: answerRecord.scoreAwarded,
         totalScore: updatedParticipant.totalScore,
+        streak: currentStreak,
+        streakMultiplier,
         submittedAt: answerRecord.submittedAt,
       };
     } catch (dbErr: any) {

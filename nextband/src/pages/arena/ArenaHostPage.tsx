@@ -93,7 +93,12 @@ export default function ArenaHostPage() {
     playClimberSound,
     playPodiumSound,
     playClickSound,
+    playFastLockSound,
   } = useArenaAudio();
+
+  // Auto-skip dead air notice state & guard ref
+  const [isAllAnsweredNotice, setIsAllAnsweredNotice] = useState<boolean>(false);
+  const autoSkipTriggeredRef = useRef<number>(-1);
 
   // Chế độ toàn màn hình cho Giáo viên trình chiếu
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -421,12 +426,17 @@ export default function ArenaHostPage() {
           const isClassicMode = roomSettingsRef.current.gameMode === 'CLASSIC';
           const finalMultiplier = (isClassicMode && isFinalQuestion) ? 2 : 1;
 
+          // Streak Multiplier đồng bộ với Server (x1.1 cho streak 2, x1.2 cho streak 3, x1.5 cho streak 5+)
+          const curStreak = playerStreakMap[payload.nickname] || 0;
+          const nextStreak = curStreak + 1;
+          const streakMultiplier = nextStreak >= 5 ? 1.5 : nextStreak >= 3 ? 1.2 : nextStreak >= 2 ? 1.1 : 1.0;
+
           if (roomSettingsRef.current.scoringMode === 'double') {
-            score = (100 + (payload.timeLeft || 1) * 10) * 2 * finalMultiplier;
+            score = Math.round((100 + (payload.timeLeft || 1) * 10) * 2 * finalMultiplier * streakMultiplier);
           } else if (roomSettingsRef.current.scoringMode === 'no_points') {
             score = 0;
           } else {
-            score = (100 + (payload.timeLeft || 1) * 10) * finalMultiplier;
+            score = Math.round((100 + (payload.timeLeft || 1) * 10) * finalMultiplier * streakMultiplier);
           }
         }
 
@@ -597,6 +607,7 @@ export default function ArenaHostPage() {
           nickname: name,
           totalScore: gold,
           avatarSeed: found?.avatarSeed !== undefined ? found.avatarSeed : name,
+          streak: playerStreakMap[name] || 0,
         };
       });
     }
@@ -637,6 +648,7 @@ export default function ArenaHostPage() {
         lives: item.lives,
         maxLives: item.maxLives,
         isEliminated: item.isEliminated,
+        streak: playerStreakMap[item.name] || 0,
       }));
     }
 
@@ -656,9 +668,10 @@ export default function ArenaHostPage() {
         nickname: name,
         totalScore: score,
         avatarSeed: found?.avatarSeed !== undefined ? found.avatarSeed : name,
+        streak: playerStreakMap[name] || 0,
       };
     });
-  }, [cumulativeScores, playerGoldMap, playerLivesMap, eliminatedRoundMap, players, roomSettings.gameMode, roomSettings.survivalInitialLives]);
+  }, [cumulativeScores, playerGoldMap, playerLivesMap, playerStreakMap, eliminatedRoundMap, players, roomSettings.gameMode, roomSettings.survivalInitialLives]);
 
 
   // Cho phép Host kick học viên ra khỏi sảnh chờ để họ có thể tự vào lại
@@ -752,6 +765,34 @@ export default function ArenaHostPage() {
     }, 1000);
     return () => clearInterval(interval);
   }, [state, stopQuestionSuspense]);
+
+  // Triệt tiêu thời gian chết (Auto-skip Dead Air): Khi 100% học sinh đã nộp bài
+  useEffect(() => {
+    if (state !== 'QUESTION_LIVE') return;
+    const answeredCount = Object.keys(answers).length;
+    const totalPlayers = players.length;
+
+    if (totalPlayers > 0 && answeredCount >= totalPlayers && autoSkipTriggeredRef.current !== questionIndex) {
+      autoSkipTriggeredRef.current = questionIndex;
+      setIsAllAnsweredNotice(true);
+      playFastLockSound();
+
+      const timer = setTimeout(() => {
+        stopQuestionSuspense();
+        setState('ANSWER_LOCKED');
+        setIsAllAnsweredNotice(false);
+        if (channelRef.current) {
+          channelRef.current.send({
+            type: 'broadcast',
+            event: 'round-locked',
+          });
+        }
+      }, 1200);
+
+      return () => clearTimeout(timer);
+    }
+  }, [state, answers, players.length, questionIndex, playFastLockSound, stopQuestionSuspense]);
+
 
   // Điều phối chuyển trạng thái bằng Single Button (Server-Authoritative)
   const handleExecuteCommand = useCallback(
@@ -986,6 +1027,22 @@ export default function ArenaHostPage() {
             }
           }
 
+          // Cập nhật Streak cho các chế độ CLASSIC & GOLD_QUEST
+          if (roomSettings.gameMode !== 'ARENA_100') {
+            const nextStreakMap: Record<string, number> = { ...playerStreakMap };
+            players.forEach((p) => {
+              const name = p.name;
+              const ans = answers[name];
+              const isAnsCorrect = Boolean(ans && ans.optionId === currentQuestion.correctOptionId);
+              if (isAnsCorrect) {
+                nextStreakMap[name] = (nextStreakMap[name] || 0) + 1;
+              } else {
+                nextStreakMap[name] = 0;
+              }
+            });
+            setPlayerStreakMap(nextStreakMap);
+          }
+
           if (channelRef.current) {
             channelRef.current.send({
               type: 'broadcast',
@@ -1051,6 +1108,8 @@ export default function ArenaHostPage() {
             const nextIdx = questionIndex + 1;
             setQuestionIndex(nextIdx);
             setAnswers({});
+            setIsAllAnsweredNotice(false);
+            autoSkipTriggeredRef.current = -1;
             setActiveJudgedEliminatedNames([]);
             const nextQ = serverQuestion || currentQuestion;
             runQuestionCountdown(nextIdx, nextQ, serverTotal, false);
@@ -1431,6 +1490,14 @@ export default function ArenaHostPage() {
                   }}
                 />
               </div>
+
+              {/* Auto-Skip Flash Banner khi 100% học sinh đã nộp bài */}
+              {isAllAnsweredNotice && (
+                <div className="mt-2.5 py-1.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500/30 via-teal-500/30 to-emerald-500/30 border border-emerald-400 text-emerald-300 text-xs font-black tracking-wide flex items-center justify-center gap-1.5 animate-pulse shadow-lg shadow-emerald-950/60">
+                  <Zap className="w-4 h-4 text-emerald-400 fill-emerald-400 animate-bounce" />
+                  <span>⚡ 100% ĐÃ NỘP BÀI! TỰ ĐỘNG CHỐT ĐÁP ÁN...</span>
+                </div>
+              )}
             </div>
 
             {/* Live Feed cảnh báo cướp vàng nếu ở chế độ GOLD_QUEST */}

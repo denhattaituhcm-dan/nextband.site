@@ -94,7 +94,8 @@ export default function ArenaPlayPage() {
   const [wrongQuestions, setWrongQuestions] = useState<RevengeQuestionItem[]>([]);
   const [isRevengeModalOpen, setIsRevengeModalOpen] = useState<boolean>(false);
 
-  const { playClickSound, playCorrectSound, playWrongSound } = useArenaAudio();
+  const { playClickSound, playCorrectSound, playWrongSound, playStreakSound } = useArenaAudio();
+  const [streakMultiplier, setStreakMultiplier] = useState<number>(1.0);
   const channelRef = useRef<any>(null);
 
   const nicknameRef = useRef<string>(nickname);
@@ -545,10 +546,15 @@ export default function ArenaPlayPage() {
         });
       }
 
+      // Rung phản hồi xúc giác (Haptic micro-vibration)
+      if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+        try { navigator.vibrate([25, 35, 25]); } catch {}
+      }
+
       // Gửi nộp bài Authoritative lên Server
       if (roomId && playerToken) {
         try {
-          await arenaApi.submitAnswer({
+          const submitRes = await arenaApi.submitAnswer({
             roomId,
             playerSessionToken: playerToken,
             questionId: currentQuestion.id,
@@ -556,6 +562,10 @@ export default function ArenaPlayPage() {
             selectedOptionId: optionId,
             clientTelemetryTime: new Date().toISOString(),
           });
+          if (submitRes) {
+            if (typeof (submitRes as any).streak === 'number') setStreak((submitRes as any).streak);
+            if (typeof (submitRes as any).streakMultiplier === 'number') setStreakMultiplier((submitRes as any).streakMultiplier);
+          }
         } catch (err: any) {
           console.warn('[ArenaPlayPage] submitAnswer response/status:', err?.message || err);
           // Nếu server báo đã nộp trước đó (ALREADY_SUBMITTED), tiếp tục giữ khóa an toàn
@@ -646,8 +656,15 @@ export default function ArenaPlayPage() {
     if (!showResult) return;
     if (gameMode === 'CLASSIC') {
       if (hasSubmitted && isCorrect) {
-        setStreak((prev) => prev + 1);
-        playCorrectSound();
+        setStreak((prev) => {
+          const next = prev + 1;
+          if (next >= 2) {
+            playStreakSound(next);
+          } else {
+            playCorrectSound();
+          }
+          return next;
+        });
       } else {
         setStreak(0);
         playWrongSound();
@@ -1070,9 +1087,13 @@ export default function ArenaPlayPage() {
                     ? `Kho vàng: ${gold} 🪙`
                     : totalQuestions > 0 && questionIndex >= totalQuestions - 1
                     ? '⚡ ĐÃ NHÂN ĐÔI ĐIỂM CÂU CUỐI (X2)!'
-                    : streak > 1
-                    ? `🔥 Chuỗi ${streak} câu đúng liên tiếp! (+100 Điểm Tốc Độ)`
-                    : '+100 Điểm Tốc Độ'
+                    : streak >= 5
+                    ? `⚡ SUPER STREAK x${streak}! (Hệ số +50% Điểm Thưởng)`
+                    : streak >= 3
+                    ? `🔥 ON FIRE x${streak}! (Hệ số +20% Điểm Thưởng)`
+                    : streak >= 2
+                    ? `📈 COMBO x${streak}! (Hệ số +10% Điểm Thưởng)`
+                    : '+100 Điểm Cơ Bản'
                 ) : (
                   'Đừng nản lòng, chú ý collocation tiếp theo'
                 )}

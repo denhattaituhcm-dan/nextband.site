@@ -52,6 +52,7 @@ export interface PlayerPublicRank {
   lives?: number;
   maxLives?: number;
   isEliminated?: boolean;
+  streak?: number;
 }
 
 export interface PlayerPersonalResult {

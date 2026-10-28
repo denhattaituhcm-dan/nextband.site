@@ -123731,14 +123731,41 @@ var init_arena_engine_service = __esm({
         const question = questions[roundIndex];
         const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
         let scoreAwarded = 0;
+        let currentStreak = 0;
+        let streakMultiplier = 1;
         if (isCorrect) {
+          const previousAnswers = await this.prisma.arenaAnswer.findMany({
+            where: {
+              roomId: room.id,
+              participantId: participant.id,
+              roundIndex: { lt: roundIndex }
+            },
+            orderBy: { roundIndex: "desc" },
+            select: { isCorrect: true, roundIndex: true }
+          });
+          let streakCount = 1;
+          for (const prev of previousAnswers) {
+            if (prev.isCorrect) {
+              streakCount++;
+            } else {
+              break;
+            }
+          }
+          currentStreak = streakCount;
+          if (currentStreak >= 5) {
+            streakMultiplier = 1.5;
+          } else if (currentStreak >= 3) {
+            streakMultiplier = 1.2;
+          } else if (currentStreak >= 2) {
+            streakMultiplier = 1.1;
+          }
           const timeLeftSeconds = room.roundDeadlineAt ? Math.max(0, Math.ceil((room.roundDeadlineAt.getTime() - serverReceivedAt.getTime()) / 1e3)) : 1;
           const baseScore = 100 + timeLeftSeconds * 10;
           const isFinalQuestion = totalQuestions > 0 && roundIndex >= totalQuestions - 1;
           const roomConfig = room.config && typeof room.config === "object" ? room.config : {};
           const isClassicMode = !roomConfig.gameMode || roomConfig.gameMode === "CLASSIC";
-          const multiplier = isClassicMode && isFinalQuestion ? 2 : 1;
-          scoreAwarded = baseScore * multiplier;
+          const finalQuestionMultiplier = isClassicMode && isFinalQuestion ? 2 : 1;
+          scoreAwarded = Math.round(baseScore * finalQuestionMultiplier * streakMultiplier);
         }
         try {
           const [answerRecord, updatedParticipant] = await this.prisma.$transaction([
@@ -123767,6 +123794,8 @@ var init_arena_engine_service = __esm({
             isCorrect: answerRecord.isCorrect,
             scoreAwarded: answerRecord.scoreAwarded,
             totalScore: updatedParticipant.totalScore,
+            streak: currentStreak,
+            streakMultiplier,
             submittedAt: answerRecord.submittedAt
           };
         } catch (dbErr) {

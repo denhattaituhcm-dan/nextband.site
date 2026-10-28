@@ -326,6 +326,83 @@ describe("🎮 PHASE 4: SERVER-AUTHORITATIVE STATE MACHINE & SCORING SPEC SUITE"
       expect(submitResult.totalScore).toBe(submitResult.scoreAwarded);
     });
 
+
+    it("tính chính xác streak và áp dụng hệ số nhân Streak Multiplier khi trả lời đúng liên tiếp", async () => {
+      const room = await roomService.createRoom({});
+      createdRoomIds.push(room.roomId);
+
+      const p1 = await roomService.joinRoom({
+        pin: room.pin,
+        nickname: "Minh Combo",
+      });
+
+      await engineService.executeHostCommand({
+        commandId: randomUUID(),
+        action: "START_ARENA",
+        pin: room.pin,
+        hostToken: room.hostToken,
+      });
+
+      // Câu 1 (round 0): Trả lời đúng -> streak 1 (x1.0)
+      const q0 = ARENA_STANDARD_QUESTIONS[0];
+      const res0 = await engineService.submitAnswer({
+        roomId: room.roomId,
+        playerSessionToken: p1.playerSessionToken,
+        questionId: q0.id,
+        roundIndex: 0,
+        selectedOptionId: q0.correctOptionId,
+      });
+      expect(res0.isCorrect).toBe(true);
+      expect((res0 as any).streak).toBe(1);
+      expect((res0 as any).streakMultiplier).toBe(1.0);
+
+      // Chuyển sang Câu 2 (round 1)
+      await prisma.arenaRoom.update({
+        where: { id: room.roomId },
+        data: {
+          currentRound: 1,
+          currentQuestionId: ARENA_STANDARD_QUESTIONS[1].id,
+          roundDeadlineAt: new Date(Date.now() + 15000),
+        },
+      });
+
+      // Câu 2: Trả lời đúng liên tiếp -> streak 2 (x1.1)
+      const q1 = ARENA_STANDARD_QUESTIONS[1];
+      const res1 = await engineService.submitAnswer({
+        roomId: room.roomId,
+        playerSessionToken: p1.playerSessionToken,
+        questionId: q1.id,
+        roundIndex: 1,
+        selectedOptionId: q1.correctOptionId,
+      });
+      expect(res1.isCorrect).toBe(true);
+      expect((res1 as any).streak).toBe(2);
+      expect((res1 as any).streakMultiplier).toBe(1.1);
+
+      // Chuyển sang Câu 3 (round 2)
+      await prisma.arenaRoom.update({
+        where: { id: room.roomId },
+        data: {
+          currentRound: 2,
+          currentQuestionId: ARENA_STANDARD_QUESTIONS[2].id,
+          roundDeadlineAt: new Date(Date.now() + 15000),
+        },
+      });
+
+      // Câu 3: Trả lời đúng liên tiếp -> streak 3 (x1.2 On Fire)
+      const q2 = ARENA_STANDARD_QUESTIONS[2];
+      const res2 = await engineService.submitAnswer({
+        roomId: room.roomId,
+        playerSessionToken: p1.playerSessionToken,
+        questionId: q2.id,
+        roundIndex: 2,
+        selectedOptionId: q2.correctOptionId,
+      });
+      expect(res2.isCorrect).toBe(true);
+      expect((res2 as any).streak).toBe(3);
+      expect((res2 as any).streakMultiplier).toBe(1.2);
+    });
+
     it("KHÔNG nhân đôi điểm câu cuối khi ở chế độ GOLD_QUEST", async () => {
       const room = await roomService.createRoom({});
       createdRoomIds.push(room.roomId);

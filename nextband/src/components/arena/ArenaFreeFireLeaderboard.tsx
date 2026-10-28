@@ -143,6 +143,12 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
                 <span className="text-xs font-bold text-amber-300/90 block">
                   {getCharacterBySeed(getPlayerSeed(leader.nickname, leader.playerId)).name}
                 </span>
+                {leader.streak !== undefined && leader.streak >= 2 && (
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-orange-500/30 to-amber-500/30 border border-orange-400/60 text-xs font-black text-amber-300 animate-pulse mt-1">
+                    <Flame className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
+                    <span>CHUỖI THẮNG {leader.streak} CÂU LIÊN TIẾP!</span>
+                  </div>
+                )}
                 {gameMode === 'ARENA_100' && (
                   <div className="pt-1 flex justify-center">{renderLivesBadge(leader)}</div>
                 )}
@@ -244,9 +250,17 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
                         />
                       </div>
                       <div className="min-w-0 flex-1 text-left">
-                        <span className="font-black text-sm md:text-base text-white tracking-wide uppercase truncate block drop-shadow-sm">
-                          {p.nickname}
-                        </span>
+                        <div className="flex items-center gap-1.5 truncate">
+                          <span className="font-black text-sm md:text-base text-white tracking-wide uppercase truncate drop-shadow-sm">
+                            {p.nickname}
+                          </span>
+                          {p.streak !== undefined && p.streak >= 2 && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-gradient-to-r from-orange-500/30 to-amber-500/30 border border-orange-400/60 text-[10px] font-black text-amber-300 animate-pulse shrink-0">
+                              <Flame className="w-3 h-3 text-orange-400 fill-orange-400" />
+                              <span>x{p.streak}</span>
+                            </span>
+                          )}
+                        </div>
                         <span className="text-[10px] font-semibold text-cyan-300/80 block truncate">
                           {getCharacterBySeed(getPlayerSeed(p.nickname, p.playerId)).name}
                         </span>
