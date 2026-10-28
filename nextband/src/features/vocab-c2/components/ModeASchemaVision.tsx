@@ -351,7 +351,7 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             {visualMode === "image" && !imageError ? (
               <div className="relative w-full h-full min-h-[260px] sm:min-h-[320px] select-none">
                 <img
-                  src={`/images/vocab-c2/schema/${currentItem.id}.jpg`}
+                  src={`/images/vocab-c2/schema/${currentItem.id}.webp`}
                   alt={`${currentItem.word} vs ${currentItem.contrastWord}`}
                   onError={() => setImageError(true)}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500"
