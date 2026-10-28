@@ -55,7 +55,7 @@ try {
 // Gate 4: TypeScript Frontend Compilation Check
 console.log("👉 [Gate 4] Verifying Frontend TypeScript Contract...");
 try {
-  execSync("node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc -p nextband/tsconfig.app.json --noEmit", { stdio: "inherit" });
+  execSync("npx tsc -p nextband/tsconfig.app.json --noEmit", { stdio: "inherit" });
   console.log("✅ PASSED: Frontend TypeScript compilation successful.\n");
 } catch (err) {
   console.error("❌ FAILED: Frontend TypeScript compilation errors detected.");

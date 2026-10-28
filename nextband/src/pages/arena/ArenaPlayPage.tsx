@@ -11,6 +11,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { StudentAnswerCard } from '@/components/arena/StudentAnswerCard';
+import { ArenaReactionBar } from '@/components/arena/ArenaReactionBar';
 import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { GoldQuestChestModal } from '@/components/arena/GoldQuestChestModal';
 import { QuestionTypeRevengeModal, RevengeQuestionItem } from '@/components/arena/QuestionTypeRevengeModal';
@@ -96,6 +97,23 @@ export default function ArenaPlayPage() {
 
   const { playClickSound, playCorrectSound, playWrongSound, playStreakSound } = useArenaAudio();
   const [streakMultiplier, setStreakMultiplier] = useState<number>(1.0);
+  const [myClimberNotice, setMyClimberNotice] = useState<number | null>(null);
+
+  const handleSendReaction = useCallback((emoji: string) => {
+    if (!channelRef.current) return;
+    try {
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'player-reaction',
+        payload: {
+          id: `rx_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+          emoji,
+          senderName: nickname,
+          sentAt: Date.now(),
+        },
+      });
+    } catch {}
+  }, [nickname]);
   const channelRef = useRef<any>(null);
 
   const nicknameRef = useRef<string>(nickname);
@@ -368,6 +386,11 @@ export default function ArenaPlayPage() {
       .on('broadcast', { event: 'show-leaderboard' }, ({ payload }) => {
         setIsChestModalOpen(false);
         setGameState('LEADERBOARD');
+        if (payload?.biggestClimber && payload.biggestClimber.name?.trim().toLowerCase() === nicknameRef.current?.trim().toLowerCase()) {
+          setMyClimberNotice(payload.biggestClimber.rankDelta);
+        } else {
+          setMyClimberNotice(null);
+        }
         if (payload?.rankings && Array.isArray(payload.rankings)) {
           setTopRankings(payload.rankings.slice(0, 5));
           const me = payload.rankings.find(
@@ -1125,6 +1148,27 @@ export default function ArenaPlayPage() {
           </div>
         )}
       </main>
+
+      {/* Highest Climber Banner vinh danh học sinh khi bứt phá thứ hạng */}
+      {gameState === 'LEADERBOARD' && myClimberNotice && myClimberNotice >= 2 && (
+        <div className="py-2 px-3 mx-auto max-w-sm w-full rounded-2xl bg-gradient-to-r from-emerald-500/25 via-teal-500/20 to-emerald-500/25 border border-emerald-400 text-center animate-bounce shadow-lg shadow-emerald-950/60 mb-2">
+          <span className="text-xs font-black text-emerald-300">
+            🚀 BẠN LÀ NGƯỜI BỨT PHÁ ẤN TƯỢNG NHẤT (+{myClimberNotice} BẬC)!
+          </span>
+        </div>
+      )}
+
+      {/* Live Reactions Docked Bar: Cho phép học sinh biểu cảm khi ở sảnh chờ, sau khi chốt đáp án, hoặc khi xem bảng xếp hạng */}
+      {(gameState === 'LOBBY_WAITING' ||
+        gameState === 'LEADERBOARD' ||
+        gameState === 'PODIUM' ||
+        showResult ||
+        hasSubmitted ||
+        isLocked) && (
+        <div className="pt-1 pb-1 flex justify-center animate-fadeIn z-20">
+          <ArenaReactionBar onSendReaction={handleSendReaction} />
+        </div>
+      )}
 
       {/* Modal Thông Báo Khi Host Mời Ra Khỏi Phòng */}
       {isKicked && (

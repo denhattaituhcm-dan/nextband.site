@@ -53,6 +53,15 @@ export interface PlayerPublicRank {
   maxLives?: number;
   isEliminated?: boolean;
   streak?: number;
+  rankDelta?: number;
+  isUnderdog?: boolean;
+}
+
+export interface PlayerReactionPayload {
+  id: string;
+  emoji: string;
+  senderName: string;
+  sentAt: number;
 }
 
 export interface PlayerPersonalResult {

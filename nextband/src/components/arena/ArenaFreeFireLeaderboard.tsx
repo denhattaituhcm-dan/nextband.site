@@ -21,6 +21,7 @@ interface ArenaFreeFireLeaderboardProps {
   questionIndex: number;
   totalQuestions: number;
   gameMode?: 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100';
+  biggestClimber?: { name: string; rankDelta: number; newRank: number } | null;
 }
 
 export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> = React.memo(({
@@ -30,6 +31,7 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
   questionIndex,
   totalQuestions,
   gameMode = 'CLASSIC',
+  biggestClimber = null,
 }) => {
   const top10 = rankings.slice(0, 10);
   const leader = rankings[0];
@@ -94,6 +96,28 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
           </span>
         </div>
       </div>
+
+      {/* Highest Climber Spotlight Banner */}
+      {biggestClimber && biggestClimber.rankDelta >= 2 && (
+        <div className="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-emerald-950/80 via-teal-900/70 to-emerald-950/80 border-2 border-emerald-400/60 rounded-2xl shadow-xl shadow-emerald-950/50 animate-in zoom-in-95 duration-300">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-lg shadow-sm">
+              🚀
+            </div>
+            <div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-300 block">
+                BỨT PHÁ ẤN TƯỢNG NHẤT VÒNG {questionIndex + 1}
+              </span>
+              <span className="text-sm md:text-base font-black text-white">
+                {biggestClimber.name} · Vươn lên Hạng #{biggestClimber.newRank}
+              </span>
+            </div>
+          </div>
+          <div className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-300 font-mono font-black text-xs md:text-sm shadow-sm animate-pulse">
+            +{biggestClimber.rankDelta} BẬC
+          </div>
+        </div>
+      )}
 
       {/* Main 2-Column Esports Showdown Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -237,6 +261,11 @@ export const ArenaFreeFireLeaderboard: React.FC<ArenaFreeFireLeaderboardProps> =
                         }`}
                       >
                         {p.rank === 1 ? '1ST' : p.rank === 2 ? '2ND' : p.rank === 3 ? '3RD' : `${p.rank}TH`}
+                        {p.rankDelta !== undefined && p.rankDelta > 0 && (
+                          <span className="text-[9px] font-black text-emerald-300 ml-0.5">
+                            ↑{p.rankDelta}
+                          </span>
+                        )}
                       </div>
                     </div>
 

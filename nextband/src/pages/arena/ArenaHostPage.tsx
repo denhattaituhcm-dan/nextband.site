@@ -20,6 +20,8 @@ import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/compon
 import { ArenaRulesModal } from '@/components/arena/ArenaRulesModal';
 import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
 import { ArenaFreeFireLeaderboard } from '@/components/arena/ArenaFreeFireLeaderboard';
+import { ArenaReactionOverlay } from '@/components/arena/ArenaReactionOverlay';
+import { PlayerReactionPayload } from '@/lib/arena/types';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
@@ -99,6 +101,11 @@ export default function ArenaHostPage() {
   // Auto-skip dead air notice state & guard ref
   const [isAllAnsweredNotice, setIsAllAnsweredNotice] = useState<boolean>(false);
   const autoSkipTriggeredRef = useRef<number>(-1);
+
+  // Live Reactions & Comeback / Highest Climber
+  const [latestReaction, setLatestReaction] = useState<PlayerReactionPayload | null>(null);
+  const previousRanksMapRef = useRef<Record<string, number>>({});
+  const [biggestClimber, setBiggestClimber] = useState<{ name: string; rankDelta: number; newRank: number } | null>(null);
 
   // Chế độ toàn màn hình cho Giáo viên trình chiếu
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -377,6 +384,16 @@ export default function ArenaHostPage() {
         registerPlayer(payload);
         playClickSound();
       })
+      .on('broadcast', { event: 'player-reaction' }, ({ payload }) => {
+        if (payload?.emoji) {
+          setLatestReaction({
+            id: payload.id || `rx_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+            emoji: payload.emoji,
+            senderName: payload.senderName || '',
+            sentAt: payload.sentAt || Date.now(),
+          });
+        }
+      })
       .on('broadcast', { event: 'player-sync-request' }, ({ payload }) => {
         if (!payload || !payload.playerId) return;
         const reqName = (payload.nickname || payload.name || '').trim();
@@ -431,12 +448,17 @@ export default function ArenaHostPage() {
           const nextStreak = curStreak + 1;
           const streakMultiplier = nextStreak >= 5 ? 1.5 : nextStreak >= 3 ? 1.2 : nextStreak >= 2 ? 1.1 : 1.0;
 
+          // Underdog Boost: Bảo hiểm thí sinh ở nửa dưới bảng xếp hạng (+15% Điểm để lội ngược dòng)
+          const prevRank = previousRanksMapRef.current[payload.nickname];
+          const isUnderdog = prevRank !== undefined && prevRank >= Math.max(4, Math.ceil(players.length / 2));
+          const underdogMultiplier = isUnderdog ? 1.15 : 1.0;
+
           if (roomSettingsRef.current.scoringMode === 'double') {
-            score = Math.round((100 + (payload.timeLeft || 1) * 10) * 2 * finalMultiplier * streakMultiplier);
+            score = Math.round((100 + (payload.timeLeft || 1) * 10) * 2 * finalMultiplier * streakMultiplier * underdogMultiplier);
           } else if (roomSettingsRef.current.scoringMode === 'no_points') {
             score = 0;
           } else {
-            score = Math.round((100 + (payload.timeLeft || 1) * 10) * finalMultiplier * streakMultiplier);
+            score = Math.round((100 + (payload.timeLeft || 1) * 10) * finalMultiplier * streakMultiplier * underdogMultiplier);
           }
         }
 
@@ -1059,7 +1081,37 @@ export default function ArenaHostPage() {
         case 'START_DEBRIEF':
           setState('TEACHER_DEBRIEF');
           break;
-        case 'SHOW_LEADERBOARD':
+        case 'SHOW_LEADERBOARD': {
+          // Tính toán thứ hạng thay đổi (Rank Delta) & Highest Climber
+          let maxDelta = 0;
+          let topClimberName = '';
+          let topClimberNewRank = 0;
+
+          allRankings.forEach((r) => {
+            const oldRank = previousRanksMapRef.current[r.nickname];
+            if (oldRank !== undefined) {
+              const delta = oldRank - r.rank;
+              (r as any).rankDelta = delta;
+              if (delta > maxDelta) {
+                maxDelta = delta;
+                topClimberName = r.nickname;
+                topClimberNewRank = r.rank;
+              }
+            }
+          });
+
+          // Lưu rank hiện tại cho vòng sau
+          const currentRankingsSnapshot: Record<string, number> = {};
+          allRankings.forEach((r) => {
+            currentRankingsSnapshot[r.nickname] = r.rank;
+          });
+          previousRanksMapRef.current = currentRankingsSnapshot;
+
+          const climberInfo = maxDelta >= 2 && topClimberName
+            ? { name: topClimberName, rankDelta: maxDelta, newRank: topClimberNewRank }
+            : null;
+          setBiggestClimber(climberInfo);
+
           if (effectiveIsLastRound) {
             // Ở câu hỏi cuối cùng hoặc khi Đấu Trường 100 đã tìm ra Quán quân trụ lại cuối cùng
             stopQuestionSuspense();
@@ -1084,11 +1136,13 @@ export default function ArenaHostPage() {
                 event: 'show-leaderboard',
                 payload: {
                   rankings: allRankings,
+                  biggestClimber: climberInfo,
                 },
               });
             }
           }
           break;
+        }
         case 'NEXT_ROUND': {
           if (state === 'PODIUM' || effectiveIsLastRound || questionIndex >= totalQuestions - 1) {
             stopQuestionSuspense();
@@ -1130,6 +1184,8 @@ export default function ArenaHostPage() {
           setEliminatedRoundMap({});
           setActiveJudgedEliminatedNames([]);
           setPlayerStreakMap({});
+          previousRanksMapRef.current = {};
+          setBiggestClimber(null);
           setLiveLogs([]);
           setState('LOBBY');
           if (channelRef.current) {
@@ -1242,6 +1298,8 @@ export default function ArenaHostPage() {
 
   return (
     <div className="min-h-screen bg-[#150a33] text-white flex flex-col justify-between p-6 select-none font-sans bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
+      {/* Live Reaction Overlay (Floating Emojis từ học sinh) */}
+      <ArenaReactionOverlay latestReaction={latestReaction} />
       {/* Top Header Bar */}
       <header className="flex items-center justify-between border-b border-purple-900/40 pb-4">
         <div className="flex items-center gap-3">
@@ -1658,6 +1716,7 @@ export default function ArenaHostPage() {
             questionIndex={questionIndex}
             totalQuestions={totalQuestions}
             gameMode={roomSettings.gameMode}
+            biggestClimber={biggestClimber}
           />
         )}
 
