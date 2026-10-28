@@ -19,6 +19,7 @@ export interface LobbyPlayer {
   rank?: string;
   joinedAt?: string;
   isOnline?: boolean;
+  team?: 'RED' | 'BLUE';
 }
 
 interface ArenaLobbyKahootProps {

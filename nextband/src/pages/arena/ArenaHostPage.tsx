@@ -21,6 +21,7 @@ import { ArenaRulesModal } from '@/components/arena/ArenaRulesModal';
 import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
 import { ArenaFreeFireLeaderboard } from '@/components/arena/ArenaFreeFireLeaderboard';
 import { ArenaReactionOverlay } from '@/components/arena/ArenaReactionOverlay';
+import { ArenaTeamTugOfWar } from '@/components/arena/ArenaTeamTugOfWar';
 import { PlayerReactionPayload } from '@/lib/arena/types';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
@@ -170,11 +171,14 @@ export default function ArenaHostPage() {
     if (!playerName || playerName === 'host') return;
     const playerId = p.id || `p_${playerName}`;
 
+    const assignedTeam: 'RED' | 'BLUE' = players.length % 2 === 0 ? 'RED' : 'BLUE';
+
     setPlayers((prev) => {
       const existingIdx = prev.findIndex((item) => item.id === playerId || item.name.toLowerCase() === playerName.toLowerCase());
       if (existingIdx >= 0) {
         return prev;
       }
+      const autoTeam: 'RED' | 'BLUE' = prev.length % 2 === 0 ? 'RED' : 'BLUE';
       return [
         ...prev,
         {
@@ -183,6 +187,7 @@ export default function ArenaHostPage() {
           avatarSeed: p.avatarSeed ?? p.avatarId ?? playerName,
           rank: p.rank || 'Học viên',
           joinedAt: p.joinedAt || new Date().toISOString(),
+          team: autoTeam,
         },
       ];
     });
@@ -416,6 +421,8 @@ export default function ArenaHostPage() {
               gameMode: roomSettingsRef.current.gameMode,
               survivalInitialLives: roomSettingsRef.current.survivalInitialLives,
               lives: reqName ? playerLivesMapRef.current[reqName] : undefined,
+              team: reqName ? players.find((pl) => pl.name.toLowerCase() === reqName.toLowerCase())?.team : undefined,
+              teamScores,
             },
           });
         } catch (err) {
@@ -558,11 +565,12 @@ export default function ArenaHostPage() {
   // Định kỳ gửi danh sách người chơi, số vàng và số mạng sinh tồn sang các học sinh
   useEffect(() => {
     if (!channelRef.current || players.length === 0) return;
-    const candidates = players.map((p) => ({
+    const candidates = players.map((p, idx) => ({
       name: p.name,
       gold: playerGoldMap[p.name] || 0,
       lives: playerLivesMap[p.name] ?? roomSettings.survivalInitialLives,
       maxLives: roomSettings.survivalInitialLives,
+      team: p.team || (idx % 2 === 0 ? 'RED' : 'BLUE'),
     }));
     channelRef.current.send({
       type: 'broadcast',
@@ -571,6 +579,7 @@ export default function ArenaHostPage() {
         players: candidates,
         gameMode: roomSettings.gameMode,
         survivalInitialLives: roomSettings.survivalInitialLives,
+        teamScores,
       },
     });
   }, [players, playerGoldMap, playerLivesMap, roomSettings.gameMode, roomSettings.survivalInitialLives]);
@@ -596,6 +605,18 @@ export default function ArenaHostPage() {
       D: Math.round((counts.D / total) * 100),
     };
   }, [answers]);
+
+  // Tổng điểm kéo co của 2 Đội khi ở chế độ TEAM_BATTLE
+  const teamScores = useMemo(() => {
+    let red = 0;
+    let blue = 0;
+    players.forEach((p) => {
+      const pts = cumulativeScores[p.name] || 0;
+      if (p.team === 'RED') red += pts;
+      else if (p.team === 'BLUE') blue += pts;
+    });
+    return { RED: red, BLUE: blue };
+  }, [players, cumulativeScores]);
 
   // Số người chơi còn trụ lại trong Đấu Trường 100
   const survivingPlayersCount = useMemo(() => {
@@ -1494,6 +1515,18 @@ export default function ArenaHostPage() {
               )}
             </div>
 
+            {/* Tug-of-War Realtime Meter khi ở chế độ TEAM_BATTLE */}
+            {roomSettings.gameMode === 'TEAM_BATTLE' && (
+              <div className="mb-4">
+                <ArenaTeamTugOfWar
+                  redScore={teamScores.RED}
+                  blueScore={teamScores.BLUE}
+                  players={players}
+                  cumulativeScores={cumulativeScores}
+                />
+              </div>
+            )}
+
             {/* Prompt */}
             <h2 className="text-2xl md:text-4xl font-extrabold text-white max-w-3xl mx-auto leading-relaxed">
               "{currentQuestion.prompt}"
@@ -1705,6 +1738,17 @@ export default function ArenaHostPage() {
                 </p>
               </div>
             )}
+          </div>
+        )}
+
+        {state === 'LEADERBOARD' && roomSettings.gameMode === 'TEAM_BATTLE' && (
+          <div className="mb-6 w-full">
+            <ArenaTeamTugOfWar
+              redScore={teamScores.RED}
+              blueScore={teamScores.BLUE}
+              players={players}
+              cumulativeScores={cumulativeScores}
+            />
           </div>
         )}
 

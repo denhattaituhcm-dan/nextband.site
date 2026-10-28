@@ -14,11 +14,12 @@ import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { getCharacterBySeed } from '@/lib/arena/characterCatalog';
 import { LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
+import { ArenaGameMode } from '@/components/arena/HostSettingsModal';
 
 interface ArenaPodiumViewProps {
   rankings: PlayerPublicRank[];
   players?: LobbyPlayer[];
-  gameMode?: 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100';
+  gameMode?: ArenaGameMode;
   onRestart?: () => void;
 }
 

@@ -10,7 +10,7 @@
 import React from 'react';
 import { X, Clock, Award, Users, Check, Gamepad2, Shield, Heart } from 'lucide-react';
 
-export type ArenaGameMode = 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100';
+export type ArenaGameMode = 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100' | 'TEAM_BATTLE';
 
 export interface RoomSettings {
   gameMode: ArenaGameMode; // 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100'
@@ -95,7 +95,7 @@ export const HostSettingsModal: React.FC<HostSettingsModalProps> = ({
           <span className="text-xs font-black text-purple-200 uppercase tracking-wider flex items-center gap-1.5">
             <Gamepad2 className="w-4 h-4 text-orange-400" /> Chọn chế độ thi đấu
           </span>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             <button
               type="button"
               onClick={() => setLocalSettings((prev) => ({ ...prev, gameMode: 'CLASSIC' }))}
@@ -157,6 +157,27 @@ export const HostSettingsModal: React.FC<HostSettingsModalProps> = ({
               </div>
               <div className="font-black text-xs sm:text-sm text-rose-300">Đấu Trường 100</div>
               <div className="text-[10px] text-rose-200/80 mt-0.5 leading-snug">Sinh tồn trụ hạng qua từng vòng</div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setLocalSettings((prev) => ({ ...prev, gameMode: 'TEAM_BATTLE' }))}
+              className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden ${
+                localSettings.gameMode === 'TEAM_BATTLE'
+                  ? 'bg-gradient-to-br from-rose-950/90 to-cyan-950/90 border-amber-400 text-white shadow-lg shadow-purple-900/50'
+                  : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-lg">⚔️</span>
+                {localSettings.gameMode === 'TEAM_BATTLE' && (
+                  <span className="text-[10px] px-2 py-0.5 bg-amber-500 text-slate-950 font-black rounded-full">
+                    Đang chọn
+                  </span>
+                )}
+              </div>
+              <div className="font-black text-xs sm:text-sm text-amber-300">Chia Đội Phân Tranh</div>
+              <div className="text-[10px] text-purple-200/80 mt-0.5 leading-snug">Kéo co điểm số Đỏ vs Xanh</div>
             </button>
           </div>
 

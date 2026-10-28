@@ -62,7 +62,9 @@ export default function ArenaPlayPage() {
   const currentCharacter = CHARACTER_AVATARS[avatarId] || getCharacterBySeed(nickname);
 
   const [gameState, setGameState] = useState<StudentGameState>('LOBBY_WAITING');
-  const [gameMode, setGameMode] = useState<'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100'>('CLASSIC');
+  const [gameMode, setGameMode] = useState<'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100' | 'TEAM_BATTLE'>('CLASSIC');
+  const [myTeam, setMyTeam] = useState<'RED' | 'BLUE'>('RED');
+  const [teamScores, setTeamScores] = useState<{ RED: number; BLUE: number }>({ RED: 0, BLUE: 0 });
   const [gold, setGold] = useState<number>(0);
   const [lives, setLives] = useState<number>(3);
   const [maxLives, setMaxLives] = useState<number>(3);
@@ -227,6 +229,8 @@ export default function ArenaPlayPage() {
           if (payload?.gameMode) setGameMode(payload.gameMode);
           if (typeof payload?.survivalInitialLives === 'number') setMaxLives(payload.survivalInitialLives);
           if (typeof payload?.lives === 'number') setLives(payload.lives);
+          if (payload?.team) setMyTeam(payload.team);
+          if (payload?.teamScores) setTeamScores(payload.teamScores);
           if (payload?.state) {
             if (payload.state === 'QUESTION_LIVE') setGameState('QUESTION_LIVE');
             else if (payload.state === 'ANSWER_LOCKED') setGameState('ROUND_LOCKED');
@@ -437,6 +441,7 @@ export default function ArenaPlayPage() {
       .on('broadcast', { event: 'players-sync' }, ({ payload }) => {
         if (payload?.gameMode) setGameMode(payload.gameMode);
         if (typeof payload?.survivalInitialLives === 'number') setMaxLives(payload.survivalInitialLives);
+        if (payload?.teamScores) setTeamScores(payload.teamScores);
         if (payload?.players) {
           setPlayersList(payload.players);
           const me = payload.players.find(
@@ -446,6 +451,7 @@ export default function ArenaPlayPage() {
             setIsJoinedAcknowledged(true);
             if (typeof me.lives === 'number') setLives(me.lives);
             if (typeof me.maxLives === 'number') setMaxLives(me.maxLives);
+            if (me.team) setMyTeam(me.team);
           }
         }
       })
@@ -735,6 +741,20 @@ export default function ArenaPlayPage() {
           {gameMode === 'GOLD_QUEST' && (
             <div className="px-3 py-1 bg-amber-500/20 border border-amber-400/40 rounded-full text-xs font-black text-amber-300 font-mono flex items-center gap-1 shadow-sm">
               <span>🪙</span> {gold} Vàng
+            </div>
+          )}
+          {gameMode === 'TEAM_BATTLE' && (
+            <div
+              className={`px-3 py-1 rounded-full text-xs font-black flex items-center gap-1.5 shadow-sm border ${
+                myTeam === 'RED'
+                  ? 'bg-rose-600/30 border-rose-400 text-rose-200'
+                  : 'bg-cyan-600/30 border-cyan-400 text-cyan-200'
+              }`}
+            >
+              <span>{myTeam === 'RED' ? '🔴 Rồng Lửa' : '🔵 Phượng Hoàng'}</span>
+              <span className="font-mono text-amber-300">
+                ({myTeam === 'RED' ? teamScores.RED : teamScores.BLUE}đ)
+              </span>
             </div>
           )}
           {gameMode === 'ARENA_100' && (
@@ -1108,6 +1128,8 @@ export default function ArenaPlayPage() {
                 ) : isCorrect ? (
                   gameMode === 'GOLD_QUEST'
                     ? `Kho vàng: ${gold} 🪙`
+                    : gameMode === 'TEAM_BATTLE'
+                    ? `👏 +100đ đóng góp cho Đội ${myTeam === 'RED' ? 'Rồng Lửa 🔴' : 'Phượng Hoàng 🔵'}!`
                     : totalQuestions > 0 && questionIndex >= totalQuestions - 1
                     ? '⚡ ĐÃ NHÂN ĐÔI ĐIỂM CÂU CUỐI (X2)!'
                     : streak >= 5

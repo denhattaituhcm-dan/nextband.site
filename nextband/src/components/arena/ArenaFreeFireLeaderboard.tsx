@@ -2,6 +2,7 @@ import React from 'react';
 import { Trophy, Zap, Crown, Flame, ChevronRight, Award } from 'lucide-react';
 import { PlayerPublicRank } from '@/lib/arena/types';
 import { LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
+import { ArenaGameMode } from '@/components/arena/HostSettingsModal';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { getCharacterBySeed } from '@/lib/arena/characterCatalog';
 
@@ -20,7 +21,7 @@ interface ArenaFreeFireLeaderboardProps {
   players: LobbyPlayer[];
   questionIndex: number;
   totalQuestions: number;
-  gameMode?: 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100';
+  gameMode?: ArenaGameMode;
   biggestClimber?: { name: string; rankDelta: number; newRank: number } | null;
 }
 

@@ -15,11 +15,12 @@ import {
   Sparkles,
   HelpCircle,
 } from 'lucide-react';
+import { ArenaGameMode } from '@/components/arena/HostSettingsModal';
 
 interface ArenaRulesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  gameMode?: 'CLASSIC' | 'GOLD_QUEST' | 'ARENA_100';
+  gameMode?: ArenaGameMode;
   survivalInitialLives?: 1 | 3;
 }
 
@@ -134,6 +135,8 @@ export const ArenaRulesModal: React.FC<ArenaRulesModalProps> = ({
                   ? 'Chế độ Cướp Vàng 💰'
                   : gameMode === 'ARENA_100'
                   ? 'Chế độ Đấu Trường 100 🛡️'
+                  : gameMode === 'TEAM_BATTLE'
+                  ? 'Chia Đội Phân Tranh ⚔️'
                   : 'Chế độ Cổ Điển 🎯'}
                 ):
               </span>
@@ -166,6 +169,24 @@ export const ArenaRulesModal: React.FC<ArenaRulesModalProps> = ({
                   </li>
                   <li>
                     <strong>Điều kiện Chiến Thắng:</strong> Chiến binh cuối cùng trụ lại trên sàn đấu sẽ đăng quang Quán Quân ngay lập tức, hoặc phân định theo số mạng còn lại & điểm tốc độ khi hết bộ câu hỏi.
+                  </li>
+                </ul>
+              </div>
+            ) : gameMode === 'TEAM_BATTLE' ? (
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-red-950/60 via-purple-950/50 to-blue-950/60 border-2 border-amber-400/60 space-y-2">
+                <div className="flex items-center gap-2 text-amber-300 font-black text-sm">
+                  <Flame className="w-5 h-5 text-amber-400 animate-bounce" />
+                  <span>CHIA ĐỘI PHÂN TRANH — KÉO CO THỜI GIAN THỰC (TUG-OF-WAR ⚔️):</span>
+                </div>
+                <ul className="text-xs text-slate-200 leading-relaxed space-y-1.5 list-disc pl-4">
+                  <li>
+                    Người chơi tự động được chia làm 2 chiến tuyến: <strong className="text-red-400">🔴 Rồng Đỏ (Red Dragons)</strong> và <strong className="text-blue-400">🔵 Phượng Lam (Blue Phoenix)</strong>.
+                  </li>
+                  <li>
+                    Điểm số cá nhân của bạn sẽ trực tiếp cộng dồn vào thanh lực Kéo Co của toàn đội. Đội có tổng điểm cao hơn sẽ chiếm ưu thế áp đảo trên màn hình Máy Chủ!
+                  </li>
+                  <li>
+                    Người chơi có điểm số cao nhất mỗi đội sẽ được vinh danh là <strong>MVP Đội</strong> sau mỗi vòng đấu.
                   </li>
                 </ul>
               </div>
