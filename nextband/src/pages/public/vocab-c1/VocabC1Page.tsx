@@ -752,50 +752,66 @@ export const VocabC1Page: React.FC = () => {
                   <div
                     key={unit.unitId}
                     onClick={() => handleSelectUnit(idx)}
-                    className="group bg-white border border-slate-200 hover:border-indigo-400 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-200 flex flex-col justify-between cursor-pointer"
+                    className="group bg-white border border-slate-200 hover:border-indigo-400 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-200 flex flex-col justify-between cursor-pointer"
                   >
                     <div>
-                      {/* Top Badge Row */}
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-mono text-xs font-bold tracking-wider">
-                          UNIT {unit.unitId < 10 ? `0${unit.unitId}` : unit.unitId}
-                        </span>
-                        <span className="text-xs font-mono font-semibold text-slate-400">
-                          {meta.pages}
-                        </span>
+                      {/* Unit Card Cover Image */}
+                      <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100 border-b border-slate-100">
+                        <img
+                          src={`/images/vocab-c1/unit-${unit.unitId < 10 ? `0${unit.unitId}` : unit.unitId}.webp`}
+                          alt={cleanTitle}
+                          loading="lazy"
+                          className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute top-3 left-3">
+                          <span className="px-2.5 py-1 rounded-lg bg-indigo-600/90 backdrop-blur-xs text-white font-mono text-xs font-bold tracking-wider shadow-sm">
+                            UNIT {unit.unitId < 10 ? `0${unit.unitId}` : unit.unitId}
+                          </span>
+                        </div>
+                        <div className="absolute top-3 right-3">
+                          <span className="px-2 py-0.5 rounded-md bg-slate-900/70 backdrop-blur-xs text-white font-mono text-[11px] font-semibold">
+                            {meta.pages}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* Unit Title & Vietnamese Subtitle */}
-                      <h2 className="text-xl font-black text-slate-900 group-hover:text-indigo-700 transition-colors mb-1">
-                        {cleanTitle}
-                      </h2>
-                      <p className="text-xs font-bold text-indigo-600 mb-2">
-                        {meta.themeVi}
-                      </p>
-                      <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                        {meta.descVi}
-                      </p>
+                      {/* Card Body */}
+                      <div className="p-5">
+                        {/* Unit Title & Vietnamese Subtitle */}
+                        <h2 className="text-lg font-black text-slate-900 group-hover:text-indigo-700 transition-colors mb-1 line-clamp-1">
+                          {cleanTitle}
+                        </h2>
+                        <p className="text-xs font-bold text-indigo-600 mb-2">
+                          {meta.themeVi}
+                        </p>
+                        <p className="text-xs text-slate-600 leading-relaxed mb-4 line-clamp-2">
+                          {meta.descVi}
+                        </p>
 
-                      {/* Sample Words Pills */}
-                      <div className="flex flex-wrap gap-1.5 mb-5">
-                        {previewWords.map((w) => (
-                          <span
-                            key={w.id}
-                            className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 font-mono text-xs font-semibold"
-                          >
-                            {w.word}
-                          </span>
-                        ))}
-                        {remainingCount > 0 && (
-                          <span className="px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-100 text-indigo-600 font-mono text-xs font-bold">
-                            +{remainingCount} từ
-                          </span>
-                        )}
+                        {/* Sample Words Pills */}
+                        <div className="flex flex-wrap gap-1.5 mb-2">
+                          {previewWords.map((w) => (
+                            <span
+                              key={w.id}
+                              className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 font-mono text-xs font-semibold"
+                            >
+                              {w.word}
+                            </span>
+                          ))}
+                          {remainingCount > 0 && (
+                            <span className="px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-100 text-indigo-600 font-mono text-xs font-bold">
+                              +{remainingCount} từ
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
 
                     {/* Card Footer */}
-                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div className="px-5 pb-5 pt-3 border-t border-slate-100 flex items-center justify-between">
                       <span className="text-xs font-mono text-slate-500 font-semibold">
                         {unit.wordsInAction.length} từ • 6 chặng
                       </span>
