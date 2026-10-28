@@ -613,7 +613,7 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
 
       {/* Spatial Schema Calibration Quiz (Active Retrieval - Masked Cloze) */}
       <div
-        className={`rounded-2xl p-5 shadow-lg space-y-4 transition-all ${
+        className={`rounded-2xl p-5 shadow-lg space-y-3.5 transition-all ${
           isPaperTheme
             ? "bg-[#FAF7F2] border border-[#E2D9CC] text-slate-900"
             : isSlateTheme
@@ -621,22 +621,6 @@ export const ModeASchemaVision: React.FC<C2ModeSharedProps> = ({ unit, onRecordA
             : "bg-[#0B0F19] border border-white/10 text-slate-100"
         }`}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles className={`w-4 h-4 ${isPaperTheme ? "text-teal-700" : "text-cyan-400"}`} />
-            <h3 className="text-sm font-extrabold uppercase tracking-wider">
-              Thử Thách Truy Hồi Chủ Động [Masked Active Retrieval]
-            </h3>
-          </div>
-          <span
-            className={`text-xs font-mono ${
-              isPaperTheme ? "text-slate-600 font-medium" : "text-slate-400"
-            }`}
-          >
-            Điền từ C2 chính xác vào ngữ cảnh thực tế bên dưới
-          </span>
-        </div>
-
         {/* Masked Contextual Prompt Box */}
         <div
           className={`p-4 rounded-xl border leading-relaxed font-serif ${
