@@ -41,6 +41,7 @@ import {
   CambridgeUnitData,
   UnitOverviewItem,
   Stage1Magnet,
+  MagnetOption,
   Stage2Milestone,
   EssayBlank,
   MorphologyVariant,
@@ -145,6 +146,15 @@ const speakWord = (text: string) => {
   window.speechSynthesis.speak(u);
 };
 
+function shuffleArray<T>(arr: T[]): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 export default function CambridgeVocabHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
@@ -169,6 +179,7 @@ export default function CambridgeVocabHubPage() {
   const [stage1Solved, setStage1Solved] = useState<boolean>(false);
   const [stage1ActiveSlotWord, setStage1ActiveSlotWord] = useState<string | null>(null);
   const [stage1WrongMessage, setStage1WrongMessage] = useState<{ title: string; exp: string } | null>(null);
+  const [stage1ShuffledOptions, setStage1ShuffledOptions] = useState<MagnetOption[]>([]);
 
   // Stage 2 State
   const [stage2Index, setStage2Index] = useState<number>(0);
@@ -176,6 +187,7 @@ export default function CambridgeVocabHubPage() {
   const [stage2Solved, setStage2Solved] = useState<boolean>(false);
   const [stage2SlotWord, setStage2SlotWord] = useState<string | null>(null);
   const [stage2ShuffledCandidates, setStage2ShuffledCandidates] = useState<string[]>([]);
+  const [stage2ShuffleSeed, setStage2ShuffleSeed] = useState<number>(0);
 
   // Stage 3 State
   const [stage3ActiveBlankId, setStage3ActiveBlankId] = useState<string | null>(null);
@@ -333,13 +345,23 @@ export default function CambridgeVocabHubPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [lexiconModalOpen, stage3DialOpen, currentUnitData, currentStage, stage1Solved, stage2Solved, stage1Index, stage2Index, stage2ShuffledCandidates, stage3ActiveBlankId, stage3ShuffledVariants, reviewQueue.length]);
+  }, [lexiconModalOpen, stage3DialOpen, currentUnitData, currentStage, stage1Solved, stage2Solved, stage1Index, stage1ShuffledOptions, stage2Index, stage2ShuffledCandidates, stage3ActiveBlankId, stage3ShuffledVariants, reviewQueue.length]);
 
   // STAGE 1 HANDLERS
+  // Shuffle Stage 1 options on unit load or item change
+  useEffect(() => {
+    if (!currentUnitData) return;
+    const cur = currentUnitData.stage1_magnets[stage1Index];
+    if (cur && cur.options) {
+      setStage1ShuffledOptions(shuffleArray(cur.options));
+    }
+  }, [selectedUnitId, stage1Index, currentUnitData]);
+
   const handleSelectStage1Option = (optionIdx: number) => {
     if (stage1Solved || !currentUnitData) return;
     const cur = currentUnitData.stage1_magnets[stage1Index];
-    const chosen = cur.options[optionIdx];
+    const activeOpts = stage1ShuffledOptions.length > 0 ? stage1ShuffledOptions : cur.options;
+    const chosen = activeOpts[optionIdx];
     setTotalAttempts(a => a + 1);
 
     if (chosen.word.toLowerCase() === cur.target.toLowerCase()) {
@@ -376,15 +398,14 @@ export default function CambridgeVocabHubPage() {
     }
   };
 
-  // Shuffle Stage 2 candidates on unit load or milestone change so answers are never always at [1]
+  // Shuffle Stage 2 candidates on unit load, milestone change, or reset so answers are never always at [1]
   useEffect(() => {
     if (!currentUnitData) return;
     const m = currentUnitData.stage2_timeline[stage2Index];
     if (m && m.candidates) {
-      const shuffled = [...m.candidates].sort(() => Math.random() - 0.5);
-      setStage2ShuffledCandidates(shuffled);
+      setStage2ShuffledCandidates(shuffleArray(m.candidates));
     }
-  }, [selectedUnitId, stage2Index, currentUnitData]);
+  }, [selectedUnitId, stage2Index, stage2ShuffleSeed, currentUnitData]);
 
   // STAGE 2 HANDLERS
   const handleSelectStage2Candidate = (candidateWord: string) => {
@@ -431,7 +452,7 @@ export default function CambridgeVocabHubPage() {
     const blank = currentUnitData.stage3_essay.blanks.find(b => b.id === blankId);
     if (blank) {
       // Shuffle options so it is never always A!
-      const shuffled = [...blank.variants].sort(() => Math.random() - 0.5);
+      const shuffled = shuffleArray(blank.variants);
       setStage3ShuffledVariants(shuffled);
       setStage3DialOpen(true);
     }
@@ -856,7 +877,7 @@ export default function CambridgeVocabHubPage() {
                     CHỌN VIÊN NANG TỪ VỰNG CHÍNH XÁC
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-                    {currentMagnet.options.map((opt, idx) => {
+                    {(stage1ShuffledOptions.length > 0 ? stage1ShuffledOptions : currentMagnet.options).map((opt, idx) => {
                       const isTarget = opt.word.toLowerCase() === currentMagnet.target.toLowerCase();
 
                       let cardStyle = "bg-white border-slate-200 hover:border-indigo-400 hover:shadow-md";
@@ -997,7 +1018,7 @@ export default function CambridgeVocabHubPage() {
                   <span className="font-bold text-violet-600">{stage2Index + 1} / {milestones.length}</span>
                 </div>
                 <button
-                  onClick={() => { setStage2Index(0); setStage2Solved(false); setStage2SlotWord(null); }}
+                  onClick={() => { setStage2Index(0); setStage2Solved(false); setStage2SlotWord(null); setStage2ShuffleSeed(s => s + 1); }}
                   className="text-xs text-slate-400 hover:text-slate-600 underline font-medium"
                 >
                   Làm lại
