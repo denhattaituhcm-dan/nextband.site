@@ -175,6 +175,7 @@ export default function CambridgeVocabHubPage() {
   const [stage2UnlockedUpTo, setStage2UnlockedUpTo] = useState<number>(0);
   const [stage2Solved, setStage2Solved] = useState<boolean>(false);
   const [stage2SlotWord, setStage2SlotWord] = useState<string | null>(null);
+  const [stage2ShuffledCandidates, setStage2ShuffledCandidates] = useState<string[]>([]);
 
   // Stage 3 State
   const [stage3ActiveBlankId, setStage3ActiveBlankId] = useState<string | null>(null);
@@ -317,9 +318,9 @@ export default function CambridgeVocabHubPage() {
       } else if (currentStage === 2) {
         if (e.key === "1" || e.key === "2" || e.key === "3" || e.key === "4") {
           const idx = parseInt(e.key, 10) - 1;
-          const cur = currentUnitData.stage2_timeline[stage2Index];
-          if (cur && cur.candidates[idx]) {
-            handleSelectStage2Candidate(cur.candidates[idx]);
+          const activeCandidates = stage2ShuffledCandidates.length > 0 ? stage2ShuffledCandidates : currentUnitData.stage2_timeline[stage2Index]?.candidates;
+          if (activeCandidates && activeCandidates[idx]) {
+            handleSelectStage2Candidate(activeCandidates[idx]);
           }
         } else if (e.code === "Space" || e.key === "Tab" || e.key === "Enter") {
           if (stage2Solved) {
@@ -332,7 +333,7 @@ export default function CambridgeVocabHubPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [lexiconModalOpen, stage3DialOpen, currentUnitData, currentStage, stage1Solved, stage2Solved, stage1Index, stage2Index, stage3ActiveBlankId, stage3ShuffledVariants, reviewQueue.length]);
+  }, [lexiconModalOpen, stage3DialOpen, currentUnitData, currentStage, stage1Solved, stage2Solved, stage1Index, stage2Index, stage2ShuffledCandidates, stage3ActiveBlankId, stage3ShuffledVariants, reviewQueue.length]);
 
   // STAGE 1 HANDLERS
   const handleSelectStage1Option = (optionIdx: number) => {
@@ -374,6 +375,16 @@ export default function CambridgeVocabHubPage() {
       setCurrentStage(2);
     }
   };
+
+  // Shuffle Stage 2 candidates on unit load or milestone change so answers are never always at [1]
+  useEffect(() => {
+    if (!currentUnitData) return;
+    const m = currentUnitData.stage2_timeline[stage2Index];
+    if (m && m.candidates) {
+      const shuffled = [...m.candidates].sort(() => Math.random() - 0.5);
+      setStage2ShuffledCandidates(shuffled);
+    }
+  }, [selectedUnitId, stage2Index, currentUnitData]);
 
   // STAGE 2 HANDLERS
   const handleSelectStage2Candidate = (candidateWord: string) => {
@@ -1101,7 +1112,7 @@ export default function CambridgeVocabHubPage() {
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {currentMilestone.candidates.map((cand, idx) => (
+                    {(stage2ShuffledCandidates.length > 0 ? stage2ShuffledCandidates : currentMilestone.candidates).map((cand, idx) => (
                       <div
                         key={idx}
                         onClick={() => handleSelectStage2Candidate(cand)}
