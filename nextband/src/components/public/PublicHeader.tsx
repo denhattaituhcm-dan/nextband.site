@@ -53,11 +53,11 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
     href: "/reading",
     children: [
       { label: "Thử thách đọc hiểu", href: "/reading-challenge", badge: "Mới" },
-      { label: "Tủ sách phân tích bài đọc", href: "/reading#tu-sach", badge: "Bài đọc" },
+      { label: "Bài đọc phân tích", href: "/reading#tu-sach", badge: "Bài đọc" },
       { label: "Thành ngữ thông dụng", href: "/reading/idioms", badge: "8 Chủ đề" },
       { label: "Từ vựng nâng cao C1", href: "/vocab-c1", badge: "12 Bài" },
       { label: "Đấu trường từ vựng C2", href: "/vocab-c2", badge: "HOT" },
-      { label: "Từ vựng Cambridge IELTS", href: "/cambridge-vocab", badge: "20 Chủ đề" },
+      { label: "Từ vựng B2-C1", href: "/cambridge-vocab", badge: "20 Chủ đề" },
       { label: "Luyện tập Giới từ", href: "/preposition-lab", badge: "Mới" },
       { label: "DIVIDER", href: "", isDivider: true },
       { label: "Phương pháp đọc sâu", href: "/reading#phuong-phap" },
