@@ -29,7 +29,16 @@ export interface WordInAction {
   contrastWords?: ContrastWordItem[];
   usageConnotationVi?: string;
   visualCueUrl?: string;
-  visualCueType?: "shield-shelter" | "cliff-helicopter" | "arctic-summit" | "monolith-challenge" | "image";
+  visualCueType?:
+    | "shield-shelter"
+    | "cliff-helicopter"
+    | "arctic-summit"
+    | "monolith-challenge"
+    | "physique-plump-corpulent-obese"
+    | "physique-lanky-spindly-gaunt"
+    | "physique-muscular-stout-burly"
+    | "physique-frail-decrepit-senile"
+    | "image";
   visualCueCaptionVi?: string;
   contrastiveRecall?: ContrastiveRecallItem;
 }
@@ -1520,7 +1529,7 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
   title: "Unit 2: Adjectives Denoting Physique",
   subtitle: "The Vocabulary Files - Level C1 (Pages 7-10)",
 
-  // 1. Words in Action (22 words from Page 7)
+    // 1. Words in Action (22 words from Page 7)
   wordsInAction: [
     {
       id: "u2-wia-1",
@@ -1532,7 +1541,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Fleshy or slightly overweight in a pleasant, rounded way.",
       viDef: "Mũm mĩm, tròn trịa, đầy đặn (thường mang sắc thái dễ thương, tích cực).",
       example: "The nurse held a healthy, **plump** baby with rosy cheeks.",
-      targetKeyword: "plump"
+      targetKeyword: "plump",
+      coreNuanceVi: "Thừa cân nhẹ hoặc đầy đặn nhưng tạo cảm giác ưa nhìn, mềm mại, phúc hậu và đáng yêu; không gây phản cảm hay mang tính bệnh lý.",
+      microSceneEn: "A joyful grandmother squeezes the rosy, chubby cheeks of her smiling toddler grandchild.",
+      microSceneVi: "Người bà vuốt ve đôi má ửng hồng, phúng phính mũm mĩm của đứa cháu mới biết đi đang cười rạng rỡ.",
+      contrastWords: [
+        { word: "plump", distinction: "tròn trịa, mũm mĩm dễ thương (thường tả em bé, phụ nữ, đệm)." },
+        { word: "corpulent", distinction: "to béo phì nộn nặng nề, từ ngữ văn phong trang trọng cho người lớn." },
+        { word: "obese", distinction: "thuật ngữ y khoa chỉ béo phì nguy hại đến sức khỏe (BMI cao)." }
+      ],
+      usageConnotationVi: "Tích cực, nhã nhặn; là cách nói lịch thiệp tránh dùng từ 'fat' khi khen người hoặc miêu tả gia cầm, đồ vật căng tròn.",
+      visualCueType: "physique-plump-corpulent-obese",
+      visualCueCaptionVi: "Phổ béo phì: 'plump' (tròn trịa, má hồng dễ thương) vs 'corpulent' (phì nộn bệ vệ) vs 'obese' (bệnh lý lâm sàng).",
+      contrastiveRecall: {
+        scenarioEn: "The healthy newborn had chubby arms and charmingly ________ cheeks.",
+        scenarioVi: "Bé sơ sinh khỏe mạnh có đôi cánh tay bụ bẫm và đôi má bầu bĩnh, mũm mĩm đáng yêu.",
+        options: ["plump", "corpulent", "obese", "stout"],
+        correctWord: "plump",
+        explanationVi: "Chọn 'plump' (plump cheeks) vì mang sắc thái khen ngợi, dễ thương và khỏe mạnh. 'Corpulent' và 'obese' dùng cho người lớn bị béo phì nặng."
+      }
     },
     {
       id: "u2-wia-2",
@@ -1544,7 +1571,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Excessively fat; having a large, bulky body.",
       viDef: "Béo phì, phì nhiêu, to béo nặng nề (từ trang trọng dùng cho người).",
       example: "A **corpulent** aristocrat slowly climbed out of the horse-drawn carriage.",
-      targetKeyword: "corpulent"
+      targetKeyword: "corpulent",
+      coreNuanceVi: "Văn phong trang trọng/văn học để miêu tả người có thân hình to bè, bụng bự, bước đi chậm chạp nặng nề do tích tụ nhiều mỡ.",
+      microSceneEn: "An affluent 19th-century nobleman struggles to fasten his tailored waistcoat over his protruding belly.",
+      microSceneVi: "Một quý tộc thế kỷ 19 giàu có chật vật cài chiếc áo gi-lê may đo ôm trọn vòng bụng phệ to lớn của mình.",
+      contrastWords: [
+        { word: "corpulent", distinction: "văn học/trang trọng để tả người to béo phì nhiêu, bệ vệ." },
+        { word: "plump", distinction: "mũm mĩm, tròn trịa vừa phải và mang nét duyên dáng." },
+        { word: "obese", distinction: "béo phì chuẩn y khoa bệnh lý lâm sàng." }
+      ],
+      usageConnotationVi: "Trang trọng, hơi kiểu cách; thường xuất hiện trong văn học miêu tả các nhân vật quý tộc hoặc quan chức thời xưa.",
+      visualCueType: "physique-plump-corpulent-obese",
+      visualCueCaptionVi: "Phổ béo phì: 'corpulent' khắc họa thân hình bệ vệ, to béo nặng nề kiểu quý tộc xưa.",
+      contrastiveRecall: {
+        scenarioEn: "In Victorian literature, the wealthy banker is often depicted as a ________ gentleman in a tight waistcoat.",
+        scenarioVi: "Trong văn học thời Victoria, vị giám đốc ngân hàng giàu có thường được khắc họa là một quý ông béo tốt bệ vệ trong chiếc áo gi-lê chật ních.",
+        options: ["corpulent", "plump", "spindly", "lanky"],
+        correctWord: "corpulent",
+        explanationVi: "Chọn 'corpulent' (corpulent gentleman) vì ngữ cảnh văn học trang trọng miêu tả thể hình to béo nặng nề của quý ông quyền quý."
+      }
     },
     {
       id: "u2-wia-3",
@@ -1556,7 +1601,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Medically very overweight, to a degree that threatens health.",
       viDef: "Béo phì ở mức độ bệnh lý (thuật ngữ y khoa chỉ thừa cân nguy hại sức khỏe).",
       example: "Doctors warn that children who consume excessive sugar risk becoming clinically **obese**.",
-      targetKeyword: "obese"
+      targetKeyword: "obese",
+      coreNuanceVi: "Là thuật ngữ chẩn đoán y khoa chính xác (chỉ số BMI từ 30 trở lên), liên quan trực tiếp đến các rủi ro tim mạch, tiểu đường.",
+      microSceneEn: "A clinical nutritionist points to a high BMI chart while explaining diabetes risks to a patient.",
+      microSceneVi: "Một chuyên gia dinh dưỡng lâm sàng chỉ vào biểu đồ chỉ số BMI cao khi giải thích nguy cơ tiểu đường cho bệnh nhân.",
+      contrastWords: [
+        { word: "obese", distinction: "thuật ngữ y khoa chuẩn xác, có định lượng chỉ số cơ thể nguy hại sức khỏe." },
+        { word: "plump", distinction: "mũm mĩm tự nhiên, không mang nghĩa bệnh lý." },
+        { word: "corpulent", distinction: "từ ngữ văn chương miêu tả dáng dấp to béo bệ vệ." }
+      ],
+      usageConnotationVi: "Khách quan, y khoa, học thuật; thường dùng trong các bài báo nghiên cứu sức khỏe cộng đồng.",
+      visualCueType: "physique-plump-corpulent-obese",
+      visualCueCaptionVi: "Phổ béo phì: 'obese' gắn liền với mức chỉ số BMI vượt ngưỡng an toàn lâm sàng.",
+      contrastiveRecall: {
+        scenarioEn: "Public health guidelines define an adult with a BMI over 30 as medically ________.",
+        scenarioVi: "Hướng dẫn y tế cộng đồng định nghĩa một người trưởng thành có chỉ số BMI trên 30 là béo phì bệnh lý.",
+        options: ["obese", "plump", "stout", "hefty"],
+        correctWord: "obese",
+        explanationVi: "Chọn 'obese' (medically/clinically obese) vì đây là văn cảnh y học định lượng theo chỉ số BMI."
+      }
     },
     {
       id: "u2-wia-4",
@@ -1568,7 +1631,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Strong and physically powerful with well-developed muscles.",
       viDef: "Cơ bắp cuồn cuộn, vạm vỡ, săn chắc.",
       example: "Years of rowing had given him a broad, **muscular** physique.",
-      targetKeyword: "muscular"
+      targetKeyword: "muscular",
+      coreNuanceVi: "Nhấn mạnh các thớ cơ bắp phát triển rõ nét (defined muscles), thường là thành quả của quá trình tập luyện thể thao, chèo thuyền, thể hình.",
+      microSceneEn: "A competitive rower displays defined deltoids and cut abdominal muscles on the medal podium.",
+      microSceneVi: "Một vận động viên chèo thuyền khoe cơ vai vạm vỡ và cơ bụng săn chắc rõ múi trên bục nhận huy chương.",
+      contrastWords: [
+        { word: "muscular", distinction: "săn chắc rõ múi cơ nhờ luyện tập thể thao." },
+        { word: "burly", distinction: "to lớn đồ sộ, vai u thịt bắp, khung xương nặng tự nhiên." },
+        { word: "stout", distinction: "đậm người chắc nịch, to ngang, thân mình dày dặn." }
+      ],
+      usageConnotationVi: "Tích cực, thẩm mỹ; chuẩn mực của thể thao và thể hình cân đối.",
+      visualCueType: "physique-muscular-stout-burly",
+      visualCueCaptionVi: "Phổ thể lực: 'muscular' (săn chắc rõ múi) vs 'stout' (đậm chắc to ngang) vs 'burly' (đồ sộ lực lưỡng).",
+      contrastiveRecall: {
+        scenarioEn: "Years of Olympic gymnastic training had sculpted an exceptionally lean and ________ body.",
+        scenarioVi: "Nhiều năm tập luyện thể dục dụng cụ Olympic đã tạc nên một cơ thể đặc biệt săn chắc và cuồn cuộn cơ bắp.",
+        options: ["muscular", "frail", "spindly", "decrepit"],
+        correctWord: "muscular",
+        explanationVi: "Chọn 'muscular' vì câu nhấn mạnh cơ bắp săn chắc được tôi luyện qua thể thao Olympic."
+      }
     },
     {
       id: "u2-wia-5",
@@ -1580,7 +1661,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Rather fat and heavy at the same time; thickset and solid.",
       viDef: "Đậm người, mập chắc, to ngang; (nghĩa bóng) kiên cường, vững chãi.",
       example: "A short, **stout** innkeeper greeted the weary travelers at the door.",
-      targetKeyword: "stout"
+      targetKeyword: "stout",
+      coreNuanceVi: "Thân hình chắc nịch, dày mình, trọng tâm thấp, to ngang (thickset); mang lại cảm giác vững chãi như cây bách, khó bị xô ngã.",
+      microSceneEn: "A solid, thickset blacksmith stands firmly planted beside his heavy iron anvil.",
+      microSceneVi: "Một người thợ rèn đậm chắc, dày mình đứng vững như bàn thạch bên cạnh chiếc đe sắt nặng nề.",
+      contrastWords: [
+        { word: "stout", distinction: "đậm người, thân hình dày chắc, trọng tâm thấp vững vàng." },
+        { word: "muscular", distinction: "thể hình săn chắc rõ thớ cơ." },
+        { word: "plump", distinction: "tròn trịa mềm mại dễ thương." }
+      ],
+      usageConnotationVi: "Trung tính đến tích cực; khi dùng cho ý chí ('stout heart/defense') mang nghĩa kiên định, dũng cảm không lùi bước.",
+      visualCueType: "physique-muscular-stout-burly",
+      visualCueCaptionVi: "Phổ thể lực: 'stout' nhấn mạnh dáng dấp dày mình, đậm chắc, khó bị lay chuyển.",
+      contrastiveRecall: {
+        scenarioEn: "The castle gate was defended by a line of ________ guards with broad shields who held their ground.",
+        scenarioVi: "Cổng thành được trấn giữ bởi một hàng lính gác đậm chắc, vững chãi mang khiên lớn kiên quyết không lùi một bước.",
+        options: ["stout", "lanky", "delicate", "frail"],
+        correctWord: "stout",
+        explanationVi: "Chọn 'stout' (stout guards / stout defense) vì gợi tả dáng dấp chắc nịch, vững chãi và kiên cường."
+      }
     },
     {
       id: "u2-wia-6",
@@ -1592,7 +1691,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Big and strong; large, heavy, and powerful.",
       viDef: "To khỏe, lực lưỡng, đô con; (số tiền/khoản phạt) khổng lồ, nặng nề.",
       example: "Two **hefty** security guards stood at the entrance of the club.",
-      targetKeyword: "hefty"
+      targetKeyword: "hefty",
+      coreNuanceVi: "Vừa to lớn vừa nặng cân và có sức mạnh lớn; rất thông dụng ở cả nghĩa đen lẫn nghĩa bóng (khoản tiền lớn, đòn đánh mạnh).",
+      microSceneEn: "A powerful warehouse loader hoists a 40-kilogram cement sack onto his back with ease.",
+      microSceneVi: "Một công nhân kho bãi to khỏe lực lưỡng vác bao xi măng 40kg lên lưng một cách nhẹ nhàng.",
+      contrastWords: [
+        { word: "hefty", distinction: "vừa to vừa nặng vừa khỏe; dùng rất nhiều cho số tiền, khoản phạt, cú đánh." },
+        { word: "burly", distinction: "chuyên dùng tả nam giới to con vai u thịt bắp." },
+        { word: "husky", distinction: "to khỏe vạm vỡ hoặc chỉ giọng nói trầm khàn." }
+      ],
+      usageConnotationVi: "Thông dụng, sinh động; thường xuất hiện trong cụm 'hefty fine' (khoản phạt nặng) hoặc 'hefty fellow'.",
+      contrastiveRecall: {
+        scenarioEn: "The court imposed a ________ fine of two million dollars on the corporation for violating safety rules.",
+        scenarioVi: "Tòa án đã áp mức phạt nặng nề lên tới 2 triệu đô la đối với tập đoàn vì vi phạm quy định an toàn.",
+        options: ["hefty", "frail", "lanky", "sickly"],
+        correctWord: "hefty",
+        explanationVi: "Chọn 'hefty' (collocation: hefty fine/price tag) mang nghĩa khoản tiền khổng lồ, nặng đô."
+      }
     },
     {
       id: "u2-wia-7",
@@ -1604,7 +1719,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Strong and powerfully built; tall and muscular (or having a low, rough voice).",
       viDef: "Cường tráng, vạm vỡ, to khỏe; (giọng nói) trầm khàn quyến rũ.",
       example: "Several **husky** young farmhands helped load the heavy timber onto the truck.",
-      targetKeyword: "husky"
+      targetKeyword: "husky",
+      coreNuanceVi: "Cơ thể to lớn, rắn rỏi và khỏe khoắn tự nhiên (đặc biệt là thanh niên/nam giới); nghĩa thứ hai rất phổ biến là giọng nói khàn trầm ấm.",
+      microSceneEn: "An outdoorsman in a flannel shirt cuts logs in the morning chill, speaking with a deep, rasping tone.",
+      microSceneVi: "Một chàng trai vùng núi mặc áo dạ xẻ gỗ trong sương sớm, cất tiếng nói với tông giọng trầm khàn mạnh mẽ.",
+      contrastWords: [
+        { word: "husky", distinction: "to khỏe vạm vỡ, hoặc tả giọng khàn quyến rũ." },
+        { word: "burly", distinction: "to lớn kềnh càng, vai rộng u thịt bắp." },
+        { word: "virile", distinction: "nhấn mạnh sinh lực nam tính sung mãn." }
+      ],
+      usageConnotationVi: "Tích cực, hấp dẫn; 'husky voice' là collocation C1 cực kỳ phổ biến trong văn học và giao tiếp.",
+      contrastiveRecall: {
+        scenarioEn: "She spoke with a deep, pleasantly ________ voice that immediately captured the audience's attention.",
+        scenarioVi: "Cô ấy nói bằng chất giọng trầm khàn cuốn hút khiến khán giả lập tức chú ý.",
+        options: ["husky", "corpulent", "spindly", "bony"],
+        correctWord: "husky",
+        explanationVi: "Chọn 'husky' (collocation: husky voice) để chỉ giọng nói trầm ấm, khàn khàn đặc trưng."
+      }
     },
     {
       id: "u2-wia-8",
@@ -1616,7 +1747,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Large in body, bulky and stout; heavily and strongly built.",
       viDef: "Đô con, vạm vỡ, to lớn lực lưỡng (thường miêu tả nam giới vai u thịt bắp).",
       example: "A **burly** dockworker effortlessly lifted the crate onto his shoulder.",
-      targetKeyword: "burly"
+      targetKeyword: "burly",
+      coreNuanceVi: "Thân hình hộ pháp, khung xương đồ sộ, bờ vai rộng dày cộm cơ bắp; hình mẫu điển hình của võ sĩ bóng bầu dục, bốc vác bến tàu, nhân viên bảo vệ.",
+      microSceneEn: "A massive rugby forward charges forward, shrugging off two tacklers with his broad, thick shoulders.",
+      microSceneVi: "Một tiền đạo bóng bầu dục hộ pháp lao lên, hất văng hai cầu thủ cản phá bằng bờ vai dày cộm đồ sộ.",
+      contrastWords: [
+        { word: "burly", distinction: "to lớn đồ sộ, vai u thịt bắp, khung xương nặng (burly dockworker/rugby player)." },
+        { word: "muscular", distinction: "cơ bắp săn chắc, thon gọn hơn, tập trung vào múi cơ." },
+        { word: "hefty", distinction: "to nặng khỏe nói chung, dùng được cho cả vật và số tiền." }
+      ],
+      usageConnotationVi: "Tích cực, gợi cảm giác vững chãi và đáng tin cậy về mặt thể lực thô ráp.",
+      visualCueType: "physique-muscular-stout-burly",
+      visualCueCaptionVi: "Phổ thể lực: 'burly' thể hiện vóc dáng hộ pháp, vai u thịt bắp, sức vóc thô ráp đồ sộ.",
+      contrastiveRecall: {
+        scenarioEn: "The nightclub hired three ________ bouncers with broad shoulders to handle rowdy patrons.",
+        scenarioVi: "Hộp đêm thuê ba nhân viên bảo vệ vạm vỡ, đô con với bờ vai rộng để xử lý những vị khách quá khích.",
+        options: ["burly", "frail", "delicate", "spindly"],
+        correctWord: "burly",
+        explanationVi: "Chọn 'burly' (burly bouncers/dockworkers) để miêu tả hình mẫu hộ pháp vai u thịt bắp đầy uy lực."
+      }
     },
     {
       id: "u2-wia-9",
@@ -1628,7 +1777,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Exhibiting physical strength, masculine vigor, and generative power.",
       viDef: "Cường tráng, sung mãn, tràn đầy sinh lực nam tính.",
       example: "In his twenties, he was an athletic and **virile** young mountaineer.",
-      targetKeyword: "virile"
+      targetKeyword: "virile",
+      coreNuanceVi: "Không chỉ là cơ bắp bên ngoài; từ này nhấn mạnh bản lĩnh, sinh lực dồi dào, sức sống mãnh liệt và nét cuốn hút nam tính (masculine vigor).",
+      microSceneEn: "An ancient Greek sculptor chisels an idealized statue of a young hero brimming with life and vigor.",
+      microSceneVi: "Nhà điêu khắc Hy Lạp cổ đại tạc bức tượng người anh hùng trẻ tuổi tràn đầy sức sống và sinh lực nam tính.",
+      contrastWords: [
+        { word: "virile", distinction: "sinh lực nam tính, sức sống mãnh liệt, năng lượng phái mạnh." },
+        { word: "muscular", distinction: "thuần túy miêu tả cơ bắp thể hình." },
+        { word: "robust", distinction: "tráng kiện dẻo dai, chống chịu bệnh tật bền bỉ (dùng cả nam, nữ, hệ thống)." }
+      ],
+      usageConnotationVi: "Trang trọng, ca ngợi sức sống thanh xuân và năng lượng nam giới sung mãn.",
+      contrastiveRecall: {
+        scenarioEn: "The folk legend celebrated the leader as a ________ warrior who led his tribe with boundless youthful vitality.",
+        scenarioVi: "Truyền thuyết dân gian ca ngợi vị thủ lĩnh là một chiến binh cường tráng, tràn đầy sinh lực dẫn dắt bộ tộc.",
+        options: ["virile", "senile", "decrepit", "feeble"],
+        correctWord: "virile",
+        explanationVi: "Chọn 'virile' vì ngữ cảnh tôn vinh sinh lực và sức sống nam tính dồi dào đối lập với suy nhược tuổi già."
+      }
     },
     {
       id: "u2-wia-10",
@@ -1640,7 +1805,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Possessing excellent health and strength; strongly and solidly built.",
       viDef: "Cứng cáp, rắn rỏi, khỏe khoắn; (đồ vật) chắc chắn, bền bỉ.",
       example: "Mountain climbers need **sturdy** legs and reliable equipment.",
-      targetKeyword: "sturdy"
+      targetKeyword: "sturdy",
+      coreNuanceVi: "Kết cấu chắc đặc, cứng cáp, chịu lực và chống đỡ tốt; áp dụng cực kỳ tự nhiên cho cả con người (chân tay cứng cáp) lẫn đồ vật bền vững (giày ủng, bàn ghế).",
+      microSceneEn: "A hiker navigates jagged mountain rocks wearing thick, reinforced hiking boots.",
+      microSceneVi: "Một người leo núi vượt qua những mỏm đá lởm chởm trên đôi ủng leo núi dày dặn và chắc chắn.",
+      contrastWords: [
+        { word: "sturdy", distinction: "cứng cáp, bền chắc, chịu lực va đập tốt (dùng cho cả người và đồ vật)." },
+        { word: "robust", distinction: "tráng kiện dẻo dai, ít đau ốm, vận hành ổn định trước áp lực." },
+        { word: "frail", distinction: "mỏng manh yếu ớt, dễ vỡ vụn hoặc đổ bệnh." }
+      ],
+      usageConnotationVi: "Rất tích cực; biểu thị sự tin cậy, bền bỉ theo thời gian.",
+      contrastiveRecall: {
+        scenarioEn: "To trek through the muddy rainforest, you will need a pair of ________ waterproof boots.",
+        scenarioVi: "Để đi xuyên qua rừng mưa bùn lầy, bạn sẽ cần một đôi ủng chống thấm nước thật chắc chắn, bền bỉ.",
+        options: ["sturdy", "feeble", "frail", "lanky"],
+        correctWord: "sturdy",
+        explanationVi: "Chọn 'sturdy' (sturdy boots/construction) vì miêu tả đồ vật có kết cấu chịu lực, bền chắc."
+      }
     },
     {
       id: "u2-wia-11",
@@ -1652,7 +1833,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Strong and healthy with great stamina and resilience.",
       viDef: "Tráng kiện, dẻo dai, tràn đầy sức sống; (hệ thống/kinh tế) vững mạnh.",
       example: "Despite being over eighty, my grandfather remains in **robust** health.",
-      targetKeyword: "robust"
+      targetKeyword: "robust",
+      coreNuanceVi: "Khả năng chống chịu cao, khó bị suy thoái hoặc đánh gục trước bệnh tật, biến động; dùng cả cho thể chất sinh học lẫn mô hình kinh tế, phần mềm, lập luận phản biện.",
+      microSceneEn: "An 85-year-old farmer works in the morning frost without ever catching a cold, full of vitality.",
+      microSceneVi: "Một bác nông dân 85 tuổi làm việc giữa sương giá ban mai mà không hề cảm cúm, tràn trề sức sống dẻo dai.",
+      contrastWords: [
+        { word: "robust", distinction: "dẻo dai tráng kiện, đề kháng cao (robust health / robust economy)." },
+        { word: "sturdy", distinction: "cứng cáp về mặt vật lý, kết cấu chịu lực va chạm tốt." },
+        { word: "sickly", distinction: "hay đau ốm quặt quẹo, đề kháng kém." }
+      ],
+      usageConnotationVi: "Trang trọng, học thuật; từ cốt lõi trong các bài viết IELTS band 8+ khi nói về sức khỏe hoặc nền kinh tế vững vàng.",
+      contrastiveRecall: {
+        scenarioEn: "The central bank took proactive steps to maintain a ________ financial system against global shocks.",
+        scenarioVi: "Ngân hàng trung ương đã thực hiện các biện pháp chủ động để duy trì một hệ thống tài chính vững mạnh trước các cú sốc toàn cầu.",
+        options: ["robust", "plump", "spindly", "corpulent"],
+        correctWord: "robust",
+        explanationVi: "Chọn 'robust' (robust system/economy/health) để nhấn mạnh tính bền vững và khả năng chống chịu cao."
+      }
     },
     {
       id: "u2-wia-12",
@@ -1664,7 +1861,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Very thin, tall, and ungraceful or awkward in movement.",
       viDef: "Cao lêu nghêu, gầy gò và hơi lóng ngóng vụng về.",
       example: "A **lanky** teenager with long limbs walked awkwardly onto the basketball court.",
-      targetKeyword: "lanky"
+      targetKeyword: "lanky",
+      coreNuanceVi: "Chiều cao phát triển nhanh nhưng cơ bắp chưa kịp theo kịp, dẫn đến chân tay dài ngoằng, dáng đi hơi lòng khòng lóng ngóng (thường thấy ở lứa tuổi dậy thì).",
+      microSceneEn: "A 16-year-old boy whose growth spurt left him all arms and legs trips slightly over his own sneakers.",
+      microSceneVi: "Một cậu bé 16 tuổi sau đợt tăng vọt chiều cao với đôi tay chân dài ngoằng hơi vấp nhẹ vào chính mũi giày của mình.",
+      contrastWords: [
+        { word: "lanky", distinction: "cao lêu nghêu, chân tay dài và cử chỉ hơi vụng về (lanky teen)." },
+        { word: "spindly", distinction: "khẳng khiu mảnh khảnh như que củi, gợi cảm giác yếu ớt." },
+        { word: "skinny", distinction: "gầy nhom nói chung, không nhất thiết phải quá cao." }
+      ],
+      usageConnotationVi: "Sinh động, tả thực; thường dùng miêu tả các bạn trẻ đang lớn với thái độ trìu mến hoặc cảm thông.",
+      visualCueType: "physique-lanky-spindly-gaunt",
+      visualCueCaptionVi: "Phổ gầy gò: 'lanky' (cao lêu nghêu, lóng ngóng) vs 'spindly' (khẳng khiu que củi) vs 'gaunt' (hốc hác tiều tụy).",
+      contrastiveRecall: {
+        scenarioEn: "During his teenage growth spurt, Mark transformed into a tall, ________ boy whose trousers were always too short.",
+        scenarioVi: "Trong giai đoạn dậy thì lớn phổng phao, Mark biến thành một cậu bé cao lêu nghêu với chiếc quần lúc nào cũng bị cộc.",
+        options: ["lanky", "burly", "stout", "corpulent"],
+        correctWord: "lanky",
+        explanationVi: "Chọn 'lanky' (lanky teenager/growth spurt) vì miêu tả chiều cao vượt trội đi kèm thân hình gầy và tay chân dài."
+      }
     },
     {
       id: "u2-wia-13",
@@ -1676,7 +1891,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Long and thin in a way that suggests physical weakness or fragility.",
       viDef: "Khẳng khiu, mảnh khảnh yếu ớt (như que củi, thường tả chân tay hoặc cành cây).",
       example: "The newborn foal struggled to stand on its **spindly** legs.",
-      targetKeyword: "spindly"
+      targetKeyword: "spindly",
+      coreNuanceVi: "Mảnh mai như trục con thoi (spindle), dài và mỏng manh đến mức tưởng chừng như có thể gãy nếu chịu lực nặng; thường dùng cho chân tay non nớt, chân bàn ghế thanh mảnh hoặc cành cây khẳng khiu.",
+      microSceneEn: "A newborn giraffe takes its very first wobbly steps on four remarkably thin, stick-like legs.",
+      microSceneVi: "Một chú hươu cao cổ sơ sinh chập chững những bước đi đầu tiên run rẩy trên bốn chiếc chân khẳng khiu như que củi.",
+      contrastWords: [
+        { word: "spindly", distinction: "mảnh khảnh yếu ớt như que tăm, dễ gãy (spindly legs/branches)." },
+        { word: "lanky", distinction: "cao lêu nghêu, vụng về nhưng không hẳn là mỏng manh dễ gãy." },
+        { word: "bony", distinction: "gầy trơ xương, nổi rõ các khớp xương dưới da." }
+      ],
+      usageConnotationVi: "Tả thực, gợi cảm giác mỏng manh cần được nâng đỡ, che chở.",
+      visualCueType: "physique-lanky-spindly-gaunt",
+      visualCueCaptionVi: "Phổ gầy gò: 'spindly' gợi hình que tăm khẳng khiu, mảnh dẻ dễ gãy tổn thương.",
+      contrastiveRecall: {
+        scenarioEn: "The antique wooden side-table rested on four delicate, ________ legs that could barely support a heavy book.",
+        scenarioVi: "Chiếc bàn con cổ kính đứng trên bốn chiếc chân khẳng khiu, thanh mảnh đến mức khó lòng chịu nổi một cuốn sách nặng.",
+        options: ["spindly", "burly", "hefty", "stout"],
+        correctWord: "spindly",
+        explanationVi: "Chọn 'spindly' (spindly legs) vì miêu tả các chân chống quá mỏng manh, yếu ớt như que củi."
+      }
     },
     {
       id: "u2-wia-14",
@@ -1688,7 +1921,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Weak, lacking in muscular power; also unconvincing or faint.",
       viDef: "Yếu ớt, thều thào, thiếu sức lực; (lý do/lập luận) nghèo nàn, thiếu thuyết phục.",
       example: "His **feeble** excuses for missing the deadline exasperated the manager.",
-      targetKeyword: "feeble"
+      targetKeyword: "feeble",
+      coreNuanceVi: "Thiếu hụt trầm trọng sức mạnh thể chất hoặc năng lượng tinh thần; mạch đập yếu ớt, giọng nói thều thào; nghĩa bóng chỉ nỗ lực hoặc lý do yếu ớt, không đáng tin.",
+      microSceneEn: "An exhausted patient can only offer a faint, weak whisper when the doctor asks how he feels.",
+      microSceneVi: "Bệnh nhân kiệt sức chỉ có thể thều thào một lời thì thầm yếu ớt khi bác sĩ hỏi thăm tình hình.",
+      contrastWords: [
+        { word: "feeble", distinction: "yếu ớt thiếu sức lực (cả thể chất lẫn lý lẽ/lập luận)." },
+        { word: "frail", distinction: "mỏng manh suy nhược vì tuổi tác hoặc bệnh mãn tính." },
+        { word: "decrepit", distinction: "già nua xập xệ, đổ nát vì thời gian tàn phá." }
+      ],
+      usageConnotationVi: "Mang sắc thái tiêu cực hoặc cảm thương; 'feeble excuse' là collocation rất hay gặp trong bài thi.",
+      contrastiveRecall: {
+        scenarioEn: "Claiming that his alarm did not ring for the fourth time this week was an exceedingly ________ excuse.",
+        scenarioVi: "Việc viện cớ đồng hồ báo thức không kêu lần thứ tư trong tuần là một lời biện hộ hết sức yếu ớt và vô lý.",
+        options: ["feeble", "sturdy", "muscular", "husky"],
+        correctWord: "feeble",
+        explanationVi: "Chọn 'feeble' (feeble excuse/attempt) vì ngữ cảnh chỉ lời viện cớ yếu ớt, nghèo nàn không có sức thuyết phục."
+      }
     },
     {
       id: "u2-wia-15",
@@ -1700,7 +1949,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Easily injured, bruised, or easily made ill; requiring careful handling.",
       viDef: "Mong manh, thanh mảnh, có thể trạng yếu dễ đổ bệnh.",
       example: "Because of her **delicate** health, she was advised to avoid cold climates.",
-      targetKeyword: "delicate"
+      targetKeyword: "delicate",
+      coreNuanceVi: "Thanh tú, nhạy cảm và dễ bị tổn thương nếu chịu tác động mạnh; thể trạng cần được chăm sóc đặc biệt cẩn thận; còn tả đường nét khuôn mặt thanh tú, quý phái.",
+      microSceneEn: "A porcelain-skinned Victorian lady rests indoors wrapped in silk shawls to protect her fragile lungs.",
+      microSceneVi: "Một thiếu nữ quý tộc da trắng như sứ nghỉ ngơi trong phòng quấn khăn lụa để bảo vệ buồng phổi mong manh.",
+      contrastWords: [
+        { word: "delicate", distinction: "thanh mảnh, thể trạng nhạy cảm dễ đổ bệnh; đường nét thanh tú." },
+        { word: "frail", distinction: "già yếu suy kiệt, thể xác teo tóp mong manh." },
+        { word: "sickly", distinction: "quặt quẹo, thường xuyên đau ốm, sắc mặt xanh xao." }
+      ],
+      usageConnotationVi: "Tao nhã, lịch thiệp; không mang nét tiều tụy xấu xí mà gợi vẻ đẹp thanh tao cần nâng niu.",
+      contrastiveRecall: {
+        scenarioEn: "Due to a ________ constitution since childhood, the poet was easily exhausted by harsh weather.",
+        scenarioVi: "Do thể tạng mong manh nhạy cảm từ nhỏ, nhà thơ rất dễ kiệt sức trước thời tiết khắc nghiệt.",
+        options: ["delicate", "burly", "hefty", "stout"],
+        correctWord: "delicate",
+        explanationVi: "Chọn 'delicate' (delicate constitution/health) để chỉ thể trạng mong manh, thanh mảnh dễ đổ bệnh."
+      }
     },
     {
       id: "u2-wia-16",
@@ -1712,7 +1977,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Physically delicate and weak, usually due to poor health or advanced age.",
       viDef: "Mảnh mai, suy nhược, già yếu mong manh.",
       example: "The **frail** old lady needed assistance walking down the stairs.",
-      targetKeyword: "frail"
+      targetKeyword: "frail",
+      coreNuanceVi: "Thể xác yếu đuối, mỏng manh như chiếc lá khô trước gió, thường là hệ quả của tuổi già xế chiều hoặc bệnh nan y kéo dài; đi đứng run rẩy cần người đỡ.",
+      microSceneEn: "A gentle nurse carefully supports an 90-year-old grandmother as she takes slow steps with her walking frame.",
+      microSceneVi: "Một y tá ân cần đỡ người bà 90 tuổi khi bà từng bước chậm rãi di chuyển với khung tập đi.",
+      contrastWords: [
+        { word: "frail", distinction: "già yếu, thể xác mỏng manh suy nhược theo năm tháng." },
+        { word: "decrepit", distinction: "nhấn mạnh sự xập xệ, suy tàn, đổ nát của thể xác hoặc đồ đạc." },
+        { word: "senile", distinction: "nhấn mạnh sự lú lẫn, suy giảm nhận thức trí tuệ do tuổi già." }
+      ],
+      usageConnotationVi: "Gợi lòng trắc ẩn, sự đồng cảm sâu sắc; thường đi với người cao tuổi ('frail elderly').",
+      visualCueType: "physique-frail-decrepit-senile",
+      visualCueCaptionVi: "Phổ tuổi già: 'frail' (thể xác già yếu mong manh) vs 'decrepit' (hom hem xập xệ) vs 'senile' (lú lẫn trí nhớ).",
+      contrastiveRecall: {
+        scenarioEn: "The community care program provides daily meal deliveries for ________ seniors living alone.",
+        scenarioVi: "Chương trình chăm sóc cộng đồng cung cấp các suất ăn hàng ngày cho những người cao tuổi già yếu neo đơn.",
+        options: ["frail", "virile", "muscular", "burly"],
+        correctWord: "frail",
+        explanationVi: "Chọn 'frail' (frail seniors / frail elderly) vì phù hợp với hoàn cảnh người cao tuổi có thể trạng yếu ớt cần hỗ trợ."
+      }
     },
     {
       id: "u2-wia-17",
@@ -1724,7 +2007,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Thin and extremely weak, as though from lack of food, illness, or severe exhaustion.",
       viDef: "Hốc hác, tiều tụy, gầy rộc đi vì đói khát, bệnh tật hoặc đau khổ.",
       example: "After weeks lost in the jungle, the survivors looked pale and **gaunt**.",
-      targetKeyword: "gaunt"
+      targetKeyword: "gaunt",
+      coreNuanceVi: "Khuôn mặt hốc hác, má hóp sâu, mắt trũng lại và làn da xám xịt do thiếu ăn, thiếu ngủ hoặc chịu đựng nỗi thống khổ cùng cực.",
+      microSceneEn: "A lost trekker is finally rescued after ten days with no food, his cheekbones jutting starkly from his hollow face.",
+      microSceneVi: "Một người leo núi lạc đường cuối cùng được giải cứu sau 10 ngày nhịn ăn, đôi gò má nhô cao trên khuôn mặt hóp sâu tiều tụy.",
+      contrastWords: [
+        { word: "gaunt", distinction: "hốc hác tiều tụy vì đói khát, kiệt sức, khổ ải (gaunt face/look)." },
+        { word: "skinny", distinction: "gầy nhom thông thường, không nhất thiết chịu khổ ải." },
+        { word: "bony", distinction: "gầy trơ xương, nhấn mạnh vào cấu trúc xương lộ dưới da." }
+      ],
+      usageConnotationVi: "Bi kịch, ám ảnh, văn chương; biểu đạt dấu vết tàn phá của nghịch cảnh lên diện mạo con người.",
+      visualCueType: "physique-lanky-spindly-gaunt",
+      visualCueCaptionVi: "Phổ gầy gò: 'gaunt' khắc họa khuôn mặt hóp má, mắt trũng sâu vì đói khát và kiệt cùng gian truân.",
+      contrastiveRecall: {
+        scenarioEn: "Emerging from weeks of solitary confinement in the cold cell, the prisoner had a hollow, ________ face.",
+        scenarioVi: "Bước ra sau nhiều tuần bị biệt giam trong phòng lạnh, người tù nhân có khuôn mặt trũng sâu, hốc hác tiều tụy.",
+        options: ["gaunt", "plump", "corpulent", "stout"],
+        correctWord: "gaunt",
+        explanationVi: "Chọn 'gaunt' (hollow, gaunt face) vì ngữ cảnh miêu tả sự kiệt quệ, tiều tụy do gian khổ đói rét kéo dài."
+      }
     },
     {
       id: "u2-wia-18",
@@ -1736,7 +2037,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Often ill; in habitually poor health, or having an unhealthy pallor.",
       viDef: "Hay đau ốm, ốm yếu quặt quẹo; xanh xao vàng vọt.",
       example: "Although he was a **sickly** child, he grew up to become a marathon runner.",
-      targetKeyword: "sickly"
+      targetKeyword: "sickly",
+      coreNuanceVi: "Thường xuyên đau ốm triền miên, hệ miễn dịch kém; diện mạo biểu hiện qua sắc da tái mét, nhợt nhạt hoặc hơi vàng (sickly complexion); còn dùng cho mùi vị gây buồn nôn ('sickly sweet').",
+      microSceneEn: "A pale child wrapped in blankets sits by the window, catching colds at every change of the season.",
+      microSceneVi: "Một đứa trẻ da tái quấn chăn ngồi bên cửa sổ, hễ thời tiết đổi mùa là lại sụt sùi ốm sốt.",
+      contrastWords: [
+        { word: "sickly", distinction: "ốm đau kinh niên quặt quẹo; nước da xanh xao thiếu sinh khí." },
+        { word: "delicate", distinction: "mong manh thanh tao, nhạy cảm chứ không hẳn là luôn ốm sốt." },
+        { word: "frail", distinction: "già yếu xương cốt mong manh." }
+      ],
+      usageConnotationVi: "Gợi cảm giác xót xa, thương cảm; thường dùng khi kể về thời thơ ấu yếu ớt của ai đó.",
+      contrastiveRecall: {
+        scenarioEn: "The long winter without sunlight gave the office workers a pale, ________ complexion.",
+        scenarioVi: "Mùa đông dài thiếu ánh mặt trời khiến những nhân viên văn phòng có sắc da nhợt nhạt, xanh xao ốm yếu.",
+        options: ["sickly", "husky", "burly", "virile"],
+        correctWord: "sickly",
+        explanationVi: "Chọn 'sickly' (sickly complexion) vì cụm từ chuyên tả sắc mặt xanh xao, thiếu sức sống."
+      }
     },
     {
       id: "u2-wia-19",
@@ -1748,7 +2065,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Very thin, as though the bones show prominently through the skin.",
       viDef: "Gầy trơ xương, khẳng khiu, lộ rõ xương xẩu.",
       example: "The old beggar stretched out a long, **bony** hand toward the passersby.",
-      targetKeyword: "bony"
+      targetKeyword: "bony",
+      coreNuanceVi: "Lớp thịt và mỡ dưới da quá mỏng khiến các gờ xương (xương sườn, xương đòn, khớp ngón tay) gồ hẳn lên mặt da cứng quắc.",
+      microSceneEn: "An elderly street peddler extends thin, knobby hands where every knuckle and joint protrudes.",
+      microSceneVi: "Người bán hàng rong cao tuổi chìa bàn tay gầy gò, từng khớp ngón tay nhô lên lộ rõ từng đốt xương.",
+      contrastWords: [
+        { word: "bony", distinction: "lộ rõ các khớp xương, ngón tay xương xẩu (bony fingers/knees)." },
+        { word: "skinny", distinction: "gầy nhom bình thường, chưa đến mức trơ gồ các khớp xương." },
+        { word: "spindly", distinction: "thanh mảnh như que củi, nhấn mạnh sự yếu ớt." }
+      ],
+      usageConnotationVi: "Tả thực, trực diện; đôi khi tạo cảm giác sắc nhọn hoặc khắc khổ khi chạm vào.",
+      contrastiveRecall: {
+        scenarioEn: "The witch in the fairy tale pointed at the children with a long, ________ finger.",
+        scenarioVi: "Mụ phù thủy trong câu chuyện cổ tích chỉ về phía lũ trẻ bằng một ngón tay dài, gầy trơ xương xẩu.",
+        options: ["bony", "plump", "corpulent", "stout"],
+        correctWord: "bony",
+        explanationVi: "Chọn 'bony' (bony finger) vì hình ảnh kinh điển tả ngón tay gầy gò trơ xương trong truyện cổ tích."
+      }
     },
     {
       id: "u2-wia-20",
@@ -1760,7 +2093,23 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Very thin, often in an unattractive or underdeveloped way.",
       viDef: "Gầy nhom, ốm nhách (từ thông dụng hằng ngày).",
       example: "You need to eat more nutritious meals; you're getting far too **skinny**.",
-      targetKeyword: "skinny"
+      targetKeyword: "skinny",
+      coreNuanceVi: "Từ khẩu ngữ đời thường nhất để chỉ người quá gầy, thiếu da thịt, kém hấp dẫn; khác với 'slim' hay 'slender' (thon thả thanh mảnh quyến rũ).",
+      microSceneEn: "A mother worries as her teenage son refuses his dinner, noting his increasingly frail, skinny frame.",
+      microSceneVi: "Người mẹ lo lắng khi thấy con trai tuổi teen bỏ bữa, nhận thấy thân hình cậu ngày càng gầy nhom thiếu thịt.",
+      contrastWords: [
+        { word: "skinny", distinction: "gầy nhom, thiếu cân, thường không đẹp mắt (khẩu ngữ thường ngày)." },
+        { word: "slim / slender", distinction: "thon thả, mảnh mai hấp dẫn (sắc thái tích cực)." },
+        { word: "lanky", distinction: "cao lêu nghêu lòng khòng." }
+      ],
+      usageConnotationVi: "Khẩu ngữ trung tính hoặc hơi tiêu cực; tránh dùng 'skinny' nếu muốn khen ai đó có dáng đẹp (hãy dùng 'slim/slender').",
+      contrastiveRecall: {
+        scenarioEn: "Be careful with your compliments: calling someone 'slim' is polite, whereas calling them '________' can sound critical of their lack of weight.",
+        scenarioVi: "Hãy cẩn thận với lời khen: gọi ai đó là 'slim' thì lịch sự, trong khi gọi họ là 'skinny' có thể nghe như đang chê họ quá gầy nhom.",
+        options: ["skinny", "burly", "stout", "muscular"],
+        correctWord: "skinny",
+        explanationVi: "Chọn 'skinny' vì đây là từ khẩu ngữ chỉ sự gầy nhom thiếu cân, đối lập với nét đẹp thon thả của 'slim'."
+      }
     },
     {
       id: "u2-wia-21",
@@ -1772,7 +2121,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Weak and in bad condition from old age or long, hard use.",
       viDef: "Già cỗi, suy kiệt, hom hem (người); đổ nát, xập xệ (nhà cửa/đồ vật).",
       example: "They lived in a **decrepit** nineteenth-century house with a leaking roof.",
-      targetKeyword: "decrepit"
+      targetKeyword: "decrepit",
+      coreNuanceVi: "Tình trạng xập xệ, suy tàn, rệu rã do trải qua thời gian quá dài hoặc bị hao mòn khốc liệt; vừa dùng cho người già lưng còng hom hem, vừa dùng cực kỳ chuẩn xác cho máy móc cũ rích hay nhà cửa dột nát.",
+      microSceneEn: "An old rusty truck rattles loudly down the country lane, shaking as if its axles might snap at any moment.",
+      microSceneVi: "Chiếc xe tải rỉ sét rệu rã lộc cộc chạy trên đường làng, rung lắc như thể trục bánh có thể gãy rời bất kỳ lúc nào.",
+      contrastWords: [
+        { word: "decrepit", distinction: "rệu rã, xập xệ, tàn tạ sau thời gian dài sử dụng (người già hom hem, nhà cửa/xe cộ đổ nát)." },
+        { word: "frail", distinction: "chỉ tính chất mỏng manh yếu ớt của thể xác người." },
+        { word: "senile", distinction: "chuyên về sự suy giảm tâm thần, lú lẫn của tuổi già." }
+      ],
+      usageConnotationVi: "Văn học, tả cảnh; mang lại cảm giác hoang tàn, rệu rã và mục nát.",
+      visualCueType: "physique-frail-decrepit-senile",
+      visualCueCaptionVi: "Phổ tuổi già: 'decrepit' đặc tả dáng vẻ hom hem, còng lưng, hao mòn rệu rã theo thời gian.",
+      contrastiveRecall: {
+        scenarioEn: "The village council finally voted to tear down the ________ wooden bridge before it collapsed completely.",
+        scenarioVi: "Hội đồng làng cuối cùng đã biểu quyết dỡ bỏ cây cầu gỗ xập xệ, rệu rã trước khi nó sập hoàn toàn.",
+        options: ["decrepit", "plump", "husky", "virile"],
+        correctWord: "decrepit",
+        explanationVi: "Chọn 'decrepit' (decrepit bridge/building) vì từ này chuyên dùng cho công trình/đồ vật xập xệ, mục nát do quá cũ."
+      }
     },
     {
       id: "u2-wia-22",
@@ -1784,7 +2151,25 @@ export const VOCAB_C1_UNIT_2: VocabC1Unit = {
       enDef: "Connected with old age; showing weakness of the body and especially loss of mental faculties.",
       viDef: "Lẫn cẫn, lú lẫn, suy giảm trí tuệ và thể chất do tuổi già.",
       example: "In his final years, the former general became increasingly **senile** and forgetful.",
-      targetKeyword: "senile"
+      targetKeyword: "senile",
+      coreNuanceVi: "Trọng tâm là sự suy thoái năng lực trí tuệ, đãng trí, lú lẫn, hay quên danh tính người thân do lão hóa não bộ (chứng sa sút trí tuệ tuổi già).",
+      microSceneEn: "An elderly patriarch forgets his son's name, gazing out the window with a perplexed, distant look.",
+      microSceneVi: "Người ông cao tuổi bỗng quên mất tên con trai mình, nhìn ra ngoài cửa sổ với ánh mắt ngơ ngác, xa xăm.",
+      contrastWords: [
+        { word: "senile", distinction: "suy giảm trí tuệ, lẫn cẫn, lú lẫn trí nhớ do tuổi già (senile dementia)." },
+        { word: "frail", distinction: "yếu ớt về mặt thể xác, đi đứng khó khăn." },
+        { word: "decrepit", distinction: "hom hem, suy tàn thể chất hoặc đồ đạc rệu rã." }
+      ],
+      usageConnotationVi: "Y học, trang trọng; cần dùng thận trọng trong giao tiếp vì có thể mang tính xúc phạm nếu dùng tùy tiện.",
+      visualCueType: "physique-frail-decrepit-senile",
+      visualCueCaptionVi: "Phổ tuổi già: 'senile' thể hiện đám mây suy giảm trí nhớ, lú lẫn và đãng trí của tuổi xế chiều.",
+      contrastiveRecall: {
+        scenarioEn: "Neurologists specialize in differentiating normal age-related forgetfulness from clinical ________ dementia.",
+        scenarioVi: "Các bác sĩ chuyên khoa thần kinh phân biệt giữa chứng hay quên do tuổi tác thông thường và hội chứng sa sút trí tuệ tuổi già lâm sàng.",
+        options: ["senile", "hefty", "muscular", "plump"],
+        correctWord: "senile",
+        explanationVi: "Chọn 'senile' (collocation y khoa: senile dementia) vì câu nói về sự suy giảm trí tuệ và trí nhớ tuổi già."
+      }
     }
   ],
 

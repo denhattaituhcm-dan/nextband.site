@@ -311,6 +311,164 @@ export const SemanticNuanceCard: React.FC<SemanticNuanceCardProps> = ({
                       </text>
                     </svg>
                   )}
+                  {item.visualCueType === "physique-plump-corpulent-obese" && (
+                    <svg viewBox="0 0 360 110" className="w-full max-h-32">
+                      {/* Background grid guide */}
+                      <line x1="120" y1="10" x2="120" y2="100" stroke="#334155" strokeDasharray="3 3" />
+                      <line x1="240" y1="10" x2="240" y2="100" stroke="#334155" strokeDasharray="3 3" />
+
+                      {/* Figure 1: PLUMP (Pleasantly rounded / rosy cheek) */}
+                      <circle cx="60" cy="32" r="13" fill="#fed7aa" />
+                      <ellipse cx="60" cy="70" rx="19" ry="24" fill="#38bdf8" />
+                      <circle cx="54" cy="34" r="2.5" fill="#f43f5e" opacity="0.75" />
+                      <circle cx="66" cy="34" r="2.5" fill="#f43f5e" opacity="0.75" />
+                      <text x="60" y="104" textAnchor="middle" fill="#38bdf8" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        PLUMP
+                      </text>
+
+                      {/* Figure 2: CORPULENT (Bulky / formal gentlemanly belly) */}
+                      <circle cx="180" cy="30" r="14" fill="#fed7aa" />
+                      <ellipse cx="180" cy="68" rx="28" ry="26" fill="#a855f7" />
+                      {/* Vest / tie detail */}
+                      <polygon points="180,48 174,62 186,62" fill="#facc15" />
+                      <text x="180" y="104" textAnchor="middle" fill="#c084fc" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        CORPULENT
+                      </text>
+
+                      {/* Figure 3: OBESE (Clinical severe excess / medical scale marker) */}
+                      <circle cx="300" cy="28" r="14" fill="#fed7aa" />
+                      <ellipse cx="300" cy="68" rx="36" ry="28" fill="#f43f5e" />
+                      <text x="300" y="65" textAnchor="middle" fill="#ffffff" fontSize="10" fontFamily="sans-serif" fontWeight="900">
+                        BMI 35+
+                      </text>
+                      <text x="300" y="104" textAnchor="middle" fill="#fb7185" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        OBESE
+                      </text>
+                    </svg>
+                  )}
+                  {item.visualCueType === "physique-lanky-spindly-gaunt" && (
+                    <svg viewBox="0 0 360 110" className="w-full max-h-32">
+                      <line x1="120" y1="10" x2="120" y2="100" stroke="#334155" strokeDasharray="3 3" />
+                      <line x1="240" y1="10" x2="240" y2="100" stroke="#334155" strokeDasharray="3 3" />
+
+                      {/* Figure 1: LANKY (Tall, long limbs, awkward movement) */}
+                      <circle cx="60" cy="20" r="9" fill="#fde68a" />
+                      <line x1="60" y1="29" x2="60" y2="60" stroke="#38bdf8" strokeWidth="4" />
+                      <line x1="60" y1="60" x2="48" y2="92" stroke="#38bdf8" strokeWidth="3" />
+                      <line x1="60" y1="60" x2="74" y2="92" stroke="#38bdf8" strokeWidth="3" />
+                      <line x1="60" y1="38" x2="40" y2="52" stroke="#38bdf8" strokeWidth="3" />
+                      <line x1="60" y1="38" x2="80" y2="44" stroke="#38bdf8" strokeWidth="3" />
+                      <text x="60" y="105" textAnchor="middle" fill="#38bdf8" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        LANKY (Lêu nghêu)
+                      </text>
+
+                      {/* Figure 2: SPINDLY (Stick-thin / fragile like twigs) */}
+                      <circle cx="180" cy="24" r="8" fill="#fde68a" />
+                      <line x1="180" y1="32" x2="180" y2="65" stroke="#94a3b8" strokeWidth="2" />
+                      <line x1="180" y1="65" x2="172" y2="92" stroke="#94a3b8" strokeWidth="1.5" />
+                      <line x1="180" y1="65" x2="188" y2="92" stroke="#94a3b8" strokeWidth="1.5" />
+                      <line x1="180" y1="42" x2="166" y2="56" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="3 1" />
+                      <line x1="180" y1="42" x2="194" y2="56" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="3 1" />
+                      <text x="180" y="105" textAnchor="middle" fill="#cbd5e1" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        SPINDLY (Khẳng khiu)
+                      </text>
+
+                      {/* Figure 3: GAUNT (Hollow cheeks / exhausted from suffering) */}
+                      {/* Hollow head silhouette */}
+                      <polygon points="300,18 312,28 308,44 292,44 288,28" fill="#fde68a" />
+                      <circle cx="295" cy="30" r="2.5" fill="#0f172a" />
+                      <circle cx="305" cy="30" r="2.5" fill="#0f172a" />
+                      <ellipse cx="300" cy="38" rx="2" ry="3.5" fill="#0f172a" />
+                      {/* Hollow cheek shading */}
+                      <line x1="293" y1="34" x2="295" y2="40" stroke="#f59e0b" strokeWidth="1.5" />
+                      <line x1="307" y1="34" x2="305" y2="40" stroke="#f59e0b" strokeWidth="1.5" />
+                      <line x1="300" y1="44" x2="300" y2="70" stroke="#fbbf24" strokeWidth="3" />
+                      <line x1="300" y1="70" x2="294" y2="92" stroke="#fbbf24" strokeWidth="2" />
+                      <line x1="300" y1="70" x2="306" y2="92" stroke="#fbbf24" strokeWidth="2" />
+                      <text x="300" y="105" textAnchor="middle" fill="#fbbf24" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        GAUNT (Hốc hác)
+                      </text>
+                    </svg>
+                  )}
+                  {item.visualCueType === "physique-muscular-stout-burly" && (
+                    <svg viewBox="0 0 360 110" className="w-full max-h-32">
+                      <line x1="120" y1="10" x2="120" y2="100" stroke="#334155" strokeDasharray="3 3" />
+                      <line x1="240" y1="10" x2="240" y2="100" stroke="#334155" strokeDasharray="3 3" />
+
+                      {/* Figure 1: MUSCULAR (V-taper athletic cut / defined delts) */}
+                      <circle cx="60" cy="24" r="10" fill="#fed7aa" />
+                      <polygon points="40,36 80,36 68,68 52,68" fill="#10b981" />
+                      <circle cx="40" cy="38" r="6" fill="#059669" />
+                      <circle cx="80" cy="38" r="6" fill="#059669" />
+                      <rect x="52" y="68" width="6.5" height="24" fill="#334155" />
+                      <rect x="61.5" y="68" width="6.5" height="24" fill="#334155" />
+                      <text x="60" y="104" textAnchor="middle" fill="#34d399" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        MUSCULAR (Cơ bắp)
+                      </text>
+
+                      {/* Figure 2: STOUT (Solid, square/thickset, low center of gravity) */}
+                      <circle cx="180" cy="28" r="11" fill="#fed7aa" />
+                      <rect x="160" y="42" width="40" height="34" rx="4" fill="#64748b" />
+                      <rect x="162" y="76" width="15" height="16" fill="#334155" />
+                      <rect x="183" y="76" width="15" height="16" fill="#334155" />
+                      <text x="180" y="104" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        STOUT (Đậm chắc)
+                      </text>
+
+                      {/* Figure 3: BURLY (Broad shoulders, heavy bulky frame) */}
+                      <circle cx="300" cy="22" r="11" fill="#fed7aa" />
+                      {/* Massive traps & chest */}
+                      <polygon points="274,34 326,34 318,72 282,72" fill="#ea580c" />
+                      <circle cx="272" cy="38" r="8" fill="#c2410c" />
+                      <circle cx="328" cy="38" r="8" fill="#c2410c" />
+                      <rect x="282" y="72" width="14" height="20" fill="#334155" />
+                      <rect x="304" y="72" width="14" height="20" fill="#334155" />
+                      <text x="300" y="104" textAnchor="middle" fill="#fb923c" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        BURLY (Đô vạm vỡ)
+                      </text>
+                    </svg>
+                  )}
+                  {item.visualCueType === "physique-frail-decrepit-senile" && (
+                    <svg viewBox="0 0 360 110" className="w-full max-h-32">
+                      <line x1="120" y1="10" x2="120" y2="100" stroke="#334155" strokeDasharray="3 3" />
+                      <line x1="240" y1="10" x2="240" y2="100" stroke="#334155" strokeDasharray="3 3" />
+
+                      {/* Figure 1: FRAIL (Delicate, fragile physical structure) */}
+                      <circle cx="60" cy="30" r="8" fill="#fde68a" />
+                      <path d="M60,38 Q66,54 58,72" stroke="#60a5fa" strokeWidth="2.5" fill="none" />
+                      <line x1="58" y1="72" x2="52" y2="92" stroke="#60a5fa" strokeWidth="2" />
+                      <line x1="58" y1="72" x2="64" y2="92" stroke="#60a5fa" strokeWidth="2" />
+                      {/* Walking stick support */}
+                      <line x1="68" y1="56" x2="72" y2="92" stroke="#f59e0b" strokeWidth="2" />
+                      <text x="60" y="105" textAnchor="middle" fill="#93c5fd" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        FRAIL (Yếu mỏng)
+                      </text>
+
+                      {/* Figure 2: DECREPIT (Stooped posture, severe physical wear of age) */}
+                      <circle cx="170" cy="38" r="8.5" fill="#fde68a" />
+                      <path d="M170,46 Q184,55 186,74" stroke="#a78bfa" strokeWidth="3" fill="none" />
+                      <line x1="186" y1="74" x2="178" y2="92" stroke="#a78bfa" strokeWidth="2.5" />
+                      <line x1="186" y1="74" x2="192" y2="92" stroke="#a78bfa" strokeWidth="2.5" />
+                      <line x1="162" y1="62" x2="158" y2="92" stroke="#d8b4fe" strokeWidth="2.5" />
+                      <text x="180" y="105" textAnchor="middle" fill="#c4b5fd" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        DECREPIT (Già cỗi)
+                      </text>
+
+                      {/* Figure 3: SENILE (Mind fade / memory lapses / thought cloud) */}
+                      <circle cx="295" cy="40" r="9" fill="#fde68a" />
+                      <path d="M295,49 L295,74 L288,92" stroke="#ec4899" strokeWidth="2.5" fill="none" />
+                      <line x1="295" y1="74" x2="302" y2="92" stroke="#ec4899" strokeWidth="2" />
+                      {/* Faded thought bubble with question mark */}
+                      <ellipse cx="320" cy="22" rx="15" ry="11" fill="#475569" stroke="#94a3b8" strokeDasharray="2 2" />
+                      <text x="320" y="26" textAnchor="middle" fill="#fde047" fontSize="12" fontWeight="bold">
+                        ?
+                      </text>
+                      <circle cx="308" cy="32" r="2" fill="#94a3b8" />
+                      <text x="300" y="105" textAnchor="middle" fill="#f472b6" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                        SENILE (Lú lẫn)
+                      </text>
+                    </svg>
+                  )}
                 </div>
               )}
               {item.visualCueCaptionVi && (
