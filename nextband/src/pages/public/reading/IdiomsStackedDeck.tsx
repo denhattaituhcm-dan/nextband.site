@@ -13,6 +13,8 @@ import {
   CheckCircle2,
   Layers,
   ArrowRight,
+  FileCheck2,
+  ExternalLink,
 } from "lucide-react";
 
 export interface IdiomItemForDeck {
@@ -48,7 +50,7 @@ export interface IdiomItemForDeck {
 
 interface IdiomsStackedDeckProps {
   idioms: IdiomItemForDeck[];
-  etymologyData?: Record<string, { summary: string; full_story?: string; visual_anchor?: string }>;
+  etymologyData?: Record<string, any>;
   bookmarkedIds: Set<string>;
   onToggleBookmark: (id: string) => void;
   listenedIds: Set<string>;
@@ -472,31 +474,119 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
                       </div>
                     )}
 
-                    {/* Etymology Mode */}
+                    {/* Etymology Mode (Academic & Cognitive History) */}
                     {cardTab === "etymology" && (
                       <div className="space-y-3 pt-1 text-xs sm:text-sm">
-                        <div className="flex items-center gap-1.5 text-amber-800 font-extrabold">
-                          <History className="w-4 h-4" />
-                          <span>Nguồn gốc & Điển tích lịch sử</span>
+                        <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-amber-200/60">
+                          <div className="flex items-center gap-1.5 text-amber-900 font-extrabold">
+                            <History className="w-4 h-4 text-amber-600" />
+                            <span>Khảo cứu Từ nguyên & Điển tích</span>
+                          </div>
+                          {etym?.evidence_category && (
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase border ${
+                                etym.evidence_category === "DOCUMENTED ORIGIN"
+                                  ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                                  : etym.evidence_category === "PLAUSIBLE IMAGE/MEANING CONNECTION"
+                                  ? "bg-sky-100 text-sky-800 border-sky-300"
+                                  : "bg-slate-100 text-slate-700 border-slate-300"
+                              }`}
+                            >
+                              {etym.evidence_category === "DOCUMENTED ORIGIN"
+                                ? "✓ Nguồn gốc xác thực (Documented)"
+                                : etym.evidence_category === "PLAUSIBLE IMAGE/MEANING CONNECTION"
+                                ? "⚡ Ẩn dụ nhận thức (Metaphor)"
+                                : "? Chưa rõ niên đại (Uncertain)"}
+                            </span>
+                          )}
                         </div>
-                        {etym?.summary ? (
-                          <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 text-slate-800 leading-relaxed space-y-2">
-                            <p className="font-semibold">{etym.summary}</p>
-                            {etym.full_story && (
-                              <p className="text-xs text-slate-600 leading-relaxed pt-2 border-t border-amber-200/60">
-                                {etym.full_story}
-                              </p>
+
+                        {etym ? (
+                          <div className="space-y-2.5 leading-relaxed text-xs">
+                            {/* 1. Literal Image */}
+                            {etym.literal_image && (
+                              <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-1">
+                                <span className="text-[10px] font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1">
+                                  <span>🎨</span> 1. Hình ảnh ban đầu (Literal Imagery)
+                                </span>
+                                <p className="text-slate-800 font-medium italic bg-white/80 p-2 rounded-lg border border-amber-100">
+                                  "{etym.literal_image}"
+                                </p>
+                              </div>
+                            )}
+
+                            {/* 2. Cognitive Metaphor / Figurative Connection */}
+                            {etym.figurative_connection && (
+                              <div className="p-3 rounded-xl bg-sky-50/70 border border-sky-200/80 space-y-1">
+                                <span className="text-[10px] font-bold text-sky-900 uppercase tracking-wider flex items-center gap-1">
+                                  <span>🧠</span> 2. Cơ chế chuyển nghĩa nhận thức
+                                </span>
+                                <p className="text-slate-700 leading-relaxed">
+                                  {etym.figurative_connection}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* 3. Historical Context */}
+                            {etym.historical_context && (
+                              <div className="p-3 rounded-xl bg-purple-50/70 border border-purple-200/80 space-y-1">
+                                <span className="text-[10px] font-bold text-purple-900 uppercase tracking-wider flex items-center gap-1">
+                                  <span>📜</span> 3. Điển tích lịch sử & Niên đại OED
+                                </span>
+                                <p className="text-slate-700 leading-relaxed">
+                                  {etym.historical_context}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* 4. Deep Example / Contrast */}
+                            {etym.deep_example && (
+                              <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/80 space-y-1">
+                                <span className="text-[10px] font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1">
+                                  <span>💡</span> 4. Ví dụ đối chiếu nhận thức sâu
+                                </span>
+                                <p className="text-emerald-950 font-medium leading-relaxed bg-white/80 p-2 rounded-lg border border-emerald-100">
+                                  {etym.deep_example}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* 5. Sources */}
+                            {etym.sources && etym.sources.length > 0 && (
+                              <div className="pt-2 border-t border-slate-200 text-[10px] text-slate-500 flex flex-wrap items-center gap-2">
+                                <span className="font-semibold text-slate-600">📚 Nguồn đối chiếu:</span>
+                                {etym.sources.map((s: any, idx: number) => (
+                                  <span key={idx}>
+                                    {s.url ? (
+                                      <a
+                                        href={s.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="text-amber-800 underline hover:text-amber-950 inline-flex items-center gap-0.5"
+                                      >
+                                        {s.title}
+                                        <ExternalLink className="w-2.5 h-2.5" />
+                                      </a>
+                                    ) : (
+                                      <span>{s.title}</span>
+                                    )}
+                                    {idx < etym.sources.length - 1 ? " • " : ""}
+                                  </span>
+                                ))}
+                              </div>
                             )}
                           </div>
                         ) : (
-                          <div className="bg-slate-50 rounded-2xl p-4 text-slate-500 italic">
-                            {item.origin || "Thành ngữ dân gian phổ biến được ghi nhận qua nhiều thế kỷ đàm thoại Anh ngữ."}
-                          </div>
-                        )}
-                        {item.metaphor_breakdown && (
-                          <div className="p-3 bg-sky-50 rounded-xl border border-sky-200 text-xs text-sky-900">
-                            <span className="font-bold block mb-0.5">Hình tượng ẩn dụ:</span>
-                            {item.metaphor_breakdown}
+                          <div className="space-y-2">
+                            <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 text-slate-700 leading-relaxed">
+                              {item.origin || "Thành ngữ đàm thoại cổ điển Anh ngữ, hình thành qua giao lưu thương mại và đời sống dân gian qua nhiều thế kỷ."}
+                            </div>
+                            {item.metaphor_breakdown && (
+                              <div className="p-3 bg-sky-50 rounded-xl border border-sky-200 text-xs text-sky-900">
+                                <span className="font-bold block mb-0.5">Hình tượng ẩn dụ:</span>
+                                {item.metaphor_breakdown}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
