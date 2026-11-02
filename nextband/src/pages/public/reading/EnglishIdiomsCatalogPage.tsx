@@ -578,10 +578,36 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     isAvailable: true,
     cover_image: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=700&q=80",
   },
+  {
+    id: 20,
+    unit_number_str: "20",
+    title_en: "Ease and difficulty",
+    title_vi: "Sự Dễ dàng & Khó khăn (Chuyện nhỏ, Thuận buồm xuôi gió & Gian nan trắc trở)",
+    section: "SITUATIONS AND CIRCUMSTANCES",
+    description_vi:
+        "20 thành ngữ then chốt diễn tả mức độ khó - dễ trong cuộc sống và công việc: từ việc dễ như ăn bánh, thuận buồm xuôi gió đến chướng ngại khổng lồ và chuyện bé xé ra to.",
+    total_idioms: 20,
+    total_exercises: 5,
+    modules: [
+      {
+        id: "20.1",
+        title: "Ease",
+        sample: "a piece of cake, a walk in the park, a breeze, a cinch, easy peasy, smooth sailing, not rocket science...",
+      },
+      {
+        id: "20.2",
+        title: "Difficulties and problems",
+        sample: "a pain in the neck, opened a can of worms, a mountain to climb, make a mountain out of a molehill, a tall order, out of one's depth, like getting blood from a stone, teething problems...",
+      },
+    ],
+    tags: ["Dễ dàng", "Khó khăn", "Thử thách", "Công việc"],
+    accent: "US / UK",
+    isAvailable: true,
+    cover_image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=700&q=80",
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 20, unit_number_str: "20", title_en: "Ease and difficulty", title_vi: "Dễ dàng & Khó khăn" },
   { id: 21, unit_number_str: "21", title_en: "Safety and danger", title_vi: "An toàn & Nguy hiểm" },
   { id: 22, unit_number_str: "22", title_en: "Difficult situations", title_vi: "Tình huống nan giải" },
   { id: 23, unit_number_str: "23", title_en: "The weather and nature", title_vi: "Thời tiết & Thiên nhiên" },
