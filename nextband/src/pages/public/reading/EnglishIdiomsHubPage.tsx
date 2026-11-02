@@ -1386,65 +1386,36 @@ export default function EnglishIdiomsHubPage() {
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-10">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-[#002147] via-[#0369a1] to-[#0284c7] rounded-3xl p-8 sm:p-10 text-white shadow-lg relative overflow-hidden">
-          <div className="relative z-10 space-y-4 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-xs font-bold tracking-wider uppercase">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>{currentUnitData.major_section}</span>
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Unit {currentUnitData.unit_number_str}: {currentUnitData.unit_title}
-            </h1>
-            <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-light">
-              {selectedUnitId === 1
-                ? "Khám phá 20 thành ngữ cốt lõi và cụm từ cố định về tuổi thơ, thanh xuân, bước ngoặt trưởng thành và những năm tháng xế chiều."
-                : selectedUnitId === 2
-                ? "Khám phá 20 thành ngữ then chốt diễn tả tình bạn, kết giao, phai nhạt liên lạc cùng các mối quan hệ ruột thịt gia đình nhiều thế hệ."
-                : selectedUnitId === 3
-                ? "Khám phá 20 thành ngữ ấn tượng miêu tả diện mạo, nét tương đồng, phong thái ăn mặc chỉn chu cùng xuất thân và vị thế xã hội."
-                : selectedUnitId === 4
-                ? "Khám phá 20 thành ngữ sắc bén khắc họa tính cách con người qua lăng kính động vật và thực phẩm, từ điềm tĩnh kiên cường đến lập dị chân chất."
-                : selectedUnitId === 5
-                ? "Khám phá 20 thành ngữ đỉnh cao miêu tả sự xuất sắc, thành tựu kiệt xuất, những điều tuyệt vời ngoài sức tưởng tượng và cơ duyên tái ông thất mã."
-                : selectedUnitId === 6
-                ? "Khám phá 20 thành ngữ then chốt diễn tả chất lượng tồi tàn, sự hụt hẫng thất vọng, cảm giác tẻ nhạt đến phát ngấy và giới hạn chịu đựng giọt nước tràn ly."
-                : selectedUnitId === 7
-                ? "Khám phá 20 thành ngữ giàu hình ảnh ẩn dụ từ thế giới động vật, từ bản năng ranh mãnh, thói quen sinh học đến những câu chuyện ngụ ngôn bất hủ của Aesop và văn hào Shakespeare."
-                : selectedUnitId === 8
-                ? "Khám phá 20 thành ngữ đặc sắc mượn chất liệu ẩm thực, bánh trái, bơ sữa và thói quen ăn uống để khắc họa tâm lý, thế giới nghề nghiệp và các mối quan hệ xã hội."
-                : selectedUnitId === 9
-                ? "Khám phá 20 thành ngữ then chốt diễn tả sự đồng thuận, bất đồng nảy lửa và nghệ thuật thương lượng, từ 'bury the hatchet', 'strike a deal' đến 'on the same wavelength'."
-                : selectedUnitId === 10
-                ? "Khám phá 20 thành ngữ then chốt diễn tả cách đối nhân xử thế, lòng nhân ái trắc ẩn, thái độ bóc lột tệ bạc, trò đùa tai quái và chuẩn mực hành vi con người."
-                : selectedUnitId === 11
-                ? "Khám phá 20 thành ngữ then chốt khắc họa các cung bậc cảm xúc dữ dội của con người qua ẩn dụ bộ phận cơ thể, sắc màu tâm trạng và thế giới ẩm thực."
-                : selectedUnitId === 12
-                ? "Khám phá 20 thành ngữ ngập tràn năng lượng tích cực, niềm hân hoan tột đỉnh, tình yêu say đắm, lòng nhiệt huyết hăng say và sự phấn khích hồi hộp khó tả."
-                : selectedUnitId === 13
-                ? "Khám phá 20 thành ngữ then chốt diễn tả các sắc thái cảm xúc tiêu cực, từ nỗi buồn sâu lắng, cơn giận dữ sôi máu, nỗi khiếp đảm lạnh sống lưng cho đến sự ngượng ngùng muốn độn thổ."
-                : selectedUnitId === 14
-                ? "Khám phá 20 thành ngữ then chốt về trí nhớ và quên lãng, từ hiện tượng 'nằm ngay trên đầu lưỡi', đãng trí như 'cái rây thủng', hồi tưởng xuôi dòng ký ức cho đến nỗ lực vắt kiệt óc để nhớ lại."
-                : selectedUnitId === 15
-                ? "Khám phá 20 thành ngữ kinh điển mượn ẩn dụ các bộ phận cơ thể con người (mắt, tai, tim, vai, cằm, da, dây thần kinh), từ sự hồi hộp bồn chồn, lòng can đảm phút chót đến nghệ thuật tùy cơ ứng biến."
-                : selectedUnitId === 16
-                ? "Khám phá 20 thành ngữ mượn thuật ngữ quân sự, chiến hào, hỏa lực và vũ khí chiến đấu cổ điển để khắc họa sắc sảo các xung đột, sự phản bội, lòng kiên định phòng thủ và nghệ thuật đàm phán."
-                : selectedUnitId === 17
-                ? "Khám phá 20 thành ngữ phong phú diễn tả các thang bậc số lượng (từ hạt muối bỏ bể đến trọn gói A-Z) và khoảng cách địa lý (từ trong gang tấc bước chân đến chốn khỉ ho cò gáy xa xôi)."
-                : selectedUnitId === 18
-                ? "Khám phá 20 thành ngữ sinh động về sự khởi đầu và kết thúc, từ vạch xuất phát thuận buồm xuôi gió, lật sang trang mới cuộc đời cho đến lúc hạ màn trọn vẹn và đặt dấu chấm hết."
-                : "Khám phá 20 thành ngữ kinh điển về cơ hội, vận may và xác suất xảy ra, từ cơ duyên trời ban, ăn may phút chót đến những ước mơ viển vông khi mặt trời mọc đằng tây."}
-            </p>
-            <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
-              <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
-              <span className="px-3 py-1 rounded-full bg-black/25">
-                🎙️ Audio giọng {currentUnitData.summary.accent === "UK" ? "Anh chuẩn (UK Accent)" : "Mỹ chuẩn (US Accent)"}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        {/* Compact Minimalist Unit Header (Replaces bulky hero banner) */}
+        <div className="bg-white rounded-2xl border border-[#EAE3D9] p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#002147] text-white text-[11px] font-black tracking-wider uppercase">
+                Unit {currentUnitData.unit_number_str}
               </span>
-              <span className="px-3 py-1 rounded-full bg-black/25">🎯 5 Bài luyện tập tương tác</span>
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200 text-[10px] font-bold uppercase tracking-wider">
+                {currentUnitData.major_section}
+              </span>
+              <span className="text-[11px] text-slate-500 font-medium">
+                • {allIdioms.length} Thành ngữ & Cụm từ • Giọng {currentUnitData.summary.accent === "UK" ? "Anh (UK)" : "Mỹ (US)"}
+              </span>
             </div>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              {currentUnitData.unit_title}
+            </h1>
           </div>
-        </section>
+
+          <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FAF7F2] border border-[#EAE3D9] text-xs font-semibold text-[#635951]">
+              <span>🎧 Đã nghe:</span>
+              <span className="font-bold text-[#002147]">{unitListenedCount}/{allIdioms.length}</span>
+            </div>
+            <span className="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800">
+              5 Bài luyện tập
+            </span>
+          </div>
+        </div>
 
         {/* TAB 1: LEARN (CARDS) */}
         {activeTab === "learn" && (

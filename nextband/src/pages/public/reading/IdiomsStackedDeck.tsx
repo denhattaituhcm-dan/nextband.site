@@ -9,7 +9,6 @@ import {
   BookOpen,
   History,
   Lightbulb,
-  ExternalLink,
   Star,
   CheckCircle2,
   Layers,
@@ -68,47 +67,50 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [deckList, setDeckList] = useState<IdiomItemForDeck[]>(() => idioms ?? []);
-  const [isFlipped, setIsFlipped] = useState(false);
   const [cardTab, setCardTab] = useState<"front" | "context" | "etymology" | "exam">("front");
+  
+  // Drag and dismiss state
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | "up" | null>(null);
+  const [isDismissing, setIsDismissing] = useState<"left" | "right" | null>(null);
 
   // Sync idioms into deck
   useEffect(() => {
     setDeckList(idioms);
     setCurrentIndex(0);
-    setIsFlipped(false);
     setCardTab("front");
+    setIsDismissing(null);
+    setDragOffset({ x: 0, y: 0 });
   }, [idioms]);
 
   const currentCard = deckList[currentIndex];
   const etym = currentCard ? etymologyData[currentCard.id] : undefined;
 
-  const nextCard = useCallback(() => {
-    if (currentIndex < deckList.length - 1) {
-      setSwipeDirection("right");
+  const triggerNext = useCallback(
+    (direction: "left" | "right" = "right") => {
+      if (currentIndex >= deckList.length - 1) {
+        // At the last card, bounce back
+        setDragOffset({ x: 0, y: 0 });
+        return;
+      }
+      setIsDismissing(direction);
       setTimeout(() => {
         setCurrentIndex((prev) => prev + 1);
-        setIsFlipped(false);
         setCardTab("front");
-        setSwipeDirection(null);
         setDragOffset({ x: 0, y: 0 });
-      }, 260);
-    }
-  }, [currentIndex, deckList.length]);
+        setIsDismissing(null);
+      }, 280);
+    },
+    [currentIndex, deckList.length]
+  );
 
   const prevCard = useCallback(() => {
     if (currentIndex > 0) {
-      setSwipeDirection("left");
-      setTimeout(() => {
-        setCurrentIndex((prev) => prev - 1);
-        setIsFlipped(false);
-        setCardTab("front");
-        setSwipeDirection(null);
-        setDragOffset({ x: 0, y: 0 });
-      }, 260);
+      setCurrentIndex((prev) => prev - 1);
+      setCardTab("front");
+      setDragOffset({ x: 0, y: 0 });
+      setIsDismissing(null);
     }
   }, [currentIndex]);
 
@@ -116,55 +118,75 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
     const shuffled = [...deckList].sort(() => Math.random() - 0.5);
     setDeckList(shuffled);
     setCurrentIndex(0);
-    setIsFlipped(false);
     setCardTab("front");
+    setDragOffset({ x: 0, y: 0 });
+    setIsDismissing(null);
   };
 
   const restartDeck = () => {
     setCurrentIndex(0);
-    setIsFlipped(false);
     setCardTab("front");
     setDragOffset({ x: 0, y: 0 });
+    setIsDismissing(null);
   };
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      if (e.key === "ArrowRight") nextCard();
+      if (e.key === "ArrowRight") triggerNext("right");
       else if (e.key === "ArrowLeft") prevCard();
-      else if (e.key === " " || e.key === "Enter") {
-        e.preventDefault();
-        setIsFlipped((prev) => !prev);
-      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextCard, prevCard]);
+  }, [triggerNext, prevCard]);
 
   // Touch & Pointer Gesture Handling
   const handlePointerDown = (e: React.PointerEvent) => {
-    // Only drag from top card if not clicking on interactive elements
-    if ((e.target as HTMLElement).closest("button, a, input, [role='button']")) return;
+    if (isDismissing) return;
+    // Do not initiate drag from interactive elements or scrollable text areas
+    if ((e.target as HTMLElement).closest("button, a, input, select, textarea, [role='button']")) return;
+    
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {
+      // safe fallback if pointer capture fails
+    }
+    
     setIsDragging(true);
     setDragStart({ x: e.clientX, y: e.clientY });
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
+    if (!isDragging || isDismissing) return;
     const dx = e.clientX - dragStart.x;
-    const dy = e.clientY - dragStart.y;
+    const dy = (e.clientY - dragStart.y) * 0.35; // dampen vertical drag
     setDragOffset({ x: dx, y: dy });
   };
 
-  const handlePointerUp = () => {
-    if (!isDragging) return;
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!isDragging || isDismissing) return;
     setIsDragging(false);
-    if (dragOffset.x > 90) {
-      nextCard();
-    } else if (dragOffset.x < -90) {
-      nextCard(); // dismiss
+    
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {
+      // safe fallback
+    }
+
+    // Threshold: 75px or flick
+    if (dragOffset.x > 75) {
+      triggerNext("right");
+    } else if (dragOffset.x < -75) {
+      triggerNext("left");
     } else {
+      setDragOffset({ x: 0, y: 0 });
+    }
+  };
+
+  const handlePointerCancel = () => {
+    if (isDragging && !isDismissing) {
+      setIsDragging(false);
       setDragOffset({ x: 0, y: 0 });
     }
   };
@@ -194,11 +216,11 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
   const progressPercent = Math.round(((currentIndex + 1) / deckList.length) * 100);
 
   return (
-    <div className="w-full flex flex-col items-center select-none py-4">
+    <div className="w-full flex flex-col items-center select-none py-2">
       {/* Top Deck Stats & Controls */}
-      <div className="w-full max-w-2xl flex items-center justify-between gap-3 px-2 mb-6">
+      <div className="w-full max-w-2xl flex items-center justify-between gap-3 px-2 mb-4">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-black uppercase tracking-wider text-amber-700 bg-amber-100/90 px-3 py-1 rounded-full border border-amber-300">
+          <span className="text-xs font-black uppercase tracking-wider text-amber-800 bg-amber-100/90 px-3 py-1 rounded-full border border-amber-300">
             Card Fan 2.5D
           </span>
           <span className="text-xs font-bold text-[#635951]">
@@ -240,11 +262,12 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
 
       {/* 2.5D Stack Container */}
       <div
-        className="relative w-full max-w-xl h-[470px] sm:h-[490px] flex items-center justify-center"
+        className="relative w-full max-w-xl h-[470px] sm:h-[490px] flex items-center justify-center touch-pan-y"
         style={{ perspective: "1200px" }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
       >
         {stackCards
           .slice()
@@ -255,38 +278,59 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
             const isPlaying = currentlyPlayingAudio === item.audio_url;
 
             // 2.5D Transform calculations
-            // Each card behind is slightly scaled down, translated Y up, and rotated slightly to fan out
             const fanRotations = [0, -3.5, 4, -6.5];
             const baseRot = fanRotations[offset] || 0;
             const baseScale = 1 - offset * 0.045;
             const baseTranslateY = offset * 14;
             const baseTranslateZ = -offset * 45;
             const zIndex = 30 - offset;
-            const opacity = 1 - offset * 0.16;
+            const baseOpacity = 1 - offset * 0.16;
 
-            // Extra drag transforms for top card
-            const dragX = isTop ? dragOffset.x : 0;
-            const dragY = isTop ? dragOffset.y : 0;
-            const dynamicRot = isTop ? baseRot + dragX * 0.08 : baseRot;
+            // Dragging or Dismissing states for top card
+            let currentX = 0;
+            let currentY = baseTranslateY;
+            let currentRot = baseRot;
+            let cardOpacity = baseOpacity;
 
-            let exitClass = "";
-            if (isTop && swipeDirection === "right") {
-              exitClass = "translate-x-[150%] rotate-20 opacity-0 pointer-events-none";
-            } else if (isTop && swipeDirection === "left") {
-              exitClass = "-translate-x-[150%] -rotate-20 opacity-0 pointer-events-none";
+            if (isTop) {
+              if (isDismissing === "right") {
+                currentX = 650;
+                currentY = baseTranslateY + 20;
+                currentRot = 26;
+                cardOpacity = 0;
+              } else if (isDismissing === "left") {
+                currentX = -650;
+                currentY = baseTranslateY + 20;
+                currentRot = -26;
+                cardOpacity = 0;
+              } else {
+                currentX = dragOffset.x;
+                currentY = baseTranslateY + dragOffset.y;
+                currentRot = baseRot + dragOffset.x * 0.08;
+                cardOpacity = 1 - Math.min(Math.abs(dragOffset.x) / 380, 0.4);
+              }
             }
+
+            const transitionStyle =
+              isDismissing && isTop
+                ? "transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s linear"
+                : isDragging && isTop
+                ? "none"
+                : "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease-out";
 
             return (
               <div
                 key={item.id}
-                className={`absolute inset-0 w-full h-full transition-all ${
-                  isDragging && isTop ? "duration-75 cursor-grabbing" : "duration-300 ease-out"
-                } ${exitClass}`}
+                className={`absolute inset-0 w-full h-full pointer-events-auto ${
+                  isDragging && isTop ? "cursor-grabbing" : isTop ? "cursor-grab" : "pointer-events-none"
+                }`}
                 style={{
-                  transform: `translate3d(${dragX}px, ${baseTranslateY + dragY}px, ${baseTranslateZ}px) rotateZ(${dynamicRot}deg) scale(${baseScale})`,
+                  transform: `translate3d(${currentX}px, ${currentY}px, ${baseTranslateZ}px) rotateZ(${currentRot}deg) scale(${baseScale})`,
                   zIndex,
-                  opacity,
+                  opacity: cardOpacity,
                   transformOrigin: "bottom center",
+                  transition: transitionStyle,
+                  willChange: "transform, opacity",
                 }}
               >
                 <div
@@ -294,6 +338,21 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
                     isTop ? "border-amber-400/80 shadow-2xl ring-1 ring-amber-200/60" : "border-[#EAE3D9] shadow-lg"
                   } p-6 sm:p-7 flex flex-col justify-between overflow-hidden bg-linear-to-b from-white via-white to-amber-50/20`}
                 >
+                  {/* Real-time Swipe Feedback Badge */}
+                  {isTop && Math.abs(dragOffset.x) > 40 && !isDismissing && (
+                    <div
+                      className={`absolute top-5 ${
+                        dragOffset.x > 0 ? "right-5" : "left-5"
+                      } z-30 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider shadow-lg transition pointer-events-none ${
+                        dragOffset.x > 0
+                          ? "bg-emerald-500 text-white border border-emerald-300 rotate-6"
+                          : "bg-indigo-500 text-white border border-indigo-300 -rotate-6"
+                      }`}
+                    >
+                      {dragOffset.x > 0 ? "TIẾP THEO →" : "← TIẾP THEO"}
+                    </div>
+                  )}
+
                   {/* Subtle Card Background Watermark */}
                   <div className="absolute -bottom-8 -right-8 pointer-events-none opacity-[0.03] select-none">
                     <BookOpen className="w-64 h-64 text-[#002147]" />
@@ -521,7 +580,7 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
 
                     {/* Hint for interaction */}
                     <div className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
-                      <span>Kéo sang phải để qua</span>
+                      <span>Vuốt ngang để qua</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </div>
                   </div>
@@ -554,7 +613,7 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
 
         <button
           type="button"
-          onClick={nextCard}
+          onClick={() => triggerNext("right")}
           disabled={currentIndex === deckList.length - 1}
           className={`flex items-center gap-1.5 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition shadow-md cursor-pointer ${
             currentIndex === deckList.length - 1
