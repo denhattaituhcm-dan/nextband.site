@@ -88,8 +88,7 @@ describe("BASELINE F1.1: EXAM DRAFT RESILIENCY (draftStore Invariant Tests)", ()
     // Temporarily mock indexedDB as undefined
     const originalIndexedDB = window.indexedDB;
     try {
-      // @ts-ignore
-      window.indexedDB = undefined;
+      vi.stubGlobal("indexedDB", undefined);
 
       const saveRes = await saveDraftLocally(submissionId, userId, examId, sampleAnswers);
       expect(saveRes.status).toBe("SAVE_SUCCESS");
@@ -103,7 +102,7 @@ describe("BASELINE F1.1: EXAM DRAFT RESILIENCY (draftStore Invariant Tests)", ()
         expect(loadRes.draft.answers).toEqual(sampleAnswers);
       }
     } finally {
-      window.indexedDB = originalIndexedDB;
+      vi.unstubAllGlobals();
     }
   });
 

@@ -113,7 +113,6 @@ export function SiteLogo({
       className={cn("object-contain select-none", className)}
       loading="eager"
       decoding="async"
-      // @ts-ignore
       fetchPriority="high"
       onError={handleImgError}
     />
