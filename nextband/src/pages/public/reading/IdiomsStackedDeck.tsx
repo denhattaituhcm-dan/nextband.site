@@ -625,6 +625,16 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
                             {item.usage_notes}
                           </div>
                         )}
+                        {!item.ielts_speaking_application && !item.ielts_writing_application && !item.usage_notes && (
+                          <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-3.5 space-y-1">
+                            <span className="text-[10px] font-black uppercase text-amber-700 tracking-wider">
+                              Chiến lược phòng thi IELTS:
+                            </span>
+                            <p className="text-xs text-amber-950 font-medium leading-relaxed">
+                              Thành ngữ mang tính hình tượng cao. Nên ưu tiên sử dụng tự nhiên trong IELTS Speaking (Part 1 & 2) khi kể chuyện hoặc bày tỏ quan điểm cá nhân; thận trọng tránh lạm dụng trong Academic Writing Task 2 trừ khi văn cảnh đòi hỏi phong cách ẩn dụ cụ thể.
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

@@ -1530,10 +1530,22 @@ export default function EnglishIdiomsHubPage() {
                   moduleTitle: item.moduleTitle,
                   origin: item.origin,
                   metaphor_breakdown: item.metaphor_breakdown,
-                  usage_notes: item.vietnamese?.usage_notes || item.usage_notes,
+                  usage_notes:
+                    item.vietnamese?.usage_notes ||
+                    item.usage_notes ||
+                    item.vietnamese?.usage_note,
                   ielts_speaking_application:
-                    item.vietnamese?.ielts_speaking_tip || item.ielts_speaking_application,
-                  ielts_writing_application: item.ielts_writing_application,
+                    item.vietnamese?.ielts_speaking_tip ||
+                    item.ielts_speaking_application ||
+                    item.ielts_application?.sample_response ||
+                    (item.ielts_application?.context_fit
+                      ? `[${item.ielts_application.context_fit}] ${item.ielts_application.sample_response || ""}`
+                      : undefined),
+                  ielts_writing_application:
+                    item.ielts_writing_application ||
+                    (item.ielts_application?.band_score
+                      ? `Mục tiêu Band ${item.ielts_application.band_score} — Ngữ cảnh: ${item.ielts_application.context_fit || ""}`
+                      : undefined),
                   cognitive_anchor: item.cognitive_anchor,
                   register_info: item.register_info,
                 }))}
