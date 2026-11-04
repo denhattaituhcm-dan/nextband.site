@@ -1,4 +1,18 @@
-import { ScoringQuestion, StudentRawAnswer } from "./types.js";
+import {
+  AssessmentMode,
+  ExamStructureInput,
+  ScoreScope,
+  ScoringQuestion,
+  StudentRawAnswer,
+} from "./types.js";
+
+function isAssessmentMode(value: unknown): value is AssessmentMode {
+  return value === "OBJECTIVE" || value === "MANUAL_ITEM" || value === "HOLISTIC";
+}
+
+function isScoreScope(value: unknown): value is ScoreScope {
+  return value === "ITEM" || value === "HOLISTIC";
+}
 
 export interface ResolvedExamAttempt {
   questions: ScoringQuestion[];
@@ -11,8 +25,8 @@ export class AnswerResolver {
    * Extracts and flattens all questions from exam structure and pairs them with student answers
    */
   public resolve(
-    examStructure: any,
-    studentAnswers: Array<{ questionId: string; answerText?: any; audioUrl?: string | null }>,
+    examStructure: ExamStructureInput | null | undefined,
+    studentAnswers: ReadonlyArray<StudentRawAnswer> | null | undefined,
   ): ResolvedExamAttempt {
     const flattenedQuestions: ScoringQuestion[] = [];
     const sections = examStructure?.sections || [];
@@ -70,8 +84,18 @@ export class AnswerResolver {
           const isSpeakingType = qType === "speaking" || qType.startsWith("ielts_speaking") || (sectionType === "speaking" && !["multiple_choice", "multiple_choice_multi", "fill_blank", "matching"].includes(qType));
           const isManualItem = !q.assessmentMode && (isSpeakingType || isSubjectiveType);
 
-          const resolvedMode = q.assessmentMode || (isExplicitHolistic || isImplicitHolistic ? "HOLISTIC" : isManualItem ? "MANUAL_ITEM" : "OBJECTIVE");
-          const resolvedScope = q.scoreScope || (resolvedMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
+          const resolvedMode: AssessmentMode = isAssessmentMode(q.assessmentMode)
+            ? q.assessmentMode
+            : isExplicitHolistic || isImplicitHolistic
+              ? "HOLISTIC"
+              : isManualItem
+                ? "MANUAL_ITEM"
+                : "OBJECTIVE";
+          const resolvedScope: ScoreScope = isScoreScope(q.scoreScope)
+            ? q.scoreScope
+            : resolvedMode === "HOLISTIC"
+              ? "HOLISTIC"
+              : "ITEM";
 
           flattenedQuestions.push({
             id: q.id,
