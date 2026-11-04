@@ -1,5 +1,6 @@
 import {
   IQuestionEvaluator,
+  ItemEvaluationDetail,
   ITextNormalizer,
   QuestionEvaluationResult,
   ScoringQuestion,
@@ -31,8 +32,8 @@ export class MultipleChoiceEvaluator implements IQuestionEvaluator {
     const isMultiSelect =
       question.selectionMode === "multiple" ||
       question.questionType === "multiple_choice_multi" ||
-      (question as any).isMultiChoice === true ||
-      (question as any).is_multi_choice === true ||
+      question.isMultiChoice === true ||
+      question.is_multi_choice === true ||
       (typeof question.maxSelections === "number" && question.maxSelections > 1);
 
     if (isMultiSelect) {
@@ -124,11 +125,11 @@ export class MultipleChoiceEvaluator implements IQuestionEvaluator {
     const pointPerChoice = totalPoints / expectedCount;
 
     // Parse student selected answers (could be Array, JSON string, or single string)
-    let studentSelections: any[] = [];
+    let studentSelections: unknown[] = [];
     if (Array.isArray(rawStudent)) {
       studentSelections = rawStudent;
     } else if (typeof rawStudent === "string") {
-      const parsed = normalizer.parseJsonSafe(rawStudent, null);
+      const parsed = normalizer.parseJsonSafe<unknown>(rawStudent, null);
       if (Array.isArray(parsed)) {
         studentSelections = parsed;
       } else if (rawStudent.trim()) {
@@ -140,7 +141,7 @@ export class MultipleChoiceEvaluator implements IQuestionEvaluator {
     const distinctSelections = Array.from(new Set(studentSelections.map((s) => String(s))));
 
     let correctMatches = 0;
-    const details: any[] = [];
+    const details: ItemEvaluationDetail[] = [];
 
     // Track matched correct items so one student answer doesn't match two correct items
     const matchedCorrect = new Set<string>();
