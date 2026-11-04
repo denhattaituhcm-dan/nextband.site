@@ -7,6 +7,22 @@ import {
   StudentRawAnswer,
 } from "../types.js";
 
+type MatchingPairsMap = Record<string, unknown>;
+
+function isPairsRecord(value: unknown): value is MatchingPairsMap {
+  return typeof value === "object" && value !== null;
+}
+
+function extractPairsMap(value: unknown): MatchingPairsMap {
+  if (!isPairsRecord(value)) {
+    return {};
+  }
+  if (isPairsRecord(value.pairs)) {
+    return value.pairs;
+  }
+  return value;
+}
+
 export class MatchingEvaluator implements IQuestionEvaluator {
   public supportedTypes = [
     "matching",
@@ -29,12 +45,8 @@ export class MatchingEvaluator implements IQuestionEvaluator {
     const rawStudent = studentAnswer?.answerText;
     const defaultPoints = question.points && question.points > 0 ? question.points : 1;
 
-    let targetPairs: Record<string, any> = {};
     const parsedCorrect = normalizer.parseJsonSafe(rawCorrect, null);
-
-    if (parsedCorrect && typeof parsedCorrect === "object") {
-      targetPairs = (parsedCorrect as any).pairs || parsedCorrect;
-    }
+    const targetPairs: MatchingPairsMap = extractPairsMap(parsedCorrect);
 
     const pairKeys = Object.keys(targetPairs);
     const pairsCount = pairKeys.length;
@@ -57,12 +69,12 @@ export class MatchingEvaluator implements IQuestionEvaluator {
     }
 
     // Parse student pairs
-    let studentPairs: Record<string, any> = {};
-    if (rawStudent && typeof rawStudent === "object") {
-      studentPairs = (rawStudent as any).pairs || rawStudent;
+    let studentPairs: MatchingPairsMap = {};
+    if (isPairsRecord(rawStudent)) {
+      studentPairs = extractPairsMap(rawStudent);
     } else if (typeof rawStudent === "string" && rawStudent.trim()) {
       const parsed = normalizer.parseJsonSafe(rawStudent, {});
-      studentPairs = (parsed as any).pairs || parsed;
+      studentPairs = extractPairsMap(parsed);
     }
 
     const maxScore = defaultPoints >= pairsCount ? defaultPoints : pairsCount;
