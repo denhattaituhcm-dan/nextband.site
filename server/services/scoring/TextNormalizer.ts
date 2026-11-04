@@ -82,17 +82,17 @@ export class TextNormalizer implements ITextNormalizer {
   /**
    * Safely parses JSON strings, returns fallback if parsing fails
    */
-  public parseJsonSafe<T = any>(val: unknown, fallback: T = {} as T): T {
-    if (val === null || val === undefined) return fallback;
+  public parseJsonSafe<T = unknown>(val: unknown, fallback: unknown = {}): T {
+    if (val === null || val === undefined) return fallback as T;
     if (typeof val === "object") return val as T;
     if (typeof val === "string") {
       try {
-        return JSON.parse(val);
+        return JSON.parse(val) as T;
       } catch {
-        return fallback;
+        return fallback as T;
       }
     }
-    return fallback;
+    return fallback as T;
   }
 
   /**
