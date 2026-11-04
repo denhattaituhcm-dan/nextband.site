@@ -1,4 +1,9 @@
-import { ITextNormalizer, SubmissionGradingSummary } from "./types.js";
+import {
+  ExamStructureInput,
+  ITextNormalizer,
+  StudentRawAnswer,
+  SubmissionGradingSummary,
+} from "./types.js";
 import { defaultTextNormalizer } from "./TextNormalizer.js";
 import { AnswerResolver } from "./AnswerResolver.js";
 import { getEvaluatorForType } from "./evaluators/index.js";
@@ -19,8 +24,8 @@ export class CanonicalScoringService {
    * Evaluates an entire exam attempt against canonical IELTS scoring rules
    */
   public evaluateExamAttempt(
-    examStructure: any,
-    studentAnswers: Array<{ questionId: string; answerText?: any; audioUrl?: string | null }>,
+    examStructure: ExamStructureInput | null | undefined,
+    studentAnswers: ReadonlyArray<StudentRawAnswer> | null | undefined,
   ): SubmissionGradingSummary {
     const { questions, answerMap } = this.resolver.resolve(examStructure, studentAnswers);
 
