@@ -191,6 +191,8 @@ const AdminClassOperations = lazyWithRetry(() => import("@/pages/admin/ClassOper
 const AdminClassEdit = lazyWithRetry(() => import("@/pages/admin/ClassWorkspace"));
 const AdminClassLeague = lazyWithRetry(() => import("@/pages/admin/ClassLeague"));
 const AdminGameArena = lazyWithRetry(() => import("@/pages/admin/Arena/AdminGameArenaPage"));
+const ArenaHubPage = lazyWithRetry(() => import("@/pages/arena/ArenaHubPage"));
+const ArenaSoloPlayPage = lazyWithRetry(() => import("@/pages/arena/ArenaSoloPlayPage"));
 const ArenaHostPage = lazyWithRetry(() => import("@/pages/arena/ArenaHostPage"));
 const ArenaJoinPage = lazyWithRetry(() => import("@/pages/arena/ArenaJoinPage"));
 const ArenaPlayPage = lazyWithRetry(() => import("@/pages/arena/ArenaPlayPage"));
@@ -434,6 +436,8 @@ const App = () => (
               <Route path="/reading/preposition-lab" element={<PrepositionLabPage />} />
               
               {/* Class Arena Live Routes */}
+              <Route path="/arena" element={<ArenaHubPage />} />
+              <Route path="/arena/solo" element={<ArenaSoloPlayPage />} />
               <Route
                 path="/arena/host"
                 element={
