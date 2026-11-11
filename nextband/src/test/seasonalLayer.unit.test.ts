@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { TET_THEME } from "@/features/seasonal/presets/tet/theme";
 import { SEASONAL_THEMES } from "@/features/seasonal/core/seasonalThemeAdapter";
 import { DEFAULT_TET_UI_CONFIG } from "../../../server/services/seasonal.service";
+
+const TET_THEME = SEASONAL_THEMES.TET;
 
 describe("ARIS Seasonal Layer - Vietnamese Tet Architecture Invariants", () => {
   it("should have authentic Vietnamese copywriting and proverbs from Viện Trưởng Huyền Cơ", () => {

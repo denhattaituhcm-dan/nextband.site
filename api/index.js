@@ -129882,6 +129882,12 @@ var TextNormalizer = class {
 var defaultTextNormalizer = new TextNormalizer();
 
 // server/services/scoring/AnswerResolver.ts
+function isAssessmentMode(value) {
+  return value === "OBJECTIVE" || value === "MANUAL_ITEM" || value === "HOLISTIC";
+}
+function isScoreScope(value) {
+  return value === "ITEM" || value === "HOLISTIC";
+}
 var AnswerResolver = class {
   /**
    * Extracts and flattens all questions from exam structure and pairs them with student answers
@@ -129925,8 +129931,8 @@ var AnswerResolver = class {
           const isImplicitHolistic = !q.assessmentMode && (qType === "essay" || qType === "writing" || qType === "ielts_writing_task1" || qType === "ielts_writing_task2" || sectionType === "writing" && !["multiple_choice", "multiple_choice_multi", "fill_blank", "matching", "true_false_not_given", "yes_no_not_given"].includes(qType));
           const isSpeakingType = qType === "speaking" || qType.startsWith("ielts_speaking") || sectionType === "speaking" && !["multiple_choice", "multiple_choice_multi", "fill_blank", "matching"].includes(qType);
           const isManualItem = !q.assessmentMode && (isSpeakingType || isSubjectiveType);
-          const resolvedMode = q.assessmentMode || (isExplicitHolistic || isImplicitHolistic ? "HOLISTIC" : isManualItem ? "MANUAL_ITEM" : "OBJECTIVE");
-          const resolvedScope = q.scoreScope || (resolvedMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
+          const resolvedMode = isAssessmentMode(q.assessmentMode) ? q.assessmentMode : isExplicitHolistic || isImplicitHolistic ? "HOLISTIC" : isManualItem ? "MANUAL_ITEM" : "OBJECTIVE";
+          const resolvedScope = isScoreScope(q.scoreScope) ? q.scoreScope : resolvedMode === "HOLISTIC" ? "HOLISTIC" : "ITEM";
           flattenedQuestions.push({
             id: q.id,
             questionType: q.questionType || q.question_type || "multiple_choice",
@@ -130257,6 +130263,18 @@ var FillBlankEvaluator = class {
 };
 
 // server/services/scoring/evaluators/MatchingEvaluator.ts
+function isPairsRecord(value) {
+  return typeof value === "object" && value !== null;
+}
+function extractPairsMap(value) {
+  if (!isPairsRecord(value)) {
+    return {};
+  }
+  if (isPairsRecord(value.pairs)) {
+    return value.pairs;
+  }
+  return value;
+}
 var MatchingEvaluator = class {
   supportedTypes = [
     "matching",
@@ -130272,11 +130290,8 @@ var MatchingEvaluator = class {
     const rawCorrect = (question.correctAnswer || "").trim();
     const rawStudent = studentAnswer?.answerText;
     const defaultPoints = question.points && question.points > 0 ? question.points : 1;
-    let targetPairs = {};
     const parsedCorrect = normalizer.parseJsonSafe(rawCorrect, null);
-    if (parsedCorrect && typeof parsedCorrect === "object") {
-      targetPairs = parsedCorrect.pairs || parsedCorrect;
-    }
+    const targetPairs = extractPairsMap(parsedCorrect);
     const pairKeys = Object.keys(targetPairs);
     const pairsCount = pairKeys.length;
     if (pairsCount === 0) {
@@ -130295,11 +130310,11 @@ var MatchingEvaluator = class {
       };
     }
     let studentPairs = {};
-    if (rawStudent && typeof rawStudent === "object") {
-      studentPairs = rawStudent.pairs || rawStudent;
+    if (isPairsRecord(rawStudent)) {
+      studentPairs = extractPairsMap(rawStudent);
     } else if (typeof rawStudent === "string" && rawStudent.trim()) {
       const parsed = normalizer.parseJsonSafe(rawStudent, {});
-      studentPairs = parsed.pairs || parsed;
+      studentPairs = extractPairsMap(parsed);
     }
     const maxScore = defaultPoints >= pairsCount ? defaultPoints : pairsCount;
     const pointPerPair = maxScore / pairsCount;
