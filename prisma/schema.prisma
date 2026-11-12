@@ -68,6 +68,7 @@ model User {
   cambridgeSessionsCreated CambridgeSession[]    @relation("TeacherCambridgeSessions")
   cambridgeSessionsGraded  CambridgeSession[]    @relation("GradedCambridgeSessions")
   cambridgeRoomsCreated    CambridgeRoom[]       @relation("TeacherCambridgeRooms")
+  arenaSoloRuns            ArenaSoloRun[]        @relation("UserArenaSoloRuns")
 
   @@map("profiles")
 }
@@ -1579,6 +1580,28 @@ model ArenaAnswer {
   @@unique([participantId, questionId])
   @@index([roomId, roundIndex])
   @@map("arena_answers")
+}
+
+model ArenaSoloRun {
+  id              String   @id @default(uuid())
+  userId          String?  @map("user_id")
+  nickname        String   @db.VarChar(50)
+  avatarId        Int      @default(0) @map("avatar_id")
+  totalScore      Int      @map("total_score")
+  correctCount    Int      @map("correct_count")
+  totalQuestions  Int      @default(10) @map("total_questions")
+  maxStreak       Int      @default(0) @map("max_streak")
+  avgResponseMs   Int      @default(0) @map("avg_response_ms")
+  challengeCode   String?  @map("challenge_code") @db.VarChar(16)
+  questionIds     String[] @map("question_ids")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  user            User?    @relation("UserArenaSoloRuns", fields: [userId], references: [userId], onDelete: SetNull)
+
+  @@index([totalScore(sort: Desc)])
+  @@index([challengeCode])
+  @@index([createdAt])
+  @@map("arena_solo_runs")
 }
 
 model ReadingDiscussion {

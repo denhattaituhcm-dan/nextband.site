@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
+import { authenticate, optionalAuthenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { ArenaRoomService } from "../services/arena-room.service.js";
 
 export default async function arenaRoutes(fastify: FastifyInstance) {
@@ -313,6 +313,168 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
           error: err?.message || "Không thể khôi phục bộ câu hỏi.",
         });
       }
+    }
+  );
+
+  // POST /arena/solo/runs - Lưu kết quả đấu đơn và tạo mã thách đấu
+  fastify.post<{
+    Body: {
+      nickname: string;
+      avatarId?: number;
+      totalScore: number;
+      correctCount: number;
+      totalQuestions?: number;
+      maxStreak?: number;
+      avgResponseMs?: number;
+      challengeCode?: string;
+      questionIds?: string[];
+    };
+  }>(
+    "/solo/runs",
+    { preHandler: [optionalAuthenticate] },
+    async (request, reply) => {
+      const user = request.user as any;
+      const userId = user?.userId || user?.id || null;
+      const body = request.body;
+
+      if (!body || typeof body.totalScore !== "number") {
+        return reply.code(400).send({ success: false, error: "Dữ liệu kết quả không hợp lệ." });
+      }
+
+      const nickname = (body.nickname || "Chiến Binh IELTS").trim().slice(0, 50);
+      const avatarId = Number(body.avatarId) || 0;
+      const totalScore = Math.max(0, Math.floor(body.totalScore));
+      const correctCount = Math.max(0, Math.min(50, Number(body.correctCount) || 0));
+      const totalQuestions = Math.max(1, Number(body.totalQuestions) || 10);
+      const maxStreak = Math.max(0, Number(body.maxStreak) || 0);
+      const avgResponseMs = Math.max(0, Number(body.avgResponseMs) || 0);
+      const questionIds = Array.isArray(body.questionIds) ? body.questionIds.map(String) : [];
+
+      // Sinh mã thách đấu ngẫu nhiên 6 ký tự viết hoa duy nhất (vd: DL-9X2Y)
+      const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const newChallengeCode = `DL-${randomSuffix}`;
+
+      const run = await fastify.prisma.arenaSoloRun.create({
+        data: {
+          userId,
+          nickname,
+          avatarId,
+          totalScore,
+          correctCount,
+          totalQuestions,
+          maxStreak,
+          avgResponseMs,
+          challengeCode: newChallengeCode,
+          questionIds,
+        },
+      });
+
+      return reply.code(201).send({
+        success: true,
+        data: {
+          id: run.id,
+          challengeCode: run.challengeCode,
+          totalScore: run.totalScore,
+          createdAt: run.createdAt,
+        },
+      });
+    }
+  );
+
+  // GET /arena/solo/leaderboard - Bảng xếp hạng cao thủ Đấu Trường
+  fastify.get<{
+    Querystring: { timeframe?: "today" | "week" | "all"; limit?: number };
+  }>(
+    "/solo/leaderboard",
+    async (request, reply) => {
+      const { timeframe = "week", limit = 15 } = request.query;
+      const safeLimit = Math.min(50, Math.max(1, Number(limit) || 15));
+
+      let dateFilter: Date | undefined;
+      const now = new Date();
+      if (timeframe === "today") {
+        dateFilter = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      } else if (timeframe === "week") {
+        dateFilter = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      }
+
+      const runs = await fastify.prisma.arenaSoloRun.findMany({
+        where: dateFilter ? { createdAt: { gte: dateFilter } } : undefined,
+        orderBy: [
+          { totalScore: "desc" },
+          { correctCount: "desc" },
+          { avgResponseMs: "asc" },
+          { createdAt: "asc" },
+        ],
+        take: safeLimit * 2,
+        select: {
+          id: true,
+          nickname: true,
+          avatarId: true,
+          totalScore: true,
+          correctCount: true,
+          totalQuestions: true,
+          maxStreak: true,
+          avgResponseMs: true,
+          challengeCode: true,
+          createdAt: true,
+        },
+      });
+
+      // Lọc trùng theo nickname để mỗi người chơi chỉ xuất hiện điểm cao nhất
+      const seenNicknames = new Set<string>();
+      const leaderboard: typeof runs = [];
+      for (const r of runs) {
+        const lower = r.nickname.toLowerCase();
+        if (!seenNicknames.has(lower)) {
+          seenNicknames.add(lower);
+          leaderboard.push(r);
+          if (leaderboard.length >= safeLimit) break;
+        }
+      }
+
+      return reply.send({
+        success: true,
+        data: leaderboard,
+      });
+    }
+  );
+
+  // GET /arena/solo/challenge/:code - Lấy thông tin người thách đấu
+  fastify.get<{
+    Params: { code: string };
+  }>(
+    "/solo/challenge/:code",
+    async (request, reply) => {
+      const { code } = request.params;
+      const run = await fastify.prisma.arenaSoloRun.findFirst({
+        where: { challengeCode: code.toUpperCase() },
+        select: {
+          id: true,
+          nickname: true,
+          avatarId: true,
+          totalScore: true,
+          correctCount: true,
+          totalQuestions: true,
+          maxStreak: true,
+          avgResponseMs: true,
+          questionIds: true,
+          createdAt: true,
+        },
+      });
+
+      if (!run) {
+        return reply.code(404).send({
+          success: false,
+          error: "Mã thách đấu không tồn tại hoặc đã hết hạn.",
+          code: "CHALLENGE_NOT_FOUND",
+        });
+      }
+
+      return reply.send({
+        success: true,
+        data: run,
+      });
     }
   );
 }

@@ -1,7 +1,10 @@
 /**
  * ARENA SOLO PLAY PAGE (/arena/solo)
  * Đấu Trường Đơn Cấp Tốc - Trải nghiệm thi đấu phản xạ IELTS mượt mà, độc lập 100%.
- * Không cần mã PIN, không cần chờ phòng, không phụ thuộc kết nối bên ngoài.
+ * Tích hợp:
+ * - Lưu kết quả bền vững vào Database qua REST API
+ * - Chế độ Thách Đấu 1v1 Đối Đầu Trực Tiếp (Head-to-Head Duel Showdown)
+ * - Tự động cấp mã Thách Đấu (Challenge Code) để mời bạn bè
  */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -13,6 +16,7 @@ import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCata
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { QuestionTypeRevengeModal, RevengeQuestionItem } from '@/components/arena/QuestionTypeRevengeModal';
 import { RAW_ARENA_COLLOCATION_QUESTIONS, shuffleQuestionOptions, ArenaQuestion } from '@/lib/arena/questions';
+import { arenaApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Trophy, 
@@ -27,17 +31,34 @@ import {
   CheckCircle2, 
   XCircle, 
   Volume2, 
-  VolumeX,
-  Clock,
-  Award
+  VolumeX, 
+  Clock, 
+  Award,
+  Swords,
+  Crown
 } from 'lucide-react';
 
 type SoloStage = 'COUNTDOWN' | 'PLAYING' | 'REVEAL' | 'PODIUM';
+
+interface ChallengerInfo {
+  id: string;
+  nickname: string;
+  avatarId: number;
+  totalScore: number;
+  correctCount: number;
+  totalQuestions: number;
+  maxStreak: number;
+  avgResponseMs: number;
+  questionIds: string[];
+}
 
 export default function ArenaSoloPlayPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+
+  const challengeCode = searchParams.get('challenge');
+  const [challenger, setChallenger] = useState<ChallengerInfo | null>(null);
 
   const rawNickname = searchParams.get('name') || (typeof window !== 'undefined' ? sessionStorage.getItem('arena_solo_name') : '') || 'Chiến Binh IELTS';
   const rawAvatarId = searchParams.get('avatarId') || (typeof window !== 'undefined' ? sessionStorage.getItem('arena_solo_avatar') : null);
@@ -48,7 +69,7 @@ export default function ArenaSoloPlayPage() {
     : getCharacterBySeed(nickname).id;
   const character = CHARACTER_AVATARS[avatarId] || getCharacterBySeed(nickname);
 
-  // Bộ câu hỏi cho trận đấu (10 câu xáo trộn)
+  // Bộ câu hỏi cho trận đấu (10 câu)
   const [questions, setQuestions] = useState<ArenaQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [stage, setStage] = useState<SoloStage>('COUNTDOWN');
@@ -67,6 +88,7 @@ export default function ArenaSoloPlayPage() {
   const [isRevengeOpen, setIsRevengeOpen] = useState(false);
   const [isNewRecord, setIsNewRecord] = useState(false);
   const [autoAdvanceSeconds, setAutoAdvanceSeconds] = useState(5);
+  const [myChallengeCode, setMyChallengeCode] = useState<string>('');
 
   // Thống kê tốc độ
   const questionStartTimeRef = useRef<number>(Date.now());
@@ -89,18 +111,29 @@ export default function ArenaSoloPlayPage() {
     toggleBgm,
   } = useArenaAudio();
 
-  // Khởi tạo và xáo trộn 10 câu hỏi ngẫu nhiên từ ngân hàng
-  const initGameQuestions = useCallback(() => {
-    const pool = [...RAW_ARENA_COLLOCATION_QUESTIONS];
-    // Fisher-Yates shuffle
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
+  // Khởi tạo câu hỏi ngẫu nhiên hoặc theo lời thách đấu
+  const initGameQuestions = useCallback((customQuestionIds?: string[]) => {
+    let chosen: ArenaQuestion[] = [];
+
+    if (customQuestionIds && customQuestionIds.length > 0) {
+      const map = new Map(RAW_ARENA_COLLOCATION_QUESTIONS.map((q) => [q.id, q]));
+      chosen = customQuestionIds.map((id) => map.get(id)).filter(Boolean) as ArenaQuestion[];
     }
-    const chosen = pool.slice(0, 10).map((q, idx) =>
+
+    if (chosen.length < 5) {
+      const pool = [...RAW_ARENA_COLLOCATION_QUESTIONS];
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      chosen = pool.slice(0, 10);
+    }
+
+    const shuffled = chosen.map((q, idx) =>
       shuffleQuestionOptions({ ...q, roundIndex: idx }, `solo_${Date.now()}_${q.id}_${idx}`)
     );
-    setQuestions(chosen);
+
+    setQuestions(shuffled);
     setCurrentIndex(0);
     setScore(0);
     setStreak(0);
@@ -110,9 +143,21 @@ export default function ArenaSoloPlayPage() {
     responseTimesRef.current = [];
   }, []);
 
+  // Tải dữ liệu người thách đấu nếu có
   useEffect(() => {
-    initGameQuestions();
-  }, [initGameQuestions]);
+    if (challengeCode) {
+      arenaApi.getSoloChallenge(challengeCode)
+        .then((data) => {
+          setChallenger(data);
+          initGameQuestions(data.questionIds);
+        })
+        .catch(() => {
+          initGameQuestions();
+        });
+    } else {
+      initGameQuestions();
+    }
+  }, [challengeCode, initGameQuestions]);
 
   // Bộ đếm đếm ngược 3, 2, 1 trước khi bắt đầu
   useEffect(() => {
@@ -139,7 +184,6 @@ export default function ArenaSoloPlayPage() {
     if (stage !== 'PLAYING' || isLocked) return;
 
     if (timeLeft <= 0) {
-      // Hết giờ -> Tự động chốt đáp án
       handleConfirmAnswer(selectedOptionId || undefined);
       return;
     }
@@ -206,7 +250,6 @@ export default function ArenaSoloPlayPage() {
         playStreakSound(currentStreakNext);
       }
 
-      // Điểm cơ bản + Điểm thời gian còn lại x Hệ số streak
       const earned = Math.round((1000 + Math.max(0, timeLeft) * 20) * streakMultiplier);
       setRoundEarnedScore(earned);
       setScore((prev) => prev + earned);
@@ -215,7 +258,6 @@ export default function ArenaSoloPlayPage() {
       setStreak(0);
       setRoundEarnedScore(0);
 
-      // Thêm vào danh sách câu sai
       const wrongItem: RevengeQuestionItem = {
         id: currentQ.id,
         prompt: currentQ.prompt,
@@ -273,11 +315,37 @@ export default function ArenaSoloPlayPage() {
       questionStartTimeRef.current = Date.now();
       startQuestionSuspense(15);
     } else {
-      // Hết 10 câu -> Vào bục vinh danh Podium
+      // Hết câu -> Vào bục vinh danh Podium
       setStage('PODIUM');
       playPodiumSound();
 
-      // Kiểm tra và lưu kỷ lục vào localStorage
+      // Lưu kết quả bền vững vào database PostgreSQL qua REST API
+      const avgMs = responseTimesRef.current.length > 0
+        ? Math.round(responseTimesRef.current.reduce((a, b) => a + b, 0) / responseTimesRef.current.length)
+        : 0;
+      const correctCount = questions.length - wrongQuestions.length;
+      const questionIds = questions.map((q) => q.id);
+
+      arenaApi.saveSoloRun({
+        nickname,
+        avatarId,
+        totalScore: score,
+        correctCount,
+        totalQuestions: questions.length,
+        maxStreak,
+        avgResponseMs: avgMs,
+        challengeCode: challengeCode || undefined,
+        questionIds,
+      })
+        .then((res) => {
+          if (res?.challengeCode) {
+            setMyChallengeCode(res.challengeCode);
+          }
+        })
+        .catch((err) => {
+          console.warn('Lỗi lưu kết quả thi đấu:', err);
+        });
+
       if (typeof window !== 'undefined') {
         const prevHigh = Number(localStorage.getItem('arena_solo_high_score') || 0);
         if (score > prevHigh) {
@@ -294,9 +362,13 @@ export default function ArenaSoloPlayPage() {
     }
   }, [
     currentIndex, 
-    questions.length, 
+    questions, 
+    wrongQuestions.length,
     score, 
     maxStreak, 
+    nickname,
+    avatarId,
+    challengeCode,
     playClickSound, 
     playPodiumSound, 
     startQuestionSuspense
@@ -327,12 +399,12 @@ export default function ArenaSoloPlayPage() {
       alpha: number;
     }> = [];
 
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 140; i++) {
       particles.push({
-        x: canvas.width / 2 + (Math.random() - 0.5) * 80,
+        x: canvas.width / 2 + (Math.random() - 0.5) * 100,
         y: canvas.height * 0.4,
-        vx: (Math.random() - 0.5) * 12,
-        vy: -Math.random() * 10 - 4,
+        vx: (Math.random() - 0.5) * 14,
+        vy: -Math.random() * 12 - 5,
         size: Math.random() * 8 + 4,
         color: colors[Math.floor(Math.random() * colors.length)],
         rotation: Math.random() * 360,
@@ -348,7 +420,7 @@ export default function ArenaSoloPlayPage() {
       particles.forEach((p) => {
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.22; // Trọng lực
+        p.vy += 0.22;
         p.rotation += p.vr;
         p.alpha -= 0.005;
 
@@ -376,14 +448,15 @@ export default function ArenaSoloPlayPage() {
   // Sao chép link thách đấu bạn bè
   const handleShareChallenge = () => {
     playClickSound();
-    const shareUrl = `${window.location.origin}/arena`;
-    const shareText = `🔥 Mình vừa đạt ${score.toLocaleString()} điểm tại Đấu Trường Phản Xạ NextBand Arena! Đố bạn vượt qua được kỷ lục của mình: ${shareUrl}`;
+    const code = myChallengeCode || challengeCode || '';
+    const shareUrl = `${window.location.origin}/arena${code ? `?challenge=${code}` : ''}`;
+    const shareText = `⚔️ Mình vừa đạt ${score.toLocaleString()} điểm tại Đấu Trường NextBand Arena! Đố bạn vượt qua được kỷ lục của mình: ${shareUrl}`;
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareText).then(() => {
         toast({
           title: '✅ Đã sao chép link thách đấu!',
-          description: 'Gửi link này cho bạn bè qua Zalo hoặc Messenger để cùng so tài nhé!',
+          description: 'Gửi link này cho bạn bè qua Zalo hoặc Messenger để cùng so tài đối đầu!',
         });
       }).catch(() => {
         toast({
@@ -403,9 +476,11 @@ export default function ArenaSoloPlayPage() {
   };
 
   const currentQ = questions[currentIndex];
+  const isChallengerWon = challenger ? score < challenger.totalScore : false;
+  const isPlayerWon = challenger ? score > challenger.totalScore : true;
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-[#150a33] text-white flex flex-col font-sans select-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
+    <div className="min-h-screen min-h-[100dvh] bg-[#12082b] text-white flex flex-col font-sans select-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
       {/* Top Header Bar */}
       <header className="w-full max-w-4xl mx-auto px-4 py-3 flex items-center justify-between border-b border-purple-500/20 shrink-0">
         <Link 
@@ -416,11 +491,18 @@ export default function ArenaSoloPlayPage() {
           <span className="hidden sm:inline">Sảnh Đấu Trường</span>
         </Link>
 
-        {/* Brand & Round Counter */}
+        {/* Brand & Round Counter / Duel Tag */}
         <div className="flex items-center gap-2.5">
-          <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-200 text-xs font-mono font-bold">
-            CÂU {currentIndex + 1} / {questions.length || 10}
-          </span>
+          {challenger ? (
+            <span className="px-2.5 py-0.5 rounded-full bg-red-500/20 border border-red-500/40 text-red-300 text-xs font-mono font-bold flex items-center gap-1">
+              <Swords className="w-3.5 h-3.5" /> ĐỐI ĐẦU 1V1 • CÂU {currentIndex + 1}/{questions.length || 10}
+            </span>
+          ) : (
+            <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-200 text-xs font-mono font-bold">
+              CÂU {currentIndex + 1} / {questions.length || 10}
+            </span>
+          )}
+
           {streak >= 2 && (
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-black shadow-md animate-pulse">
               <Flame className="w-3.5 h-3.5" /> STREAK x{streakMultiplier}
@@ -453,15 +535,33 @@ export default function ArenaSoloPlayPage() {
         {/* ============================================================ */}
         {stage === 'COUNTDOWN' && (
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-4 bg-purple-500/10 rounded-full border-2 border-purple-400/40 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
-              <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="lg" />
-            </div>
+            {challenger ? (
+              <div className="flex items-center gap-4">
+                <div className="p-2.5 bg-amber-400/20 rounded-2xl border-2 border-amber-400 shadow">
+                  <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="md" />
+                </div>
+                <div className="w-10 h-10 rounded-full bg-red-600/30 border border-red-500 flex items-center justify-center text-red-300 font-black">
+                  VS
+                </div>
+                <div className="p-2.5 bg-red-500/20 rounded-2xl border-2 border-red-400 shadow">
+                  <PvZCardAvatar avatarId={challenger.avatarId} seed={challenger.avatarId} size="md" />
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 bg-purple-500/10 rounded-full border-2 border-purple-400/40 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
+                <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="lg" />
+              </div>
+            )}
+
             <div className="space-y-1">
-              <h2 className="text-xl sm:text-2xl font-black text-white">SẴN SÀNG THI ĐẤU!</h2>
+              <h2 className="text-xl sm:text-2xl font-black text-white">
+                {challenger ? `TRANH ĐẤU VỚI ${challenger.nickname.toUpperCase()}!` : 'SẴN SÀNG THI ĐẤU!'}
+              </h2>
               <p className="text-xs sm:text-sm text-purple-200">
                 10 câu hỏi IELTS Collocation • 15 giây mỗi câu
               </p>
             </div>
+
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center shadow-[0_0_40px_rgba(249,115,22,0.6)] animate-bounce">
               <span className="text-5xl sm:text-6xl font-black font-mono text-purple-950">
                 {countdownNum}
@@ -475,14 +575,19 @@ export default function ArenaSoloPlayPage() {
         {/* ============================================================ */}
         {stage === 'PLAYING' && currentQ && (
           <div className="flex-1 flex flex-col justify-between space-y-3.5 py-1 animate-in fade-in duration-200">
-            {/* Top Score & Incense Timer */}
+            {/* Top Score Bar */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-mono font-bold px-1">
                 <span className="text-amber-400 flex items-center gap-1.5">
                   <Trophy className="w-4 h-4" /> ĐIỂM: {score.toLocaleString()}
                 </span>
+                {challenger && (
+                  <span className="text-red-300 font-bold">
+                    Mục tiêu cần vượt: {challenger.totalScore.toLocaleString()}đ
+                  </span>
+                )}
                 <span className="text-purple-300">
-                  {15 - timeLeft}s đã trôi qua
+                  {15 - timeLeft}s đã qua
                 </span>
               </div>
               <ArenaIncenseTimer timeLeftSeconds={timeLeft} totalTimeSeconds={15} />
@@ -498,7 +603,7 @@ export default function ArenaSoloPlayPage() {
               </h3>
             </div>
 
-            {/* Answer Options (A/B/C/D) */}
+            {/* Answer Options */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
               {currentQ.options.map((option) => (
                 <StudentAnswerCard
@@ -573,7 +678,6 @@ export default function ArenaSoloPlayPage() {
 
             {/* Correct Answer & Misconception Box */}
             <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/70 border border-purple-500/40 space-y-3.5 shadow-inner">
-              {/* Correct Answer Display */}
               <div className="flex items-start gap-2.5 text-xs sm:text-sm">
                 <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-black shrink-0 border border-emerald-500/40">
                   ĐÁP ÁN ĐÚNG
@@ -583,12 +687,10 @@ export default function ArenaSoloPlayPage() {
                 </span>
               </div>
 
-              {/* Standard Explanation */}
               <p className="text-xs text-slate-300 leading-relaxed bg-black/30 p-2.5 rounded-xl border border-white/5">
                 {currentQ.correctExplanation}
               </p>
 
-              {/* Misconception Diagnostic Box */}
               {currentQ.misconception && (
                 <div className="p-3 sm:p-3.5 rounded-xl bg-gradient-to-br from-amber-950/60 to-purple-950/80 border border-amber-500/50 space-y-1.5 text-left">
                   <div className="flex items-center gap-1.5 text-amber-300 font-black text-xs">
@@ -618,22 +720,71 @@ export default function ArenaSoloPlayPage() {
         )}
 
         {/* ============================================================ */}
-        {/* STAGE 4: PODIUM VICTORY & SUMMARY                             */}
+        {/* STAGE 4: PODIUM VICTORY & HEAD-TO-HEAD SHOWDOWN               */}
         {/* ============================================================ */}
         {stage === 'PODIUM' && (
           <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 py-3 animate-in fade-in zoom-in-95 duration-300 relative z-10">
-            {/* Canvas Confetti */}
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />
 
-            {/* Avatar on Podium */}
-            <div className="relative z-10">
-              <div className="p-4 bg-purple-500/10 rounded-full border-2 border-amber-400/80 shadow-[0_0_40px_rgba(251,191,36,0.4)]">
-                <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="lg" />
+            {/* DUEL SHOWDOWN (NẾU ĐANG CHƠI CHẾ ĐỘ THÁCH ĐẤU 1V1) */}
+            {challenger ? (
+              <div className="w-full max-w-lg z-10 space-y-3">
+                <div className={`p-4 rounded-3xl border-2 shadow-2xl ${
+                  isPlayerWon
+                    ? 'bg-gradient-to-r from-emerald-950/90 via-purple-950/90 to-emerald-950/90 border-emerald-400 shadow-[0_0_40px_rgba(16,185,129,0.3)]'
+                    : 'bg-gradient-to-r from-rose-950/90 via-purple-950/90 to-rose-950/90 border-rose-400 shadow-[0_0_40px_rgba(244,63,94,0.3)]'
+                }`}>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase mb-3 border bg-black/40 text-amber-300 border-amber-400/40">
+                    <Swords className="w-4 h-4" /> KẾT QUẢ ĐỐI ĐẦU 1V1
+                  </div>
+
+                  {/* 2 Sides Showdown Grid */}
+                  <div className="grid grid-cols-2 gap-3 items-center">
+                    {/* BẠN */}
+                    <div className={`p-3 rounded-2xl border text-center space-y-1 relative ${
+                      isPlayerWon ? 'bg-emerald-500/20 border-emerald-400' : 'bg-purple-900/40 border-purple-700/40'
+                    }`}>
+                      {isPlayerWon && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-amber-400 text-purple-950 text-[10px] font-black uppercase shadow">
+                          👑 CHIẾN THẮNG
+                        </div>
+                      )}
+                      <div className="mx-auto w-12 h-12">
+                        <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="sm" />
+                      </div>
+                      <span className="text-xs font-black text-white truncate block">{nickname}</span>
+                      <span className="text-lg font-black font-mono text-amber-400 block">{score.toLocaleString()}đ</span>
+                    </div>
+
+                    {/* ĐỐI THỦ */}
+                    <div className={`p-3 rounded-2xl border text-center space-y-1 relative ${
+                      isChallengerWon ? 'bg-emerald-500/20 border-emerald-400' : 'bg-purple-900/40 border-purple-700/40'
+                    }`}>
+                      {isChallengerWon && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-amber-400 text-purple-950 text-[10px] font-black uppercase shadow">
+                          👑 CHIẾN THẮNG
+                        </div>
+                      )}
+                      <div className="mx-auto w-12 h-12">
+                        <PvZCardAvatar avatarId={challenger.avatarId} seed={challenger.avatarId} size="sm" />
+                      </div>
+                      <span className="text-xs font-black text-white truncate block">{challenger.nickname}</span>
+                      <span className="text-lg font-black font-mono text-amber-400 block">{challenger.totalScore.toLocaleString()}đ</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-purple-950 font-black text-xs shadow-lg border border-amber-200">
-                👑 QUÁN QUÂN
+            ) : (
+              /* SOLO PODIUM THÔNG THƯỜNG */
+              <div className="relative z-10">
+                <div className="p-4 bg-purple-500/10 rounded-full border-2 border-amber-400/80 shadow-[0_0_40px_rgba(251,191,36,0.4)]">
+                  <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="lg" />
+                </div>
+                <div className="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-purple-950 font-black text-xs shadow-lg border border-amber-200">
+                  👑 QUÁN QUÂN
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Title & Rank Badge */}
             <div className="space-y-1.5 z-10">
@@ -648,7 +799,6 @@ export default function ArenaSoloPlayPage() {
 
             {/* Performance Stats Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-lg z-10 text-left">
-              {/* Total Score */}
               <div className="p-3 rounded-2xl bg-purple-950/70 border border-purple-500/40 relative overflow-hidden">
                 <span className="text-[10px] font-bold text-purple-300 uppercase block">Tổng điểm</span>
                 <span className="text-xl sm:text-2xl font-black text-amber-400 font-mono">
@@ -661,7 +811,6 @@ export default function ArenaSoloPlayPage() {
                 )}
               </div>
 
-              {/* Accuracy */}
               <div className="p-3 rounded-2xl bg-purple-950/70 border border-purple-500/40">
                 <span className="text-[10px] font-bold text-purple-300 uppercase block">Độ chính xác</span>
                 <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">
@@ -669,7 +818,6 @@ export default function ArenaSoloPlayPage() {
                 </span>
               </div>
 
-              {/* Max Streak */}
               <div className="p-3 rounded-2xl bg-purple-950/70 border border-purple-500/40">
                 <span className="text-[10px] font-bold text-purple-300 uppercase block">Streak kỷ lục</span>
                 <span className="text-xl sm:text-2xl font-black text-orange-400 font-mono flex items-center gap-1">
@@ -677,7 +825,6 @@ export default function ArenaSoloPlayPage() {
                 </span>
               </div>
 
-              {/* Avg Speed */}
               <div className="p-3 rounded-2xl bg-purple-950/70 border border-purple-500/40">
                 <span className="text-[10px] font-bold text-purple-300 uppercase block">Tốc độ TB</span>
                 <span className="text-xl sm:text-2xl font-black text-sky-400 font-mono flex items-center gap-1">
@@ -688,7 +835,6 @@ export default function ArenaSoloPlayPage() {
 
             {/* Action Buttons Grid */}
             <div className="w-full max-w-lg space-y-2.5 z-10 pt-2">
-              {/* Revenge Notebook Button (Only when there are wrong questions) */}
               {wrongQuestions.length > 0 && (
                 <button
                   type="button"
@@ -700,7 +846,6 @@ export default function ArenaSoloPlayPage() {
                 </button>
               )}
 
-              {/* Share Challenge & Play Again in 2 Columns */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <button
                   type="button"
@@ -721,7 +866,6 @@ export default function ArenaSoloPlayPage() {
                 </button>
               </div>
 
-              {/* Back to Arena Hub */}
               <Link
                 to="/arena"
                 className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-slate-300 hover:text-white pt-1 transition"

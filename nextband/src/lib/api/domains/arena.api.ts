@@ -260,4 +260,85 @@ export const arenaApi = {
     );
     return json;
   },
+
+  async saveSoloRun(params: {
+    nickname: string;
+    avatarId?: number;
+    totalScore: number;
+    correctCount: number;
+    totalQuestions?: number;
+    maxStreak?: number;
+    avgResponseMs?: number;
+    challengeCode?: string;
+    questionIds?: string[];
+  }): Promise<{
+    id: string;
+    challengeCode: string;
+    totalScore: number;
+    createdAt: string;
+  }> {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/arena/solo/runs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: JSON.stringify(params),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể lưu kết quả thi đấu Đấu Trường"
+    );
+    return json.data;
+  },
+
+  async getSoloLeaderboard(params?: {
+    timeframe?: "today" | "week" | "all";
+    limit?: number;
+  }): Promise<
+    Array<{
+      id: string;
+      nickname: string;
+      avatarId: number;
+      totalScore: number;
+      correctCount: number;
+      totalQuestions: number;
+      maxStreak: number;
+      avgResponseMs: number;
+      challengeCode: string;
+      createdAt: string;
+    }>
+  > {
+    const query = new URLSearchParams();
+    if (params?.timeframe) query.set("timeframe", params.timeframe);
+    if (params?.limit) query.set("limit", String(params.limit));
+
+    const res = await fetch(`${API_BASE_URL}/arena/solo/leaderboard?${query.toString()}`);
+    const json = await handleApiResponse<{ success: boolean; data: any[] }>(
+      res,
+      "Không thể tải bảng xếp hạng Đấu Trường"
+    );
+    return json.data;
+  },
+
+  async getSoloChallenge(code: string): Promise<{
+    id: string;
+    nickname: string;
+    avatarId: number;
+    totalScore: number;
+    correctCount: number;
+    totalQuestions: number;
+    maxStreak: number;
+    avgResponseMs: number;
+    questionIds: string[];
+    createdAt: string;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/arena/solo/challenge/${encodeURIComponent(code)}`);
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể tải thông tin thách đấu"
+    );
+    return json.data;
+  },
 };

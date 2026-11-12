@@ -144291,6 +144291,133 @@ async function arenaRoutes(fastify) {
       }
     }
   );
+  fastify.post(
+    "/solo/runs",
+    { preHandler: [optionalAuthenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user?.userId || user?.id || null;
+      const body = request.body;
+      if (!body || typeof body.totalScore !== "number") {
+        return reply.code(400).send({ success: false, error: "D\u1EEF li\u1EC7u k\u1EBFt qu\u1EA3 kh\xF4ng h\u1EE3p l\u1EC7." });
+      }
+      const nickname = (body.nickname || "Chi\u1EBFn Binh IELTS").trim().slice(0, 50);
+      const avatarId = Number(body.avatarId) || 0;
+      const totalScore = Math.max(0, Math.floor(body.totalScore));
+      const correctCount = Math.max(0, Math.min(50, Number(body.correctCount) || 0));
+      const totalQuestions = Math.max(1, Number(body.totalQuestions) || 10);
+      const maxStreak = Math.max(0, Number(body.maxStreak) || 0);
+      const avgResponseMs = Math.max(0, Number(body.avgResponseMs) || 0);
+      const questionIds = Array.isArray(body.questionIds) ? body.questionIds.map(String) : [];
+      const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const newChallengeCode = `DL-${randomSuffix}`;
+      const run = await fastify.prisma.arenaSoloRun.create({
+        data: {
+          userId,
+          nickname,
+          avatarId,
+          totalScore,
+          correctCount,
+          totalQuestions,
+          maxStreak,
+          avgResponseMs,
+          challengeCode: newChallengeCode,
+          questionIds
+        }
+      });
+      return reply.code(201).send({
+        success: true,
+        data: {
+          id: run.id,
+          challengeCode: run.challengeCode,
+          totalScore: run.totalScore,
+          createdAt: run.createdAt
+        }
+      });
+    }
+  );
+  fastify.get(
+    "/solo/leaderboard",
+    async (request, reply) => {
+      const { timeframe = "week", limit = 15 } = request.query;
+      const safeLimit = Math.min(50, Math.max(1, Number(limit) || 15));
+      let dateFilter;
+      const now = /* @__PURE__ */ new Date();
+      if (timeframe === "today") {
+        dateFilter = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      } else if (timeframe === "week") {
+        dateFilter = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
+      }
+      const runs = await fastify.prisma.arenaSoloRun.findMany({
+        where: dateFilter ? { createdAt: { gte: dateFilter } } : void 0,
+        orderBy: [
+          { totalScore: "desc" },
+          { correctCount: "desc" },
+          { avgResponseMs: "asc" },
+          { createdAt: "asc" }
+        ],
+        take: safeLimit * 2,
+        select: {
+          id: true,
+          nickname: true,
+          avatarId: true,
+          totalScore: true,
+          correctCount: true,
+          totalQuestions: true,
+          maxStreak: true,
+          avgResponseMs: true,
+          challengeCode: true,
+          createdAt: true
+        }
+      });
+      const seenNicknames = /* @__PURE__ */ new Set();
+      const leaderboard = [];
+      for (const r of runs) {
+        const lower = r.nickname.toLowerCase();
+        if (!seenNicknames.has(lower)) {
+          seenNicknames.add(lower);
+          leaderboard.push(r);
+          if (leaderboard.length >= safeLimit) break;
+        }
+      }
+      return reply.send({
+        success: true,
+        data: leaderboard
+      });
+    }
+  );
+  fastify.get(
+    "/solo/challenge/:code",
+    async (request, reply) => {
+      const { code } = request.params;
+      const run = await fastify.prisma.arenaSoloRun.findFirst({
+        where: { challengeCode: code.toUpperCase() },
+        select: {
+          id: true,
+          nickname: true,
+          avatarId: true,
+          totalScore: true,
+          correctCount: true,
+          totalQuestions: true,
+          maxStreak: true,
+          avgResponseMs: true,
+          questionIds: true,
+          createdAt: true
+        }
+      });
+      if (!run) {
+        return reply.code(404).send({
+          success: false,
+          error: "M\xE3 th\xE1ch \u0111\u1EA5u kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 h\u1EBFt h\u1EA1n.",
+          code: "CHALLENGE_NOT_FOUND"
+        });
+      }
+      return reply.send({
+        success: true,
+        data: run
+      });
+    }
+  );
 }
 
 // server/routes/reading-discussion.routes.ts
