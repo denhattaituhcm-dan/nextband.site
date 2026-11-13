@@ -468,6 +468,11 @@ export class ClassService {
       throw new NotFoundError("Không tìm thấy lớp học");
     }
 
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền tạo/cập nhật buổi học cho lớp này", 403);
+    }
+
     const {
       startDate,
       weekdays,

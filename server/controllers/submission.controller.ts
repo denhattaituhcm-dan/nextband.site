@@ -3,12 +3,15 @@ import { ExamSubmissionService } from "../services/exam-submission.service.js";
 import { handleValidation } from "../utils/validation.js";
 import { paginationSchema } from "../schemas/common.schema.js";
 import { GeminiWritingDiagnosticService } from "../services/geminiWritingDiagnostic.service.js";
+import { isStudentInTeacherClasses } from "../utils/teacherScope.js";
 
 export class SubmissionController {
+  private prisma: any;
   private service: ExamSubmissionService;
   private aiDiagnosticService: GeminiWritingDiagnosticService;
 
   constructor(fastify: any) {
+    this.prisma = fastify.prisma;
     this.service = new ExamSubmissionService(fastify.prisma);
     this.aiDiagnosticService = new GeminiWritingDiagnosticService();
   }
@@ -203,8 +206,16 @@ export class SubmissionController {
 
       const isAdmin = user?.roles?.includes("admin");
       const isTeacher = user?.roles?.includes("teacher");
-      if (!isAdmin && !isTeacher && user?.id !== targetStudentId) {
-        return reply.status(403).send({ error: "Bạn không có quyền xem hồ sơ bằng chứng của học viên khác" });
+
+      if (!isAdmin) {
+        if (isTeacher) {
+          const inScope = await isStudentInTeacherClasses(this.prisma, user.id, targetStudentId);
+          if (!inScope) {
+            return reply.status(403).send({ error: "Bạn chỉ có thể xem hồ sơ bằng chứng của học viên thuộc các lớp bạn phụ trách" });
+          }
+        } else if (user?.id !== targetStudentId) {
+          return reply.status(403).send({ error: "Bạn không có quyền xem hồ sơ bằng chứng của học viên khác" });
+        }
       }
 
       const stats = await this.service.getStudentAcademicEvidenceStats(targetStudentId);

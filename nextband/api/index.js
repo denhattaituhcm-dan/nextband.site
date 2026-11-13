@@ -96076,6 +96076,10 @@ var init_class_service = __esm({
         if (!classData) {
           throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
         }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n t\u1EA1o/c\u1EADp nh\u1EADt bu\u1ED5i h\u1ECDc cho l\u1EDBp n\xE0y", 403);
+        }
         const {
           startDate,
           weekdays,
@@ -132819,9 +132823,11 @@ ${userPrompt}` }]
 
 // server/controllers/submission.controller.ts
 var SubmissionController = class {
+  prisma;
   service;
   aiDiagnosticService;
   constructor(fastify) {
+    this.prisma = fastify.prisma;
     this.service = new ExamSubmissionService(fastify.prisma);
     this.aiDiagnosticService = new GeminiWritingDiagnosticService();
   }
@@ -132969,8 +132975,15 @@ var SubmissionController = class {
       const targetStudentId = request.params.studentId;
       const isAdmin = user?.roles?.includes("admin");
       const isTeacher = user?.roles?.includes("teacher");
-      if (!isAdmin && !isTeacher && user?.id !== targetStudentId) {
-        return reply.status(403).send({ error: "B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n xem h\u1ED3 s\u01A1 b\u1EB1ng ch\u1EE9ng c\u1EE7a h\u1ECDc vi\xEAn kh\xE1c" });
+      if (!isAdmin) {
+        if (isTeacher) {
+          const inScope = await isStudentInTeacherClasses(this.prisma, user.id, targetStudentId);
+          if (!inScope) {
+            return reply.status(403).send({ error: "B\u1EA1n ch\u1EC9 c\xF3 th\u1EC3 xem h\u1ED3 s\u01A1 b\u1EB1ng ch\u1EE9ng c\u1EE7a h\u1ECDc vi\xEAn thu\u1ED9c c\xE1c l\u1EDBp b\u1EA1n ph\u1EE5 tr\xE1ch" });
+          }
+        } else if (user?.id !== targetStudentId) {
+          return reply.status(403).send({ error: "B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n xem h\u1ED3 s\u01A1 b\u1EB1ng ch\u1EE9ng c\u1EE7a h\u1ECDc vi\xEAn kh\xE1c" });
+        }
       }
       const stats = await this.service.getStudentAcademicEvidenceStats(targetStudentId);
       return reply.send({ success: true, data: stats });

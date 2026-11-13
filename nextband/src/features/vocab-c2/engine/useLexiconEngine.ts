@@ -134,8 +134,8 @@ export function useLexiconEngine(currentUnitNumber: number = 1) {
         };
 
         // Combos and XP
-        let newCombo = isCorrect ? prev.currentCombo + 1 : 0;
-        let newMaxCombo = Math.max(prev.maxCombo, newCombo);
+        const newCombo = isCorrect ? prev.currentCombo + 1 : 0;
+        const newMaxCombo = Math.max(prev.maxCombo, newCombo);
 
         let earnedXp = 0;
         if (isCorrect) {
