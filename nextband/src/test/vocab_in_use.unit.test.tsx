@@ -850,4 +850,56 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     expect(within(badges2).getByText(/chỉ cần nhận biết/i)).toBeInTheDocument();
     expect(within(badges2).getByText(/Chủ đề nhạy cảm/i)).toBeInTheDocument();
   });
+
+  it("Accepts hyphen, punctuation and apostrophe variants when grading gap fills", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/19"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const ex192 = screen.getByTestId("exercise-ex-19-2");
+    const inputs = within(ex192).getAllByRole("textbox");
+    const values = [
+      "Disdain.",
+      "impetuosity",
+      "obstinacy",
+      "modesty",
+      "gullibility",
+      "reserve",
+      "garrulity",
+      "conceit",
+      "pig headedness"
+    ];
+    values.forEach((v, i) => fireEvent.change(inputs[i], { target: { value: v } }));
+    fireEvent.click(
+      within(ex192).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex192).getByText("Kết quả: 9/9")).toBeInTheDocument();
+  });
+
+  it("Hard mode hides the word bank and hints and persists the preference", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/19"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const ex193 = screen.getByTestId("exercise-ex-19-3");
+    expect(within(ex193).getByText(/Kho mảnh ghép/i)).toBeInTheDocument();
+    expect(within(ex193).getAllByText(/Gợi ý:/i).length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole("switch"));
+    expect(within(ex193).queryByText(/Kho mảnh ghép/i)).not.toBeInTheDocument();
+    expect(within(ex193).queryByText(/Gợi ý:/i)).not.toBeInTheDocument();
+    expect(localStorage.getItem("nb_vocab_in_use_hard_mode_v1")).toBe("1");
+
+    fireEvent.click(screen.getByRole("switch"));
+    expect(within(ex193).getByText(/Kho mảnh ghép/i)).toBeInTheDocument();
+    expect(localStorage.getItem("nb_vocab_in_use_hard_mode_v1")).toBe("0");
+  });
 });

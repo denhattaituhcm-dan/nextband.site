@@ -35,6 +35,7 @@ import {
 
 const BOOKMARKS_STORAGE_KEY = "nb_vocab_in_use_bookmarks_v1";
 const PROGRESS_STORAGE_KEY = "nb_vocab_in_use_progress_v1";
+const HARD_MODE_STORAGE_KEY = "nb_vocab_in_use_hard_mode_v1";
 
 type ViewMode = "split" | "left" | "right" | "bookmarks";
 
@@ -58,7 +59,16 @@ function speakEnglish(text: string) {
 }
 
 function normalizeAnswer(val: string): string {
-  return val.trim().toLowerCase().replace(/\s+/g, " ");
+  return val
+    .normalize("NFC")
+    .trim()
+    .toLowerCase()
+    .replace(/[\u2018\u2019\u02BC]/g, "'")
+    .replace(/(\d),(?=\d{3}\b)/g, "$1")
+    .replace(/[\u2010-\u2015-]/g, " ")
+    .replace(/[.,;:!?]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function isGapCorrect(
@@ -141,6 +151,24 @@ export default function VocabInUsePage() {
   );
 
   const [viewMode, setViewMode] = useState<ViewMode>("split");
+  const [hardMode, setHardMode] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(HARD_MODE_STORAGE_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+  const toggleHardMode = () => {
+    setHardMode((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(HARD_MODE_STORAGE_KEY, next ? "1" : "0");
+      } catch {
+        // storage unavailable: keep in-memory preference only
+      }
+      return next;
+    });
+  };
   const [catalogBookmarksOpen, setCatalogBookmarksOpen] = useState(false);
   const [selectedLexiconId, setSelectedLexiconId] = useState<string>(
     activeUnit.lexicon[0]?.id || ""
@@ -758,6 +786,26 @@ export default function VocabInUsePage() {
                   </div>
                 </div>
 
+                <div className="bg-white rounded-2xl border border-[#E6DDD0] px-5 py-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+                  <div className="text-sm text-[#4E453E]">
+                    <strong className="text-[#1F1A17]">Chế độ khó:</strong>{" "}
+                    ẩn kho mảnh ghép và gợi ý ở bài điền từ để tự truy hồi đáp án.
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={hardMode}
+                    onClick={toggleHardMode}
+                    className={`px-3.5 py-1.5 rounded-xl text-sm font-semibold border transition cursor-pointer ${
+                      hardMode
+                        ? "bg-[#002147] text-white border-[#002147]"
+                        : "bg-white text-[#1F1A17] border-[#DCCFBE] hover:border-[#C86D51]"
+                    }`}
+                  >
+                    {hardMode ? "Đang bật" : "Đang tắt"}
+                  </button>
+                </div>
+
                 {activeUnit.exercises.map((exercise) => {
                   const isChecked = Boolean(checkedExercises[exercise.id]);
                   const score = isChecked
@@ -808,6 +856,7 @@ export default function VocabInUsePage() {
                             onChangeAnswer={(qId, value) =>
                               setAnswers((prev) => ({ ...prev, [qId]: value }))
                             }
+                            hardMode={hardMode}
                             onPickWordBank={(word) =>
                               handleWordBankPick(exercise, word)
                             }
@@ -923,6 +972,7 @@ interface GapFillBodyProps {
   onFocusGap: (qId: string) => void;
   onChangeAnswer: (qId: string, value: string) => void;
   onPickWordBank: (word: string) => void;
+  hardMode: boolean;
 }
 
 function GapFillExerciseBody({
@@ -932,11 +982,12 @@ function GapFillExerciseBody({
   focusedGapId,
   onFocusGap,
   onChangeAnswer,
+  hardMode,
   onPickWordBank
 }: GapFillBodyProps) {
   return (
     <div className="space-y-4">
-      {exercise.wordBank && exercise.wordBank.length > 0 && (
+      {!hardMode && exercise.wordBank && exercise.wordBank.length > 0 && (
         <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EAE1D3] space-y-2.5">
           <div className="text-xs font-mono uppercase tracking-wider text-[#574D44] font-semibold">
             Kho mảnh ghép (chạm để điền vào ô đang chọn):
@@ -995,7 +1046,7 @@ function GapFillExerciseBody({
                 {q.promptAfter && <span>{q.promptAfter}</span>}
               </div>
 
-              {q.hint && !isChecked && (
+              {!hardMode && q.hint && !isChecked && (
                 <p className="text-xs text-[#574D44] mt-2">
                   Gợi ý: {q.hint}
                 </p>
