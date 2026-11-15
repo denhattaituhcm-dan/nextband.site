@@ -220,6 +220,67 @@ export function useVocabInUseBookmarks(activeUnitId?: number) {
     [isAuthenticated, getLocalBookmarks, saveLocalBookmarks]
   );
 
+  // 5b. Batch add bookmarks (Lưu hàng loạt từ Productive / cả Unit / từ làm sai)
+  const batchAddBookmarks = useCallback(
+    async (unitId: number, lexiconItems: LexiconItem[]) => {
+      if (!lexiconItems || lexiconItems.length === 0) return;
+      setSyncError(null);
+
+      const newItems = lexiconItems.filter(
+        (lex) => !bookmarkedKeys.includes(`${unitId}:${lex.id}`)
+      );
+      if (newItems.length === 0) return;
+
+      const payloads: VocabInUseBookmarkPayload[] = newItems.map((lex) => ({
+        unitId,
+        lexiconId: lex.id,
+        word: lex.word,
+        ipa: lex.ipa,
+        pos: lex.pos,
+        meaningVi: lex.meaningVi,
+        meaningEn: lex.meaningEn,
+        nuanceTip: lex.nuanceTip,
+        example: lex.example,
+        registerNote: lex.registerNote,
+        exampleSource: lex.exampleSource,
+        ieltsUse: lex.ieltsUse,
+        usageFlag: lex.usageFlag,
+      }));
+
+      if (!isAuthenticated) {
+        const locals = getLocalBookmarks();
+        const existingSet = new Set(
+          locals.map((l) => `${l.unitId}:${l.lexiconId}`)
+        );
+        const nowIso = new Date().toISOString();
+        const additions: LocalBookmarkPayload[] = payloads
+          .filter((p) => !existingSet.has(`${p.unitId}:${p.lexiconId}`))
+          .map((p) => ({ ...p, savedAt: nowIso }));
+
+        const next = [...locals, ...additions];
+        saveLocalBookmarks(next);
+        setBookmarkedKeys(next.map((l) => `${l.unitId}:${l.lexiconId}`));
+        return;
+      }
+
+      setIsSyncing(true);
+      try {
+        const updatedServerList = await vocabInUseApi.syncBookmarks(payloads);
+        setServerBookmarks(updatedServerList);
+        setBookmarkedKeys(
+          updatedServerList.map((b) => `${b.unitId}:${b.lexiconId}`)
+        );
+      } catch (err: any) {
+        setSyncError(
+          err.message || "Không thể lưu hàng loạt vào Sổ từ. Vui lòng thử lại."
+        );
+      } finally {
+        setIsSyncing(false);
+      }
+    },
+    [isAuthenticated, bookmarkedKeys, getLocalBookmarks, saveLocalBookmarks]
+  );
+
   // 6. Gửi kết quả ôn tập flashcard (SM-2)
   const submitReview = useCallback(
     async (bookmarkId: string, isCorrect: boolean, latencyMs?: number) => {
@@ -260,6 +321,7 @@ export function useVocabInUseBookmarks(activeUnitId?: number) {
     isLoadingDue,
     fetchDueReview,
     toggleBookmark,
+    batchAddBookmarks,
     submitReview,
     isLexiconBookmarked,
     totalBookmarked: bookmarkedKeys.length,

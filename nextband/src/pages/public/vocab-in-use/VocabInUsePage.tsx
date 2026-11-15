@@ -42,6 +42,8 @@ import {
 const BOOKMARKS_STORAGE_KEY = "nb_vocab_in_use_bookmarks_v1";
 const PROGRESS_STORAGE_KEY = "nb_vocab_in_use_progress_v1";
 const HARD_MODE_STORAGE_KEY = "nb_vocab_in_use_hard_mode_v1";
+const STUDY_GUIDE_STORAGE_KEY = "nb_vocab_in_use_guide_dismissed_v1";
+const SANDBOX_STORAGE_KEY = "nb_vocab_in_use_sandbox_v1";
 
 type ViewMode = "split" | "left" | "right" | "bookmarks";
 
@@ -139,6 +141,91 @@ function computeExerciseScore(
   return { correct, total: exercise.questions.length };
 }
 
+function matchLexiconFromTargetText(
+  targetText: string,
+  unitLexicon: LexiconItem[]
+): LexiconItem[] {
+  const normTarget = normalizeAnswer(targetText);
+  if (!normTarget) return [];
+  return unitLexicon.filter((lex) => {
+    const normWord = normalizeAnswer(lex.word);
+    const normId = normalizeAnswer(lex.id.replace(/_/g, " "));
+    if (normTarget === normWord || normTarget === normId) return true;
+    if (normTarget.includes(normWord) || normWord.includes(normTarget)) return true;
+    const stem = normWord.length >= 5 ? normWord.slice(0, 5) : normWord;
+    return stem.length >= 4 && normTarget.includes(stem);
+  });
+}
+
+function getMissedLexiconForExercise(
+  exercise: ExerciseBlock,
+  answers: Record<string, string>,
+  subAnswers: Record<string, string>,
+  unitLexicon: LexiconItem[]
+): LexiconItem[] {
+  const missedTargets: string[] = [];
+
+  if (exercise.kind === "gap_fill") {
+    for (const q of exercise.questions) {
+      if (!isGapCorrect(answers[q.id] || "", q.answer, q.acceptedAnswers)) {
+        missedTargets.push(q.answer);
+      }
+    }
+  } else if (exercise.kind === "classifier") {
+    for (const q of exercise.questions) {
+      const catOk = answers[q.id] === q.correctCategory;
+      const subOk = q.subCorrectAnswer
+        ? isGapCorrect(subAnswers[q.id] || "", q.subCorrectAnswer, q.subAcceptedAnswers)
+        : true;
+      if (!catOk || !subOk) {
+        missedTargets.push(q.highlightWord);
+        if (q.subCorrectAnswer) missedTargets.push(q.subCorrectAnswer);
+      }
+    }
+  } else if (exercise.kind === "sentence_upgrade") {
+    for (const q of exercise.questions) {
+      if (answers[q.id] !== q.correctOption) {
+        missedTargets.push(q.correctOption);
+      }
+    }
+  }
+
+  const matchedMap = new Map<string, LexiconItem>();
+  for (const t of missedTargets) {
+    for (const lex of matchLexiconFromTargetText(t, unitLexicon)) {
+      matchedMap.set(lex.id, lex);
+    }
+  }
+  return Array.from(matchedMap.values());
+}
+
+function maskWordInExample(example: string, word: string): string {
+  if (!example || !word) return example;
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const exactRegex = new RegExp(`\\b${escaped}[a-z]*\\b`, "gi");
+  if (exactRegex.test(example)) {
+    return example.replace(exactRegex, "_______");
+  }
+  const stem = word.length >= 5 ? word.slice(0, 5).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : "";
+  if (stem) {
+    const stemRegex = new RegExp(`\\b${stem}[a-z]*\\b`, "gi");
+    if (stemRegex.test(example)) {
+      return example.replace(stemRegex, "_______");
+    }
+  }
+  return example;
+}
+
+function doesDraftUseLexicon(draft: string, lex: LexiconItem): boolean {
+  const normDraft = normalizeAnswer(draft);
+  if (!normDraft) return false;
+  const normWord = normalizeAnswer(lex.word);
+  if (!normWord) return false;
+  if (normDraft.includes(normWord)) return true;
+  const stem = normWord.length >= 6 ? normWord.slice(0, 5) : "";
+  return Boolean(stem && normDraft.includes(stem));
+}
+
 export default function VocabInUsePage() {
   const { unitId: unitParam } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
@@ -175,6 +262,43 @@ export default function VocabInUsePage() {
       return next;
     });
   };
+  const [showStudyGuide, setShowStudyGuide] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(STUDY_GUIDE_STORAGE_KEY) !== "1";
+    } catch {
+      return true;
+    }
+  });
+  const toggleStudyGuide = (nextState?: boolean) => {
+    setShowStudyGuide((prev) => {
+      const next = typeof nextState === "boolean" ? nextState : !prev;
+      try {
+        localStorage.setItem(STUDY_GUIDE_STORAGE_KEY, next ? "0" : "1");
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  };
+  const [sandboxDrafts, setSandboxDrafts] = useState<Record<number, string>>(() => {
+    try {
+      const raw = localStorage.getItem(SANDBOX_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  });
+  const handleUpdateSandboxDraft = (uId: number, text: string) => {
+    setSandboxDrafts((prev) => {
+      const next = { ...prev, [uId]: text };
+      try {
+        localStorage.setItem(SANDBOX_STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  };
   const [catalogBookmarksOpen, setCatalogBookmarksOpen] = useState(false);
   const [selectedLexiconId, setSelectedLexiconId] = useState<string>(
     activeUnit.lexicon[0]?.id || ""
@@ -194,6 +318,7 @@ export default function VocabInUsePage() {
     bookmarkedKeys,
     isLexiconBookmarked,
     toggleBookmark: toggleBookmarkSync,
+    batchAddBookmarks,
     isSyncing,
     syncError,
     dueReviewItems,
@@ -403,6 +528,21 @@ export default function VocabInUsePage() {
           <div className="flex items-center gap-1.5 bg-white/10 p-1 rounded-xl border border-white/15 shrink-0">
             <button
               type="button"
+              data-testid="toggle-study-guide"
+              onClick={() => toggleStudyGuide()}
+              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                showStudyGuide
+                  ? "bg-amber-400/25 text-amber-200 border border-amber-300/30"
+                  : "text-slate-200 hover:text-white"
+              }`}
+              title="Bật/tắt hướng dẫn lộ trình 3 bước"
+            >
+              <Compass className="h-3.5 w-3.5 text-amber-300" />
+              <span className="hidden sm:inline">Cách học</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setViewMode("split")}
               className={`hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 viewMode === "split"
@@ -459,7 +599,73 @@ export default function VocabInUsePage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+        {viewMode !== "bookmarks" && showStudyGuide && (
+          <section
+            data-testid="unit-study-guide"
+            aria-label="Lộ trình 3 bước học Unit hiệu quả"
+            className="bg-gradient-to-r from-[#002147] via-[#0B2E59] to-[#163B6B] text-white rounded-3xl p-5 sm:p-6 shadow-md border border-white/10 space-y-4"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-amber-300 shrink-0" />
+                <span className="text-xs sm:text-sm font-mono uppercase tracking-wider text-amber-200 font-bold">
+                  Lộ trình Học Chuẩn Band 7.0 → 8.0+ (3 Bước · {activeUnit.estimatedMinutes} phút)
+                </span>
+              </div>
+              <button
+                type="button"
+                data-testid="dismiss-study-guide"
+                onClick={() => toggleStudyGuide(false)}
+                className="text-xs font-semibold px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 transition cursor-pointer"
+              >
+                Đã hiểu · Thu gọn
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+              <div
+                onClick={() => setViewMode("left")}
+                className="p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition cursor-pointer space-y-1"
+              >
+                <div className="text-xs font-mono font-bold text-amber-300 uppercase">
+                  Bước 1 · Nạp Ngữ cảnh &amp; Collocations
+                </div>
+                <p className="text-xs sm:text-sm text-slate-100 leading-relaxed">
+                  Đọc bài đọc <strong>Trang Trái</strong>, chạm các từ gạch chân để soi{" "}
+                  <em>Ngữ vực (Register) &amp; Ứng dụng IELTS</em> ở khung Inspector rồi đọc bảng lý thuyết A–B–C–D.
+                </p>
+              </div>
+
+              <div
+                onClick={() => setViewMode("right")}
+                className="p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition cursor-pointer space-y-1"
+              >
+                <div className="text-xs font-mono font-bold text-emerald-300 uppercase">
+                  Bước 2 · Truy hồi Chủ động &amp; Đặt câu
+                </div>
+                <p className="text-xs sm:text-sm text-slate-100 leading-relaxed">
+                  Làm bài tập <strong>Trang Phải</strong> (khuyến nghị bật{" "}
+                  <strong>Chế độ khó</strong> để ẩn gợi ý) và tự viết 2–3 câu thực chiến ở khung Sandbox cuối bài.
+                </p>
+              </div>
+
+              <div
+                onClick={() => setViewMode("bookmarks")}
+                className="p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 transition cursor-pointer space-y-1"
+              >
+                <div className="text-xs font-mono font-bold text-sky-300 uppercase">
+                  Bước 3 · Đóng băng Từ Hổng (SM-2)
+                </div>
+                <p className="text-xs sm:text-sm text-slate-100 leading-relaxed">
+                  Lưu nhanh các từ làm sai hoặc từ <em>Productive</em> vào{" "}
+                  <strong>Sổ từ</strong> để ôn ngắt quãng 1–3–7–14 ngày bằng thử thách điền khuyết.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
         {viewMode === "bookmarks" ? (
           <BookmarksDeckView
             items={savedBookmarkItems}
@@ -547,11 +753,77 @@ export default function VocabInUsePage() {
                       ))}
                     </div>
 
-                    {/* Quick Target Lexicon Strip */}
-                    <div className="pt-4 border-t border-[#F2ECE2]">
-                      <div className="text-xs font-mono uppercase tracking-wider text-[#574D44] font-semibold mb-2">
-                        Danh mục từ vựng mục tiêu ({activeUnit.lexicon.length}):
+                    {/* Quick Target Lexicon Strip + Batch Save */}
+                    <div className="pt-4 border-t border-[#F2ECE2] space-y-2.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="text-xs font-mono uppercase tracking-wider text-[#574D44] font-semibold">
+                          Danh mục từ vựng mục tiêu ({activeUnit.lexicon.length}):
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {activeUnit.lexicon.some(
+                            (l) =>
+                              l.ieltsUse === "productive" &&
+                              !isLexiconBookmarked(activeUnit.unitId, l.id)
+                          ) && (
+                            <button
+                              type="button"
+                              data-testid="batch-bookmark-productive"
+                              disabled={isSyncing}
+                              onClick={() =>
+                                batchAddBookmarks(
+                                  activeUnit.unitId,
+                                  activeUnit.lexicon.filter(
+                                    (l) => l.ieltsUse === "productive"
+                                  )
+                                )
+                              }
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition cursor-pointer"
+                            >
+                              <Bookmark className="h-3 w-3" />
+                              <span>+ Lưu từ Productive</span>
+                            </button>
+                          )}
+
+                          {activeUnit.lexicon.some(
+                            (l) => !isLexiconBookmarked(activeUnit.unitId, l.id)
+                          ) ? (
+                            <button
+                              type="button"
+                              data-testid="batch-bookmark-unit"
+                              disabled={isSyncing}
+                              onClick={() =>
+                                batchAddBookmarks(
+                                  activeUnit.unitId,
+                                  activeUnit.lexicon
+                                )
+                              }
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#FAF7F2] text-[#002147] border border-[#DCCFBE] hover:border-[#002147] transition cursor-pointer"
+                            >
+                              <Bookmark className="h-3 w-3 text-[#C86D51]" />
+                              <span>
+                                + Lưu cả Unit (
+                                {
+                                  activeUnit.lexicon.filter(
+                                    (l) =>
+                                      !isLexiconBookmarked(
+                                        activeUnit.unitId,
+                                        l.id
+                                      )
+                                  ).length
+                                }
+                                )
+                              </span>
+                            </button>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-900">
+                              <BookmarkCheck className="h-3 w-3" />
+                              Đã lưu trọn Unit
+                            </span>
+                          )}
+                        </div>
                       </div>
+
                       <div className="flex flex-wrap gap-1.5">
                         {activeUnit.lexicon.map((lex) => {
                           const isSelected = lex.id === activeLexicon?.id;
@@ -598,13 +870,13 @@ export default function VocabInUsePage() {
                             {activeLexicon.ipa}
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                        <div className="flex flex-wrap items-center gap-2 mt-1.5">
                           <span className="text-xs font-mono uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded text-white/90">
                             {activeLexicon.pos}
                           </span>
                           {activeLexicon.registerNote && (
-                            <span className="text-xs bg-amber-500/20 text-amber-200 px-2 py-0.5 rounded">
-                              {activeLexicon.registerNote}
+                            <span className="text-xs bg-amber-500/20 text-amber-200 px-2.5 py-0.5 rounded font-medium border border-amber-400/25">
+                              Ngữ vực: {activeLexicon.registerNote}
                             </span>
                           )}
                         </div>
@@ -653,7 +925,72 @@ export default function VocabInUsePage() {
                       </div>
                     </div>
 
+                    {/* Top Priority IELTS Strategy & Register Badges for Band 7.0+ */}
+                    {(activeLexicon.exampleSource ||
+                      activeLexicon.ieltsUse ||
+                      activeLexicon.usageFlag) && (
+                      <div
+                        className="flex flex-wrap items-center gap-2 pt-0.5"
+                        data-testid="lexicon-meta-badges"
+                      >
+                        {activeLexicon.ieltsUse && (
+                          <span
+                            className={`text-xs font-semibold px-2.5 py-1 rounded-lg border ${
+                              activeLexicon.ieltsUse === "productive"
+                                ? "bg-emerald-500/20 text-emerald-200 border-emerald-400/30"
+                                : "bg-sky-500/20 text-sky-200 border-sky-400/30"
+                            }`}
+                          >
+                            {activeLexicon.ieltsUse === "productive"
+                              ? "🎯 IELTS: Gợi ý dùng được khi nói/viết (Productive)"
+                              : "📖 IELTS: Gợi ý chỉ cần nhận biết (Receptive)"}
+                          </span>
+                        )}
+                        {activeLexicon.usageFlag && (
+                          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-200 border border-amber-400/30">
+                            {activeLexicon.usageFlag === "informal"
+                              ? "⚠️ Thân mật / informal (Tránh viết Task 2)"
+                              : activeLexicon.usageFlag === "uk-only"
+                                ? "🇬🇧 Thiên về Anh-Anh"
+                                : "⚠️ Chủ đề nhạy cảm"}
+                          </span>
+                        )}
+                        {activeLexicon.exampleSource && (
+                          <span className="text-xs px-2.5 py-1 rounded-lg bg-white/10 text-white/80">
+                            {activeLexicon.exampleSource === "book"
+                              ? "Ví dụ: theo sách gốc"
+                              : "Ví dụ: ARIS soạn"}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
                     <div className="space-y-3 text-sm sm:text-base">
+                      {/* Context & Collocation Example Box */}
+                      <div className="p-3.5 rounded-2xl bg-black/30 border border-amber-400/25 flex items-center justify-between gap-3">
+                        <div className="space-y-1">
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-amber-300/90 font-semibold block">
+                            Ngữ cảnh &amp; Cụm kết hợp (Collocation):
+                          </span>
+                          <p className="text-sm sm:text-base text-white font-serif italic leading-relaxed">
+                            “{activeLexicon.example}”
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => speakEnglish(activeLexicon.example)}
+                          title="Nghe câu ví dụ"
+                          className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-amber-200 shrink-0 cursor-pointer"
+                        >
+                          <Volume2 className="h-4 w-4" />
+                        </button>
+                      </div>
+
+                      <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs sm:text-sm text-amber-100 leading-relaxed">
+                        <strong className="text-amber-300">Sắc thái &amp; Cách dùng chuẩn IELTS:</strong>{" "}
+                        {activeLexicon.nuanceTip}
+                      </div>
+
                       <p className="text-white/95 leading-relaxed">
                         <strong className="text-amber-200">Nghĩa tiếng Việt:</strong>{" "}
                         {activeLexicon.meaningVi}
@@ -662,54 +999,54 @@ export default function VocabInUsePage() {
                         <strong className="text-white">English definition:</strong>{" "}
                         {activeLexicon.meaningEn}
                       </p>
-                      <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs sm:text-sm text-amber-100 leading-relaxed">
-                        <strong className="text-amber-300">Sắc thái & Ghi nhớ:</strong>{" "}
-                        {activeLexicon.nuanceTip}
-                      </div>
-                      {(activeLexicon.exampleSource ||
-                        activeLexicon.ieltsUse ||
-                        activeLexicon.usageFlag) && (
-                        <div
-                          className="flex flex-wrap items-center gap-2"
-                          data-testid="lexicon-meta-badges"
-                        >
-                          {activeLexicon.ieltsUse && (
-                            <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">
-                              {activeLexicon.ieltsUse === "productive"
-                                ? "Gợi ý: dùng được khi nói/viết"
-                                : "Gợi ý: chỉ cần nhận biết"}
-                            </span>
-                          )}
-                          {activeLexicon.usageFlag && (
-                            <span className="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-200">
-                              {activeLexicon.usageFlag === "informal"
-                                ? "Thân mật / informal"
-                                : activeLexicon.usageFlag === "uk-only"
-                                  ? "Thiên về Anh-Anh"
-                                  : "Chủ đề nhạy cảm"}
-                            </span>
-                          )}
-                          {activeLexicon.exampleSource && (
-                            <span className="text-xs px-2 py-0.5 rounded bg-white/10 text-white/80">
-                              {activeLexicon.exampleSource === "book"
-                                ? "Ví dụ: theo sách gốc"
-                                : "Ví dụ: ARIS soạn"}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between gap-2 pt-1 text-sm text-white/90 italic">
-                        <span>“{activeLexicon.example}”</span>
+                    </div>
+
+                    {/* Quick Word Stepper inside Inspector */}
+                    {activeUnit.lexicon.length > 1 && (
+                      <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2 text-xs">
                         <button
                           type="button"
-                          onClick={() => speakEnglish(activeLexicon.example)}
-                          title="Nghe câu ví dụ"
-                          className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-amber-200 shrink-0 cursor-pointer"
+                          data-testid="inspector-prev-word"
+                          onClick={() => {
+                            const idx = activeUnit.lexicon.findIndex(
+                              (l) => l.id === activeLexicon.id
+                            );
+                            const prevIdx =
+                              idx > 0 ? idx - 1 : activeUnit.lexicon.length - 1;
+                            setSelectedLexiconId(activeUnit.lexicon[prevIdx].id);
+                          }}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold transition cursor-pointer"
                         >
-                          <Volume2 className="h-4 w-4" />
+                          <ArrowLeft className="h-3.5 w-3.5" />
+                          <span>Từ trước</span>
+                        </button>
+
+                        <span className="font-mono text-white/70">
+                          Từ{" "}
+                          {activeUnit.lexicon.findIndex(
+                            (l) => l.id === activeLexicon.id
+                          ) + 1}{" "}
+                          / {activeUnit.lexicon.length}
+                        </span>
+
+                        <button
+                          type="button"
+                          data-testid="inspector-next-word"
+                          onClick={() => {
+                            const idx = activeUnit.lexicon.findIndex(
+                              (l) => l.id === activeLexicon.id
+                            );
+                            const nextIdx =
+                              idx < activeUnit.lexicon.length - 1 ? idx + 1 : 0;
+                            setSelectedLexiconId(activeUnit.lexicon[nextIdx].id);
+                          }}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold transition cursor-pointer"
+                        >
+                          <span>Từ tiếp</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
                         </button>
                       </div>
-                    </div>
+                    )}
                   </div>
                 )}
 
@@ -813,6 +1150,16 @@ export default function VocabInUsePage() {
                   const score = isChecked
                     ? computeExerciseScore(exercise, answers, subAnswers)
                     : null;
+                  const missedUnbookmarked = isChecked
+                    ? getMissedLexiconForExercise(
+                        exercise,
+                        answers,
+                        subAnswers,
+                        activeUnit.lexicon
+                      ).filter(
+                        (lex) => !isLexiconBookmarked(activeUnit.unitId, lex.id)
+                      )
+                    : [];
 
                   return (
                     <div
@@ -894,6 +1241,48 @@ export default function VocabInUsePage() {
                           />
                         )}
 
+                        {/* Mistake Auto-Capture Banner */}
+                        {isChecked && missedUnbookmarked.length > 0 && (
+                          <div
+                            data-testid={`missed-vocab-banner-${exercise.id}`}
+                            className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-3"
+                          >
+                            <div className="space-y-1">
+                              <div className="text-xs sm:text-sm font-bold text-amber-950">
+                                Phát hiện {missedUnbookmarked.length} từ bạn làm chưa đúng chưa có trong Sổ từ:
+                              </div>
+                              <div className="flex flex-wrap gap-1.5">
+                                {missedUnbookmarked.map((lex) => (
+                                  <span
+                                    key={lex.id}
+                                    className="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-xs font-mono font-bold text-[#9C4124]"
+                                  >
+                                    {lex.word}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              data-testid={`save-missed-vocab-${exercise.id}`}
+                              disabled={isSyncing}
+                              onClick={() =>
+                                batchAddBookmarks(
+                                  activeUnit.unitId,
+                                  missedUnbookmarked
+                                )
+                              }
+                              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#C86D51] hover:bg-[#B25A3F] text-white shadow-2xs transition cursor-pointer shrink-0"
+                            >
+                              <Bookmark className="h-3.5 w-3.5" />
+                              <span>
+                                Lưu ngay {missedUnbookmarked.length} từ làm sai vào Sổ từ SM-2
+                              </span>
+                            </button>
+                          </div>
+                        )}
+
                         {/* Action Bar */}
                         <div className="pt-3 border-t border-[#F2ECE2] flex flex-wrap items-center justify-between gap-3">
                           <button
@@ -918,6 +1307,85 @@ export default function VocabInUsePage() {
                     </div>
                   );
                 })}
+
+                {/* IELTS Active Production Sandbox (Band 7.0 -> 8.0+ Output Bridge) */}
+                <div
+                  data-testid="production-sandbox"
+                  className="bg-white rounded-3xl border border-[#E6DDD0] shadow-sm overflow-hidden"
+                >
+                  <div className="px-6 py-4 border-b border-[#F2ECE2] bg-[#002147] text-white flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <span className="text-xs font-mono uppercase tracking-wider text-amber-300 font-bold">
+                        Bước chuyển hóa · Receptive → Productive
+                      </span>
+                      <h3 className="font-serif text-lg sm:text-xl font-bold text-white mt-0.5">
+                        Thử thách Viết câu IELTS Thực chiến (Active Output Sandbox)
+                      </h3>
+                    </div>
+
+                    <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-400/20 text-emerald-200 border border-emerald-400/30">
+                      Đã vận dụng:{" "}
+                      {
+                        activeUnit.lexicon.filter((lex) =>
+                          doesDraftUseLexicon(
+                            sandboxDrafts[activeUnit.unitId] || "",
+                            lex
+                          )
+                        ).length
+                      }
+                      /{activeUnit.lexicon.length} từ
+                    </span>
+                  </div>
+
+                  <div className="p-6 space-y-4">
+                    <p className="text-sm text-[#3A312B] leading-relaxed">
+                      Để thực sự sở hữu từ vựng ở mức <strong>Band 7.5–8.0+</strong>, hãy tự viết{" "}
+                      <strong>2–3 câu trả lời Speaking Part 3 hoặc luận điểm Writing Task 2</strong> về chủ đề{" "}
+                      <strong className="text-[#002147]">
+                        “{activeUnit.titleEn} ({activeUnit.titleVi})”
+                      </strong>{" "}
+                      có sử dụng ít nhất 3 từ vựng dưới đây:
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5">
+                      {activeUnit.lexicon.slice(0, 8).map((lex) => {
+                        const used = doesDraftUseLexicon(
+                          sandboxDrafts[activeUnit.unitId] || "",
+                          lex
+                        );
+                        return (
+                          <button
+                            key={lex.id}
+                            type="button"
+                            onClick={() => setSelectedLexiconId(lex.id)}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                              used
+                                ? "bg-emerald-600 text-white border-emerald-600"
+                                : "bg-[#FAF7F2] text-[#3A312B] border-[#E6DDD0] hover:border-[#002147]"
+                            }`}
+                          >
+                            {used && <CheckCircle2 className="h-3 w-3 shrink-0" />}
+                            <span>{lex.word}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <textarea
+                      data-testid="production-sandbox-input"
+                      rows={3}
+                      value={sandboxDrafts[activeUnit.unitId] || ""}
+                      onChange={(e) =>
+                        handleUpdateSandboxDraft(
+                          activeUnit.unitId,
+                          e.target.value
+                        )
+                      }
+                      placeholder={`Viết thử 2–3 câu vận dụng các từ như "${activeUnit.lexicon[0]?.word}", "${activeUnit.lexicon[1]?.word || ""}"... (Tự động lưu nháp trên trình duyệt)`}
+                      className="w-full p-3.5 rounded-2xl border border-[#CBBBA4] bg-[#FAF7F2]/60 text-sm sm:text-base text-[#1F1A17] focus:outline-none focus:border-[#002147] focus:bg-white transition leading-relaxed"
+                    />
+                  </div>
+                </div>
               </section>
             )}
           </div>
@@ -1306,7 +1774,11 @@ interface BookmarksDeckProps {
   onRemove: (unitId: number, lexiconId: string) => void;
   onJumpToUnit: (unitId: number, lexiconId: string) => void;
   dueReviewItems?: VocabInUseBookmarkRecord[];
-  onSubmitReview?: (bookmarkId: string, isCorrect: boolean) => Promise<void>;
+  onSubmitReview?: (
+    bookmarkId: string,
+    isCorrect: boolean,
+    latencyMs?: number
+  ) => Promise<void>;
   isAuthenticated?: boolean;
   isSyncing?: boolean;
   syncError?: string | null;
@@ -1324,16 +1796,39 @@ function BookmarksDeckView({
 }: BookmarksDeckProps) {
   const [reviewIndex, setReviewIndex] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [recallInput, setRecallInput] = useState("");
+  const [recallResult, setRecallResult] = useState<"correct" | "wrong" | null>(
+    null
+  );
   const [isReviewSubmitting, setIsReviewSubmitting] = useState(false);
+  const cardShownAtRef = useRef<number>(Date.now());
 
   const currentDueItem = dueReviewItems[reviewIndex];
 
+  useEffect(() => {
+    cardShownAtRef.current = Date.now();
+    setRecallInput("");
+    setRecallResult(null);
+    setIsRevealed(false);
+  }, [currentDueItem?.id]);
+
+  const handleCheckRecall = () => {
+    if (!currentDueItem) return;
+    const ok = isGapCorrect(recallInput, currentDueItem.word);
+    setRecallResult(ok ? "correct" : "wrong");
+    setIsRevealed(true);
+    speakEnglish(currentDueItem.word);
+  };
+
   const handleReviewAnswer = async (isCorrect: boolean) => {
     if (!currentDueItem || !onSubmitReview || isReviewSubmitting) return;
+    const latencyMs = Math.max(100, Date.now() - cardShownAtRef.current);
     setIsReviewSubmitting(true);
     try {
-      await onSubmitReview(currentDueItem.id, isCorrect);
+      await onSubmitReview(currentDueItem.id, isCorrect, latencyMs);
       setIsRevealed(false);
+      setRecallInput("");
+      setRecallResult(null);
       if (reviewIndex >= dueReviewItems.length - 1) {
         setReviewIndex(0);
       }
@@ -1370,7 +1865,7 @@ function BookmarksDeckView({
         </div>
       )}
 
-      {/* Spaced Repetition Due Review Box */}
+      {/* Spaced Repetition Due Review Box (Active Cloze Recall) */}
       {isAuthenticated && dueReviewItems.length > 0 && currentDueItem && (
         <div
           data-testid="due-review-card"
@@ -1380,7 +1875,7 @@ function BookmarksDeckView({
             <div className="flex items-center gap-2">
               <Brain className="h-5 w-5 text-amber-300" />
               <h3 className="font-serif text-lg sm:text-xl font-bold">
-                Ôn tập Trí nhớ Dài hạn (SM-2)
+                Ôn tập Trí nhớ Dài hạn (SM-2 · Active Recall)
               </h3>
             </div>
             <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-amber-400 text-[#002147]">
@@ -1388,45 +1883,113 @@ function BookmarksDeckView({
             </span>
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-baseline gap-3">
-              <span className="text-2xl font-serif font-bold text-amber-200">
-                {currentDueItem.word}
-              </span>
-              {currentDueItem.ipa && (
-                <span className="text-sm font-mono text-white/70">
-                  {currentDueItem.ipa}
-                </span>
-              )}
+          <div className="space-y-3">
+            {/* Meaning Prompt & POS */}
+            <div className="flex flex-wrap items-center gap-2">
               {currentDueItem.pos && (
-                <span className="text-xs uppercase font-mono px-2 py-0.5 rounded bg-white/10 text-white/90">
+                <span className="text-xs uppercase font-mono px-2.5 py-0.5 rounded bg-amber-400/20 text-amber-200 border border-amber-400/30 font-bold">
                   {currentDueItem.pos}
                 </span>
               )}
+              <span className="text-base sm:text-lg font-medium text-emerald-200">
+                <strong>Nghĩa gợi mở:</strong> {currentDueItem.meaningVi}
+              </span>
             </div>
 
+            {/* Cloze Example or Revealed Example */}
             {currentDueItem.example && (
-              <p className="text-sm text-white/80 italic">
-                “{currentDueItem.example}”
+              <p
+                data-testid="sm2-example-sentence"
+                className="text-sm sm:text-base text-white/90 italic bg-black/20 p-3.5 rounded-2xl border border-white/10"
+              >
+                “
+                {isRevealed
+                  ? currentDueItem.example
+                  : maskWordInExample(
+                      currentDueItem.example,
+                      currentDueItem.word
+                    )}
+                ”
               </p>
             )}
 
-            {isRevealed ? (
-              <div className="pt-3 space-y-2 border-t border-white/10">
-                <p className="text-base font-medium text-emerald-200">
-                  <strong>Nghĩa:</strong> {currentDueItem.meaningVi}
-                </p>
+            {!isRevealed ? (
+              <div className="space-y-3 pt-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    type="text"
+                    data-testid="sm2-recall-input"
+                    value={recallInput}
+                    onChange={(e) => setRecallInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleCheckRecall();
+                      }
+                    }}
+                    placeholder="Gõ lại từ tiếng Anh cần điền..."
+                    className="flex-1 min-w-[200px] px-3.5 py-2 rounded-xl bg-white text-[#002147] font-semibold text-sm sm:text-base focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    data-testid="sm2-check-btn"
+                    onClick={handleCheckRecall}
+                    className="py-2 px-4 rounded-xl text-sm font-bold bg-amber-400 hover:bg-amber-300 text-[#002147] transition cursor-pointer"
+                  >
+                    Kiểm tra từ
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsRevealed(true)}
+                    className="py-2 px-4 rounded-xl text-sm font-bold bg-white/10 hover:bg-white/20 text-amber-200 transition cursor-pointer"
+                  >
+                    👁️ Hiện nghĩa tiếng Việt &amp; Sắc thái
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="pt-3 space-y-3 border-t border-white/10">
+                <div className="flex flex-wrap items-baseline justify-between gap-3">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-2xl font-serif font-bold text-amber-200">
+                      {currentDueItem.word}
+                    </span>
+                    {currentDueItem.ipa && (
+                      <span className="text-sm font-mono text-white/70">
+                        {currentDueItem.ipa}
+                      </span>
+                    )}
+                  </div>
+
+                  {recallResult && (
+                    <span
+                      data-testid="sm2-recall-feedback"
+                      className={`text-xs font-bold px-3 py-1 rounded-full ${
+                        recallResult === "correct"
+                          ? "bg-emerald-500/30 text-emerald-100 border border-emerald-400/40"
+                          : "bg-rose-500/30 text-rose-100 border border-rose-400/40"
+                      }`}
+                    >
+                      {recallResult === "correct"
+                        ? "🎉 Chính xác! Bạn đã tự truy hồi đúng từ vựng."
+                        : `Chưa khớp (Bạn gõ: "${recallInput || "trống"}")`}
+                    </span>
+                  )}
+                </div>
+
                 {currentDueItem.nuanceTip && (
-                  <p className="text-xs text-amber-100/90 bg-white/5 p-2.5 rounded-xl border border-white/10">
-                    💡 <strong>Ghi nhớ:</strong> {currentDueItem.nuanceTip}
+                  <p className="text-xs sm:text-sm text-amber-100/90 bg-white/5 p-3 rounded-xl border border-white/10">
+                    💡 <strong>Sắc thái &amp; Ghi nhớ:</strong>{" "}
+                    {currentDueItem.nuanceTip}
                   </p>
                 )}
-                <div className="flex flex-wrap gap-3 pt-2">
+
+                <div className="flex flex-wrap gap-3 pt-1">
                   <button
                     type="button"
                     disabled={isReviewSubmitting}
                     onClick={() => handleReviewAnswer(false)}
-                    className="flex-1 py-2 px-4 rounded-xl text-sm font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/30 transition cursor-pointer"
+                    className="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/30 transition cursor-pointer"
                   >
                     ❌ Chưa nhớ (Ôn lại sau 1 ngày)
                   </button>
@@ -1434,21 +1997,11 @@ function BookmarksDeckView({
                     type="button"
                     disabled={isReviewSubmitting}
                     onClick={() => handleReviewAnswer(true)}
-                    className="flex-1 py-2 px-4 rounded-xl text-sm font-bold bg-emerald-500/30 hover:bg-emerald-500/40 text-emerald-100 border border-emerald-400/40 transition cursor-pointer"
+                    className="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold bg-emerald-500/30 hover:bg-emerald-500/40 text-emerald-100 border border-emerald-400/40 transition cursor-pointer"
                   >
                     ✅ Đã nhớ (+{currentDueItem.intervalDays === 1 ? 3 : 7} ngày)
                   </button>
                 </div>
-              </div>
-            ) : (
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsRevealed(true)}
-                  className="py-2 px-4 rounded-xl text-sm font-bold bg-white/10 hover:bg-white/20 text-amber-200 transition cursor-pointer"
-                >
-                  👁️ Hiện nghĩa tiếng Việt & Sắc thái
-                </button>
               </div>
             )}
           </div>

@@ -902,4 +902,123 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     expect(within(ex193).getByText(/Kho mảnh ghép/i)).toBeInTheDocument();
     expect(localStorage.getItem("nb_vocab_in_use_hard_mode_v1")).toBe("0");
   });
+
+  it("Displays 3-Step Study Guide, allows collapsing with persistence, and navigates words via Inspector Stepper", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/19"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // 3-Step Study Guide is visible by default
+    expect(screen.getByTestId("unit-study-guide")).toBeInTheDocument();
+
+    // Dismissing hides the guide and persists in localStorage
+    fireEvent.click(screen.getByTestId("dismiss-study-guide"));
+    expect(screen.queryByTestId("unit-study-guide")).not.toBeInTheDocument();
+    expect(localStorage.getItem("nb_vocab_in_use_guide_dismissed_v1")).toBe("1");
+
+    // Re-opening from header button restores the guide
+    fireEvent.click(screen.getByTestId("toggle-study-guide"));
+    expect(screen.getByTestId("unit-study-guide")).toBeInTheDocument();
+
+    // Inspector stepper cycles through Unit 19 words without hunting in passage
+    const unit19 = getVocabInUseUnit(19);
+    const inspector = screen.getByTestId("lexicon-inspector");
+    expect(within(inspector).getByText(unit19.lexicon[0].word)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("inspector-next-word"));
+    expect(within(inspector).getByText(unit19.lexicon[1].word)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("inspector-prev-word"));
+    expect(within(inspector).getByText(unit19.lexicon[0].word)).toBeInTheDocument();
+  });
+
+  it("Supports 1-click batch bookmarking of Productive words and entire Unit", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/20"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const unit20 = getVocabInUseUnit(20);
+    const productiveCount = unit20.lexicon.filter(
+      (l) => l.ieltsUse === "productive"
+    ).length;
+    expect(productiveCount).toBeGreaterThan(0);
+    expect(productiveCount).toBeLessThan(unit20.lexicon.length);
+
+    // Click "+ Lưu từ Productive"
+    fireEvent.click(screen.getByTestId("batch-bookmark-productive"));
+    expect(
+      screen.getByRole("button", { name: new RegExp(`Sổ từ \\(${productiveCount}\\)`, "i") })
+    ).toBeInTheDocument();
+
+    // Click "+ Lưu cả Unit" to bookmark the remaining words
+    fireEvent.click(screen.getByTestId("batch-bookmark-unit"));
+    expect(
+      screen.getByRole("button", {
+        name: new RegExp(`Sổ từ \\(${unit20.lexicon.length}\\)`, "i"),
+      })
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Đã lưu trọn Unit/i)).toBeInTheDocument();
+  });
+
+  it("Detects missed vocabulary after checking an exercise and saves them in 1 click", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/20"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const ex205 = screen.getByTestId("exercise-ex-20-5");
+    // Submit empty answers so all items are marked wrong
+    fireEvent.click(
+      within(ex205).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+
+    const missedBanner = screen.getByTestId("missed-vocab-banner-ex-20-5");
+    expect(missedBanner).toBeInTheDocument();
+
+    const saveMissedBtn = screen.getByTestId("save-missed-vocab-ex-20-5");
+    fireEvent.click(saveMissedBtn);
+
+    // Banner disappears once all missed words are saved into Sổ từ
+    expect(
+      screen.queryByTestId("missed-vocab-banner-ex-20-5")
+    ).not.toBeInTheDocument();
+  });
+
+  it("Tracks used Unit words live in the IELTS Active Production Sandbox and persists drafts", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/19"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const sandbox = screen.getByTestId("production-sandbox");
+    expect(within(sandbox).getByText(/Đã vận dụng: 0\//i)).toBeInTheDocument();
+
+    const unit19 = getVocabInUseUnit(19);
+    const word1 = unit19.lexicon[0].word;
+    const word2 = unit19.lexicon[1].word;
+
+    const textarea = screen.getByTestId("production-sandbox-input");
+    fireEvent.change(textarea, {
+      target: {
+        value: `In modern workplaces, ${word1} and ${word2} often shape how leaders collaborate.`,
+      },
+    });
+
+    expect(within(sandbox).getByText(/Đã vận dụng: 2\//i)).toBeInTheDocument();
+    expect(localStorage.getItem("nb_vocab_in_use_sandbox_v1")).toContain(word1);
+  });
 });
