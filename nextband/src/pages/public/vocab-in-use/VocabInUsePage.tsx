@@ -1328,6 +1328,18 @@ function UnitCatalogView({
   onJumpToUnit
 }: UnitCatalogViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedChapter, setSelectedChapter] = useState<string>("all");
+
+  const chapterOptions = useMemo(() => {
+    const counts = new Map<string, number>();
+    VOCAB_IN_USE_UNITS.forEach((u) => {
+      counts.set(u.chapterTitle, (counts.get(u.chapterTitle) || 0) + 1);
+    });
+    return Array.from(counts.entries()).map(([title, count]) => ({
+      title,
+      count
+    }));
+  }, []);
 
   const totalLexiconCount = useMemo(
     () => VOCAB_IN_USE_UNITS.reduce((sum, u) => sum + u.lexicon.length, 0),
@@ -1349,9 +1361,12 @@ function UnitCatalogView({
 
   const filteredUnits = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return VOCAB_IN_USE_UNITS;
-    return VOCAB_IN_USE_UNITS.filter(
-      (u) =>
+    return VOCAB_IN_USE_UNITS.filter((u) => {
+      const matchesChapter =
+        selectedChapter === "all" || u.chapterTitle === selectedChapter;
+      if (!matchesChapter) return false;
+      if (!q) return true;
+      return (
         `unit ${u.unitId}`.includes(q) ||
         u.titleEn.toLowerCase().includes(q) ||
         u.titleVi.toLowerCase().includes(q) ||
@@ -1362,8 +1377,9 @@ function UnitCatalogView({
             l.word.toLowerCase().includes(q) ||
             l.meaningVi.toLowerCase().includes(q)
         )
-    );
-  }, [searchQuery]);
+      );
+    });
+  }, [searchQuery, selectedChapter]);
 
   return (
     <div
@@ -1494,40 +1510,78 @@ function UnitCatalogView({
               </div>
             </section>
 
-            {/* Search Bar */}
+            {/* Search Bar & Chapter Filters */}
             <section
               aria-label="Tìm kiếm Unit"
-              className="bg-white rounded-2xl border border-[#E6DDD0] p-4 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3"
+              className="bg-white rounded-2xl border border-[#E6DDD0] p-4 shadow-2xs space-y-3"
             >
-              <div className="relative flex-1">
-                <Search className="h-4 w-4 text-[#574D44] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Tìm Unit theo tên, chủ đề tiếng Việt hoặc từ vựng (e.g., sits, underfunded, jargon)..."
-                  aria-label="Tìm kiếm Unit"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#DCCFBE] bg-[#FAF7F2]/60 text-sm sm:text-base text-[#1F1A17] placeholder:text-[#574D44]/70 focus:outline-none focus:border-[#002147] focus:bg-white transition"
-                />
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="relative flex-1">
+                  <Search className="h-4 w-4 text-[#574D44] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Tìm Unit theo tên, chủ đề tiếng Việt hoặc từ vựng (e.g., sits, flexi-time, plagiarism)..."
+                    aria-label="Tìm kiếm Unit"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#DCCFBE] bg-[#FAF7F2]/60 text-sm sm:text-base text-[#1F1A17] placeholder:text-[#574D44]/70 focus:outline-none focus:border-[#002147] focus:bg-white transition"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between sm:justify-end gap-3 text-xs sm:text-sm text-[#4E453E] shrink-0 px-1">
+                  <span>
+                    Hiển thị{" "}
+                    <strong className="text-[#1F1A17]">
+                      {filteredUnits.length}/{VOCAB_IN_USE_UNITS.length} Units
+                    </strong>
+                  </span>
+                  {(searchQuery.trim() || selectedChapter !== "all") && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setSelectedChapter("all");
+                      }}
+                      className="text-xs sm:text-sm font-semibold text-[#C86D51] hover:underline cursor-pointer"
+                    >
+                      Xóa lọc
+                    </button>
+                  )}
+                </div>
               </div>
 
-              <div className="flex items-center justify-between sm:justify-end gap-3 text-xs sm:text-sm text-[#4E453E] shrink-0 px-1">
-                <span>
-                  Hiển thị{" "}
-                  <strong className="text-[#1F1A17]">
-                    {filteredUnits.length}/{VOCAB_IN_USE_UNITS.length} Units
-                  </strong>
-                </span>
-                {searchQuery.trim() && (
+              {chapterOptions.length > 1 && (
+                <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#F2ECE2]">
+                  <span className="text-xs font-semibold text-[#574D44] mr-1">
+                    Chủ đề:
+                  </span>
                   <button
                     type="button"
-                    onClick={() => setSearchQuery("")}
-                    className="text-xs sm:text-sm font-semibold text-[#C86D51] hover:underline cursor-pointer"
+                    onClick={() => setSelectedChapter("all")}
+                    className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
+                      selectedChapter === "all"
+                        ? "bg-[#002147] text-white shadow-2xs"
+                        : "bg-[#FAF7F2] text-[#4E453E] border border-[#E6DDD0] hover:border-[#002147]"
+                    }`}
                   >
-                    Xóa lọc
+                    Tất cả ({VOCAB_IN_USE_UNITS.length})
                   </button>
-                )}
-              </div>
+                  {chapterOptions.map((ch) => (
+                    <button
+                      key={ch.title}
+                      type="button"
+                      onClick={() => setSelectedChapter(ch.title)}
+                      className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
+                        selectedChapter === ch.title
+                          ? "bg-[#002147] text-white shadow-2xs"
+                          : "bg-[#FAF7F2] text-[#4E453E] border border-[#E6DDD0] hover:border-[#002147]"
+                      }`}
+                    >
+                      {ch.title} ({ch.count})
+                    </button>
+                  ))}
+                </div>
+              )}
             </section>
 
             {/* Digitized Units Grid */}
@@ -1554,7 +1608,10 @@ function UnitCatalogView({
                   </p>
                   <button
                     type="button"
-                    onClick={() => setSearchQuery("")}
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSelectedChapter("all");
+                    }}
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#002147] text-white text-sm font-semibold cursor-pointer"
                   >
                     Hiển thị tất cả Units

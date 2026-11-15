@@ -1,6 +1,8 @@
 export * from "./types";
 import type { VocabInUseUnit, RoadmapChapter } from "./types";
 import { VOCAB_IN_USE_UNITS_4_TO_6 } from "./units4to6";
+import { VOCAB_IN_USE_UNITS_7_TO_9 } from "./units7to9";
+import { VOCAB_IN_USE_UNITS_10_TO_12 } from "./units10to12";
 
 export const ROADMAP_CHAPTERS: RoadmapChapter[] = [
   {
@@ -24,11 +26,14 @@ export const ROADMAP_CHAPTERS: RoadmapChapter[] = [
     titleVi: "Công việc, Sự nghiệp & Học thuật",
     unitRange: "Units 7 – 12",
     sampleTopics: [
-      "Colleagues & Routines (flexi-time, job-share)",
-      "Career & Promotion (perks, glass ceiling)",
-      "Academic Study & Education Debates"
+      "Unit 7: Colleagues & Routines (flexi-time, job-share)",
+      "Unit 8: Career & Promotion (perks, glass ceiling)",
+      "Unit 9: Business 1 (niche market, entrepreneurship)",
+      "Unit 10: Business 2 (submit a tender, square deal)",
+      "Unit 11: Study & Academic Work (dissertation, plagiarism)",
+      "Unit 12: Education Debates (elitism, league tables)"
     ],
-    status: "upcoming"
+    status: "live"
   },
   {
     chapterNumber: 3,
@@ -1979,7 +1984,9 @@ export const VOCAB_IN_USE_UNITS: VocabInUseUnit[] = [
       }
     ]
   },
-  ...VOCAB_IN_USE_UNITS_4_TO_6
+  ...VOCAB_IN_USE_UNITS_4_TO_6,
+  ...VOCAB_IN_USE_UNITS_7_TO_9,
+  ...VOCAB_IN_USE_UNITS_10_TO_12
 ];
 
 export function getVocabInUseUnit(unitId: number): VocabInUseUnit {

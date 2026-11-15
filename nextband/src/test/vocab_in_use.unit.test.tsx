@@ -9,8 +9,11 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     localStorage.clear();
   });
 
-  it("Validates complete data integrity across Units 1 to 6", () => {
-    expect(VOCAB_IN_USE_UNITS).toHaveLength(6);
+  it("Validates complete data integrity across Units 1 to 12", () => {
+    expect(VOCAB_IN_USE_UNITS).toHaveLength(12);
+    expect(VOCAB_IN_USE_UNITS.map((u) => u.unitId)).toEqual([
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+    ]);
 
     for (const unit of VOCAB_IN_USE_UNITS) {
       expect(unit.passageParagraphs.length).toBeGreaterThanOrEqual(2);
@@ -47,7 +50,7 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     expect(getVocabInUseUnit(999).unitId).toBe(1);
   });
 
-  it("Renders Unit Catalog hub at /vocab-in-use without entering exercises immediately, then navigates to Unit 1 on selection", () => {
+  it("Renders Unit Catalog hub at /vocab-in-use without entering exercises immediately, filters chapters, then navigates to Unit 1 on selection", () => {
     render(
       <MemoryRouter initialEntries={["/vocab-in-use"]}>
         <Routes>
@@ -58,12 +61,17 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     );
 
     expect(screen.getByTestId("vocab-in-use-catalog")).toBeInTheDocument();
+    for (let id = 1; id <= 12; id++) {
+      expect(screen.getByTestId(`unit-card-${id}`)).toBeInTheDocument();
+    }
+
+    // Chapter filter narrows to Work and Study (Units 7-12)
+    fireEvent.click(screen.getByRole("button", { name: /Work and Study \(6\)/i }));
+    expect(screen.queryByTestId("unit-card-1")).not.toBeInTheDocument();
+    expect(screen.getByTestId("unit-card-7")).toBeInTheDocument();
+    expect(screen.getByTestId("unit-card-12")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Tất cả \(12\)/i }));
     expect(screen.getByTestId("unit-card-1")).toBeInTheDocument();
-    expect(screen.getByTestId("unit-card-2")).toBeInTheDocument();
-    expect(screen.getByTestId("unit-card-3")).toBeInTheDocument();
-    expect(screen.getByTestId("unit-card-4")).toBeInTheDocument();
-    expect(screen.getByTestId("unit-card-5")).toBeInTheDocument();
-    expect(screen.getByTestId("unit-card-6")).toBeInTheDocument();
 
     // Unit 1 passage & exercise workspace should NOT render on the catalog root route
     expect(
@@ -79,7 +87,10 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     fireEvent.change(searchInput, { target: { value: "" } });
 
     // Enter Unit 1 via its CTA link
-    const enterUnit1Link = screen.getByRole("link", { name: /Vào học Unit 1/i });
+    const enterUnit1Link = within(screen.getByTestId("unit-card-1")).getByRole(
+      "link",
+      { name: /Vào học Unit 1$/i }
+    );
     fireEvent.click(enterUnit1Link);
 
     expect(
@@ -312,5 +323,185 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
       within(ex64).getByRole("button", { name: /Kiểm tra đáp án/i })
     );
     expect(within(ex64).getByText("Kết quả: 2/6")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 7 Colleagues & Routines exercises and grades Gap Fill accurately", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/7"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Inside the Modern Workspace: Colleagues, Clocks, and Calling/i)
+    ).toBeInTheDocument();
+
+    const ex71 = screen.getByTestId("exercise-ex-7-1");
+    const inputs = within(ex71).getAllByRole("textbox");
+    expect(inputs).toHaveLength(5);
+
+    fireEvent.change(inputs[0], { target: { value: "working relationship" } });
+    fireEvent.change(inputs[1], { target: { value: "rapport" } });
+    fireEvent.change(inputs[2], { target: { value: "opposite number" } });
+    fireEvent.change(inputs[3], { target: { value: "socialise with" } });
+    fireEvent.change(inputs[4], { target: { value: "talk shop" } });
+
+    fireEvent.click(
+      within(ex71).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex71).getByText("Kết quả: 5/5")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 8 Career & Promotion exercises and grades Classifier & Gap Fill", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/8"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Climbing the Ladder: Ambition, Perks, and Invisible Ceilings/i)
+    ).toBeInTheDocument();
+
+    const ex84 = screen.getByTestId("exercise-ex-8-4");
+    const negButtons = within(ex84).getAllByRole("button", {
+      name: /Trở ngại & Từ chối \(-\)/i
+    });
+    const posButtons = within(ex84).getAllByRole("button", {
+      name: /Thăng tiến & Đãi ngộ \(\+\)/i
+    });
+    fireEvent.click(negButtons[0]); // glass ceiling (-)
+    fireEvent.click(posButtons[1]); // perks (+)
+    fireEvent.click(posButtons[7]); // high-flyer (+)
+
+    fireEvent.click(
+      within(ex84).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex84).getByText("Kết quả: 3/8")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 9 Business 1 exercises and grades Sentence Upgrade accurately", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/9"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/From Cold Calls to Boardroom Deals: The Vocabulary of Commerce/i)
+    ).toBeInTheDocument();
+
+    const ex93 = screen.getByTestId("exercise-ex-9-3");
+    fireEvent.click(within(ex93).getByRole("button", { name: "hammer out a deal" }));
+    fireEvent.click(within(ex93).getByRole("button", { name: "red tape" }));
+    fireEvent.click(within(ex93).getByRole("button", { name: "entrepreneurship" }));
+
+    fireEvent.click(
+      within(ex93).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex93).getByText("Kết quả: 3/6")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 10 Business 2 exercises and grades Contracts & Collocations", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/10"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Contracts, Clauses, and the Human Factor in Enterprise/i)
+    ).toBeInTheDocument();
+
+    const ex102 = screen.getByTestId("exercise-ex-10-2");
+    const inputs = within(ex102).getAllByRole("textbox");
+    expect(inputs).toHaveLength(6);
+
+    fireEvent.change(inputs[0], { target: { value: "project" } });
+    fireEvent.change(inputs[1], { target: { value: "flaw" } });
+    fireEvent.change(inputs[2], { target: { value: "Resources" } });
+    fireEvent.change(inputs[3], { target: { value: "morale" } });
+    fireEvent.change(inputs[4], { target: { value: "lack" } });
+    fireEvent.change(inputs[5], { target: { value: "employee" } });
+
+    fireEvent.click(
+      within(ex102).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex102).getByText("Kết quả: 6/6")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 11 Study & Academic Work and grades Written Genres Gap Fill", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/11"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Inside the Seminar Room: From First Draft to Doctoral Thesis/i)
+    ).toBeInTheDocument();
+
+    const ex111 = screen.getByTestId("exercise-ex-11-1");
+    const inputs = within(ex111).getAllByRole("textbox");
+    expect(inputs).toHaveLength(7);
+
+    fireEvent.change(inputs[0], { target: { value: "thesis" } });
+    fireEvent.change(inputs[1], { target: { value: "composition" } });
+    fireEvent.change(inputs[2], { target: { value: "portfolio" } });
+    fireEvent.change(inputs[3], { target: { value: "essay" } });
+    fireEvent.change(inputs[4], { target: { value: "assignment" } });
+    fireEvent.change(inputs[5], { target: { value: "dissertation" } });
+    fireEvent.change(inputs[6], { target: { value: "project" } });
+
+    fireEvent.click(
+      within(ex111).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex111).getByText("Kết quả: 7/7")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 12 Education Debates and grades Sentence Upgrade accurately", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/12"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Bridging the Divide: Equity, League Tables, and Lifelong Learning/i)
+    ).toBeInTheDocument();
+
+    const ex122 = screen.getByTestId("exercise-ex-12-2");
+    fireEvent.click(
+      within(ex122).getByRole("button", {
+        name: "Inequality is inherent in the education system."
+      })
+    );
+    fireEvent.click(
+      within(ex122).getByRole("button", {
+        name: "Elitism is bad for the country in the long term."
+      })
+    );
+    fireEvent.click(
+      within(ex122).getByRole("button", {
+        name: "All parents want their children to excel at school."
+      })
+    );
+
+    fireEvent.click(
+      within(ex122).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex122).getByText("Kết quả: 3/7")).toBeInTheDocument();
   });
 });
