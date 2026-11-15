@@ -291,13 +291,13 @@ async function runStagingVerification() {
       url: "/api/vocab-in-use/bookmarks",
       headers: { authorization: `Bearer ${tokenUser1}` },
     });
-    const u1Bookmarks = reloadRes1.json().bookmarks;
+    const u1Bookmarks = reloadRes1.json().data?.items || [];
     console.log(`   Account 1 reloaded page: Found ${u1Bookmarks.length} bookmarks:`, u1Bookmarks.map((b: any) => b.word));
     if (u1Bookmarks.length !== 2) {
       throw new Error(`Data persistence failure! Expected 2 bookmarks for User 1, got ${u1Bookmarks.length}`);
     }
     const impetuousBm = u1Bookmarks.find((b: any) => b.word === "impetuous");
-    if (!impetuousBm || impetuousBm.meaningVi !== "bốc đồng, hấp tấp" || impetuousBm.collocations.length !== 2) {
+    if (!impetuousBm || impetuousBm.meaningVi !== "bốc đồng, hấp tấp" || impetuousBm.unitId !== 19) {
       throw new Error("Full snapshot integrity check failed on reloaded bookmark!");
     }
     console.log("   ✅ Data persisted after reload with 100% snapshot integrity!");
@@ -309,7 +309,7 @@ async function runStagingVerification() {
       url: "/api/vocab-in-use/bookmarks",
       headers: { authorization: `Bearer ${tokenUser2}` },
     });
-    const u2Bookmarks = u2BookmarksRes.json().bookmarks;
+    const u2Bookmarks = u2BookmarksRes.json().data?.items || [];
     console.log(`   Account 2 bookmarks count: ${u2Bookmarks.length}`);
     if (u2Bookmarks.length !== 0) {
       throw new Error(`DATA LEAK! Account 2 can see Account 1's bookmarks: ${JSON.stringify(u2Bookmarks)}`);
@@ -324,7 +324,7 @@ async function runStagingVerification() {
       headers: { authorization: `Bearer ${tokenUser2}` },
       payload: {
         bookmarkId: impetuousBm.id,
-        rating: "GOOD",
+        isCorrect: true,
       },
     });
     console.log(`   Account 2 review attempt status: ${hackReviewRes.statusCode}`);
@@ -354,8 +354,9 @@ async function runStagingVerification() {
       url: "/api/vocab-in-use/bookmarks",
       headers: { authorization: `Bearer ${tokenUser2}` },
     });
-    console.log(`   Account 2 reloaded page: Found ${u2ReloadRes.json().bookmarks.length} bookmark:`, u2ReloadRes.json().bookmarks.map((b: any) => b.word));
-    if (u2ReloadRes.json().bookmarks.length !== 1 || u2ReloadRes.json().bookmarks[0].word !== "effusive") {
+    const u2Items = u2ReloadRes.json().data?.items || [];
+    console.log(`   Account 2 reloaded page: Found ${u2Items.length} bookmark:`, u2Items.map((b: any) => b.word));
+    if (u2Items.length !== 1 || u2Items[0].word !== "effusive") {
       throw new Error("Account 2 bookmark persistence mismatch!");
     }
 
@@ -365,7 +366,8 @@ async function runStagingVerification() {
       url: "/api/vocab-in-use/bookmarks",
       headers: { authorization: `Bearer ${tokenUser1}` },
     });
-    if (u1RecheckRes.json().bookmarks.length !== 2) {
+    const u1RecheckItems = u1RecheckRes.json().data?.items || [];
+    if (u1RecheckItems.length !== 2) {
       throw new Error("Account 1 bookmarks corrupted by Account 2 activity!");
     }
     console.log("   ✅ Multi-user concurrent isolation confirmed: User 1 has 2 bookmarks, User 2 has 1 bookmark.");
@@ -377,26 +379,26 @@ async function runStagingVerification() {
       url: "/api/vocab-in-use/due-review",
       headers: { authorization: `Bearer ${tokenUser1}` },
     });
-    console.log(`   Account 1 words due for review: ${initialDueRes.json().totalDue}`);
+    console.log(`   Account 1 words due for review: ${initialDueRes.json().data?.count || 0}`);
 
-    // Submit review with rating 'GOOD' (quality 4)
+    // Submit review with isCorrect: true
     const reviewRes = await app.inject({
       method: "POST",
       url: "/api/vocab-in-use/review",
       headers: { authorization: `Bearer ${tokenUser1}` },
       payload: {
         bookmarkId: impetuousBm.id,
-        rating: "GOOD",
+        isCorrect: true,
       },
     });
-    const reviewData = reviewRes.json();
+    const reviewData = reviewRes.json().data;
     console.log("   Review result for 'impetuous':");
     console.log(`      - Interval Days: ${reviewData.intervalDays} (Progression: 1 -> 3 days)`);
-    console.log(`      - Repetition Count: ${reviewData.repetitionCount}`);
+    console.log(`      - Total Reviews: ${reviewData.totalReviews}`);
     console.log(`      - Mastery Score: ${reviewData.masteryScore}`);
     console.log(`      - Next Review At: ${reviewData.nextReviewAt}`);
 
-    if (reviewData.intervalDays !== 3 || reviewData.repetitionCount !== 1) {
+    if (reviewData.intervalDays !== 3 || reviewData.totalReviews !== 1) {
       throw new Error(`SM-2 calculation failed! Expected intervalDays=3, got ${reviewData.intervalDays}`);
     }
 
@@ -406,8 +408,8 @@ async function runStagingVerification() {
       url: "/api/vocab-in-use/bookmarks",
       headers: { authorization: `Bearer ${tokenUser1}` },
     });
-    const reloadedImpetuous = postReviewReload.json().bookmarks.find((b: any) => b.id === impetuousBm.id);
-    if (!reloadedImpetuous || reloadedImpetuous.intervalDays !== 3 || reloadedImpetuous.repetitionCount !== 1) {
+    const reloadedImpetuous = postReviewReload.json().data?.items.find((b: any) => b.id === impetuousBm.id);
+    if (!reloadedImpetuous || reloadedImpetuous.intervalDays !== 3 || reloadedImpetuous.totalReviews !== 1) {
       throw new Error("SM-2 review progress was NOT persisted after page reload!");
     }
     console.log("   ✅ SM-2 review progress successfully persisted after page reload!");
