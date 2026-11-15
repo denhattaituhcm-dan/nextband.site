@@ -3,6 +3,9 @@ import type { VocabInUseUnit, RoadmapChapter } from "./types";
 import { VOCAB_IN_USE_UNITS_4_TO_6 } from "./units4to6";
 import { VOCAB_IN_USE_UNITS_7_TO_9 } from "./units7to9";
 import { VOCAB_IN_USE_UNITS_10_TO_12 } from "./units10to12";
+import { VOCAB_IN_USE_UNITS_13_TO_15 } from "./units13to15";
+import { VOCAB_IN_USE_UNITS_16_TO_18 } from "./units16to18";
+import { VOCAB_IN_USE_UNITS_19_TO_20 } from "./units19to20";
 
 export const ROADMAP_CHAPTERS: RoadmapChapter[] = [
   {
@@ -41,11 +44,16 @@ export const ROADMAP_CHAPTERS: RoadmapChapter[] = [
     titleVi: "Con người, Tính cách & Tương tác",
     unitRange: "Units 13 – 20",
     sampleTopics: [
-      "Self-reflection (diligent, shrewd, sagacious)",
-      "Relationships & Passions",
-      "Character Traits & Mannerisms"
+      "Unit 13: Talking about yourself (diligent, shrewd, sagacious)",
+      "Unit 14: Relationships: positive aspects (kindred spirits, rapport)",
+      "Unit 15: Relationships: problems (acrimonious, rift, estranged)",
+      "Unit 16: Passions: reactions and emotions (ardent, crave, appease)",
+      "Unit 17: Feelings: antipathies & aversions (loathe, abhor, disdain)",
+      "Unit 18: Observing others: appearance & mannerisms (portly, scowl)",
+      "Unit 19: Observing others: character traits (impetuous, taciturn)",
+      "Unit 20: Birth and death: from cradle to grave (conceive, bequeath)"
     ],
-    status: "upcoming"
+    status: "live"
   },
   {
     chapterNumber: 4,
@@ -1986,7 +1994,10 @@ export const VOCAB_IN_USE_UNITS: VocabInUseUnit[] = [
   },
   ...VOCAB_IN_USE_UNITS_4_TO_6,
   ...VOCAB_IN_USE_UNITS_7_TO_9,
-  ...VOCAB_IN_USE_UNITS_10_TO_12
+  ...VOCAB_IN_USE_UNITS_10_TO_12,
+  ...VOCAB_IN_USE_UNITS_13_TO_15,
+  ...VOCAB_IN_USE_UNITS_16_TO_18,
+  ...VOCAB_IN_USE_UNITS_19_TO_20
 ];
 
 export function getVocabInUseUnit(unitId: number): VocabInUseUnit {

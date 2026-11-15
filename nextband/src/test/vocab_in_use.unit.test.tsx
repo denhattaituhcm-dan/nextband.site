@@ -9,10 +9,10 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     localStorage.clear();
   });
 
-  it("Validates complete data integrity across Units 1 to 12", () => {
-    expect(VOCAB_IN_USE_UNITS).toHaveLength(12);
+  it("Validates complete data integrity across Units 1 to 20", () => {
+    expect(VOCAB_IN_USE_UNITS).toHaveLength(20);
     expect(VOCAB_IN_USE_UNITS.map((u) => u.unitId)).toEqual([
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
     ]);
 
     for (const unit of VOCAB_IN_USE_UNITS) {
@@ -61,7 +61,7 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     );
 
     expect(screen.getByTestId("vocab-in-use-catalog")).toBeInTheDocument();
-    for (let id = 1; id <= 12; id++) {
+    for (let id = 1; id <= 20; id++) {
       expect(screen.getByTestId(`unit-card-${id}`)).toBeInTheDocument();
     }
 
@@ -70,7 +70,16 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     expect(screen.queryByTestId("unit-card-1")).not.toBeInTheDocument();
     expect(screen.getByTestId("unit-card-7")).toBeInTheDocument();
     expect(screen.getByTestId("unit-card-12")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /Tất cả \(12\)/i }));
+
+    // Chapter filter narrows to People and Relationships (Units 13-20)
+    fireEvent.click(
+      screen.getByRole("button", { name: /People and Relationships \(8\)/i })
+    );
+    expect(screen.queryByTestId("unit-card-7")).not.toBeInTheDocument();
+    expect(screen.getByTestId("unit-card-13")).toBeInTheDocument();
+    expect(screen.getByTestId("unit-card-20")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Tất cả \(20\)/i }));
     expect(screen.getByTestId("unit-card-1")).toBeInTheDocument();
 
     // Unit 1 passage & exercise workspace should NOT render on the catalog root route
@@ -503,5 +512,263 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
       within(ex122).getByRole("button", { name: /Kiểm tra đáp án/i })
     );
     expect(within(ex122).getByText("Kết quả: 3/7")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 13 Talking About Yourself and grades Classifier 13.4 accurately", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/13"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Twelve Mirrors: The Nuance Between Virtue and Flaw/i)
+    ).toBeInTheDocument();
+
+    const ex134 = screen.getByTestId("exercise-ex-13-4");
+    const posButtons = within(ex134).getAllByRole("button", {
+      name: /^Positive Connotation \(Khen ngợi \+\)$/i
+    });
+    const negButtons = within(ex134).getAllByRole("button", {
+      name: /^Negative Connotation \(Phê phán -\)$/i
+    });
+
+    fireEvent.click(posButtons[0]);
+    fireEvent.click(negButtons[1]);
+    fireEvent.click(negButtons[2]);
+    fireEvent.click(posButtons[3]);
+    fireEvent.click(posButtons[4]);
+    fireEvent.click(negButtons[5]);
+
+    fireEvent.click(
+      within(ex134).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex134).getByText("Kết quả: 6/6")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 14 Relationships Positive Aspects and grades Preposition Gap Fill 14.4", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/14"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/The Ties That Bind: Kindred Spirits and Lifelong Bonds/i)
+    ).toBeInTheDocument();
+
+    const ex144 = screen.getByTestId("exercise-ex-14-4");
+    const inputs = within(ex144).getAllByRole("textbox");
+    expect(inputs).toHaveLength(6);
+
+    fireEvent.change(inputs[0], { target: { value: "to" } });
+    fireEvent.change(inputs[1], { target: { value: "for" } });
+    fireEvent.change(inputs[2], { target: { value: "to" } });
+    fireEvent.change(inputs[3], { target: { value: "of" } });
+    fireEvent.change(inputs[4], { target: { value: "of" } });
+    fireEvent.change(inputs[5], { target: { value: "in" } });
+
+    fireEvent.click(
+      within(ex144).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex144).getByText("Kết quả: 6/6")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 15 Relationships Problems and grades Sentence Upgrade 15.2 & Preposition Classifier 15.6", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/15"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Fractured Bonds: Rivalry, Discord, and the Anatomy of a Rift/i)
+    ).toBeInTheDocument();
+
+    const ex152 = screen.getByTestId("exercise-ex-15-2");
+    fireEvent.click(
+      within(ex152).getByRole("button", {
+        name: "We both own the company: we're business partners."
+      })
+    );
+    fireEvent.click(
+      within(ex152).getByRole("button", {
+        name: "Were Britain and the USA allies in the First World War too?"
+      })
+    );
+    fireEvent.click(
+      within(ex152).getByRole("button", {
+        name: "The two companies hate each other: they're bitter rivals."
+      })
+    );
+    fireEvent.click(
+      within(ex152).getByRole("button", {
+        name: "Rick and his sister didn't see eye to eye on a lot of things."
+      })
+    );
+
+    fireEvent.click(
+      within(ex152).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex152).getByText("Kết quả: 4/6")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 16 Passions & Emotions and grades Word Formation Gap Fill 16.2", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/16"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Desire, Diplomacy, and Rapture: The Spectrum of Human Passion/i)
+    ).toBeInTheDocument();
+
+    const ex162 = screen.getByTestId("exercise-ex-16-2");
+    const inputs = within(ex162).getAllByRole("textbox");
+    expect(inputs).toHaveLength(7);
+
+    fireEvent.change(inputs[0], { target: { value: "hankering" } });
+    fireEvent.change(inputs[1], { target: { value: "covetously" } });
+    fireEvent.change(inputs[2], { target: { value: "rapturously" } });
+    fireEvent.change(inputs[3], { target: { value: "conciliatory" } });
+    fireEvent.change(inputs[4], { target: { value: "implacable" } });
+    fireEvent.change(inputs[5], { target: { value: "placatory" } });
+    fireEvent.change(inputs[6], { target: { value: "jubilation" } });
+
+    fireEvent.click(
+      within(ex162).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex162).getByText("Kết quả: 7/7")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 17 Antipathies & Aversions and grades Nuance Sentence Upgrade 17.5", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/17"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Degrees of Distaste: From Bland Banality to Utter Revulsion/i)
+    ).toBeInTheDocument();
+
+    const ex175 = screen.getByTestId("exercise-ex-17-5");
+    fireEvent.click(within(ex175).getByRole("button", { name: "fuddy-duddy" }));
+    fireEvent.click(within(ex175).getByRole("button", { name: "puerile" }));
+    fireEvent.click(within(ex175).getByRole("button", { name: "nit-picking" }));
+    fireEvent.click(within(ex175).getByRole("button", { name: "off-hand" }));
+    fireEvent.click(within(ex175).getByRole("button", { name: "officious" }));
+    fireEvent.click(within(ex175).getByRole("button", { name: "brash" }));
+
+    fireEvent.click(
+      within(ex175).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex175).getByText("Kết quả: 6/6")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 18 Appearance & Mannerisms and grades Body Build Gap Fill 18.2", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/18"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Reading the Room: Physique, Complexion, and Silent Gestures/i)
+    ).toBeInTheDocument();
+
+    const ex182 = screen.getByTestId("exercise-ex-18-2");
+    const inputs = within(ex182).getAllByRole("textbox");
+    expect(inputs).toHaveLength(6);
+
+    fireEvent.change(inputs[0], { target: { value: "scrawny" } });
+    fireEvent.change(inputs[1], { target: { value: "lanky" } });
+    fireEvent.change(inputs[2], { target: { value: "portly" } });
+    fireEvent.change(inputs[3], { target: { value: "gangling" } });
+    fireEvent.change(inputs[4], { target: { value: "stout" } });
+    fireEvent.change(inputs[5], { target: { value: "corpulent" } });
+
+    fireEvent.click(
+      within(ex182).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex182).getByText("Kết quả: 6/6")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 19 Character Traits and grades Noun Transformations 19.2 & Rewrites 19.4", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/19"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/Reading Temperament Beyond First Impressions/i)
+    ).toBeInTheDocument();
+
+    const ex192 = screen.getByTestId("exercise-ex-19-2");
+    const inputs = within(ex192).getAllByRole("textbox");
+    expect(inputs).toHaveLength(9);
+
+    fireEvent.change(inputs[0], { target: { value: "disdain" } });
+    fireEvent.change(inputs[1], { target: { value: "impetuosity" } });
+    fireEvent.change(inputs[2], { target: { value: "obstinacy" } });
+    fireEvent.change(inputs[3], { target: { value: "modesty" } });
+    fireEvent.change(inputs[4], { target: { value: "gullibility" } });
+    fireEvent.change(inputs[5], { target: { value: "reserve" } });
+    fireEvent.change(inputs[6], { target: { value: "garrulity" } });
+    fireEvent.change(inputs[7], { target: { value: "conceit" } });
+    fireEvent.change(inputs[8], { target: { value: "pig-headedness" } });
+
+    fireEvent.click(
+      within(ex192).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex192).getByText("Kết quả: 9/9")).toBeInTheDocument();
+  });
+
+  it("Renders Unit 20 Birth and Death and grades Estate & News Cloze 20.5", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/20"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText(/From Maternity Wards to Quiet Legacies/i)
+    ).toBeInTheDocument();
+
+    const ex205 = screen.getByTestId("exercise-ex-20-5");
+    const inputs = within(ex205).getAllByRole("textbox");
+    expect(inputs).toHaveLength(8);
+
+    fireEvent.change(inputs[0], { target: { value: "perished" } });
+    fireEvent.change(inputs[1], { target: { value: "fatalities" } });
+    fireEvent.change(inputs[2], { target: { value: "slaughtered" } });
+    fireEvent.change(inputs[3], { target: { value: "deceased" } });
+    fireEvent.change(inputs[4], { target: { value: "passed away" } });
+    fireEvent.change(inputs[5], { target: { value: "bequeathed" } });
+    fireEvent.change(inputs[6], { target: { value: "inherited" } });
+    fireEvent.change(inputs[7], { target: { value: "bequest" } });
+
+    fireEvent.click(
+      within(ex205).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex205).getByText("Kết quả: 8/8")).toBeInTheDocument();
   });
 });
