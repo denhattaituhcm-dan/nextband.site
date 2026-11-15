@@ -142,6 +142,9 @@ const VocabC2ArenaPage = lazyWithRetry(() => import("@/features/vocab-c2/pages/V
 // Lazy-loaded Cambridge Vocabulary for IELTS Focus App
 const CambridgeVocabHubPage = lazyWithRetry(() => import("@/pages/public/cambridge-vocab/CambridgeVocabHubPage"));
 
+// Lazy-loaded English Vocabulary in Use Interactive Studio
+const VocabInUsePage = lazyWithRetry(() => import("@/pages/public/vocab-in-use/VocabInUsePage"));
+
 // Lazy-loaded C1/C2 Mastery Lab Lean Prototype
 const C1MasteryMiniLabPage = lazyWithRetry(() => import("@/features/c1-mastery/pages/C1MasteryMiniLabPage"));
 
@@ -426,6 +429,12 @@ const App = () => (
               <Route path="/cambridge-vocab/:unitId" element={<CambridgeVocabHubPage />} />
               <Route path="/reading/cambridge-vocab" element={<CambridgeVocabHubPage />} />
               <Route path="/reading/cambridge-vocab/:unitId" element={<CambridgeVocabHubPage />} />
+
+              {/* English Vocabulary in Use Interactive Studio */}
+              <Route path="/vocab-in-use" element={<VocabInUsePage />} />
+              <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+              <Route path="/reading/vocab-in-use" element={<VocabInUsePage />} />
+              <Route path="/reading/vocab-in-use/:unitId" element={<VocabInUsePage />} />
 
               {/* C1/C2 Mastery Lab Lean Prototype (Have/Get) */}
               <Route path="/c1-mastery" element={<C1MasteryMiniLabPage />} />

@@ -5,8 +5,11 @@ import {
   Volume2,
   ArrowRight,
   Compass,
+  BookOpen,
+  Sparkles,
 } from "lucide-react";
 import { MasterCuratorShelf } from "@/features/reading/components/MasterCuratorShelf";
+import { VOCAB_IN_USE_UNITS } from "@/data/vocabInUse";
 
 export default function ReadingUniversePage() {
   const [popoverOpen, setPopoverOpen] = useState(true);
@@ -1060,6 +1063,74 @@ export default function ReadingUniversePage() {
             <p className="text-xs sm:text-sm text-[#73685E] leading-relaxed font-light">
               Khi rũ bỏ đồng hồ đếm ngược và áp lực chọn đáp án trắc nghiệm, bộ não sẽ bước vào trạng thái tiếp nhận ngôn ngữ tự nhiên nhất: quan sát cấu trúc ngữ pháp, chiêm nghiệm ý tưởng và thẩm thấu từ vựng đúng ngữ cảnh sống.
             </p>
+          </div>
+        </section>
+
+        {/* Digitized Vocabulary in Use Shelf Section (#von-tu) */}
+        <section
+          id="von-tu"
+          className="rounded-3xl bg-white border border-[#E5DCCD] p-6 sm:p-9 shadow-sm space-y-6"
+        >
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#F2ECE2] pb-5">
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono uppercase tracking-wider bg-[#FBEBE5] text-[#9C4124] font-semibold">
+                <Sparkles className="h-3 w-3" />
+                Tủ sách Số hóa · Interactive 2-Page Spread
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl text-[#241F1C]">
+                English Vocabulary in Use (C1–C2 Studio)
+              </h2>
+              <p className="text-sm text-[#6E645D] max-w-2xl font-light leading-relaxed">
+                Mô hình học 2 trang đối xứng: <strong>Trang trái</strong> đọc bài ngữ cảnh tích hợp tra từ & phát âm bản xứ tức thì; <strong>Trang phải</strong> luyện các dạng bài tập tuyển chọn trực quan có chấm điểm và giải thích song ngữ.
+              </p>
+            </div>
+            <Link
+              to="/vocab-in-use/1"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#002147] hover:bg-[#00336E] text-white text-xs font-bold tracking-wide transition shadow-sm shrink-0 self-start md:self-auto"
+            >
+              <BookOpen className="h-4 w-4 text-amber-300" />
+              <span>Mở Studio Đọc & Luyện từ</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-5">
+            {VOCAB_IN_USE_UNITS.map((unit) => (
+              <Link
+                key={unit.unitId}
+                to={`/vocab-in-use/${unit.unitId}`}
+                className="group rounded-2xl border border-[#EAE3D9] bg-[#FAF7F2]/60 hover:bg-white hover:border-[#C86D51]/60 hover:shadow-md transition-all p-5 flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2 text-[11px] font-mono">
+                    <span className="px-2 py-0.5 rounded bg-[#002147] text-white font-bold">
+                      UNIT {unit.unitId}
+                    </span>
+                    <span className="text-[#8A7E75]">
+                      {unit.cefr} · {unit.estimatedMinutes} phút
+                    </span>
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-[#241F1C] group-hover:text-[#C86D51] transition-colors leading-snug">
+                    {unit.titleEn}
+                  </h3>
+                  <p className="text-xs font-medium text-[#7A6452]">
+                    {unit.titleVi}
+                  </p>
+                  <p className="text-xs text-[#6E645D] leading-relaxed line-clamp-3">
+                    {unit.summaryVi}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[#EAE3D9] flex items-center justify-between text-xs">
+                  <span className="text-[#8A7E75]">
+                    {unit.lexicon.length} từ · {unit.exercises.length} bài luyện
+                  </span>
+                  <span className="font-semibold text-[#C86D51] inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                    Học ngay <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       </main>
