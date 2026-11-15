@@ -284,6 +284,48 @@ describe("📚 Vocabulary in Use (VIU) — Sync Architecture & SM-2 Engine", () 
       expect(removeRes.json().action).toBe("removed");
       expect(inMemoryStore).toHaveLength(0);
     });
+
+    it("prevents cross-account data leakage and unauthorized review tampering", async () => {
+      const inMemoryStore: any[] = [
+        {
+          id: "00000000-0000-0000-0000-000000000001",
+          userId: "user-bob-999",
+          unitId: 19,
+          lexiconId: "diffident",
+          word: "diffident",
+          meaningVi: "rụt rè",
+          masteryScore: 0.8,
+          intervalDays: 14,
+        },
+      ];
+
+      // App runs authenticated as test-user-123 (Alice)
+      const app = buildTestApp(inMemoryStore);
+
+      // 1. Alice cố lấy danh sách bookmark: Không được thấy bookmark của Bob
+      const listRes = await app.inject({
+        method: "GET",
+        url: "/bookmarks",
+      });
+      expect(listRes.statusCode).toBe(200);
+      expect(listRes.json().data.items).toHaveLength(0);
+
+      // 2. Alice cố can thiệp/review từ của Bob bằng bookmarkId: Bị chặn với 404
+      const reviewRes = await app.inject({
+        method: "POST",
+        url: "/review",
+        payload: {
+          bookmarkId: "00000000-0000-0000-0000-000000000001",
+          isCorrect: true,
+        },
+      });
+      expect(reviewRes.statusCode).toBe(404);
+      expect(reviewRes.json().message).toContain("Không tìm thấy bản ghi");
+
+      // Đảm bảo dữ liệu của Bob không bị thay đổi
+      expect(inMemoryStore[0].intervalDays).toBe(14);
+      expect(inMemoryStore[0].masteryScore).toBe(0.8);
+    });
   });
 
   describe("🧠 3. SM-2 Spaced Repetition Mathematical Precision", () => {
