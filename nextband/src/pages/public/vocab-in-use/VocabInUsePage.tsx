@@ -302,14 +302,14 @@ export default function VocabInUsePage() {
 
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded bg-amber-400/20 text-amber-200 border border-amber-400/30">
+                <span className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-amber-400/20 text-amber-200 border border-amber-400/30">
                   Vocabulary in Use · {activeUnit.cefr}
                 </span>
-                <span className="text-[11px] text-slate-300 hidden md:inline">
+                <span className="text-xs text-slate-200 hidden md:inline">
                   2-Page Interactive Studio
                 </span>
               </div>
-              <h1 className="text-sm sm:text-base font-serif font-bold text-white truncate mt-0.5">
+              <h1 className="text-base sm:text-lg font-serif font-bold text-white truncate mt-0.5">
                 Unit {activeUnit.unitId}: {activeUnit.titleEn}
               </h1>
             </div>
@@ -394,15 +394,15 @@ export default function VocabInUsePage() {
                   >
                     <div className="flex items-center gap-2">
                       <span
-                        className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                        className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
                           isSelected
                             ? "bg-amber-400 text-[#002147]"
-                            : "bg-[#EFE9DF] text-[#7A6452]"
+                            : "bg-[#EFE9DF] text-[#574D44]"
                         }`}
                       >
                         UNIT {unit.unitId}
                       </span>
-                      <span className="text-xs font-bold">{unit.titleEn}</span>
+                      <span className="text-sm font-bold">{unit.titleEn}</span>
                     </div>
                   </button>
                 );
@@ -411,7 +411,7 @@ export default function VocabInUsePage() {
               <button
                 type="button"
                 onClick={() => setRoadmapOpen((prev) => !prev)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white/80 hover:bg-white text-[#7A6452] border border-dashed border-[#CBBBA4] transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white/90 hover:bg-white text-[#574D44] border border-dashed border-[#CBBBA4] transition cursor-pointer"
               >
                 <Layers className="h-3.5 w-3.5 text-[#C86D51]" />
                 <span>Lộ trình toàn sách (100 Units)</span>
@@ -423,7 +423,7 @@ export default function VocabInUsePage() {
               </button>
             </div>
 
-            <div className="flex items-center gap-3 text-xs text-[#6E645D]">
+            <div className="flex items-center gap-3 text-xs sm:text-sm text-[#4E453E]">
               <span>{activeUnit.lexicon.length} từ vựng trọng tâm</span>
               <span>·</span>
               <span className="font-semibold text-[#C86D51]">
@@ -444,24 +444,24 @@ export default function VocabInUsePage() {
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#7A6452] font-bold">
+                    <span className="text-xs font-mono uppercase tracking-wider text-[#574D44] font-bold">
                       {chap.unitRange}
                     </span>
                     {chap.status === "live" ? (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                      <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
                         Đang mở · Units 1–3
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#EFE9DF] text-[#7A7067]">
-                        <Lock className="h-2.5 w-2.5" /> Sắp xuất bản
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#EFE9DF] text-[#574D44]">
+                        <Lock className="h-3 w-3" /> Sắp xuất bản
                       </span>
                     )}
                   </div>
-                  <h3 className="font-serif font-bold text-sm text-[#241F1C]">
+                  <h3 className="font-serif font-bold text-base text-[#241F1C]">
                     {chap.titleEn}
                   </h3>
-                  <p className="text-xs text-[#6E645D] mb-2">{chap.titleVi}</p>
-                  <ul className="space-y-1 text-[11px] text-[#7A7067]">
+                  <p className="text-sm text-[#4E453E] mb-2">{chap.titleVi}</p>
+                  <ul className="space-y-1 text-xs text-[#574D44]">
                     {chap.sampleTopics.map((topic) => (
                       <li key={topic} className="flex items-start gap-1.5">
                         <span className="text-[#C86D51]">•</span>
@@ -513,7 +513,7 @@ export default function VocabInUsePage() {
                         Trang Trái · Bài đọc Ngữ cảnh
                       </span>
                     </div>
-                    <span className="text-[11px] text-amber-200 bg-white/10 px-2.5 py-0.5 rounded-full">
+                    <span className="text-xs text-amber-200 bg-white/10 px-2.5 py-0.5 rounded-full">
                       Chạm từ gạch chân để tra cứu
                     </span>
                   </div>
@@ -523,7 +523,7 @@ export default function VocabInUsePage() {
                       <h2 className="font-serif text-xl sm:text-2xl text-[#241F1C] font-semibold leading-snug">
                         {activeUnit.passageTitle}
                       </h2>
-                      <p className="text-xs text-[#8A7E75] mt-1">
+                      <p className="text-xs sm:text-sm text-[#574D44] mt-1">
                         {activeUnit.passageSubtitle}
                       </p>
                     </div>
@@ -566,7 +566,7 @@ export default function VocabInUsePage() {
 
                     {/* Quick Target Lexicon Strip */}
                     <div className="pt-4 border-t border-[#F2ECE2]">
-                      <div className="text-[11px] font-mono uppercase tracking-wider text-[#8A7E75] mb-2">
+                      <div className="text-xs font-mono uppercase tracking-wider text-[#574D44] font-semibold mb-2">
                         Danh mục từ vựng mục tiêu ({activeUnit.lexicon.length}):
                       </div>
                       <div className="flex flex-wrap gap-1.5">
@@ -581,10 +581,10 @@ export default function VocabInUsePage() {
                               key={lex.id}
                               type="button"
                               onClick={() => setSelectedLexiconId(lex.id)}
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition cursor-pointer ${
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-medium transition cursor-pointer ${
                                 isSelected
                                   ? "bg-[#002147] text-white"
-                                  : "bg-[#FAF7F2] text-[#4E453E] border border-[#E6DDD0] hover:border-[#C86D51]"
+                                  : "bg-[#FAF7F2] text-[#3A312B] border border-[#E6DDD0] hover:border-[#C86D51]"
                               }`}
                             >
                               <span>{lex.word}</span>
@@ -616,11 +616,11 @@ export default function VocabInUsePage() {
                           </span>
                         </div>
                         <div className="flex flex-wrap items-center gap-2 mt-1">
-                          <span className="text-[11px] font-mono uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded text-white/80">
+                          <span className="text-xs font-mono uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded text-white/90">
                             {activeLexicon.pos}
                           </span>
                           {activeLexicon.registerNote && (
-                            <span className="text-[11px] bg-amber-500/20 text-amber-200 px-2 py-0.5 rounded">
+                            <span className="text-xs bg-amber-500/20 text-amber-200 px-2 py-0.5 rounded">
                               {activeLexicon.registerNote}
                             </span>
                           )}
@@ -670,20 +670,20 @@ export default function VocabInUsePage() {
                       </div>
                     </div>
 
-                    <div className="space-y-2.5 text-sm">
+                    <div className="space-y-3 text-sm sm:text-base">
                       <p className="text-white/95 leading-relaxed">
                         <strong className="text-amber-200">Nghĩa tiếng Việt:</strong>{" "}
                         {activeLexicon.meaningVi}
                       </p>
-                      <p className="text-white/75 text-xs leading-relaxed">
-                        <strong className="text-white/90">English definition:</strong>{" "}
+                      <p className="text-white/85 text-sm leading-relaxed">
+                        <strong className="text-white">English definition:</strong>{" "}
                         {activeLexicon.meaningEn}
                       </p>
-                      <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-xs text-amber-100/90 leading-relaxed">
+                      <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs sm:text-sm text-amber-100 leading-relaxed">
                         <strong className="text-amber-300">Sắc thái & Ghi nhớ:</strong>{" "}
                         {activeLexicon.nuanceTip}
                       </div>
-                      <div className="flex items-center justify-between gap-2 pt-1 text-xs text-white/80 italic">
+                      <div className="flex items-center justify-between gap-2 pt-1 text-sm text-white/90 italic">
                         <span>“{activeLexicon.example}”</span>
                         <button
                           type="button"
@@ -691,7 +691,7 @@ export default function VocabInUsePage() {
                           title="Nghe câu ví dụ"
                           className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-amber-200 shrink-0 cursor-pointer"
                         >
-                          <Volume2 className="h-3.5 w-3.5" />
+                          <Volume2 className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
@@ -700,8 +700,8 @@ export default function VocabInUsePage() {
 
                 {/* Structured Theory Cards (Sections A, B, C, D) */}
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#7A6452] px-1">
-                    <Compass className="h-3.5 w-3.5 text-[#C86D51]" />
+                  <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#574D44] font-semibold px-1">
+                    <Compass className="h-4 w-4 text-[#C86D51]" />
                     <span>Hệ thống hóa Kiến thức Ngữ pháp & Từ vựng</span>
                   </div>
                   {activeUnit.theorySections.map((section) => (
@@ -714,10 +714,10 @@ export default function VocabInUsePage() {
                           {section.key}
                         </span>
                         <div>
-                          <h4 className="font-serif font-bold text-base text-[#241F1C]">
+                          <h4 className="font-serif font-bold text-base sm:text-lg text-[#241F1C]">
                             {section.title}
                           </h4>
-                          <p className="text-xs text-[#8A7E75]">
+                          <p className="text-xs sm:text-sm text-[#574D44]">
                             {section.subtitle}
                           </p>
                         </div>
@@ -727,16 +727,16 @@ export default function VocabInUsePage() {
                         {section.items.map((item, idx) => (
                           <div
                             key={idx}
-                            className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EFE9DF] space-y-1"
+                            className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EFE9DF] space-y-1.5"
                           >
-                            <div className="text-xs font-bold text-[#002147]">
+                            <div className="text-sm font-bold text-[#002147]">
                               {item.label}
                             </div>
-                            <p className="text-xs text-[#4E453E] leading-relaxed">
+                            <p className="text-sm text-[#3A312B] leading-relaxed">
                               {item.detail}
                             </p>
                             {item.example && (
-                              <p className="text-[11px] italic text-[#9C4124]">
+                              <p className="text-xs sm:text-sm italic text-[#9C4124]">
                                 Ex: {item.example}
                               </p>
                             )}
@@ -757,16 +757,16 @@ export default function VocabInUsePage() {
                   viewMode === "split" ? "lg:col-span-6" : ""
                 } space-y-6`}
               >
-                <div className="bg-white rounded-3xl border border-[#E6DDD0] p-5 flex items-center justify-between gap-3 shadow-xs">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#FBEBE5] text-[#C86D51] flex items-center justify-center shrink-0">
-                      <Sparkles className="h-4 w-4" />
+                <div className="bg-white rounded-3xl border border-[#E6DDD0] p-5 sm:p-6 flex items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-[#FBEBE5] text-[#C86D51] flex items-center justify-center shrink-0">
+                      <Sparkles className="h-5 w-5" />
                     </div>
                     <div>
-                      <h2 className="font-serif text-lg font-bold text-[#241F1C]">
+                      <h2 className="font-serif text-lg sm:text-xl font-bold text-[#1F1A17]">
                         Trang Phải · Bài tập Tuyển chọn Trực quan
                       </h2>
-                      <p className="text-xs text-[#7A7067]">
+                      <p className="text-sm text-[#4E453E] mt-0.5">
                         Chọn lọc các bài tập đắt giá nhất — làm trực tiếp và xem giải thích tức thì.
                       </p>
                     </div>
@@ -785,19 +785,19 @@ export default function VocabInUsePage() {
                       data-testid={`exercise-${exercise.id}`}
                       className="bg-white rounded-3xl border border-[#E6DDD0] shadow-sm overflow-hidden"
                     >
-                      <div className="px-6 py-4 border-b border-[#F2ECE2] bg-[#FAF7F2]/60 flex flex-wrap items-center justify-between gap-2">
+                      <div className="px-6 py-4 border-b border-[#F2ECE2] bg-[#FAF7F2]/70 flex flex-wrap items-center justify-between gap-2">
                         <div>
-                          <span className="text-[10px] font-mono uppercase tracking-wider text-[#C86D51] font-bold">
+                          <span className="text-xs font-mono uppercase tracking-wider text-[#9C4124] font-bold">
                             {exercise.sourceNote}
                           </span>
-                          <h3 className="font-serif text-lg font-bold text-[#241F1C] mt-0.5">
+                          <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1F1A17] mt-0.5">
                             {exercise.title}
                           </h3>
                         </div>
 
                         {score && (
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            className={`px-3.5 py-1 rounded-full text-xs sm:text-sm font-bold ${
                               score.correct === score.total
                                 ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
                                 : "bg-amber-100 text-amber-900 border border-amber-200"
@@ -809,7 +809,7 @@ export default function VocabInUsePage() {
                       </div>
 
                       <div className="p-6 space-y-5">
-                        <p className="text-xs sm:text-sm text-[#5E544C] leading-relaxed">
+                        <p className="text-sm sm:text-[15px] text-[#3A312B] leading-relaxed">
                           {exercise.instruction}
                         </p>
 
@@ -863,18 +863,18 @@ export default function VocabInUsePage() {
                           <button
                             type="button"
                             onClick={() => handleResetExercise(exercise)}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#6E645D] hover:bg-[#FAF7F2] border border-[#E6DDD0] transition cursor-pointer"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-[#4E453E] hover:bg-[#FAF7F2] border border-[#E6DDD0] transition cursor-pointer"
                           >
-                            <RotateCcw className="h-3.5 w-3.5" />
+                            <RotateCcw className="h-4 w-4" />
                             <span>Làm lại</span>
                           </button>
 
                           <button
                             type="button"
                             onClick={() => handleCheckExercise(exercise)}
-                            className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs font-bold bg-[#002147] hover:bg-[#00336E] text-white shadow-sm transition cursor-pointer"
+                            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#002147] hover:bg-[#00336E] text-white shadow-sm transition cursor-pointer"
                           >
-                            <Check className="h-3.5 w-3.5" />
+                            <Check className="h-4 w-4" />
                             <span>Kiểm tra đáp án</span>
                           </button>
                         </div>
@@ -913,8 +913,8 @@ function GapFillExerciseBody({
   return (
     <div className="space-y-4">
       {exercise.wordBank && exercise.wordBank.length > 0 && (
-        <div className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-[#EAE1D3] space-y-2">
-          <div className="text-[11px] font-mono uppercase tracking-wider text-[#8A7E75]">
+        <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#EAE1D3] space-y-2.5">
+          <div className="text-xs font-mono uppercase tracking-wider text-[#574D44] font-semibold">
             Kho mảnh ghép (chạm để điền vào ô đang chọn):
           </div>
           <div className="flex flex-wrap gap-2">
@@ -924,7 +924,7 @@ function GapFillExerciseBody({
                 type="button"
                 disabled={isChecked}
                 onClick={() => onPickWordBank(word)}
-                className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-[#DCCFBE] text-[#241F1C] hover:border-[#C86D51] hover:bg-[#FBEBE5] disabled:opacity-50 transition cursor-pointer"
+                className="px-3.5 py-1.5 rounded-xl text-sm font-bold bg-white border border-[#DCCFBE] text-[#1F1A17] hover:border-[#C86D51] hover:bg-[#FBEBE5] disabled:opacity-50 transition cursor-pointer shadow-2xs"
               >
                 {word}
               </button>
@@ -933,7 +933,7 @@ function GapFillExerciseBody({
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-3.5">
         {exercise.questions.map((q, index) => {
           const val = answers[q.id] || "";
           const ok =
@@ -943,18 +943,18 @@ function GapFillExerciseBody({
           return (
             <div
               key={q.id}
-              className={`p-4 rounded-2xl border transition ${
+              className={`p-4 sm:p-5 rounded-2xl border transition ${
                 isChecked
                   ? ok
                     ? "bg-emerald-50/70 border-emerald-200"
                     : "bg-rose-50/70 border-rose-200"
                   : isFocused
                   ? "bg-white border-[#C86D51] ring-2 ring-[#C86D51]/15"
-                  : "bg-[#FAF7F2]/40 border-[#EAE1D3]"
+                  : "bg-[#FAF7F2]/50 border-[#EAE1D3]"
               }`}
             >
-              <div className="text-sm text-[#241F1C] leading-relaxed flex flex-wrap items-center gap-1.5">
-                <span className="font-mono text-xs font-bold text-[#8A7E75] mr-1">
+              <div className="text-base sm:text-[17px] font-medium text-[#1F1A17] leading-relaxed flex flex-wrap items-center gap-2">
+                <span className="font-mono text-sm font-bold text-[#574D44] mr-0.5">
                   {index + 1}.
                 </span>
                 {q.promptBefore && <span>{q.promptBefore}</span>}
@@ -966,32 +966,32 @@ function GapFillExerciseBody({
                   onChange={(e) => onChangeAnswer(q.id, e.target.value)}
                   placeholder="Điền hoặc chọn từ..."
                   aria-label={`Câu ${index + 1}`}
-                  className="px-2.5 py-1 rounded-lg border border-[#CBBBA4] bg-white text-xs sm:text-sm font-semibold text-[#002147] min-w-[140px] focus:outline-none focus:border-[#002147]"
+                  className="px-3 py-1.5 rounded-lg border border-[#CBBBA4] bg-white text-sm sm:text-base font-semibold text-[#002147] min-w-[155px] focus:outline-none focus:border-[#002147]"
                 />
                 {q.promptAfter && <span>{q.promptAfter}</span>}
               </div>
 
               {q.hint && !isChecked && (
-                <p className="text-[11px] text-[#8A7E75] mt-1.5">
+                <p className="text-xs text-[#574D44] mt-2">
                   Gợi ý: {q.hint}
                 </p>
               )}
 
               {isChecked && (
-                <div className="mt-2.5 pt-2.5 border-t border-black/5 text-xs space-y-1">
+                <div className="mt-3 pt-3 border-t border-black/10 text-sm space-y-1.5">
                   <div className="flex items-center gap-1.5 font-semibold">
                     {ok ? (
                       <span className="text-emerald-700 inline-flex items-center gap-1">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> Chính xác!
+                        <CheckCircle2 className="h-4 w-4" /> Chính xác!
                       </span>
                     ) : (
                       <span className="text-rose-700 inline-flex items-center gap-1">
-                        <XCircle className="h-3.5 w-3.5" /> Đáp án chuẩn:{" "}
+                        <XCircle className="h-4 w-4" /> Đáp án chuẩn:{" "}
                         <strong className="underline">{q.answer}</strong>
                       </span>
                     )}
                   </div>
-                  <p className="text-[#4E453E]">{q.explanationVi}</p>
+                  <p className="text-[#3A312B] leading-relaxed">{q.explanationVi}</p>
                 </div>
               )}
             </div>
@@ -1022,20 +1022,20 @@ function ClassifierExerciseBody({
   return (
     <div className="space-y-4">
       {/* Category Legend */}
-      <div className="grid sm:grid-cols-2 gap-2">
+      <div className="grid sm:grid-cols-2 gap-2.5">
         {exercise.categories.map((cat) => (
           <div
             key={cat.key}
-            className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE1D3]"
+            className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EAE1D3]"
           >
-            <div className="text-xs font-bold text-[#002147]">{cat.label}</div>
-            <div className="text-[11px] text-[#6E645D]">{cat.description}</div>
+            <div className="text-sm font-bold text-[#002147]">{cat.label}</div>
+            <div className="text-xs sm:text-sm text-[#4E453E] mt-0.5">{cat.description}</div>
           </div>
         ))}
       </div>
 
       {/* Questions */}
-      <div className="space-y-3">
+      <div className="space-y-3.5">
         {exercise.questions.map((q, idx) => {
           const picked = answers[q.id];
           const subVal = subAnswers[q.id] || "";
@@ -1049,16 +1049,16 @@ function ClassifierExerciseBody({
           return (
             <div
               key={q.id}
-              className={`p-4 rounded-2xl border space-y-2.5 ${
+              className={`p-4 sm:p-5 rounded-2xl border space-y-3 ${
                 isChecked
                   ? isRowOk
                     ? "bg-emerald-50/70 border-emerald-200"
                     : "bg-rose-50/70 border-rose-200"
-                  : "bg-[#FAF7F2]/40 border-[#EAE1D3]"
+                  : "bg-[#FAF7F2]/50 border-[#EAE1D3]"
               }`}
             >
-              <p className="text-sm text-[#241F1C] leading-relaxed">
-                <span className="font-mono text-xs font-bold text-[#8A7E75] mr-1.5">
+              <p className="text-base sm:text-[17px] font-medium text-[#1F1A17] leading-relaxed">
+                <span className="font-mono text-sm font-bold text-[#574D44] mr-1.5">
                   {idx + 1}.
                 </span>
                 {q.prompt}
@@ -1073,10 +1073,10 @@ function ClassifierExerciseBody({
                       type="button"
                       disabled={isChecked}
                       onClick={() => onSelectCategory(q.id, cat.key)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer ${
+                      className={`px-3.5 py-2 rounded-xl text-sm sm:text-base font-semibold border transition cursor-pointer ${
                         selected
                           ? "bg-[#002147] text-white border-[#002147]"
-                          : "bg-white text-[#2D2825] border-[#DCCFBE] hover:border-[#C86D51]"
+                          : "bg-white text-[#1F1A17] border-[#DCCFBE] hover:border-[#C86D51]"
                       }`}
                     >
                       {cat.label}
@@ -1087,7 +1087,7 @@ function ClassifierExerciseBody({
 
               {q.subPrompt && picked === "YES" && (
                 <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <span className="text-xs font-medium text-[#5E544C]">
+                  <span className="text-sm font-medium text-[#3A312B]">
                     {q.subPrompt}
                   </span>
                   <input
@@ -1096,21 +1096,21 @@ function ClassifierExerciseBody({
                     disabled={isChecked}
                     onChange={(e) => onChangeSubAnswer(q.id, e.target.value)}
                     placeholder="Nhập từ sau ghép..."
-                    className="px-2.5 py-1 rounded-lg border border-[#CBBBA4] bg-white text-xs font-semibold text-[#002147]"
+                    className="px-3 py-1.5 rounded-lg border border-[#CBBBA4] bg-white text-sm sm:text-base font-semibold text-[#002147]"
                   />
                 </div>
               )}
 
               {isChecked && (
-                <div className="pt-2 border-t border-black/5 text-xs space-y-1">
+                <div className="pt-2.5 border-t border-black/10 text-sm space-y-1.5">
                   <div className="font-semibold">
                     {isRowOk ? (
                       <span className="text-emerald-700 inline-flex items-center gap-1">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> Chính xác!
+                        <CheckCircle2 className="h-4 w-4" /> Chính xác!
                       </span>
                     ) : (
                       <span className="text-rose-700 inline-flex items-center gap-1">
-                        <XCircle className="h-3.5 w-3.5" /> Đáp án:{" "}
+                        <XCircle className="h-4 w-4" /> Đáp án:{" "}
                         <strong>
                           {q.correctCategory}
                           {q.subCorrectAnswer ? ` (${q.subCorrectAnswer})` : ""}
@@ -1118,7 +1118,7 @@ function ClassifierExerciseBody({
                       </span>
                     )}
                   </div>
-                  <p className="text-[#4E453E]">{q.explanationVi}</p>
+                  <p className="text-[#3A312B] leading-relaxed">{q.explanationVi}</p>
                 </div>
               )}
             </div>
@@ -1149,75 +1149,75 @@ function SentenceUpgradeExerciseBody({
         const ok = isChecked && picked === q.correctOption;
 
         return (
-          <div
-            key={q.id}
-            className={`p-4 rounded-2xl border space-y-2.5 ${
-              isChecked
-                ? ok
-                  ? "bg-emerald-50/70 border-emerald-200"
-                  : "bg-rose-50/70 border-rose-200"
-                : "bg-[#FAF7F2]/40 border-[#EAE1D3]"
-            }`}
-          >
-            <div>
-              <p className="text-sm font-medium text-[#241F1C]">
-                <span className="font-mono text-xs font-bold text-[#8A7E75] mr-1.5">
-                  {idx + 1}.
-                </span>
-                {q.originalSentence}
-              </p>
-              {q.promptCue && (
-                <p className="text-[11px] text-[#8A7E75] mt-0.5 pl-4">
-                  Ngữ cảnh: {q.promptCue}
+            <div
+              key={q.id}
+              className={`p-4 sm:p-5 rounded-2xl border space-y-3 ${
+                isChecked
+                  ? ok
+                    ? "bg-emerald-50/70 border-emerald-200"
+                    : "bg-rose-50/70 border-rose-200"
+                  : "bg-[#FAF7F2]/50 border-[#EAE1D3]"
+              }`}
+            >
+              <div>
+                <p className="text-base sm:text-[17px] font-medium text-[#1F1A17] leading-relaxed">
+                  <span className="font-mono text-sm font-bold text-[#574D44] mr-1.5">
+                    {idx + 1}.
+                  </span>
+                  {q.originalSentence}
+                </p>
+                {q.promptCue && (
+                  <p className="text-xs sm:text-sm text-[#574D44] mt-1 pl-5">
+                    Ngữ cảnh: {q.promptCue}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                {q.options.map((option) => {
+                  const isSelected = picked === option;
+                  const isCorrectOpt = option === q.correctOption;
+
+                  let btnClass =
+                    "bg-white text-[#1F1A17] border-[#DCCFBE] hover:border-[#C86D51]";
+                  if (isChecked) {
+                    if (isCorrectOpt) {
+                      btnClass =
+                        "bg-emerald-600 text-white border-emerald-600 font-semibold";
+                    } else if (isSelected && !isCorrectOpt) {
+                      btnClass =
+                        "bg-rose-600 text-white border-rose-600 line-through";
+                    } else {
+                      btnClass = "bg-white/60 text-[#574D44] border-[#EAE1D3]";
+                    }
+                  } else if (isSelected) {
+                    btnClass =
+                      "bg-[#002147] text-white border-[#002147] font-semibold";
+                  }
+
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      disabled={isChecked}
+                      onClick={() => onSelectOption(q.id, option)}
+                      className={`w-full text-left px-4 py-2.5 rounded-xl text-sm sm:text-base border transition cursor-pointer ${btnClass}`}
+                    >
+                      {option}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {isChecked && (
+                <p className="text-sm text-[#3A312B] leading-relaxed pt-2 border-t border-black/10">
+                  <strong className={ok ? "text-emerald-700" : "text-rose-700"}>
+                    Giải thích:
+                  </strong>{" "}
+                  {q.explanationVi}
                 </p>
               )}
             </div>
-
-            <div className="grid gap-2">
-              {q.options.map((option) => {
-                const isSelected = picked === option;
-                const isCorrectOpt = option === q.correctOption;
-
-                let btnClass =
-                  "bg-white text-[#2D2825] border-[#DCCFBE] hover:border-[#C86D51]";
-                if (isChecked) {
-                  if (isCorrectOpt) {
-                    btnClass =
-                      "bg-emerald-600 text-white border-emerald-600 font-semibold";
-                  } else if (isSelected && !isCorrectOpt) {
-                    btnClass =
-                      "bg-rose-600 text-white border-rose-600 line-through";
-                  } else {
-                    btnClass = "bg-white/60 text-[#8A7E75] border-[#EAE1D3]";
-                  }
-                } else if (isSelected) {
-                  btnClass =
-                    "bg-[#002147] text-white border-[#002147] font-semibold";
-                }
-
-                return (
-                  <button
-                    key={option}
-                    type="button"
-                    disabled={isChecked}
-                    onClick={() => onSelectOption(q.id, option)}
-                    className={`w-full text-left px-3.5 py-2 rounded-xl text-xs sm:text-sm border transition cursor-pointer ${btnClass}`}
-                  >
-                    {option}
-                  </button>
-                );
-              })}
-            </div>
-
-            {isChecked && (
-              <p className="text-xs text-[#4E453E] pt-1.5 border-t border-black/5">
-                <strong className={ok ? "text-emerald-700" : "text-rose-700"}>
-                  Giải thích:
-                </strong>{" "}
-                {q.explanationVi}
-              </p>
-            )}
-          </div>
         );
       })}
     </div>
@@ -1265,7 +1265,7 @@ function BookmarksDeckView({
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FAF7F2] text-[#7A6452] border border-[#EAE1D3]">
+                <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-[#FAF7F2] text-[#574D44] border border-[#EAE1D3]">
                   {unitTitle}
                 </span>
                 <button
@@ -1274,21 +1274,21 @@ function BookmarksDeckView({
                   className="p-1.5 rounded-lg bg-[#FAF7F2] hover:bg-[#EFE9DF] text-[#002147] cursor-pointer"
                   aria-label={`Nghe ${lexicon.word}`}
                 >
-                  <Volume2 className="h-3.5 w-3.5" />
+                  <Volume2 className="h-4 w-4" />
                 </button>
               </div>
               <div>
-                <h3 className="font-serif text-lg font-bold text-[#241F1C]">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1F1A17]">
                   {lexicon.word}
                 </h3>
-                <p className="text-xs font-mono text-[#8A7E75]">
+                <p className="text-xs sm:text-sm font-mono text-[#574D44]">
                   {lexicon.ipa} · {lexicon.pos}
                 </p>
               </div>
-              <p className="text-xs text-[#2D2825] font-medium">
+              <p className="text-sm text-[#2D2825] font-medium">
                 {lexicon.meaningVi}
               </p>
-              <p className="text-[11px] text-[#6E645D] italic">
+              <p className="text-xs sm:text-sm text-[#4E453E] italic">
                 “{lexicon.example}”
               </p>
             </div>
@@ -1297,14 +1297,14 @@ function BookmarksDeckView({
               <button
                 type="button"
                 onClick={() => onJumpToUnit(unitId, lexicon.id)}
-                className="text-xs font-semibold text-[#C86D51] hover:underline cursor-pointer"
+                className="text-xs sm:text-sm font-semibold text-[#C86D51] hover:underline cursor-pointer"
               >
                 Mở lại ngữ cảnh →
               </button>
               <button
                 type="button"
                 onClick={() => onRemove(unitId, lexicon.id)}
-                className="text-xs text-[#8A7E75] hover:text-rose-600 cursor-pointer"
+                className="text-xs sm:text-sm text-[#574D44] hover:text-rose-600 cursor-pointer"
               >
                 Bỏ lưu
               </button>

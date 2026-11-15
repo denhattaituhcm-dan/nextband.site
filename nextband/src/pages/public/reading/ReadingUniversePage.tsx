@@ -1073,20 +1073,20 @@ export default function ReadingUniversePage() {
         >
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#F2ECE2] pb-5">
             <div className="space-y-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono uppercase tracking-wider bg-[#FBEBE5] text-[#9C4124] font-semibold">
-                <Sparkles className="h-3 w-3" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono uppercase tracking-wider bg-[#FBEBE5] text-[#9C4124] font-semibold">
+                <Sparkles className="h-3.5 w-3.5" />
                 Tủ sách Số hóa · Interactive 2-Page Spread
               </span>
               <h2 className="font-serif text-2xl sm:text-3xl text-[#241F1C]">
                 English Vocabulary in Use (C1–C2 Studio)
               </h2>
-              <p className="text-sm text-[#6E645D] max-w-2xl font-light leading-relaxed">
+              <p className="text-sm sm:text-base text-[#4E453E] max-w-2xl font-light leading-relaxed">
                 Mô hình học 2 trang đối xứng: <strong>Trang trái</strong> đọc bài ngữ cảnh tích hợp tra từ & phát âm bản xứ tức thì; <strong>Trang phải</strong> luyện các dạng bài tập tuyển chọn trực quan có chấm điểm và giải thích song ngữ.
               </p>
             </div>
             <Link
               to="/vocab-in-use/1"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#002147] hover:bg-[#00336E] text-white text-xs font-bold tracking-wide transition shadow-sm shrink-0 self-start md:self-auto"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#002147] hover:bg-[#00336E] text-white text-sm font-bold tracking-wide transition shadow-sm shrink-0 self-start md:self-auto"
             >
               <BookOpen className="h-4 w-4 text-amber-300" />
               <span>Mở Studio Đọc & Luyện từ</span>
@@ -1102,27 +1102,27 @@ export default function ReadingUniversePage() {
                 className="group rounded-2xl border border-[#EAE3D9] bg-[#FAF7F2]/60 hover:bg-white hover:border-[#C86D51]/60 hover:shadow-md transition-all p-5 flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-2.5">
-                  <div className="flex items-center justify-between gap-2 text-[11px] font-mono">
+                  <div className="flex items-center justify-between gap-2 text-xs font-mono">
                     <span className="px-2 py-0.5 rounded bg-[#002147] text-white font-bold">
                       UNIT {unit.unitId}
                     </span>
-                    <span className="text-[#8A7E75]">
+                    <span className="text-[#574D44]">
                       {unit.cefr} · {unit.estimatedMinutes} phút
                     </span>
                   </div>
-                  <h3 className="font-serif text-lg font-bold text-[#241F1C] group-hover:text-[#C86D51] transition-colors leading-snug">
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1F1A17] group-hover:text-[#C86D51] transition-colors leading-snug">
                     {unit.titleEn}
                   </h3>
-                  <p className="text-xs font-medium text-[#7A6452]">
+                  <p className="text-sm font-medium text-[#574D44]">
                     {unit.titleVi}
                   </p>
-                  <p className="text-xs text-[#6E645D] leading-relaxed line-clamp-3">
+                  <p className="text-sm text-[#4E453E] leading-relaxed line-clamp-3">
                     {unit.summaryVi}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-[#EAE3D9] flex items-center justify-between text-xs">
-                  <span className="text-[#8A7E75]">
+                <div className="pt-3 border-t border-[#EAE3D9] flex items-center justify-between text-xs sm:text-sm">
+                  <span className="text-[#574D44]">
                     {unit.lexicon.length} từ · {unit.exercises.length} bài luyện
                   </span>
                   <span className="font-semibold text-[#C86D51] inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
