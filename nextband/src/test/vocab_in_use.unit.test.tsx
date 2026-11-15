@@ -37,6 +37,56 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     expect(getVocabInUseUnit(999).unitId).toBe(1);
   });
 
+  it("Renders Unit Catalog hub at /vocab-in-use without entering exercises immediately, then navigates to Unit 1 on selection", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use"]}>
+        <Routes>
+          <Route path="/vocab-in-use" element={<VocabInUsePage />} />
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId("vocab-in-use-catalog")).toBeInTheDocument();
+    expect(screen.getByTestId("unit-card-1")).toBeInTheDocument();
+    expect(screen.getByTestId("unit-card-2")).toBeInTheDocument();
+    expect(screen.getByTestId("unit-card-3")).toBeInTheDocument();
+
+    // Unit 1 passage & exercise workspace should NOT render on the catalog root route
+    expect(
+      screen.queryByText(/The Architecture of Brevity: Decoding Modern Shorthand/i)
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("exercise-ex-1-1")).not.toBeInTheDocument();
+
+    // Search filters down to matching Unit
+    const searchInput = screen.getByRole("textbox", { name: /Tìm kiếm Unit/i });
+    fireEvent.change(searchInput, { target: { value: "Prefixes" } });
+    expect(screen.queryByTestId("unit-card-1")).not.toBeInTheDocument();
+    expect(screen.getByTestId("unit-card-2")).toBeInTheDocument();
+    fireEvent.change(searchInput, { target: { value: "" } });
+
+    // Enter Unit 1 via its CTA link
+    const enterUnit1Link = screen.getByRole("link", { name: /Vào học Unit 1/i });
+    fireEvent.click(enterUnit1Link);
+
+    expect(
+      screen.getByText(/The Architecture of Brevity: Decoding Modern Shorthand/i)
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("exercise-ex-1-1")).toBeInTheDocument();
+
+    // Unit switcher bar and 100-unit roadmap accordion should NOT be combined into the unit workspace
+    expect(screen.queryByTestId("vocab-in-use-catalog")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Lộ trình toàn sách \(100 Units\)/i })
+    ).not.toBeInTheDocument();
+
+    // Back-to-catalog links are present in header and bottom navigation
+    expect(screen.getByRole("link", { name: /^Chọn Unit$/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /Về trang Chọn Unit/i })
+    ).toBeInTheDocument();
+  });
+
   it("Renders Unit 1 interactive spread, updates Lexicon Inspector on word click, and saves bookmarks", () => {
     render(
       <MemoryRouter initialEntries={["/vocab-in-use/1"]}>

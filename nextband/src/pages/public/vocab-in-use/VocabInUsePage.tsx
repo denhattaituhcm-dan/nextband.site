@@ -1,24 +1,26 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { SEO } from "@/components/common/SEO";
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   Bookmark,
   BookmarkCheck,
   CheckCircle2,
+  Clock,
   Columns2,
   Compass,
   FileText,
   Layers,
   PenTool,
   RotateCcw,
+  Search,
   Sparkles,
   Volume2,
   XCircle,
   Lock,
-  Check,
-  ChevronRight
+  Check
 } from "lucide-react";
 import {
   VOCAB_IN_USE_UNITS,
@@ -126,17 +128,24 @@ export default function VocabInUsePage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const parsedUnitId = unitParam ? parseInt(unitParam, 10) : 1;
+  const baseRoute = location.pathname.startsWith("/reading/vocab-in-use")
+    ? "/reading/vocab-in-use"
+    : "/vocab-in-use";
+
+  const parsedUnitId = unitParam ? parseInt(unitParam, 10) : null;
+  const hasUnitSelection =
+    parsedUnitId !== null && !Number.isNaN(parsedUnitId);
   const activeUnit = useMemo(
-    () => getVocabInUseUnit(Number.isNaN(parsedUnitId) ? 1 : parsedUnitId),
-    [parsedUnitId]
+    () => getVocabInUseUnit(hasUnitSelection ? parsedUnitId! : 1),
+    [hasUnitSelection, parsedUnitId]
   );
 
   const [viewMode, setViewMode] = useState<ViewMode>("split");
+  const [catalogBookmarksOpen, setCatalogBookmarksOpen] = useState(false);
   const [selectedLexiconId, setSelectedLexiconId] = useState<string>(
     activeUnit.lexicon[0]?.id || ""
   );
-  const [roadmapOpen, setRoadmapOpen] = useState(false);
+  const pendingLexiconRef = useRef<string | null>(null);
 
   // Answers & checked status per exercise
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -158,7 +167,7 @@ export default function VocabInUsePage() {
     return [];
   });
 
-  // Persistent Exercise Progress (exerciseId -> "correct/total")
+  // Persistent Exercise Progress (exerciseId -> ExerciseScore)
   const [exerciseProgress, setExerciseProgress] = useState<
     Record<string, ExerciseScore>
   >(() => {
@@ -174,9 +183,26 @@ export default function VocabInUsePage() {
   });
 
   useEffect(() => {
-    setSelectedLexiconId(activeUnit.lexicon[0]?.id || "");
+    const targetLex = pendingLexiconRef.current;
+    if (targetLex && activeUnit.lexicon.some((l) => l.id === targetLex)) {
+      setSelectedLexiconId(targetLex);
+      pendingLexiconRef.current = null;
+    } else {
+      setSelectedLexiconId(activeUnit.lexicon[0]?.id || "");
+    }
     setFocusedGapId(null);
   }, [activeUnit.unitId, activeUnit.lexicon]);
+
+  useEffect(() => {
+    try {
+      window.scrollTo?.(0, 0);
+    } catch {
+      // ignore in non-DOM test environments
+    }
+    if (hasUnitSelection) {
+      setCatalogBookmarksOpen(false);
+    }
+  }, [unitParam, hasUnitSelection]);
 
   useEffect(() => {
     try {
@@ -202,13 +228,22 @@ export default function VocabInUsePage() {
   );
 
   const handleSelectUnit = (targetId: number) => {
-    const baseRoute = location.pathname.startsWith("/reading/vocab-in-use")
-      ? "/reading/vocab-in-use"
-      : "/vocab-in-use";
     navigate(`${baseRoute}/${targetId}`);
     if (viewMode === "bookmarks") {
       setViewMode("split");
     }
+  };
+
+  const handleJumpToUnit = (uId: number, lexId: string) => {
+    pendingLexiconRef.current = lexId;
+    if (hasUnitSelection && uId === activeUnit.unitId) {
+      setSelectedLexiconId(lexId);
+      pendingLexiconRef.current = null;
+      setViewMode("split");
+      return;
+    }
+    handleSelectUnit(uId);
+    setViewMode("split");
   };
 
   const makeBookmarkKey = (uId: number, lexId: string) => `${uId}:${lexId}`;
@@ -281,6 +316,30 @@ export default function VocabInUsePage() {
     (ex) => Boolean(exerciseProgress[ex.id])
   ).length;
 
+  const currentUnitIndex = VOCAB_IN_USE_UNITS.findIndex(
+    (u) => u.unitId === activeUnit.unitId
+  );
+  const prevUnit =
+    currentUnitIndex > 0 ? VOCAB_IN_USE_UNITS[currentUnitIndex - 1] : null;
+  const nextUnit =
+    currentUnitIndex >= 0 && currentUnitIndex < VOCAB_IN_USE_UNITS.length - 1
+      ? VOCAB_IN_USE_UNITS[currentUnitIndex + 1]
+      : null;
+
+  if (!hasUnitSelection) {
+    return (
+      <UnitCatalogView
+        baseRoute={baseRoute}
+        exerciseProgress={exerciseProgress}
+        savedBookmarkItems={savedBookmarkItems}
+        bookmarksOpen={catalogBookmarksOpen}
+        onToggleBookmarks={setCatalogBookmarksOpen}
+        onRemoveBookmark={toggleBookmark}
+        onJumpToUnit={handleJumpToUnit}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2D2825] font-sans selection:bg-[#F2DBD3] selection:text-[#2D2825]">
       <SEO
@@ -288,16 +347,16 @@ export default function VocabInUsePage() {
         description={activeUnit.summaryVi}
       />
 
-      {/* Top Studio Header */}
+      {/* Top Studio Header (Dedicated Unit Workspace) */}
       <header className="sticky top-0 z-40 border-b border-[#EAE3D9] bg-[#002147] text-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link
-              to="/reading"
+              to={baseRoute}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition-colors shrink-0"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Tab Đọc</span>
+              <span>Chọn Unit</span>
             </Link>
 
             <div className="min-w-0">
@@ -305,8 +364,8 @@ export default function VocabInUsePage() {
                 <span className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-amber-400/20 text-amber-200 border border-amber-400/30">
                   Vocabulary in Use · {activeUnit.cefr}
                 </span>
-                <span className="text-xs text-slate-200 hidden md:inline">
-                  2-Page Interactive Studio
+                <span className="text-xs font-semibold text-amber-200 hidden md:inline">
+                  Đã luyện {unitCompletedCount}/{activeUnit.exercises.length} bài
                 </span>
               </div>
               <h1 className="text-base sm:text-lg font-serif font-bold text-white truncate mt-0.5">
@@ -374,119 +433,13 @@ export default function VocabInUsePage() {
         </div>
       </header>
 
-      {/* Unit Switcher Strip & Book Roadmap */}
-      <section className="border-b border-[#EAE3D9] bg-[#F4EFE6]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-3">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              {VOCAB_IN_USE_UNITS.map((unit) => {
-                const isSelected = unit.unitId === activeUnit.unitId;
-                return (
-                  <button
-                    key={unit.unitId}
-                    type="button"
-                    onClick={() => handleSelectUnit(unit.unitId)}
-                    className={`px-3.5 py-2 rounded-xl text-left transition-all border cursor-pointer ${
-                      isSelected
-                        ? "bg-[#002147] text-white border-[#002147] shadow-md"
-                        : "bg-white text-[#2D2825] border-[#E0D6C6] hover:border-[#C86D51]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
-                          isSelected
-                            ? "bg-amber-400 text-[#002147]"
-                            : "bg-[#EFE9DF] text-[#574D44]"
-                        }`}
-                      >
-                        UNIT {unit.unitId}
-                      </span>
-                      <span className="text-sm font-bold">{unit.titleEn}</span>
-                    </div>
-                  </button>
-                );
-              })}
-
-              <button
-                type="button"
-                onClick={() => setRoadmapOpen((prev) => !prev)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white/90 hover:bg-white text-[#574D44] border border-dashed border-[#CBBBA4] transition cursor-pointer"
-              >
-                <Layers className="h-3.5 w-3.5 text-[#C86D51]" />
-                <span>Lộ trình toàn sách (100 Units)</span>
-                <ChevronRight
-                  className={`h-3.5 w-3.5 transition-transform ${
-                    roadmapOpen ? "rotate-90" : ""
-                  }`}
-                />
-              </button>
-            </div>
-
-            <div className="flex items-center gap-3 text-xs sm:text-sm text-[#4E453E]">
-              <span>{activeUnit.lexicon.length} từ vựng trọng tâm</span>
-              <span>·</span>
-              <span className="font-semibold text-[#C86D51]">
-                Đã luyện {unitCompletedCount}/{activeUnit.exercises.length} bài
-              </span>
-            </div>
-          </div>
-
-          {roadmapOpen && (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2 animate-in fade-in duration-150">
-              {ROADMAP_CHAPTERS.map((chap) => (
-                <div
-                  key={chap.chapterNumber}
-                  className={`rounded-2xl p-4 border ${
-                    chap.status === "live"
-                      ? "bg-white border-emerald-200 shadow-xs"
-                      : "bg-[#FAF7F2]/80 border-[#E5DCCD]"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="text-xs font-mono uppercase tracking-wider text-[#574D44] font-bold">
-                      {chap.unitRange}
-                    </span>
-                    {chap.status === "live" ? (
-                      <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-                        Đang mở · Units 1–3
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-[#EFE9DF] text-[#574D44]">
-                        <Lock className="h-3 w-3" /> Sắp xuất bản
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="font-serif font-bold text-base text-[#241F1C]">
-                    {chap.titleEn}
-                  </h3>
-                  <p className="text-sm text-[#4E453E] mb-2">{chap.titleVi}</p>
-                  <ul className="space-y-1 text-xs text-[#574D44]">
-                    {chap.sampleTopics.map((topic) => (
-                      <li key={topic} className="flex items-start gap-1.5">
-                        <span className="text-[#C86D51]">•</span>
-                        <span>{topic}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {viewMode === "bookmarks" ? (
           <BookmarksDeckView
             items={savedBookmarkItems}
             onRemove={(uId, lexId) => toggleBookmark(uId, lexId)}
-            onJumpToUnit={(uId, lexId) => {
-              handleSelectUnit(uId);
-              setSelectedLexiconId(lexId);
-              setViewMode("split");
-            }}
+            onJumpToUnit={handleJumpToUnit}
           />
         ) : (
           <div
@@ -885,6 +838,45 @@ export default function VocabInUsePage() {
               </section>
             )}
           </div>
+        )}
+
+        {viewMode !== "bookmarks" && (
+          <nav
+            aria-label="Điều hướng Unit"
+            className="mt-10 pt-6 border-t border-[#E6DDD0] flex flex-wrap items-center justify-between gap-3"
+          >
+            <Link
+              to={baseRoute}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-[#F4EFE6] text-[#1F1A17] border border-[#DCCFBE] text-sm font-semibold transition shadow-2xs"
+            >
+              <ArrowLeft className="h-4 w-4 text-[#574D44]" />
+              <span>Về trang Chọn Unit</span>
+            </Link>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              {prevUnit && (
+                <Link
+                  to={`${baseRoute}/${prevUnit.unitId}`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-[#F4EFE6] text-[#3A312B] border border-[#DCCFBE] text-sm font-semibold transition"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>Unit {prevUnit.unitId}: {prevUnit.titleEn}</span>
+                </Link>
+              )}
+
+              {nextUnit && (
+                <Link
+                  to={`${baseRoute}/${nextUnit.unitId}`}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#002147] hover:bg-[#00336E] text-white text-sm font-bold transition shadow-sm"
+                >
+                  <span>
+                    Học tiếp Unit {nextUnit.unitId}: {nextUnit.titleEn}
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-amber-300" />
+                </Link>
+              )}
+            </div>
+          </nav>
         )}
       </main>
     </div>
@@ -1312,6 +1304,415 @@ function BookmarksDeckView({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+interface UnitCatalogViewProps {
+  baseRoute: string;
+  exerciseProgress: Record<string, ExerciseScore>;
+  savedBookmarkItems: SavedBookmarkItem[];
+  bookmarksOpen: boolean;
+  onToggleBookmarks: (open: boolean) => void;
+  onRemoveBookmark: (unitId: number, lexiconId: string) => void;
+  onJumpToUnit: (unitId: number, lexiconId: string) => void;
+}
+
+function UnitCatalogView({
+  baseRoute,
+  exerciseProgress,
+  savedBookmarkItems,
+  bookmarksOpen,
+  onToggleBookmarks,
+  onRemoveBookmark,
+  onJumpToUnit
+}: UnitCatalogViewProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const totalLexiconCount = useMemo(
+    () => VOCAB_IN_USE_UNITS.reduce((sum, u) => sum + u.lexicon.length, 0),
+    []
+  );
+  const totalExercisesCount = useMemo(
+    () => VOCAB_IN_USE_UNITS.reduce((sum, u) => sum + u.exercises.length, 0),
+    []
+  );
+  const totalCompletedExercises = useMemo(
+    () =>
+      VOCAB_IN_USE_UNITS.reduce(
+        (sum, u) =>
+          sum + u.exercises.filter((ex) => Boolean(exerciseProgress[ex.id])).length,
+        0
+      ),
+    [exerciseProgress]
+  );
+
+  const filteredUnits = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return VOCAB_IN_USE_UNITS;
+    return VOCAB_IN_USE_UNITS.filter(
+      (u) =>
+        `unit ${u.unitId}`.includes(q) ||
+        u.titleEn.toLowerCase().includes(q) ||
+        u.titleVi.toLowerCase().includes(q) ||
+        u.summaryVi.toLowerCase().includes(q) ||
+        u.chapterTitle.toLowerCase().includes(q) ||
+        u.lexicon.some(
+          (l) =>
+            l.word.toLowerCase().includes(q) ||
+            l.meaningVi.toLowerCase().includes(q)
+        )
+    );
+  }, [searchQuery]);
+
+  return (
+    <div
+      data-testid="vocab-in-use-catalog"
+      className="min-h-screen bg-[#FAF7F2] text-[#2D2825] font-sans selection:bg-[#F2DBD3] selection:text-[#2D2825]"
+    >
+      <SEO
+        title="Danh mục Chủ đề & Chọn Unit — Vocabulary in Use (C1–C2) | NextBand"
+        description="Chọn Unit từ giáo trình English Vocabulary in Use Advanced (C1–C2) với mô hình học 2 trang đối xứng: đọc ngữ cảnh tra từ & làm bài tập tuyển chọn trực quan."
+      />
+
+      {/* Catalog Header */}
+      <header className="sticky top-0 z-40 border-b border-[#EAE3D9] bg-[#002147] text-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <Link
+              to="/reading"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition-colors shrink-0"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Tab Đọc</span>
+            </Link>
+
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-amber-400/20 text-amber-200 border border-amber-400/30">
+                  VOCABULARY IN USE · C1 – C2
+                </span>
+              </div>
+              <h1 className="text-base sm:text-lg font-serif font-bold text-white truncate mt-0.5">
+                Danh mục Chủ đề &amp; Chọn Unit
+              </h1>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 bg-white/10 p-1 rounded-xl border border-white/15 shrink-0">
+            <button
+              type="button"
+              onClick={() => onToggleBookmarks(false)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                !bookmarksOpen
+                  ? "bg-white text-[#002147] shadow-xs"
+                  : "text-slate-200 hover:text-white"
+              }`}
+            >
+              <Layers className="h-3.5 w-3.5" />
+              <span>Danh mục Unit</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onToggleBookmarks(true)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                bookmarksOpen
+                  ? "bg-amber-400 text-[#002147] shadow-xs"
+                  : "text-slate-200 hover:text-white"
+              }`}
+            >
+              <Bookmark className="h-3.5 w-3.5" />
+              <span>Sổ từ ({savedBookmarkItems.length})</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-10">
+        {bookmarksOpen ? (
+          <BookmarksDeckView
+            items={savedBookmarkItems}
+            onRemove={onRemoveBookmark}
+            onJumpToUnit={onJumpToUnit}
+          />
+        ) : (
+          <>
+            {/* Hero Banner introducing the book & 2-Page Spread model */}
+            <section className="rounded-3xl bg-gradient-to-br from-[#002147] via-[#0B2F5E] to-[#123E78] text-white p-6 sm:p-10 shadow-xl relative overflow-hidden">
+              <div className="space-y-6">
+                <div className="space-y-3 max-w-3xl">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-200 border border-amber-400/30 text-xs font-mono uppercase tracking-wider font-semibold">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    English Vocabulary in Use · Advanced (C1–C2)
+                  </span>
+                  <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white leading-tight">
+                    Số hóa Studio Học Từ vựng 2 Trang Đối xứng
+                  </h2>
+                  <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
+                    Chọn một Unit phù hợp để bước vào phòng học tập trung:{" "}
+                    <strong className="text-white">Trang Trái</strong> giúp bạn đọc ngữ cảnh tự nhiên, chạm từ để tra sắc thái và nghe phát âm bản xứ;{" "}
+                    <strong className="text-white">Trang Phải</strong> là hệ thống bài tập tuyển chọn trực quan có chấm điểm và giải thích song ngữ tức thì.
+                  </p>
+                </div>
+
+                {/* 4 Quick Stats */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                  <div className="rounded-2xl bg-white/10 border border-white/15 p-4">
+                    <div className="text-xl sm:text-2xl font-bold text-amber-300 font-mono">
+                      100 Units
+                    </div>
+                    <div className="text-xs sm:text-sm text-slate-200 mt-0.5">
+                      Lộ trình toàn sách
+                    </div>
+                  </div>
+                  <div className="rounded-2xl bg-white/10 border border-white/15 p-4">
+                    <div className="text-xl sm:text-2xl font-bold text-emerald-300 font-mono">
+                      {VOCAB_IN_USE_UNITS.length} Units
+                    </div>
+                    <div className="text-xs sm:text-sm text-slate-200 mt-0.5">
+                      Sẵn sàng học ngay
+                    </div>
+                  </div>
+                  <div className="rounded-2xl bg-white/10 border border-white/15 p-4">
+                    <div className="text-xl sm:text-2xl font-bold text-sky-200 font-mono">
+                      {totalLexiconCount} mục từ
+                    </div>
+                    <div className="text-xs sm:text-sm text-slate-200 mt-0.5">
+                      Từ vựng trọng tâm C1–C2
+                    </div>
+                  </div>
+                  <div className="rounded-2xl bg-white/10 border border-white/15 p-4">
+                    <div className="text-xl sm:text-2xl font-bold text-white font-mono">
+                      {totalCompletedExercises}/{totalExercisesCount}
+                    </div>
+                    <div className="text-xs sm:text-sm text-slate-200 mt-0.5">
+                      Bài tập đã hoàn thành
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Search Bar */}
+            <section
+              aria-label="Tìm kiếm Unit"
+              className="bg-white rounded-2xl border border-[#E6DDD0] p-4 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3"
+            >
+              <div className="relative flex-1">
+                <Search className="h-4 w-4 text-[#574D44] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Tìm Unit theo tên, chủ đề tiếng Việt hoặc từ vựng (e.g., sits, underfunded, jargon)..."
+                  aria-label="Tìm kiếm Unit"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#DCCFBE] bg-[#FAF7F2]/60 text-sm sm:text-base text-[#1F1A17] placeholder:text-[#574D44]/70 focus:outline-none focus:border-[#002147] focus:bg-white transition"
+                />
+              </div>
+
+              <div className="flex items-center justify-between sm:justify-end gap-3 text-xs sm:text-sm text-[#4E453E] shrink-0 px-1">
+                <span>
+                  Hiển thị{" "}
+                  <strong className="text-[#1F1A17]">
+                    {filteredUnits.length}/{VOCAB_IN_USE_UNITS.length} Units
+                  </strong>
+                </span>
+                {searchQuery.trim() && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="text-xs sm:text-sm font-semibold text-[#C86D51] hover:underline cursor-pointer"
+                  >
+                    Xóa lọc
+                  </button>
+                )}
+              </div>
+            </section>
+
+            {/* Digitized Units Grid */}
+            <section aria-label="Danh sách Unit" className="space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-[#E6DDD0] pb-3">
+                <div>
+                  <span className="text-xs font-mono uppercase tracking-wider text-[#9C4124] font-bold">
+                    Đã số hóa · Phiên bản Interactive Studio
+                  </span>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1F1A17] mt-0.5">
+                    Chọn Unit để Bắt đầu Học &amp; Luyện tập
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-[#574D44]">
+                  Mỗi Unit gồm 1 bài đọc ngữ cảnh + {`3–4`} bài tập trực quan
+                </p>
+              </div>
+
+              {filteredUnits.length === 0 ? (
+                <div className="bg-white rounded-3xl border border-dashed border-[#CBBBA4] p-10 text-center space-y-3">
+                  <Search className="h-8 w-8 text-[#574D44] mx-auto opacity-70" />
+                  <p className="text-base font-semibold text-[#1F1A17]">
+                    Không tìm thấy Unit nào khớp với “{searchQuery}”
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#002147] text-white text-sm font-semibold cursor-pointer"
+                  >
+                    Hiển thị tất cả Units
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredUnits.map((unit) => {
+                    const completedInUnit = unit.exercises.filter((ex) =>
+                      Boolean(exerciseProgress[ex.id])
+                    ).length;
+
+                    return (
+                      <article
+                        key={unit.unitId}
+                        data-testid={`unit-card-${unit.unitId}`}
+                        className="bg-white rounded-3xl border border-[#E6DDD0] hover:border-[#C86D51] shadow-xs hover:shadow-lg transition-all p-6 flex flex-col justify-between gap-5"
+                      >
+                        <div className="space-y-3.5">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-[#002147] text-white">
+                              UNIT {String(unit.unitId).padStart(2, "0")}
+                            </span>
+                            {completedInUnit > 0 ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                Đã luyện {completedInUnit}/{unit.exercises.length} bài
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-[#FBEBE5] text-[#9C4124]">
+                                Sẵn sàng học
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#574D44] font-medium">
+                            <span>{unit.chapterTitle}</span>
+                            <span>·</span>
+                            <span>{unit.cefr}</span>
+                            <span>·</span>
+                            <span className="inline-flex items-center gap-1">
+                              <Clock className="h-3.5 w-3.5" />
+                              {unit.estimatedMinutes} phút
+                            </span>
+                          </div>
+
+                          <div>
+                            <h4 className="font-serif text-xl font-bold text-[#1F1A17] leading-snug">
+                              {unit.titleEn}
+                            </h4>
+                            <p className="text-sm font-semibold text-[#9C4124] mt-1">
+                              {unit.titleVi}
+                            </p>
+                          </div>
+
+                          <p className="text-sm text-[#4E453E] leading-relaxed">
+                            {unit.summaryVi}
+                          </p>
+
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {unit.lexicon.slice(0, 6).map((lex) => (
+                              <span
+                                key={lex.id}
+                                className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#FAF7F2] text-[#3A312B] border border-[#E6DDD0]"
+                              >
+                                {lex.word}
+                              </span>
+                            ))}
+                            {unit.lexicon.length > 6 && (
+                              <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#EFE9DF] text-[#574D44]">
+                                +{unit.lexicon.length - 6} từ
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="pt-4 border-t border-[#F2ECE2] flex items-center justify-between gap-3">
+                          <span className="text-xs sm:text-sm text-[#574D44] font-medium">
+                            {unit.lexicon.length} từ · {unit.exercises.length} bài tập
+                          </span>
+                          <Link
+                            to={`${baseRoute}/${unit.unitId}`}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#002147] hover:bg-[#00336E] text-white text-sm font-bold transition shadow-xs shrink-0"
+                          >
+                            <span>Vào học Unit {unit.unitId}</span>
+                            <ArrowRight className="h-4 w-4 text-amber-300" />
+                          </Link>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+
+            {/* Full Book 100-Unit Roadmap */}
+            <section
+              aria-label="Lộ trình toàn sách 100 Units"
+              className="bg-white rounded-3xl border border-[#E6DDD0] p-6 sm:p-8 space-y-5 shadow-xs"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-[#F2ECE2] pb-4">
+                <div>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-[#9C4124] font-bold">
+                    <Layers className="h-3.5 w-3.5" />
+                    Cấu trúc Giáo trình Toàn bộ
+                  </span>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1F1A17] mt-1">
+                    Lộ trình toàn sách (100 Units)
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-[#574D44]">
+                  Các chương tiếp theo đang được đội ngũ học thuật tiếp tục số hóa
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {ROADMAP_CHAPTERS.map((chap) => (
+                  <div
+                    key={chap.chapterNumber}
+                    className={`rounded-2xl p-4 sm:p-5 border ${
+                      chap.status === "live"
+                        ? "bg-white border-emerald-200 shadow-xs"
+                        : "bg-[#FAF7F2]/80 border-[#E5DCCD]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-xs font-mono uppercase tracking-wider text-[#574D44] font-bold">
+                        {chap.unitRange}
+                      </span>
+                      {chap.status === "live" ? (
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                          Đang mở · Units 1–3
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#EFE9DF] text-[#574D44]">
+                          <Lock className="h-3 w-3" /> Sắp xuất bản
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="font-serif font-bold text-base sm:text-lg text-[#241F1C]">
+                      {chap.titleEn}
+                    </h4>
+                    <p className="text-sm text-[#4E453E] mb-2.5">{chap.titleVi}</p>
+                    <ul className="space-y-1 text-xs sm:text-sm text-[#574D44]">
+                      {chap.sampleTopics.map((topic) => (
+                        <li key={topic} className="flex items-start gap-1.5">
+                          <span className="text-[#C86D51] font-bold">•</span>
+                          <span>{topic}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
+        )}
+      </main>
     </div>
   );
 }

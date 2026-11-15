@@ -1085,11 +1085,11 @@ export default function ReadingUniversePage() {
               </p>
             </div>
             <Link
-              to="/vocab-in-use/1"
+              to="/vocab-in-use"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#002147] hover:bg-[#00336E] text-white text-sm font-bold tracking-wide transition shadow-sm shrink-0 self-start md:self-auto"
             >
               <BookOpen className="h-4 w-4 text-amber-300" />
-              <span>Mở Studio Đọc & Luyện từ</span>
+              <span>Xem danh mục &amp; Chọn Unit</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
