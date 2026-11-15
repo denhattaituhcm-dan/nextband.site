@@ -93,6 +93,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
     lexicon: [
       {
         id: "impetuous",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "impetuous",
         ipa: "/ɪmˈpetʃ.u.əs/",
         pos: "adj",
@@ -103,6 +105,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "impulsive",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "impulsive",
         ipa: "/ɪmˈpʌl.sɪv/",
         pos: "adj",
@@ -113,6 +117,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "effusive",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "effusive",
         ipa: "/ɪˈfjuː.sɪv/",
         pos: "adj",
@@ -123,6 +129,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "excitable",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "excitable",
         ipa: "/ɪkˈsaɪ.tə.bəl/",
         pos: "adj",
@@ -133,6 +141,9 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "pushy",
+        exampleSource: "book",
+        ieltsUse: "productive",
+        usageFlag: "informal",
         word: "pushy",
         ipa: "/ˈpʊʃ.i/",
         pos: "adj (informal)",
@@ -144,6 +155,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "garrulous",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "garrulous",
         ipa: "/ˈɡær.əl.əs/",
         pos: "adj",
@@ -154,6 +167,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "taciturn",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "taciturn",
         ipa: "/ˈtæs.ɪ.tɜːn/",
         pos: "adj",
@@ -164,6 +179,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "introvert",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "introvert",
         ipa: "/ˈɪn.trə.vɜːt/",
         pos: "n",
@@ -174,6 +191,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "extrovert",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "extrovert",
         ipa: "/ˈek.strə.vɜːt/",
         pos: "n",
@@ -184,6 +203,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "diffident",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "diffident",
         ipa: "/ˈdɪf.ɪ.dənt/",
         pos: "adj",
@@ -194,6 +215,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "reserved",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "reserved",
         ipa: "/rɪˈzɜːvd/",
         pos: "adj",
@@ -204,6 +227,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "aloof",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "aloof",
         ipa: "/əˈluːf/",
         pos: "adj",
@@ -214,6 +239,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "haughty",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "haughty",
         ipa: "/ˈhɔː.ti/",
         pos: "adj",
@@ -224,6 +251,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "disdainful",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "disdainful",
         ipa: "/dɪsˈdeɪn.fəl/",
         pos: "adj",
@@ -234,6 +263,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "unapproachable",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "unapproachable",
         ipa: "/ˌʌn.əˈprəʊ.tʃə.bəl/",
         pos: "adj",
@@ -244,6 +275,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "approachable",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "approachable",
         ipa: "/əˈprəʊ.tʃə.bəl/",
         pos: "adj",
@@ -254,6 +287,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "conceited",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "conceited",
         ipa: "/kənˈsiː.tɪd/",
         pos: "adj",
@@ -264,6 +299,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "self-important",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "self-important",
         ipa: "/ˌself.ɪmˈpɔː.tənt/",
         pos: "adj",
@@ -274,6 +311,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "modest",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "modest",
         ipa: "/ˈmɒd.ɪst/",
         pos: "adj",
@@ -284,6 +323,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "flirt",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "flirt",
         ipa: "/flɜːt/",
         pos: "n",
@@ -294,6 +335,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "naive",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "naïve",
         ipa: "/naɪˈiːv/",
         pos: "adj",
@@ -304,6 +347,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "gullible",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "gullible",
         ipa: "/ˈɡʌl.ə.bəl/",
         pos: "adj",
@@ -314,6 +359,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "conscientious",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "conscientious",
         ipa: "/ˌkɒn.ʃiˈen.ʃəs/",
         pos: "adj",
@@ -324,6 +371,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "obstinate",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "obstinate",
         ipa: "/ˈɒb.stɪ.nət/",
         pos: "adj",
@@ -334,6 +383,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "pig-headed",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "pig-headed",
         ipa: "/ˌpɪɡˈhed.ɪd/",
         pos: "adj",
@@ -344,6 +395,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "unscrupulous",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "unscrupulous",
         ipa: "/ʌnˈskruː.pjə.ləs/",
         pos: "adj",
@@ -853,6 +906,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
     lexicon: [
       {
         id: "make-medical-history",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "make medical history",
         ipa: "/meɪk ˈmed.ɪ.kəl ˈhɪs.tər.i/",
         pos: "phrase",
@@ -863,6 +918,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "womb",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
         word: "womb (uterus)",
         ipa: "/wuːm/",
         pos: "n",
@@ -873,6 +930,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "deliver",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "deliver (a baby)",
         ipa: "/dɪˈlɪv.ər/",
         pos: "v",
@@ -883,6 +942,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "caesarean-section",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
         word: "Caesarean section",
         ipa: "/sɪˈzeə.ri.ən ˈsek.ʃən/",
         pos: "n",
@@ -893,6 +954,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "placenta",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
         word: "placenta",
         ipa: "/pləˈsen.tə/",
         pos: "n",
@@ -903,6 +966,9 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "foetus",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
+        usageFlag: "uk-only",
         word: "foetus",
         ipa: "/ˈfiː.təs/",
         pos: "n (US fetus)",
@@ -913,6 +979,9 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "ectopic-pregnancy",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
+        usageFlag: "sensitive",
         word: "ectopic pregnancy",
         ipa: "/ekˈtɒp.ɪk ˈpreɡ.nən.si/",
         pos: "n",
@@ -923,6 +992,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "fallopian-tubes",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
         word: "fallopian tubes",
         ipa: "/fəˈləʊ.pi.ən tjuːbz/",
         pos: "n (pl)",
@@ -933,6 +1004,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "ovaries",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
         word: "ovaries",
         ipa: "/ˈəʊ.vər.iz/",
         pos: "n (pl; sg ovary)",
@@ -943,6 +1016,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "conceive",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "conceive",
         ipa: "/kənˈsiːv/",
         pos: "v",
@@ -953,6 +1028,9 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "termination",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
+        usageFlag: "sensitive",
         word: "termination",
         ipa: "/ˌtɜː.mɪˈneɪ.ʃən/",
         pos: "n",
@@ -963,6 +1041,9 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "miscarriage",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
+        usageFlag: "sensitive",
         word: "miscarriage",
         ipa: "/ˈmɪs.kær.ɪdʒ/",
         pos: "n",
@@ -973,6 +1054,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "live-to-a-ripe-old-age",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "live to a ripe old age",
         ipa: "/lɪv tuː ə raɪp əʊld eɪdʒ/",
         pos: "idiom",
@@ -983,6 +1066,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "late",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "late (e.g. my late father)",
         ipa: "/leɪt/",
         pos: "adj",
@@ -993,6 +1078,9 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "sheltered-accommodation",
+        exampleSource: "aris",
+        ieltsUse: "productive",
+        usageFlag: "uk-only",
         word: "sheltered accommodation",
         ipa: "/ˈʃel.təd əˌkɒm.əˈdeɪ.ʃən/",
         pos: "n (uncountable, UK)",
@@ -1003,6 +1091,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "have-all-ones-wits",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "have all one's wits about one",
         ipa: "/hæv ɔːl wʌnz wɪts əˈbaʊt wʌn/",
         pos: "idiom",
@@ -1013,6 +1103,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "mourning",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "mourning",
         ipa: "/ˈmɔː.nɪŋ/",
         pos: "n",
@@ -1023,6 +1115,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "bereaved",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "bereaved",
         ipa: "/bɪˈriːvd/",
         pos: "adj / n (the bereaved)",
@@ -1033,6 +1127,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "will",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "will",
         ipa: "/wɪl/",
         pos: "n",
@@ -1043,6 +1139,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "cremation",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "cremation",
         ipa: "/krɪˈmeɪ.ʃən/",
         pos: "n",
@@ -1053,6 +1151,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "burial",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "burial",
         ipa: "/ˈber.i.əl/",
         pos: "n",
@@ -1063,6 +1163,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "scatter-ashes",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "scatter one's ashes",
         ipa: "/ˈskæt.ər wʌnz ˈæʃ.ɪz/",
         pos: "collocation",
@@ -1073,6 +1175,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "obituaries",
+        exampleSource: "aris",
+        ieltsUse: "productive",
         word: "obituaries",
         ipa: "/əˈbɪtʃ.u.ər.iz/",
         pos: "n (pl; sg obituary)",
@@ -1083,6 +1187,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "at-deaths-door",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "at death's door",
         ipa: "/æt deθs dɔːr/",
         pos: "idiom",
@@ -1093,6 +1199,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "on-ones-last-legs",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "on one's last legs",
         ipa: "/ɒn wʌnz lɑːst leɡz/",
         pos: "idiom",
@@ -1103,6 +1211,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "pass-away",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "pass away / pass on",
         ipa: "/pɑːs əˈweɪ/",
         pos: "phrasal verb",
@@ -1113,6 +1223,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "fatalities",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "fatalities",
         ipa: "/fəˈtæl.ə.tiz/",
         pos: "n (pl; sg fatality)",
@@ -1123,6 +1235,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "perished",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "perished",
         ipa: "/ˈper.ɪʃt/",
         pos: "v (past of perish)",
@@ -1133,6 +1247,9 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "slaughtered",
+        exampleSource: "book",
+        ieltsUse: "receptive",
+        usageFlag: "sensitive",
         word: "slaughtered",
         ipa: "/ˈslɔː.təd/",
         pos: "v (past/pp of slaughter)",
@@ -1143,6 +1260,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "the-deceased",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "the deceased",
         ipa: "/ðə dɪˈsiːst/",
         pos: "n (legal, sg or pl)",
@@ -1154,6 +1273,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "bequeath",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "bequeath",
         ipa: "/bɪˈkwiːð/",
         pos: "v",
@@ -1164,6 +1285,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "bequest",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "bequest",
         ipa: "/bɪˈkwest/",
         pos: "n",
@@ -1174,6 +1297,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "inherit",
+        exampleSource: "book",
+        ieltsUse: "productive",
         word: "inherit",
         ipa: "/ɪnˈher.ɪt/",
         pos: "v",
@@ -1184,6 +1309,8 @@ export const VOCAB_IN_USE_UNITS_19_TO_20: VocabInUseUnit[] = [
       },
       {
         id: "intestate",
+        exampleSource: "aris",
+        ieltsUse: "receptive",
         word: "intestate",
         ipa: "/ɪnˈtes.teɪt/",
         pos: "adj / adv",

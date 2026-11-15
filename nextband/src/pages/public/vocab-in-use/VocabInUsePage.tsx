@@ -636,6 +636,38 @@ export default function VocabInUsePage() {
                         <strong className="text-amber-300">Sắc thái & Ghi nhớ:</strong>{" "}
                         {activeLexicon.nuanceTip}
                       </div>
+                      {(activeLexicon.exampleSource ||
+                        activeLexicon.ieltsUse ||
+                        activeLexicon.usageFlag) && (
+                        <div
+                          className="flex flex-wrap items-center gap-2"
+                          data-testid="lexicon-meta-badges"
+                        >
+                          {activeLexicon.ieltsUse && (
+                            <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200">
+                              {activeLexicon.ieltsUse === "productive"
+                                ? "Gợi ý: dùng được khi nói/viết"
+                                : "Gợi ý: chỉ cần nhận biết"}
+                            </span>
+                          )}
+                          {activeLexicon.usageFlag && (
+                            <span className="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-200">
+                              {activeLexicon.usageFlag === "informal"
+                                ? "Thân mật / informal"
+                                : activeLexicon.usageFlag === "uk-only"
+                                  ? "Thiên về Anh-Anh"
+                                  : "Chủ đề nhạy cảm"}
+                            </span>
+                          )}
+                          {activeLexicon.exampleSource && (
+                            <span className="text-xs px-2 py-0.5 rounded bg-white/10 text-white/80">
+                              {activeLexicon.exampleSource === "book"
+                                ? "Ví dụ: theo sách gốc"
+                                : "Ví dụ: ARIS soạn"}
+                            </span>
+                          )}
+                        </div>
+                      )}
                       <div className="flex items-center justify-between gap-2 pt-1 text-sm text-white/90 italic">
                         <span>“{activeLexicon.example}”</span>
                         <button

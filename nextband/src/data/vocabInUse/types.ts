@@ -10,6 +10,12 @@ export interface LexiconItem {
   registerNote?: string;
   nuanceTip: string;
   example: string;
+  /** Provenance of `example`: "book" = quoted/adapted from the source book or its Key; "aris" = written by ARIS. Omit when unverified. */
+  exampleSource?: "book" | "aris";
+  /** ARIS editorial suggestion: "productive" = worth using in speaking/writing; "receptive" = recognition only. */
+  ieltsUse?: "productive" | "receptive";
+  /** Register / variety / sensitivity caution shown to learners. */
+  usageFlag?: "informal" | "uk-only" | "sensitive";
 }
 
 export interface PassageToken {

@@ -771,4 +771,83 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
     );
     expect(within(ex205).getByText("Kết quả: 8/8")).toBeInTheDocument();
   });
+
+  it("Enforces extended data hygiene across all Units (unique ids, word banks cover answers, metadata enums)", () => {
+    const exerciseIds = VOCAB_IN_USE_UNITS.flatMap((u) =>
+      u.exercises.map((e) => e.id)
+    );
+    expect(new Set(exerciseIds).size).toBe(exerciseIds.length);
+
+    const bankOffenders: string[] = [];
+    const duplicateLexicon: string[] = [];
+    const badMeta: string[] = [];
+    for (const u of VOCAB_IN_USE_UNITS) {
+      const lexIds = u.lexicon.map((l) => l.id);
+      if (new Set(lexIds).size !== lexIds.length) duplicateLexicon.push(`U${u.unitId}`);
+      for (const l of u.lexicon) {
+        if (l.exampleSource && !["book", "aris"].includes(l.exampleSource))
+          badMeta.push(`${u.unitId}:${l.id}`);
+        if (l.ieltsUse && !["productive", "receptive"].includes(l.ieltsUse))
+          badMeta.push(`${u.unitId}:${l.id}`);
+      }
+      for (const ex of u.exercises) {
+        if (ex.kind === "gap_fill" && ex.wordBank) {
+          const bank = new Set(ex.wordBank.map((w) => w.toLowerCase()));
+          for (const q of ex.questions) {
+            if (!bank.has(q.answer.toLowerCase())) bankOffenders.push(`${ex.id}/${q.id}`);
+          }
+        }
+      }
+    }
+    expect(duplicateLexicon).toEqual([]);
+    expect(badMeta).toEqual([]);
+    expect(bankOffenders).toEqual([]);
+  });
+
+  it("Grades Unit 20 cloze with a wrong answer and tolerates case and surrounding spaces", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/20"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const ex205 = screen.getByTestId("exercise-ex-20-5");
+    const inputs = within(ex205).getAllByRole("textbox");
+    fireEvent.change(inputs[0], { target: { value: "  Perished " } });
+    fireEvent.change(inputs[1], { target: { value: "fatality" } });
+    fireEvent.change(inputs[2], { target: { value: "slaughtered" } });
+    fireEvent.change(inputs[3], { target: { value: "deceased" } });
+    fireEvent.change(inputs[4], { target: { value: "passed away" } });
+    fireEvent.change(inputs[5], { target: { value: "bequeathed" } });
+    fireEvent.change(inputs[6], { target: { value: "inherited" } });
+    fireEvent.change(inputs[7], { target: { value: "bequest" } });
+
+    fireEvent.click(
+      within(ex205).getByRole("button", { name: /Kiểm tra đáp án/i })
+    );
+    expect(within(ex205).getByText("Kết quả: 7/8")).toBeInTheDocument();
+  });
+
+  it("Shows provenance, IELTS-use and usage badges in the Lexicon Inspector for labelled words", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/20"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getAllByText("bequeathed")[0]);
+    const badges = screen.getByTestId("lexicon-meta-badges");
+    expect(within(badges).getByText(/theo sách gốc/i)).toBeInTheDocument();
+    expect(within(badges).getByText(/dùng được khi nói\/viết/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByText("termination")[0]);
+    const badges2 = screen.getByTestId("lexicon-meta-badges");
+    expect(within(badges2).getByText(/ARIS soạn/i)).toBeInTheDocument();
+    expect(within(badges2).getByText(/chỉ cần nhận biết/i)).toBeInTheDocument();
+    expect(within(badges2).getByText(/Chủ đề nhạy cảm/i)).toBeInTheDocument();
+  });
 });
