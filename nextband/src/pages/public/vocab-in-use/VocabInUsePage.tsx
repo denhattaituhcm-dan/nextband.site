@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useContext } from "react";
 import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { SEO } from "@/components/common/SEO";
 import {
@@ -20,8 +20,14 @@ import {
   Volume2,
   XCircle,
   Lock,
-  Check
+  Check,
+  AlertTriangle,
+  Brain,
+  RefreshCw
 } from "lucide-react";
+import { AuthContext } from "@/hooks/useAuth";
+import { useVocabInUseBookmarks } from "@/hooks/useVocabInUseBookmarks";
+import { VocabInUseBookmarkRecord } from "@/lib/api/domains/vocab-in-use.api";
 import {
   VOCAB_IN_USE_UNITS,
   ROADMAP_CHAPTERS,
@@ -181,19 +187,28 @@ export default function VocabInUsePage() {
   const [checkedExercises, setCheckedExercises] = useState<Record<string, boolean>>({});
   const [focusedGapId, setFocusedGapId] = useState<string | null>(null);
 
-  // Persistent Bookmarks (unitId:lexiconId)
-  const [bookmarkedKeys, setBookmarkedKeys] = useState<string[]>(() => {
-    try {
-      const raw = localStorage.getItem(BOOKMARKS_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch {
-      // ignore storage errors
+  // Synchronized Bookmarks & Spaced Repetition (Guest Local -> Account Server)
+  const authContext = useContext(AuthContext);
+  const isAuthenticated = authContext?.isAuthenticated ?? false;
+  const {
+    bookmarkedKeys,
+    isLexiconBookmarked,
+    toggleBookmark: toggleBookmarkSync,
+    isSyncing,
+    syncError,
+    dueReviewItems,
+    submitReview,
+  } = useVocabInUseBookmarks(activeUnit.unitId);
+
+  const toggleBookmark = (uId: number, lexId: string) => {
+    const targetUnit =
+      VOCAB_IN_USE_UNITS.find((u) => u.unitId === uId) || activeUnit;
+    const targetLex =
+      targetUnit.lexicon.find((l) => l.id === lexId) || activeLexicon;
+    if (targetLex) {
+      toggleBookmarkSync(uId, targetLex);
     }
-    return [];
-  });
+  };
 
   // Persistent Exercise Progress (exerciseId -> ExerciseScore)
   const [exerciseProgress, setExerciseProgress] = useState<
@@ -234,14 +249,6 @@ export default function VocabInUsePage() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(BOOKMARKS_STORAGE_KEY, JSON.stringify(bookmarkedKeys));
-    } catch {
-      // ignore storage errors
-    }
-  }, [bookmarkedKeys]);
-
-  useEffect(() => {
-    try {
       localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(exerciseProgress));
     } catch {
       // ignore storage errors
@@ -275,16 +282,6 @@ export default function VocabInUsePage() {
   };
 
   const makeBookmarkKey = (uId: number, lexId: string) => `${uId}:${lexId}`;
-
-  const isLexiconBookmarked = (uId: number, lexId: string) =>
-    bookmarkedKeys.includes(makeBookmarkKey(uId, lexId));
-
-  const toggleBookmark = (uId: number, lexId: string) => {
-    const key = makeBookmarkKey(uId, lexId);
-    setBookmarkedKeys((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
-    );
-  };
 
   const savedBookmarkItems: SavedBookmarkItem[] = useMemo(() => {
     const result: SavedBookmarkItem[] = [];
@@ -468,6 +465,11 @@ export default function VocabInUsePage() {
             items={savedBookmarkItems}
             onRemove={(uId, lexId) => toggleBookmark(uId, lexId)}
             onJumpToUnit={handleJumpToUnit}
+            dueReviewItems={dueReviewItems}
+            onSubmitReview={submitReview}
+            isAuthenticated={isAuthenticated}
+            isSyncing={isSyncing}
+            syncError={syncError}
           />
         ) : (
           <div
@@ -1303,90 +1305,237 @@ interface BookmarksDeckProps {
   items: SavedBookmarkItem[];
   onRemove: (unitId: number, lexiconId: string) => void;
   onJumpToUnit: (unitId: number, lexiconId: string) => void;
+  dueReviewItems?: VocabInUseBookmarkRecord[];
+  onSubmitReview?: (bookmarkId: string, isCorrect: boolean) => Promise<void>;
+  isAuthenticated?: boolean;
+  isSyncing?: boolean;
+  syncError?: string | null;
 }
 
 function BookmarksDeckView({
   items,
   onRemove,
-  onJumpToUnit
+  onJumpToUnit,
+  dueReviewItems = [],
+  onSubmitReview,
+  isAuthenticated = false,
+  isSyncing = false,
+  syncError = null,
 }: BookmarksDeckProps) {
-  if (items.length === 0) {
-    return (
-      <div className="max-w-xl mx-auto bg-white rounded-3xl border border-[#E6DDD0] p-10 text-center space-y-3">
-        <Bookmark className="h-10 w-10 text-[#C86D51] mx-auto opacity-75" />
-        <h2 className="font-serif text-xl font-bold text-[#241F1C]">
-          Sổ từ cá nhân đang trống
-        </h2>
-        <p className="text-sm text-[#6E645D]">
-          Hãy chạm vào các từ vựng được gạch chân trong bài đọc Trang Trái và nhấn{" "}
-          <strong>Lưu sổ từ</strong> để tạo bộ ôn tập riêng của bạn.
-        </p>
-      </div>
-    );
-  }
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [isReviewSubmitting, setIsReviewSubmitting] = useState(false);
+
+  const currentDueItem = dueReviewItems[reviewIndex];
+
+  const handleReviewAnswer = async (isCorrect: boolean) => {
+    if (!currentDueItem || !onSubmitReview || isReviewSubmitting) return;
+    setIsReviewSubmitting(true);
+    try {
+      await onSubmitReview(currentDueItem.id, isCorrect);
+      setIsRevealed(false);
+      if (reviewIndex >= dueReviewItems.length - 1) {
+        setReviewIndex(0);
+      }
+    } finally {
+      setIsReviewSubmitting(false);
+    }
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="font-serif text-2xl font-bold text-[#241F1C]">
-          Sổ từ vựng Đã lưu ({items.length})
-        </h2>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map(({ unitId, unitTitle, lexicon }) => (
-          <div
-            key={`${unitId}:${lexicon.id}`}
-            className="bg-white rounded-2xl border border-[#E6DDD0] p-5 space-y-3 flex flex-col justify-between shadow-xs"
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-[#FAF7F2] text-[#574D44] border border-[#EAE1D3]">
-                  {unitTitle}
+    <div className="space-y-6">
+      {/* Sync Error Notice */}
+      {syncError && (
+        <div
+          data-testid="sync-error-banner"
+          className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-sm flex items-center gap-3"
+        >
+          <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+          <div className="flex-1">
+            <strong>Thông báo lưu trữ:</strong> {syncError}
+          </div>
+        </div>
+      )}
+
+      {/* Guest Warning / Cloud Sync Badge */}
+      {!isAuthenticated && (
+        <div className="p-4 rounded-2xl bg-[#002147]/5 border border-[#002147]/10 text-[#002147] text-sm flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <Sparkles className="h-4 w-4 text-[#C86D51] shrink-0" />
+            <span>
+              Bạn đang ở chế độ <strong>Khách</strong>: Từ vựng lưu an toàn trên trình duyệt này.
+              Đăng nhập để đồng bộ lên tài khoản và mở khóa chu kỳ ôn tập ngắt quãng (SM-2).
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Spaced Repetition Due Review Box */}
+      {isAuthenticated && dueReviewItems.length > 0 && currentDueItem && (
+        <div
+          data-testid="due-review-card"
+          className="p-6 rounded-3xl bg-gradient-to-br from-[#002147] to-[#133560] text-white space-y-4 shadow-md"
+        >
+          <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
+            <div className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-amber-300" />
+              <h3 className="font-serif text-lg sm:text-xl font-bold">
+                Ôn tập Trí nhớ Dài hạn (SM-2)
+              </h3>
+            </div>
+            <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-amber-400 text-[#002147]">
+              {reviewIndex + 1} / {dueReviewItems.length} từ đến hạn
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-baseline gap-3">
+              <span className="text-2xl font-serif font-bold text-amber-200">
+                {currentDueItem.word}
+              </span>
+              {currentDueItem.ipa && (
+                <span className="text-sm font-mono text-white/70">
+                  {currentDueItem.ipa}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => speakEnglish(lexicon.word)}
-                  className="p-1.5 rounded-lg bg-[#FAF7F2] hover:bg-[#EFE9DF] text-[#002147] cursor-pointer"
-                  aria-label={`Nghe ${lexicon.word}`}
-                >
-                  <Volume2 className="h-4 w-4" />
-                </button>
-              </div>
-              <div>
-                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1F1A17]">
-                  {lexicon.word}
-                </h3>
-                <p className="text-xs sm:text-sm font-mono text-[#574D44]">
-                  {lexicon.ipa} · {lexicon.pos}
-                </p>
-              </div>
-              <p className="text-sm text-[#2D2825] font-medium">
-                {lexicon.meaningVi}
-              </p>
-              <p className="text-xs sm:text-sm text-[#4E453E] italic">
-                “{lexicon.example}”
-              </p>
+              )}
+              {currentDueItem.pos && (
+                <span className="text-xs uppercase font-mono px-2 py-0.5 rounded bg-white/10 text-white/90">
+                  {currentDueItem.pos}
+                </span>
+              )}
             </div>
 
-            <div className="pt-3 border-t border-[#F2ECE2] flex items-center justify-between gap-2">
-              <button
-                type="button"
-                onClick={() => onJumpToUnit(unitId, lexicon.id)}
-                className="text-xs sm:text-sm font-semibold text-[#C86D51] hover:underline cursor-pointer"
-              >
-                Mở lại ngữ cảnh →
-              </button>
-              <button
-                type="button"
-                onClick={() => onRemove(unitId, lexicon.id)}
-                className="text-xs sm:text-sm text-[#574D44] hover:text-rose-600 cursor-pointer"
-              >
-                Bỏ lưu
-              </button>
-            </div>
+            {currentDueItem.example && (
+              <p className="text-sm text-white/80 italic">
+                “{currentDueItem.example}”
+              </p>
+            )}
+
+            {isRevealed ? (
+              <div className="pt-3 space-y-2 border-t border-white/10">
+                <p className="text-base font-medium text-emerald-200">
+                  <strong>Nghĩa:</strong> {currentDueItem.meaningVi}
+                </p>
+                {currentDueItem.nuanceTip && (
+                  <p className="text-xs text-amber-100/90 bg-white/5 p-2.5 rounded-xl border border-white/10">
+                    💡 <strong>Ghi nhớ:</strong> {currentDueItem.nuanceTip}
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-3 pt-2">
+                  <button
+                    type="button"
+                    disabled={isReviewSubmitting}
+                    onClick={() => handleReviewAnswer(false)}
+                    className="flex-1 py-2 px-4 rounded-xl text-sm font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/30 transition cursor-pointer"
+                  >
+                    ❌ Chưa nhớ (Ôn lại sau 1 ngày)
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isReviewSubmitting}
+                    onClick={() => handleReviewAnswer(true)}
+                    className="flex-1 py-2 px-4 rounded-xl text-sm font-bold bg-emerald-500/30 hover:bg-emerald-500/40 text-emerald-100 border border-emerald-400/40 transition cursor-pointer"
+                  >
+                    ✅ Đã nhớ (+{currentDueItem.intervalDays === 1 ? 3 : 7} ngày)
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsRevealed(true)}
+                  className="py-2 px-4 rounded-xl text-sm font-bold bg-white/10 hover:bg-white/20 text-amber-200 transition cursor-pointer"
+                >
+                  👁️ Hiện nghĩa tiếng Việt & Sắc thái
+                </button>
+              </div>
+            )}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Bookmarks Grid / Empty State */}
+      {items.length === 0 ? (
+        <div className="max-w-xl mx-auto bg-white rounded-3xl border border-[#E6DDD0] p-10 text-center space-y-3">
+          <Bookmark className="h-10 w-10 text-[#C86D51] mx-auto opacity-75" />
+          <h2 className="font-serif text-xl font-bold text-[#241F1C]">
+            Sổ từ cá nhân đang trống
+          </h2>
+          <p className="text-sm text-[#6E645D]">
+            Hãy chạm vào các từ vựng được gạch chân trong bài đọc Trang Trái và nhấn{" "}
+            <strong>Lưu sổ từ</strong> để tạo bộ ôn tập riêng của bạn.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-serif text-2xl font-bold text-[#241F1C]">
+              Sổ từ vựng Đã lưu ({items.length})
+            </h2>
+            {isSyncing && (
+              <span className="text-xs text-[#574D44] inline-flex items-center gap-1.5 font-medium">
+                <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Đang đồng bộ...
+              </span>
+            )}
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {items.map(({ unitId, unitTitle, lexicon }) => (
+              <div
+                key={`${unitId}:${lexicon.id}`}
+                className="bg-white rounded-2xl border border-[#E6DDD0] p-5 space-y-3 flex flex-col justify-between shadow-xs"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-[#FAF7F2] text-[#574D44] border border-[#EAE1D3]">
+                      {unitTitle}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => speakEnglish(lexicon.word)}
+                      className="p-1.5 rounded-lg bg-[#FAF7F2] hover:bg-[#EFE9DF] text-[#002147] cursor-pointer"
+                      aria-label={`Nghe ${lexicon.word}`}
+                    >
+                      <Volume2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1F1A17]">
+                      {lexicon.word}
+                    </h3>
+                    <p className="text-xs sm:text-sm font-mono text-[#574D44]">
+                      {lexicon.ipa} · {lexicon.pos}
+                    </p>
+                  </div>
+                  <p className="text-sm text-[#2D2825] font-medium">
+                    {lexicon.meaningVi}
+                  </p>
+                  <p className="text-xs sm:text-sm text-[#4E453E] italic">
+                    “{lexicon.example}”
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[#F2ECE2] flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onJumpToUnit(unitId, lexicon.id)}
+                    className="text-xs sm:text-sm font-semibold text-[#C86D51] hover:underline cursor-pointer"
+                  >
+                    Mở lại ngữ cảnh →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onRemove(unitId, lexicon.id)}
+                    className="text-xs sm:text-sm text-[#574D44] hover:text-rose-600 cursor-pointer"
+                  >
+                    Bỏ lưu
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

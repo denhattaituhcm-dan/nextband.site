@@ -58,6 +58,7 @@ model User {
   referralRewards       ReferralReward[]         @relation("InviterRewards")
   refereeAttribution    ReferralAttribution?     @relation("RefereeAttribution")
   userVocabularies      UserVocabulary[]
+  vocabInUseBookmarks   VocabInUseBookmark[]
   teacherProfile        TeacherProfile?
   weeklySnapshots       WeeklySnapshot[]
   errorEpisodes         StudentErrorEpisode[]    @relation("StudentErrorEpisodes")
@@ -1249,6 +1250,46 @@ model UserVocabulary {
   @@index([userId, nextReviewAt])
   @@map("user_vocabularies")
 }
+
+model VocabInUseBookmark {
+  id             String    @id @default(uuid())
+  userId         String    @map("user_id")
+  unitId         Int       @map("unit_id")
+  lexiconId      String    @map("lexicon_id")
+  
+  // Snapshot nội dung ARIS biên soạn
+  word           String
+  ipa            String?
+  pos            String?
+  meaningVi      String    @map("meaning_vi")
+  meaningEn      String?   @map("meaning_en")
+  nuanceTip      String?   @map("nuance_tip")
+  example        String?
+  registerNote   String?   @map("register_note")
+  exampleSource  String?   @map("example_source") // "book" | "aris"
+  ieltsUse       String?   @map("ielts_use")       // "productive" | "receptive"
+  usageFlag      String?   @map("usage_flag")      // "informal" | "uk-only" | "sensitive"
+
+  // Chu kỳ Spaced Repetition (Thuật toán SM-2 chuẩn hóa)
+  masteryState   Int       @default(0) @map("mastery_state") // 0: new, 1: learning, 2: consolidating, 3: mastered
+  masteryScore   Float     @default(0.1) @map("mastery_score")
+  intervalDays   Int       @default(1) @map("interval_days")
+  easeFactor     Float     @default(2.5) @map("ease_factor")
+  nextReviewAt   DateTime  @default(now()) @map("next_review_at")
+  totalReviews   Int       @default(0) @map("total_reviews")
+  failedReviews  Int       @default(0) @map("failed_reviews")
+  history        Json      @default("[]")
+
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  user           User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([userId, unitId, lexiconId])
+  @@index([userId, nextReviewAt])
+  @@map("vocab_in_use_bookmarks")
+}
+
 model TeacherProfile {
   id        String   @id @default(uuid())
   userId    String   @unique @map("user_id")

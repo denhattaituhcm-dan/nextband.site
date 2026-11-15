@@ -4305,3 +4305,9 @@ export { arenaApi } from "./api/domains/arena.api";
 export { facultyApi } from "./api/domains/faculty.api";
 
 export { evidenceApi } from "./api/domains/evidence.api";
+
+export {
+  vocabInUseApi,
+  type VocabInUseBookmarkPayload,
+  type VocabInUseBookmarkRecord,
+} from "./api/domains/vocab-in-use.api";

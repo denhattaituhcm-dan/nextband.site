@@ -31,6 +31,7 @@ import tuitionRoutes from "./tuition.routes.js";
 import milestoneRoutes from "./milestone.routes.js";
 import referralsRoutes from "./referrals.routes.js";
 import lexiconRoutes from "./lexicon.routes.js";
+import vocabInUseRoutes from "./vocab-in-use.routes.js";
 import teacherProfileRoutes from "./teacher-profile.routes.js";
 import cronRoutes from "./cron.routes.js";
 import parentReportsRoutes from "./parent-reports.routes.js";
@@ -87,6 +88,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(tuitionRoutes, { prefix: "/admin/tuition" });
   await fastify.register(milestoneRoutes, { prefix: "/milestones" });
   await fastify.register(lexiconRoutes, { prefix: "/lexicon" });
+  await fastify.register(vocabInUseRoutes, { prefix: "/vocab-in-use" });
   await fastify.register(teacherProfileRoutes, { prefix: "/teacher-profile" });
   await fastify.register(cronRoutes, { prefix: "/cron" });
   await fastify.register(parentReportsRoutes);
