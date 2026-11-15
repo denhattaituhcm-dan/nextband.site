@@ -1686,7 +1686,7 @@ function UnitCatalogView({
                       </span>
                       {chap.status === "live" ? (
                         <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-                          Đang mở · Units 1–3
+                          Hoàn thành · {chap.unitRange}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#EFE9DF] text-[#574D44]">
