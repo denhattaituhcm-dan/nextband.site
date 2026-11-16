@@ -10,6 +10,11 @@ import { EVC5_UNIT07_DATA } from "../../../data/essentialVocab/books/evc5/unit07
 import { EVC5_UNIT08_DATA } from "../../../data/essentialVocab/books/evc5/unit08.keeping-fit-and-healthy";
 import { EVC5_UNIT09_DATA } from "../../../data/essentialVocab/books/evc5/unit09.at-the-dentists";
 import { EVC5_UNIT10_DATA } from "../../../data/essentialVocab/books/evc5/unit10.accidents-and-emergencies";
+import { EVC5_UNIT11_DATA } from "../../../data/essentialVocab/books/evc5/unit11.working";
+import { EVC5_UNIT12_DATA } from "../../../data/essentialVocab/books/evc5/unit12.cooking";
+import { EVC5_UNIT13_DATA } from "../../../data/essentialVocab/books/evc5/unit13.eating-and-drinking";
+import { EVC5_UNIT14_DATA } from "../../../data/essentialVocab/books/evc5/unit14.eating-out";
+import { EVC5_UNIT15_DATA } from "../../../data/essentialVocab/books/evc5/unit15.household-equipment";
 import {
   resolveEvcUnitId,
   getEvcUnitSummary,
@@ -238,6 +243,11 @@ describe("Essential Vocabulary in Context — Schema, Grader & Progress Engine",
       EVC5_UNIT08_DATA,
       EVC5_UNIT09_DATA,
       EVC5_UNIT10_DATA,
+      EVC5_UNIT11_DATA,
+      EVC5_UNIT12_DATA,
+      EVC5_UNIT13_DATA,
+      EVC5_UNIT14_DATA,
+      EVC5_UNIT15_DATA,
     ];
 
     for (const u of units) {
@@ -292,8 +302,24 @@ describe("Essential Vocabulary in Context — Schema, Grader & Progress Engine",
     });
     expect(u10s3.score).toBe(5);
 
-    // Verify lazy loader resolves Units 1..10
-    for (const slug of ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]) {
+    // Verify lazy loader resolves Units 1..15
+    for (const slug of [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+    ]) {
       const loaded = await loadEvcUnit(slug);
       expect(loaded).not.toBeNull();
       expect(loaded?.unitNumber).toBe(Number(slug));
