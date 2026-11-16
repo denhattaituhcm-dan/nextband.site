@@ -110,6 +110,16 @@ export const EssentialVocabUnitPage: React.FC = () => {
   const [isSubmittingStage, setIsSubmittingStage] = useState(false);
   const [bookmarkToast, setBookmarkToast] = useState<string | null>(null);
 
+  useEffect(() => {
+    setStage1Answers({});
+    setStage2Answers({});
+    setStage3Answers({});
+    setStage4Answers({});
+    setGradedResults({});
+    setBookmarkToast(null);
+    setActiveStage(1);
+  }, [canonicalUnitId]);
+
   const entriesById = useMemo(() => {
     const map: Record<string, EvcGlossaryEntry> = {};
     if (!unitData) return map;
