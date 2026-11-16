@@ -1089,19 +1089,22 @@ export const EssentialVocabUnitPage: React.FC = () => {
               </div>
             )}
 
-            {/* ================= STAGE 3: GUIDED BOX CLOZE ================= */}
-            {activeStage === 3 &&
-              unitData.exercises.stage3.variant === "box_word_bank" && (
-                <div className="space-y-5">
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-amber-600">
-                      Exercise 3 · Guided Passage Cloze (Box A–J)
-                    </p>
-                    <p className="mt-1 text-sm font-medium text-slate-700">
-                      {unitData.exercises.stage3.instructions}
-                    </p>
+            {/* ================= STAGE 3: GUIDED CLOZE (BOX OR INLINE) ================= */}
+            {activeStage === 3 && (
+              <div className="space-y-5">
+                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-amber-600">
+                    Exercise 3 ·{" "}
+                    {unitData.exercises.stage3.variant === "box_word_bank"
+                      ? "Guided Passage Cloze (Box A–J)"
+                      : "Guided Passage Cloze (Inline 4-Option)"}
+                  </p>
+                  <p className="mt-1 text-sm font-medium text-slate-700">
+                    {unitData.exercises.stage3.instructions}
+                  </p>
 
-                    {/* Word Bank A-J */}
+                  {/* Word Bank A-J (only when variant is box_word_bank) */}
+                  {unitData.exercises.stage3.variant === "box_word_bank" && (
                     <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:grid-cols-5">
                       {unitData.exercises.stage3.wordBank.map((wb) => {
                         const isUsed = usedStage3Letters.has(wb.letter);
@@ -1122,110 +1125,126 @@ export const EssentialVocabUnitPage: React.FC = () => {
                         );
                       })}
                     </div>
-                  </div>
+                  )}
+                </div>
 
-                  {/* Passage with Inline Selectors */}
-                  <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    {unitData.exercises.stage3.passageTitle && (
-                      <h3 className="mb-3 text-base font-extrabold text-slate-900">
-                        {unitData.exercises.stage3.passageTitle}
-                      </h3>
-                    )}
+                {/* Passage with Inline Selectors */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  {unitData.exercises.stage3.passageTitle && (
+                    <h3 className="mb-3 text-base font-extrabold text-slate-900">
+                      {unitData.exercises.stage3.passageTitle}
+                    </h3>
+                  )}
 
-                    {renderPassageWithBlanks(
-                      unitData.exercises.stage3.passageTemplate,
-                      (blankNum) => {
-                        const blankObj =
-                          unitData.exercises.stage3.blanks.find(
-                            (b) => b.blankNumber === blankNum
-                          );
-                        if (!blankObj) return null;
+                  {renderPassageWithBlanks(
+                    unitData.exercises.stage3.passageTemplate,
+                    (blankNum) => {
+                      const blankObj = unitData.exercises.stage3.blanks.find(
+                        (b) => b.blankNumber === blankNum
+                      );
+                      if (!blankObj) return null;
 
-                        const selectedLetter =
-                          stage3Answers[blankObj.blankId] ?? "";
-                        const itemResult = currentStageResult?.items.find(
-                          (i) => i.itemId === blankObj.blankId
-                        );
+                      const selectedVal =
+                        stage3Answers[blankObj.blankId] ?? "";
+                      const itemResult = currentStageResult?.items.find(
+                        (i) => i.itemId === blankObj.blankId
+                      );
 
-                        return (
-                          <span className="mx-1 inline-flex items-center gap-1 align-baseline">
-                            <span className="rounded bg-indigo-100 px-1.5 py-0.5 text-xs font-bold text-indigo-800">
-                              ({blankNum})
-                            </span>
-                            <select
-                              disabled={Boolean(itemResult)}
-                              value={selectedLetter}
-                              onChange={(e) =>
-                                setStage3Answers((prev) => ({
-                                  ...prev,
-                                  [blankObj.blankId]: e.target.value,
-                                }))
-                              }
-                              className={`rounded-lg border px-2 py-1 text-xs font-bold focus:outline-none sm:text-sm ${
-                                itemResult
-                                  ? itemResult.isCorrect
-                                    ? "border-emerald-500 bg-emerald-50 text-emerald-900"
-                                    : "border-rose-400 bg-rose-50 text-rose-900"
-                                  : selectedLetter
-                                  ? "border-indigo-500 bg-indigo-50 text-indigo-900"
-                                  : "border-slate-300 bg-slate-50 text-slate-700"
-                              }`}
-                            >
-                              <option value="">— Chọn A–J —</option>
-                              {unitData.exercises.stage3.variant ===
-                                "box_word_bank" &&
-                                unitData.exercises.stage3.wordBank.map((wb) => (
-                                  <option key={wb.letter} value={wb.letter}>
-                                    ({wb.letter}) {wb.word}
-                                  </option>
-                                ))}
-                            </select>
+                      return (
+                        <span className="mx-1 inline-flex items-center gap-1 align-baseline">
+                          <span className="rounded bg-indigo-100 px-1.5 py-0.5 text-xs font-bold text-indigo-800">
+                            ({blankNum})
                           </span>
-                        );
-                      }
-                    )}
-
-                    {currentStageResult && (
-                      <div className="mt-6 space-y-2 border-t border-slate-200 pt-4">
-                        <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
-                          Giải thích chi tiết từng chỗ trống
-                        </h4>
-                        {currentStageResult.items.map((item) => (
-                          <div
-                            key={item.itemId}
-                            className={`rounded-xl p-3 text-xs ${
-                              item.isCorrect
-                                ? "bg-emerald-50 text-emerald-900"
-                                : "bg-amber-50 text-amber-900"
+                          <select
+                            disabled={Boolean(itemResult)}
+                            value={selectedVal}
+                            onChange={(e) =>
+                              setStage3Answers((prev) => ({
+                                ...prev,
+                                [blankObj.blankId]: e.target.value,
+                              }))
+                            }
+                            className={`rounded-lg border px-2 py-1 text-xs font-bold focus:outline-none sm:text-sm ${
+                              itemResult
+                                ? itemResult.isCorrect
+                                  ? "border-emerald-500 bg-emerald-50 text-emerald-900"
+                                  : "border-rose-400 bg-rose-50 text-rose-900"
+                                : selectedVal
+                                ? "border-indigo-500 bg-indigo-50 text-indigo-900"
+                                : "border-slate-300 bg-slate-50 text-slate-700"
                             }`}
                           >
-                            <strong>
-                              Chỗ trống ({item.itemNumber}) — Đáp án đúng:{" "}
-                              {item.canonicalDisplay}
-                            </strong>
-                            <p className="mt-0.5">
-                              {item.feedbackVi || item.feedbackEn}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                            <option value="">
+                              {unitData.exercises.stage3.variant ===
+                              "box_word_bank"
+                                ? "— Chọn A–J —"
+                                : "— Chọn (1)–(4) —"}
+                            </option>
+                            {unitData.exercises.stage3.variant ===
+                              "box_word_bank" &&
+                              unitData.exercises.stage3.wordBank.map((wb) => (
+                                <option key={wb.letter} value={wb.letter}>
+                                  ({wb.letter}) {wb.word}
+                                </option>
+                              ))}
+                            {unitData.exercises.stage3.variant ===
+                              "inline_four_option" &&
+                              "options" in blankObj &&
+                              blankObj.options.map((opt) => (
+                                <option
+                                  key={opt.optionNumber}
+                                  value={String(opt.optionNumber)}
+                                >
+                                  ({opt.optionNumber}) {opt.text}
+                                </option>
+                              ))}
+                          </select>
+                        </span>
+                      );
+                    }
+                  )}
 
-                  {!currentStageResult && (
-                    <div className="flex justify-end">
-                      <button
-                        type="button"
-                        disabled={isSubmittingStage}
-                        onClick={() => handleGradeStage(3)}
-                        className="rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-500"
-                      >
-                        Chấm điểm Exercise 3
-                      </button>
+                  {currentStageResult && (
+                    <div className="mt-6 space-y-2 border-t border-slate-200 pt-4">
+                      <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                        Giải thích chi tiết từng chỗ trống
+                      </h4>
+                      {currentStageResult.items.map((item) => (
+                        <div
+                          key={item.itemId}
+                          className={`rounded-xl p-3 text-xs ${
+                            item.isCorrect
+                              ? "bg-emerald-50 text-emerald-900"
+                              : "bg-amber-50 text-amber-900"
+                          }`}
+                        >
+                          <strong>
+                            Chỗ trống ({item.itemNumber}) — Đáp án đúng:{" "}
+                            {item.canonicalDisplay}
+                          </strong>
+                          <p className="mt-0.5">
+                            {item.feedbackVi || item.feedbackEn}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
-              )}
+
+                {!currentStageResult && (
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      disabled={isSubmittingStage}
+                      onClick={() => handleGradeStage(3)}
+                      className="rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-500"
+                    >
+                      Chấm điểm Exercise 3
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* ================= STAGE 4: OPEN CLOZE PASSAGE ================= */}
             {activeStage === 4 && (
