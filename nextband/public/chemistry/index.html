@@ -1055,6 +1055,70 @@
               </button>
             </div>
           </div>
+
+          <!-- Bài 8: Định luật tuần hoàn & Ý nghĩa BTH (Đã hoàn thiện) -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <polygon points="110,18 45,72 175,72" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3,3"/>
+                <circle cx="110" cy="18" r="13" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+                <text x="110" y="22" font-size="8" font-weight="700" fill="#0369a1" text-anchor="middle">Vị trí</text>
+                
+                <circle cx="45" cy="72" r="13" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+                <text x="45" y="76" font-size="8" font-weight="700" fill="#1d4ed8" text-anchor="middle">Cấu hình</text>
+                
+                <circle cx="175" cy="72" r="13" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+                <text x="175" y="76" font-size="8" font-weight="700" fill="#15803d" text-anchor="middle">Tính chất</text>
+                
+                <circle cx="110" cy="52" r="16" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <text x="110" y="56" font-size="11" font-weight="800" fill="#b45309" text-anchor="middle">Mg</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status ready">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 8: Định luật tuần hoàn & Ý nghĩa BTH</h3>
+                <p>Nội dung định luật tuần hoàn, thiên tài Mendeleev, tam giác suy luận Vị trí ⇄ Cấu hình ⇄ Tính chất và so sánh quan hệ lân cận.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b8')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Bài 9: Ôn tập Chương 2 (Đã hoàn thiện) -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <rect x="75" y="25" width="70" height="40" rx="8" fill="#eff6ff" stroke="#0284c7" stroke-width="2"/>
+                <text x="110" y="48" font-size="11" font-weight="800" fill="#0369a1" text-anchor="middle">Chương 2</text>
+                
+                <line x1="75" y1="35" x2="35" y2="25" stroke="#cbd5e1" stroke-width="1.5"/>
+                <circle cx="35" cy="25" r="8" fill="#dbeafe" stroke="#3b82f6"/>
+                
+                <line x1="75" y1="55" x2="35" y2="65" stroke="#cbd5e1" stroke-width="1.5"/>
+                <circle cx="35" cy="65" r="8" fill="#d1fae5" stroke="#10b981"/>
+                
+                <line x1="145" y1="35" x2="185" y2="25" stroke="#cbd5e1" stroke-width="1.5"/>
+                <circle cx="185" cy="25" r="8" fill="#fef3c7" stroke="#f59e0b"/>
+                
+                <line x1="145" y1="55" x2="185" y2="65" stroke="#cbd5e1" stroke-width="1.5"/>
+                <circle cx="185" cy="65" r="8" fill="#fee2e2" stroke="#ef4444"/>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status ready">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 9: Ôn tập & Luyện tập Chương 2</h3>
+                <p>Bản đồ tư duy 2.5D toàn cảnh, hoàn thành Sơ đồ Điền khuyết SGK Tr.45-46 & Đấu trường 6 bài tập lớn SGK Tr.46-47.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b9')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -3109,6 +3173,462 @@
   </div>
 
 
+  
+
+
+  <!-- ========================================================
+       BÀI 8: ĐỊNH LUẬT TUẦN HOÀN & Ý NGHĨA BẢNG TUẦN HOÀN
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM)
+       ======================================================== -->
+  <div id="view-studio-b8" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Header -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 2 • Bài 8</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Định luật tuần hoàn & Ý nghĩa của bảng tuần hoàn các nguyên tố hoá học</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 8 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b8-p1" class="tab-seg-btn active" onclick="switchPartB8('part1')">
+            <span>1 Định luật tuần hoàn & Lịch sử Mendeleev</span>
+          </button>
+          <button id="tab-btn-b8-p2" class="tab-seg-btn" onclick="switchPartB8('part2')">
+            <span>2 Ý nghĩa BTH: Tam giác Vị trí - Cấu hình - Tính chất</span>
+          </button>
+          <button id="tab-btn-b8-p3" class="tab-seg-btn" onclick="switchPartB8('part3')">
+            <span>3 So sánh quan hệ lân cận & Luyện tập SGK</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: ĐỊNH LUẬT TUẦN HOÀN & MENDELEEV -->
+          <div id="content-b8-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu sư phạm (SGK Trang 43)</h4>
+              <p>Phát biểu được định luật tuần hoàn. Trình bày được ý nghĩa lịch sử của D. I. Mendeleev khi tiên đoán các nguyên tố mới và đảo trật tự khối lượng nguyên tử.</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 43</div>
+            <h3 class="section-title">Nội dung Định luật tuần hoàn</h3>
+            
+            <div class="box-law" style="border-left: 5px solid #0284c7; background: #f0f9ff;">
+              <h4 style="color: #0369a1; font-size: 15px;">📜 Định luật Tuần hoàn (Periodic Law)</h4>
+              <p style="font-size: 14px; font-weight: 600; color: #0f172a; line-height: 1.6; margin: 8px 0;">
+                "Tính chất của các nguyên tố và đơn chất, cũng như thành phần và tính chất của các hợp chất tạo nên từ các nguyên tố đó biến đổi tuần hoàn theo chiều tăng của điện tích hạt nhân nguyên tử."
+              </p>
+            </div>
+
+            <p style="margin-top: 14px; font-size: 13.5px; line-height: 1.6; color: #334155;">
+              Sự lặp lại tuần hoàn về tính chất hoá học của các đơn chất và hợp chất là hệ quả trực tiếp của <strong>sự lặp lại tuần hoàn cấu hình electron lớp ngoài cùng</strong> của nguyên tử các nguyên tố khi điện tích hạt nhân $Z$ tăng dần.
+            </p>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-top: 14px;">
+              <span style="font-size: 11px; font-weight: 700; color: #d97706; text-transform: uppercase;">💡 Em có biết? (SGK Trang 43)</span>
+              <h5 style="font-size: 13px; font-weight: 700; color: #0f172a; margin: 6px 0;">Thiên tài dự đoán của D. I. Mendeleev</h5>
+              <p style="font-size: 13px; color: #475569; margin: 0; line-height: 1.5;">
+                Dựa trên xu hướng biến đổi tuần hoàn, Mendeleev đã đưa ra 2 quyết định vĩ đại: (1) Dành chỗ trống trong bảng và dự đoán chuẩn xác tính chất các nguyên tố chưa tìm ra (như <em>Eka-aluminium</em> chính là Gallium, <em>Eka-silicon</em> là Germanium); (2) Đảo trật tự khối lượng nguyên tử (xếp Tellurium trước Iodine dù Te nặng hơn) để khớp đúng quy luật biến đổi tính chất!
+              </p>
+            </div>
+
+            <!-- Quiz nhanh Phần 1 -->
+            <div class="interactive-quiz-card" style="margin-top: 18px; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; background: #ffffff;">
+              <span style="font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase;">? Câu hỏi 1 (SGK Trang 43): Cội nguồn tính tuần hoàn</span>
+              <p style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 8px;">Nguyên nhân cốt lõi dẫn đến sự biến đổi tuần hoàn tính chất của các nguyên tố hoá học là gì?</p>
+              
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                <button class="opt-btn" onclick="checkB8MiniQuiz(this, false, 'Chưa đúng! Khối lượng nguyên tử tăng liên tục chứ không lặp lại tuần hoàn.')" style="text-align: left; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;">A. Do khối lượng nguyên tử tăng dần liên tục</button>
+                <button class="opt-btn" onclick="checkB8MiniQuiz(this, true, 'Chính xác! Cấu hình electron lớp ngoài cùng biến đổi lặp lại có chu kì (ví dụ ns¹ đến ns²np⁶), từ đó quyết định tính chất hoá học lặp lại tuần hoàn.')" style="text-align: left; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;">B. Do sự biến đổi tuần hoàn cấu hình electron lớp ngoài cùng</button>
+                <button class="opt-btn" onclick="checkB8MiniQuiz(this, false, 'Sai rồi! Bán kính nguyên tử là một tính chất biến đổi, không phải là nguyên nhân gốc rễ.')" style="text-align: left; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;">C. Do bán kính nguyên tử giảm dần trong chu kì</button>
+              </div>
+              <div class="quiz-feedback" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600; padding: 10px; border-radius: 6px;"></div>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: Ý NGHĨA BTH - TAM GIÁC VỊ TRÍ, CẤU HÌNH, TÍNH CHẤT -->
+          <div id="content-b8-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Ý nghĩa của Bảng tuần hoàn (SGK Trang 43 - 44)</h4>
+              <p>Mối quan hệ 2 chiều mật thiết giữa: <strong>Vị trí trong BTH ⇄ Cấu hình electron ⇄ Tính chất hoá học của nguyên tố và hợp chất</strong>.</p>
+            </div>
+
+            <div class="meta-citation">Mục II • SGK Trang 43 - 44</div>
+            <h3 class="section-title">Tam giác suy luận hoá học</h3>
+            <p>Biết một trong ba đỉnh của tam giác, ta hoàn toàn suy ra được 2 đỉnh còn lại một cách chính xác tuyệt đối:</p>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 14px 0;">
+              <div style="padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0;">
+                <strong style="color: #1e40af;">1. Vị trí ➔ Cấu hình electron:</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • Số thứ tự Ô = $Z$ = Số proton = Số electron.<br/>
+                  • Số thứ tự Chu kì = Số lớp electron.<br/>
+                  • Số thứ tự Nhóm A = Số electron lớp ngoài cùng.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0;">
+                <strong style="color: #166534;">2. Cấu hình e ➔ Tính chất hoá học:</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • 1, 2, 3 e ngoài cùng: Kim loại (trừ H, He, B).<br/>
+                  • 5, 6, 7 e ngoài cùng: Phi kim.<br/>
+                  • 8 e ngoài cùng (He có 2e): Khí hiếm trơ.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0 8px 8px 0;">
+                <strong style="color: #991b1b;">3. Hoá trị cao nhất & Hợp chất:</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • Hoá trị cao nhất với O = Số thứ tự nhóm A.<br/>
+                  • Suy ra công thức Oxide cao nhất và Hydroxide tương ứng cùng tính chất acid / base.
+                </p>
+              </div>
+            </div>
+
+            <div class="box-law">
+              <h4>Ví dụ Sư phạm SGK Tr. 43 - 44</h4>
+              <p><strong>Sulfur ($Z=16$):</strong> Ô 16, Chu kì 3, Nhóm VIA $	o 1s^2 2s^2 2p^6 3s^2 3p^4$ (có 6e ngoài cùng). Là phi kim. Oxide cao nhất là $	ext{SO}_3$ (acidic oxide) và acid tương ứng $	ext{H}_2	ext{SO}_4$ (acid mạnh).</p>
+            </div>
+          </div>
+
+          <!-- PHẦN 3: SO SÁNH QUAN HỆ LÂN CẬN & BÀI TẬP SGK -->
+          <div id="content-b8-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 So sánh tính chất với các nguyên tố lân cận (SGK Tr. 44)</h4>
+              <p>Dựa vào vị trí lân cận trong cùng một chu kì hoặc cùng một nhóm để so sánh tính phi kim, kim loại, độ âm điện và tính acid - base.</p>
+            </div>
+
+            <div class="meta-citation">SGK Trang 44</div>
+            <h3 class="section-title">Quy luật chữ Thập so sánh lân cận</h3>
+            <p>Xét một nguyên tố $X$ ở giữa, ta so sánh được với các nguyên tố xung quanh:</p>
+            
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin: 12px 0;">
+              <p style="font-size: 13px; line-height: 1.6; margin: 0;">
+                <strong>Ví dụ SGK Tr. 44:</strong> So sánh Phosphorus ($	ext{P}$, $Z=15$) với $	ext{N}$ ($Z=7$) và $	ext{S}$ ($Z=16$):<br/>
+                • $	ext{P}$ và $	ext{N}$ cùng nhóm VA: đi từ trên xuống dưới tính phi kim giảm $	o 	ext{N}$ phi kim mạnh hơn $	ext{P}$.<br/>
+                • $	ext{P}$ và $	ext{S}$ cùng chu kì 3: đi từ trái sang phải tính phi kim tăng $	o 	ext{P}$ phi kim yếu hơn $	ext{S}$.
+              </p>
+            </div>
+
+            <!-- Đấu trường luyện tập Bài 8 SGK -->
+            <div style="margin-top: 20px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 12px;">⚔️ Đấu trường bài tập SGK Trang 44</h4>
+              
+              <div id="b8-question-card-container">
+                <!-- Sẽ render qua hàm initB8QuizArena() -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">NGUYÊN TỐ ĐANG KHẢO SÁT</span>
+              <span id="b8-hud-element" class="hud-value highlight">Magnesium (Mg, Z = 12)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">VỊ TRÍ TRÊN BTH</span>
+              <span id="b8-hud-position" class="hud-value">Ô 12 • Chu kì 3 • Nhóm IIA</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">CẤU HÌNH ELECTRON</span>
+              <span id="b8-hud-config" class="hud-value" style="color: #2563eb;">[Ne] 3s²</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">TÍNH CHẤT CHỦ ĐẠO</span>
+              <span id="b8-hud-character" class="hud-value" style="color: #16a34a;">Kim loại hoạt động</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1 & 2: Mô hình Tam giác Suy luận Tương tác 2.5D -->
+          <div id="panel-b8-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🔺 Mô hình Tam giác Suy luận Hoá học Tương tác</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" id="btn-b8-elem-mg" onclick="selectB8Element('Mg')">12. Mg</button>
+                <button class="btn-tool" id="btn-b8-elem-p" onclick="selectB8Element('P')">15. P</button>
+                <button class="btn-tool" id="btn-b8-elem-s" onclick="selectB8Element('S')">16. S</button>
+                <button class="btn-tool" id="btn-b8-elem-k" onclick="selectB8Element('K')">19. K</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b8TriangleCanvas"></canvas>
+            </div>
+          </div>
+
+          <div id="panel-b8-part2" class="lab-canvas-area" style="display: none; flex-direction: column;">
+            <!-- Dùng chung canvas triangle cho part 2 -->
+          </div>
+
+          <!-- PANEL 3: Đấu trường luyện tập & strip câu hỏi -->
+          <div id="panel-b8-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">Bảng điều khiển câu hỏi SGK Trang 44</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Bài 8</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b8-quiz-progress-text">
+                Đã hoàn thành: 0 / 3 câu
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;" id="b8-question-selector-strip">
+              <!-- Render selector strip -->
+            </div>
+            <div id="b8-quiz-score-board" style="margin-top: 30px; padding: 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; display: none;">
+              <h3 style="font-size: 22px; font-weight: 800; color: #16a34a; margin: 0 0 8px 0;">🎉 XUẤT SẮC! HOÀN THÀNH BÀI 8</h3>
+              <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">Bạn đã làm chủ Định luật tuần hoàn và quy luật suy luận quan hệ lân cận trong BTH!</p>
+              <button class="btn-tool active" onclick="resetB8QuizArena()" style="padding: 10px 20px; font-size: 14px;">Làm lại Đấu trường</button>
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b8-lab-status-tip">
+              💡 <em>Click vào các đỉnh của Tam giác suy luận để kiểm tra chi tiết cấu hình e, vị trí và tính chất của nguyên tố.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB8InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+
+
+  <!-- ========================================================
+       BÀI 9: ÔN TẬP & LUYỆN TẬP CHƯƠNG 2
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM)
+       ======================================================== -->
+  <div id="view-studio-b9" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Header -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 2 • Bài 9</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Ôn tập & Luyện tập Chương 2: Bảng tuần hoàn & Định luật tuần hoàn</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 9 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b9-p1" class="tab-seg-btn active" onclick="switchPartB9('part1')">
+            <span>1 Sơ đồ Tư duy Toàn cảnh Chương 2</span>
+          </button>
+          <button id="tab-btn-b9-p2" class="tab-seg-btn" onclick="switchPartB9('part2')">
+            <span>2 Hệ thống hoá Điền khuyết SGK Tr. 45 - 46</span>
+          </button>
+          <button id="tab-btn-b9-p3" class="tab-seg-btn" onclick="switchPartB9('part3')">
+            <span>3 Đấu trường 6 Bài tập SGK Tr. 46 - 47</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: HỆ THỐNG HOÁ TOÀN BỘ CHƯƠNG 2 -->
+          <div id="content-b9-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu tổng kết Chương 2 (SGK Trang 45)</h4>
+              <p>Khái quát hoá toàn bộ 4 bài học trọng tâm của Chương 2: Cấu tạo BTH (Bài 5), Xu hướng tính chất nguyên tử (Bài 6), Xu hướng tính chất hợp chất (Bài 7) và Định luật tuần hoàn (Bài 8).</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 45</div>
+            <h3 class="section-title">Hệ thống hoá kiến thức cốt lõi Chương 2</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 14px 0;">
+              <div style="padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0;">
+                <strong style="color: #1e40af;">1. Cấu tạo Bảng tuần hoàn (118 nguyên tố):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • <strong>Ô nguyên tố:</strong> Số hiệu nguyên tử $Z$ = Số proton = Số electron.<br/>
+                  • <strong>Chu kì (7 chu kì):</strong> Số thứ tự chu kì = Số lớp electron.<br/>
+                  • <strong>Nhóm (8 nhóm A, 8 nhóm B):</strong> Nhóm A có số e hoá trị = số e lớp ngoài cùng.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0;">
+                <strong style="color: #166534;">2. Quy luật biến đổi trong một Chu kì (Trái ➔ Phải):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • Bán kính nguyên tử: <strong>Giảm dần</strong>.<br/>
+                  • Độ âm điện & Năng lượng ion hoá $I_1$: <strong>Tăng dần</strong>.<br/>
+                  • Tính kim loại giảm, tính phi kim <strong>tăng dần</strong>.<br/>
+                  • Tính base của oxide/hydroxide giảm, tính acid <strong>tăng dần</strong>.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0 8px 8px 0;">
+                <strong style="color: #991b1b;">3. Quy luật biến đổi trong một Nhóm A (Trên ➔ Dưới):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • Bán kính nguyên tử: <strong>Tăng dần</strong> (tăng số lớp e).<br/>
+                  • Độ âm điện & Năng lượng ion hoá $I_1$: <strong>Giảm dần</strong>.<br/>
+                  • Tính kim loại tăng, tính phi kim <strong>giảm dần</strong>.<br/>
+                  • Tính base của oxide/hydroxide tăng, tính acid <strong>giảm dần</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div class="box-law">
+              <h4>📜 Định luật tuần hoàn</h4>
+              <p>Mọi tính chất của đơn chất, thành phần và tính chất của hợp chất biến đổi tuần hoàn theo chiều tăng của điện tích hạt nhân nguyên tử!</p>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: HỆ THỐNG ĐIỀN KHUYẾT SGK TRANG 45 - 46 -->
+          <div id="content-b9-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Thử thách Điền khuyết SGK Trang 45 - 46</h4>
+              <p>Thực hành điền các từ khoá hoá học chính xác để kiểm tra độ hiểu sâu sắc về nguyên tắc cấu tạo và định luật tuần hoàn.</p>
+            </div>
+
+            <div class="meta-citation">SGK Trang 45 - 46</div>
+            <h3 class="section-title">Hệ thống hoá điền khuyết tương tác</h3>
+            
+            <div id="b9-cloze-container" style="display: flex; flex-direction: column; gap: 14px; margin: 16px 0;">
+              <!-- Render cloze interactive exercises -->
+            </div>
+          </div>
+
+          <!-- PHẦN 3: ĐẤU TRƯỜNG 6 BÀI TẬP SGK TRANG 46 - 47 -->
+          <div id="content-b9-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Đấu trường bài tập tổng hợp Chương 2 (SGK Tr. 46 - 47)</h4>
+              <p>Chinh phục 6 câu hỏi bài tập lớn bao hàm Borax hàn the, phân tử Caffeine, hợp kim hàng không và vị trí các nguyên tố bí ẩn $E, T, Q, X, Y, Z$.</p>
+            </div>
+
+            <div class="meta-citation">SGK Trang 46 - 47</div>
+            <h3 class="section-title">Luyện tập tổng hợp nâng cao</h3>
+            
+            <div id="b9-question-card-container">
+              <!-- Sẽ render qua hàm initB9QuizArena() -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHƯƠNG TỔNG KẾT</span>
+              <span class="hud-value highlight">Chương 2 • BTH & ĐL Tuần hoàn</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">SỐ NGUYÊN TỐ IUPAC</span>
+              <span class="hud-value">118 Nguyên tố (7 Chu kì)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">TRỤ CỘT SUY LUẬN</span>
+              <span class="hud-value" style="color: #2563eb;">Vị trí ⇄ Cấu hình ⇄ Tính chất</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">TIẾN ĐỘ CHƯƠNG</span>
+              <span id="b9-hud-progress" class="hud-value" style="color: #16a34a;">100% Hoàn thiện</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1: Sơ đồ Tư duy Toàn cảnh 2.5D Mindmap -->
+          <div id="panel-b9-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🗺️ Bản đồ Tư duy Tương tác Toàn cảnh Chương 2</span>
+              <div style="font-size: 12px; color: #64748b;">
+                Click các nhánh để xem chi tiết
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b9MindmapCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Kiểm tra kết quả Điền khuyết -->
+          <div id="panel-b9-part2" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 24px;">
+            <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0 0 8px 0;">Kết quả bài tập Điền khuyết</h4>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Hoàn thành các mệnh đề ở cột bên trái để kiểm tra sự thấu hiểu quy luật cấu tạo BTH và định luật tuần hoàn.</p>
+            <div id="b9-cloze-status-board" style="padding: 16px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 13px; line-height: 1.6;">
+              <!-- Status info -->
+            </div>
+          </div>
+
+          <!-- PANEL 3: Đấu trường luyện tập & strip 6 câu hỏi SGK -->
+          <div id="panel-b9-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">Đấu trường 6 Câu hỏi SGK Trang 46 - 47</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Bài 9</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b9-quiz-progress-text">
+                Đã hoàn thành: 0 / 6 câu
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="b9-question-selector-strip">
+              <!-- Render selector strip -->
+            </div>
+            <div id="b9-quiz-score-board" style="margin-top: 30px; padding: 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; display: none;">
+              <h3 style="font-size: 22px; font-weight: 800; color: #16a34a; margin: 0 0 8px 0;">🎉 CHÚC MỪNG BẠN ĐÃ TỐT NGHIỆP TOÀN DIỆN CHƯƠNG 2!</h3>
+              <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">Bạn đã hoàn thành xuất sắc 100% các bài học và thí nghiệm từ Bài 5 đến Bài 9 của Bảng tuần hoàn!</p>
+              <button class="btn-tool active" onclick="resetB9QuizArena()" style="padding: 10px 20px; font-size: 14px;">Làm lại Đấu trường</button>
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b9-lab-status-tip">
+              💡 <em>Sơ đồ tư duy 2.5D tương tác: Bấm vào từng nhánh kiến thức để khám phá tóm tắt nội dung.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB9InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -3130,8 +3650,22 @@
       if (studioB6) studioB6.classList.remove('active');
       const studioB7 = document.getElementById('view-studio-b7');
       if (studioB7) studioB7.classList.remove('active');
+      const studioB8 = document.getElementById('view-studio-b8');
+      if (studioB8) studioB8.classList.remove('active');
+      const studioB9 = document.getElementById('view-studio-b9');
+      if (studioB9) studioB9.classList.remove('active');
       const studioB7 = document.getElementById('view-studio-b7');
       if (studioB7) studioB7.classList.remove('active');
+      const studioB8 = document.getElementById('view-studio-b8');
+      if (studioB8) studioB8.classList.remove('active');
+      const studioB9 = document.getElementById('view-studio-b9');
+      if (studioB9) studioB9.classList.remove('active');
+      const studioB8 = document.getElementById('view-studio-b8');
+      if (studioB8) studioB8.classList.remove('active');
+      const studioB9 = document.getElementById('view-studio-b9');
+      if (studioB9) studioB9.classList.remove('active');
+      const studioB9 = document.getElementById('view-studio-b9');
+      if (studioB9) studioB9.classList.remove('active');
       
       if (lessonId === 'b1') {
         document.getElementById('view-studio').classList.add('active');
@@ -3179,6 +3713,21 @@
           if (typeof initB7BeakerSim === 'function') initB7BeakerSim();
           if (typeof initB7QuizArena === 'function') initB7QuizArena();
         }, 50);
+      } else if (lessonId === 'b8') {
+        if (studioB8) studioB8.classList.add('active');
+        switchPartB8('part1');
+        setTimeout(() => {
+          if (typeof initB8TriangleLab === 'function') initB8TriangleLab();
+          if (typeof initB8QuizArena === 'function') initB8QuizArena();
+        }, 50);
+      } else if (lessonId === 'b9') {
+        if (studioB9) studioB9.classList.add('active');
+        switchPartB9('part1');
+        setTimeout(() => {
+          if (typeof initB9Mindmap === 'function') initB9Mindmap();
+          if (typeof initB9ClozeLab === 'function') initB9ClozeLab();
+          if (typeof initB9QuizArena === 'function') initB9QuizArena();
+        }, 50);
       }
       window.location.hash = lessonId;
     }
@@ -3196,6 +3745,10 @@
       if (studioB6) studioB6.classList.remove('active');
       const studioB7 = document.getElementById('view-studio-b7');
       if (studioB7) studioB7.classList.remove('active');
+      const studioB8 = document.getElementById('view-studio-b8');
+      if (studioB8) studioB8.classList.remove('active');
+      const studioB9 = document.getElementById('view-studio-b9');
+      if (studioB9) studioB9.classList.remove('active');
       document.getElementById('view-dashboard').classList.add('active');
       window.location.hash = '';
     }
@@ -6423,6 +6976,1036 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       updateB7Hud();
       drawB7CompoundLab();
       runB7SimOxide('na2o');
+    }
+
+
+
+
+
+    /* ==========================================================
+       LOGIC BÀI 8: ĐỊNH LUẬT TUẦN HOÀN & Ý NGHĨA BẢNG TUẦN HOÀN
+       ========================================================== */
+
+    let currentPartB8 = 'part1';
+    let b8CurElemKey = 'Mg'; // 'Mg' | 'P' | 'S' | 'K'
+
+    const B8_ELEMENTS_DATA = {
+      'Mg': {
+        name: 'Magnesium',
+        sym: 'Mg',
+        z: 12,
+        pos: 'Ô 12 • Chu kì 3 • Nhóm IIA',
+        config: '1s² 2s² 2p⁶ 3s²',
+        valenceE: '2e lớp ngoài cùng (3s²)',
+        char: 'Kim loại hoạt động',
+        charColor: '#16a34a',
+        oxide: 'MgO (Basic oxide)',
+        hyd: 'Mg(OH)₂ (Base yếu)',
+        neighbor: 'So với Na (cùng chu kì): Mg có tính kim loại yếu hơn Na. So với Ca (cùng nhóm IIA phía dưới): Mg có tính kim loại yếu hơn Ca.'
+      },
+      'P': {
+        name: 'Phosphorus',
+        sym: 'P',
+        z: 15,
+        pos: 'Ô 15 • Chu kì 3 • Nhóm VA',
+        config: '1s² 2s² 2p⁶ 3s² 3p³',
+        valenceE: '5e lớp ngoài cùng (3s² 3p³)',
+        char: 'Phi kim',
+        charColor: '#ea580c',
+        oxide: 'P₂O₅ (Acidic oxide)',
+        hyd: 'H₃PO₄ (Acid trung bình)',
+        neighbor: 'So với N (nhóm VA): N phi kim mạnh hơn P. So với S (chu kì 3 bên phải): S phi kim mạnh hơn P.'
+      },
+      'S': {
+        name: 'Sulfur',
+        sym: 'S',
+        z: 16,
+        pos: 'Ô 16 • Chu kì 3 • Nhóm VIA',
+        config: '1s² 2s² 2p⁶ 3s² 3p⁴',
+        valenceE: '6e lớp ngoài cùng (3s² 3p⁴)',
+        char: 'Phi kim hoạt động',
+        charColor: '#dc2626',
+        oxide: 'SO₃ (Acidic oxide)',
+        hyd: 'H₂SO₄ (Acid mạnh)',
+        neighbor: 'So với P (bên trái): S phi kim mạnh hơn P. So với Cl (bên phải): Cl phi kim mạnh hơn S. So với O (phía trên): O phi kim mạnh hơn S.'
+      },
+      'K': {
+        name: 'Potassium',
+        sym: 'K',
+        z: 19,
+        pos: 'Ô 19 • Chu kì 4 • Nhóm IA',
+        config: '[Ar] 4s¹',
+        valenceE: '1e lớp ngoài cùng (4s¹)',
+        char: 'Kim loại kiềm rất mạnh',
+        charColor: '#2563eb',
+        oxide: 'K₂O (Basic oxide mạnh)',
+        hyd: 'KOH (Base rất mạnh, kiềm ăn da)',
+        neighbor: 'So với Na (cùng nhóm IA phía trên): K có tính kim loại mạnh hơn Na. So với Ca (chu kì 4 bên phải): K kim loại mạnh hơn Ca.'
+      }
+    };
+
+    function switchPartB8(partId) {
+      currentPartB8 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b8-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      // Show/hide sections in theory pane
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b8-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+      });
+
+      // Show/hide panels
+      const panelP1 = document.getElementById('panel-b8-part1');
+      const panelP3 = document.getElementById('panel-b8-part3');
+      if (panelP1) panelP1.style.display = (partId === 'part1' || partId === 'part2') ? 'flex' : 'none';
+      if (panelP3) panelP3.style.display = (partId === 'part3') ? 'flex' : 'none';
+
+      const activeSec = document.getElementById('content-b8-' + partId);
+      if (activeSec) activeSec.scrollTop = 0;
+
+      if (partId === 'part1' || partId === 'part2') {
+        setTimeout(initB8TriangleLab, 50);
+      } else if (partId === 'part3') {
+        setTimeout(initB8QuizArena, 50);
+      }
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function checkB8MiniQuiz(btn, isCorrect, feedback) {
+      const parent = btn.parentElement.parentElement;
+      const allBtns = parent.querySelectorAll('.opt-btn');
+      allBtns.forEach(b => {
+        b.style.pointerEvents = 'none';
+        b.style.opacity = '0.7';
+      });
+
+      if (isCorrect) {
+        btn.style.background = '#dcfce7';
+        btn.style.borderColor = '#16a34a';
+        btn.style.color = '#15803d';
+        btn.style.opacity = '1';
+      } else {
+        btn.style.background = '#fee2e2';
+        btn.style.borderColor = '#dc2626';
+        btn.style.color = '#b91c1c';
+        btn.style.opacity = '1';
+      }
+
+      const fb = parent.querySelector('.quiz-feedback');
+      if (fb) {
+        fb.style.display = 'block';
+        fb.style.background = isCorrect ? '#f0fdf4' : '#fef2f2';
+        fb.style.color = isCorrect ? '#166534' : '#991b1b';
+        fb.style.border = `1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}`;
+        fb.innerHTML = feedback;
+      }
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    /* -------------------------------------------------------------
+       LAB CANVAS: TAM GIÁC SUY LUẬN HOÁ HỌC (BÀI 8)
+       ------------------------------------------------------------- */
+    let b8TriangleCanvas, b8TriangleCtx;
+    let b8ActiveVertex = 'pos'; // 'pos' | 'config' | 'prop'
+
+    function initB8TriangleLab() {
+      b8TriangleCanvas = document.getElementById('b8TriangleCanvas');
+      if (!b8TriangleCanvas) return;
+      b8TriangleCtx = b8TriangleCanvas.getContext('2d');
+      resizeB8TriangleCanvas();
+
+      b8TriangleCanvas.onclick = handleB8TriangleClick;
+      updateB8Hud();
+      drawB8TriangleLab();
+    }
+
+    function resizeB8TriangleCanvas() {
+      if (!b8TriangleCanvas) return;
+      const rect = b8TriangleCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b8TriangleCanvas.width = rect.width * dpr;
+      b8TriangleCanvas.height = rect.height * dpr;
+      b8TriangleCtx.scale(dpr, dpr);
+      drawB8TriangleLab();
+    }
+
+    function selectB8Element(key) {
+      b8CurElemKey = key;
+      ['Mg', 'P', 'S', 'K'].forEach(k => {
+        const btn = document.getElementById('btn-b8-elem-' + k.toLowerCase());
+        if (btn) btn.classList.toggle('active', k === key);
+      });
+      updateB8Hud();
+      drawB8TriangleLab();
+    }
+
+    function updateB8Hud() {
+      const d = B8_ELEMENTS_DATA[b8CurElemKey];
+      const elemText = document.getElementById('b8-hud-element');
+      if (elemText) elemText.innerText = `${d.name} (${d.sym}, Z = ${d.z})`;
+
+      const posText = document.getElementById('b8-hud-position');
+      if (posText) posText.innerText = d.pos;
+
+      const cfgText = document.getElementById('b8-hud-config');
+      if (cfgText) cfgText.innerText = d.config;
+
+      const charText = document.getElementById('b8-hud-character');
+      if (charText) {
+        charText.innerText = d.char;
+        charText.style.color = d.charColor;
+      }
+
+      const statusTip = document.getElementById('b8-lab-status-tip');
+      if (statusTip) {
+        statusTip.innerHTML = `💡 <strong>Quan hệ lân cận:</strong> ${d.neighbor}`;
+      }
+    }
+
+    function handleB8TriangleClick(e) {
+      if (!b8TriangleCanvas) return;
+      const rect = b8TriangleCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const w = b8TriangleCanvas.parentElement.clientWidth;
+      const h = b8TriangleCanvas.parentElement.clientHeight;
+
+      // Coordinates of 3 vertices
+      const topV = { x: w / 2, y: 70 };
+      const leftV = { x: w / 2 - 170, y: h - 100 };
+      const rightV = { x: w / 2 + 170, y: h - 100 };
+
+      if (Math.hypot(x - topV.x, y - topV.y) < 55) {
+        b8ActiveVertex = 'pos';
+      } else if (Math.hypot(x - leftV.x, y - leftV.y) < 55) {
+        b8ActiveVertex = 'config';
+      } else if (Math.hypot(x - rightV.x, y - rightV.y) < 55) {
+        b8ActiveVertex = 'prop';
+      }
+      drawB8TriangleLab();
+    }
+
+    function drawB8TriangleLab() {
+      if (!b8TriangleCtx || !b8TriangleCanvas) return;
+      const w = b8TriangleCanvas.parentElement.clientWidth;
+      const h = b8TriangleCanvas.parentElement.clientHeight;
+      const ctx = b8TriangleCtx;
+      const d = B8_ELEMENTS_DATA[b8CurElemKey];
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Coordinates of 3 vertices
+      const topV = { x: w / 2, y: 75, id: 'pos', title: 'VỊ TRÍ TRONG BTH', color: '#0284c7' };
+      const leftV = { x: w / 2 - 180, y: h - 110, id: 'config', title: 'CẤU HÌNH ELECTRON', color: '#2563eb' };
+      const rightV = { x: w / 2 + 180, y: h - 110, id: 'prop', title: 'TÍNH CHẤT HOÁ HỌC', color: '#16a34a' };
+      const vertices = [topV, leftV, rightV];
+
+      // Draw two-way arrows between vertices
+      drawTwoWayArrow(ctx, topV.x, topV.y, leftV.x, leftV.y, '#94a3b8');
+      drawTwoWayArrow(ctx, topV.x, topV.y, rightV.x, rightV.y, '#94a3b8');
+      drawTwoWayArrow(ctx, leftV.x, leftV.y, rightV.x, rightV.y, '#94a3b8');
+
+      // Center element badge
+      const cX = w / 2, cY = (topV.y + leftV.y) / 2 + 15;
+      ctx.save();
+      ctx.shadowColor = '#cbd5e1';
+      ctx.shadowBlur = 12;
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = d.charColor;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.roundRect(cX - 55, cY - 35, 110, 70, 12);
+      ctx.fill();
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '800 22px "Plus Jakarta Sans"';
+      ctx.textAlign = 'center';
+      ctx.fillText(d.sym, cX, cY - 4);
+
+      ctx.font = '600 11px "JetBrains Mono"';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText(`Z = ${d.z}`, cX, cY + 16);
+      ctx.restore();
+
+      // Draw vertices nodes
+      vertices.forEach(v => {
+        const isSelected = (v.id === b8ActiveVertex);
+
+        ctx.save();
+        if (isSelected) {
+          ctx.shadowColor = v.color;
+          ctx.shadowBlur = 16;
+        }
+
+        ctx.fillStyle = isSelected ? '#ffffff' : '#f8fafc';
+        ctx.strokeStyle = isSelected ? v.color : '#cbd5e1';
+        ctx.lineWidth = isSelected ? 3 : 1.5;
+
+        // Card box at vertex
+        const nodeW = 190, nodeH = 75;
+        ctx.beginPath();
+        ctx.roundRect(v.x - nodeW / 2, v.y - nodeH / 2, nodeW, nodeH, 10);
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Header tag
+        ctx.font = '700 11px "Plus Jakarta Sans"';
+        ctx.fillStyle = v.color;
+        ctx.textAlign = 'center';
+        ctx.fillText(v.title, v.x, v.y - 18);
+
+        // Body info based on vertex
+        ctx.font = '600 12px "JetBrains Mono"';
+        ctx.fillStyle = '#1e293b';
+        if (v.id === 'pos') {
+          ctx.fillText(d.pos, v.x, v.y + 4);
+          ctx.font = '500 10px "Plus Jakarta Sans"';
+          ctx.fillStyle = '#64748b';
+          ctx.fillText(`Ô ${d.z} ➔ Số e = Số p = ${d.z}`, v.x, v.y + 20);
+        } else if (v.id === 'config') {
+          ctx.fillText(d.config, v.x, v.y + 4);
+          ctx.font = '500 10px "Plus Jakarta Sans"';
+          ctx.fillStyle = '#64748b';
+          ctx.fillText(d.valenceE, v.x, v.y + 20);
+        } else if (v.id === 'prop') {
+          ctx.fillText(d.char, v.x, v.y + 4);
+          ctx.font = '500 10px "Plus Jakarta Sans"';
+          ctx.fillStyle = '#64748b';
+          ctx.fillText(`${d.oxide} • ${d.hyd}`, v.x, v.y + 20);
+        }
+
+        ctx.restore();
+      });
+    }
+
+    function drawTwoWayArrow(ctx, x1, y1, x2, y2, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    /* -------------------------------------------------------------
+       LAB 3: ĐẤU TRƯỜNG LUYỆN TẬP SGK TRANG 44 (BÀI 8)
+       ------------------------------------------------------------- */
+    const B8_EXERCISES_DATA = [
+      {
+        id: 1,
+        title: "Câu hỏi 2 (SGK Trang 44): Giải phẫu nguyên tố Magnesium",
+        text: "Nguyên tố Magnesium thuộc ô số 12, chu kì 3, nhóm IIA của bảng tuần hoàn. Cấu hình electron và tính chất cơ bản của Mg là gì?",
+        options: [
+          "A. 1s² 2s² 2p⁶ 3s²; là kim loại; oxide MgO là basic oxide; hydroxide Mg(OH)₂ là base yếu",
+          "B. 1s² 2s² 2p⁶ 3s¹; là kim loại kiềm; hydroxide MgOH là base mạnh",
+          "C. 1s² 2s² 2p⁶ 3s² 3p²; là phi kim; oxide MgO₂ là acidic oxide",
+          "D. 1s² 2s² 2p⁶; là khí hiếm trơ về mặt hoá học"
+        ],
+        correct: 0, // A
+        explain: "Chính xác! Ô 12 ➔ Z = 12 ➔ 1s² 2s² 2p⁶ 3s². Có 2e ngoài cùng nên Mg là kim loại hoạt động. Hoá trị cao nhất với oxygen là II ➔ Basic oxide MgO và Base yếu kết tủa trắng Mg(OH)₂."
+      },
+      {
+        id: 2,
+        title: "Câu hỏi 2b (SGK Trang 44): So sánh tính kim loại của Mg với lân cận",
+        text: "So sánh tính kim loại của Mg (Z = 12) với các nguyên tố lân cận Na (Z = 11) và Ca (Z = 20) trong bảng tuần hoàn:",
+        options: [
+          "A. Mg kim loại mạnh hơn Na và Ca",
+          "B. Mg có tính kim loại yếu hơn Na và yếu hơn Ca",
+          "C. Mg có tính kim loại mạnh hơn Na nhưng yếu hơn Ca",
+          "D. Mg có tính kim loại yếu hơn Na nhưng mạnh hơn Ca"
+        ],
+        correct: 1, // B
+        explain: "Chính xác! Trong chu kì 3: đi từ trái sang phải tính kim loại giảm ➔ Mg kim loại yếu hơn Na. Trong nhóm IIA: đi từ trên xuống dưới tính kim loại tăng ➔ Mg kim loại yếu hơn Ca."
+      },
+      {
+        id: 3,
+        title: "Câu hỏi 3 (SGK Trang 44): Nguyên tố dinh dưỡng Potassium (K)",
+        text: "Nguyên tử potassium (K) có cấu hình electron lớp ngoài cùng là 4s¹. Vị trí và tính chất cơ bản của Potassium là gì?",
+        options: [
+          "A. Ô 19, Chu kì 4, Nhóm IA; là kim loại kiềm mạnh; KOH là base rất mạnh",
+          "B. Ô 19, Chu kì 1, Nhóm IVA; là phi kim; H₂KO₃ là acid yếu",
+          "C. Ô 17, Chu kì 3, Nhóm VIIA; là halogen; K₂O là acidic oxide",
+          "D. Ô 20, Chu kì 4, Nhóm IIA; là kim loại kiềm thổ; K(OH)₂ là base yếu"
+        ],
+        correct: 0, // A
+        explain: "Chính xác! 4s¹ ➔ 4 lớp electron (Chu kì 4), 1e ngoài cùng (Nhóm IA). Tổng số e = 2 + 8 + 8 + 1 = 19 (Ô 19). Potassium là kim loại kiềm rất mạnh, tan mãnh liệt trong nước tạo base mạnh (xút kali) KOH."
+      }
+    ];
+
+    let b8CurrentQuestionIdx = 0;
+    let b8UserAnswers = {};
+
+    function initB8QuizArena() {
+      b8CurrentQuestionIdx = 0;
+      b8UserAnswers = {};
+      renderB8QuizStrip();
+      renderB8QuestionCard();
+    }
+
+    function renderB8QuizStrip() {
+      const strip = document.getElementById('b8-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = '';
+
+      B8_EXERCISES_DATA.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = 'b8-q-strip-btn-' + idx;
+        btn.className = 'btn-tool';
+        btn.style.minWidth = '42px';
+        btn.style.height = '36px';
+        btn.style.fontWeight = '700';
+
+        const isAnswered = (b8UserAnswers[idx] !== undefined);
+        const isCurrent = (idx === b8CurrentQuestionIdx);
+
+        if (isCurrent) {
+          btn.style.borderColor = '#0284c7';
+          btn.style.background = '#e0f2fe';
+          btn.style.color = '#0369a1';
+        } else if (isAnswered) {
+          const isCorrect = (b8UserAnswers[idx] === q.correct);
+          btn.style.background = isCorrect ? '#dcfce7' : '#fee2e2';
+          btn.style.borderColor = isCorrect ? '#16a34a' : '#dc2626';
+          btn.style.color = isCorrect ? '#15803d' : '#b91c1c';
+        } else {
+          btn.style.background = '#f8fafc';
+          btn.style.color = '#64748b';
+        }
+
+        btn.innerText = `Câu ${idx + 1}`;
+        btn.onclick = () => {
+          b8CurrentQuestionIdx = idx;
+          renderB8QuizStrip();
+          renderB8QuestionCard();
+        };
+        strip.appendChild(btn);
+      });
+
+      const prog = document.getElementById('b8-quiz-progress-text');
+      const answeredCount = Object.keys(b8UserAnswers).length;
+      if (prog) prog.innerText = `Đã hoàn thành: ${answeredCount} / ${B8_EXERCISES_DATA.length} câu`;
+
+      const scoreBoard = document.getElementById('b8-quiz-score-board');
+      if (scoreBoard) {
+        scoreBoard.style.display = (answeredCount === B8_EXERCISES_DATA.length) ? 'block' : 'none';
+      }
+    }
+
+    function renderB8QuestionCard() {
+      const container = document.getElementById('b8-question-card-container');
+      if (!container) return;
+
+      const q = B8_EXERCISES_DATA[b8CurrentQuestionIdx];
+      const userSelected = b8UserAnswers[b8CurrentQuestionIdx];
+      const isAnswered = (userSelected !== undefined);
+
+      let optionsHtml = '';
+      q.options.forEach((opt, optIdx) => {
+        let optStyle = 'width:100%; text-align:left; padding:12px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:8px; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between;';
+        if (isAnswered) {
+          if (optIdx === q.correct) {
+            optStyle += 'background:#dcfce7; border-color:#16a34a; color:#15803d; font-weight:700;';
+          } else if (optIdx === userSelected) {
+            optStyle += 'background:#fee2e2; border-color:#dc2626; color:#b91c1c; font-weight:700;';
+          } else {
+            optStyle += 'opacity:0.6;';
+          }
+        }
+
+        optionsHtml += `
+          <button style="${optStyle}" onclick="selectB8Answer(${optIdx})" ${isAnswered ? 'disabled' : ''}>
+            <span>${opt}</span>
+            ${isAnswered && optIdx === q.correct ? '<span style="color:#16a34a; font-weight:800;">✓</span>' : ''}
+            ${isAnswered && optIdx === userSelected && userSelected !== q.correct ? '<span style="color:#dc2626; font-weight:800;">✗</span>' : ''}
+          </button>
+        `;
+      });
+
+      let explainHtml = '';
+      if (isAnswered) {
+        const isCorrect = (userSelected === q.correct);
+        explainHtml = `
+          <div style="margin-top:14px; padding:12px; border-radius:8px; background:${isCorrect ? '#f0fdf4' : '#fef2f2'}; border:1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; font-size:13px; color:${isCorrect ? '#166534' : '#991b1b'}; line-height:1.5;">
+            <strong>${isCorrect ? '✓ Câu trả lời chính xác!' : '✗ Câu trả lời chưa chính xác!'}</strong><br/>
+            ${q.explain}
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11px; font-weight:700; color:#0284c7; text-transform:uppercase;">${q.title}</span>
+            <span style="font-size:11px; font-weight:600; color:#64748b;">Câu ${b8CurrentQuestionIdx + 1} / ${B8_EXERCISES_DATA.length}</span>
+          </div>
+          <p style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:14px; line-height:1.5;">${q.text}</p>
+          <div>
+            ${optionsHtml}
+          </div>
+          ${explainHtml}
+        </div>
+      `;
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function selectB8Answer(optIdx) {
+      if (b8UserAnswers[b8CurrentQuestionIdx] !== undefined) return;
+      b8UserAnswers[b8CurrentQuestionIdx] = optIdx;
+      renderB8QuizStrip();
+      renderB8QuestionCard();
+    }
+
+    function resetB8QuizArena() {
+      b8UserAnswers = {};
+      b8CurrentQuestionIdx = 0;
+      renderB8QuizStrip();
+      renderB8QuestionCard();
+    }
+
+    function resetB8InteractiveState() {
+      b8CurElemKey = 'Mg';
+      selectB8Element('Mg');
+    }
+
+
+
+
+
+    /* ==========================================================
+       LOGIC BÀI 9: ÔN TẬP & LUYỆN TẬP CHƯƠNG 2
+       ========================================================== */
+
+    let currentPartB9 = 'part1';
+
+    function switchPartB9(partId) {
+      currentPartB9 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b9-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      // Show/hide sections in theory pane
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b9-' + p);
+        const panel = document.getElementById('panel-b9-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
+
+      const activeSec = document.getElementById('content-b9-' + partId);
+      if (activeSec) activeSec.scrollTop = 0;
+
+      if (partId === 'part1') {
+        setTimeout(initB9Mindmap, 50);
+      } else if (partId === 'part2') {
+        setTimeout(initB9ClozeLab, 50);
+      } else if (partId === 'part3') {
+        setTimeout(initB9QuizArena, 50);
+      }
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    /* -------------------------------------------------------------
+       LAB CANVAS 1: SƠ ĐỒ TƯ DUY TƯƠNG TÁC 2.5D CHƯƠNG 2
+       ------------------------------------------------------------- */
+    let b9MindmapCanvas, b9MindmapCtx;
+    let b9SelectedBranch = 0;
+
+    const B9_BRANCHES = [
+      {
+        id: 0,
+        title: 'Cấu tạo BTH (Bài 5)',
+        color: '#0284c7',
+        sub: '118 nguyên tố • 7 Chu kì • 8 Nhóm A & 8 Nhóm B • Khối s, p, d, f',
+        details: 'Ô = Z (proton, electron). Chu kì = Số lớp e. Nhóm A = Số e hoá trị = Số e lớp ngoài cùng.'
+      },
+      {
+        id: 1,
+        title: 'Tính chất Nguyên tử (Bài 6)',
+        color: '#2563eb',
+        sub: 'Bán kính r • Độ âm điện χ • Năng lượng I₁ • Tính KL - PK',
+        details: 'Chu kì (Trái ➔ Phải): Bán kính giảm, độ âm điện tăng, I₁ tăng, KL giảm, PK tăng. Nhóm A (Trên ➔ Dưới): ngược lại.'
+      },
+      {
+        id: 2,
+        title: 'Tính chất Hợp chất (Bài 7)',
+        color: '#16a34a',
+        sub: 'Oxide & Hydroxide cao nhất • Thang Acid - Base',
+        details: 'Hoá trị cao nhất với O tăng từ I đến VII. Chu kì: Tính base giảm dần, tính acid tăng dần (NaOH ➔ Al(OH)₃ ➔ HClO₄).'
+      },
+      {
+        id: 3,
+        title: 'Định luật Tuần hoàn (Bài 8)',
+        color: '#d97706',
+        sub: 'Quy luật tuần hoàn • Tam giác suy luận BTH',
+        details: 'Mối quan hệ mật thiết 2 chiều giữa Vị trí trong BTH ⇄ Cấu hình electron ⇄ Tính chất hoá học và quan hệ lân cận.'
+      }
+    ];
+
+    function initB9Mindmap() {
+      b9MindmapCanvas = document.getElementById('b9MindmapCanvas');
+      if (!b9MindmapCanvas) return;
+      b9MindmapCtx = b9MindmapCanvas.getContext('2d');
+      resizeB9MindmapCanvas();
+
+      b9MindmapCanvas.onclick = handleB9MindmapClick;
+      drawB9Mindmap();
+    }
+
+    function resizeB9MindmapCanvas() {
+      if (!b9MindmapCanvas) return;
+      const rect = b9MindmapCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b9MindmapCanvas.width = rect.width * dpr;
+      b9MindmapCanvas.height = rect.height * dpr;
+      b9MindmapCtx.scale(dpr, dpr);
+      drawB9Mindmap();
+    }
+
+    function handleB9MindmapClick(e) {
+      if (!b9MindmapCanvas) return;
+      const rect = b9MindmapCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const w = b9MindmapCanvas.parentElement.clientWidth;
+      const h = b9MindmapCanvas.parentElement.clientHeight;
+
+      const cX = w / 2, cY = h / 2 - 20;
+      const branchCoords = [
+        { x: cX - 180, y: cY - 90 },
+        { x: cX + 180, y: cY - 90 },
+        { x: cX - 180, y: cY + 90 },
+        { x: cX + 180, y: cY + 90 }
+      ];
+
+      branchCoords.forEach((b, idx) => {
+        if (Math.hypot(x - b.x, y - b.y) < 65) {
+          b9SelectedBranch = idx;
+          const tip = document.getElementById('b9-lab-status-tip');
+          if (tip) tip.innerHTML = `💡 <strong>${B9_BRANCHES[idx].title}:</strong> ${B9_BRANCHES[idx].details}`;
+          drawB9Mindmap();
+        }
+      });
+    }
+
+    function drawB9Mindmap() {
+      if (!b9MindmapCtx || !b9MindmapCanvas) return;
+      const w = b9MindmapCanvas.parentElement.clientWidth;
+      const h = b9MindmapCanvas.parentElement.clientHeight;
+      const ctx = b9MindmapCtx;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const cX = w / 2, cY = h / 2 - 20;
+
+      const branchCoords = [
+        { x: cX - 180, y: cY - 90 },
+        { x: cX + 180, y: cY - 90 },
+        { x: cX - 180, y: cY + 90 },
+        { x: cX + 180, y: cY + 90 }
+      ];
+
+      // Draw curved branches to nodes
+      branchCoords.forEach((b, idx) => {
+        const br = B9_BRANCHES[idx];
+        const isSelected = (idx === b9SelectedBranch);
+
+        ctx.save();
+        ctx.strokeStyle = isSelected ? br.color : '#cbd5e1';
+        ctx.lineWidth = isSelected ? 3 : 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cX, cY);
+        ctx.bezierCurveTo(cX, b.y, b.x, cY, b.x, b.y);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Center Node: CHƯƠNG 2
+      ctx.save();
+      ctx.shadowColor = '#cbd5e1';
+      ctx.shadowBlur = 14;
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(cX - 75, cY - 45, 150, 90, 16);
+      ctx.fill();
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      ctx.font = '800 13px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#0284c7';
+      ctx.textAlign = 'center';
+      ctx.fillText('BẢNG TUẦN HOÀN', cX, cY - 14);
+
+      ctx.font = '700 11px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#0f172a';
+      ctx.fillText('& ĐỊNH LUẬT', cX, cY + 4);
+
+      ctx.font = '600 10px "JetBrains Mono"';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('CHƯƠNG 2', cX, cY + 22);
+      ctx.restore();
+
+      // Branch Nodes
+      branchCoords.forEach((b, idx) => {
+        const br = B9_BRANCHES[idx];
+        const isSelected = (idx === b9SelectedBranch);
+
+        ctx.save();
+        if (isSelected) {
+          ctx.shadowColor = br.color;
+          ctx.shadowBlur = 16;
+        }
+
+        ctx.fillStyle = isSelected ? '#ffffff' : '#f8fafc';
+        ctx.strokeStyle = isSelected ? br.color : '#cbd5e1';
+        ctx.lineWidth = isSelected ? 2.5 : 1.5;
+
+        const nodeW = 190, nodeH = 75;
+        ctx.beginPath();
+        ctx.roundRect(b.x - nodeW / 2, b.y - nodeH / 2, nodeW, nodeH, 12);
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        ctx.font = '700 12px "Plus Jakarta Sans"';
+        ctx.fillStyle = br.color;
+        ctx.textAlign = 'center';
+        ctx.fillText(br.title, b.x, b.y - 12);
+
+        ctx.font = '500 10px "Plus Jakarta Sans"';
+        ctx.fillStyle = '#475569';
+        ctx.fillText(br.sub.substring(0, 32), b.x, b.y + 6);
+        ctx.fillText(br.sub.substring(32), b.x, b.y + 20);
+        ctx.restore();
+      });
+    }
+
+    /* -------------------------------------------------------------
+       LAB 2: HỆ THỐNG HOÁ ĐIỀN KHUYẾT (SGK TRANG 45 - 46)
+       ------------------------------------------------------------- */
+    const B9_CLOZE_ITEMS = [
+      {
+        id: 1,
+        title: "1. Nguyên tắc sắp xếp Bảng tuần hoàn (SGK Trang 45)",
+        text: "Các nguyên tố trong BTH được sắp xếp theo chiều tăng dần của (1) ______; các nguyên tố có cùng (2) ______ được xếp thành một hàng (chu kì); các nguyên tố có cùng (3) ______ được xếp thành một cột (nhóm).",
+        options1: ["điện tích hạt nhân", "khối lượng nguyên tử", "bán kính nguyên tử"],
+        correct1: "điện tích hạt nhân",
+        options2: ["số lớp electron", "số proton", "số nơtron"],
+        correct2: "số lớp electron",
+        options3: ["số electron hoá trị", "số hạt mang điện", "số lớp electron"],
+        correct3: "số electron hoá trị"
+      },
+      {
+        id: 2,
+        title: "2. Định luật tuần hoàn (SGK Trang 46)",
+        text: "Tính chất của các (1) ______ và đơn chất cũng như thành phần và (2) ______ của các hợp chất tạo nên từ các nguyên tố đó biến đổi tuần hoàn theo chiều tăng của (3) ______ nguyên tử.",
+        options1: ["nguyên tố", "phân tử", "nguyên tử"],
+        correct1: "nguyên tố",
+        options2: ["tính chất", "màu sắc", "trạng thái"],
+        correct2: "tính chất",
+        options3: ["điện tích hạt nhân", "khối lượng", "kích thước"],
+        correct3: "điện tích hạt nhân"
+      }
+    ];
+
+    let b9ClozeAnswers = {};
+
+    function initB9ClozeLab() {
+      const container = document.getElementById('b9-cloze-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      B9_CLOZE_ITEMS.forEach((item, itemIdx) => {
+        const div = document.createElement('div');
+        div.style.background = '#ffffff';
+        div.style.border = '1px solid #e2e8f0';
+        div.style.borderRadius = '10px';
+        div.style.padding = '16px';
+
+        div.innerHTML = `
+          <h4 style="font-size:14px; font-weight:700; color:#0284c7; margin:0 0 10px 0;">${item.title}</h4>
+          <p style="font-size:13px; line-height:1.7; color:#1e293b; margin-bottom:12px;">
+            ${item.text
+              .replace('(1) ______', `<select id="b9-cloze-${itemIdx}-1" onchange="checkB9Cloze()" style="padding:4px 8px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px; font-weight:600; color:#0369a1;"><option value="">-- Chọn cụm từ (1) --</option>${item.options1.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`)
+              .replace('(2) ______', `<select id="b9-cloze-${itemIdx}-2" onchange="checkB9Cloze()" style="padding:4px 8px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px; font-weight:600; color:#0369a1;"><option value="">-- Chọn cụm từ (2) --</option>${item.options2.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`)
+              .replace('(3) ______', `<select id="b9-cloze-${itemIdx}-3" onchange="checkB9Cloze()" style="padding:4px 8px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px; font-weight:600; color:#0369a1;"><option value="">-- Chọn cụm từ (3) --</option>${item.options3.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`)}
+          </p>
+        `;
+        container.appendChild(div);
+      });
+      checkB9Cloze();
+    }
+
+    function checkB9Cloze() {
+      let total = 6;
+      let correct = 0;
+
+      B9_CLOZE_ITEMS.forEach((item, itemIdx) => {
+        for (let s = 1; s <= 3; s++) {
+          const sel = document.getElementById(`b9-cloze-${itemIdx}-${s}`);
+          if (sel) {
+            const val = sel.value;
+            const target = item[`correct${s}`];
+            if (val === target) {
+              correct++;
+              sel.style.borderColor = '#16a34a';
+              sel.style.background = '#f0fdf4';
+            } else if (val) {
+              sel.style.borderColor = '#dc2626';
+              sel.style.background = '#fef2f2';
+            } else {
+              sel.style.borderColor = '#cbd5e1';
+              sel.style.background = '#ffffff';
+            }
+          }
+        }
+      });
+
+      const board = document.getElementById('b9-cloze-status-board');
+      if (board) {
+        board.innerHTML = `
+          <strong>Tiến độ hoàn thành:</strong> ${correct} / ${total} vị trí chính xác.<br/>
+          ${correct === total ? '<span style="color:#16a34a; font-weight:700;">🎉 Tuyệt vời! Bạn đã hoàn thành chính xác 100% nội dung hệ thống hoá kiến thức BTH!</span>' : '<span style="color:#64748b;">Hãy lựa chọn cụm từ thích hợp cho từng ô trống để hoàn thiện mệnh đề.</span>'}
+        `;
+      }
+    }
+
+    /* -------------------------------------------------------------
+       LAB 3: ĐẤU TRƯỜNG 6 BÀI TẬP SGK TRANG 46 - 47 (BÀI 9)
+       ------------------------------------------------------------- */
+    const B9_EXERCISES_DATA = [
+      {
+        id: 1,
+        title: "Bài tập 1 (SGK Trang 46): Vị trí các nguyên tố bí ẩn E, T, Q, X, Y, Z",
+        text: "Cho vị trí của các nguyên tố E, T, Q, X, Y, Z trong BTH rút gọn (chỉ biểu diễn nhóm A). Nhận xét nào dưới đây là ĐÚNG?",
+        options: [
+          "A. Thứ tự giảm dần tính kim loại là: Y > E > X",
+          "B. Thứ tự tăng dần độ âm điện là: Y < X < Z < T",
+          "C. Thứ tự tăng dần tính phi kim là: T < Z < Q",
+          "D. Tất cả các nhận xét trên đều đúng"
+        ],
+        correct: 3, // D
+        explain: "Chính xác! Y thuộc chu kì 3 nhóm IA (kim loại mạnh nhất), E ở nhóm IIA, X ở nhóm IIIA ➔ tính kim loại Y > E > X. Tăng dần độ âm điện từ kim loại sang phi kim ➔ Y < X < Z < T. Tính phi kim tăng dần từ dưới lên trên và sang phải ➔ T < Z < Q."
+      },
+      {
+        id: 2,
+        title: "Bài tập 2 (SGK Trang 47): Mệnh đề về Sulfur (S, Z = 16)",
+        text: "Sulfur (S) là nguyên tố thuộc nhóm VIA, chu kì 3 của bảng tuần hoàn. Số phát biểu ĐÚNG trong số các phát biểu về S là:",
+        options: [
+          "A. 1",
+          "B. 2",
+          "C. 3",
+          "D. 4"
+        ],
+        correct: 2, // C
+        explain: "Chính xác! Có 3 phát biểu đúng: (1) S có 3 lớp e và 10 electron p (2p⁶ 3p⁴) [Đúng]; (3) Oxide cao nhất là SO₃ thuộc acidic oxide [Đúng]; (5) Hydroxide cao nhất là H₂SO₄ có tính acid mạnh [Đúng]. Phát biểu (2) sai vì S có 6e hoá trị và 6e s (1s² 2s² 3s²). Phát biểu (4) sai vì S có tính phi kim yếu hơn Oxygen (Z=8)."
+      },
+      {
+        id: 3,
+        title: "Bài tập 3 (SGK Trang 47): Cặp oxide cao nhất XO và YO₃",
+        text: "X và Y là hai nguyên tố thuộc nhóm A trong cùng một chu kì. Oxide cao nhất của X và Y có dạng XO và YO₃. Số phát biểu ĐÚNG là:",
+        options: [
+          "A. 1",
+          "B. 2",
+          "C. 3",
+          "D. 4"
+        ],
+        correct: 1, // B
+        explain: "Chính xác! Có 2 phát biểu đúng: XO ➔ X thuộc nhóm IIA (kim loại); YO₃ ➔ Y thuộc nhóm VIA (phi kim) ➔ Phát biểu (2) đúng; X₂O không tồn tại mà là XO (basic oxide) và YO₃ (acidic oxide) ➔ Phát biểu (3) đúng. (1) sai vì nhóm IIA và VIA cách xa nhau. (4) sai vì hydroxide của Y có dạng H₂YO₄ là acid."
+      },
+      {
+        id: 4,
+        title: "Bài tập 4 (SGK Trang 47): Khoáng chất Borax (Hàn the - Na₂B₄O₇·10H₂O)",
+        text: "Thứ tự sắp xếp các nguyên tố Na, B, O trong phân tử Borax theo chiều BÁN KÍNH NGUYÊN TỬ TĂNG DẦN là:",
+        options: [
+          "A. O < B < Na",
+          "B. Na < B < O",
+          "C. B < O < Na",
+          "D. O < Na < B"
+        ],
+        correct: 0, // A
+        explain: "Chính xác! O (Z=8, chu kì 2 nhóm VIA), B (Z=5, chu kì 2 nhóm IIIA), Na (Z=11, chu kì 3 nhóm IA). Trong chu kì 2: Bán kính O < B. Nguyên tố Na ở chu kì 3 có 3 lớp electron nên bán kính lớn nhất. Chiều bán kính tăng dần: O < B < Na."
+      },
+      {
+        id: 5,
+        title: "Bài tập 5 (SGK Trang 47): Phân tử Caffeine (C₈H₁₀N₄O₂)",
+        text: "So sánh độ âm điện của các nguyên tố C, N, O cấu tạo nên phân tử Caffeine theo chiều TĂNG DẦN:",
+        options: [
+          "A. C < N < O",
+          "B. O < N < C",
+          "C. N < C < O",
+          "D. C < O < N"
+        ],
+        correct: 0, // A
+        explain: "Chính xác! C, N, O đều thuộc Chu kì 2 (nhóm IVA, VA, VIA). Đi từ trái sang phải trong chu kì, điện tích hạt nhân tăng dần kéo electron mạnh hơn làm độ âm điện tăng đều đặn: C (2,55) < N (3,04) < O (3,44)."
+      },
+      {
+        id: 6,
+        title: "Bài tập 6 (SGK Trang 47): Hợp kim hàng không A, B đứng kế tiếp",
+        text: "Hai nguyên tố A, B đứng kế tiếp nhau trong cùng một chu kì của BTH có tổng số đơn vị điện tích hạt nhân là 25 (Z_A + Z_B = 25). A và B là:",
+        options: [
+          "A. Magnesium (Mg, Z = 12) và Aluminium (Al, Z = 13)",
+          "B. Sodium (Na, Z = 11) và Silicon (Si, Z = 14)",
+          "C. Carbon (C, Z = 6) và Potassium (K, Z = 19)",
+          "D. Beryllium (Be, Z = 4) và Scandium (Sc, Z = 21)"
+        ],
+        correct: 0, // A
+        explain: "Chính xác! Vì A và B kế tiếp nhau trong cùng chu kì nên Z_B - Z_A = 1. Kết hợp Z_A + Z_B = 25 ➔ Z_A = 12 (Mg) và Z_B = 13 (Al). Hợp kim nhôm - magie (Duralumin) siêu nhẹ và siêu bền, là vật liệu kinh điển trong kỹ thuật hàng không vũ trụ!"
+      }
+    ];
+
+    let b9CurrentQuestionIdx = 0;
+    let b9UserAnswers = {};
+
+    function initB9QuizArena() {
+      b9CurrentQuestionIdx = 0;
+      b9UserAnswers = {};
+      renderB9QuizStrip();
+      renderB9QuestionCard();
+    }
+
+    function renderB9QuizStrip() {
+      const strip = document.getElementById('b9-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = '';
+
+      B9_EXERCISES_DATA.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = 'b9-q-strip-btn-' + idx;
+        btn.className = 'btn-tool';
+        btn.style.minWidth = '42px';
+        btn.style.height = '36px';
+        btn.style.fontWeight = '700';
+
+        const isAnswered = (b9UserAnswers[idx] !== undefined);
+        const isCurrent = (idx === b9CurrentQuestionIdx);
+
+        if (isCurrent) {
+          btn.style.borderColor = '#0284c7';
+          btn.style.background = '#e0f2fe';
+          btn.style.color = '#0369a1';
+        } else if (isAnswered) {
+          const isCorrect = (b9UserAnswers[idx] === q.correct);
+          btn.style.background = isCorrect ? '#dcfce7' : '#fee2e2';
+          btn.style.borderColor = isCorrect ? '#16a34a' : '#dc2626';
+          btn.style.color = isCorrect ? '#15803d' : '#b91c1c';
+        } else {
+          btn.style.background = '#f8fafc';
+          btn.style.color = '#64748b';
+        }
+
+        btn.innerText = `Câu ${idx + 1}`;
+        btn.onclick = () => {
+          b9CurrentQuestionIdx = idx;
+          renderB9QuizStrip();
+          renderB9QuestionCard();
+        };
+        strip.appendChild(btn);
+      });
+
+      const prog = document.getElementById('b9-quiz-progress-text');
+      const answeredCount = Object.keys(b9UserAnswers).length;
+      if (prog) prog.innerText = `Đã hoàn thành: ${answeredCount} / ${B9_EXERCISES_DATA.length} câu`;
+
+      const scoreBoard = document.getElementById('b9-quiz-score-board');
+      if (scoreBoard) {
+        scoreBoard.style.display = (answeredCount === B9_EXERCISES_DATA.length) ? 'block' : 'none';
+      }
+    }
+
+    function renderB9QuestionCard() {
+      const container = document.getElementById('b9-question-card-container');
+      if (!container) return;
+
+      const q = B9_EXERCISES_DATA[b9CurrentQuestionIdx];
+      const userSelected = b9UserAnswers[b9CurrentQuestionIdx];
+      const isAnswered = (userSelected !== undefined);
+
+      let optionsHtml = '';
+      q.options.forEach((opt, optIdx) => {
+        let optStyle = 'width:100%; text-align:left; padding:12px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:8px; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between;';
+        if (isAnswered) {
+          if (optIdx === q.correct) {
+            optStyle += 'background:#dcfce7; border-color:#16a34a; color:#15803d; font-weight:700;';
+          } else if (optIdx === userSelected) {
+            optStyle += 'background:#fee2e2; border-color:#dc2626; color:#b91c1c; font-weight:700;';
+          } else {
+            optStyle += 'opacity:0.6;';
+          }
+        }
+
+        optionsHtml += `
+          <button style="${optStyle}" onclick="selectB9Answer(${optIdx})" ${isAnswered ? 'disabled' : ''}>
+            <span>${opt}</span>
+            ${isAnswered && optIdx === q.correct ? '<span style="color:#16a34a; font-weight:800;">✓</span>' : ''}
+            ${isAnswered && optIdx === userSelected && userSelected !== q.correct ? '<span style="color:#dc2626; font-weight:800;">✗</span>' : ''}
+          </button>
+        `;
+      });
+
+      let explainHtml = '';
+      if (isAnswered) {
+        const isCorrect = (userSelected === q.correct);
+        explainHtml = `
+          <div style="margin-top:14px; padding:12px; border-radius:8px; background:${isCorrect ? '#f0fdf4' : '#fef2f2'}; border:1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; font-size:13px; color:${isCorrect ? '#166534' : '#991b1b'}; line-height:1.5;">
+            <strong>${isCorrect ? '✓ Câu trả lời chính xác!' : '✗ Câu trả lời chưa chính xác!'}</strong><br/>
+            ${q.explain}
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11px; font-weight:700; color:#0284c7; text-transform:uppercase;">${q.title}</span>
+            <span style="font-size:11px; font-weight:600; color:#64748b;">Câu ${b9CurrentQuestionIdx + 1} / ${B9_EXERCISES_DATA.length}</span>
+          </div>
+          <p style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:14px; line-height:1.5;">${q.text}</p>
+          <div>
+            ${optionsHtml}
+          </div>
+          ${explainHtml}
+        </div>
+      `;
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function selectB9Answer(optIdx) {
+      if (b9UserAnswers[b9CurrentQuestionIdx] !== undefined) return;
+      b9UserAnswers[b9CurrentQuestionIdx] = optIdx;
+      renderB9QuizStrip();
+      renderB9QuestionCard();
+    }
+
+    function resetB9QuizArena() {
+      b9UserAnswers = {};
+      b9CurrentQuestionIdx = 0;
+      renderB9QuizStrip();
+      renderB9QuestionCard();
+    }
+
+    function resetB9InteractiveState() {
+      b9SelectedBranch = 0;
+      drawB9Mindmap();
+      initB9ClozeLab();
     }
 
 
