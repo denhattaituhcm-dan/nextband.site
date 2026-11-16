@@ -1293,7 +1293,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                     <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/60 p-3">
                       <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-800">
                         <Sparkles className="h-3.5 w-3.5" />
-                        Danh sách từ gốc trong Unit 1 (Lưu ý: Bạn cần tự chia danh từ số
+                        Danh sách từ gốc trong Unit {unitData.unitNumber} (Lưu ý: Bạn cần tự chia danh từ số
                         nhiều / động từ cho đúng ngữ pháp của chỗ trống!):
                       </div>
                       <div className="mt-2 flex flex-wrap gap-1.5">
