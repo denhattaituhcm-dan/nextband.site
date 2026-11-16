@@ -993,8 +993,8 @@
             </div>
           </div>
 
-          <!-- Bài 6: Xu hướng biến đổi tính chất (Theo lộ trình) -->
-          <div class="lesson-item-card">
+          <!-- Bài 6: Xu hướng biến đổi tính chất (Đã hoàn thiện) -->
+          <div class="lesson-item-card ready">
             <div class="card-thumb-svg">
               <svg width="220" height="90" viewBox="0 0 220 90">
                 <circle cx="60" cy="45" r="22" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
@@ -1006,12 +1006,13 @@
             </div>
             <div class="card-content-wrap">
               <div>
-                <span class="badge-status pending">○ THEO LỘ TRÌNH</span>
+                <span class="badge-status ready">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
                 <h3>Bài 6: Xu hướng biến đổi tính chất nguyên tử</h3>
                 <p>Quy luật biến đổi bán kính nguyên tử, độ âm điện, năng lượng ion hoá thứ nhất và tính kim loại - phi kim trong chu kì và nhóm.</p>
               </div>
-              <button class="btn-enter-lesson btn-disabled" onclick="alert('Bài 6 xu hướng biến đổi sẽ ra mắt tiếp theo!')">
-                <span>Đang biên soạn</span>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b6')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
               </button>
             </div>
           </div>
@@ -2551,7 +2552,228 @@
   </div>
 
 
-<script>
+
+
+
+  <!-- ========================================================
+       PHÒNG HỌC & THÍ NGHIỆM CHUẨN MỰC BÀI 6 (FOCUS STUDIO)
+       ======================================================== -->
+  <div id="view-studio-b6" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Header với 3 Tab chuyên sâu cho Bài 6 -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <span class="studio-lesson-title">Bài 6: Xu hướng biến đổi tính chất nguyên tử (SGK Tr.35 – 40)</span>
+        </div>
+
+        <div class="nav-tabs-segmented">
+          <button class="tab-seg-btn active" id="tab-btn-b6-p1" onclick="switchPartB6('part1')">I & II. Xu hướng Bán kính Nguyên tử</button>
+          <button class="tab-seg-btn" id="tab-btn-b6-p2" onclick="switchPartB6('part2')">III. Độ âm điện & Năng lượng Ion hoá</button>
+          <button class="tab-seg-btn" id="tab-btn-b6-p3" onclick="switchPartB6('part3')">IV. Tính Kim loại - Phi kim & Luyện tập</button>
+        </div>
+      </nav>
+
+      <!-- Studio Dual Pane Body Bài 6 -->
+      <div class="studio-main-body">
+        
+        <!-- CỘT TRÁI: NỘI DUNG SƯ PHẠM BÀI 6 -->
+        <section class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: BÁN KÍNH NGUYÊN TỬ -->
+          <div id="content-b6-part1" class="lesson-section-content active">
+            
+            <div class="pedagogy-box box-target">
+              <div class="box-header">🎯 MỤC TIÊU BÀI HỌC (SGK TRANG 35)</div>
+              <ul>
+                <li>Giải thích được xu hướng biến đổi bán kính nguyên tử trong một chu kì và trong một nhóm A (dựa trên lực hút tĩnh điện hạt nhân và số lớp electron).</li>
+                <li>Nhận xét và giải thích được xu hướng biến đổi độ âm điện, năng lượng ion hoá thứ nhất ($I_1$).</li>
+                <li>Quy luật biến đổi tính kim loại, tính phi kim trong một chu kì và trong nhóm A.</li>
+              </ul>
+            </div>
+
+            <h3 class="theory-heading">1. Bán kính nguyên tử (Atomic Radius - $r$)</h3>
+            <p class="theory-paragraph">
+              Bán kính nguyên tử phụ thuộc vào <strong>lực hút tĩnh điện giữa hạt nhân với các electron lớp ngoài cùng</strong>:
+            </p>
+
+            <div class="pedagogy-box box-law">
+              <div class="box-header">📏 QUY LUẬT BIẾN ĐỔI BÁN KÍNH NGUYÊN TỬ</div>
+              <p style="margin: 0; font-size: 13px; line-height: 1.7; color: #1e3a8a;">
+                • <strong>Trong một chu kì (từ trái qua phải):</strong> Bán kính nguyên tử <strong>GIẢM DẦN</strong>.<br>
+                <em>Giải thích:</em> Số lớp electron không đổi ($n$), nhưng điện tích hạt nhân ($Z$) tăng dần $\to$ lực hút tĩnh điện giữa hạt nhân với electron lớp ngoài cùng tăng mạnh $\to$ kéo các electron lại gần hạt nhân hơn.<br>
+                • <strong>Trong một nhóm A (từ trên xuống dưới):</strong> Bán kính nguyên tử <strong>TĂNG DẦN</strong>.<br>
+                <em>Giải thích:</em> Mặc dù $Z$ tăng, nhưng số lớp electron tăng thêm nhanh hơn $\to$ các lớp vỏ ngoài cùng ở xa hạt nhân hơn và bị các lớp trong chắn bớt lực hút.
+              </p>
+            </div>
+
+            <!-- Quiz câu 3 SGK -->
+            <div class="quiz-card" style="margin-top: 16px;">
+              <div class="quiz-badge">? Câu hỏi 3a (SGK Trang 36)</div>
+              <p class="quiz-question">Dựa vào bảng tuần hoàn, so sánh bán kính nguyên tử của Lithium (Z = 3) và Potassium (Z = 19):</p>
+              <div class="quiz-options">
+                <button class="opt-btn" onclick="checkB6Quiz(this, true, 'Chính xác! Li và K cùng thuộc nhóm IA, K ở chu kì 4 (có 4 lớp e) nằm dưới Li ở chu kì 2 (có 2 lớp e) nên bán kính K lớn hơn Li rất nhiều (K: 227 pm > Li: 152 pm).')">A. Bán kính của Potassium (K) lớn hơn Lithium (Li) vì K có nhiều lớp electron hơn (4 lớp > 2 lớp)</button>
+                <button class="opt-btn" onclick="checkB6Quiz(this, false, 'Sai. Cùng nhóm A từ trên xuống bán kính tăng dần.')">B. Bán kính của Lithium (Li) lớn hơn Potassium (K)</button>
+                <button class="opt-btn" onclick="checkB6Quiz(this, false, 'Sai. Bán kính nguyên tử các nguyên tố khác nhau là khác biệt rõ rệt.')">C. Hai nguyên tử có bán kính xấp xỉ bằng nhau</button>
+              </div>
+              <div class="quiz-feedback" style="display:none;"></div>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: ĐỘ ÂM ĐIỆN & NĂNG LƯỢNG ION HOÁ -->
+          <div id="content-b6-part2" class="lesson-section-content">
+            <h3 class="theory-heading">2. Độ âm điện ($\chi$) & Năng lượng Ion hoá ($I_1$)</h3>
+
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:12px;">
+              <strong style="color:#0369a1; font-size:13.5px;">1. Khái niệm Độ âm điện (Pauling):</strong>
+              <p style="font-size:12.5px; color:#475569; margin:4px 0 0; line-height:1.6;">
+                Độ âm điện ($\chi$) đặc trưng cho <strong>khả năng hút electron</strong> của nguyên tử khi tạo thành liên kết hoá học. Độ âm điện càng lớn $\to$ tính phi kim càng mạnh, càng dễ nhận electron.
+              </p>
+            </div>
+
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:12px;">
+              <strong style="color:#b45309; font-size:13.5px;">2. Năng lượng ion hoá thứ nhất ($I_1$):</strong>
+              <p style="font-size:12.5px; color:#475569; margin:4px 0 0; line-height:1.6;">
+                Là năng lượng tối thiểu cần thiết để tách electron thứ nhất ra khỏi nguyên tử ở thể khí (trạng thái cơ bản): $\text{X}(g) \to \text{X}^+(g) + 1e$. $I_1$ càng nhỏ $\to$ càng dễ nhường electron $\to$ tính kim loại càng mạnh.
+              </p>
+            </div>
+
+            <div class="pedagogy-box box-law">
+              <div class="box-header">⚡ QUY LUẬT BIẾN ĐỔI ĐỘ ÂM ĐIỆN & $I_1$</div>
+              <p style="margin: 0; font-size: 13px; line-height: 1.65; color: #1e3a8a;">
+                • <strong>Trong một chu kì:</strong> Đi từ trái qua phải $\to$ Độ âm điện và $I_1$ <strong>TĂNG DẦN</strong> (do bán kính giảm, lực hút hạt nhân mạnh hơn).<br>
+                • <strong>Trong một nhóm A:</strong> Đi từ trên xuống dưới $\to$ Độ âm điện và $I_1$ <strong>GIẢM DẦN</strong> (do số lớp electron tăng, hạt nhân giữ e ngoài cùng lỏng lẻo hơn).
+              </p>
+            </div>
+
+            <!-- Quiz câu 4 SGK -->
+            <div class="quiz-card" style="margin-top:14px;">
+              <div class="quiz-badge">? Câu hỏi 4 (SGK Trang 38)</div>
+              <p class="quiz-question">Dãy nguyên tố nào sau đây được sắp xếp theo chiều ĐỘ ÂM ĐIỆN TĂNG DẦN?</p>
+              <div class="quiz-options">
+                <button class="opt-btn" onclick="checkB6Quiz(this, true, 'Hoàn toàn chính xác! Ca (1.00) < Mg (1.31) < P (2.19) < S (2.58). Ca dưới Mg trong nhóm IIA nên Ca < Mg; Mg, P, S cùng chu kì 3 đi từ trái sang phải nên Mg < P < S.')">A. Ca < Mg < P < S (Độ âm điện tăng dần)</button>
+                <button class="opt-btn" onclick="checkB6Quiz(this, false, 'Sai. S có độ âm điện lớn hơn P.')">B. Ca < Mg < S < P</button>
+                <button class="opt-btn" onclick="checkB6Quiz(this, false, 'Sai. Mg thuộc nhóm IIA có độ âm điện nhỏ hơn P và S rất nhiều.')">C. S < P < Mg < Ca</button>
+              </div>
+              <div class="quiz-feedback" style="display:none;"></div>
+            </div>
+          </div>
+
+          <!-- PHẦN 3: TÍNH KIM LOẠI - PHI KIM & BÀI TẬP SGK -->
+          <div id="content-b6-part3" class="lesson-section-content">
+            <h3 class="theory-heading">3. Quy luật Tính Kim loại & Tính Phi kim</h3>
+
+            <div style="display:flex; flex-direction:column; gap:10px; margin: 14px 0;">
+              <div style="background:#fff; border-left:4px solid #ef4444; padding:12px; border-radius:6px;">
+                <strong style="color:#b91c1c; font-size:13.5px;">Tính kim loại (Khả năng nhường e):</strong>
+                <p style="font-size:12.5px; color:#334155; margin:4px 0 0; line-height:1.55;">
+                  • Trong chu kì: <strong>GIẢM DẦN</strong> từ trái sang phải.<br>
+                  • Trong nhóm A: <strong>TĂNG DẦN</strong> từ trên xuống dưới (Kim loại mạnh nhất là Francium, Caesium).
+                </p>
+              </div>
+
+              <div style="background:#fff; border-left:4px solid #10b981; padding:12px; border-radius:6px;">
+                <strong style="color:#047857; font-size:13.5px;">Tính phi kim (Khả năng nhận e):</strong>
+                <p style="font-size:12.5px; color:#334155; margin:4px 0 0; line-height:1.55;">
+                  • Trong chu kì: <strong>TĂNG DẦN</strong> từ trái sang phải.<br>
+                  • Trong nhóm A: <strong>GIẢM DẦN</strong> từ trên xuống dưới (Phi kim mạnh nhất là Fluorine: $\chi = 3.98$).
+                </p>
+              </div>
+            </div>
+
+            <!-- Quiz câu 7 SGK -->
+            <div class="quiz-card">
+              <div class="quiz-badge">? Câu hỏi 7 (SGK Trang 40)</div>
+              <p class="quiz-question">Trong các nguyên tố O, F, Cl, Se, nguyên tố có tính PHI KIM MẠNH NHẤT là:</p>
+              <div class="quiz-options">
+                <button class="opt-btn" onclick="checkB6Quiz(this, true, 'Chính xác! Fluorine (F) có bán kính nhỏ nhất trong các phi kim, độ âm điện lớn nhất (3.98), là phi kim hoạt động hoá học mạnh nhất toàn bảng tuần hoàn.')">A. Fluorine (F)</button>
+                <button class="opt-btn" onclick="checkB6Quiz(this, false, 'Sai. O có độ âm điện 3.44, nhỏ hơn F (3.98).')">B. Oxygen (O)</button>
+                <button class="opt-btn" onclick="checkB6Quiz(this, false, 'Sai. Chlorine nằm dưới F trong nhóm VIIA nên tính phi kim yếu hơn F.')">C. Chlorine (Cl)</button>
+                <button class="opt-btn" onclick="checkB6Quiz(this, false, 'Sai. Se có tính phi kim yếu hơn cả O, F và Cl.')">D. Selenium (Se)</button>
+              </div>
+              <div class="quiz-feedback" style="display:none;"></div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- CỘT PHẢI: PHÒNG THÍ NGHIỆM TƯƠNG TÁC BÀI 6 -->
+        <main class="lab-interactive-pane">
+          
+          <!-- TAB 1: TRỰC QUAN HOÁ BÁN KÍNH NGUYÊN TỬ 2D & 3D (CANVAS) -->
+          <div id="panel-b6-part1" style="display: flex; flex-direction: column; height: 100%; width: 100%;">
+            <div class="hud-scientific">
+              <div>ĐỐI SOÁT: <span>Quy Luật Bán Kính Nguyên Tử Trong Chu Kì & Nhóm A</span></div>
+              <div>THÔNG SỐ: <span>Chu kì: Giảm dần từ trái qua phải • Nhóm A: Tăng dần từ trên xuống dưới</span></div>
+              <div>QUY TẮC: <span>Lực hút tĩnh điện hạt nhân vs Số lớp electron bao quanh</span></div>
+            </div>
+
+            <div class="canvas-wrapper">
+              <canvas id="b6RadiusCanvas"></canvas>
+            </div>
+
+            <footer class="lab-action-footer">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12.5px; font-weight: 600; color: var(--text-muted);">Quan sát:</span>
+                <button class="btn-tool btn-tool-active" id="btn-b6-radius-p3" onclick="selectB6RadiusMode('period3')">Chu kì 3 (Na ➔ Cl)</button>
+                <button class="btn-tool btn-tool-subtle" id="btn-b6-radius-p2" onclick="selectB6RadiusMode('period2')">Chu kì 2 (Li ➔ F)</button>
+                <button class="btn-tool btn-tool-subtle" id="btn-b6-radius-g1" onclick="selectB6RadiusMode('group1')">Nhóm IA (Li ➔ Cs)</button>
+                <button class="btn-tool btn-tool-subtle" id="btn-b6-radius-g7" onclick="selectB6RadiusMode('group7')">Nhóm VIIA (F ➔ I)</button>
+              </div>
+            </footer>
+          </div>
+
+          <!-- TAB 2: BIỂU ĐỒ TƯƠNG TÁC ĐỘ ÂM ĐIỆN & NĂNG LƯỢNG ION HOÁ -->
+          <div id="panel-b6-part2" style="display: none; flex-direction: column; height: 100%; width: 100%;">
+            <div class="hud-scientific">
+              <div>BIỂU ĐỒ ĐỊNH LƯỢNG: <span>Độ Âm Điện Pauling & Năng Lượng Ion Hoá $I_1$ (kJ/mol)</span></div>
+              <div>XU HƯỚNG: <span>Chu kì: Tăng dần • Nhóm A: Giảm dần</span></div>
+            </div>
+
+            <div class="canvas-wrapper">
+              <canvas id="b6ElectronegCanvas"></canvas>
+            </div>
+
+            <footer class="lab-action-footer">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12.5px; font-weight: 600; color: var(--text-muted);">Thông số:</span>
+                <button class="btn-tool btn-tool-active" id="btn-b6-mode-en" onclick="setB6ChartMetric('en')">Độ âm điện (Pauling)</button>
+                <button class="btn-tool btn-tool-subtle" id="btn-b6-mode-ie" onclick="setB6ChartMetric('ie')">Năng lượng Ion hoá I₁ (kJ/mol)</button>
+              </div>
+            </footer>
+          </div>
+
+          <!-- TAB 3: BÀI TẬP VẬN DỤNG SGK TRANG 40 -->
+          <div id="panel-b6-part3" style="display: none; flex-direction: column; height: 100%; width: 100%; background: #f8fafc; overflow-y: auto; padding: 18px; gap: 14px;">
+            
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:13px; font-weight:700; color:#334155;">Câu hỏi SGK Trang 36 – 40:</span>
+                <div id="b6-question-selector-strip" style="display:flex; gap:4px; flex-wrap:wrap;"></div>
+              </div>
+              <div id="b6-quiz-progress-text" style="font-size:12px; font-weight:600; color:#0284c7;">Tiến độ: 0 / 5 câu</div>
+            </div>
+
+            <div id="b6-question-card-container" style="background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:20px; box-shadow:0 2px 6px rgba(0,0,0,0.03);"></div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <button class="btn-tool btn-tool-subtle" onclick="stepB6Question(-1)">◀ Câu trước</button>
+              <button class="btn-tool btn-tool-active" onclick="stepB6Question(1)">Câu sau ▶</button>
+            </div>
+
+          </div>
+
+        </main>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
        ========================================================== */
@@ -2568,6 +2790,10 @@
       if (studioB4) studioB4.classList.remove('active');
       const studioB5 = document.getElementById('view-studio-b5');
       if (studioB5) studioB5.classList.remove('active');
+      const studioB6 = document.getElementById('view-studio-b6');
+      if (studioB6) studioB6.classList.remove('active');
+      const studioB6 = document.getElementById('view-studio-b6');
+      if (studioB6) studioB6.classList.remove('active');
       
       if (lessonId === 'b1') {
         document.getElementById('view-studio').classList.add('active');
@@ -2599,6 +2825,14 @@
           initB5PeriodicTable();
           initB5QuizArena();
         }, 50);
+      } else if (lessonId === 'b6') {
+        if (studioB6) studioB6.classList.add('active');
+        switchPartB6('part1');
+        setTimeout(() => {
+          if (typeof initB6RadiusLab === 'function') initB6RadiusLab();
+          if (typeof initB6ElectronegLab === 'function') initB6ElectronegLab();
+          if (typeof initB6QuizArena === 'function') initB6QuizArena();
+        }, 50);
       }
       window.location.hash = lessonId;
     }
@@ -2612,6 +2846,8 @@
       if (studioB4) studioB4.classList.remove('active');
       const studioB5 = document.getElementById('view-studio-b5');
       if (studioB5) studioB5.classList.remove('active');
+      const studioB6 = document.getElementById('view-studio-b6');
+      if (studioB6) studioB6.classList.remove('active');
       document.getElementById('view-dashboard').classList.add('active');
       window.location.hash = '';
     }
@@ -4577,6 +4813,557 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       b5UserAnswers[b5CurrentQuestionIdx] = optionIdx;
       updateB5QuestionStripUI();
       renderB5CurrentQuestion();
+    }
+
+
+
+
+
+    /* ==========================================================
+       LOGIC BÀI 6: XU HƯỚNG BIẾN ĐỔI TÍNH CHẤT NGUYÊN TỬ
+       ========================================================== */
+
+    let currentPartB6 = 'part1';
+
+    function switchPartB6(partId) {
+      currentPartB6 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b6-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b6-' + p);
+        const panel = document.getElementById('panel-b6-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
+
+      if (window.renderMathInElement) {
+        const activeSec = document.getElementById('content-b6-' + partId);
+        if (activeSec) {
+          renderMathInElement(activeSec, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+          });
+        }
+      }
+
+      setTimeout(() => {
+        if (partId === 'part1') resizeB6RadiusCanvas();
+        else if (partId === 'part2') resizeB6ElectronegCanvas();
+        else if (partId === 'part3') renderB6CurrentQuestion();
+      }, 50);
+    }
+
+    function checkB6Quiz(btn, isCorrect, feedbackText) {
+      const parent = btn.closest('.quiz-card');
+      const allBtns = parent.querySelectorAll('.opt-btn');
+      allBtns.forEach(b => b.classList.remove('selected', 'correct', 'wrong'));
+      
+      btn.classList.add('selected');
+      if (isCorrect) btn.classList.add('correct');
+      else btn.classList.add('wrong');
+
+      const fb = parent.querySelector('.quiz-feedback');
+      if (fb) {
+        fb.style.display = 'block';
+        fb.style.background = isCorrect ? '#f0fdf4' : '#fef2f2';
+        fb.style.color = isCorrect ? '#166534' : '#991b1b';
+        fb.style.border = '1px solid ' + (isCorrect ? '#bbf7d0' : '#fecaca');
+        fb.innerHTML = (isCorrect ? '✅ ' : '❌ ') + feedbackText;
+      }
+    }
+
+    /* ----------------------------------------------------------
+       TAB 1: TRỰC QUAN HOÁ BÁN KÍNH NGUYÊN TỬ (CANVAS)
+       ---------------------------------------------------------- */
+    let b6RadiusCanvas, b6RadiusCtx;
+    let b6RadiusMode = 'period3'; // 'period3', 'period2', 'group1', 'group7'
+
+    const B6_RADIUS_DATA = {
+      period3: [
+        { sym: 'Na', Z: 11, r: 186, type: 'metal' },
+        { sym: 'Mg', Z: 12, r: 160, type: 'metal' },
+        { sym: 'Al', Z: 13, r: 143, type: 'metal' },
+        { sym: 'Si', Z: 14, r: 118, type: 'metalloid' },
+        { sym: 'P',  Z: 15, r: 110, type: 'nonmetal' },
+        { sym: 'S',  Z: 16, r: 104, type: 'nonmetal' },
+        { sym: 'Cl', Z: 17, r: 99,  type: 'nonmetal' },
+        { sym: 'Ar', Z: 18, r: 98,  type: 'noble' }
+      ],
+      period2: [
+        { sym: 'Li', Z: 3,  r: 152, type: 'metal' },
+        { sym: 'Be', Z: 4,  r: 112, type: 'metal' },
+        { sym: 'B',  Z: 5,  r: 88,  type: 'metalloid' },
+        { sym: 'C',  Z: 6,  r: 77,  type: 'nonmetal' },
+        { sym: 'N',  Z: 7,  r: 75,  type: 'nonmetal' },
+        { sym: 'O',  Z: 8,  r: 73,  type: 'nonmetal' },
+        { sym: 'F',  Z: 9,  r: 71,  type: 'nonmetal' },
+        { sym: 'Ne', Z: 10, r: 69,  type: 'noble' }
+      ],
+      group1: [
+        { sym: 'Li', Z: 3,  r: 152, period: 2, type: 'metal' },
+        { sym: 'Na', Z: 11, r: 186, period: 3, type: 'metal' },
+        { sym: 'K',  Z: 19, r: 227, period: 4, type: 'metal' },
+        { sym: 'Rb', Z: 37, r: 248, period: 5, type: 'metal' },
+        { sym: 'Cs', Z: 55, r: 265, period: 6, type: 'metal' }
+      ],
+      group7: [
+        { sym: 'F',  Z: 9,  r: 71,  period: 2, type: 'nonmetal' },
+        { sym: 'Cl', Z: 17, r: 99,  period: 3, type: 'nonmetal' },
+        { sym: 'Br', Z: 35, r: 114, period: 4, type: 'nonmetal' },
+        { sym: 'I',  Z: 53, r: 133, period: 5, type: 'nonmetal' }
+      ]
+    };
+
+    function resizeB6RadiusCanvas() {
+      b6RadiusCanvas = document.getElementById('b6RadiusCanvas');
+      if (!b6RadiusCanvas) return;
+      b6RadiusCtx = b6RadiusCanvas.getContext('2d');
+      const rect = b6RadiusCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b6RadiusCanvas.width = rect.width * dpr;
+      b6RadiusCanvas.height = rect.height * dpr;
+      if (b6RadiusCtx) b6RadiusCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawB6RadiusCanvas();
+    }
+
+    function selectB6RadiusMode(mode) {
+      b6RadiusMode = mode;
+      ['p3', 'p2', 'g1', 'g7'].forEach(m => {
+        const btn = document.getElementById('btn-b6-radius-' + m);
+        const mapM = { p3: 'period3', p2: 'period2', g1: 'group1', g7: 'group7' };
+        if (btn) btn.classList.toggle('btn-tool-active', mapM[m] === mode);
+        if (btn) btn.classList.toggle('btn-tool-subtle', mapM[m] !== mode);
+      });
+      drawB6RadiusCanvas();
+    }
+
+    function drawB6RadiusCanvas() {
+      if (!b6RadiusCanvas || !b6RadiusCtx) return;
+      const w = b6RadiusCanvas.parentElement.clientWidth;
+      const h = b6RadiusCanvas.parentElement.clientHeight;
+      const ctx = b6RadiusCtx;
+      const list = B6_RADIUS_DATA[b6RadiusMode];
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Tiêu đề trực quan
+      ctx.save();
+      ctx.font = 'bold 14px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#0f172a';
+      ctx.textAlign = 'center';
+
+      let title = '';
+      if (b6RadiusMode === 'period3') title = 'Chu kì 3 (Từ trái qua phải): Bán kính nguyên tử GIẢM DẦN (Na ➔ Cl)';
+      else if (b6RadiusMode === 'period2') title = 'Chu kì 2 (Từ trái qua phải): Bán kính nguyên tử GIẢM DẦN (Li ➔ F)';
+      else if (b6RadiusMode === 'group1') title = 'Nhóm IA (Từ trên xuống dưới): Bán kính nguyên tử TĂNG DẦN (Li ➔ Cs)';
+      else if (b6RadiusMode === 'group7') title = 'Nhóm VIIA (Từ trên xuống dưới): Bán kính nguyên tử TĂNG DẦN (F ➔ I)';
+      ctx.fillText(title, w / 2, 38);
+
+      // Dàn trải các hình cầu nguyên tử
+      const count = list.length;
+      const isPeriod = b6RadiusMode.startsWith('period');
+      const startX = 60;
+      const endX = w - 60;
+      const stepX = (endX - startX) / (count - 1);
+      const cy = h / 2 + 10;
+
+      list.forEach((item, idx) => {
+        const cx = startX + idx * stepX;
+        // Tỷ lệ bán kính vẽ
+        const drawRadius = (item.r / 265) * 48;
+
+        // Vẽ vòng cầu với Radial Gradient 2.5D
+        let grad = ctx.createRadialGradient(cx - drawRadius * 0.3, cy - drawRadius * 0.3, 2, cx, cy, drawRadius);
+        if (item.type === 'metal') {
+          grad.addColorStop(0, '#93c5fd');
+          grad.addColorStop(0.8, '#3b82f6');
+          grad.addColorStop(1, '#1d4ed8');
+        } else if (item.type === 'nonmetal') {
+          grad.addColorStop(0, '#fef08a');
+          grad.addColorStop(0.8, '#eab308');
+          grad.addColorStop(1, '#a16207');
+        } else if (item.type === 'noble') {
+          grad.addColorStop(0, '#e9d5ff');
+          grad.addColorStop(0.8, '#a855f7');
+          grad.addColorStop(1, '#6b21a8');
+        } else {
+          grad.addColorStop(0, '#a7f3d0');
+          grad.addColorStop(0.8, '#10b981');
+          grad.addColorStop(1, '#047857');
+        }
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, drawRadius, 0, 2 * Math.PI);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Kí hiệu nguyên tố ở giữa
+        ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(item.sym, cx, cy);
+
+        // Nhãn số hiệu Z và bán kính pm bên dưới
+        ctx.textBaseline = 'alphabetic';
+        ctx.font = 'bold 11px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(`${item.r} pm`, cx, cy + drawRadius + 20);
+
+        ctx.font = '10px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText(`Z = ${item.Z}`, cx, cy + drawRadius + 34);
+      });
+
+      // Mũi tên xu hướng biến đổi
+      ctx.beginPath();
+      ctx.moveTo(startX, h - 30);
+      ctx.lineTo(endX, h - 30);
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Mũi tên đầu
+      ctx.beginPath();
+      ctx.moveTo(endX - 8, h - 35);
+      ctx.lineTo(endX, h - 30);
+      ctx.lineTo(endX - 8, h - 25);
+      ctx.fillStyle = '#0284c7';
+      ctx.fill();
+
+      ctx.font = 'bold 11.5px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#0369a1';
+      ctx.textAlign = 'center';
+      const trendText = isPeriod ? 'Chiều tăng dần điện tích hạt nhân Z (Bán kính GIẢM DẦN)' : 'Chiều tăng dần số lớp electron n (Bán kính TĂNG DẦN)';
+      ctx.fillText(trendText, w / 2, h - 14);
+
+      ctx.restore();
+    }
+
+    /* ----------------------------------------------------------
+       TAB 2: ĐỘ ÂM ĐIỆN & NĂNG LƯỢNG ION HOÁ
+       ---------------------------------------------------------- */
+    let b6ElectronegCanvas, b6ElectronegCtx;
+    let b6ChartMetric = 'en'; // 'en' (độ âm điện), 'ie' (năng lượng ion hoá)
+
+    const B6_METRIC_DATA = [
+      { sym: 'Li', Z: 3,  en: 0.98, ie: 520 },
+      { sym: 'Be', Z: 4,  en: 1.57, ie: 899 },
+      { sym: 'B',  Z: 5,  en: 2.04, ie: 801 },
+      { sym: 'C',  Z: 6,  en: 2.55, ie: 1086 },
+      { sym: 'N',  Z: 7,  en: 3.04, ie: 1402 },
+      { sym: 'O',  Z: 8,  en: 3.44, ie: 1314 },
+      { sym: 'F',  Z: 9,  en: 3.98, ie: 1681 },
+      { sym: 'Ne', Z: 10, en: 0,    ie: 2080 }
+    ];
+
+    function resizeB6ElectronegCanvas() {
+      b6ElectronegCanvas = document.getElementById('b6ElectronegCanvas');
+      if (!b6ElectronegCanvas) return;
+      b6ElectronegCtx = b6ElectronegCanvas.getContext('2d');
+      const rect = b6ElectronegCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b6ElectronegCanvas.width = rect.width * dpr;
+      b6ElectronegCanvas.height = rect.height * dpr;
+      if (b6ElectronegCtx) b6ElectronegCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawB6ElectronegCanvas();
+    }
+
+    function setB6ChartMetric(metric) {
+      b6ChartMetric = metric;
+      const btnEn = document.getElementById('btn-b6-mode-en');
+      const btnIe = document.getElementById('btn-b6-mode-ie');
+      if (btnEn) {
+        btnEn.classList.toggle('btn-tool-active', metric === 'en');
+        btnEn.classList.toggle('btn-tool-subtle', metric !== 'en');
+      }
+      if (btnIe) {
+        btnIe.classList.toggle('btn-tool-active', metric === 'ie');
+        btnIe.classList.toggle('btn-tool-subtle', metric !== 'ie');
+      }
+      drawB6ElectronegCanvas();
+    }
+
+    function drawB6ElectronegCanvas() {
+      if (!b6ElectronegCanvas || !b6ElectronegCtx) return;
+      const w = b6ElectronegCanvas.parentElement.clientWidth;
+      const h = b6ElectronegCanvas.parentElement.clientHeight;
+      const ctx = b6ElectronegCtx;
+
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.save();
+      const isEn = b6ChartMetric === 'en';
+      const maxVal = isEn ? 4.2 : 2200;
+
+      // Tiêu đề
+      ctx.font = 'bold 13.5px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#0f172a';
+      ctx.textAlign = 'center';
+      ctx.fillText(isEn ? 'Biểu đồ Độ âm điện Pauling qua Chu kì 2 (Li ➔ F)' : 'Biểu đồ Năng lượng Ion hoá Thứ nhất I₁ qua Chu kì 2 (kJ/mol)', w / 2, 34);
+
+      // Trục toạ độ
+      const ox = 70, oy = h - 50;
+      const chartW = w - 120, chartH = h - 100;
+
+      ctx.beginPath();
+      ctx.moveTo(ox, oy - chartH);
+      ctx.lineTo(ox, oy);
+      ctx.lineTo(ox + chartW, oy);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Cột giá trị
+      const count = B6_METRIC_DATA.length;
+      const stepX = chartW / count;
+
+      B6_METRIC_DATA.forEach((d, idx) => {
+        const val = isEn ? d.en : d.ie;
+        if (val === 0) return; // Ne không xác định độ âm điện Pauling
+
+        const barH = (val / maxVal) * chartH;
+        const bx = ox + idx * stepX + 10;
+        const bw = stepX - 20;
+        const by = oy - barH;
+
+        // Vẽ cột
+        ctx.fillStyle = isEn ? '#f59e0b' : '#0284c7';
+        ctx.beginPath();
+        ctx.roundRect(bx, by, bw, barH, [4, 4, 0, 0]);
+        ctx.fill();
+
+        // Giá trị trên đầu cột
+        ctx.font = 'bold 10.5px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#0f172a';
+        ctx.textAlign = 'center';
+        ctx.fillText(isEn ? val.toFixed(2) : val, bx + bw / 2, by - 6);
+
+        // Kí hiệu bên dưới
+        ctx.font = 'bold 11.5px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#334155';
+        ctx.fillText(d.sym, bx + bw / 2, oy + 18);
+        ctx.font = '9.5px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(`Z=${d.Z}`, bx + bw / 2, oy + 32);
+      });
+
+      ctx.restore();
+    }
+
+    /* ----------------------------------------------------------
+       TAB 3: BÀI TẬP SGK TRANG 36 - 40
+       ---------------------------------------------------------- */
+    const B6_EXERCISES_DATA = [
+      {
+        id: 1,
+        title: 'Câu 3b (SGK Trang 36): So sánh bán kính của Calcium và Selenium',
+        text: 'Dựa vào bảng tuần hoàn, hãy so sánh bán kính nguyên tử của Calcium (Z = 20) và Selenium (Z = 34).',
+        options: [
+          'A. Bán kính của Calcium (Ca) lớn hơn Selenium (Se)',
+          'B. Bán kính của Selenium (Se) lớn hơn Calcium (Ca)',
+          'C. Hai nguyên tử có bán kính bằng nhau',
+          'D. Không thể so sánh được vì khác nhóm'
+        ],
+        correct: 0,
+        explain: 'Cả Ca và Se đều thuộc chu kì 4. Trong cùng một chu kì đi từ trái sang phải theo chiều tăng điện tích hạt nhân, bán kính nguyên tử giảm dần. Ca (nhóm IIA) nằm trước Se (nhóm VIA) nên bán kính của Ca (197 pm) lớn hơn Se (116 pm).'
+      },
+      {
+        id: 2,
+        title: 'Câu 5a (SGK Trang 38): Sắp xếp bán kính nguyên tử trong hợp kim Almelec',
+        text: 'Hợp kim Almelec gồm: Al (Z=13), Mg (Z=12) và Si (Z=14). Thứ tự TĂNG DẦN về bán kính nguyên tử là:',
+        options: [
+          'A. Si < Al < Mg',
+          'B. Mg < Al < Si',
+          'C. Al < Mg < Si',
+          'D. Si < Mg < Al'
+        ],
+        correct: 0,
+        explain: 'Cả 3 nguyên tố cùng thuộc chu kì 3. Theo chiều tăng Z (Mg: 12 < Al: 13 < Si: 14), bán kính nguyên tử giảm dần: Mg (160 pm) > Al (143 pm) > Si (118 pm). Do đó thứ tự tăng dần bán kính là: Si < Al < Mg.'
+      },
+      {
+        id: 3,
+        title: 'Câu 5b (SGK Trang 38): Sắp xếp độ âm điện trong hợp kim Almelec',
+        text: 'Thứ tự GIẢM DẦN về độ âm điện của các nguyên tố trong Almelec (Mg, Al, Si) là:',
+        options: [
+          'A. Si > Al > Mg',
+          'B. Mg > Al > Si',
+          'C. Al > Si > Mg',
+          'D. Si > Mg > Al'
+        ],
+        correct: 0,
+        explain: 'Trong chu kì 3, độ âm điện tăng dần theo chiều tăng Z: Mg (1.31) < Al (1.61) < Si (1.90). Do đó, thứ tự giảm dần về độ âm điện là: Si > Al > Mg.'
+      },
+      {
+        id: 4,
+        title: 'Câu 6 (SGK Trang 40): Sắp xếp tính kim loại giảm dần của Ba, Mg, Ca, Sr',
+        text: 'Sắp xếp các nguyên tố nhóm IIA: Ba, Mg, Ca, Sr theo thứ tự GIẢM DẦN tính kim loại:',
+        options: [
+          'A. Ba > Sr > Ca > Mg',
+          'B. Mg > Ca > Sr > Ba',
+          'C. Ba > Ca > Sr > Mg',
+          'D. Sr > Ba > Ca > Mg'
+        ],
+        correct: 0,
+        explain: 'Cả 4 nguyên tố đều thuộc nhóm IIA (kim loại kiềm thổ). Trong một nhóm A, theo chiều từ trên xuống dưới theo thứ tự Z tăng dần (Mg ➔ Ca ➔ Sr ➔ Ba), tính kim loại tăng dần: Mg < Ca < Sr < Ba. Vì vậy, thứ tự giảm dần tính kim loại là: Ba > Sr > Ca > Mg.'
+      },
+      {
+        id: 5,
+        title: 'Tổng kết quy luật: Bán kính và Tính Kim loại',
+        text: 'Khẳng định nào sau đây là hoàn toàn ĐÚNG về quy luật tuần hoàn?',
+        options: [
+          'A. Trong chu kì từ trái qua phải: Bán kính giảm, tính phi kim tăng',
+          'B. Trong chu kì từ trái qua phải: Bán kính tăng, tính kim loại tăng',
+          'C. Trong nhóm A từ trên xuống: Bán kính giảm, độ âm điện tăng',
+          'D. Phi kim mạnh nhất là Francium, kim loại mạnh nhất là Fluorine'
+        ],
+        correct: 0,
+        explain: 'Trong một chu kì, đi từ trái qua phải: điện tích hạt nhân Z tăng, số lớp e không đổi => bán kính nguyên tử giảm dần, lực hút electron mạnh hơn => tính phi kim tăng dần.'
+      }
+    ];
+
+    let b6CurrentQuestionIdx = 0;
+    let b6UserAnswers = {};
+
+    function initB6QuizArena() {
+      buildB6QuestionStrip();
+      renderB6CurrentQuestion();
+    }
+
+    function buildB6QuestionStrip() {
+      const strip = document.getElementById('b6-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = '';
+
+      B6_EXERCISES_DATA.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = 'b6-q-strip-btn-' + idx;
+        btn.style.cssText = 'width:28px; height:28px; border-radius:6px; border:1px solid #cbd5e1; background:#fff; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s;';
+        btn.innerText = idx + 1;
+        btn.onclick = () => selectB6QuestionIdx(idx);
+        strip.appendChild(btn);
+      });
+      updateB6QuestionStripUI();
+    }
+
+    function updateB6QuestionStripUI() {
+      B6_EXERCISES_DATA.forEach((q, idx) => {
+        const btn = document.getElementById('b6-q-strip-btn-' + idx);
+        if (!btn) return;
+
+        const isAnswered = (b6UserAnswers[idx] !== undefined);
+        const isCurrent = (idx === b6CurrentQuestionIdx);
+
+        if (isCurrent) {
+          btn.style.borderColor = '#0284c7';
+          btn.style.borderWidth = '2px';
+        } else {
+          btn.style.borderColor = '#cbd5e1';
+          btn.style.borderWidth = '1px';
+        }
+
+        if (isAnswered) {
+          const isCorrect = (b6UserAnswers[idx] === q.correct);
+          btn.style.background = isCorrect ? '#10b981' : '#ef4444';
+          btn.style.color = '#ffffff';
+        } else {
+          btn.style.background = isCurrent ? '#e0f2fe' : '#ffffff';
+          btn.style.color = isCurrent ? '#0369a1' : '#334155';
+        }
+      });
+
+      const prog = document.getElementById('b6-quiz-progress-text');
+      const answeredCount = Object.keys(b6UserAnswers).length;
+      if (prog) prog.innerText = `Tiến độ: ${answeredCount} / ${B6_EXERCISES_DATA.length} câu`;
+    }
+
+    function selectB6QuestionIdx(idx) {
+      b6CurrentQuestionIdx = Math.max(0, Math.min(B6_EXERCISES_DATA.length - 1, idx));
+      updateB6QuestionStripUI();
+      renderB6CurrentQuestion();
+    }
+
+    function stepB6Question(delta) {
+      selectB6QuestionIdx(b6CurrentQuestionIdx + delta);
+    }
+
+    function renderB6CurrentQuestion() {
+      const container = document.getElementById('b6-question-card-container');
+      if (!container) return;
+
+      const q = B6_EXERCISES_DATA[b6CurrentQuestionIdx];
+      const userSelected = b6UserAnswers[b6CurrentQuestionIdx];
+      const isAnswered = (userSelected !== undefined);
+
+      let optionsHtml = '';
+      q.options.forEach((opt, oIdx) => {
+        let optStyle = 'width:100%; text-align:left; padding:12px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:8px; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between;';
+        
+        if (isAnswered) {
+          if (oIdx === q.correct) {
+            optStyle += ' background:#f0fdf4; border-color:#86efac; color:#15803d; font-weight:700;';
+          } else if (oIdx === userSelected) {
+            optStyle += ' background:#fef2f2; border-color:#fca5a5; color:#b91c1c; font-weight:700;';
+          }
+        }
+
+        optionsHtml += `<button style="${optStyle}" onclick="chooseB6Option(${oIdx})" ${isAnswered ? 'disabled' : ''}>
+          <span>${opt}</span>
+          ${isAnswered && oIdx === q.correct ? '<span style="color:#15803d;">✓ Đúng</span>' : ''}
+          ${isAnswered && oIdx === userSelected && oIdx !== q.correct ? '<span style="color:#b91c1c;">✕ Bạn đã chọn</span>' : ''}
+        </button>`;
+      });
+
+      let explainHtml = '';
+      if (isAnswered) {
+        const isCorrect = (userSelected === q.correct);
+        explainHtml = `
+          <div style="margin-top:14px; padding:12px 16px; border-radius:8px; background:${isCorrect ? '#f0fdf4' : '#fffbeb'}; border:1px solid ${isCorrect ? '#bbf7d0' : '#fde68a'};">
+            <div style="font-weight:700; font-size:13px; color:${isCorrect ? '#166534' : '#92400e'}; margin-bottom:4px;">
+              ${isCorrect ? '🎉 Hoàn toàn chính xác!' : '💡 Lời giải chi tiết sư phạm:'}
+            </div>
+            <div style="font-size:12.5px; color:#334155; line-height:1.5;">${q.explain}</div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span style="font-size:12px; font-weight:700; background:#e0f2fe; color:#0369a1; padding:3px 10px; border-radius:12px;">CÂU ${b6CurrentQuestionIdx + 1} / ${B6_EXERCISES_DATA.length}</span>
+          <span style="font-size:12px; color:#64748b;">Mục Luyện tập SGK Hoá học 10</span>
+        </div>
+        <h3 style="font-size:15px; font-weight:700; color:#0f172a; margin:0 0 8px 0;">${q.title}</h3>
+        <p style="font-size:13.5px; color:#334155; line-height:1.6; margin:0 0 16px 0;">${q.text}</p>
+        <div style="display:flex; flex-direction:column;">${optionsHtml}</div>
+        ${explainHtml}
+      `;
+
+      if (window.renderMathInElement) {
+        renderMathInElement(container, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function chooseB6Option(optionIdx) {
+      if (b6UserAnswers[b6CurrentQuestionIdx] !== undefined) return;
+      b6UserAnswers[b6CurrentQuestionIdx] = optionIdx;
+      updateB6QuestionStripUI();
+      renderB6CurrentQuestion();
     }
 
 
