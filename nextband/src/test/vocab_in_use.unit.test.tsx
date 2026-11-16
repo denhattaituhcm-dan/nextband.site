@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import VocabInUsePage from "../pages/public/vocab-in-use/VocabInUsePage";
+import VocabInUsePage, { evaluateRecallAnswer } from "../pages/public/vocab-in-use/VocabInUsePage";
 import { VOCAB_IN_USE_UNITS, getVocabInUseUnit } from "../data/vocabInUse";
+import { VocabInUseBookmarkRecord } from "../lib/api/domains/vocab-in-use.api";
 
 describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () => {
   beforeEach(() => {
@@ -1020,5 +1021,118 @@ describe("📚 Vocabulary in Use (C1-C2 Studio) — Data & Interactive UI", () =
 
     expect(within(sandbox).getByText(/Đã vận dụng: 2\//i)).toBeInTheDocument();
     expect(localStorage.getItem("nb_vocab_in_use_sandbox_v1")).toContain(word1);
+  });
+
+  it("Shows stuffing warning for over-dense drafts, supports Band 8 self-audit checklist and benchmark exemplar", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/19"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const unit19 = getVocabInUseUnit(19);
+    const word1 = unit19.lexicon[0].word;
+    const word2 = unit19.lexicon[1].word;
+
+    const textarea = screen.getByTestId("production-sandbox-input");
+
+    // Over-dense draft (< 15 words with 2 target words) triggers stuffing warning
+    fireEvent.change(textarea, {
+      target: {
+        value: `${word1} and ${word2}`,
+      },
+    });
+
+    expect(screen.getByTestId("stuffing-warning-banner")).toBeInTheDocument();
+    expect(screen.getByText(/Cảnh báo nhồi từ/i)).toBeInTheDocument();
+
+    // Self-audit checklist interaction
+    expect(screen.getByTestId("sandbox-checklist")).toBeInTheDocument();
+    const collocationCheck = screen.getByTestId("checklist-collocation");
+    const registerCheck = screen.getByTestId("checklist-register");
+    const wordFormCheck = screen.getByTestId("checklist-word-form");
+
+    fireEvent.click(collocationCheck);
+    fireEvent.click(registerCheck);
+    fireEvent.click(wordFormCheck);
+    expect(collocationCheck).toBeChecked();
+    expect(registerCheck).toBeChecked();
+    expect(wordFormCheck).toBeChecked();
+
+    // Benchmark Exemplar accordion
+    const toggleExemplarBtn = screen.getByTestId("toggle-band8-exemplar");
+    expect(screen.queryByTestId("band8-exemplar-content")).not.toBeInTheDocument();
+    fireEvent.click(toggleExemplarBtn);
+    expect(screen.getByTestId("band8-exemplar-content")).toBeInTheDocument();
+  });
+
+  it("Toggles Test-First mode to veil the lexicon strip and unmasks it temporarily or upon checking exercises", () => {
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/20"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const toggleTestFirstBtn = screen.getByTestId("toggle-test-first");
+    expect(screen.queryByTestId("test-first-veil")).not.toBeInTheDocument();
+
+    // Turn ON Test-First mode
+    fireEvent.click(toggleTestFirstBtn);
+    expect(screen.getByTestId("test-first-veil")).toBeInTheDocument();
+    expect(screen.getByText(/Đang bật Chế độ Thử sức/i)).toBeInTheDocument();
+    expect(screen.queryByTestId("batch-bookmark-productive")).not.toBeInTheDocument();
+
+    // Click temporary reveal button
+    fireEvent.click(screen.getByTestId("temp-reveal-btn"));
+    expect(screen.queryByTestId("test-first-veil")).not.toBeInTheDocument();
+    expect(screen.getByTestId("batch-bookmark-productive")).toBeInTheDocument();
+  });
+
+  it("Provides English-first Active Cloze prompts, smart tolerance for inflections and typos, and toggleable Vietnamese hints", () => {
+    // 1. Verify evaluateRecallAnswer algorithm directly
+    expect(evaluateRecallAnswer("bequeathed", "bequeathed").status).toBe("exact");
+    expect(evaluateRecallAnswer("bequeathed", "bequeathed").isCorrect).toBe(true);
+
+    // Past tense inflection: student inputs base form "bequeath", target is "bequeathed"
+    const inflectionEval = evaluateRecallAnswer("bequeath", "bequeathed");
+    expect(inflectionEval.status).toBe("inflection");
+    expect(inflectionEval.isCorrect).toBe(true);
+    expect(inflectionEval.message).toContain("Nhớ đúng từ vựng");
+
+    // Plural inflection: student inputs singular "trait", target is "traits"
+    expect(evaluateRecallAnswer("trait", "traits").status).toBe("inflection");
+
+    // Typo tolerance: 1 letter typo on long word
+    const typoEval = evaluateRecallAnswer("consciencious", "conscientious");
+    expect(typoEval.status).toBe("typo");
+    expect(typoEval.isCorrect).toBe(true);
+    expect(typoEval.message).toContain("Gần chính xác");
+
+    // Wrong answer
+    const wrongEval = evaluateRecallAnswer("completely_wrong", "bequeathed");
+    expect(wrongEval.status).toBe("wrong");
+    expect(wrongEval.isCorrect).toBe(false);
+
+    // 2. Test batch bookmarking productive words then navigating to Bookmarks view
+    render(
+      <MemoryRouter initialEntries={["/vocab-in-use/20"]}>
+        <Routes>
+          <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // Batch bookmark productive words
+    fireEvent.click(screen.getByTestId("batch-bookmark-productive"));
+
+    // Switch to Bookmarks view
+    fireEvent.click(screen.getByTestId("header-bookmarks-tab"));
+
+    // Verify view renders with bookmarked items
+    expect(screen.getByText(/Sổ từ vựng Đã lưu/i)).toBeInTheDocument();
   });
 });

@@ -16,6 +16,22 @@ const UNIT_LOADERS: Record<string, () => Promise<EvcUnitData>> = {
     const mod = await import("./books/evc5/unit01.looking-good");
     return EvcUnitDataSchema.parse(mod.EVC5_UNIT01_DATA);
   },
+  "evc5-u02": async () => {
+    const mod = await import("./books/evc5/unit02.personality-and-behaviour");
+    return EvcUnitDataSchema.parse(mod.EVC5_UNIT02_DATA);
+  },
+  "evc5-u03": async () => {
+    const mod = await import("./books/evc5/unit03.bad-feelings");
+    return EvcUnitDataSchema.parse(mod.EVC5_UNIT03_DATA);
+  },
+  "evc5-u04": async () => {
+    const mod = await import("./books/evc5/unit04.good-feelings");
+    return EvcUnitDataSchema.parse(mod.EVC5_UNIT04_DATA);
+  },
+  "evc5-u05": async () => {
+    const mod = await import("./books/evc5/unit05.communication");
+    return EvcUnitDataSchema.parse(mod.EVC5_UNIT05_DATA);
+  },
 };
 
 export function getEvcBookMeta(bookId: EvcBookId = "evc-5"): EvcBookMeta {
