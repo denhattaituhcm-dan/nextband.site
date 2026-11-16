@@ -103,6 +103,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
   const [stage3Answers, setStage3Answers] = useState<Record<string, string>>({});
   const [stage4Answers, setStage4Answers] = useState<Record<string, string>>({});
   const [stage4Mode, setStage4Mode] = useState<"assisted" | "hard">("assisted");
+  const [instantFeedback, setInstantFeedback] = useState<boolean>(true);
 
   const [gradedResults, setGradedResults] = useState<
      Partial<Record<ActiveStage, GradedStageSummary>>
@@ -693,9 +694,33 @@ export const EssentialVocabUnitPage: React.FC = () => {
           </div>
         ) : (
           /* ================= 4-STAGE PRACTICE VIEW ================= */
-          <div>
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-xs">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-indigo-600" />
+                <span className="text-xs font-bold text-slate-800">
+                  Kiểm tra tức thời (Instant Feedback):
+                </span>
+                <span className="text-xs text-slate-500 hidden sm:inline">
+                  Chạm chọn đáp án để xem đúng/sai và lời giải thích tức thì
+                </span>
+              </div>
+              <button
+                type="button"
+                data-testid="toggle-evc-instant-feedback"
+                onClick={() => setInstantFeedback((v) => !v)}
+                className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${
+                  instantFeedback
+                    ? "bg-emerald-600 text-white"
+                    : "border border-slate-300 bg-slate-50 text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                {instantFeedback ? "✓ Đang bật" : "Đang tắt"}
+              </button>
+            </div>
+
             {/* Stage Stepper */}
-            <div className="mb-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {[
                 {
                   stage: 1 as const,
@@ -847,11 +872,20 @@ export const EssentialVocabUnitPage: React.FC = () => {
                   const itemResult = currentStageResult?.items.find(
                     (i) => i.itemId === q.questionId
                   );
+                  const isRevealed = Boolean(itemResult) || (instantFeedback && Boolean(selected));
+                  const isCorrectAnswer = selected === q.correctOptionNumber;
+                  const correctOptionObj = q.options.find((o) => o.optionNumber === q.correctOptionNumber);
 
                   return (
                     <div
                       key={q.questionId}
-                      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                      className={`rounded-2xl border p-5 shadow-sm transition-colors ${
+                        isRevealed
+                          ? isCorrectAnswer
+                            ? "border-emerald-200 bg-emerald-50/40"
+                            : "border-rose-200 bg-rose-50/40"
+                          : "border-slate-200 bg-white"
+                      }`}
                     >
                       <div className="flex items-start gap-3">
                         <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-700">
@@ -870,13 +904,15 @@ export const EssentialVocabUnitPage: React.FC = () => {
 
                               let btnStyle =
                                 "border-slate-200 bg-slate-50 text-slate-800 hover:border-indigo-300";
-                              if (itemResult) {
+                              if (isRevealed) {
                                 if (isCorrectOpt) {
                                   btnStyle =
-                                    "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold";
+                                    "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold shadow-2xs";
                                 } else if (isChosen && !isCorrectOpt) {
                                   btnStyle =
-                                    "border-rose-400 bg-rose-50 text-rose-900 line-through";
+                                    "border-rose-400 bg-rose-50 text-rose-900 line-through shadow-2xs";
+                                } else {
+                                  btnStyle = "border-slate-200 bg-slate-50/60 text-slate-500";
                                 }
                               } else if (isChosen) {
                                 btnStyle =
@@ -894,7 +930,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                                       [q.questionId]: opt.optionNumber,
                                     }))
                                   }
-                                  className={`flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-left text-xs sm:text-sm transition ${btnStyle}`}
+                                  className={`flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-left text-xs sm:text-sm transition cursor-pointer ${btnStyle}`}
                                 >
                                   <span>
                                     <strong className="mr-1.5">
@@ -902,10 +938,10 @@ export const EssentialVocabUnitPage: React.FC = () => {
                                     </strong>
                                     {opt.text}
                                   </span>
-                                  {itemResult && isCorrectOpt && (
+                                  {isRevealed && isCorrectOpt && (
                                     <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                                   )}
-                                  {itemResult && isChosen && !isCorrectOpt && (
+                                  {isRevealed && isChosen && !isCorrectOpt && (
                                     <XCircle className="h-4 w-4 text-rose-600" />
                                   )}
                                 </button>
@@ -913,19 +949,27 @@ export const EssentialVocabUnitPage: React.FC = () => {
                             })}
                           </div>
 
-                          {itemResult && (
+                          {isRevealed && (
                             <div
-                              className={`mt-3 rounded-xl p-3 text-xs ${
-                                itemResult.isCorrect
-                                  ? "bg-emerald-50 text-emerald-900"
-                                  : "bg-amber-50 text-amber-900"
+                              className={`mt-3 rounded-xl p-3 text-xs space-y-1 ${
+                                isCorrectAnswer
+                                  ? "bg-emerald-50 text-emerald-900 border border-emerald-200"
+                                  : "bg-rose-50 text-rose-950 border border-rose-200"
                               }`}
                             >
-                              <div className="font-bold">
-                                Đáp án đúng: {itemResult.canonicalDisplay}
+                              <div className="font-bold flex items-center gap-1.5">
+                                {isCorrectAnswer ? (
+                                  <span className="text-emerald-700 flex items-center gap-1">
+                                    <CheckCircle2 className="h-3.5 w-3.5" /> Chính xác
+                                  </span>
+                                ) : (
+                                  <span className="text-rose-700 flex items-center gap-1">
+                                    <XCircle className="h-3.5 w-3.5" /> Đáp án chuẩn: ({q.correctOptionNumber}) {correctOptionObj?.text || q.canonicalAnswerText}
+                                  </span>
+                                )}
                               </div>
-                              <div className="mt-1">
-                                {itemResult.feedbackVi || itemResult.feedbackEn}
+                              <div className="mt-0.5 text-slate-700 leading-relaxed">
+                                {q.explanationVi || q.explanationEn}
                               </div>
                             </div>
                           )}
@@ -967,6 +1011,9 @@ export const EssentialVocabUnitPage: React.FC = () => {
                   const itemResult = currentStageResult?.items.find(
                     (i) => i.itemId === q.questionId
                   );
+                  const isRevealed = Boolean(itemResult) || (instantFeedback && Boolean(selected));
+                  const isCorrectAnswer = selected === q.correctOptionNumber;
+                  const correctOptionObj = q.options.find((o) => o.optionNumber === q.correctOptionNumber);
 
                   // Highlight underlined target word in sentenceContext
                   const parts = q.sentenceContext
@@ -978,7 +1025,13 @@ export const EssentialVocabUnitPage: React.FC = () => {
                   return (
                     <div
                       key={q.questionId}
-                      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                      className={`rounded-2xl border p-5 shadow-sm transition-colors ${
+                        isRevealed
+                          ? isCorrectAnswer
+                            ? "border-emerald-200 bg-emerald-50/40"
+                            : "border-rose-200 bg-rose-50/40"
+                          : "border-slate-200 bg-white"
+                      }`}
                     >
                       <div className="flex items-start gap-3">
                         <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-700">
@@ -1009,13 +1062,15 @@ export const EssentialVocabUnitPage: React.FC = () => {
 
                               let btnStyle =
                                 "border-slate-200 bg-slate-50 text-slate-800 hover:border-indigo-300";
-                              if (itemResult) {
+                              if (isRevealed) {
                                 if (isCorrectOpt) {
                                   btnStyle =
-                                    "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold";
+                                    "border-emerald-500 bg-emerald-50 text-emerald-900 font-bold shadow-2xs";
                                 } else if (isChosen && !isCorrectOpt) {
                                   btnStyle =
-                                    "border-rose-400 bg-rose-50 text-rose-900 line-through";
+                                    "border-rose-400 bg-rose-50 text-rose-900 line-through shadow-2xs";
+                                } else {
+                                  btnStyle = "border-slate-200 bg-slate-50/60 text-slate-500";
                                 }
                               } else if (isChosen) {
                                 btnStyle =
@@ -1033,7 +1088,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                                       [q.questionId]: opt.optionNumber,
                                     }))
                                   }
-                                  className={`flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-left text-xs sm:text-sm transition ${btnStyle}`}
+                                  className={`flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-left text-xs sm:text-sm transition cursor-pointer ${btnStyle}`}
                                 >
                                   <span>
                                     <strong className="mr-1.5">
@@ -1041,10 +1096,10 @@ export const EssentialVocabUnitPage: React.FC = () => {
                                     </strong>
                                     {opt.text}
                                   </span>
-                                  {itemResult && isCorrectOpt && (
+                                  {isRevealed && isCorrectOpt && (
                                     <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                                   )}
-                                  {itemResult && isChosen && !isCorrectOpt && (
+                                  {isRevealed && isChosen && !isCorrectOpt && (
                                     <XCircle className="h-4 w-4 text-rose-600" />
                                   )}
                                 </button>
@@ -1052,20 +1107,27 @@ export const EssentialVocabUnitPage: React.FC = () => {
                             })}
                           </div>
 
-                          {itemResult && (
+                          {isRevealed && (
                             <div
-                              className={`mt-3 rounded-xl p-3 text-xs ${
-                                itemResult.isCorrect
-                                  ? "bg-emerald-50 text-emerald-900"
-                                  : "bg-amber-50 text-amber-900"
+                              className={`mt-3 rounded-xl p-3 text-xs space-y-1 ${
+                                isCorrectAnswer
+                                  ? "bg-emerald-50 text-emerald-900 border border-emerald-200"
+                                  : "bg-rose-50 text-rose-950 border border-rose-200"
                               }`}
                             >
-                              <div className="font-bold">
-                                Từ đồng nghĩa thay thế cho “{q.targetWordOrPhrase}”:{" "}
-                                {itemResult.canonicalDisplay}
+                              <div className="font-bold flex items-center gap-1.5">
+                                {isCorrectAnswer ? (
+                                  <span className="text-emerald-700 flex items-center gap-1">
+                                    <CheckCircle2 className="h-3.5 w-3.5" /> Chính xác
+                                  </span>
+                                ) : (
+                                  <span className="text-rose-700 flex items-center gap-1">
+                                    <XCircle className="h-3.5 w-3.5" /> Đáp án chuẩn: ({q.correctOptionNumber}) {correctOptionObj?.text || q.canonicalAnswerText}
+                                  </span>
+                                )}
                               </div>
-                              <div className="mt-1">
-                                {itemResult.feedbackVi || itemResult.feedbackEn}
+                              <div className="mt-0.5 text-slate-700 leading-relaxed">
+                                {q.explanationVi || q.explanationEn}
                               </div>
                             </div>
                           )}

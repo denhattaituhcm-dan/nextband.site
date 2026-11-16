@@ -48,6 +48,7 @@ const PROGRESS_STORAGE_KEY = "nb_vocab_in_use_progress_v1";
 const HARD_MODE_STORAGE_KEY = "nb_vocab_in_use_hard_mode_v1";
 const STUDY_GUIDE_STORAGE_KEY = "nb_vocab_in_use_guide_dismissed_v1";
 const SANDBOX_STORAGE_KEY = "nb_vocab_in_use_sandbox_v1";
+const INSTANT_FEEDBACK_STORAGE_KEY = "nb_vocab_in_use_instant_feedback_v1";
 const TEST_FIRST_STORAGE_KEY = "nb_vocab_in_use_test_first_v1";
 
 type ViewMode = "split" | "left" | "right" | "bookmarks";
@@ -412,6 +413,23 @@ export default function VocabInUsePage() {
     });
   };
 
+  const [instantFeedback, setInstantFeedback] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(INSTANT_FEEDBACK_STORAGE_KEY) !== "0"; // default enabled
+    } catch {
+      return true;
+    }
+  });
+  const toggleInstantFeedback = () => {
+    setInstantFeedback((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(INSTANT_FEEDBACK_STORAGE_KEY, next ? "1" : "0");
+      } catch {}
+      return next;
+    });
+  };
+
   const [testFirstMode, setTestFirstMode] = useState<boolean>(() => {
     try {
       return localStorage.getItem(TEST_FIRST_STORAGE_KEY) === "1";
@@ -585,6 +603,41 @@ export default function VocabInUsePage() {
     const score = computeExerciseScore(exercise, answers, subAnswers);
     setCheckedExercises((prev) => ({ ...prev, [exercise.id]: true }));
     setExerciseProgress((prev) => ({ ...prev, [exercise.id]: score }));
+  };
+
+  const handleSelectSentenceUpgradeOption = (
+    exercise: SentenceUpgradeExercise,
+    qId: string,
+    option: string
+  ) => {
+    const updatedAnswers = { ...answers, [qId]: option };
+    setAnswers(updatedAnswers);
+
+    if (instantFeedback) {
+      // Auto-compute score & mark completed if all questions in exercise answered
+      const allAnswered = exercise.questions.every((q) => Boolean(updatedAnswers[q.id]));
+      if (allAnswered) {
+        const score = computeExerciseScore(exercise, updatedAnswers, subAnswers);
+        setExerciseProgress((prev) => ({ ...prev, [exercise.id]: score }));
+      }
+    }
+  };
+
+  const handleSelectClassifierCategory = (
+    exercise: ClassifierExercise,
+    qId: string,
+    catKey: string
+  ) => {
+    const updatedAnswers = { ...answers, [qId]: catKey };
+    setAnswers(updatedAnswers);
+
+    if (instantFeedback) {
+      const allAnswered = exercise.questions.every((q) => Boolean(updatedAnswers[q.id]));
+      if (allAnswered) {
+        const score = computeExerciseScore(exercise, updatedAnswers, subAnswers);
+        setExerciseProgress((prev) => ({ ...prev, [exercise.id]: score }));
+      }
+    }
   };
 
   const handleResetExercise = (exercise: ExerciseBlock) => {
@@ -1352,6 +1405,31 @@ export default function VocabInUsePage() {
                 </div>
 
                 <div className="bg-white rounded-2xl border border-[#E6DDD0] px-5 py-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+                  <div className="space-y-0.5">
+                    <div className="text-sm font-bold text-[#1F1A17] flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-amber-500" />
+                      <span>Kiểm tra tức thời (Instant Feedback):</span>
+                    </div>
+                    <p className="text-xs text-[#574D44]">
+                      Chạm chọn phương án là biết đúng/sai và xem giải thích chi tiết ngay lập tức.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    data-testid="toggle-instant-feedback"
+                    aria-label="Kiểm tra tức thời"
+                    onClick={toggleInstantFeedback}
+                    className={`px-3.5 py-1.5 rounded-xl text-sm font-semibold border transition cursor-pointer ${
+                      instantFeedback
+                        ? "bg-emerald-600 text-white border-emerald-600"
+                        : "bg-white text-[#574D44] border-[#DCCFBE] hover:border-[#C86D51]"
+                    }`}
+                  >
+                    {instantFeedback ? "✓ Đang bật" : "Đang tắt"}
+                  </button>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-[#E6DDD0] px-5 py-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
                   <div className="text-sm text-[#4E453E]">
                     <strong className="text-[#1F1A17]">Chế độ khó:</strong>{" "}
                     ẩn kho mảnh ghép và gợi ý ở bài điền từ để tự truy hồi đáp án.
@@ -1444,8 +1522,9 @@ export default function VocabInUsePage() {
                             answers={answers}
                             subAnswers={subAnswers}
                             isChecked={isChecked}
+                            instantFeedback={instantFeedback}
                             onSelectCategory={(qId, catKey) =>
-                              setAnswers((prev) => ({ ...prev, [qId]: catKey }))
+                              handleSelectClassifierCategory(exercise, qId, catKey)
                             }
                             onChangeSubAnswer={(qId, value) =>
                               setSubAnswers((prev) => ({
@@ -1461,8 +1540,9 @@ export default function VocabInUsePage() {
                             exercise={exercise}
                             answers={answers}
                             isChecked={isChecked}
+                            instantFeedback={instantFeedback}
                             onSelectOption={(qId, option) =>
-                              setAnswers((prev) => ({ ...prev, [qId]: option }))
+                              handleSelectSentenceUpgradeOption(exercise, qId, option)
                             }
                           />
                         )}
@@ -1932,6 +2012,7 @@ interface ClassifierBodyProps {
   answers: Record<string, string>;
   subAnswers: Record<string, string>;
   isChecked: boolean;
+  instantFeedback?: boolean;
   onSelectCategory: (qId: string, catKey: string) => void;
   onChangeSubAnswer: (qId: string, value: string) => void;
 }
@@ -1941,6 +2022,7 @@ function ClassifierExerciseBody({
   answers,
   subAnswers,
   isChecked,
+  instantFeedback = false,
   onSelectCategory,
   onChangeSubAnswer
 }: ClassifierBodyProps) {
@@ -1969,13 +2051,14 @@ function ClassifierExerciseBody({
           const subOk = subRequired
             ? isGapCorrect(subVal, q.subCorrectAnswer!, q.subAcceptedAnswers)
             : true;
-          const isRowOk = isChecked && catCorrect && subOk;
+          const isRowOk = catCorrect && subOk;
+          const isRevealed = isChecked || (instantFeedback && Boolean(picked) && (!subRequired || Boolean(subVal.trim())));
 
           return (
             <div
               key={q.id}
-              className={`p-4 sm:p-5 rounded-2xl border space-y-3 ${
-                isChecked
+              className={`p-4 sm:p-5 rounded-2xl border space-y-3 transition-colors ${
+                isRevealed
                   ? isRowOk
                     ? "bg-emerald-50/70 border-emerald-200"
                     : "bg-rose-50/70 border-rose-200"
@@ -1992,17 +2075,31 @@ function ClassifierExerciseBody({
               <div className="flex flex-wrap gap-2">
                 {exercise.categories.map((cat) => {
                   const selected = picked === cat.key;
+                  const isCatCorrect = cat.key === q.correctCategory;
+
+                  let catBtnStyle =
+                    "bg-white text-[#1F1A17] border-[#DCCFBE] hover:border-[#C86D51]";
+                  if (isRevealed) {
+                    if (isCatCorrect) {
+                      catBtnStyle =
+                        "bg-emerald-600 text-white border-emerald-600 font-semibold shadow-2xs";
+                    } else if (selected && !isCatCorrect) {
+                      catBtnStyle =
+                        "bg-rose-600 text-white border-rose-600 line-through shadow-2xs";
+                    } else {
+                      catBtnStyle = "bg-white/60 text-[#574D44] border-[#EAE1D3]";
+                    }
+                  } else if (selected) {
+                    catBtnStyle = "bg-[#002147] text-white border-[#002147]";
+                  }
+
                   return (
                     <button
                       key={cat.key}
                       type="button"
                       disabled={isChecked}
                       onClick={() => onSelectCategory(q.id, cat.key)}
-                      className={`px-3.5 py-2 rounded-xl text-sm sm:text-base font-semibold border transition cursor-pointer ${
-                        selected
-                          ? "bg-[#002147] text-white border-[#002147]"
-                          : "bg-white text-[#1F1A17] border-[#DCCFBE] hover:border-[#C86D51]"
-                      }`}
+                      className={`px-3.5 py-2 rounded-xl text-sm sm:text-base font-semibold border transition cursor-pointer ${catBtnStyle}`}
                     >
                       {cat.label}
                     </button>
@@ -2026,7 +2123,7 @@ function ClassifierExerciseBody({
                 </div>
               )}
 
-              {isChecked && (
+              {isRevealed && (
                 <div className="pt-2.5 border-t border-black/10 text-sm space-y-1.5">
                   <div className="font-semibold">
                     {isRowOk ? (
@@ -2058,6 +2155,7 @@ interface SentenceUpgradeBodyProps {
   exercise: SentenceUpgradeExercise;
   answers: Record<string, string>;
   isChecked: boolean;
+  instantFeedback?: boolean;
   onSelectOption: (qId: string, option: string) => void;
 }
 
@@ -2065,19 +2163,21 @@ function SentenceUpgradeExerciseBody({
   exercise,
   answers,
   isChecked,
+  instantFeedback = false,
   onSelectOption
 }: SentenceUpgradeBodyProps) {
   return (
     <div className="space-y-3.5">
       {exercise.questions.map((q, idx) => {
         const picked = answers[q.id];
-        const ok = isChecked && picked === q.correctOption;
+        const isRevealed = isChecked || (instantFeedback && Boolean(picked));
+        const ok = isRevealed && picked === q.correctOption;
 
         return (
             <div
               key={q.id}
-              className={`p-4 sm:p-5 rounded-2xl border space-y-3 ${
-                isChecked
+              className={`p-4 sm:p-5 rounded-2xl border space-y-3 transition-colors ${
+                isRevealed
                   ? ok
                     ? "bg-emerald-50/70 border-emerald-200"
                     : "bg-rose-50/70 border-rose-200"
@@ -2105,13 +2205,13 @@ function SentenceUpgradeExerciseBody({
 
                   let btnClass =
                     "bg-white text-[#1F1A17] border-[#DCCFBE] hover:border-[#C86D51]";
-                  if (isChecked) {
+                  if (isRevealed) {
                     if (isCorrectOpt) {
                       btnClass =
-                        "bg-emerald-600 text-white border-emerald-600 font-semibold";
+                        "bg-emerald-600 text-white border-emerald-600 font-semibold shadow-2xs";
                     } else if (isSelected && !isCorrectOpt) {
                       btnClass =
-                        "bg-rose-600 text-white border-rose-600 line-through";
+                        "bg-rose-600 text-white border-rose-600 line-through font-medium shadow-2xs";
                     } else {
                       btnClass = "bg-white/60 text-[#574D44] border-[#EAE1D3]";
                     }
@@ -2134,13 +2234,26 @@ function SentenceUpgradeExerciseBody({
                 })}
               </div>
 
-              {isChecked && (
-                <p className="text-sm text-[#3A312B] leading-relaxed pt-2 border-t border-black/10">
-                  <strong className={ok ? "text-emerald-700" : "text-rose-700"}>
-                    Giải thích:
-                  </strong>{" "}
-                  {q.explanationVi}
-                </p>
+              {isRevealed && (
+                <div className="pt-2 border-t border-black/10 space-y-1">
+                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide">
+                    {ok ? (
+                      <span className="text-emerald-700 flex items-center gap-1">
+                        <CheckCircle2 className="h-4 w-4" /> Chính xác
+                      </span>
+                    ) : (
+                      <span className="text-rose-700 flex items-center gap-1">
+                        <XCircle className="h-4 w-4" /> Chưa chính xác &bull; Đáp án chuẩn: {q.correctOption}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-[#3A312B] leading-relaxed">
+                    <strong className={ok ? "text-emerald-700" : "text-rose-700"}>
+                      Giải thích:
+                    </strong>{" "}
+                    {q.explanationVi}
+                  </p>
+                </div>
               )}
             </div>
         );
