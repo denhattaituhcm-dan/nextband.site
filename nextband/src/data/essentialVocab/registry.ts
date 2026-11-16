@@ -72,6 +72,26 @@ const UNIT_LOADERS: Record<string, () => Promise<EvcUnitData>> = {
     const mod = await import("./books/evc5/unit15.household-equipment");
     return EvcUnitDataSchema.parse(mod.EVC5_UNIT15_DATA);
   },
+  "evc5-u16": async () => {
+    const mod = await import("./books/evc5/unit16.household-jobs");
+    return EvcUnitDataSchema.parse(mod.EVC5_UNIT16_DATA);
+  },
+  "evc5-u17": async () => {
+    const mod = await import("./books/evc5/unit17.tools");
+    return EvcUnitDataSchema.parse(mod.EVC5_UNIT17_DATA);
+  },
+  "evc5-u18": async () => {
+    const mod = await import("./books/evc5/unit18.gardens-and-gardening");
+    return EvcUnitDataSchema.parse(mod.EVC5_UNIT18_DATA);
+  },
+  "evc5-u19": async () => {
+    const mod = await import("./books/evc5/unit19.games-and-sports");
+    return EvcUnitDataSchema.parse(mod.EVC5_UNIT19_DATA);
+  },
+  "evc5-u20": async () => {
+    const mod = await import("./books/evc5/unit20.religions-and-festivals");
+    return EvcUnitDataSchema.parse(mod.EVC5_UNIT20_DATA);
+  },
 };
 
 export function getEvcBookMeta(bookId: EvcBookId = "evc-5"): EvcBookMeta {

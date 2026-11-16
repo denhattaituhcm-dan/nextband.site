@@ -15,6 +15,11 @@ import { EVC5_UNIT12_DATA } from "../../../data/essentialVocab/books/evc5/unit12
 import { EVC5_UNIT13_DATA } from "../../../data/essentialVocab/books/evc5/unit13.eating-and-drinking";
 import { EVC5_UNIT14_DATA } from "../../../data/essentialVocab/books/evc5/unit14.eating-out";
 import { EVC5_UNIT15_DATA } from "../../../data/essentialVocab/books/evc5/unit15.household-equipment";
+import { EVC5_UNIT16_DATA } from "../../../data/essentialVocab/books/evc5/unit16.household-jobs";
+import { EVC5_UNIT17_DATA } from "../../../data/essentialVocab/books/evc5/unit17.tools";
+import { EVC5_UNIT18_DATA } from "../../../data/essentialVocab/books/evc5/unit18.gardens-and-gardening";
+import { EVC5_UNIT19_DATA } from "../../../data/essentialVocab/books/evc5/unit19.games-and-sports";
+import { EVC5_UNIT20_DATA } from "../../../data/essentialVocab/books/evc5/unit20.religions-and-festivals";
 import {
   resolveEvcUnitId,
   getEvcUnitSummary,
@@ -248,6 +253,11 @@ describe("Essential Vocabulary in Context — Schema, Grader & Progress Engine",
       EVC5_UNIT13_DATA,
       EVC5_UNIT14_DATA,
       EVC5_UNIT15_DATA,
+      EVC5_UNIT16_DATA,
+      EVC5_UNIT17_DATA,
+      EVC5_UNIT18_DATA,
+      EVC5_UNIT19_DATA,
+      EVC5_UNIT20_DATA,
     ];
 
     for (const u of units) {
