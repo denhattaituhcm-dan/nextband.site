@@ -33,12 +33,13 @@ export default function ReadingUniversePage() {
             >
               Tủ sách tương tác
             </a>
-            <a
-              href="#phuong-phap"
-              className="hover:text-[#2D2825] transition-colors pb-1"
+            <Link
+              to="/ielts-speaking-forecast"
+              className="hover:text-[#2D2825] transition-colors pb-1 flex items-center gap-1.5 font-semibold text-[#002147]"
             >
-              Phương pháp đọc sâu
-            </a>
+              <span>Speaking Forecast</span>
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-rose-100 text-rose-700 font-bold">HOT</span>
+            </Link>
             <a
               href="#von-tu"
               className="hover:text-[#2D2825] transition-colors pb-1"
