@@ -449,6 +449,10 @@ const App = () => (
               <Route path="/essential-vocabulary/unit/:unitSlug/practice" element={<EssentialVocabUnitPage />} />
               <Route path="/essential-vocabulary/review" element={<EssentialVocabReviewPage />} />
               <Route path="/essential-vocabulary/progress" element={<EssentialVocabProgressPage />} />
+              <Route path="/reading/essential-vocabulary" element={<EssentialVocabHubPage />} />
+              <Route path="/reading/essential-vocabulary/unit/:unitSlug" element={<EssentialVocabUnitPage />} />
+              <Route path="/reading/essential-vocabulary/unit/:unitSlug/glossary" element={<EssentialVocabUnitPage />} />
+              <Route path="/reading/essential-vocabulary/unit/:unitSlug/practice" element={<EssentialVocabUnitPage />} />
 
               {/* C1/C2 Mastery Lab Lean Prototype (Have/Get) */}
               <Route path="/c1-mastery" element={<C1MasteryMiniLabPage />} />

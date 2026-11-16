@@ -55,6 +55,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
       { label: "Thử thách đọc hiểu", href: "/reading-challenge", badge: "Mới" },
       { label: "Bài đọc phân tích", href: "/reading#tu-sach", badge: "Bài đọc" },
       { label: "Thành ngữ thông dụng", href: "/reading/idioms", badge: "8 Chủ đề" },
+      { label: "Essential Vocabulary (B2-C1)", href: "/essential-vocabulary", badge: "20 Bài" },
       { label: "Từ vựng nâng cao C1", href: "/vocab-c1", badge: "12 Bài" },
       { label: "Vocabulary in Use (C1-C2)", href: "/vocab-in-use", badge: "Mới" },
       { label: "Đấu trường từ vựng C2", href: "/vocab-c2", badge: "HOT" },
@@ -94,6 +95,7 @@ export function PublicHeader() {
       if (
         location.pathname.startsWith("/reading") ||
         location.pathname.startsWith("/reading-challenge") ||
+        location.pathname.startsWith("/essential-vocabulary") ||
         location.pathname.startsWith("/vocab-c1") ||
         location.pathname.startsWith("/vocab-in-use") ||
         location.pathname.startsWith("/vocab-c2") ||
@@ -110,6 +112,7 @@ export function PublicHeader() {
 
   const isSubActive = (href: string) => {
     if (href === "/courses" && location.pathname === "/courses") return true;
+    if (href === "/essential-vocabulary" && (location.pathname.startsWith("/essential-vocabulary") || location.pathname.startsWith("/reading/essential-vocabulary"))) return true;
     if (href === "/vocab-c1" && (location.pathname === "/vocab-c1" || location.pathname === "/reading/vocab-c1")) return true;
     if (href === "/vocab-in-use" && (location.pathname.startsWith("/vocab-in-use") || location.pathname.startsWith("/reading/vocab-in-use"))) return true;
     if (href === "/vocab-c2" && (location.pathname === "/vocab-c2" || location.pathname === "/reading/vocab-c2")) return true;
