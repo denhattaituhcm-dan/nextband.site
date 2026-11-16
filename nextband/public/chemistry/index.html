@@ -13,7 +13,7 @@
   <!-- KaTeX Math & Chem Rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInPage()"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="if(typeof renderMathInPage==='function'){renderMathInPage();}else{window.__katexLoaded=true;}"></script>
 
   <style>
     /* ==========================================================
@@ -2792,8 +2792,6 @@
       if (studioB5) studioB5.classList.remove('active');
       const studioB6 = document.getElementById('view-studio-b6');
       if (studioB6) studioB6.classList.remove('active');
-      const studioB6 = document.getElementById('view-studio-b6');
-      if (studioB6) studioB6.classList.remove('active');
       
       if (lessonId === 'b1') {
         document.getElementById('view-studio').classList.add('active');
@@ -2862,6 +2860,10 @@
           throwOnError: false
         });
       }
+    }
+    // Auto-call if KaTeX finished loading earlier
+    if (window.__katexLoaded || window.renderMathInElement) {
+      setTimeout(renderMathInPage, 100);
     }
 
     /* ==========================================================
@@ -4158,9 +4160,6 @@
        LOGIC BÀI 3: CẤU TRÚC LỚP VỎ ELECTRON NGUYÊN TỬ
        ========================================================== */
 
-    let currentPartB3 = 'part1';
-
-    
     /* ==========================================================
        TAB SWITCHERS FOR LESSONS 3, 4, 5 (STANDARDIZED)
        ========================================================== */
