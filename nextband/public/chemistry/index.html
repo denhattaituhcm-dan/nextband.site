@@ -1016,6 +1016,45 @@
               </button>
             </div>
           </div>
+
+          <!-- Bài 7: Xu hướng biến đổi tính chất hợp chất (Đã hoàn thiện) -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <rect x="25" y="32" width="170" height="12" rx="6" fill="url(#b7Grad)" stroke="#cbd5e1"/>
+                <defs>
+                  <linearGradient id="b7Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#3b82f6"/>
+                    <stop offset="50%" stop-color="#10b981"/>
+                    <stop offset="100%" stop-color="#ef4444"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="50" cy="38" r="14" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+                <text x="50" y="42" font-size="9" font-weight="700" fill="#1e40af" text-anchor="middle">NaOH</text>
+                
+                <circle cx="110" cy="38" r="14" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+                <text x="110" y="42" font-size="9" font-weight="700" fill="#065f46" text-anchor="middle">Al(OH)₃</text>
+                
+                <circle cx="170" cy="38" r="14" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+                <text x="170" y="42" font-size="9" font-weight="700" fill="#991b1b" text-anchor="middle">HClO₄</text>
+                
+                <text x="50" y="72" font-size="8" font-weight="600" fill="#2563eb" text-anchor="middle">Base mạnh</text>
+                <text x="110" y="72" font-size="8" font-weight="600" fill="#059669" text-anchor="middle">Lưỡng tính</text>
+                <text x="170" y="72" font-size="8" font-weight="600" fill="#dc2626" text-anchor="middle">Acid rất mạnh</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status ready">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 7: Xu hướng biến đổi tính chất của hợp chất</h3>
+                <p>Thành phần oxide, hydroxide cao nhất trong chu kì, thí nghiệm ảo phản ứng với nước, quỳ tím và quy luật biến đổi tính acid - base.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b7')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -2773,6 +2812,303 @@
   </div>
 
 
+  
+
+
+  <!-- ========================================================
+       BÀI 7: XU HƯỚNG BIẾN ĐỔI THÀNH PHẦN VÀ TÍNH CHẤT HỢP CHẤT TRONG MỘT CHU KÌ
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM)
+       ======================================================== -->
+  <div id="view-studio-b7" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Header -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 2 • Bài 7</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Xu hướng biến đổi thành phần và tính chất của hợp chất trong một chu kì</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 7 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b7-p1" class="tab-seg-btn active" onclick="switchPartB7('part1')">
+            <span>1 Thành phần Oxide & Hydroxide cao nhất</span>
+          </button>
+          <button id="tab-btn-b7-p2" class="tab-seg-btn" onclick="switchPartB7('part2')">
+            <span>2 Thí nghiệm ảo Phản ứng Oxide với Nước</span>
+          </button>
+          <button id="tab-btn-b7-p3" class="tab-seg-btn" onclick="switchPartB7('part3')">
+            <span>3 Thang biến đổi Acid - Base & Bài tập SGK</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: THÀNH PHẦN OXIDE VÀ HYDROXIDE CAO NHẤT -->
+          <div id="content-b7-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu sư phạm (SGK Trang 40)</h4>
+              <p>Nhận xét được xu hướng biến đổi thành phần của oxide và hydroxide theo chu kì ứng với hoá trị cao nhất của nguyên tố nhóm A. Viết được công thức hoá học của hợp chất.</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 40</div>
+            <h3 class="section-title">Thành phần của các Oxide và Hydroxide</h3>
+            <p>Hoá trị cao nhất của các nguyên tố nhóm A trong hợp chất với oxygen tăng từ <strong>I đến VII</strong> khi đi từ trái qua phải trong một chu kì (trừ chu kì 1 và fluorine ở chu kì 2). Do đó, thành phần của các oxide và hydroxide có sự lặp lại theo chu kì.</p>
+
+            <div class="box-law">
+              <h4>⚖️ Bảng công thức Oxide và Hydroxide cao nhất (Chu kì 3)</h4>
+              <p>Quan sát quy luật tăng dần chỉ số oxygen và hoá trị cao nhất từ Nhóm IA đến VIIA:</p>
+              <div style="overflow-x: auto; margin-top: 10px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center;">
+                  <thead>
+                    <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                      <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">Nhóm</th>
+                      <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">IA</th>
+                      <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">IIA</th>
+                      <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">IIIA</th>
+                      <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">IVA</th>
+                      <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">VA</th>
+                      <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">VIA</th>
+                      <th style="padding: 6px 8px; border: 1px solid #cbd5e1;">VIIA</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding: 6px 8px; font-weight: 700; background: #f8fafc; border: 1px solid #cbd5e1;">Hoá trị cao nhất</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #2563eb;">I</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #2563eb;">II</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #2563eb;">III</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #2563eb;">IV</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #2563eb;">V</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #2563eb;">VI</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: 700; color: #2563eb;">VII</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 8px; font-weight: 700; background: #f8fafc; border: 1px solid #cbd5e1;">Oxide Chu kì 3</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{Na}_2\text{O}$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{MgO}$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{Al}_2\text{O}_3$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{SiO}_2$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{P}_2\text{O}_5$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{SO}_3$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{Cl}_2\text{O}_7$</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 6px 8px; font-weight: 700; background: #f8fafc; border: 1px solid #cbd5e1;">Hydroxide Chu kì 3</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{NaOH}$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{Mg(OH)}_2$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{Al(OH)}_3$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{H}_2\text{SiO}_3$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{H}_3\text{PO}_4$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{H}_2\text{SO}_4$</td>
+                      <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">$\text{HClO}_4$</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Quiz trắc nghiệm tương tác Mục I -->
+            <div class="interactive-quiz-card" style="margin-top: 18px; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; background: #ffffff;">
+              <span style="font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase;">? Câu hỏi 1 (SGK Trang 40): Dự đoán công thức hợp chất</span>
+              <p style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 8px;">Nguyên tố Gallium (Ga) thuộc nhóm IIIA và Selenium (Se) thuộc nhóm VIA của bảng tuần hoàn. Hãy chọn cặp công thức oxide ứng với hoá trị cao nhất đúng của hai nguyên tố:</p>
+              
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                <button class="opt-btn" onclick="checkB7MiniQuiz(this, false, 'Sai rồi! Gallium nhóm IIIA có hoá trị cao nhất là III (Ga2O3), Selenium nhóm VIA có hoá trị cao nhất là VI (SeO3).')" style="text-align: left; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;">A. $\text{GaO}$ và $\text{SeO}_2$</button>
+                <button class="opt-btn" onclick="checkB7MiniQuiz(this, true, 'Chính xác! Ga (nhóm IIIA) hoá trị III tạo Ga2O3 và hydroxide Ga(OH)3. Se (nhóm VIA) hoá trị VI tạo SeO3 và acid tương ứng H2SeO4.')" style="text-align: left; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;">B. $\text{Ga}_2\text{O}_3$ và $\text{SeO}_3$</button>
+                <button class="opt-btn" onclick="checkB7MiniQuiz(this, false, 'Sai rồi! Gallium không có hoá trị V trong oxide cao nhất.')" style="text-align: left; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;">C. $\text{Ga}_2\text{O}_5$ và $\text{SeO}_3$</button>
+              </div>
+              <div class="quiz-feedback" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600; padding: 10px; border-radius: 6px;"></div>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: THÍ NGHIỆM PHẢN ỨNG CỦA OXIDE VỚI NƯỚC & QUỲ TÍM -->
+          <div id="content-b7-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Thí nghiệm Sư phạm (SGK Trang 41)</h4>
+              <p>Quan sát hiện tượng hoà tan và phản ứng của $\text{Na}_2\text{O}$, $\text{MgO}$, $\text{P}_2\text{O}_5$ với nước; thử dung dịch thu được bằng giấy quỳ tím để kết luận tính acid - base.</p>
+            </div>
+
+            <div class="meta-citation">Mục II • Thí nghiệm SGK Trang 41</div>
+            <h3 class="section-title">Phản ứng của Oxide với Nước</h3>
+            <p>Cho lần lượt các oxide $\text{Na}_2\text{O}$, $\text{MgO}$, $\text{P}_2\text{O}_5$ vào nước, nhúng giấy quỳ tím vào dung dịch sau phản ứng:</p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin: 14px 0;">
+              <div style="padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0;">
+                <strong style="color: #1e40af;">1. $\text{Na}_2\text{O}$ (Basic oxide mạnh):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">$\text{Na}_2\text{O} + \text{H}_2\text{O} \to 2\text{NaOH}$</p>
+                <span style="font-size: 12px; color: #2563eb;">➔ Tan hoàn toàn, tạo dung dịch kiềm mạnh, làm quỳ tím hoá <strong>xanh đậm</strong>.</span>
+              </div>
+
+              <div style="padding: 12px; background: #f8fafc; border-left: 4px solid #64748b; border-radius: 0 8px 8px 0;">
+                <strong style="color: #334155;">2. $\text{MgO}$ (Basic oxide yếu):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">$\text{MgO} + \text{H}_2\text{O} \rightleftharpoons \text{Mg(OH)}_2$</p>
+                <span style="font-size: 12px; color: #475569;">➔ Tan rất ít trong nước, dung dịch base yếu, làm quỳ tím hoá <strong>xanh nhạt</strong>.</span>
+              </div>
+
+              <div style="padding: 12px; background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0 8px 8px 0;">
+                <strong style="color: #991b1b;">3. $\text{P}_2\text{O}_5$ (Acidic oxide):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">$\text{P}_2\text{O}_5 + 3\text{H}_2\text{O} \to 2\text{H}_3\text{PO}_4$</p>
+                <span style="font-size: 12px; color: #dc2626;">➔ Tan hoàn toàn tạo phosphoric acid (acid trung bình), làm quỳ tím hoá <strong>đỏ</strong>.</span>
+              </div>
+            </div>
+
+            <div class="box-law">
+              <h4>⚗️ Thí nghiệm đẩy muối (SGK Trang 41)</h4>
+              <p>Nhỏ từ từ dung dịch $\text{HNO}_3$ loãng vào ống nghiệm chứa $\text{Na}_2\text{CO}_3$:</p>
+              <p style="text-align: center; font-weight: 700; color: #0284c7; margin: 8px 0;">
+                $2\text{HNO}_3 + \text{Na}_2\text{CO}_3 \to 2\text{NaNO}_3 + \text{CO}_2\uparrow + \text{H}_2\text{O}$
+              </p>
+              <p style="font-size: 13px;">Hiện tượng: Có bọt khí $\text{CO}_2$ thoát ra mãnh liệt. <strong>Kết luận:</strong> Acid mạnh ($	ext{HNO}_3$) đẩy được acid yếu ($	ext{H}_2	ext{CO}_3$) ra khỏi dung dịch muối!</p>
+            </div>
+          </div>
+
+          <!-- PHẦN 3: QUY LUẬT BIẾN ĐỔI ACID - BASE & LUYỆN TẬP SGK -->
+          <div id="content-b7-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Định luật biến đổi tuần hoàn tính Acid - Base (SGK Tr. 41 - 42)</h4>
+              <p>Trong một chu kì, theo chiều tăng dần của điện tích hạt nhân: <strong>Tính base của oxide và hydroxide giảm dần, đồng thời tính acid của chúng tăng dần</strong>.</p>
+            </div>
+
+            <div class="meta-citation">Bảng 7.2 • SGK Trang 41</div>
+            <h3 class="section-title">Thang biến đổi Acid - Base Chu kì 3</h3>
+            
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin: 12px 0;">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 6px;">
+                <span style="color: #2563eb;">← Tính Base mạnh</span>
+                <span style="color: #0d9488;">Lưỡng tính (Amphoteric)</span>
+                <span style="color: #dc2626;">Tính Acid mạnh →</span>
+              </div>
+              <div style="height: 10px; border-radius: 5px; background: linear-gradient(90deg, #3b82f6 0%, #10b981 35%, #f59e0b 60%, #ef4444 100%); margin-bottom: 12px;"></div>
+              
+              <div style="font-size: 13px; line-height: 1.6;">
+                <p>• $\text{NaOH}$: Base mạnh (kiềm ăn da).</p>
+                <p>• $\text{Mg(OH)}_2$: Base yếu (kết tủa trắng).</p>
+                <p>• $\text{Al(OH)}_3$: Hydroxide <strong>lưỡng tính</strong> (vừa tan trong acid mạnh, vừa tan trong base mạnh).</p>
+                <p>• $\text{H}_2\text{SiO}_3$: Acid rất yếu (kết tủa keo trắng bông).</p>
+                <p>• $\text{H}_3\text{PO}_4$: Acid trung bình (ba nấc).</p>
+                <p>• $\text{H}_2\text{SO}_4$: Acid mạnh.</p>
+                <p>• $\text{HClO}_4$: Acid <strong>rất mạnh</strong> (mạnh nhất trong các acid vô cơ có oxy của Chu kì 3).</p>
+              </div>
+            </div>
+
+            <!-- Đấu trường 3 câu hỏi luyện tập SGK Trang 42 -->
+            <div style="margin-top: 20px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 12px;">⚔️ Đấu trường bài tập SGK Trang 42</h4>
+              
+              <div id="b7-question-card-container">
+                <!-- Sẽ render qua hàm initB7QuizArena() -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHU KÌ KHẢO SÁT</span>
+              <span id="b7-hud-period" class="hud-value highlight">Chu kì 3 (Na ➔ Cl)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">HỢP CHẤT ĐANG CHỌN</span>
+              <span id="b7-hud-compound" class="hud-value">NaOH / Na₂O</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">TÍNH CHẤT ACID - BASE</span>
+              <span id="b7-hud-character" class="hud-value" style="color: #2563eb;">Base mạnh</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">pH DỰ ĐOÁN</span>
+              <span id="b7-hud-ph" class="hud-value" style="color: #2563eb;">pH ≈ 13 - 14</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1 & 3: Thang biến đổi trực quan Oxide & Hydroxide -->
+          <div id="panel-b7-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">📊 Thang biến đổi Tính Acid - Base Hợp chất Chu kì 3</span>
+              <div style="display: flex; gap: 6px;">
+                <button id="btn-b7-view-hydroxide" class="btn-tool active" onclick="setB7ViewMode('hydroxide')">Hydroxide</button>
+                <button id="btn-b7-view-oxide" class="btn-tool" onclick="setB7ViewMode('oxide')">Oxide cao nhất</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b7CompoundCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Phòng thí nghiệm phản ứng Oxide với Nước 2.5D -->
+          <div id="panel-b7-part2" class="lab-canvas-area" style="display: none; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🧪 Thí nghiệm ảo: Cho Oxide vào Nước & Đo quỳ tím</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" id="btn-b7-sim-na2o" onclick="runB7SimOxide('na2o')">Na₂O</button>
+                <button class="btn-tool" id="btn-b7-sim-mgo" onclick="runB7SimOxide('mgo')">MgO</button>
+                <button class="btn-tool" id="btn-b7-sim-p2o5" onclick="runB7SimOxide('p2o5')">P₂O₅</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b7BeakerCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 3: Đấu trường luyện tập & strip câu hỏi -->
+          <div id="panel-b7-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">Bảng điều khiển câu hỏi trắc nghiệm</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Trang 42</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b7-quiz-progress-text">
+                Đã hoàn thành: 0 / 3 câu
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;" id="b7-question-selector-strip">
+              <!-- Render selector strip -->
+            </div>
+            <div id="b7-quiz-score-board" style="margin-top: 30px; padding: 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; display: none;">
+              <h3 style="font-size: 22px; font-weight: 800; color: #16a34a; margin: 0 0 8px 0;">🎉 XUẤT SẮC! HOÀN THÀNH BÀI 7</h3>
+              <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">Bạn đã nắm vững toàn bộ quy luật biến đổi thành phần và tính chất Acid - Base của hợp chất!</p>
+              <button class="btn-tool active" onclick="resetB7QuizArena()" style="padding: 10px 20px; font-size: 14px;">Làm lại Đấu trường</button>
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b7-lab-status-tip">
+              💡 <em>Click vào từng hợp chất để kiểm tra cấu trúc phân tử và độ mạnh acid - base tương ứng.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB7InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -2792,6 +3128,10 @@
       if (studioB5) studioB5.classList.remove('active');
       const studioB6 = document.getElementById('view-studio-b6');
       if (studioB6) studioB6.classList.remove('active');
+      const studioB7 = document.getElementById('view-studio-b7');
+      if (studioB7) studioB7.classList.remove('active');
+      const studioB7 = document.getElementById('view-studio-b7');
+      if (studioB7) studioB7.classList.remove('active');
       
       if (lessonId === 'b1') {
         document.getElementById('view-studio').classList.add('active');
@@ -2831,6 +3171,14 @@
           if (typeof initB6ElectronegLab === 'function') initB6ElectronegLab();
           if (typeof initB6QuizArena === 'function') initB6QuizArena();
         }, 50);
+      } else if (lessonId === 'b7') {
+        if (studioB7) studioB7.classList.add('active');
+        switchPartB7('part1');
+        setTimeout(() => {
+          if (typeof initB7CompoundLab === 'function') initB7CompoundLab();
+          if (typeof initB7BeakerSim === 'function') initB7BeakerSim();
+          if (typeof initB7QuizArena === 'function') initB7QuizArena();
+        }, 50);
       }
       window.location.hash = lessonId;
     }
@@ -2846,6 +3194,8 @@
       if (studioB5) studioB5.classList.remove('active');
       const studioB6 = document.getElementById('view-studio-b6');
       if (studioB6) studioB6.classList.remove('active');
+      const studioB7 = document.getElementById('view-studio-b7');
+      if (studioB7) studioB7.classList.remove('active');
       document.getElementById('view-dashboard').classList.add('active');
       window.location.hash = '';
     }
@@ -5363,6 +5713,716 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       b6UserAnswers[b6CurrentQuestionIdx] = optionIdx;
       updateB6QuestionStripUI();
       renderB6CurrentQuestion();
+    }
+
+
+
+
+
+    /* ==========================================================
+       LOGIC BÀI 7: XU HƯỚNG BIẾN ĐỔI THÀNH PHẦN VÀ TÍNH CHẤT HỢP CHẤT
+       ========================================================== */
+
+    let currentPartB7 = 'part1';
+    let b7ViewMode = 'hydroxide'; // 'hydroxide' | 'oxide'
+    let b7CurCompoundIdx = 0; // 0 to 6 (Na to Cl)
+
+    const B7_COMPOUNDS_DATA = [
+      {
+        element: 'Na',
+        group: 'IA',
+        ox: 'Na₂O',
+        oxType: 'Basic oxide',
+        hyd: 'NaOH',
+        hydType: 'Base mạnh',
+        ph: 'pH ≈ 13 - 14',
+        phColor: '#1d4ed8', // Dark blue
+        litmus: 'Xanh đậm',
+        color: '#3b82f6',
+        desc: 'Tan mãnh liệt trong nước, toả nhiệt mạnh tạo xút ăn da NaOH.'
+      },
+      {
+        element: 'Mg',
+        group: 'IIA',
+        ox: 'MgO',
+        oxType: 'Basic oxide',
+        hyd: 'Mg(OH)₂',
+        hydType: 'Base yếu',
+        ph: 'pH ≈ 9 - 10',
+        phColor: '#60a5fa', // Light blue
+        litmus: 'Xanh nhạt',
+        color: '#60a5fa',
+        desc: 'Ít tan trong nước, dung dịch base yếu, kết tủa trắng Mg(OH)₂.'
+      },
+      {
+        element: 'Al',
+        group: 'IIIA',
+        ox: 'Al₂O₃',
+        oxType: 'Oxide lưỡng tính',
+        hyd: 'Al(OH)₃',
+        hydType: 'Hydroxide lưỡng tính',
+        ph: 'pH ≈ 7',
+        phColor: '#059669', // Emerald
+        litmus: 'Không đổi màu',
+        color: '#10b981',
+        desc: 'Không tan trong nước. Tan được trong cả dung dịch acid mạnh và base mạnh.'
+      },
+      {
+        element: 'Si',
+        group: 'IVA',
+        ox: 'SiO₂',
+        oxType: 'Acidic oxide',
+        hyd: 'H₂SiO₃',
+        hydType: 'Acid rất yếu',
+        ph: 'pH ≈ 5 - 6',
+        phColor: '#d97706', // Amber
+        litmus: 'Hồng rất nhạt',
+        color: '#f59e0b',
+        desc: 'Không tan trong nước. Tạo kết tủa keo dính silicat, acid rất yếu.'
+      },
+      {
+        element: 'P',
+        group: 'VA',
+        ox: 'P₂O₅',
+        oxType: 'Acidic oxide',
+        hyd: 'H₃PO₄',
+        hydType: 'Acid trung bình',
+        ph: 'pH ≈ 2 - 3',
+        phColor: '#ea580c', // Orange
+        litmus: 'Đỏ',
+        color: '#f97316',
+        desc: 'Hút nước cực mạnh tạo phosphoric acid ba nấc.'
+      },
+      {
+        element: 'S',
+        group: 'VIA',
+        ox: 'SO₃',
+        oxType: 'Acidic oxide',
+        hyd: 'H₂SO₄',
+        hydType: 'Acid mạnh',
+        ph: 'pH ≈ 1',
+        phColor: '#dc2626', // Red
+        litmus: 'Đỏ đậm',
+        color: '#ef4444',
+        desc: 'Tan vô hạn trong nước, toả nhiệt ghê gớm tạo acid sulfuric mạnh.'
+      },
+      {
+        element: 'Cl',
+        group: 'VIIA',
+        ox: 'Cl₂O₇',
+        oxType: 'Acidic oxide',
+        hyd: 'HClO₄',
+        hydType: 'Acid rất mạnh',
+        ph: 'pH < 1',
+        phColor: '#991b1b', // Dark red
+        litmus: 'Đỏ thẫm',
+        color: '#b91c1c',
+        desc: 'Perchloric acid, một trong những acid vô cơ mạnh nhất trong hoá học.'
+      }
+    ];
+
+    function switchPartB7(partId) {
+      currentPartB7 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b7-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      // Show/hide sections in theory pane
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b7-' + p);
+        const panel = document.getElementById('panel-b7-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
+
+      const activeSec = document.getElementById('content-b7-' + partId);
+      if (activeSec) activeSec.scrollTop = 0;
+
+      if (partId === 'part1' || partId === 'part3') {
+        setTimeout(initB7CompoundLab, 50);
+      } else if (partId === 'part2') {
+        setTimeout(initB7BeakerSim, 50);
+      }
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function checkB7MiniQuiz(btn, isCorrect, feedback) {
+      const parent = btn.parentElement.parentElement;
+      const allBtns = parent.querySelectorAll('.opt-btn');
+      allBtns.forEach(b => {
+        b.style.pointerEvents = 'none';
+        b.style.opacity = '0.7';
+      });
+
+      if (isCorrect) {
+        btn.style.background = '#dcfce7';
+        btn.style.borderColor = '#16a34a';
+        btn.style.color = '#15803d';
+        btn.style.opacity = '1';
+      } else {
+        btn.style.background = '#fee2e2';
+        btn.style.borderColor = '#dc2626';
+        btn.style.color = '#b91c1c';
+        btn.style.opacity = '1';
+      }
+
+      const fb = parent.querySelector('.quiz-feedback');
+      if (fb) {
+        fb.style.display = 'block';
+        fb.style.background = isCorrect ? '#f0fdf4' : '#fef2f2';
+        fb.style.color = isCorrect ? '#166534' : '#991b1b';
+        fb.style.border = `1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}`;
+        fb.innerHTML = feedback;
+      }
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    /* -------------------------------------------------------------
+       LAB CANVAS 1: THANG BIẾN ĐỔI ACID - BASE BÀI 7
+       ------------------------------------------------------------- */
+    let b7CompoundCanvas, b7CompoundCtx;
+    let b7CompoundAnimFrame;
+
+    function initB7CompoundLab() {
+      b7CompoundCanvas = document.getElementById('b7CompoundCanvas');
+      if (!b7CompoundCanvas) return;
+      b7CompoundCtx = b7CompoundCanvas.getContext('2d');
+      resizeB7CompoundCanvas();
+
+      b7CompoundCanvas.onmousemove = handleB7CompoundHover;
+      b7CompoundCanvas.onclick = handleB7CompoundClick;
+
+      drawB7CompoundLab();
+    }
+
+    function resizeB7CompoundCanvas() {
+      if (!b7CompoundCanvas) return;
+      const rect = b7CompoundCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b7CompoundCanvas.width = rect.width * dpr;
+      b7CompoundCanvas.height = rect.height * dpr;
+      b7CompoundCtx.scale(dpr, dpr);
+      drawB7CompoundLab();
+    }
+
+    function setB7ViewMode(mode) {
+      b7ViewMode = mode;
+      document.getElementById('btn-b7-view-hydroxide').classList.toggle('active', mode === 'hydroxide');
+      document.getElementById('btn-b7-view-oxide').classList.toggle('active', mode === 'oxide');
+      updateB7Hud();
+      drawB7CompoundLab();
+    }
+
+    function handleB7CompoundHover(e) {
+      if (!b7CompoundCanvas) return;
+      const rect = b7CompoundCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const w = b7CompoundCanvas.parentElement.clientWidth;
+      const h = b7CompoundCanvas.parentElement.clientHeight;
+
+      const count = B7_COMPOUNDS_DATA.length;
+      const startX = 60, endX = w - 60;
+      const stepX = (endX - startX) / (count - 1);
+
+      let hoveredIdx = -1;
+      for (let i = 0; i < count; i++) {
+        const cx = startX + i * stepX;
+        const cy = h / 2 - 20;
+        if (Math.hypot(x - cx, y - cy) < 40) {
+          hoveredIdx = i;
+          break;
+        }
+      }
+      b7CompoundCanvas.style.cursor = hoveredIdx !== -1 ? 'pointer' : 'default';
+    }
+
+    function handleB7CompoundClick(e) {
+      if (!b7CompoundCanvas) return;
+      const rect = b7CompoundCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const w = b7CompoundCanvas.parentElement.clientWidth;
+      const h = b7CompoundCanvas.parentElement.clientHeight;
+
+      const count = B7_COMPOUNDS_DATA.length;
+      const startX = 60, endX = w - 60;
+      const stepX = (endX - startX) / (count - 1);
+
+      for (let i = 0; i < count; i++) {
+        const cx = startX + i * stepX;
+        const cy = h / 2 - 20;
+        if (Math.hypot(x - cx, y - cy) < 45) {
+          b7CurCompoundIdx = i;
+          updateB7Hud();
+          drawB7CompoundLab();
+          break;
+        }
+      }
+    }
+
+    function updateB7Hud() {
+      const d = B7_COMPOUNDS_DATA[b7CurCompoundIdx];
+      const compLabel = b7ViewMode === 'hydroxide' ? `${d.hyd} (Hydroxide)` : `${d.ox} (Oxide cao nhất)`;
+      const typeLabel = b7ViewMode === 'hydroxide' ? d.hydType : d.oxType;
+
+      const hudElem = document.getElementById('b7-hud-compound');
+      if (hudElem) hudElem.innerText = compLabel;
+
+      const hudChar = document.getElementById('b7-hud-character');
+      if (hudChar) {
+        hudChar.innerText = typeLabel;
+        hudChar.style.color = d.phColor;
+      }
+
+      const hudPh = document.getElementById('b7-hud-ph');
+      if (hudPh) {
+        hudPh.innerText = d.ph;
+        hudPh.style.color = d.phColor;
+      }
+
+      const statusTip = document.getElementById('b7-lab-status-tip');
+      if (statusTip) {
+        statusTip.innerHTML = `💡 <strong>${d.element} (Nhóm ${d.group}):</strong> ${d.desc}`;
+      }
+    }
+
+    function drawB7CompoundLab() {
+      if (!b7CompoundCtx || !b7CompoundCanvas) return;
+      const w = b7CompoundCanvas.parentElement.clientWidth;
+      const h = b7CompoundCanvas.parentElement.clientHeight;
+      const ctx = b7CompoundCtx;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Gradient spectrum background bar
+      const barY = h / 2 + 65;
+      const grad = ctx.createLinearGradient(60, 0, w - 60, 0);
+      grad.addColorStop(0, '#3b82f6');  // Base (Blue)
+      grad.addColorStop(0.35, '#10b981'); // Amphoteric (Green)
+      grad.addColorStop(0.65, '#f59e0b'); // Weak acid (Amber)
+      grad.addColorStop(1, '#ef4444');  // Strong acid (Red)
+
+      ctx.save();
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(60, barY, w - 120, 14, 7);
+      ctx.fill();
+
+      // Spectrum labels
+      ctx.font = '600 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#2563eb';
+      ctx.textAlign = 'left';
+      ctx.fillText('← Tính Base mạnh dần (Nhóm IA)', 60, barY + 36);
+
+      ctx.fillStyle = '#dc2626';
+      ctx.textAlign = 'right';
+      ctx.fillText('Tính Acid mạnh dần (Nhóm VIIA) →', w - 60, barY + 36);
+
+      ctx.fillStyle = '#059669';
+      ctx.textAlign = 'center';
+      ctx.fillText('Lưỡng tính (Al)', w / 2 - 40, barY + 36);
+      ctx.restore();
+
+      // Draw compounds
+      const count = B7_COMPOUNDS_DATA.length;
+      const startX = 60, endX = w - 60;
+      const stepX = (endX - startX) / (count - 1);
+
+      B7_COMPOUNDS_DATA.forEach((d, idx) => {
+        const cx = startX + idx * stepX;
+        const cy = h / 2 - 25;
+        const isSelected = (idx === b7CurCompoundIdx);
+
+        // Connector line to gradient bar
+        ctx.strokeStyle = isSelected ? d.color : '#e2e8f0';
+        ctx.lineWidth = isSelected ? 2.5 : 1.5;
+        ctx.setLineDash(isSelected ? [] : [3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy + 35);
+        ctx.lineTo(cx, barY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Compound circle / card
+        const radius = isSelected ? 36 : 28;
+
+        // Shadow / Glow
+        if (isSelected) {
+          ctx.shadowColor = d.color;
+          ctx.shadowBlur = 18;
+        } else {
+          ctx.shadowBlur = 0;
+        }
+
+        ctx.fillStyle = isSelected ? '#ffffff' : '#f8fafc';
+        ctx.strokeStyle = isSelected ? d.color : '#cbd5e1';
+        ctx.lineWidth = isSelected ? 3 : 1.5;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Text formulas inside circle
+        const formula = b7ViewMode === 'hydroxide' ? d.hyd : d.ox;
+        ctx.fillStyle = isSelected ? d.phColor : '#1e293b';
+        ctx.font = isSelected ? '700 13px "JetBrains Mono"' : '600 11px "JetBrains Mono"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(formula, cx, cy - 4);
+
+        // Group label below
+        ctx.font = '700 11px "Plus Jakarta Sans"';
+        ctx.fillStyle = isSelected ? '#0f172a' : '#64748b';
+        ctx.fillText(d.group, cx, cy + 14);
+
+        // Character tag above
+        const tag = b7ViewMode === 'hydroxide' ? d.hydType : d.oxType;
+        ctx.font = isSelected ? '700 11px "Plus Jakarta Sans"' : '500 10px "Plus Jakarta Sans"';
+        ctx.fillStyle = isSelected ? d.phColor : '#94a3b8';
+        ctx.fillText(tag, cx, cy - radius - 12);
+      });
+    }
+
+    /* -------------------------------------------------------------
+       LAB CANVAS 2: THÍ NGHIỆM ẢO PHẢN ỨNG OXIDE VỚI NƯỚC (BÀI 7)
+       ------------------------------------------------------------- */
+    let b7BeakerCanvas, b7BeakerCtx;
+    let b7BeakerSimState = 'idle'; // 'idle' | 'dropping' | 'reacting' | 'finished'
+    let b7CurrentSimOxide = 'na2o';
+    let b7AnimProgress = 0;
+    let b7SimAnimId;
+
+    function initB7BeakerSim() {
+      b7BeakerCanvas = document.getElementById('b7BeakerCanvas');
+      if (!b7BeakerCanvas) return;
+      b7BeakerCtx = b7BeakerCanvas.getContext('2d');
+      resizeB7BeakerCanvas();
+      runB7SimOxide('na2o');
+    }
+
+    function resizeB7BeakerCanvas() {
+      if (!b7BeakerCanvas) return;
+      const rect = b7BeakerCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b7BeakerCanvas.width = rect.width * dpr;
+      b7BeakerCanvas.height = rect.height * dpr;
+      b7BeakerCtx.scale(dpr, dpr);
+    }
+
+    function runB7SimOxide(oxide) {
+      b7CurrentSimOxide = oxide;
+      ['na2o', 'mgo', 'p2o5'].forEach(o => {
+        const btn = document.getElementById('btn-b7-sim-' + o);
+        if (btn) btn.classList.toggle('active', o === oxide);
+      });
+
+      b7AnimProgress = 0;
+      b7BeakerSimState = 'dropping';
+      if (b7SimAnimId) cancelAnimationFrame(b7SimAnimId);
+      animateB7Beaker();
+    }
+
+    function animateB7Beaker() {
+      if (!b7BeakerCanvas || !b7BeakerCtx) return;
+      const w = b7BeakerCanvas.parentElement.clientWidth;
+      const h = b7BeakerCanvas.parentElement.clientHeight;
+      const ctx = b7BeakerCtx;
+
+      ctx.clearRect(0, 0, w, h);
+
+      b7AnimProgress += 0.015;
+      if (b7AnimProgress > 1) {
+        b7AnimProgress = 1;
+        b7BeakerSimState = 'finished';
+      }
+
+      // 1. Draw Beaker (Cốc thuỷ tinh)
+      const bW = 200, bH = 220;
+      const bX = (w - bW) / 2, bY = h / 2 - 40;
+
+      // Beaker body gradient & glass border
+      ctx.save();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(bX - 10, bY);
+      ctx.lineTo(bX, bY);
+      ctx.lineTo(bX, bY + bH - 10);
+      ctx.quadraticCurveTo(bX, bY + bH, bX + 10, bY + bH);
+      ctx.lineTo(bX + bW - 10, bY + bH);
+      ctx.quadraticCurveTo(bX + bW, bY + bH, bX + bW, bY + bH - 10);
+      ctx.lineTo(bX + bW, bY);
+      ctx.lineTo(bX + bW + 10, bY);
+      ctx.stroke();
+
+      // 2. Liquid in Beaker with color transition
+      // Water initial: #e0f2fe (pure water)
+      // End color based on oxide:
+      let endColor = '#1d4ed8'; // Na2O: Blue
+      let liquidLabel = 'Dung dịch NaOH (Quỳ hoá Xanh đậm)';
+      if (b7CurrentSimOxide === 'mgo') {
+        endColor = '#93c5fd'; // MgO: Pale blue
+        liquidLabel = 'Mg(OH)₂ ít tan (Quỳ hoá Xanh nhạt)';
+      } else if (b7CurrentSimOxide === 'p2o5') {
+        endColor = '#ef4444'; // P2O5: Red
+        liquidLabel = 'Dung dịch H₃PO₄ (Quỳ hoá Đỏ)';
+      }
+
+      const liqLevel = bY + 80;
+      const liqHeight = bH - 82;
+
+      // Color interpolation
+      const p = Math.max(0, (b7AnimProgress - 0.3) / 0.7);
+      ctx.fillStyle = p > 0 ? endColor : '#e0f2fe';
+      ctx.globalAlpha = 0.7 + p * 0.2;
+      ctx.fillRect(bX + 3, liqLevel, bW - 6, liqHeight);
+      ctx.globalAlpha = 1.0;
+
+      // 3. Falling powder particles (Dropping phase)
+      if (b7AnimProgress < 0.6) {
+        const dropY = bY - 40 + b7AnimProgress * (liqLevel - (bY - 40));
+        ctx.fillStyle = b7CurrentSimOxide === 'na2o' ? '#ffffff' : (b7CurrentSimOxide === 'mgo' ? '#f1f5f9' : '#ffffff');
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 1;
+        for (let i = -15; i <= 15; i += 6) {
+          ctx.beginPath();
+          ctx.arc(bX + bW / 2 + i, dropY + (i % 8), 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+      }
+
+      // 4. Litmus paper strip (Giấy quỳ tím)
+      const stripW = 26, stripH = 140;
+      const stripX = bX + bW - 55;
+      const stripY = bY + 30;
+
+      // Upper dry part: Purple #a855f7
+      ctx.fillStyle = '#c084fc';
+      ctx.fillRect(stripX, stripY, stripW, 50);
+
+      // Submerged part: changes color with reaction
+      ctx.fillStyle = p > 0.2 ? endColor : '#c084fc';
+      ctx.fillRect(stripX, stripY + 50, stripW, stripH - 50);
+
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(stripX, stripY, stripW, stripH);
+
+      // Litmus tag
+      ctx.font = '600 11px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#475569';
+      ctx.textAlign = 'left';
+      ctx.fillText('Giấy quỳ tím', stripX + 32, stripY + 20);
+
+      // Equation label below beaker
+      ctx.textAlign = 'center';
+      ctx.font = '700 14px "JetBrains Mono"';
+      ctx.fillStyle = '#0f172a';
+      let eqText = 'Na₂O + H₂O ➔ 2NaOH';
+      if (b7CurrentSimOxide === 'mgo') eqText = 'MgO + H₂O ⇌ Mg(OH)₂ (ít tan)';
+      if (b7CurrentSimOxide === 'p2o5') eqText = 'P₂O₅ + 3H₂O ➔ 2H₃PO₄';
+      ctx.fillText(eqText, w / 2, bY + bH + 35);
+
+      ctx.font = '600 13px "Plus Jakarta Sans"';
+      ctx.fillStyle = endColor;
+      ctx.fillText(liquidLabel, w / 2, bY + bH + 60);
+
+      ctx.restore();
+
+      if (b7AnimProgress < 1) {
+        b7SimAnimId = requestAnimationFrame(animateB7Beaker);
+      }
+    }
+
+    /* -------------------------------------------------------------
+       LAB 3: ĐẤU TRƯỜNG LUYỆN TẬP SGK TRANG 42 (BÀI 7)
+       ------------------------------------------------------------- */
+    const B7_EXERCISES_DATA = [
+      {
+        id: 1,
+        title: "Câu hỏi 2 (SGK Trang 42): So sánh tính Acid yếu nhất",
+        text: "Trong các chất dưới đây, chất nào có tính acid yếu nhất?",
+        options: [
+          "A. H₂SO₄",
+          "B. HClO₄",
+          "C. H₃PO₄",
+          "D. H₂SiO₃"
+        ],
+        correct: 3, // D
+        explain: "Chính xác! Trong chu kì 3 theo chiều tăng điện tích hạt nhân (Si ➔ P ➔ S ➔ Cl), tính acid của hydroxide tăng dần: H₂SiO₃ (rất yếu) < H₃PO₄ (trung bình) < H₂SO₄ (mạnh) < HClO₄ (rất mạnh). Do đó H₂SiO₃ có tính acid yếu nhất."
+      },
+      {
+        id: 2,
+        title: "Câu hỏi 3 (SGK Trang 42): Thứ tự tính Base tăng dần",
+        text: "Dãy gồm các chất có tính base tăng dần là:",
+        options: [
+          "A. Al(OH)₃ < Mg(OH)₂ < NaOH",
+          "B. NaOH < Mg(OH)₂ < Al(OH)₃",
+          "C. Mg(OH)₂ < Al(OH)₃ < NaOH",
+          "D. Al(OH)₃ < NaOH < Mg(OH)₂"
+        ],
+        correct: 0, // A
+        explain: "Chính xác! Trong chu kì 3 theo chiều từ trái sang phải (Na ➔ Mg ➔ Al), tính base giảm dần: NaOH (base mạnh) > Mg(OH)₂ (base yếu) > Al(OH)₃ (lưỡng tính). Do đó chiều TĂNG DẦN tính base là Al(OH)₃ < Mg(OH)₂ < NaOH."
+      },
+      {
+        id: 3,
+        title: "Câu hỏi 4 (SGK Trang 42): Quy luật biến đổi tuần hoàn",
+        text: "Những đại lượng và tính chất nào của nguyên tố hoá học cho dưới đây KHÔNG biến đổi tuần hoàn theo chiều tăng của điện tích hạt nhân nguyên tử?",
+        options: [
+          "A. Tính kim loại và phi kim",
+          "B. Tính acid – base của các hydroxide",
+          "C. Khối lượng nguyên tử",
+          "D. Cấu hình electron lớp ngoài cùng của nguyên tử"
+        ],
+        correct: 2, // C
+        explain: "Chính xác! Khối lượng nguyên tử biến đổi tăng liên tục (không lặp lại có chu kì). Các đại lượng như cấu hình e lớp ngoài cùng, bán kính, độ âm điện, tính kim loại/phi kim, tính acid-base của hợp chất mới là những tính chất biến đổi tuần hoàn."
+      }
+    ];
+
+    let b7CurrentQuestionIdx = 0;
+    let b7UserAnswers = {};
+
+    function initB7QuizArena() {
+      b7CurrentQuestionIdx = 0;
+      b7UserAnswers = {};
+      renderB7QuizStrip();
+      renderB7QuestionCard();
+    }
+
+    function renderB7QuizStrip() {
+      const strip = document.getElementById('b7-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = '';
+
+      B7_EXERCISES_DATA.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = 'b7-q-strip-btn-' + idx;
+        btn.className = 'btn-tool';
+        btn.style.minWidth = '42px';
+        btn.style.height = '36px';
+        btn.style.fontWeight = '700';
+
+        const isAnswered = (b7UserAnswers[idx] !== undefined);
+        const isCurrent = (idx === b7CurrentQuestionIdx);
+
+        if (isCurrent) {
+          btn.style.borderColor = '#0284c7';
+          btn.style.background = '#e0f2fe';
+          btn.style.color = '#0369a1';
+        } else if (isAnswered) {
+          const isCorrect = (b7UserAnswers[idx] === q.correct);
+          btn.style.background = isCorrect ? '#dcfce7' : '#fee2e2';
+          btn.style.borderColor = isCorrect ? '#16a34a' : '#dc2626';
+          btn.style.color = isCorrect ? '#15803d' : '#b91c1c';
+        } else {
+          btn.style.background = '#f8fafc';
+          btn.style.color = '#64748b';
+        }
+
+        btn.innerText = `Câu ${idx + 1}`;
+        btn.onclick = () => {
+          b7CurrentQuestionIdx = idx;
+          renderB7QuizStrip();
+          renderB7QuestionCard();
+        };
+        strip.appendChild(btn);
+      });
+
+      const prog = document.getElementById('b7-quiz-progress-text');
+      const answeredCount = Object.keys(b7UserAnswers).length;
+      if (prog) prog.innerText = `Đã hoàn thành: ${answeredCount} / ${B7_EXERCISES_DATA.length} câu`;
+
+      const scoreBoard = document.getElementById('b7-quiz-score-board');
+      if (scoreBoard) {
+        scoreBoard.style.display = (answeredCount === B7_EXERCISES_DATA.length) ? 'block' : 'none';
+      }
+    }
+
+    function renderB7QuestionCard() {
+      const container = document.getElementById('b7-question-card-container');
+      if (!container) return;
+
+      const q = B7_EXERCISES_DATA[b7CurrentQuestionIdx];
+      const userSelected = b7UserAnswers[b7CurrentQuestionIdx];
+      const isAnswered = (userSelected !== undefined);
+
+      let optionsHtml = '';
+      q.options.forEach((opt, optIdx) => {
+        let optStyle = 'width:100%; text-align:left; padding:12px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:8px; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between;';
+        if (isAnswered) {
+          if (optIdx === q.correct) {
+            optStyle += 'background:#dcfce7; border-color:#16a34a; color:#15803d; font-weight:700;';
+          } else if (optIdx === userSelected) {
+            optStyle += 'background:#fee2e2; border-color:#dc2626; color:#b91c1c; font-weight:700;';
+          } else {
+            optStyle += 'opacity:0.6;';
+          }
+        }
+
+        optionsHtml += `
+          <button style="${optStyle}" onclick="selectB7Answer(${optIdx})" ${isAnswered ? 'disabled' : ''}>
+            <span>${opt}</span>
+            ${isAnswered && optIdx === q.correct ? '<span style="color:#16a34a; font-weight:800;">✓</span>' : ''}
+            ${isAnswered && optIdx === userSelected && userSelected !== q.correct ? '<span style="color:#dc2626; font-weight:800;">✗</span>' : ''}
+          </button>
+        `;
+      });
+
+      let explainHtml = '';
+      if (isAnswered) {
+        const isCorrect = (userSelected === q.correct);
+        explainHtml = `
+          <div style="margin-top:14px; padding:12px; border-radius:8px; background:${isCorrect ? '#f0fdf4' : '#fef2f2'}; border:1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; font-size:13px; color:${isCorrect ? '#166534' : '#991b1b'}; line-height:1.5;">
+            <strong>${isCorrect ? '✓ Câu trả lời chính xác!' : '✗ Câu trả lời chưa chính xác!'}</strong><br/>
+            ${q.explain}
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11px; font-weight:700; color:#0284c7; text-transform:uppercase;">${q.title}</span>
+            <span style="font-size:11px; font-weight:600; color:#64748b;">Câu ${b7CurrentQuestionIdx + 1} / ${B7_EXERCISES_DATA.length}</span>
+          </div>
+          <p style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:14px; line-height:1.5;">${q.text}</p>
+          <div>
+            ${optionsHtml}
+          </div>
+          ${explainHtml}
+        </div>
+      `;
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function selectB7Answer(optIdx) {
+      if (b7UserAnswers[b7CurrentQuestionIdx] !== undefined) return;
+      b7UserAnswers[b7CurrentQuestionIdx] = optIdx;
+      renderB7QuizStrip();
+      renderB7QuestionCard();
+    }
+
+    function resetB7QuizArena() {
+      b7UserAnswers = {};
+      b7CurrentQuestionIdx = 0;
+      renderB7QuizStrip();
+      renderB7QuestionCard();
+    }
+
+    function resetB7InteractiveState() {
+      b7CurCompoundIdx = 0;
+      updateB7Hud();
+      drawB7CompoundLab();
+      runB7SimOxide('na2o');
     }
 
 
