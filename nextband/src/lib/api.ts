@@ -4311,3 +4311,13 @@ export {
   type VocabInUseBookmarkPayload,
   type VocabInUseBookmarkRecord,
 } from "./api/domains/vocab-in-use.api";
+
+export {
+  essentialVocabularyApi,
+  type EvcBookmarkPayload,
+  type EvcBookmarkRecord,
+  type EvcUnitProgressRecord,
+  type EvcAttemptRecord,
+  type SubmitEvcAttemptPayload,
+  type EvcBookProgressSummary,
+} from "./api/domains/essential-vocabulary.api";

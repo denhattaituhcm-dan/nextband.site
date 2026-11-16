@@ -145,6 +145,12 @@ const CambridgeVocabHubPage = lazyWithRetry(() => import("@/pages/public/cambrid
 // Lazy-loaded English Vocabulary in Use Interactive Studio
 const VocabInUsePage = lazyWithRetry(() => import("@/pages/public/vocab-in-use/VocabInUsePage"));
 
+// Lazy-loaded Essential Vocabulary in Context Module
+const EssentialVocabHubPage = lazyWithRetry(() => import("@/pages/public/essential-vocabulary/EssentialVocabHubPage"));
+const EssentialVocabUnitPage = lazyWithRetry(() => import("@/pages/public/essential-vocabulary/EssentialVocabUnitPage"));
+const EssentialVocabReviewPage = lazyWithRetry(() => import("@/pages/public/essential-vocabulary/EssentialVocabReviewPage"));
+const EssentialVocabProgressPage = lazyWithRetry(() => import("@/pages/public/essential-vocabulary/EssentialVocabProgressPage"));
+
 // Lazy-loaded C1/C2 Mastery Lab Lean Prototype
 const C1MasteryMiniLabPage = lazyWithRetry(() => import("@/features/c1-mastery/pages/C1MasteryMiniLabPage"));
 
@@ -435,6 +441,14 @@ const App = () => (
               <Route path="/vocab-in-use/:unitId" element={<VocabInUsePage />} />
               <Route path="/reading/vocab-in-use" element={<VocabInUsePage />} />
               <Route path="/reading/vocab-in-use/:unitId" element={<VocabInUsePage />} />
+
+              {/* Essential Vocabulary in Context Independent Module */}
+              <Route path="/essential-vocabulary" element={<EssentialVocabHubPage />} />
+              <Route path="/essential-vocabulary/unit/:unitSlug" element={<EssentialVocabUnitPage />} />
+              <Route path="/essential-vocabulary/unit/:unitSlug/glossary" element={<EssentialVocabUnitPage />} />
+              <Route path="/essential-vocabulary/unit/:unitSlug/practice" element={<EssentialVocabUnitPage />} />
+              <Route path="/essential-vocabulary/review" element={<EssentialVocabReviewPage />} />
+              <Route path="/essential-vocabulary/progress" element={<EssentialVocabProgressPage />} />
 
               {/* C1/C2 Mastery Lab Lean Prototype (Have/Get) */}
               <Route path="/c1-mastery" element={<C1MasteryMiniLabPage />} />

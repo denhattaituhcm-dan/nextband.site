@@ -59,6 +59,9 @@ model User {
   refereeAttribution    ReferralAttribution?     @relation("RefereeAttribution")
   userVocabularies      UserVocabulary[]
   vocabInUseBookmarks   VocabInUseBookmark[]
+  evcBookmarks          EssentialVocabBookmark[]
+  evcUnitProgress       EssentialVocabUnitProgress[]
+  evcAttempts           EssentialVocabAttempt[]
   teacherProfile        TeacherProfile?
   weeklySnapshots       WeeklySnapshot[]
   errorEpisodes         StudentErrorEpisode[]    @relation("StudentErrorEpisodes")
@@ -1288,6 +1291,117 @@ model VocabInUseBookmark {
   @@unique([userId, unitId, lexiconId])
   @@index([userId, nextReviewAt])
   @@map("vocab_in_use_bookmarks")
+}
+
+model EssentialVocabBookmark {
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  bookId           String    @map("book_id")        // e.g. "evc-5", "evc-3"
+  unitId           String    @map("unit_id")        // e.g. "evc5-u01"
+  entryId          String    @map("entry_id")       // e.g. "evc5-u01-w15"
+  senseNumber      Int       @default(1) @map("sense_number")
+
+  // Denormalized snapshot for fast offline/review rendering
+  headword         String
+  pos              String
+  ipa              String?
+  meaningVi        String    @map("meaning_vi")
+  definitionEn     String    @map("definition_en")
+  exampleEn        String    @map("example_en")
+  inflectionsText  String?   @map("inflections_text")
+  sourceContext    String    @default("glossary") @map("source_context") // "glossary" | "stage_1" | "stage_2" | "stage_3" | "stage_4"
+
+  // Canonical SM-2 Spaced Repetition State (shared contract with VocabInUseBookmark & UserVocabulary)
+  masteryState     Int       @default(0) @map("mastery_state") // 0: new, 1: learning, 2: consolidating, 3: mastered
+  masteryScore     Float     @default(0.1) @map("mastery_score")
+  intervalDays     Int       @default(1) @map("interval_days")
+  easeFactor       Float     @default(2.5) @map("ease_factor")
+  nextReviewAt     DateTime  @default(now()) @map("next_review_at")
+  totalReviews     Int       @default(0) @map("total_reviews")
+  failedReviews    Int       @default(0) @map("failed_reviews")
+  history          Json      @default("[]")
+
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  user             User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([userId, unitId, entryId, senseNumber])
+  @@index([userId, nextReviewAt])
+  @@index([userId, bookId, unitId])
+  @@map("evc_bookmarks")
+}
+
+model EssentialVocabUnitProgress {
+  id                  String    @id @default(uuid())
+  userId              String    @map("user_id")
+  bookId              String    @map("book_id")          // e.g. "evc-5"
+  unitId              String    @map("unit_id")          // e.g. "evc5-u01"
+  contentVersion      Int       @default(1) @map("content_version")
+
+  // Dynamic max scores (supports 30 questions in Book 5 and 25 questions in Book 3)
+  stage1MaxScore      Int       @default(10) @map("stage1_max_score")
+  stage2MaxScore      Int       @default(5)  @map("stage2_max_score")
+  stage3MaxScore      Int       @default(5)  @map("stage3_max_score")
+  stage4MaxScore      Int       @default(10) @map("stage4_max_score")
+  totalMaxScore       Int       @default(30) @map("total_max_score")
+
+  // Best scores (never decrease on retry)
+  bestStage1Score     Int?      @map("best_stage1_score")
+  bestStage2Score     Int?      @map("best_stage2_score")
+  bestStage3Score     Int?      @map("best_stage3_score")
+  bestStage4Score     Int?      @map("best_stage4_score")
+  bestTotalScore      Int       @default(0) @map("best_total_score")
+  bestAccuracyPct     Float     @default(0.0) @map("best_accuracy_pct")
+
+  // Latest scores (reflect most recent attempt of each stage)
+  latestStage1Score   Int?      @map("latest_stage1_score")
+  latestStage2Score   Int?      @map("latest_stage2_score")
+  latestStage3Score   Int?      @map("latest_stage3_score")
+  latestStage4Score   Int?      @map("latest_stage4_score")
+  latestTotalScore    Int       @default(0) @map("latest_total_score")
+  latestAccuracyPct   Float     @default(0.0) @map("latest_accuracy_pct")
+
+  // Counters & status
+  completedStagesMask Int       @default(0) @map("completed_stages_mask") // Bitmask: 1=S1, 2=S2, 4=S3, 8=S4 (15 = All 4 completed)
+  attemptsCount       Int       @default(0) @map("attempts_count")
+  needsRevalidation   Boolean   @default(false) @map("needs_revalidation")
+  firstCompletedAt    DateTime? @map("first_completed_at")
+  lastPracticedAt     DateTime  @default(now()) @map("last_practiced_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  user                User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  attempts            EssentialVocabAttempt[]
+
+  @@unique([userId, unitId])
+  @@index([userId, bookId])
+  @@map("evc_unit_progress")
+}
+
+model EssentialVocabAttempt {
+  id                  String    @id @default(uuid())
+  progressId          String    @map("progress_id")
+  userId              String    @map("user_id")
+  bookId              String    @map("book_id")
+  unitId              String    @map("unit_id")
+  contentVersion      Int       @default(1) @map("content_version")
+  stage               Int       // 1, 2, 3, or 4
+  mode                String    @default("assisted") // "assisted" | "hard"
+  score               Int
+  maxScore            Int       @map("max_score")
+  accuracyPct         Float     @map("accuracy_pct")
+  durationSec         Int       @default(0) @map("duration_sec")
+  answersSnapshot     Json      @default("[]") @map("answers_snapshot")
+  wrongEntryIds       Json      @default("[]") @map("wrong_entry_ids")
+  clientAttemptKey    String?   @unique @map("client_attempt_key")
+  submittedAt         DateTime  @default(now()) @map("submitted_at")
+
+  progress            EssentialVocabUnitProgress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  user                User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId, unitId, stage, submittedAt])
+  @@map("evc_exercise_attempts")
 }
 
 model TeacherProfile {

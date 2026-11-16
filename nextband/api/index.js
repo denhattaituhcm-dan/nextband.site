@@ -140970,6 +140970,946 @@ var lexiconRoutes = async (fastify) => {
 };
 var lexicon_routes_default = lexiconRoutes;
 
+// server/routes/vocab-in-use.routes.ts
+init_zod();
+var bookmarkItemSchema = external_exports.object({
+  unitId: external_exports.number().int().min(1),
+  lexiconId: external_exports.string().min(1).max(100),
+  word: external_exports.string().min(1).max(100),
+  ipa: external_exports.string().max(100).optional(),
+  pos: external_exports.string().max(50).optional(),
+  meaningVi: external_exports.string().min(1),
+  meaningEn: external_exports.string().optional(),
+  nuanceTip: external_exports.string().optional(),
+  example: external_exports.string().optional(),
+  registerNote: external_exports.string().optional(),
+  exampleSource: external_exports.enum(["book", "aris"]).optional(),
+  ieltsUse: external_exports.enum(["productive", "receptive"]).optional(),
+  usageFlag: external_exports.enum(["informal", "uk-only", "sensitive"]).optional()
+});
+var syncBookmarksSchema = external_exports.object({
+  bookmarks: external_exports.array(bookmarkItemSchema).max(500)
+});
+var reviewSubmitSchema2 = external_exports.object({
+  bookmarkId: external_exports.string().uuid(),
+  isCorrect: external_exports.boolean(),
+  latencyMs: external_exports.number().optional()
+});
+var vocabInUseRoutes = async (fastify) => {
+  fastify.get(
+    "/bookmarks",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const query = request.query;
+      const unitId = query?.unitId ? Number(query.unitId) : void 0;
+      const items = await fastify.prisma.vocabInUseBookmark.findMany({
+        where: {
+          userId,
+          ...unitId ? { unitId } : {}
+        },
+        orderBy: { updatedAt: "desc" }
+      });
+      return reply.send({
+        status: "success",
+        data: {
+          items,
+          count: items.length
+        }
+      });
+    }
+  );
+  fastify.post(
+    "/bookmarks/sync",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const parseResult = syncBookmarksSchema.safeParse(request.body);
+      if (!parseResult.success) {
+        return reply.status(400).send({
+          status: "error",
+          message: "D\u1EEF li\u1EC7u bookmark kh\xF4ng h\u1EE3p l\u1EC7",
+          errors: parseResult.error.flatten()
+        });
+      }
+      const { bookmarks } = parseResult.data;
+      await fastify.prisma.$transaction(async (tx) => {
+        for (const item of bookmarks) {
+          const existing = await tx.vocabInUseBookmark.findUnique({
+            where: {
+              userId_unitId_lexiconId: {
+                userId,
+                unitId: item.unitId,
+                lexiconId: item.lexiconId
+              }
+            }
+          });
+          if (!existing) {
+            await tx.vocabInUseBookmark.create({
+              data: {
+                userId,
+                unitId: item.unitId,
+                lexiconId: item.lexiconId,
+                word: item.word,
+                ipa: item.ipa,
+                pos: item.pos,
+                meaningVi: item.meaningVi,
+                meaningEn: item.meaningEn,
+                nuanceTip: item.nuanceTip,
+                example: item.example,
+                registerNote: item.registerNote,
+                exampleSource: item.exampleSource,
+                ieltsUse: item.ieltsUse,
+                usageFlag: item.usageFlag,
+                masteryState: 0,
+                masteryScore: 0.1,
+                intervalDays: 1,
+                easeFactor: 2.5,
+                nextReviewAt: new Date(Date.now() + 24 * 60 * 60 * 1e3),
+                totalReviews: 0,
+                failedReviews: 0,
+                history: []
+              }
+            });
+          } else {
+            await tx.vocabInUseBookmark.update({
+              where: { id: existing.id },
+              data: {
+                word: item.word,
+                ipa: item.ipa ?? existing.ipa,
+                pos: item.pos ?? existing.pos,
+                meaningVi: item.meaningVi ?? existing.meaningVi,
+                meaningEn: item.meaningEn ?? existing.meaningEn,
+                nuanceTip: item.nuanceTip ?? existing.nuanceTip,
+                example: item.example ?? existing.example,
+                registerNote: item.registerNote ?? existing.registerNote,
+                exampleSource: item.exampleSource ?? existing.exampleSource,
+                ieltsUse: item.ieltsUse ?? existing.ieltsUse,
+                usageFlag: item.usageFlag ?? existing.usageFlag
+              }
+            });
+          }
+        }
+      });
+      const allBookmarks = await fastify.prisma.vocabInUseBookmark.findMany({
+        where: { userId },
+        orderBy: { updatedAt: "desc" }
+      });
+      return reply.send({
+        status: "success",
+        message: "\u0110\u1ED3ng b\u1ED9 S\u1ED5 t\u1EEB th\xE0nh c\xF4ng",
+        data: {
+          items: allBookmarks,
+          count: allBookmarks.length
+        }
+      });
+    }
+  );
+  fastify.post(
+    "/bookmarks/toggle",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const parseResult = bookmarkItemSchema.safeParse(request.body);
+      if (!parseResult.success) {
+        return reply.status(400).send({
+          status: "error",
+          message: "D\u1EEF li\u1EC7u t\u1EEB v\u1EF1ng kh\xF4ng h\u1EE3p l\u1EC7",
+          errors: parseResult.error.flatten()
+        });
+      }
+      const item = parseResult.data;
+      const existing = await fastify.prisma.vocabInUseBookmark.findUnique({
+        where: {
+          userId_unitId_lexiconId: {
+            userId,
+            unitId: item.unitId,
+            lexiconId: item.lexiconId
+          }
+        }
+      });
+      if (existing) {
+        await fastify.prisma.vocabInUseBookmark.delete({
+          where: { id: existing.id }
+        });
+        return reply.send({
+          status: "success",
+          action: "removed",
+          data: {
+            unitId: item.unitId,
+            lexiconId: item.lexiconId
+          }
+        });
+      }
+      const created = await fastify.prisma.vocabInUseBookmark.create({
+        data: {
+          userId,
+          unitId: item.unitId,
+          lexiconId: item.lexiconId,
+          word: item.word,
+          ipa: item.ipa,
+          pos: item.pos,
+          meaningVi: item.meaningVi,
+          meaningEn: item.meaningEn,
+          nuanceTip: item.nuanceTip,
+          example: item.example,
+          registerNote: item.registerNote,
+          exampleSource: item.exampleSource,
+          ieltsUse: item.ieltsUse,
+          usageFlag: item.usageFlag,
+          masteryState: 0,
+          masteryScore: 0.1,
+          intervalDays: 1,
+          easeFactor: 2.5,
+          nextReviewAt: new Date(Date.now() + 24 * 60 * 60 * 1e3),
+          totalReviews: 0,
+          failedReviews: 0,
+          history: []
+        }
+      });
+      return reply.send({
+        status: "success",
+        action: "added",
+        data: created
+      });
+    }
+  );
+  fastify.get(
+    "/due-review",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const dueWords = await fastify.prisma.vocabInUseBookmark.findMany({
+        where: {
+          userId,
+          nextReviewAt: {
+            lte: /* @__PURE__ */ new Date()
+          }
+        },
+        orderBy: [
+          { failedReviews: "desc" },
+          { nextReviewAt: "asc" }
+        ],
+        take: 10
+      });
+      return reply.send({
+        status: "success",
+        data: {
+          count: dueWords.length,
+          items: dueWords
+        }
+      });
+    }
+  );
+  fastify.post(
+    "/review",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const parseResult = reviewSubmitSchema2.safeParse(request.body);
+      if (!parseResult.success) {
+        return reply.status(400).send({
+          status: "error",
+          message: "D\u1EEF li\u1EC7u \xF4n t\u1EADp kh\xF4ng h\u1EE3p l\u1EC7",
+          errors: parseResult.error.flatten()
+        });
+      }
+      const body = parseResult.data;
+      const record = await fastify.prisma.vocabInUseBookmark.findFirst({
+        where: { id: body.bookmarkId, userId }
+      });
+      if (!record) {
+        return reply.status(404).send({
+          status: "error",
+          message: "Kh\xF4ng t\xECm th\u1EA5y b\u1EA3n ghi t\u1EEB v\u1EF1ng c\u1EA7n \xF4n t\u1EADp"
+        });
+      }
+      let interval = record.intervalDays;
+      let ease = record.easeFactor;
+      let masteryState = record.masteryState;
+      let masteryScore = record.masteryScore;
+      if (body.isCorrect) {
+        if (interval === 1) interval = 3;
+        else if (interval === 3) interval = 7;
+        else if (interval === 7) interval = 14;
+        else interval = Math.round(interval * ease);
+        masteryScore = Math.round(Math.min(1, masteryScore + 0.25) * 100) / 100;
+        if (masteryScore >= 0.9) masteryState = 3;
+        else if (masteryScore >= 0.6) masteryState = 2;
+        else masteryState = 1;
+      } else {
+        interval = 1;
+        ease = Math.round(Math.max(1.3, ease - 0.2) * 100) / 100;
+        masteryScore = Math.round(Math.max(0.1, masteryScore - 0.2) * 100) / 100;
+        masteryState = 1;
+      }
+      const nextReviewAt = new Date(Date.now() + interval * 24 * 60 * 60 * 1e3);
+      const currentHistory = Array.isArray(record.history) ? record.history : [];
+      const newHistoryEntry = {
+        date: (/* @__PURE__ */ new Date()).toISOString(),
+        result: body.isCorrect ? "PASS" : "FAIL",
+        latencyMs: body.latencyMs || null
+      };
+      const updated = await fastify.prisma.vocabInUseBookmark.update({
+        where: { id: record.id },
+        data: {
+          intervalDays: interval,
+          easeFactor: ease,
+          masteryState,
+          masteryScore,
+          nextReviewAt,
+          totalReviews: record.totalReviews + 1,
+          failedReviews: body.isCorrect ? record.failedReviews : record.failedReviews + 1,
+          history: [...currentHistory, newHistoryEntry]
+        }
+      });
+      return reply.send({
+        status: "success",
+        data: updated
+      });
+    }
+  );
+};
+var vocab_in_use_routes_default = vocabInUseRoutes;
+
+// server/routes/essential-vocabulary.routes.ts
+init_zod();
+
+// server/services/srs/sm2Calculator.ts
+function calculateSm2Transition(current, options) {
+  const now = options.now ?? /* @__PURE__ */ new Date();
+  const rating = options.rating ?? (options.isCorrect ? "GOOD" : "AGAIN");
+  const isPass = rating !== "AGAIN";
+  let interval = Math.max(1, current.intervalDays || 1);
+  let ease = current.easeFactor || 2.5;
+  let masteryState = current.masteryState || 0;
+  let masteryScore = current.masteryScore ?? 0.1;
+  if (rating === "AGAIN") {
+    interval = 1;
+    ease = Math.round(Math.max(1.3, ease - 0.2) * 100) / 100;
+    masteryScore = Math.round(Math.max(0.1, masteryScore - 0.2) * 100) / 100;
+    masteryState = 1;
+  } else if (rating === "HARD") {
+    interval = interval <= 1 ? 2 : Math.max(interval + 1, Math.round(interval * 1.2));
+    ease = Math.round(Math.max(1.3, ease - 0.15) * 100) / 100;
+    masteryScore = Math.round(Math.min(1, masteryScore + 0.12) * 100) / 100;
+    if (masteryScore >= 0.9) masteryState = 3;
+    else if (masteryScore >= 0.6) masteryState = 2;
+    else masteryState = 1;
+  } else if (rating === "GOOD") {
+    if (interval === 1) interval = 3;
+    else if (interval === 3) interval = 7;
+    else if (interval === 7) interval = 14;
+    else interval = Math.max(interval + 1, Math.round(interval * ease));
+    masteryScore = Math.round(Math.min(1, masteryScore + 0.25) * 100) / 100;
+    if (masteryScore >= 0.9) masteryState = 3;
+    else if (masteryScore >= 0.6) masteryState = 2;
+    else masteryState = 1;
+  } else {
+    if (interval === 1) interval = 4;
+    else if (interval <= 3) interval = 8;
+    else if (interval <= 7) interval = 16;
+    else interval = Math.max(interval + 2, Math.round(interval * ease * 1.3));
+    ease = Math.round(Math.min(3, ease + 0.15) * 100) / 100;
+    masteryScore = Math.round(Math.min(1, masteryScore + 0.35) * 100) / 100;
+    if (masteryScore >= 0.9) masteryState = 3;
+    else if (masteryScore >= 0.6) masteryState = 2;
+    else masteryState = 1;
+  }
+  const nextReviewAt = new Date(now.getTime() + interval * 24 * 60 * 60 * 1e3);
+  const existingHistory = Array.isArray(current.history) ? current.history : [];
+  const newEntry = {
+    date: now.toISOString(),
+    result: isPass ? "PASS" : "FAIL",
+    rating,
+    latencyMs: options.latencyMs ?? null
+  };
+  return {
+    intervalDays: interval,
+    easeFactor: ease,
+    masteryState,
+    masteryScore,
+    nextReviewAt,
+    totalReviews: (current.totalReviews || 0) + 1,
+    failedReviews: isPass ? current.failedReviews || 0 : (current.failedReviews || 0) + 1,
+    history: [...existingHistory.slice(-49), newEntry]
+  };
+}
+
+// server/services/essentialVocab/progressReconciler.ts
+function roundPct(numerator, denominator) {
+  if (denominator <= 0) return 0;
+  return Math.round(numerator / denominator * 1e3) / 10;
+}
+function reconcileStageAttempt(existing, attempt) {
+  const now = attempt.now ?? /* @__PURE__ */ new Date();
+  const s1Max = attempt.stageMaxScores.stage1;
+  const s2Max = attempt.stageMaxScores.stage2;
+  const s3Max = attempt.stageMaxScores.stage3;
+  const s4Max = attempt.stageMaxScores.stage4;
+  const totalMax = s1Max + s2Max + s3Max + s4Max;
+  const clampedScore = Math.max(0, Math.min(attempt.score, attempt.maxScore));
+  let bestS1 = existing?.bestStage1Score ?? null;
+  let bestS2 = existing?.bestStage2Score ?? null;
+  let bestS3 = existing?.bestStage3Score ?? null;
+  let bestS4 = existing?.bestStage4Score ?? null;
+  let latestS1 = existing?.latestStage1Score ?? null;
+  let latestS2 = existing?.latestStage2Score ?? null;
+  let latestS3 = existing?.latestStage3Score ?? null;
+  let latestS4 = existing?.latestStage4Score ?? null;
+  if (attempt.stage === 1) {
+    latestS1 = clampedScore;
+    bestS1 = bestS1 === null ? clampedScore : Math.max(bestS1, clampedScore);
+  } else if (attempt.stage === 2) {
+    latestS2 = clampedScore;
+    bestS2 = bestS2 === null ? clampedScore : Math.max(bestS2, clampedScore);
+  } else if (attempt.stage === 3) {
+    latestS3 = clampedScore;
+    bestS3 = bestS3 === null ? clampedScore : Math.max(bestS3, clampedScore);
+  } else {
+    latestS4 = clampedScore;
+    bestS4 = bestS4 === null ? clampedScore : Math.max(bestS4, clampedScore);
+  }
+  if (bestS1 !== null) bestS1 = Math.min(bestS1, s1Max);
+  if (bestS2 !== null) bestS2 = Math.min(bestS2, s2Max);
+  if (bestS3 !== null) bestS3 = Math.min(bestS3, s3Max);
+  if (bestS4 !== null) bestS4 = Math.min(bestS4, s4Max);
+  const stageBit = 1 << attempt.stage - 1;
+  const completedStagesMask = (existing?.completedStagesMask ?? 0) | stageBit;
+  const bestTotalScore = (bestS1 ?? 0) + (bestS2 ?? 0) + (bestS3 ?? 0) + (bestS4 ?? 0);
+  const latestTotalScore = (latestS1 ?? 0) + (latestS2 ?? 0) + (latestS3 ?? 0) + (latestS4 ?? 0);
+  const bestAccuracyPct = roundPct(bestTotalScore, totalMax);
+  const latestAccuracyPct = roundPct(latestTotalScore, totalMax);
+  const isAllStagesCompleted = (completedStagesMask & 15) === 15;
+  const firstCompletedAt = existing?.firstCompletedAt ?? (isAllStagesCompleted ? now : null);
+  return {
+    contentVersion: Math.max(existing?.contentVersion ?? 1, attempt.contentVersion),
+    stage1MaxScore: s1Max,
+    stage2MaxScore: s2Max,
+    stage3MaxScore: s3Max,
+    stage4MaxScore: s4Max,
+    totalMaxScore: totalMax,
+    bestStage1Score: bestS1,
+    bestStage2Score: bestS2,
+    bestStage3Score: bestS3,
+    bestStage4Score: bestS4,
+    bestTotalScore,
+    bestAccuracyPct,
+    latestStage1Score: latestS1,
+    latestStage2Score: latestS2,
+    latestStage3Score: latestS3,
+    latestStage4Score: latestS4,
+    latestTotalScore,
+    latestAccuracyPct,
+    completedStagesMask,
+    attemptsCount: (existing?.attemptsCount ?? 0) + 1,
+    needsRevalidation: false,
+    firstCompletedAt,
+    lastPracticedAt: now
+  };
+}
+
+// server/routes/essential-vocabulary.routes.ts
+var bookIdSchema = external_exports.enum(["evc-1", "evc-2", "evc-3", "evc-4", "evc-5", "evc-6"]);
+var bookmarkToggleSchema = external_exports.object({
+  bookId: bookIdSchema.default("evc-5"),
+  unitId: external_exports.string().min(1).max(32),
+  entryId: external_exports.string().min(1).max(64),
+  senseNumber: external_exports.number().int().min(1).max(10).default(1),
+  headword: external_exports.string().min(1).max(120),
+  pos: external_exports.string().min(1).max(64),
+  ipa: external_exports.string().max(120).optional(),
+  meaningVi: external_exports.string().min(1),
+  definitionEn: external_exports.string().min(1),
+  exampleEn: external_exports.string().min(1),
+  inflectionsText: external_exports.string().optional(),
+  sourceContext: external_exports.enum(["glossary", "stage_1", "stage_2", "stage_3", "stage_4"]).default("glossary")
+});
+var reviewSubmitSchema3 = external_exports.object({
+  rating: external_exports.enum(["AGAIN", "HARD", "GOOD", "EASY"]).optional(),
+  isCorrect: external_exports.boolean().optional(),
+  latencyMs: external_exports.number().int().nonnegative().optional()
+});
+var submitAttemptSchema = external_exports.object({
+  bookId: bookIdSchema.default("evc-5"),
+  unitId: external_exports.string().min(1).max(32),
+  contentVersion: external_exports.number().int().min(1).default(1),
+  stage: external_exports.union([external_exports.literal(1), external_exports.literal(2), external_exports.literal(3), external_exports.literal(4)]),
+  mode: external_exports.enum(["assisted", "hard"]).default("assisted"),
+  score: external_exports.number().int().min(0).max(50),
+  maxScore: external_exports.number().int().min(1).max(50),
+  stageMaxScores: external_exports.object({
+    stage1: external_exports.number().int().min(1).max(20).default(10),
+    stage2: external_exports.number().int().min(1).max(20).default(5),
+    stage3: external_exports.number().int().min(1).max(20).default(5),
+    stage4: external_exports.number().int().min(1).max(20).default(10)
+  }).default({ stage1: 10, stage2: 5, stage3: 5, stage4: 10 }),
+  durationSec: external_exports.number().int().min(0).default(0),
+  clientAttemptKey: external_exports.string().min(4).max(128).optional(),
+  answersSnapshot: external_exports.array(
+    external_exports.object({
+      itemId: external_exports.string().min(1),
+      submittedValue: external_exports.union([external_exports.string(), external_exports.number()]),
+      isCorrect: external_exports.boolean(),
+      matchTier: external_exports.string().optional(),
+      canonicalAnswer: external_exports.string()
+    })
+  ).default([]),
+  wrongEntryIds: external_exports.array(external_exports.string()).default([])
+});
+var syncGuestDataSchema = external_exports.object({
+  bookmarks: external_exports.array(bookmarkToggleSchema).max(500).default([]),
+  attempts: external_exports.array(submitAttemptSchema).max(200).default([])
+});
+var essentialVocabularyRoutes = async (fastify) => {
+  fastify.get(
+    "/progress",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const query = request.query;
+      const bookId = query?.bookId || "evc-5";
+      const units = await fastify.prisma.essentialVocabUnitProgress.findMany({
+        where: { userId, bookId },
+        orderBy: { updatedAt: "desc" }
+      });
+      const recentAttempts = await fastify.prisma.essentialVocabAttempt.findMany({
+        where: { userId, bookId },
+        orderBy: { submittedAt: "desc" },
+        take: 25
+      });
+      const completedUnitsCount = units.filter(
+        (u) => (u.completedStagesMask & 15) === 15
+      ).length;
+      const startedUnitsCount = units.length;
+      const totalBestScore = units.reduce((acc, u) => acc + u.bestTotalScore, 0);
+      const totalMaxPossible = units.reduce((acc, u) => acc + u.totalMaxScore, 0);
+      const overallBestAccuracyPct = totalMaxPossible > 0 ? Math.round(totalBestScore / totalMaxPossible * 1e3) / 10 : 0;
+      return reply.send({
+        status: "success",
+        data: {
+          units,
+          recentAttempts,
+          summary: {
+            bookId,
+            startedUnitsCount,
+            completedUnitsCount,
+            totalBestScore,
+            totalMaxPossible,
+            overallBestAccuracyPct
+          }
+        }
+      });
+    }
+  );
+  fastify.get(
+    "/progress/:unitId",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const { unitId } = request.params;
+      const query = request.query;
+      const limit = Math.min(50, Math.max(1, Number(query?.limit) || 20));
+      const progress = await fastify.prisma.essentialVocabUnitProgress.findUnique({
+        where: {
+          userId_unitId: { userId, unitId }
+        }
+      });
+      const attempts = await fastify.prisma.essentialVocabAttempt.findMany({
+        where: { userId, unitId },
+        orderBy: { submittedAt: "desc" },
+        take: limit
+      });
+      return reply.send({
+        status: "success",
+        data: {
+          progress,
+          attempts
+        }
+      });
+    }
+  );
+  fastify.post(
+    "/attempts",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const parsed = submitAttemptSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          status: "error",
+          error: "VALIDATION_ERROR",
+          message: "D\u1EEF li\u1EC7u n\u1ED9p b\xE0i kh\xF4ng h\u1EE3p l\u1EC7",
+          details: parsed.error.flatten()
+        });
+      }
+      const payload = parsed.data;
+      if (payload.clientAttemptKey) {
+        const existingAttempt = await fastify.prisma.essentialVocabAttempt.findUnique({
+          where: { clientAttemptKey: payload.clientAttemptKey },
+          include: { progress: true }
+        });
+        if (existingAttempt && existingAttempt.userId === userId) {
+          return reply.send({
+            status: "success",
+            data: {
+              progress: existingAttempt.progress,
+              attempt: existingAttempt,
+              deduplicated: true
+            }
+          });
+        }
+      }
+      const result = await fastify.prisma.$transaction(async (tx) => {
+        const existingProgress = await tx.essentialVocabUnitProgress.findUnique({
+          where: {
+            userId_unitId: { userId, unitId: payload.unitId }
+          }
+        });
+        const reconciled = reconcileStageAttempt(existingProgress, {
+          stage: payload.stage,
+          score: payload.score,
+          maxScore: payload.maxScore,
+          contentVersion: payload.contentVersion,
+          stageMaxScores: {
+            stage1: payload.stageMaxScores?.stage1 ?? 10,
+            stage2: payload.stageMaxScores?.stage2 ?? 5,
+            stage3: payload.stageMaxScores?.stage3 ?? 5,
+            stage4: payload.stageMaxScores?.stage4 ?? 10
+          }
+        });
+        const progress = existingProgress ? await tx.essentialVocabUnitProgress.update({
+          where: { id: existingProgress.id },
+          data: reconciled
+        }) : await tx.essentialVocabUnitProgress.create({
+          data: {
+            userId,
+            bookId: payload.bookId,
+            unitId: payload.unitId,
+            ...reconciled
+          }
+        });
+        const accuracyPct = payload.maxScore > 0 ? Math.round(payload.score / payload.maxScore * 1e3) / 10 : 0;
+        const attempt = await tx.essentialVocabAttempt.create({
+          data: {
+            progressId: progress.id,
+            userId,
+            bookId: payload.bookId,
+            unitId: payload.unitId,
+            contentVersion: payload.contentVersion,
+            stage: payload.stage,
+            mode: payload.mode,
+            score: payload.score,
+            maxScore: payload.maxScore,
+            accuracyPct,
+            durationSec: payload.durationSec,
+            answersSnapshot: payload.answersSnapshot,
+            wrongEntryIds: payload.wrongEntryIds,
+            clientAttemptKey: payload.clientAttemptKey
+          }
+        });
+        return { progress, attempt };
+      });
+      return reply.send({
+        status: "success",
+        data: result
+      });
+    }
+  );
+  fastify.get(
+    "/bookmarks",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const query = request.query;
+      const items = await fastify.prisma.essentialVocabBookmark.findMany({
+        where: {
+          userId,
+          ...query?.bookId ? { bookId: query.bookId } : {},
+          ...query?.unitId ? { unitId: query.unitId } : {},
+          ...query?.dueOnly === "true" ? { nextReviewAt: { lte: /* @__PURE__ */ new Date() } } : {}
+        },
+        orderBy: [{ nextReviewAt: "asc" }, { updatedAt: "desc" }]
+      });
+      return reply.send({
+        status: "success",
+        data: {
+          items,
+          count: items.length
+        }
+      });
+    }
+  );
+  fastify.post(
+    "/bookmarks/toggle",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const parsed = bookmarkToggleSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          status: "error",
+          error: "VALIDATION_ERROR",
+          message: "D\u1EEF li\u1EC7u t\u1EEB v\u1EF1ng kh\xF4ng h\u1EE3p l\u1EC7",
+          details: parsed.error.flatten()
+        });
+      }
+      const item = parsed.data;
+      const existing = await fastify.prisma.essentialVocabBookmark.findUnique({
+        where: {
+          userId_unitId_entryId_senseNumber: {
+            userId,
+            unitId: item.unitId,
+            entryId: item.entryId,
+            senseNumber: item.senseNumber
+          }
+        }
+      });
+      if (existing) {
+        await fastify.prisma.essentialVocabBookmark.delete({
+          where: { id: existing.id }
+        });
+        return reply.send({
+          status: "success",
+          action: "removed",
+          data: {
+            id: existing.id,
+            unitId: item.unitId,
+            entryId: item.entryId,
+            senseNumber: item.senseNumber
+          }
+        });
+      }
+      const created = await fastify.prisma.essentialVocabBookmark.create({
+        data: {
+          userId,
+          bookId: item.bookId,
+          unitId: item.unitId,
+          entryId: item.entryId,
+          senseNumber: item.senseNumber,
+          headword: item.headword,
+          pos: item.pos,
+          ipa: item.ipa,
+          meaningVi: item.meaningVi,
+          definitionEn: item.definitionEn,
+          exampleEn: item.exampleEn,
+          inflectionsText: item.inflectionsText,
+          sourceContext: item.sourceContext,
+          masteryState: 0,
+          masteryScore: 0.1,
+          intervalDays: 1,
+          easeFactor: 2.5,
+          nextReviewAt: /* @__PURE__ */ new Date(),
+          totalReviews: 0,
+          failedReviews: 0,
+          history: []
+        }
+      });
+      return reply.send({
+        status: "success",
+        action: "added",
+        data: created
+      });
+    }
+  );
+  fastify.post(
+    "/bookmarks/:id/review",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const { id } = request.params;
+      const parsed = reviewSubmitSchema3.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          status: "error",
+          error: "VALIDATION_ERROR",
+          message: "D\u1EEF li\u1EC7u \xF4n t\u1EADp kh\xF4ng h\u1EE3p l\u1EC7",
+          details: parsed.error.flatten()
+        });
+      }
+      const record = await fastify.prisma.essentialVocabBookmark.findFirst({
+        where: { id, userId }
+      });
+      if (!record) {
+        return reply.status(404).send({
+          status: "error",
+          message: "Kh\xF4ng t\xECm th\u1EA5y t\u1EEB v\u1EF1ng c\u1EA7n \xF4n t\u1EADp"
+        });
+      }
+      const nextSm2 = calculateSm2Transition(
+        {
+          intervalDays: record.intervalDays,
+          easeFactor: record.easeFactor,
+          masteryState: record.masteryState,
+          masteryScore: record.masteryScore,
+          totalReviews: record.totalReviews,
+          failedReviews: record.failedReviews,
+          history: record.history
+        },
+        {
+          rating: parsed.data.rating,
+          isCorrect: parsed.data.isCorrect,
+          latencyMs: parsed.data.latencyMs
+        }
+      );
+      const updated = await fastify.prisma.essentialVocabBookmark.update({
+        where: { id: record.id },
+        data: {
+          intervalDays: nextSm2.intervalDays,
+          easeFactor: nextSm2.easeFactor,
+          masteryState: nextSm2.masteryState,
+          masteryScore: nextSm2.masteryScore,
+          nextReviewAt: nextSm2.nextReviewAt,
+          totalReviews: nextSm2.totalReviews,
+          failedReviews: nextSm2.failedReviews,
+          history: nextSm2.history
+        }
+      });
+      return reply.send({
+        status: "success",
+        data: updated
+      });
+    }
+  );
+  fastify.post(
+    "/sync",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const parsed = syncGuestDataSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          status: "error",
+          error: "VALIDATION_ERROR",
+          message: "D\u1EEF li\u1EC7u \u0111\u1ED3ng b\u1ED9 kh\xF4ng h\u1EE3p l\u1EC7",
+          details: parsed.error.flatten()
+        });
+      }
+      const { bookmarks, attempts } = parsed.data;
+      let syncedBookmarks = 0;
+      let syncedAttempts = 0;
+      await fastify.prisma.$transaction(async (tx) => {
+        for (const item of bookmarks) {
+          const existing = await tx.essentialVocabBookmark.findUnique({
+            where: {
+              userId_unitId_entryId_senseNumber: {
+                userId,
+                unitId: item.unitId,
+                entryId: item.entryId,
+                senseNumber: item.senseNumber
+              }
+            }
+          });
+          if (!existing) {
+            await tx.essentialVocabBookmark.create({
+              data: {
+                userId,
+                bookId: item.bookId,
+                unitId: item.unitId,
+                entryId: item.entryId,
+                senseNumber: item.senseNumber,
+                headword: item.headword,
+                pos: item.pos,
+                ipa: item.ipa,
+                meaningVi: item.meaningVi,
+                definitionEn: item.definitionEn,
+                exampleEn: item.exampleEn,
+                inflectionsText: item.inflectionsText,
+                sourceContext: item.sourceContext,
+                masteryState: 0,
+                masteryScore: 0.1,
+                intervalDays: 1,
+                easeFactor: 2.5,
+                nextReviewAt: /* @__PURE__ */ new Date(),
+                totalReviews: 0,
+                failedReviews: 0,
+                history: []
+              }
+            });
+            syncedBookmarks++;
+          }
+        }
+        for (const att of attempts) {
+          if (att.clientAttemptKey) {
+            const dup = await tx.essentialVocabAttempt.findUnique({
+              where: { clientAttemptKey: att.clientAttemptKey }
+            });
+            if (dup) continue;
+          }
+          const existingProgress = await tx.essentialVocabUnitProgress.findUnique({
+            where: {
+              userId_unitId: { userId, unitId: att.unitId }
+            }
+          });
+          const reconciled = reconcileStageAttempt(existingProgress, {
+            stage: att.stage,
+            score: att.score,
+            maxScore: att.maxScore,
+            contentVersion: att.contentVersion,
+            stageMaxScores: {
+              stage1: att.stageMaxScores?.stage1 ?? 10,
+              stage2: att.stageMaxScores?.stage2 ?? 5,
+              stage3: att.stageMaxScores?.stage3 ?? 5,
+              stage4: att.stageMaxScores?.stage4 ?? 10
+            }
+          });
+          const progress = existingProgress ? await tx.essentialVocabUnitProgress.update({
+            where: { id: existingProgress.id },
+            data: reconciled
+          }) : await tx.essentialVocabUnitProgress.create({
+            data: {
+              userId,
+              bookId: att.bookId,
+              unitId: att.unitId,
+              ...reconciled
+            }
+          });
+          const accuracyPct = att.maxScore > 0 ? Math.round(att.score / att.maxScore * 1e3) / 10 : 0;
+          await tx.essentialVocabAttempt.create({
+            data: {
+              progressId: progress.id,
+              userId,
+              bookId: att.bookId,
+              unitId: att.unitId,
+              contentVersion: att.contentVersion,
+              stage: att.stage,
+              mode: att.mode,
+              score: att.score,
+              maxScore: att.maxScore,
+              accuracyPct,
+              durationSec: att.durationSec,
+              answersSnapshot: att.answersSnapshot,
+              wrongEntryIds: att.wrongEntryIds,
+              clientAttemptKey: att.clientAttemptKey
+            }
+          });
+          syncedAttempts++;
+        }
+      });
+      return reply.send({
+        status: "success",
+        data: {
+          syncedBookmarks,
+          syncedAttempts
+        }
+      });
+    }
+  );
+};
+var essential_vocabulary_routes_default = essentialVocabularyRoutes;
+
 // server/routes/teacher-profile.routes.ts
 var teacherProfileRoutes = async (fastify) => {
   fastify.get(
@@ -148458,6 +149398,8 @@ var routes = async (fastify) => {
   await fastify.register(tuitionRoutes, { prefix: "/admin/tuition" });
   await fastify.register(milestoneRoutes, { prefix: "/milestones" });
   await fastify.register(lexicon_routes_default, { prefix: "/lexicon" });
+  await fastify.register(vocab_in_use_routes_default, { prefix: "/vocab-in-use" });
+  await fastify.register(essential_vocabulary_routes_default, { prefix: "/essential-vocabulary" });
   await fastify.register(teacher_profile_routes_default, { prefix: "/teacher-profile" });
   await fastify.register(cron_routes_default, { prefix: "/cron" });
   await fastify.register(parent_reports_routes_default);
