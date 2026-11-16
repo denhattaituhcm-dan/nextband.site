@@ -1,9 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { EvcUnitDataSchema } from "../../../data/essentialVocab/schema";
 import { EVC5_UNIT01_DATA } from "../../../data/essentialVocab/books/evc5/unit01.looking-good";
+import { EVC5_UNIT02_DATA } from "../../../data/essentialVocab/books/evc5/unit02.personality-and-behaviour";
+import { EVC5_UNIT03_DATA } from "../../../data/essentialVocab/books/evc5/unit03.bad-feelings";
+import { EVC5_UNIT04_DATA } from "../../../data/essentialVocab/books/evc5/unit04.good-feelings";
+import { EVC5_UNIT05_DATA } from "../../../data/essentialVocab/books/evc5/unit05.communication";
 import {
   resolveEvcUnitId,
   getEvcUnitSummary,
+  loadEvcUnit,
 } from "../../../data/essentialVocab/registry";
 import { evaluateOpenClozeBlank } from "../answerNormalizer";
 import {
@@ -215,5 +220,53 @@ describe("Essential Vocabulary in Context — Schema, Grader & Progress Engine",
     expect(afterAgain.intervalDays).toBe(1);
     expect(afterAgain.failedReviews).toBe(1);
     expect(afterAgain.easeFactor).toBe(2.3);
+  });
+
+  it("validates Units 2, 3, 4, and 5 (120 additional questions, inline_four_option & box_word_bank variants, compound POS)", async () => {
+    const units = [
+      EVC5_UNIT02_DATA,
+      EVC5_UNIT03_DATA,
+      EVC5_UNIT04_DATA,
+      EVC5_UNIT05_DATA,
+    ];
+
+    for (const u of units) {
+      const parsed = EvcUnitDataSchema.parse(u);
+      expect(parsed.exercises.stage1.questions.length).toBe(10);
+      expect(parsed.exercises.stage2.questions.length).toBe(5);
+      expect(parsed.exercises.stage3.blanks.length).toBe(5);
+      expect(parsed.exercises.stage4.blanks.length).toBe(10);
+
+      const validEntryIds = new Set(parsed.glossary.map((g) => g.entryId));
+      for (const q of parsed.exercises.stage1.questions) {
+        expect(validEntryIds.has(q.linkedEntryId)).toBe(true);
+      }
+      for (const q of parsed.exercises.stage2.questions) {
+        expect(validEntryIds.has(q.answerLinkedEntryId)).toBe(true);
+      }
+      for (const b of parsed.exercises.stage3.blanks) {
+        expect(validEntryIds.has(b.linkedEntryId)).toBe(true);
+      }
+      for (const b of parsed.exercises.stage4.blanks) {
+        expect(validEntryIds.has(b.linkedEntryId)).toBe(true);
+      }
+    }
+
+    // Verify inline_four_option grading on Unit 2 Stage 3 (1:4, 2:3, 3:2, 4:3, 5:1)
+    const u2s3 = gradeStage3Exercise(EVC5_UNIT02_DATA.exercises.stage3, {
+      "evc5-u02-s3-b01": 4,
+      "evc5-u02-s3-b02": 3,
+      "evc5-u02-s3-b03": 2,
+      "evc5-u02-s3-b04": 3,
+      "evc5-u02-s3-b05": 1,
+    });
+    expect(u2s3.score).toBe(5);
+
+    // Verify lazy loader resolves Units 1..5
+    for (const slug of ["1", "2", "3", "4", "5"]) {
+      const loaded = await loadEvcUnit(slug);
+      expect(loaded).not.toBeNull();
+      expect(loaded?.unitNumber).toBe(Number(slug));
+    }
   });
 });

@@ -1133,6 +1133,64 @@ export default function ReadingUniversePage() {
             ))}
           </div>
         </section>
+
+        {/* Digitized Essential Vocabulary in Context 5 Shelf Section */}
+        <section className="rounded-3xl bg-white border border-[#E5DCCD] p-6 sm:p-9 shadow-sm space-y-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#F2ECE2] pb-5">
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono uppercase tracking-wider bg-indigo-50 text-indigo-700 font-semibold">
+                <Sparkles className="h-3.5 w-3.5" />
+                Tủ sách Số hóa · 4-Stage Contextual Mastery
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl text-[#241F1C]">
+                Essential Vocabulary in Context 5 (20 Units)
+              </h2>
+              <p className="text-sm sm:text-base text-[#4E453E] max-w-2xl font-light leading-relaxed">
+                Hệ thống học từ vựng theo chủ đề qua <strong>Glossary đa nghĩa</strong> và <strong>4 cấp độ bài tập thực hành</strong> (Contextual MCQ → Synonym Replacement → Guided Cloze → Open Cloze) tích hợp Sổ từ SM-2.
+              </p>
+            </div>
+            <Link
+              to="/essential-vocabulary"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold tracking-wide transition shadow-sm shrink-0 self-start md:self-auto"
+            >
+              <BookOpen className="h-4 w-4 text-indigo-100" />
+              <span>Mở Hub 20 Units</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {[
+              { id: "evc5-u01", num: 1, title: "Looking good", vi: "Thời trang, trang sức & diện mạo", words: 32 },
+              { id: "evc5-u02", num: 2, title: "Personality and behaviour", vi: "Tính cách & hành vi ứng xử", words: 29 },
+              { id: "evc5-u03", num: 3, title: "Bad feelings", vi: "Cảm xúc tiêu cực & tâm trạng", words: 29 },
+              { id: "evc5-u04", num: 4, title: "Good feelings", vi: "Cảm xúc tích cực & niềm vui", words: 29 },
+              { id: "evc5-u05", num: 5, title: "Communication", vi: "Giao tiếp, ngôn ngữ & tín hiệu", words: 30 },
+            ].map((u) => (
+              <Link
+                key={u.id}
+                to={`/essential-vocabulary/unit/${u.id}`}
+                className="group rounded-2xl border border-[#EAE3D9] bg-[#FAF7F2]/60 hover:bg-white hover:border-indigo-400 hover:shadow-md transition-all p-4 flex flex-col justify-between space-y-3"
+              >
+                <div className="space-y-1.5">
+                  <span className="inline-block px-2 py-0.5 rounded bg-indigo-600 text-white text-[11px] font-mono font-bold">
+                    UNIT {u.num}
+                  </span>
+                  <h3 className="font-serif text-base font-bold text-[#1F1A17] group-hover:text-indigo-600 transition-colors leading-snug">
+                    {u.title}
+                  </h3>
+                  <p className="text-xs text-[#574D44]">{u.vi}</p>
+                </div>
+                <div className="pt-2 border-t border-[#EAE3D9] flex items-center justify-between text-xs">
+                  <span className="text-[#574D44]">{u.words} mục từ · 30 câu</span>
+                  <span className="font-semibold text-indigo-600 inline-flex items-center gap-0.5">
+                    Học <ArrowRight className="h-3 w-3" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       </main>
 
       {/* Footer Note */}

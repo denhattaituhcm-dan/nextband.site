@@ -485,7 +485,8 @@ export const EssentialVocabUnitPage: React.FC = () => {
             <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-base font-bold text-slate-900">
-                  Bảng từ vựng ngữ cảnh (32 mục từ · 33 headwords)
+                  Bảng từ vựng ngữ cảnh ({unitData.glossary.length} mục từ ·{" "}
+                  {unitSummary?.headwordCount ?? unitData.glossary.length} headwords)
                 </h2>
                 <p className="text-xs text-slate-500">
                   Đọc kỹ định nghĩa, từ loại, biến thể chia từ và ví dụ trước khi bước
@@ -1420,6 +1421,37 @@ export const EssentialVocabUnitPage: React.FC = () => {
             )}
           </div>
         )}
+
+        {/* Quick Unit Switcher Footer (Units 1-5) */}
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="text-xs font-bold text-slate-600">
+            Chuyển nhanh giữa các Unit đã mở (Book 5):
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { id: "evc5-u01", num: 1, title: "Looking good" },
+              { id: "evc5-u02", num: 2, title: "Personality & behaviour" },
+              { id: "evc5-u03", num: 3, title: "Bad feelings" },
+              { id: "evc5-u04", num: 4, title: "Good feelings" },
+              { id: "evc5-u05", num: 5, title: "Communication" },
+            ].map((u) => {
+              const active = u.id === unitData.unitId;
+              return (
+                <Link
+                  key={u.id}
+                  to={`/essential-vocabulary/unit/${u.id}/${activeTab}`}
+                  className={`rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                    active
+                      ? "border-indigo-600 bg-indigo-600 text-white"
+                      : "border-slate-200 bg-slate-50 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50"
+                  }`}
+                >
+                  U{u.num}: {u.title}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </main>
     </div>
   );
