@@ -5,6 +5,11 @@ import { EVC5_UNIT02_DATA } from "../../../data/essentialVocab/books/evc5/unit02
 import { EVC5_UNIT03_DATA } from "../../../data/essentialVocab/books/evc5/unit03.bad-feelings";
 import { EVC5_UNIT04_DATA } from "../../../data/essentialVocab/books/evc5/unit04.good-feelings";
 import { EVC5_UNIT05_DATA } from "../../../data/essentialVocab/books/evc5/unit05.communication";
+import { EVC5_UNIT06_DATA } from "../../../data/essentialVocab/books/evc5/unit06.getting-on-with-other-people";
+import { EVC5_UNIT07_DATA } from "../../../data/essentialVocab/books/evc5/unit07.illness-and-disease";
+import { EVC5_UNIT08_DATA } from "../../../data/essentialVocab/books/evc5/unit08.keeping-fit-and-healthy";
+import { EVC5_UNIT09_DATA } from "../../../data/essentialVocab/books/evc5/unit09.at-the-dentists";
+import { EVC5_UNIT10_DATA } from "../../../data/essentialVocab/books/evc5/unit10.accidents-and-emergencies";
 import {
   resolveEvcUnitId,
   getEvcUnitSummary,
@@ -222,12 +227,17 @@ describe("Essential Vocabulary in Context — Schema, Grader & Progress Engine",
     expect(afterAgain.easeFactor).toBe(2.3);
   });
 
-  it("validates Units 2, 3, 4, and 5 (120 additional questions, inline_four_option & box_word_bank variants, compound POS)", async () => {
+  it("validates Units 2, 3, 4, 5, 6, 7, 8, 9, and 10 (270 total questions, inline_four_option & box_word_bank variants, verified answer keys)", async () => {
     const units = [
       EVC5_UNIT02_DATA,
       EVC5_UNIT03_DATA,
       EVC5_UNIT04_DATA,
       EVC5_UNIT05_DATA,
+      EVC5_UNIT06_DATA,
+      EVC5_UNIT07_DATA,
+      EVC5_UNIT08_DATA,
+      EVC5_UNIT09_DATA,
+      EVC5_UNIT10_DATA,
     ];
 
     for (const u of units) {
@@ -262,8 +272,28 @@ describe("Essential Vocabulary in Context — Schema, Grader & Progress Engine",
     });
     expect(u2s3.score).toBe(5);
 
-    // Verify lazy loader resolves Units 1..5
-    for (const slug of ["1", "2", "3", "4", "5"]) {
+    // Verify box_word_bank grading on Unit 7 Stage 3 (1:B, 2:D, 3:F, 4:H, 5:J)
+    const u7s3 = gradeStage3Exercise(EVC5_UNIT07_DATA.exercises.stage3, {
+      "evc5-u07-s3-b01": "B",
+      "evc5-u07-s3-b02": "D",
+      "evc5-u07-s3-b03": "F",
+      "evc5-u07-s3-b04": "H",
+      "evc5-u07-s3-b05": "J",
+    });
+    expect(u7s3.score).toBe(5);
+
+    // Verify inline_four_option grading on Unit 10 Stage 3 (1:4, 2:1, 3:2, 4:3, 5:2)
+    const u10s3 = gradeStage3Exercise(EVC5_UNIT10_DATA.exercises.stage3, {
+      "evc5-u10-s3-b01": 4,
+      "evc5-u10-s3-b02": 1,
+      "evc5-u10-s3-b03": 2,
+      "evc5-u10-s3-b04": 3,
+      "evc5-u10-s3-b05": 2,
+    });
+    expect(u10s3.score).toBe(5);
+
+    // Verify lazy loader resolves Units 1..10
+    for (const slug of ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]) {
       const loaded = await loadEvcUnit(slug);
       expect(loaded).not.toBeNull();
       expect(loaded?.unitNumber).toBe(Number(slug));

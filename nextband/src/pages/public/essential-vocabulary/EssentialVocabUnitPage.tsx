@@ -1434,6 +1434,11 @@ export const EssentialVocabUnitPage: React.FC = () => {
               { id: "evc5-u03", num: 3, title: "Bad feelings" },
               { id: "evc5-u04", num: 4, title: "Good feelings" },
               { id: "evc5-u05", num: 5, title: "Communication" },
+              { id: "evc5-u06", num: 6, title: "Getting on with people" },
+              { id: "evc5-u07", num: 7, title: "Illness and disease" },
+              { id: "evc5-u08", num: 8, title: "Keeping fit & healthy" },
+              { id: "evc5-u09", num: 9, title: "At the dentist's" },
+              { id: "evc5-u10", num: 10, title: "Accidents & emergencies" },
             ].map((u) => {
               const active = u.id === unitData.unitId;
               return (
