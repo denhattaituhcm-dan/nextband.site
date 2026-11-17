@@ -1488,6 +1488,54 @@
         </div>
       </section>
 
+      <!-- ========================================================
+           CHƯƠNG 7: NGUYÊN TỐ NHÓM HALOGEN
+           ======================================================== -->
+      <section class="chapter-block" style="margin-top: 48px;">
+        <div class="chapter-header-strip">
+          <span class="chap-badge">Chương 7</span>
+          <div>
+            <h2 class="chap-title">Nguyên Tố Nhóm Halogen</h2>
+            <p class="chap-desc">Đơn chất nhóm VIIA (F₂, Cl₂, Br₂, I₂), tương tác Van der Waals, tính chất hoá học đặc trưng, hydrogen halide và muối halide.</p>
+          </div>
+          <span class="chap-progress-pill">Bài 21 • Chương 7</span>
+        </div>
+
+        <div class="cards-grid">
+          <!-- Bài 21: Nhóm Halogen -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <!-- 4 lọ halogen F2, Cl2, Br2, I2 -->
+                <rect x="25" y="20" width="28" height="50" rx="4" fill="#fef9c3" stroke="#facc15" stroke-width="1.5"/>
+                <text x="39" y="50" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#854d0e" text-anchor="middle">F₂</text>
+                
+                <rect x="75" y="20" width="28" height="50" rx="4" fill="#dcfce7" stroke="#4ade80" stroke-width="1.5"/>
+                <text x="89" y="50" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#166534" text-anchor="middle">Cl₂</text>
+                
+                <rect x="125" y="20" width="28" height="50" rx="4" fill="#fed7aa" stroke="#f97316" stroke-width="1.5"/>
+                <text x="139" y="50" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#9a3412" text-anchor="middle">Br₂</text>
+                
+                <rect x="175" y="20" width="28" height="50" rx="4" fill="#ede9fe" stroke="#a855f7" stroke-width="1.5"/>
+                <text x="189" y="50" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#6b21a8" text-anchor="middle">I₂</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status active">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 21: Nhóm Halogen</h3>
+                <p>Cấu tạo phân tử, trạng thái & màu sắc 4 đơn chất (F₂, Cl₂, Br₂, I₂), quy luật nhiệt độ sôi & Van der Waals, phản ứng oxi hoá kim loại, H₂ & thí nghiệm đẩy halogen.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b21')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
 
 
 
@@ -6624,6 +6672,265 @@
     </div>
   </div>
 
+
+  <!-- ========================================================
+       BÀI 21: NHÓM HALOGEN (NHÓM VIIA)
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM SGK TR. 104 - 112)
+       ======================================================== -->
+  <div id="view-studio-b21" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Topbar -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 7 • Bài 21</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Nhóm Halogen (Nhóm VIIA)</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 21 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b21-p1" class="tab-seg-btn active" onclick="switchPartB21('part1')">
+            <span>I. Trạng Thái Tự Nhiên & Tính Chất Vật Lí</span>
+          </button>
+          <button id="tab-btn-b21-p2" class="tab-seg-btn" onclick="switchPartB21('part2')">
+            <span>II. Tính Oxi Hoá Mạnh & Quy Luật Phản Ứng</span>
+          </button>
+          <button id="tab-btn-b21-p3" class="tab-seg-btn" onclick="switchPartB21('part3')">
+            <span>III. Tự Oxi Hoá – Khử & Điều Chế Chlorine</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: TRẠNG THÁI TỰ NHIÊN & TÍNH CHẤT VẬT LÍ -->
+          <div id="content-b21-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần I (SGK Trang 104 – 108)</h4>
+              <p>Nắm vững nguồn gốc tên gọi Halogen ("sinh ra muối"); trạng thái tự nhiên trong nước biển, mỏ muối và tuyến giáp; quy luật biến đổi trạng thái tập hợp (Khí ➔ Lỏng ➔ Rắn), màu sắc đậm dần và nhiệt độ nóng chảy, nhiệt độ sôi tăng dần theo tương tác Van der Waals.</p>
+            </div>
+
+            <div class="meta-citation">Mục I & III • SGK Trang 104 – 108</div>
+            <h3 class="section-title">Vị Trí, Cấu Tạo & Xu Hướng Vật Lí Nhóm VIIA</h3>
+            
+            <p><strong>1. Tên gọi & Trạng thái tự nhiên:</strong> Nhóm VIIA gồm các nguyên tố: <strong>Fluorine (F), Chlorine (Cl), Bromine (Br), Iodine (I)</strong>, và 2 nguyên tố phóng xạ Astatine (At), Tennessine (Ts). Do có tính hoạt động hoá học rất mạnh nên trong tự nhiên các halogen <em>chỉ tồn tại ở dạng hợp chất</em> (chủ yếu là muối halide $\text{NaCl}, \text{CaF}_2, \text{NaBr}, \text{NaI}$ trong nước biển).</p>
+
+            <div style="margin: 14px 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: center;">
+                <thead style="background: #f8fafc; font-weight: 700; color: #0f172a; border-bottom: 1.5px solid #cbd5e1;">
+                  <tr>
+                    <th style="padding: 8px;">Đơn chất</th>
+                    <th>Trạng thái (25°C)</th>
+                    <th>Màu sắc</th>
+                    <th>$t_\text{nc} (^\circ\text{C})$</th>
+                    <th>$t_\text{s} (^\circ\text{C})$</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px; font-weight: 700; color: #0284c7;">$\text{F}_2$</td>
+                    <td>Thể khí</td>
+                    <td>Vàng lục nhạt</td>
+                    <td>$-219.6$</td>
+                    <td>$-188.1$</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                    <td style="padding: 8px; font-weight: 700; color: #16a34a;">$\text{Cl}_2$</td>
+                    <td>Thể khí</td>
+                    <td>Vàng lục</td>
+                    <td>$-101.5$</td>
+                    <td>$-34.0$</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px; font-weight: 700; color: #ea580c;">$\text{Br}_2$</td>
+                    <td>Thể lỏng</td>
+                    <td>Đỏ nâu (dễ bay hơi)</td>
+                    <td>$-7.2$</td>
+                    <td>$58.8$</td>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    <td style="padding: 8px; font-weight: 700; color: #7c3aed;">$\text{I}_2$</td>
+                    <td>Thể rắn</td>
+                    <td>Tím đen (thăng hoa)</td>
+                    <td>$113.7$</td>
+                    <td>$184.3$</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="padding: 10px 14px; background: #eff6ff; border-left: 4px solid #3b82f6; font-size: 13px; color: #1e40af;">
+              <strong>Giải thích quy luật nhiệt độ tăng dần từ $\text{F}_2 \rightarrow \text{I}_2$:</strong> Khi đi từ fluorine đến iodine, phân tử khối tăng và số lượng electron trong phân tử tăng, làm cho <strong>tương tác Van der Waals giữa các phân tử $\text{X}_2$ tăng mạnh</strong>, dẫn đến nhiệt độ nóng chảy và nhiệt độ sôi tăng đều đặn.
+            </div>
+          </div>
+
+          <!-- PHẦN 2: TÍNH OXI HOÁ MẠNH & QUY LUẬT PHẢN ỨNG -->
+          <div id="content-b21-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần II (SGK Trang 108 – 111)</h4>
+              <p>Hiểu cấu hình electron lớp ngoài cùng $ns^2 np^5$ (7 electron hoá trị, thiếu 1e để đạt bát tử octet); quy luật giảm dần tính oxi hoá từ $\text{F}_2 \rightarrow \text{I}_2$; phản ứng với kim loại ($\text{Fe} \rightarrow \text{Fe}^{3+}$ khi gặp $\text{Cl}_2$), với $\text{H}_2$ và phản ứng đẩy muối halide.</p>
+            </div>
+
+            <div class="meta-citation">Mục IV • SGK Trang 108 – 111</div>
+            <h3 class="section-title">Xu Hướng Oxi Hoá Mạnh Giảm Dần ($\text{F}_2 > \text{Cl}_2 > \text{Br}_2 > \text{I}_2$)</h3>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin: 14px 0;">
+              <div style="padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;">
+                <strong style="color: #b91c1c; font-size: 13px;">1. Phản ứng với Kim loại (Tạo muối halide):</strong>
+                <p style="margin: 4px 0; font-size: 12.5px; color: #1e293b;">
+                  Chlorine oxi hoá sắt lên mức oxi hoá cao nhất (+3):
+                  $$2\text{Fe} + 3\text{Cl}_2 \xrightarrow{t^\circ} 2\text{FeCl}_3 \quad (\text{Khói màu nâu đỏ})$$
+                  Trong khi đó, Iodine yếu hơn chỉ oxi hoá sắt lên mức (+2): $\text{Fe} + \text{I}_2 \xrightarrow{t^\circ} \text{FeI}_2$.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
+                <strong style="color: #166534; font-size: 13px;">2. Phản ứng với Hydrogen ($\text{H}_2$):</strong>
+                <p style="margin: 4px 0; font-size: 12.5px; color: #1e293b;">
+                  Điều kiện phản ứng khắc nghiệt dần chứng tỏ tính oxi hoá suy giảm:
+                  <br/>• $\text{H}_2 + \text{F}_2 \rightarrow 2\text{HF}$ (Nổ ngay trong bóng tối, $-252^\circ\text{C}$).
+                  <br/>• $\text{H}_2 + \text{Cl}_2 \xrightarrow{\text{ánh sáng}} 2\text{HCl}$ (Nổ khi có ánh sáng).
+                  <br/>• $\text{H}_2 + \text{Br}_2 \xrightarrow{t^\circ \approx 400^\circ\text{C}} 2\text{HBr}$ (Cần đun nóng).
+                  <br/>• $\text{H}_2 + \text{I}_2 \xrightleftharpoons[t^\circ]{\text{Pt}} 2\text{HI}$ (Thuận nghịch, cần xúc tác Pt ở $350 - 500^\circ\text{C}$).
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;">
+                <strong style="color: #b45309; font-size: 13px;">3. Quy tắc đẩy muối Halide (Halogen mạnh đẩy halogen yếu):</strong>
+                <p style="margin: 4px 0; font-size: 12.5px; color: #1e293b;">
+                  $$\text{Cl}_2 + 2\text{NaBr} \rightarrow 2\text{NaCl} + \text{Br}_2 \quad (\text{Dung dịch chuyển sang màu vàng nâu})$$
+                  $$\text{Br}_2 + 2\text{NaI} \rightarrow 2\text{NaBr} + \text{I}_2 \quad (\text{Iodine sinh ra làm xanh hồ tinh bột})$$
+                  *Ứng dụng:* Dùng $\text{Cl}_2$ để chiết tách và sản xuất Bromine thương mại từ nước biển.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHẦN 3: TỰ OXI HOÁ - KHỬ & ĐIỀU CHẾ CHLORINE -->
+          <div id="content-b21-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần III (SGK Trang 110 – 112)</h4>
+              <p>Hiểu phản ứng tự oxi hoá – khử của Chlorine trong nước và dung dịch kiềm ($\text{NaOH} \rightarrow$ Nước Javel); nguyên tắc điều chế Chlorine trong phòng thí nghiệm ($\text{MnO}_2 + \text{HCl}$) và trong công nghiệp (điện phân dung dịch $\text{NaCl}$ có màng ngăn xốp).</p>
+            </div>
+
+            <div class="meta-citation">Mục IV & V • SGK Trang 110 – 112</div>
+            <h3 class="section-title">Phản Ứng Tự Oxi Hoá – Khử & Điều Chế $\text{Cl}_2$</h3>
+
+            <div style="padding: 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; margin: 12px 0;">
+              <strong style="color: #0f172a; font-size: 13px;">1. Tác dụng với Nước & Nước Javel (Tự oxi hoá – khử):</strong>
+              <p style="margin: 4px 0; font-size: 12.5px; color: #334155; line-height: 1.6;">
+                $\overset{0}{\text{Cl}_2} + \text{H}_2\text{O} \rightleftharpoons \text{H}\overset{-1}{\text{Cl}} + \text{H}\overset{+1}{\text{Cl}}\text{O}$<br/>
+                $\overset{0}{\text{Cl}_2} + 2\text{NaOH} \rightarrow \text{Na}\overset{-1}{\text{Cl}} + \text{Na}\overset{+1}{\text{Cl}}\text{O} + \text{H}_2\text{O} \quad (\text{Nước Javel})$<br/>
+                *Giải thích:* $\text{Cl}_2$ vừa đóng vai trò là chất oxi hoá (về $-1$), vừa là chất khử (lên $+1$). Axit $\text{HClO}$ và muối $\text{NaClO}$ có tính oxi hoá cực mạnh nên nước clo và nước Javel có khả năng <strong>tẩy màu và diệt khuẩn</strong> mạnh mẽ.
+              </p>
+            </div>
+
+            <div style="padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; margin: 12px 0;">
+              <strong style="color: #1e40af; font-size: 13px;">2. Phương pháp điều chế $\text{Cl}_2$:</strong>
+              <p style="margin: 4px 0; font-size: 12.5px; color: #1e293b; line-height: 1.6;">
+                • <strong>Trong phòng thí nghiệm:</strong> Dùng chất oxi hoá mạnh ($\text{MnO}_2, \text{KMnO}_4$) tác dụng với $\text{HCl}$ đặc:<br/>
+                $$\text{MnO}_2 + 4\text{HCl}(\text{đặc}) \xrightarrow{t^\circ} \text{MnCl}_2 + \text{Cl}_2\uparrow + 2\text{H}_2\text{O}$$
+                • <strong>Trong công nghiệp:</strong> Điện phân dung dịch $\text{NaCl}$ bão hoà có màng ngăn xốp:<br/>
+                $$2\text{NaCl} + 2\text{H}_2\text{O} \xrightarrow[\text{màng ngăn}]{\text{đpdd}} 2\text{NaOH} + \text{Cl}_2\uparrow + \text{H}_2\uparrow$$
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHỦ ĐỀ ĐANG HỌC</span>
+              <span class="hud-value highlight">Chương 7 • Nhóm Halogen</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">CÔNG CỤ LAB</span>
+              <span id="b21-hud-tool" class="hud-value" style="color: #0284c7;">Bảng Màu & Trạng Thái 4 Halogen</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">QUY LUẬT CỐT TỬ</span>
+              <span class="hud-value" style="color: #16a34a;">Tính oxi hoá: F₂ > Cl₂ > Br₂ > I₂</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1: Bộ 4 Lọ Đơn Chất Halogen Tương Tác 2.5D -->
+          <div id="panel-b21-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🧪 Bộ Lọ Khí & Tinh Thể 4 Halogen (F₂ - Cl₂ - Br₂ - I₂)</span>
+              <div style="font-size: 12px; color: #64748b;">Click từng lọ để xem thông số nhiệt động</div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b21HalogenCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Thí Nghiệm Đẩy Muối Halide (Displacement Reaction Simulator) -->
+          <div id="panel-b21-part2" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">⚡ Phòng Thí Nghiệm Ống Nghiệm: Đẩy Muối Halide</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 3px 0 0 0;">Chọn thuốc thử để quan sát màu sắc dung dịch biến đổi theo quy luật Halogen mạnh đẩy Halogen yếu.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+              <button class="btn-tool active" onclick="simB21Displacement('cl2_nabr')">Cl₂ + NaBr (Tạo Br₂ nâu)</button>
+              <button class="btn-tool" onclick="simB21Displacement('br2_nai')">Br₂ + NaI (Tạo I₂ tím)</button>
+              <button class="btn-tool" onclick="simB21Displacement('i2_starch')">I₂ + Hồ tinh bột (Xanh đặc trưng)</button>
+            </div>
+
+            <div id="b21-disp-result-card" style="padding: 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #cbd5e1; flex: 1;">
+              <!-- Render displacement step -->
+            </div>
+          </div>
+
+          <!-- PANEL 3: Mô Phỏng Thiết Bị Điều Chế Khí Chlorine Trong Phòng Thí Nghiệm -->
+          <div id="panel-b21-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">🏭 Mô Hình Hệ Thống Điều Chế & Thu Khí Cl₂</h4>
+              <p style="font-size: 12px; color: #64748b; margin: 3px 0 0 0;">Phương pháp đun nóng MnO₂ với HCl đặc và bình rửa khí NaCl, H₂SO₄ đặc.</p>
+            </div>
+
+            <div id="b21-prep-display-card" style="padding: 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #cbd5e1; flex: 1;">
+              <!-- Render preparation scheme -->
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b21-lab-status-tip">
+              💡 <em>Click vào từng lọ halogen để khám phá màu sắc, trạng thái và giải thích nhiệt độ sôi tăng dần.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB21InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -6633,7 +6940,7 @@
     function openLesson(lessonId) {
       activeLesson = lessonId;
       document.getElementById('view-dashboard').classList.remove('active');
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20', 'view-studio-b21'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -6739,7 +7046,16 @@
           if (typeof initB13InterLab === 'function') initB13InterLab();
           if (typeof initB13QuizArena === 'function') initB13QuizArena();
         }, 50);
-                                          } else if (lessonId === 'b20') {
+                                          } else if (lessonId === 'b21') {
+        const studioB21 = document.getElementById('view-studio-b21');
+        if (studioB21) studioB21.classList.add('active');
+        switchPartB21('part1');
+        setTimeout(() => {
+          if (typeof selectB21HalogenBottle === 'function') selectB21HalogenBottle('Cl2');
+          if (typeof initB21DisplacementSim === 'function') initB21DisplacementSim();
+          if (typeof initB21QuizArena === 'function') initB21QuizArena();
+        }, 50);
+      } else if (lessonId === 'b20') {
         const studioB20 = document.getElementById('view-studio-b20');
         if (studioB20) studioB20.classList.add('active');
         switchPartB20('part1');
@@ -6807,7 +7123,7 @@
     }
 
     function backToDashboard() {
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20', 'view-studio-b21'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -16239,6 +16555,325 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         updateB20ClozeStatus();
       } else {
         resetB20QuizArena();
+      }
+    }
+
+
+
+
+    /* ==========================================================
+       BÀI 21: NHÓM HALOGEN (NHÓM VIIA)
+       ========================================================== */
+    let currentPartB21 = 'part1';
+
+    function switchPartB21(partId) {
+      currentPartB21 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b21-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b21-' + p);
+        const panel = document.getElementById('panel-b21-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
+
+      const tip = document.getElementById('b21-lab-status-tip');
+      const hudTool = document.getElementById('b21-hud-tool');
+      if (tip) {
+        if (partId === 'part1') {
+          tip.innerHTML = '💡 <em>Click vào từng lọ halogen để khám phá màu sắc, trạng thái và giải thích nhiệt độ sôi tăng dần.</em>';
+          if (hudTool) hudTool.innerText = 'Bảng Màu & Trạng Thái 4 Halogen';
+          setTimeout(initB21HalogenJars, 50);
+        } else if (partId === 'part2') {
+          tip.innerHTML = '💡 <em>Thí nghiệm đẩy muối: Halogen mạnh đứng trước đẩy halogen yếu đứng sau ra khỏi dung dịch muối.</em>';
+          if (hudTool) hudTool.innerText = 'Đẩy Muối Halide';
+          setTimeout(() => { simB21Displacement('cl2_nabr'); }, 50);
+        } else {
+          tip.innerHTML = '💡 <em>Hệ thống điều chế Chlorine: Thu khí đẩy không khí ngửa bình và nút bông tẩm kiềm NaOH tránh độc.</em>';
+          if (hudTool) hudTool.innerText = 'Điều Chế Khí Cl₂';
+          setTimeout(initB21PrepScheme, 50);
+        }
+      }
+    }
+
+    // --- PART 1: 4 HALOGEN JARS 2.5D ---
+    let b21SelectedJar = 1; // 0: F2, 1: Cl2, 2: Br2, 3: I2
+    const b21JarsData = [
+      {
+        name: 'Fluorine (F₂)',
+        state: 'Khí • Vàng lục cực nhạt',
+        mp: '-219.6°C',
+        bp: '-188.1°C',
+        color: '#fef08a',
+        gasAlpha: 0.25,
+        desc: 'Chất khí cực độc, phản ứng mãnh liệt với mọi đơn chất (kể cả thuỷ tinh và nước ở nhiệt độ thường).'
+      },
+      {
+        name: 'Chlorine (Cl₂)',
+        state: 'Khí • Màu vàng lục đặc trưng',
+        mp: '-101.5°C',
+        bp: '-34.0°C',
+        color: '#84cc16',
+        gasAlpha: 0.6,
+        desc: 'Chất khí mùi hắc, nặng hơn không khí (d ≈ 2.5), tan vừa phải trong nước tạo nước clo tẩy màu.'
+      },
+      {
+        name: 'Bromine (Br₂)',
+        state: 'Lỏng • Màu đỏ nâu, bốc khói',
+        mp: '-7.2°C',
+        bp: '58.8°C',
+        color: '#c2410c',
+        gasAlpha: 0.85,
+        desc: 'Đơn chất phi kim duy nhất ở thể lỏng ở nhiệt độ thường, dễ bay hơi tạo hơi màu đỏ nâu rất độc.'
+      },
+      {
+        name: 'Iodine (I₂)',
+        state: 'Rắn • Tinh thể màu tím đen',
+        mp: '113.7°C',
+        bp: '184.3°C',
+        color: '#6b21a8',
+        gasAlpha: 0.95,
+        desc: 'Chất rắn có ánh kim, dễ thăng hoa khi đun nóng nhẹ tạo luồng hơi màu tím đậm tuyệt đẹp.'
+      }
+    ];
+
+    function initB21HalogenJars() {
+      const canvas = document.getElementById('b21HalogenCanvas');
+      if (!canvas) return;
+
+      canvas.removeEventListener('click', handleB21CanvasClick);
+      canvas.addEventListener('click', handleB21CanvasClick);
+
+      window.removeEventListener('resize', drawB21HalogenJars);
+      window.addEventListener('resize', drawB21HalogenJars);
+
+      drawB21HalogenJars();
+    }
+
+    function handleB21CanvasClick(e) {
+      const canvas = document.getElementById('b21HalogenCanvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const jarWidth = rect.width / 4;
+      const jarIndex = Math.floor(clickX / jarWidth);
+      if (jarIndex >= 0 && jarIndex < 4) {
+        b21SelectedJar = jarIndex;
+        drawB21HalogenJars();
+      }
+    }
+
+    function drawB21HalogenJars() {
+      const canvas = document.getElementById('b21HalogenCanvas');
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = (rect.width || 500) * dpr;
+      canvas.height = (rect.height || 420) * dpr;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      const cw = rect.width || 500;
+      const ch = rect.height || 420;
+
+      const jarSlot = cw / 4;
+      const jw = Math.min(jarSlot - 24, 76);
+      const jh = 160;
+      const jy = ch * 0.58;
+
+      for (let i = 0; i < 4; i++) {
+        const jx = i * jarSlot + jarSlot / 2;
+        const jar = b21JarsData[i];
+        const isSelected = (i === b21SelectedJar);
+
+        // Highlight active jar background
+        if (isSelected) {
+          ctx.save();
+          ctx.fillStyle = 'rgba(2, 132, 199, 0.08)';
+          ctx.beginPath();
+          ctx.roundRect(i * jarSlot + 4, 16, jarSlot - 8, ch - 32, 12);
+          ctx.fill();
+          ctx.strokeStyle = '#0284c7';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Jar glass body
+        ctx.save();
+        ctx.shadowColor = isSelected ? jar.color : 'rgba(0,0,0,0.06)';
+        ctx.shadowBlur = isSelected ? 16 : 6;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.beginPath();
+        ctx.roundRect(jx - jw/2, jy - jh, jw, jh, 12);
+        ctx.fill();
+        ctx.lineWidth = isSelected ? 3 : 2;
+        ctx.strokeStyle = isSelected ? '#0f172a' : '#94a3b8';
+        ctx.stroke();
+
+        // Contents inside
+        if (i === 0) { // F2 gas
+          ctx.fillStyle = 'rgba(254, 240, 138, 0.35)';
+          ctx.fillRect(jx - jw/2 + 2, jy - jh + 10, jw - 4, jh - 14);
+        } else if (i === 1) { // Cl2 gas
+          ctx.fillStyle = 'rgba(132, 204, 22, 0.5)';
+          ctx.fillRect(jx - jw/2 + 2, jy - jh + 10, jw - 4, jh - 14);
+        } else if (i === 2) { // Br2 liquid + vapor
+          // liquid bottom
+          ctx.fillStyle = '#9a3412';
+          ctx.fillRect(jx - jw/2 + 2, jy - 50, jw - 4, 48);
+          // vapor top
+          ctx.fillStyle = 'rgba(234, 88, 12, 0.45)';
+          ctx.fillRect(jx - jw/2 + 2, jy - jh + 10, jw - 4, jh - 60);
+        } else { // I2 solid crystals + light vapor
+          // crystals bottom
+          ctx.fillStyle = '#3b0764';
+          ctx.fillRect(jx - jw/2 + 2, jy - 40, jw - 4, 38);
+          // violet vapor
+          ctx.fillStyle = 'rgba(168, 85, 247, 0.25)';
+          ctx.fillRect(jx - jw/2 + 2, jy - jh + 10, jw - 4, jh - 50);
+        }
+
+        // Jar Cap
+        ctx.fillStyle = '#475569';
+        ctx.beginPath();
+        ctx.roundRect(jx - (jw - 16)/2, jy - jh - 12, jw - 16, 12, 4);
+        ctx.fill();
+        ctx.restore();
+
+        // Label Under Jar
+        ctx.fillStyle = isSelected ? '#0f172a' : '#475569';
+        ctx.font = isSelected ? 'bold 14px Plus Jakarta Sans, sans-serif' : '600 13px Plus Jakarta Sans, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(jar.name, jx, jy + 24);
+
+        ctx.font = '11.5px Plus Jakarta Sans, sans-serif';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText(jar.state.split('•')[0].trim(), jx, jy + 42);
+      }
+
+      // Selected info card at bottom
+      const sel = b21JarsData[b21SelectedJar];
+      const boxW = Math.min(cw - 32, 460);
+      const boxH = 72;
+      const bx = (cw - boxW) / 2;
+      const by = ch - boxH - 10;
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+      ctx.shadowColor = 'rgba(0,0,0,0.1)';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.roundRect(bx, by, boxW, boxH, 10);
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#0284c7';
+      ctx.stroke();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 13px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`${sel.name}: ${sel.state}`, bx + 14, by + 22);
+
+      ctx.fillStyle = '#0284c7';
+      ctx.font = 'bold 12px JetBrains Mono, monospace';
+      ctx.fillText(`Nhiệt độ nóng chảy: ${sel.mp} | Nhiệt độ sôi: ${sel.bp}`, bx + 14, by + 42);
+
+      ctx.fillStyle = '#475569';
+      ctx.font = '11.5px Plus Jakarta Sans, sans-serif';
+      ctx.fillText(sel.desc, bx + 14, by + 60);
+      ctx.restore();
+
+      ctx.restore();
+    }
+
+    // --- PART 2: HALIDE DISPLACEMENT EXPERIMENT ---
+    const b21DispData = {
+      'cl2_nabr': {
+        title: 'Thí nghiệm: Khí Cl₂ sục vào dung dịch NaBr không màu',
+        equation: 'Cl₂⁰ + 2NaBr⁻¹ → 2NaCl⁻¹ + Br₂⁰ (Dung dịch hoá vàng nâu)',
+        obs: 'Dung dịch ban đầu trong suốt chuyển dần sang màu vàng cam, rồi đỏ nâu do Bromine (Br₂) tự do được sinh ra.',
+        principle: 'Tính oxi hoá của Chlorine mạnh hơn Bromine (Cl₂ > Br₂) nên Cl₂ đã cướp electron của ion Br⁻.'
+      },
+      'br2_nai': {
+        title: 'Thí nghiệm: Nước Bromine (Br₂) nhỏ vào dung dịch NaI',
+        equation: 'Br₂⁰ + 2NaI⁻¹ → 2NaBr⁻¹ + I₂⁰ (Iodine tự do sinh ra)',
+        obs: 'Dung dịch chuyển từ không màu sang màu vàng sẫm / nâu đen của Iodine phân tán trong nước.',
+        principle: 'Tính oxi hoá của Bromine mạnh hơn Iodine (Br₂ > I₂) nên Br₂ đẩy được I⁻ ra khỏi muối iodide.'
+      },
+      'i2_starch': {
+        title: 'Thí nghiệm: Nhận biết Iodine bằng Hồ Tinh Bột',
+        equation: 'I₂ + Hồ tinh bột → Hợp chất bọc màu xanh tím đặc trưng',
+        obs: 'Khi nhỏ vài giọt dung dịch I₂ vào ống nghiệm chứa hồ tinh bột, xuất hiện màu xanh tím đậm tức thì.',
+        principle: 'Cấu trúc xoắn ốc của tinh bột giữ các phân tử I₂ tạo phức màu xanh tím (mất màu khi đun nóng, hiện lại khi nguội).'
+      }
+    };
+
+    function simB21Displacement(key) {
+      const item = b21DispData[key];
+      if (!item) return;
+
+      const card = document.getElementById('b21-disp-result-card');
+      if (!card) return;
+
+      card.innerHTML = `
+        <div style="border-bottom: 1.5px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 12px;">
+          <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">${item.title}</h3>
+          <div style="margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 700; color: #0284c7;">${item.equation}</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #334155; line-height: 1.6;">
+          <div><strong>👀 Hiện tượng quan sát:</strong> ${item.obs}</div>
+          <div style="padding: 10px; border-radius: 6px; background: #f0fdf4; border-left: 4px solid #16a34a; color: #166534; font-weight: 700;">
+            🛡️ Bản chất hoá học: ${item.principle}
+          </div>
+        </div>
+      `;
+    }
+
+    // --- PART 3: CHLORINE PREPARATION SCHEME ---
+    function initB21PrepScheme() {
+      const card = document.getElementById('b21-prep-display-card');
+      if (!card) return;
+
+      card.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13px; color: #334155; line-height: 1.6;">
+          <div style="padding: 12px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+            <strong style="color: #1e40af; font-size: 14px;">1. Phương trình phản ứng điều chế Cl₂ trong PTN:</strong>
+            <p style="margin: 4px 0 0 0; font-family: 'JetBrains Mono', monospace; color: #1d4ed8; font-weight: 700;">
+              MnO₂ + 4HCl (đặc) —t°→ MnCl₂ + Cl₂↑ + 2H₂O
+            </p>
+          </div>
+          <div style="padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <strong style="color: #0f172a;">2. Vai trò các bình trong hệ thống thu khí:</strong>
+            <ul style="margin: 6px 0 0 16px;">
+              <li><strong>Bình 1 (Chứa dd NaCl bão hoà):</strong> Hấp thụ và giữ lại khí HCl bay theo.</li>
+              <li><strong>Bình 2 (Chứa H₂SO₄ đặc):</strong> Giữ lại hơi nước để làm khô hoàn toàn khí Cl₂.</li>
+              <li><strong>Bình 3 (Thu khí Cl₂ khô):</strong> Đặt ngửa bình vì khí Cl₂ nặng hơn không khí (d = 71/29 ≈ 2.45).</li>
+              <li><strong>Nút bông tẩm kiềm (NaOH):</strong> Chặn miệng bình để hấp thụ Cl₂ dư, ngăn khí độc thoát ra môi trường (Cl₂ + 2NaOH → NaCl + NaClO + H₂O).</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    function resetB21InteractiveState() {
+      if (currentPartB21 === 'part1') {
+        b21SelectedJar = 1;
+        drawB21HalogenJars();
+      } else if (currentPartB21 === 'part2') {
+        simB21Displacement('cl2_nabr');
+      } else {
+        initB21PrepScheme();
       }
     }
 
