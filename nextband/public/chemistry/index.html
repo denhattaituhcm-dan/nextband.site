@@ -1189,6 +1189,33 @@
               </button>
             </div>
           </div>
+
+          <!-- Bài 12: Liên kết cộng hoá trị (Đã hoàn thiện) -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <line x1="60" y1="45" x2="160" y2="45" stroke="#3b82f6" stroke-width="4"/>
+                <ellipse cx="110" cy="24" rx="38" ry="12" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5" opacity="0.8"/>
+                <ellipse cx="110" cy="66" rx="38" ry="12" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5" opacity="0.8"/>
+                <circle cx="60" cy="45" r="14" fill="#0f172a"/>
+                <circle cx="160" cy="45" r="14" fill="#0f172a"/>
+                <text x="60" y="49" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">C</text>
+                <text x="160" y="49" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">C</text>
+                <text x="110" y="86" font-size="8" font-weight="700" fill="#2563eb" text-anchor="middle">Xen phủ Trục σ & Bên π (C=C)</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status ready">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 12: Liên kết cộng hoá trị</h3>
+                <p>Khái niệm cặp e dùng chung, công thức Lewis, phòng lab xen phủ AO trục σ & bên π và thang phân loại theo độ âm điện Δχ.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b12')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -4146,6 +4173,251 @@
   </div>
 
 
+  
+
+
+  <!-- ========================================================
+       BÀI 12: LIÊN KẾT CỘNG HOÁ TRỊ (CHƯƠNG 3: LIÊN KẾT HOÁ HỌC)
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM)
+       ======================================================== -->
+  <div id="view-studio-b12" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Header -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 3 • Bài 12</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Liên Kết Cộng Hoá Trị, Xen Phủ AO & Năng Lượng Liên Kết</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 12 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b12-p1" class="tab-seg-btn active" onclick="switchPartB12('part1')">
+            <span>1 Sự tạo thành Liên kết & Công thức Lewis</span>
+          </button>
+          <button id="tab-btn-b12-p2" class="tab-seg-btn" onclick="switchPartB12('part2')">
+            <span>2 Xen phủ AO tạo Liên kết σ & π (2.5D Lab)</span>
+          </button>
+          <button id="tab-btn-b12-p3" class="tab-seg-btn" onclick="switchPartB12('part3')">
+            <span>3 Phân loại theo Δχ, Eb & Đấu trường SGK</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: SỰ TẠO THÀNH LIÊN KẾT & CÔNG THỨC LEWIS -->
+          <div id="content-b12-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu sư phạm (SGK Trang 54 - 58)</h4>
+              <p>Trình bày được khái niệm liên kết cộng hoá trị (đơn, đôi, ba, cho - nhận). Viết được công thức electron, công thức Lewis và công thức cấu tạo của các phân tử đơn giản.</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 54 - 58</div>
+            <h3 class="section-title">Sự hình thành Cặp electron dùng chung</h3>
+            
+            <p>Các nguyên tử phi kim có lớp electron ngoài cùng gần bão hoà sẽ góp chung một hoặc nhiều electron để tạo thành các <strong>cặp electron dùng chung</strong>. Cặp electron dùng chung tạo nên <strong>liên kết cộng hoá trị (LK CHT)</strong>.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin: 12px 0;">
+              <div style="padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0;">
+                <strong style="color: #1e40af;">1. Liên kết đơn (1 cặp e dùng chung: $\text{Cl}_2$, $\text{HCl}$):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • Công thức Lewis: $\text{H}:\ddot{\text{Cl}}:$ ➔ Công thức cấu tạo: $\text{H}-\text{Cl}$. Biểu diễn bằng 1 gạch nối.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0;">
+                <strong style="color: #166534;">2. Liên kết đôi (2 cặp e dùng chung: $\text{O}_2$, $\text{CO}_2$):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • Hai nguyên tử O mỗi bên góp 2e: $:\ddot{\text{O}}::\ddot{\text{O}}:$ ➔ Công thức cấu tạo: $\text{O}=\text{O}$. Gồm 1 liên kết $\sigma$ và 1 liên kết $\pi$.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0 8px 8px 0;">
+                <strong style="color: #991b1b;">3. Liên kết ba (3 cặp e dùng chung: $\text{N}_2$, $\text{C}_2\text{H}_2$):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • Hai nguyên tử N mỗi bên góp 3e: $:\text{N}:::\text{N}:$ ➔ Công thức cấu tạo: $\text{N}\equiv\text{N}$. Rất bền vững ở nhiệt độ thường. Gồm 1 liên kết $\sigma$ và 2 liên kết $\pi$.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0;">
+                <strong style="color: #b45309;">4. Liên kết Cho - Nhận (Phối trí, kí hiệu $\to$):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • Cặp electron dùng chung chỉ do một nguyên tử đóng góp. Ví dụ trong ion Ammonium ($\text{NH}_4^+$): Nguyên tử N đóng góp cặp e tự do cho ion $\text{H}^+$ có orbital trống: $\text{NH}_3 + \text{H}^+ \to [\text{H}_3\text{N} \to \text{H}]^+$.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: XEN PHỦ ORBITAL TẠO LIÊN KẾT SIGMA VÀ PI -->
+          <div id="content-b12-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Bản chất Xen phủ Orbital Nguyên tử (SGK Trang 60 - 61)</h4>
+              <p>Phân biệt sự xen phủ trục (tạo liên kết $\sigma$) và xen phủ bên (tạo liên kết $\pi$). Đếm số liên kết $\sigma$ và $\pi$ trong các phân tử hữu cơ/vô cơ.</p>
+            </div>
+
+            <div class="meta-citation">Mục III • SGK Trang 60 - 61</div>
+            <h3 class="section-title">Xen phủ Trục ($\sigma$) vs Xen phủ Bên ($\pi$)</h3>
+
+            <div class="box-law" style="border-left: 5px solid #0284c7; background: #f0f9ff;">
+              <h4 style="color: #0369a1; font-size: 14px;">1. Xen phủ Trục ➔ Liên kết $\sigma$ (Sigma)</h4>
+              <p style="font-size: 13.5px; line-height: 1.6; margin: 6px 0; color: #0f172a;">
+                Trục của các orbital trùng với đường nối tâm hai hạt nhân. Các kiểu: <strong>xen phủ $s-s$</strong> ($\text{H}_2$), <strong>xen phủ $s-p$</strong> ($\text{HCl}$), <strong>xen phủ $p-p$ trục</strong> ($\text{Cl}_2$).<br/>
+                <em>Đặc điểm:</em> Vùng xen phủ nằm trực diện trên trục, mật độ electron lớn nhất giữa hai hạt nhân ➔ <strong>Liên kết $\sigma$ rất bền chắc</strong>. Mọi liên kết đơn đều là liên kết $\sigma$.
+              </p>
+            </div>
+
+            <div class="box-law" style="border-left: 5px solid #ea580c; background: #fff7ed; margin-top: 12px;">
+              <h4 style="color: #c2410c; font-size: 14px;">2. Xen phủ Bên ➔ Liên kết $\pi$ (Pi)</h4>
+              <p style="font-size: 13.5px; line-height: 1.6; margin: 6px 0; color: #0f172a;">
+                Trục của các orbital $p$ song song với nhau và vuông góc với đường nối tâm hạt nhân. Vùng xen phủ nằm ở hai phía (trên và dưới) của trục liên kết.<br/>
+                <em>Đặc điểm:</em> Vùng xen phủ nhỏ hơn, lực giữ electron yếu hơn ➔ <strong>Liên kết $\pi$ kém bền hơn liên kết $\sigma$</strong>, dễ bị đứt ra trong phản ứng cộng.
+              </p>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; margin-top: 14px;">
+              <span style="font-size: 12px; font-weight: 700; color: #0f172a;">Quy tắc cấu tạo liên kết:</span>
+              <p style="font-size: 13px; margin: 4px 0; color: #334155;">
+                • Liên kết đơn: Gồm <strong>1 liên kết $\sigma$</strong>.<br/>
+                • Liên kết đôi: Gồm <strong>1 liên kết $\sigma$ + 1 liên kết $\pi$</strong>.<br/>
+                • Liên kết ba: Gồm <strong>1 liên kết $\sigma$ + 2 liên kết $\pi$</strong>.
+              </p>
+            </div>
+          </div>
+
+          <!-- PHẦN 3: PHÂN LOẠI THEO ĐỘ ÂM ĐIỆN, NĂNG LƯỢNG EB & BÀI TẬP SGK -->
+          <div id="content-b12-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Thang phân loại theo Hiệu độ âm điện $\Delta\chi$ & Năng lượng $E_b$ (SGK Tr. 59 & 62)</h4>
+              <p>Dựa vào $\Delta\chi$: Không phân cực ($0 \le \Delta\chi < 0.4$), Phân cực ($0.4 \le \Delta\chi < 1.7$), Ion ($\Delta\chi \ge 1.7$). Ý nghĩa năng lượng liên kết $E_b$ đối với độ bền phân tử.</p>
+            </div>
+
+            <div class="meta-citation">Mục II & IV • SGK Trang 59 & 62</div>
+            <h3 class="section-title">Thang đo Hiệu độ âm điện $\Delta\chi$</h3>
+
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin: 12px 0;">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 6px;">
+                <span style="color: #2563eb;">0.0 (CHT Không phân cực)</span>
+                <span style="color: #d97706;">0.4 (CHT Phân cực)</span>
+                <span style="color: #dc2626;">1.7 (Liên kết Ion)</span>
+              </div>
+              <div style="height: 10px; border-radius: 5px; background: linear-gradient(90deg, #3b82f6 0%, #3b82f6 23%, #f59e0b 24%, #f59e0b 70%, #ef4444 71%, #ef4444 100%); margin-bottom: 12px;"></div>
+              
+              <div style="font-size: 13px; line-height: 1.6; color: #1e293b;">
+                <p>• $0 \le \Delta\chi < 0.4$: <strong>Liên kết CHT không phân cực</strong> ($\text{H}_2, \text{Cl}_2, \text{CH}_4$).</p>
+                <p>• $0.4 \le \Delta\chi < 1.7$: <strong>Liên kết CHT phân cực</strong> ($\text{HCl}, \text{H}_2\text{O}, \text{NH}_3$). Cặp e lệch về phía nguyên tử có độ âm điện lớn hơn.</p>
+                <p>• $\Delta\chi \ge 1.7$: <strong>Liên kết Ion</strong> ($\text{NaCl}, \text{KF}$).</p>
+              </div>
+            </div>
+
+            <div class="box-law">
+              <h4>⚡ Năng lượng liên kết ($E_b$ - kJ/mol)</h4>
+              <p>Năng lượng liên kết đặc trưng cho độ bền: <strong>$E_b$ càng lớn thì liên kết càng bền và phân tử càng khó bị nhiệt phân huỷ</strong>!</p>
+              <p style="font-size: 12.5px; color: #475569; margin-top: 6px;">Ví dụ: $E_b(\text{N}\equiv\text{N}) = 945\,\text{kJ/mol}$ (rất lớn $\to \text{N}_2$ trơ ở nhiệt độ thường); $E_b(\text{Cl}-\text{Cl}) = 243\,\text{kJ/mol}$.</p>
+            </div>
+
+            <!-- Đấu trường luyện tập Bài 12 SGK -->
+            <div style="margin-top: 20px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 12px;">⚔️ Đấu trường bài tập SGK Trang 61 - 63</h4>
+              <div id="b12-question-card-container">
+                <!-- Sẽ render qua hàm initB12QuizArena() -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">PHÂN TỬ KHẢO SÁT</span>
+              <span id="b12-hud-mol" class="hud-value highlight">Ethene (C₂H₄)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">SỐ LIÊN KẾT σ VÀ π</span>
+              <span id="b12-hud-bonds" class="hud-value">5 liên kết σ + 1 liên kết π</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">HIỆU ĐỘ ÂM ĐIỆN Δχ</span>
+              <span id="b12-hud-deltachi" class="hud-value" style="color: #2563eb;">Δχ(C-H) = 0.35</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">PHÂN LOẠI LIÊN KẾT</span>
+              <span id="b12-hud-type" class="hud-value" style="color: #16a34a;">CHT Không phân cực</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1 & 2: Phòng Lab Trực quan hoá Xen phủ AO 2.5D -->
+          <div id="panel-b12-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🧬 Mô phỏng Xen phủ Orbital & Cấu trúc Phân tử 2.5D</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool" id="btn-b12-mol-hcl" onclick="selectB12Molecule('hcl')">HCl (s - p)</button>
+                <button class="btn-tool" id="btn-b12-mol-cl2" onclick="selectB12Molecule('cl2')">Cl₂ (p - p trục σ)</button>
+                <button class="btn-tool active" id="btn-b12-mol-c2h4" onclick="selectB12Molecule('c2h4')">C₂H₄ (1σ + 1π)</button>
+                <button class="btn-tool" id="btn-b12-mol-n2" onclick="selectB12Molecule('n2')">N₂ (1σ + 2π)</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b12AOCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 3: Đấu trường luyện tập & strip câu hỏi -->
+          <div id="panel-b12-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">Bảng điều khiển câu hỏi SGK Trang 61 - 63</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Bài 12: Liên kết cộng hoá trị</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b12-quiz-progress-text">
+                Đã hoàn thành: 0 / 3 câu
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;" id="b12-question-selector-strip">
+              <!-- Render selector strip -->
+            </div>
+            <div id="b12-quiz-score-board" style="margin-top: 30px; padding: 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; display: none;">
+              <h3 style="font-size: 22px; font-weight: 800; color: #16a34a; margin: 0 0 8px 0;">🎉 XUẤT SẮC! HOÀN THÀNH BÀI 12</h3>
+              <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">Bạn đã làm chủ cơ chế xen phủ orbital σ, π và phân loại bản chất liên kết theo độ âm điện!</p>
+              <button class="btn-tool active" onclick="resetB12QuizArena()" style="padding: 10px 20px; font-size: 14px;">Làm lại Đấu trường</button>
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b12-lab-status-tip">
+              💡 <em>Quan sát đám mây xen phủ AO trực diện (trục σ màu xanh) và xen phủ bên (π màu cam/hồng ở hai phía).</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB12InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -4175,6 +4447,8 @@
       if (studioB10) studioB10.classList.remove('active');
       const studioB11 = document.getElementById('view-studio-b11');
       if (studioB11) studioB11.classList.remove('active');
+      const studioB12 = document.getElementById('view-studio-b12');
+      if (studioB12) studioB12.classList.remove('active');
       const studioB7 = document.getElementById('view-studio-b7');
       if (studioB7) studioB7.classList.remove('active');
       const studioB8 = document.getElementById('view-studio-b8');
@@ -4185,6 +4459,8 @@
       if (studioB10) studioB10.classList.remove('active');
       const studioB11 = document.getElementById('view-studio-b11');
       if (studioB11) studioB11.classList.remove('active');
+      const studioB12 = document.getElementById('view-studio-b12');
+      if (studioB12) studioB12.classList.remove('active');
       const studioB8 = document.getElementById('view-studio-b8');
       if (studioB8) studioB8.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
@@ -4193,18 +4469,28 @@
       if (studioB10) studioB10.classList.remove('active');
       const studioB11 = document.getElementById('view-studio-b11');
       if (studioB11) studioB11.classList.remove('active');
+      const studioB12 = document.getElementById('view-studio-b12');
+      if (studioB12) studioB12.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
       if (studioB9) studioB9.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
       if (studioB10) studioB10.classList.remove('active');
       const studioB11 = document.getElementById('view-studio-b11');
       if (studioB11) studioB11.classList.remove('active');
+      const studioB12 = document.getElementById('view-studio-b12');
+      if (studioB12) studioB12.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
       if (studioB10) studioB10.classList.remove('active');
       const studioB11 = document.getElementById('view-studio-b11');
       if (studioB11) studioB11.classList.remove('active');
+      const studioB12 = document.getElementById('view-studio-b12');
+      if (studioB12) studioB12.classList.remove('active');
       const studioB11 = document.getElementById('view-studio-b11');
       if (studioB11) studioB11.classList.remove('active');
+      const studioB12 = document.getElementById('view-studio-b12');
+      if (studioB12) studioB12.classList.remove('active');
+      const studioB12 = document.getElementById('view-studio-b12');
+      if (studioB12) studioB12.classList.remove('active');
       
       if (lessonId === 'b1') {
         document.getElementById('view-studio').classList.add('active');
@@ -4281,6 +4567,13 @@
           if (typeof initB11IonLab === 'function') initB11IonLab();
           if (typeof initB11QuizArena === 'function') initB11QuizArena();
         }, 50);
+      } else if (lessonId === 'b12') {
+        if (studioB12) studioB12.classList.add('active');
+        switchPartB12('part1');
+        setTimeout(() => {
+          if (typeof initB12AOLab === 'function') initB12AOLab();
+          if (typeof initB12QuizArena === 'function') initB12QuizArena();
+        }, 50);
       }
       window.location.hash = lessonId;
     }
@@ -4306,6 +4599,8 @@
       if (studioB10) studioB10.classList.remove('active');
       const studioB11 = document.getElementById('view-studio-b11');
       if (studioB11) studioB11.classList.remove('active');
+      const studioB12 = document.getElementById('view-studio-b12');
+      if (studioB12) studioB12.classList.remove('active');
       document.getElementById('view-dashboard').classList.add('active');
       window.location.hash = '';
     }
@@ -9665,6 +9960,565 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       b11RotAngleY = 0.6;
       b11CircuitSample = 'sol_nacl';
       updateB11Hud();
+    }
+
+
+
+
+
+    /* ==========================================================
+       LOGIC BÀI 12: LIÊN KẾT CỘNG HOÁ TRỊ, XEN PHỦ AO & EB
+       ========================================================== */
+
+    let currentPartB12 = 'part1';
+    let b12CurMol = 'c2h4'; // 'hcl' | 'cl2' | 'c2h4' | 'n2'
+
+    const B12_MOLECULES_DATA = {
+      'hcl': {
+        title: 'Hydrogen Chloride (HCl)',
+        bonds: '1 liên kết σ (xen phủ s - p)',
+        deltachi: 'Δχ = 3.16 - 2.20 = 0.96 (0.4 ≤ Δχ < 1.7)',
+        type: 'CHT Phân cực (cặp e lệch về phía Cl)',
+        typeColor: '#d97706',
+        desc: 'Xen phủ trục giữa orbital tròn 1s của H và một thuỳ orbital 3p của Cl tạo liên kết đơn σ bền vững.'
+      },
+      'cl2': {
+        title: 'Chlorine (Cl₂)',
+        bonds: '1 liên kết σ (xen phủ p - p trục)',
+        deltachi: 'Δχ = 3.16 - 3.16 = 0.00 (Không phân cực)',
+        type: 'CHT Không phân cực (cặp e nằm chính giữa)',
+        typeColor: '#16a34a',
+        desc: 'Xen phủ trục giữa 2 orbital 3p của 2 nguyên tử Cl dọc theo đường nối tâm hạt nhân.'
+      },
+      'c2h4': {
+        title: 'Ethene (C₂H₄)',
+        bonds: '5 liên kết σ (4 C-H + 1 C-C) + 1 liên kết π (C=C)',
+        deltachi: 'Δχ(C-H) = 0.35; Δχ(C-C) = 0.00',
+        type: 'Liên kết đôi C=C (1σ + 1π)',
+        typeColor: '#2563eb',
+        desc: 'Hai nguyên tử Carbon xen phủ trục tạo 1 liên kết σ ở giữa và 2 orbital 2p thẳng đứng xen phủ bên tạo 1 liên kết π ở hai phía.'
+      },
+      'n2': {
+        title: 'Nitrogen (N₂)',
+        bonds: '1 liên kết σ + 2 liên kết π (Liên kết ba N≡N)',
+        deltachi: 'Δχ = 3.04 - 3.04 = 0.00',
+        type: 'Liên kết ba cực bền (Eb = 945 kJ/mol)',
+        typeColor: '#dc2626',
+        desc: 'Gồm 1 liên kết σ dọc trục và 2 liên kết π vuông góc nhau (xen phủ py-py và pz-pz) tạo lớp vỏ bọc e siêu bền.'
+      }
+    };
+
+    function switchPartB12(partId) {
+      currentPartB12 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b12-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      // Show/hide sections in theory pane
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b12-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+      });
+
+      // Show/hide panels
+      const panelP1 = document.getElementById('panel-b12-part1');
+      const panelP3 = document.getElementById('panel-b12-part3');
+      if (panelP1) panelP1.style.display = (partId === 'part1' || partId === 'part2') ? 'flex' : 'none';
+      if (panelP3) panelP3.style.display = (partId === 'part3') ? 'flex' : 'none';
+
+      const activeSec = document.getElementById('content-b12-' + partId);
+      if (activeSec) activeSec.scrollTop = 0;
+
+      if (partId === 'part1' || partId === 'part2') {
+        setTimeout(initB12AOLab, 50);
+      } else if (partId === 'part3') {
+        setTimeout(initB12QuizArena, 50);
+      }
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function selectB12Molecule(mol) {
+      b12CurMol = mol;
+      ['hcl', 'cl2', 'c2h4', 'n2'].forEach(m => {
+        const btn = document.getElementById('btn-b12-mol-' + m);
+        if (btn) btn.classList.toggle('active', m === mol);
+      });
+      updateB12Hud();
+    }
+
+    function updateB12Hud() {
+      const d = B12_MOLECULES_DATA[b12CurMol];
+      const molText = document.getElementById('b12-hud-mol');
+      if (molText) molText.innerText = d.title;
+
+      const bondText = document.getElementById('b12-hud-bonds');
+      if (bondText) bondText.innerText = d.bonds;
+
+      const deltaText = document.getElementById('b12-hud-deltachi');
+      if (deltaText) deltaText.innerText = d.deltachi;
+
+      const typeText = document.getElementById('b12-hud-type');
+      if (typeText) {
+        typeText.innerText = d.type;
+        typeText.style.color = d.typeColor;
+      }
+
+      const tipText = document.getElementById('b12-lab-status-tip');
+      if (tipText) tipText.innerHTML = `💡 <strong>${d.title}:</strong> ${d.desc}`;
+    }
+
+    /* -------------------------------------------------------------
+       LAB CANVAS: MÔ PHỎNG XEN PHỦ AO 2.5D (BÀI 12)
+       ------------------------------------------------------------- */
+    let b12AOCanvas, b12AOCtx;
+    let b12AOAnimProgress = 0;
+    let b12AOAnimId;
+
+    function initB12AOLab() {
+      b12AOCanvas = document.getElementById('b12AOCanvas');
+      if (!b12AOCanvas) return;
+      b12AOCtx = b12AOCanvas.getContext('2d');
+      resizeB12AOCanvas();
+
+      if (b12AOAnimId) cancelAnimationFrame(b12AOAnimId);
+      animateB12AO();
+      updateB12Hud();
+    }
+
+    function resizeB12AOCanvas() {
+      if (!b12AOCanvas) return;
+      const rect = b12AOCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b12AOCanvas.width = rect.width * dpr;
+      b12AOCanvas.height = rect.height * dpr;
+      b12AOCtx.scale(dpr, dpr);
+    }
+
+    function animateB12AO() {
+      if (!b12AOCtx || !b12AOCanvas) return;
+      const w = b12AOCanvas.parentElement.clientWidth;
+      const h = b12AOCanvas.parentElement.clientHeight;
+      const ctx = b12AOCtx;
+
+      ctx.clearRect(0, 0, w, h);
+      b12AOAnimProgress += 0.02;
+
+      const cX = w / 2, cY = h / 2 - 10;
+
+      if (b12CurMol === 'hcl') {
+        drawB12HClOverlap(ctx, cX, cY);
+      } else if (b12CurMol === 'cl2') {
+        drawB12Cl2Overlap(ctx, cX, cY);
+      } else if (b12CurMol === 'c2h4') {
+        drawB12C2H4Overlap(ctx, cX, cY);
+      } else if (b12CurMol === 'n2') {
+        drawB12N2Overlap(ctx, cX, cY);
+      }
+
+      b12AOAnimId = requestAnimationFrame(animateB12AO);
+    }
+
+    function drawB12HClOverlap(ctx, cX, cY) {
+      // 1s orbital of H (Sphere) on left
+      const hX = cX - 70;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(hX, cY, 32, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
+      ctx.fill();
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.font = '700 13px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#0369a1';
+      ctx.textAlign = 'center';
+      ctx.fillText('1s (H)', hX, cY + 4);
+
+      // 3p orbital of Cl (Dumbbell shape) on right
+      const clX = cX + 60;
+      // Left lobe (overlapping)
+      ctx.beginPath();
+      ctx.ellipse(clX - 40, cY, 40, 24, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.4)';
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.stroke();
+
+      // Right lobe
+      ctx.beginPath();
+      ctx.ellipse(clX + 40, cY, 40, 24, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.stroke();
+
+      ctx.fillStyle = '#065f46';
+      ctx.fillText('3p (Cl)', clX, cY + 4);
+
+      // Highlight overlap zone on axis
+      ctx.beginPath();
+      ctx.ellipse(cX - 20, cY, 20, 18, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.6)';
+      ctx.fill();
+
+      // Overlap label
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#d97706';
+      ctx.fillText('Vùng xen phủ trục s - p (Liên kết σ)', cX, cY + 70);
+      ctx.restore();
+    }
+
+    function drawB12Cl2Overlap(ctx, cX, cY) {
+      // 2 dumbbell orbitals overlapping head-on (p - p trục)
+      const leftX = cX - 70, rightX = cX + 70;
+
+      ctx.save();
+      // Left Cl p-orbital
+      ctx.beginPath();
+      ctx.ellipse(leftX - 35, cY, 35, 22, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.ellipse(leftX + 35, cY, 38, 24, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.45)';
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.stroke();
+
+      // Right Cl p-orbital
+      ctx.beginPath();
+      ctx.ellipse(rightX - 35, cY, 38, 24, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.45)';
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.ellipse(rightX + 35, cY, 35, 22, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.stroke();
+
+      // Center overlap
+      ctx.beginPath();
+      ctx.ellipse(cX, cY, 25, 22, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.65)';
+      ctx.fill();
+
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#065f46';
+      ctx.textAlign = 'center';
+      ctx.fillText('Cl (trái)', leftX - 45, cY + 4);
+      ctx.fillText('Cl (phải)', rightX + 45, cY + 4);
+
+      ctx.fillStyle = '#d97706';
+      ctx.fillText('Xen phủ trục p - p (Liên kết σ)', cX, cY + 70);
+      ctx.restore();
+    }
+
+    function drawB12C2H4Overlap(ctx, cX, cY) {
+      // Ethene C=C: 1 sigma bond on axis, 1 pi bond side-by-side
+      const c1X = cX - 65, c2X = cX + 65;
+
+      ctx.save();
+      // Axis line (Sigma)
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(c1X, cY);
+      ctx.lineTo(c2X, cY);
+      ctx.stroke();
+
+      // Vertical 2p orbitals (Pi overlap above and below)
+      // C1 pz
+      ctx.fillStyle = 'rgba(249, 115, 22, 0.4)';
+      ctx.strokeStyle = '#ea580c';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.ellipse(c1X, cY - 45, 18, 40, 0, 0, Math.PI * 2);
+      ctx.ellipse(c1X, cY + 45, 18, 40, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // C2 pz
+      ctx.beginPath();
+      ctx.ellipse(c2X, cY - 45, 18, 40, 0, 0, Math.PI * 2);
+      ctx.ellipse(c2X, cY + 45, 18, 40, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Pi cloud overlap bands (top & bottom)
+      const wave = Math.sin(b12AOAnimProgress * 2) * 2;
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
+      ctx.beginPath();
+      ctx.ellipse(cX, cY - 55 + wave, 55, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.ellipse(cX, cY + 55 - wave, 55, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Carbon nucleus
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(c1X, cY, 8, 0, Math.PI * 2);
+      ctx.arc(c2X, cY, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.font = '800 13px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('C', c1X, cY);
+      ctx.fillText('C', c2X, cY);
+
+      // Labels
+      ctx.font = '700 11px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#2563eb';
+      ctx.fillText('Liên kết σ (trục)', cX, cY + 16);
+
+      ctx.fillStyle = '#dc2626';
+      ctx.fillText('Đám mây liên kết π (trên & dưới)', cX, cY - 85);
+      ctx.fillText('Tổng: 5 liên kết σ (4 C-H + 1 C-C) và 1 liên kết π', cX, cY + 110);
+      ctx.restore();
+    }
+
+    function drawB12N2Overlap(ctx, cX, cY) {
+      // Nitrogen N2 triple bond: 1 sigma + 2 pi
+      const n1X = cX - 60, n2X = cX + 60;
+
+      ctx.save();
+      // Sigma bond in center
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(n1X, cY);
+      ctx.lineTo(n2X, cY);
+      ctx.stroke();
+
+      // Pi_y (vertical) and Pi_z (slanted)
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.3)';
+      ctx.beginPath();
+      ctx.ellipse(cX, cY - 48, 50, 16, 0, 0, Math.PI * 2);
+      ctx.ellipse(cX, cY + 48, 50, 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(168, 85, 247, 0.3)';
+      ctx.beginPath();
+      ctx.ellipse(cX, cY, 48, 16, Math.PI * 0.25, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Nuclei
+      ctx.fillStyle = '#1e3a8a';
+      ctx.beginPath();
+      ctx.arc(n1X, cY, 14, 0, Math.PI * 2);
+      ctx.arc(n2X, cY, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.font = '800 13px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('N', n1X, cY);
+      ctx.fillText('N', n2X, cY);
+
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#dc2626';
+      ctx.fillText('Liên kết ba N ≡ N (1σ + 2π)', cX, cY - 75);
+
+      ctx.font = '600 11px "JetBrains Mono"';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('Năng lượng liên kết Eb = 945 kJ/mol (Cực bền)', cX, cY + 80);
+      ctx.restore();
+    }
+
+    /* -------------------------------------------------------------
+       LAB 3: ĐẤU TRƯỜNG LUYỆN TẬP SGK TRANG 61 - 63 (BÀI 12)
+       ------------------------------------------------------------- */
+    const B12_EXERCISES_DATA = [
+      {
+        id: 1,
+        title: "Câu hỏi 4 (SGK Trang 61): Số liên kết σ và π trong phân tử C₂H₄",
+        text: "Số liên kết σ và liên kết π có trong phân tử Ethene (C₂H₄) lần lượt là:",
+        options: [
+          "A. 4 và 1",
+          "B. 5 và 1",
+          "C. 3 và 2",
+          "D. 5 và 2"
+        ],
+        correct: 1, // B
+        explain: "Chính xác! Công thức cấu tạo của C₂H₄ là CH₂=CH₂. Gồm 4 liên kết đơn C-H (mỗi liên kết đơn là 1σ) + 1 liên kết đôi C=C (gồm 1σ và 1π) ➔ Tổng cộng có 5 liên kết σ và 1 liên kết π."
+      },
+      {
+        id: 2,
+        title: "Câu hỏi 6 (SGK Trang 63): So sánh độ bền liên kết halogen dựa vào Eb",
+        text: "Dựa vào giá trị năng lượng liên kết Eb: Cl-Cl (243 kJ/mol), Br-Br (193 kJ/mol), I-I (151 kJ/mol), thứ tự giảm dần độ bền liên kết giữa các phân tử là:",
+        options: [
+          "A. I₂ > Br₂ > Cl₂",
+          "B. Br₂ > Cl₂ > I₂",
+          "C. Cl₂ > Br₂ > I₂",
+          "D. Cl₂ > I₂ > Br₂"
+        ],
+        correct: 2, // C
+        explain: "Chính xác! Năng lượng liên kết Eb càng lớn thì liên kết càng bền và phân tử càng khó bị nhiệt phân huỷ: Eb(Cl-Cl) = 243 > Eb(Br-Br) = 193 > Eb(I-I) = 151 kJ/mol ➔ Thứ tự độ bền giảm dần: Cl₂ > Br₂ > I₂."
+      },
+      {
+        id: 3,
+        title: "Vận dụng: Phân loại liên kết theo hiệu độ âm điện Δχ",
+        text: "Cho độ âm điện: Na (0.93), H (2.20), C (2.55), Cl (3.16). Phân tử nào dưới đây có liên kết cộng hoá trị phân cực?",
+        options: [
+          "A. NaCl (Δχ = 2.23)",
+          "B. CH₄ (Δχ = 0.35)",
+          "C. HCl (Δχ = 0.96)",
+          "D. Cl₂ (Δχ = 0.00)"
+        ],
+        correct: 2, // C
+        explain: "Chính xác! Theo thang đo Pauling: 0.4 ≤ Δχ < 1.7 là liên kết cộng hoá trị phân cực. Ở HCl có Δχ = 3.16 - 2.20 = 0.96 (nằm trong khoảng 0.4 đến 1.7) ➔ CHT phân cực, cặp e lệch về Cl. NaCl (Δχ = 2.23 ≥ 1.7) là liên kết ion; CH₄ và Cl₂ là CHT không phân cực."
+      }
+    ];
+
+    let b12CurrentQuestionIdx = 0;
+    let b12UserAnswers = {};
+
+    function initB12QuizArena() {
+      b12CurrentQuestionIdx = 0;
+      b12UserAnswers = {};
+      renderB12QuizStrip();
+      renderB12QuestionCard();
+    }
+
+    function renderB12QuizStrip() {
+      const strip = document.getElementById('b12-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = '';
+
+      B12_EXERCISES_DATA.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = 'b12-q-strip-btn-' + idx;
+        btn.className = 'btn-tool';
+        btn.style.minWidth = '42px';
+        btn.style.height = '36px';
+        btn.style.fontWeight = '700';
+
+        const isAnswered = (b12UserAnswers[idx] !== undefined);
+        const isCurrent = (idx === b12CurrentQuestionIdx);
+
+        if (isCurrent) {
+          btn.style.borderColor = '#0284c7';
+          btn.style.background = '#e0f2fe';
+          btn.style.color = '#0369a1';
+        } else if (isAnswered) {
+          const isCorrect = (b12UserAnswers[idx] === q.correct);
+          btn.style.background = isCorrect ? '#dcfce7' : '#fee2e2';
+          btn.style.borderColor = isCorrect ? '#16a34a' : '#dc2626';
+          btn.style.color = isCorrect ? '#15803d' : '#b91c1c';
+        } else {
+          btn.style.background = '#f8fafc';
+          btn.style.color = '#64748b';
+        }
+
+        btn.innerText = `Câu ${idx + 1}`;
+        btn.onclick = () => {
+          b12CurrentQuestionIdx = idx;
+          renderB12QuizStrip();
+          renderB12QuestionCard();
+        };
+        strip.appendChild(btn);
+      });
+
+      const prog = document.getElementById('b12-quiz-progress-text');
+      const answeredCount = Object.keys(b12UserAnswers).length;
+      if (prog) prog.innerText = `Đã hoàn thành: ${answeredCount} / ${B12_EXERCISES_DATA.length} câu`;
+
+      const scoreBoard = document.getElementById('b12-quiz-score-board');
+      if (scoreBoard) {
+        scoreBoard.style.display = (answeredCount === B12_EXERCISES_DATA.length) ? 'block' : 'none';
+      }
+    }
+
+    function renderB12QuestionCard() {
+      const container = document.getElementById('b12-question-card-container');
+      if (!container) return;
+
+      const q = B12_EXERCISES_DATA[b12CurrentQuestionIdx];
+      const userSelected = b12UserAnswers[b12CurrentQuestionIdx];
+      const isAnswered = (userSelected !== undefined);
+
+      let optionsHtml = '';
+      q.options.forEach((opt, optIdx) => {
+        let optStyle = 'width:100%; text-align:left; padding:12px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:8px; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between;';
+        if (isAnswered) {
+          if (optIdx === q.correct) {
+            optStyle += 'background:#dcfce7; border-color:#16a34a; color:#15803d; font-weight:700;';
+          } else if (optIdx === userSelected) {
+            optStyle += 'background:#fee2e2; border-color:#dc2626; color:#b91c1c; font-weight:700;';
+          } else {
+            optStyle += 'opacity:0.6;';
+          }
+        }
+
+        optionsHtml += `
+          <button style="${optStyle}" onclick="selectB12Answer(${optIdx})" ${isAnswered ? 'disabled' : ''}>
+            <span>${opt}</span>
+            ${isAnswered && optIdx === q.correct ? '<span style="color:#16a34a; font-weight:800;">✓</span>' : ''}
+            ${isAnswered && optIdx === userSelected && userSelected !== q.correct ? '<span style="color:#dc2626; font-weight:800;">✗</span>' : ''}
+          </button>
+        `;
+      });
+
+      let explainHtml = '';
+      if (isAnswered) {
+        const isCorrect = (userSelected === q.correct);
+        explainHtml = `
+          <div style="margin-top:14px; padding:12px; border-radius:8px; background:${isCorrect ? '#f0fdf4' : '#fef2f2'}; border:1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; font-size:13px; color:${isCorrect ? '#166534' : '#991b1b'}; line-height:1.5;">
+            <strong>${isCorrect ? '✓ Câu trả lời chính xác!' : '✗ Câu trả lời chưa chính xác!'}</strong><br/>
+            ${q.explain}
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11px; font-weight:700; color:#0284c7; text-transform:uppercase;">${q.title}</span>
+            <span style="font-size:11px; font-weight:600; color:#64748b;">Câu ${b12CurrentQuestionIdx + 1} / ${B12_EXERCISES_DATA.length}</span>
+          </div>
+          <p style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:14px; line-height:1.5;">${q.text}</p>
+          <div>
+            ${optionsHtml}
+          </div>
+          ${explainHtml}
+        </div>
+      `;
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function selectB12Answer(optIdx) {
+      if (b12UserAnswers[b12CurrentQuestionIdx] !== undefined) return;
+      b12UserAnswers[b12CurrentQuestionIdx] = optIdx;
+      renderB12QuizStrip();
+      renderB12QuestionCard();
+    }
+
+    function resetB12QuizArena() {
+      b12UserAnswers = {};
+      b12CurrentQuestionIdx = 0;
+      renderB12QuizStrip();
+      renderB12QuestionCard();
+    }
+
+    function resetB12InteractiveState() {
+      b12CurMol = 'c2h4';
+      selectB12Molecule('c2h4');
     }
 
 
