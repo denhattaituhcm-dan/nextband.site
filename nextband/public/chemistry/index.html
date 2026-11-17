@@ -6993,6 +6993,7 @@
 
 
 
+  
   <!-- ========================================================
        TRANG: PHÒNG HỌC & THÍ NGHIỆM CHUẨN MỰC BÀI 22 (FOCUS STUDIO)
        CHƯƠNG 7: HYDROGEN HALIDE & MUỐI HALIDE
@@ -7000,395 +7001,349 @@
   <div id="view-studio-b22" class="view-screen">
     <div class="studio-container">
       
-      <!-- Studio Header với 4 Tab riêng biệt chuẩn mực cho Bài 22 -->
+      <!-- Studio Topbar Chuẩn Mực Hệ Thống -->
       <nav class="studio-topbar">
-        <div class="studio-breadcrumb">
-          <button class="btn-back-clean" onclick="backToDashboard()">
-            <span class="icon-back">←</span>
-            <span>Trang chủ</span>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
           </button>
-          <span class="breadcrumb-sep">/</span>
-          <span class="badge-tag-chap">Chương 7</span>
-          <span class="breadcrumb-sep">/</span>
-          <span class="current-lesson-name">Bài 22: Hydrogen Halide & Muối Halide</span>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 7 • Bài 22</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Hydrogen Halide & Muối Halide</h2>
+          </div>
         </div>
 
-        <div class="studio-tabs-nav">
-          <button class="tab-clean-item active" id="tab-btn-b22-p1" onclick="switchPartB22('part1')">
-            <span class="tab-order-badge">1</span>
-            <span>Hydrogen Halide & Nhiệt Độ Sôi</span>
+        <!-- Segmented Tab Switcher Chuẩn Mực -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b22-p1" class="tab-seg-btn active" onclick="switchPartB22('part1')">
+            <span>I. Cấu Tạo & Nhiệt Độ Sôi Bất Thường</span>
           </button>
-          <button class="tab-clean-item" id="tab-btn-b22-p2" onclick="switchPartB22('part2')">
-            <span class="tab-order-badge">2</span>
-            <span>Hydrohalic Acid & Ăn Mòn Thuỷ Tinh</span>
+          <button id="tab-btn-b22-p2" class="tab-seg-btn" onclick="switchPartB22('part2')">
+            <span>II. Tính Acid & Khắc Thuỷ Tinh</span>
           </button>
-          <button class="tab-clean-item" id="tab-btn-b22-p3" onclick="switchPartB22('part3')">
-            <span class="tab-order-badge">3</span>
-            <span>Muối Halide & Nhận Biết AgNO₃</span>
+          <button id="tab-btn-b22-p3" class="tab-seg-btn" onclick="switchPartB22('part3')">
+            <span>III. Muối Halide & Nhận Biết AgNO₃</span>
           </button>
-          <button class="tab-clean-item" id="tab-btn-b22-p4" onclick="switchPartB22('part4')">
-            <span class="tab-order-badge">4</span>
-            <span>Đấu Trường Bài 22</span>
+          <button id="tab-btn-b22-p4" class="tab-seg-btn" onclick="switchPartB22('part4')">
+            <span>IV. Đấu Trường Bài 22</span>
           </button>
         </div>
       </nav>
 
-      <!-- Main Dual-Pane Studio Body -->
-      <div class="studio-body-layout">
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
         
-        <!-- CỘT TRÁI: Scrollable Theory Sheet -->
-        <aside class="theory-scroll-pane">
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
           
-          <!-- NỘI DUNG TAB 1: HYDROGEN HALIDE -->
-          <div class="theory-part-container" id="theory-b22-part1">
-            <div class="topic-indicator-tag">MỤC TIÊU 1 • SGK TRANG 113 – 114</div>
-            <h2 class="theory-main-title">Hydrogen Halide & Nhiệt Độ Sôi Bất Thường</h2>
-            
-            <p class="theory-paragraph">
-              Ở điều kiện thường, các <strong>hydrogen halide</strong> ($HX$: $HF$, $HCl$, $HBr$, $HI$) đều là chất khí không màu, mùi xốc độc, tan rất tốt trong nước tạo thành dung dịch hydrohalic acid tương ứng.
-            </p>
-
-            <div class="card-formula-highlight" style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 14px 18px; border-radius: 8px; margin: 16px 0;">
-              <h4 style="color: #065f46; font-size: 14px; font-weight: 700; margin: 0 0 6px 0;">Cấu Tạo Phân Tử HX</h4>
-              <p style="font-size: 13.5px; color: #1e293b; margin: 0; line-height: 1.6;">
-                Phân tử gồm 1 liên kết cộng hoá trị phân cực hình thành do sự xen phủ giữa orbital $1s$ của $H$ và orbital $np$ chứa electron độc thân của halogen $X$ ($H-X$). Độ phân cực liên kết giảm dần từ $HF$ đến $HI$.
-              </p>
+          <!-- PHẦN 1: CẤU TẠO PHÂN TỬ & NHIỆT ĐỘ SÔI BẤT THƯỜNG -->
+          <div id="content-b22-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần I (SGK Trang 112 – 114)</h4>
+              <p>Mô tả cấu tạo phân tử hydrogen halide ($HX$); giải thích xu hướng biến đổi độ dài liên kết và năng lượng liên kết; giải thích hiện tượng <strong>nhiệt độ sôi cao bất thường của $HF$ ($+19,5^\circ\text{C}$)</strong> do liên kết hydrogen liên phân tử và xu hướng tăng dần nhiệt độ sôi từ $HCl$ đến $HI$ theo tương tác Van der Waals.</p>
             </div>
 
-            <h3 class="theory-section-heading">Nhiệt Độ Sôi & Bất Thường Của HF</h3>
-            <div class="table-responsive" style="margin: 12px 0;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center;">
-                <thead>
-                  <tr style="background: #f1f5f9; color: #334155;">
-                    <th style="padding: 8px; border: 1px solid #cbd5e1;">Phân tử</th>
-                    <th style="padding: 8px; border: 1px solid #cbd5e1;">HF</th>
-                    <th style="padding: 8px; border: 1px solid #cbd5e1;">HCl</th>
-                    <th style="padding: 8px; border: 1px solid #cbd5e1;">HBr</th>
-                    <th style="padding: 8px; border: 1px solid #cbd5e1;">HI</th>
+            <div class="meta-citation">Mục I • SGK Trang 112 – 114</div>
+            <h3 class="section-title">1. Cấu Tạo Phân Tử Hydrogen Halide (HX)</h3>
+            
+            <p>Ở điều kiện thường, các hydrogen halide ($HF, HCl, HBr, HI$) đều là chất khí không màu, mùi xốc, độc, tan rất nhiều trong nước tạo thành dung dịch hydrohalic acid tương ứng.</p>
+
+            <p>Phân tử $HX$ gồm một liên kết cộng hoá trị phân cực hình thành do sự xen phủ giữa orbital $1s$ của nguyên tử $H$ và orbital $np$ chứa electron độc thân của nguyên tử halogen $X$ ($H-X$). Do halogen có độ âm điện lớn hơn hydrogen nên cặp electron dùng chung lệch về phía nguyên tử halogen ($H^{\delta+} - X^{\delta-}$).</p>
+
+            <div style="margin: 16px 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: center;">
+                <thead style="background: #f8fafc; font-weight: 700; color: #0f172a; border-bottom: 1.5px solid #cbd5e1;">
+                  <tr>
+                    <th style="padding: 9px;">Đặc điểm phân tử</th>
+                    <th style="color: #0284c7;">HF</th>
+                    <th style="color: #16a34a;">HCl</th>
+                    <th style="color: #ea580c;">HBr</th>
+                    <th style="color: #7c3aed;">HI</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 700;">Độ dài liên kết ($pm$)</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$92$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$127$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$141$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$161$</td>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px; font-weight: 700; text-align: left; padding-left: 14px;">Độ dài liên kết ($pm$)</td>
+                    <td>$92$</td>
+                    <td>$127$</td>
+                    <td>$141$</td>
+                    <td>$161$</td>
                   </tr>
-                  <tr>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 700;">Năng lượng liên kết ($kJ/mol$)</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; color: #0284c7; font-weight: 700;">$565$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$431$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$364$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$297$</td>
+                  <tr style="border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                    <td style="padding: 8px; font-weight: 700; text-align: left; padding-left: 14px;">Năng lượng liên kết ($E_b, \text{kJ/mol}$)</td>
+                    <td style="font-weight: 700; color: #0284c7;">$565$</td>
+                    <td>$431$</td>
+                    <td>$364$</td>
+                    <td>$297$</td>
                   </tr>
                   <tr style="background: #fefce8;">
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 700;">Nhiệt độ sôi ($^\circ C$)</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; color: #dc2626; font-weight: 800;">$+19,5$ (Cao bất thường)</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$-84,9$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$-66,7$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$-35,8$</td>
+                    <td style="padding: 8px; font-weight: 700; text-align: left; padding-left: 14px;">Nhiệt độ sôi ($t_\text{s}, ^\circ\text{C}$)</td>
+                    <td style="font-weight: 800; color: #dc2626;">$+19,5$ (Cao vọt)</td>
+                    <td>$-84,9$</td>
+                    <td>$-66,7$</td>
+                    <td>$-35,8$</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <div class="card-formula-highlight" style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 14px 18px; border-radius: 8px; margin: 16px 0;">
-              <h4 style="color: #1e40af; font-size: 14px; font-weight: 700; margin: 0 0 6px 0;">Giải Thích Cơ Chế Biến Thiên Nhiệt Độ Sôi</h4>
-              <p style="font-size: 13.5px; color: #1e293b; margin: 0; line-height: 1.6;">
-                • <strong>HF lỏng có nhiệt độ sôi cao bất thường ($+19,5^\circ C$):</strong> Do độ âm điện của $F$ rất lớn ($3,98$), liên kết $H-F$ phân cực cực mạnh nên giữa các phân tử $HF$ hình thành <em>liên kết hydrogen liên phân tử bền vững</em>: $\cdots H - F \cdots H - F \cdots H - F \cdots$<br>
-                • <strong>Từ HCl đến HI, nhiệt độ sôi tăng dần ($-84,9^\circ C \to -35,8^\circ C$):</strong> Không có liên kết hydrogen; khi phân tử khối và số electron tăng làm bán kính đám mây electron tăng, dẫn đến <em>tương tác Van der Waals giữa các phân tử tăng dần</em>.
-              </p>
+            <div style="padding: 12px 16px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 6px; font-size: 13px; color: #1e40af; line-height: 1.6; margin-top: 14px;">
+              <strong>Cơ chế khoa học cốt lõi (SGK Trang 113):</strong><br>
+              • <strong>HF lỏng có nhiệt độ sôi cao bất thường ($+19,5^\circ\text{C}$):</strong> Do nguyên tử $F$ có độ âm điện rất lớn ($3,98$) và bán kính nhỏ, liên kết $H-F$ phân cực cực mạnh khiến giữa các phân tử $HF$ hình thành <em>chuỗi liên kết hydrogen liên phân tử bền vững</em>: $\cdots \text{H}-\text{F}\cdots\text{H}-\text{F}\cdots\text{H}-\text{F}\cdots$<br>
+              • <strong>Từ HCl đến HI, nhiệt độ sôi tăng dần ($-84,9^\circ\text{C} \to -35,8^\circ\text{C}$):</strong> Các phân tử không tạo được liên kết hydrogen; tuy nhiên khối lượng phân tử và bán kính đám mây electron tăng dần làm <em>tương tác Van der Waals giữa các phân tử tăng đều đặn</em>.
             </div>
           </div>
 
-          <!-- NỘI DUNG TAB 2: HYDROHALIC ACID -->
-          <div class="theory-part-container" id="theory-b22-part2" style="display: none;">
-            <div class="topic-indicator-tag">MỤC TIÊU 2 • SGK TRANG 114 – 115</div>
-            <h2 class="theory-main-title">Tính Acid Của Dãy Hydrohalic Acid & Khắc Thuỷ Tinh</h2>
+          <!-- PHẦN 2: TÍNH ACID & PHẢN ỨNG KHẮC THUỶ TINH CỦA HF -->
+          <div id="content-b22-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần II (SGK Trang 114 – 115)</h4>
+              <p>Nắm vững xu hướng tăng dần tính acid trong dãy $\text{HF} < \text{HCl} < \text{HBr} < \text{HI}$; tính chất hoá học điển hình của acid vô cơ; tính khử của dung dịch $\text{HCl}$ và phản ứng đặc biệt <strong>ăn mòn thuỷ tinh của hydrofluoric acid ($\text{HF}$)</strong>.</p>
+            </div>
 
-            <h3 class="theory-section-heading">1. Xu Hướng Biến Đổi Tính Acid</h3>
-            <p class="theory-paragraph">
-              Khi tan trong nước, các $HX$ ion hoá tạo thành dung dịch hydrohalic acid tương ứng. Tính acid biến đổi theo xu hướng:
-            </p>
-            <div style="background: #fdf2f8; border: 1px solid #fbcfe8; padding: 12px 16px; border-radius: 8px; text-align: center; margin: 12px 0;">
-              <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: #be185d;">
+            <div class="meta-citation">Mục II • SGK Trang 114 – 115</div>
+            <h3 class="section-title">1. Quy Luật Biến Đổi Tính Acid Của Dãy Hydrohalic Acid</h3>
+            
+            <p>Khi hoà tan vào nước, các phân tử hydrogen halide phân li ra cation $\text{H}^+$ thể hiện tính acid. Tính acid trong dung dịch biến đổi theo chiều:</p>
+
+            <div style="background: #fdf2f8; border: 1.5px solid #fbcfe8; padding: 12px 18px; border-radius: 8px; text-align: center; margin: 12px 0;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: #be185d;">
                 HF (axit yếu) &lt; HCl (axit mạnh) &lt; HBr (axit rất mạnh) &lt; HI (axit rất mạnh)
               </span>
             </div>
-            <p class="theory-paragraph">
-              <strong>Nguyên nhân:</strong> Từ $HF$ đến $HI$, bán kính nguyên tử halogen tăng dần làm độ dài liên kết $H-X$ tăng ($92 \to 161\,pm$), năng lượng liên kết giảm mạnh ($565 \to 297\,kJ/mol$), khiến liên kết $H-X$ càng kém bền và khả năng phân li cho proton $H^+$ trong dung dịch càng dễ dàng.
-            </p>
 
-            <h3 class="theory-section-heading">2. Phản Ứng Đặc Trưng Của Axit HF: Khắc Chữ Lên Thuỷ Tinh</h3>
-            <p class="theory-paragraph">
-              Dung dịch $HF$ có tính chất hoá học đặc biệt vô cùng nổi tiếng: <strong>ăn mòn thuỷ tinh vô cơ</strong> (có thành phần chính là $SiO_2$).
-            </p>
+            <p><strong>Giải thích bản chất năng lượng:</strong> Từ $HF$ đến $HI$, bán kính nguyên tử halogen tăng dần làm độ dài liên kết $H-X$ tăng từ $92\,pm$ lên $161\,pm$, năng lượng liên kết $E_b$ giảm mạnh từ $565\,kJ/mol$ xuống $297\,kJ/mol$. Liên kết $H-X$ càng kém bền thì trong dung dịch nước phân tử càng dễ đứt gãy để giải phóng proton $\text{H}^+$, do đó tính acid càng mạnh.</p>
+
+            <h3 class="section-title" style="margin-top: 24px;">2. Phản Ứng Độc Đáo: Khắc Chữ Lên Thuỷ Tinh Bằng HF</h3>
+            <p>Hydrofluoric acid ($\text{HF}$) là một acid yếu nhưng có tính chất đặc biệt mà không acid nào khác có: <strong>hoà tan được silica ($\text{SiO}_2$) trong thuỷ tinh vô cơ</strong>.</p>
+
             <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 8px; margin: 12px 0;">
               <p style="font-size: 13.5px; color: #78350f; margin: 0; line-height: 1.6;">
                 $$\text{SiO}_2 + 4\text{HF} \longrightarrow \text{SiF}_4\uparrow + 2\text{H}_2\text{O}$$
-                <em>Silicon tetrafluoride ($SiF_4$) là chất khí thoát ra ngoài, làm bề mặt thuỷ tinh bị ăn mòn rãnh sâu. Ứng dụng để khắc hoa văn, khắc chữ lên cốc, bình, gương thuỷ tinh.</em>
+                <em>Khí silicon tetrafluoride ($\text{SiF}_4$) thoát ra ngoài làm bề mặt thuỷ tinh bị ăn mòn thành các rãnh sâu. Ứng dụng để khắc hoa văn, chữ viết trên các sản phẩm thuỷ tinh mỹ nghệ, gương, kính thí nghiệm.</em>
               </p>
             </div>
 
-            <h3 class="theory-section-heading">3. Tính Axit & Tính Khử Của Dung Dịch HCl</h3>
-            <p class="theory-paragraph">
-              • <strong>Tính axit điển hình:</strong> Đổi màu quỳ tím hoá đỏ; tác dụng với kim loại đứng trước $H$ giải phóng $H_2$ ($Zn + 2HCl \to ZnCl_2 + H_2\uparrow$, nhưng $Cu$ không phản ứng); tác dụng với basic oxide ($Fe_2O_3, CuO$), base ($NaOH, Cu(OH)_2$) và muối carbonate ($NaHCO_3 + HCl \to NaCl + CO_2\uparrow + H_2O$).<br>
-              • <strong>Tính khử (do ion $Cl^-$ có số oxi hoá $-1$):</strong> Tác dụng với chất oxi hoá mạnh ($KMnO_4, MnO_2$) để điều chế khí $Cl_2$:
-              $$16\text{HCl} + 2\text{KMnO}_4 \longrightarrow 2\text{KCl} + 2\text{MnCl}_2 + 5\text{Cl}_2\uparrow + 8\text{H}_2\text{O}$$
+            <h3 class="section-title" style="margin-top: 24px;">3. Tính Chất Hoá Học & Điều Chế HCl</h3>
+            <p>• <strong>Tính acid:</strong> Tác dụng với kim loại đứng trước $\text{H}$ ($\text{Zn} + 2\text{HCl} \to \text{ZnCl}_2 + \text{H}_2\uparrow$; đồng $\text{Cu}$ đứng sau $\text{H}$ không phản ứng); tác dụng base ($\text{NaOH}, \text{Cu(OH)}_2$), basic oxide ($\text{CuO}, \text{Fe}_2\text{O}_3$) và muối carbonate ($\text{NaHCO}_3 + \text{HCl} \to \text{NaCl} + \text{CO}_2\uparrow + \text{H}_2\text{O}$).<br>
+            • <strong>Tính khử (do $\text{Cl}^-$ có số oxi hoá $-1$):</strong> Bị oxi hoá bởi $\text{KMnO}_4, \text{MnO}_2$ tạo khí $\text{Cl}_2$:
+            $$16\text{HCl} + 2\text{KMnO}_4 \longrightarrow 2\text{KCl} + 2\text{MnCl}_2 + 5\text{Cl}_2\uparrow + 8\text{H}_2\text{O}$$
             </p>
           </div>
 
-          <!-- NỘI DUNG TAB 3: MUỐI HALIDE -->
-          <div class="theory-part-container" id="theory-b22-part3" style="display: none;">
-            <div class="topic-indicator-tag">MỤC TIÊU 3 • SGK TRANG 116 – 117</div>
-            <h2 class="theory-main-title">Muối Halide, Nhận Biết Bằng AgNO₃ & Vai Trò Muối Ăn</h2>
+          <!-- PHẦN 3: MUỐI HALIDE & NHẬN BIẾT BẰNG AGNO3 -->
+          <div id="content-b22-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần III (SGK Trang 116 – 117)</h4>
+              <p>Phân biệt tính tan của các muối halide; sử dụng thuốc thử <strong>$\text{AgNO}_3$</strong> để nhận biết ion $\text{F}^-, \text{Cl}^-, \text{Br}^-, \text{I}^-$; quy luật tính khử tăng dần của ion halide với $\text{H}_2\text{SO}_4$ đặc và vai trò của muối ăn $\text{NaCl}$.</p>
+            </div>
 
-            <h3 class="theory-section-heading">1. Độ Tan & Thuốc Thử AgNO₃ Nhận Biết Ion Halide</h3>
-            <p class="theory-paragraph">
-              Hầu hết các muối halide đều dễ tan trong nước, trừ một số muối bạc ($AgX$) không tan. Do đó, dung dịch <strong>$\text{AgNO}_3$</strong> là thuốc thử tiêu chuẩn dùng để phân biệt các ion halide:
-            </p>
+            <div class="meta-citation">Mục III • SGK Trang 116 – 117</div>
+            <h3 class="section-title">1. Nhận Biết Ion Halide Bằng Dung Dịch AgNO₃</h3>
+            <p>Hầu hết muối halide đều tan trong nước, trừ $\text{AgCl}, \text{AgBr}, \text{AgI}$. Do đó dung dịch silver nitrate ($\text{AgNO}_3$) là thuốc thử đặc trưng để phân biệt 4 ion halide:</p>
 
-            <div class="table-responsive" style="margin: 12px 0;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
-                <thead>
-                  <tr style="background: #f1f5f9; color: #334155;">
-                    <th style="padding: 8px; border: 1px solid #cbd5e1;">Ion Halide</th>
-                    <th style="padding: 8px; border: 1px solid #cbd5e1;">Thuốc thử $\text{AgNO}_3$</th>
-                    <th style="padding: 8px; border: 1px solid #cbd5e1;">Hiện tượng quan sát</th>
-                    <th style="padding: 8px; border: 1px solid #cbd5e1;">Phương trình ion rút gọn</th>
+            <div style="margin: 14px 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+                <thead style="background: #f8fafc; font-weight: 700; color: #0f172a; border-bottom: 1.5px solid #cbd5e1;">
+                  <tr>
+                    <th style="padding: 9px;">Ion Halide</th>
+                    <th>Thuốc thử $\text{AgNO}_3$</th>
+                    <th>Hiện tượng quan sát</th>
+                    <th>Phương trình hoá học</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 700;">$F^-$ ($NaF$)</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">Không kết tủa</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; color: #64748b;">Dung dịch trong suốt (AgF tan tốt)</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">Không phản ứng</td>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px; font-weight: 700;">$\text{F}^-$ ($\text{NaF}$)</td>
+                    <td>Không có kết tủa</td>
+                    <td style="color: #64748b;">Dung dịch trong suốt ($\text{AgF}$ tan)</td>
+                    <td>Không phản ứng</td>
                   </tr>
-                  <tr style="background: #f8fafc;">
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 700;">$Cl^-$ ($NaCl$)</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$\text{AgCl}\downarrow$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; color: #0284c7; font-weight: 700;">Kết tủa trắng</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$\text{Ag}^+ + \text{Cl}^- \to \text{AgCl}\downarrow$</td>
+                  <tr style="border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                    <td style="padding: 8px; font-weight: 700; color: #0284c7;">$\text{Cl}^-$ ($\text{NaCl}$)</td>
+                    <td>$\text{AgCl}\downarrow$</td>
+                    <td style="color: #0284c7; font-weight: 700;">Kết tủa trắng</td>
+                    <td>$\text{Ag}^+ + \text{Cl}^- \to \text{AgCl}\downarrow$</td>
                   </tr>
-                  <tr>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 700;">$Br^-$ ($NaBr$)</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$\text{AgBr}\downarrow$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; color: #d97706; font-weight: 700;">Kết tủa vàng nhạt</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$\text{Ag}^+ + \text{Br}^- \to \text{AgBr}\downarrow$</td>
+                  <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px; font-weight: 700; color: #d97706;">$\text{Br}^-$ ($\text{NaBr}$)</td>
+                    <td>$\text{AgBr}\downarrow$</td>
+                    <td style="color: #d97706; font-weight: 700;">Kết tủa vàng nhạt</td>
+                    <td>$\text{Ag}^+ + \text{Br}^- \to \text{AgBr}\downarrow$</td>
                   </tr>
                   <tr style="background: #fefce8;">
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: 700;">$I^-$ ($NaI$)</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$\text{AgI}\downarrow$</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1; color: #ca8a04; font-weight: 700;">Kết tủa vàng đậm</td>
-                    <td style="padding: 8px; border: 1px solid #cbd5e1;">$\text{Ag}^+ + \text{I}^- \to \text{AgI}\downarrow$</td>
+                    <td style="padding: 8px; font-weight: 700; color: #ca8a04;">$\text{I}^-$ ($\text{NaI}$)</td>
+                    <td>$\text{AgI}\downarrow$</td>
+                    <td style="color: #ca8a04; font-weight: 700;">Kết tủa vàng đậm</td>
+                    <td>$\text{Ag}^+ + \text{I}^- \to \text{AgI}\downarrow$</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <h3 class="theory-section-heading">2. Tính Khử Của Ion Halide Với H₂SO₄ Đặc</h3>
-            <p class="theory-paragraph">
-              Tính khử của ion halide tăng dần: $\text{Cl}^- &lt; \text{Br}^- &lt; \text{I}^-$.<br>
-              • $NaCl$ tác dụng $H_2SO_4$ đặc: chỉ xảy ra phản ứng trao đổi tạo khí $HCl$ (không khử được $H_2SO_4$).<br>
-              • $NaBr$ khử $H_2SO_4$ đặc xuống khí $SO_2$ (màu da cam của $Br_2$ xuất hiện):
-              $$2\text{NaBr} + 2\text{H}_2\text{SO}_4\text{ (đ)} \longrightarrow \text{Na}_2\text{SO}_4 + \text{Br}_2 + \text{SO}_2\uparrow + 2\text{H}_2\text{O}$$
-              • $NaI$ khử mạnh hơn, đưa $H_2SO_4$ đặc xuống khí mùi trứng thối $H_2S$ (hơi tím $I_2$ thoát ra):
-              $$8\text{NaI} + 5\text{H}_2\text{SO}_4\text{ (đ)} \longrightarrow 4\text{Na}_2\text{SO}_4 + 4\text{I}_2 + \text{H}_2\text{S}\uparrow + 4\text{H}_2\text{O}$$
-            </p>
-
-            <h3 class="theory-section-heading">3. Muối Ăn (NaCl) Trong Đời Sống & Y Học</h3>
-            <p class="theory-paragraph">
-              $NaCl$ là gia vị thiết yếu, bảo quản thực phẩm, sản xuất xút ($NaOH$), chlorine, nước Javel. Trong y tế, dung dịch $NaCl\,0,9\%$ được dùng làm <strong>nước muối sinh lí</strong> (đẳng trương) để rửa vết thương, nhỏ mắt và truyền tĩnh mạch cấp cứu.
+            <h3 class="section-title" style="margin-top: 24px;">2. Tính Khử Của Các Ion Halide Với H₂SO₄ Đặc</h3>
+            <p>Tính khử của các ion halide tăng dần theo chiều: $\text{Cl}^- < \text{Br}^- < \text{I}^-$.<br>
+            • $\text{NaCl} + \text{H}_2\text{SO}_4\text{ (đ)}$: chỉ xảy ra phản ứng trao đổi tạo khí $\text{HCl}$ (ion $\text{Cl}^-$ không khử được $\text{H}_2\text{SO}_4$).<br>
+            • $\text{NaBr}$ khử được $\text{H}_2\text{SO}_4$ đặc xuống khí $\text{SO}_2$, xuất hiện màu nâu đỏ của $\text{Br}_2$:
+            $$2\text{NaBr} + 2\text{H}_2\text{SO}_4\text{ (đ)} \longrightarrow \text{Na}_2\text{SO}_4 + \text{Br}_2 + \text{SO}_2\uparrow + 2\text{H}_2\text{O}$$
+            • $\text{NaI}$ có tính khử mạnh nhất, khử $\text{H}_2\text{SO}_4$ đặc xuống khí $\text{H}_2\text{S}$ (mùi trứng thối), xuất hiện hơi tím và tinh thể $\text{I}_2$:
+            $$8\text{NaI} + 5\text{H}_2\text{SO}_4\text{ (đ)} \longrightarrow 4\text{Na}_2\text{SO}_4 + 4\text{I}_2 + \text{H}_2\text{S}\uparrow + 4\text{H}_2\text{O}$$
             </p>
           </div>
 
-          <!-- NỘI DUNG TAB 4: ĐẤU TRƯỜNG BÀI 22 -->
-          <div class="theory-part-container" id="theory-b22-part4" style="display: none;">
-            <div class="topic-indicator-tag">LUYỆN TẬP • CỦNG CỐ BÀI 22</div>
-            <h2 class="theory-main-title">Đấu Trường Trắc Nghiệm Bài 22</h2>
-            <p class="theory-paragraph">
-              Hoàn thành 5 câu hỏi trọng tâm sát với kiến thức SGK: nhiệt độ sôi bất thường của $HF$, so sánh tính acid hydrohalic acid, phản ứng ăn mòn thuỷ tinh, nhận biết muối halide bằng $AgNO_3$ và tính khử của ion halide.
-            </p>
-            <div class="quiz-progress-bar-wrap" style="margin: 16px 0;">
-              <div class="quiz-progress-bar" id="b22-quiz-progress" style="width: 0%; height: 6px; background: #0284c7; border-radius: 3px; transition: width 0.3s ease;"></div>
+          <!-- PHẦN 4: ĐẤU TRƯỜNG BÀI 22 -->
+          <div id="content-b22-part4" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Đấu Trường Luyện Tập Củng Cố Bài 22</h4>
+              <p>Hoàn thành 5 câu hỏi trọng tâm bám sát SGK Hoá học 10 để nắm vững toàn diện kiến thức Hydrogen Halide và Muối Halide.</p>
             </div>
-            <div style="font-size: 13px; color: #64748b; margin-bottom: 12px;" id="b22-quiz-step-label">Câu hỏi 1 / 5</div>
+            <div style="font-size: 13.5px; color: #475569; line-height: 1.6; margin-top: 14px;">
+              • Khảo sát nhiệt độ sôi bất thường của $\text{HF}$ so với $\text{HCl}, \text{HBr}, \text{HI}$.<br>
+              • Quy luật năng lượng liên kết $E_b$ và tính acid tăng dần trong dung dịch nước.<br>
+              • Ứng dụng ăn mòn thuỷ tinh độc nhất của hydrofluoric acid.<br>
+              • Nhận biết 4 ion halide bằng thuốc thử $\text{AgNO}_3$.<br>
+              • Phản ứng tính khử của ion halide với sulfuric acid đặc.
+            </div>
           </div>
 
-        </aside>
+        </div>
 
-        <!-- CỘT PHẢI: Interactive Simulation / Lab Pane -->
-        <main class="lab-interactive-pane">
+        <!-- RIGHT COLUMN: Phòng Thí Nghiệm & Mô Phỏng Tương Tác 2.5D -->
+        <div class="lab-interactive-pane">
           
-          <!-- KHỐI TƯƠNG TÁC TAB 1: PHÂN TỬ HX & NHIỆT ĐỘ SÔI -->
-          <div class="interactive-stage-card" id="b22-stage-part1">
-            <div class="stage-header-clean">
-              <div class="stage-title-wrap">
-                <span class="hud-badge-live">● PHÂN TỬ VÀ LIÊN KẾT HYDROGEN 2.5D</span>
-                <h3 class="hud-big-title">Mô Hình Cấu Tạo Phân Tử HX & Tương Tác Liên Phân Tử</h3>
-              </div>
-              <div class="btn-group-sm">
+          <!-- HUD Scientific Bar Chuẩn Mực Hệ Thống -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHỦ ĐỀ ĐANG HỌC</span>
+              <span class="hud-value highlight">Chương 7 • Bài 22</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">CÔNG CỤ LAB</span>
+              <span id="b22-hud-tool" class="hud-value" style="color: #0284c7;">Mô Hình Liên Kết Phân Tử HX</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">QUY LUẬT CỐT TỬ</span>
+              <span class="hud-value" style="color: #16a34a;">Tính acid: HF &lt; HCl &lt; HBr &lt; HI</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1: Mô Hình Cấu Tạo Phân Tử HX & Liên Kết Hydrogen 2.5D -->
+          <div id="panel-b22-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🔬 Khảo Sát Liên Kết Phân Tử HX & Liên Kết Hydrogen 2.5D</span>
+              <div style="display: flex; gap: 6px;">
                 <button class="btn-tool active" id="btn-b22-mol-hf" onclick="selectB22Molecule('HF')">HF (Khí / Lỏng)</button>
                 <button class="btn-tool" id="btn-b22-mol-hcl" onclick="selectB22Molecule('HCl')">HCl</button>
                 <button class="btn-tool" id="btn-b22-mol-hbr" onclick="selectB22Molecule('HBr')">HBr</button>
                 <button class="btn-tool" id="btn-b22-mol-hi" onclick="selectB22Molecule('HI')">HI</button>
               </div>
             </div>
-
-            <!-- Canvas render mô hình phân tử & liên kết hydrogen -->
-            <div class="canvas-wrapper" style="height: 380px; position: relative; background: #f8fafc; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-              <canvas id="b22-mol-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+            <div class="canvas-wrapper" style="flex: 1; position: relative; background: #f8fafc;">
+              <canvas id="b22MolCanvas"></canvas>
             </div>
-
-            <!-- HUD số liệu thời gian thực -->
-            <div class="hud-scientific" style="margin-top: 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-              <div class="hud-data-tile">
-                <span class="hud-lbl">Chất đang chọn</span>
-                <span class="hud-val" id="b22-hud-name" style="color: #0284c7;">HF</span>
-              </div>
-              <div class="hud-data-tile">
-                <span class="hud-lbl">Độ dài lk (pm)</span>
-                <span class="hud-val" id="b22-hud-length">92 pm</span>
-              </div>
-              <div class="hud-data-tile">
-                <span class="hud-lbl">Năng lượng lk</span>
-                <span class="hud-val" id="b22-hud-energy">565 kJ/mol</span>
-              </div>
-              <div class="hud-data-tile">
-                <span class="hud-lbl">Nhiệt độ sôi (t_s)</span>
-                <span class="hud-val" id="b22-hud-bp" style="color: #dc2626;">+19,5 °C</span>
-              </div>
-            </div>
-
-            <div class="tip-banner-clean" id="b22-hud-desc" style="margin-top: 10px; font-size: 13px; color: #475569; background: #f1f5f9; padding: 10px 14px; border-radius: 6px;">
+            <div style="padding: 10px 16px; background: #ffffff; border-top: 1px solid #e2e8f0; font-size: 12.5px; color: #475569;" id="b22-mol-tip">
               💡 <em>HF có liên kết hydrogen liên phân tử mạnh (...H-F...H-F...), khiến nhiệt độ sôi vọt lên +19,5 °C (chất lỏng dễ bay hơi ở nhiệt độ phòng).</em>
             </div>
           </div>
 
-          <!-- KHỐI TƯƠNG TÁC TAB 2: ĂN MÒN THUỶ TINH & AXIT HCL -->
-          <div class="interactive-stage-card" id="b22-stage-part2" style="display: none;">
-            <div class="stage-header-clean">
-              <div class="stage-title-wrap">
-                <span class="hud-badge-live">● THÍ NGHIỆM ĐẶC TRƯNG 2.5D</span>
-                <h3 class="hud-big-title">Mô Phỏng Axit HF Khắc Thuỷ Tinh & Axit HCl</h3>
-              </div>
-              <div class="btn-group-sm">
-                <button class="btn-tool active" id="btn-b22-exp-hf" onclick="selectB22AcidExp('hf_glass')">Khắc Thuỷ Tinh (HF + SiO₂)</button>
+          <!-- PANEL 2: Thí Nghiệm Khắc Thuỷ Tinh & Phản Ứng Axit HCl -->
+          <div id="panel-b22-part2" class="lab-canvas-area" style="display: none; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🧪 Thí Nghiệm HF Khắc Thuỷ Tinh & Tính Chất Axit HCl</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" id="btn-b22-exp-hf" onclick="selectB22AcidExp('hf_glass')">Khắc Kính HF + SiO₂</button>
                 <button class="btn-tool" id="btn-b22-exp-zn" onclick="selectB22AcidExp('hcl_zn')">HCl + Kẽm (Zn)</button>
                 <button class="btn-tool" id="btn-b22-exp-cu" onclick="selectB22AcidExp('hcl_cu')">HCl + Đồng (Cu)</button>
                 <button class="btn-tool" id="btn-b22-exp-carb" onclick="selectB22AcidExp('hcl_carb')">HCl + NaHCO₃</button>
               </div>
             </div>
-
-            <!-- Canvas thí nghiệm -->
-            <div class="canvas-wrapper" style="height: 380px; position: relative; background: #0f172a; border-radius: 8px; overflow: hidden; border: 1px solid #334155;">
-              <canvas id="b22-acid-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+            <div class="canvas-wrapper" style="flex: 1; position: relative; background: #0f172a;">
+              <canvas id="b22AcidCanvas"></canvas>
             </div>
-
-            <!-- Điều khiển & Giải thích phản ứng -->
-            <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
-              <div>
-                <span style="font-size: 13px; font-weight: 700; color: #1e293b;" id="b22-exp-title">Phản ứng: SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O</span>
-                <p style="font-size: 12.5px; color: #64748b; margin: 4px 0 0 0;" id="b22-exp-sub">Axit HF hoà tan cát và thuỷ tinh, tạo bọt khí SiF₄ và để lại nét khắc sâu vĩnh cửu.</p>
-              </div>
-              <button class="btn-tool active" onclick="runB22AcidReaction()" style="padding: 8px 16px;">
+            <div style="padding: 10px 16px; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 12.5px; color: #1e293b; font-weight: 600;" id="b22-acid-desc">
+                Phản ứng: SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O (Khí SiF₄ bay ra để lại nét khắc hoa văn rãnh sâu trên kính).
+              </span>
+              <button class="btn-tool active" onclick="runB22AcidReaction()" style="padding: 6px 14px;">
                 <span>▶ Bắt đầu phản ứng</span>
               </button>
             </div>
           </div>
 
-          <!-- KHỐI TƯƠNG TÁC TAB 3: NHẬN BIẾT ION HALIDE VỚI AGNO3 -->
-          <div class="interactive-stage-card" id="b22-stage-part3" style="display: none;">
-            <div class="stage-header-clean">
-              <div class="stage-title-wrap">
-                <span class="hud-badge-live">● THÍ NGHIỆM PHÂN TÍCH NHẬN BIẾT 2.5D</span>
-                <h3 class="hud-big-title">Thuốc Thử AgNO₃ Nhận Biết 4 Ống Nghiệm F⁻, Cl⁻, Br⁻, I⁻</h3>
-              </div>
-              <div class="btn-group-sm">
+          <!-- PANEL 3: Giá 4 Ống Nghiệm Nhận Biết Bằng AgNO3 -->
+          <div id="panel-b22-part3" class="lab-canvas-area" style="display: none; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🔬 Giá 4 Ống Nghiệm Nhận Biết Ion Halide Bằng Thuốc Thử AgNO₃</span>
+              <div style="display: flex; gap: 8px;">
                 <button class="btn-tool active" onclick="triggerAgNO3All()">Nhỏ AgNO₃ Cả 4 Ống</button>
                 <button class="btn-tool" onclick="resetAgNO3Rack()">↺ Rửa ống nghiệm</button>
               </div>
             </div>
-
-            <!-- Canvas 4 ống nghiệm -->
-            <div class="canvas-wrapper" style="height: 380px; position: relative; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-              <canvas id="b22-silver-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+            <div class="canvas-wrapper" style="flex: 1; position: relative; background: #ffffff;">
+              <canvas id="b22SilverCanvas"></canvas>
             </div>
-
-            <!-- Bảng kết quả nhận biết dưới chân Canvas -->
-            <div style="margin-top: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-              <div class="hud-data-tile" style="border-top: 3px solid #94a3b8;">
-                <span class="hud-lbl">Ống 1: NaF ($F^-$)</span>
-                <span class="hud-val" id="b22-res-f" style="font-size: 13px; color: #64748b;">Chưa nhỏ AgNO₃</span>
+            <div style="padding: 10px 16px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+              <div style="font-size: 11.5px; color: #64748b; text-align: center;">
+                <strong>Ống 1 (F⁻):</strong> <span id="b22-res-f">Chưa nhỏ AgNO₃</span>
               </div>
-              <div class="hud-data-tile" style="border-top: 3px solid #0284c7;">
-                <span class="hud-lbl">Ống 2: NaCl ($Cl^-$)</span>
-                <span class="hud-val" id="b22-res-cl" style="font-size: 13px; color: #64748b;">Chưa nhỏ AgNO₃</span>
+              <div style="font-size: 11.5px; color: #0284c7; text-align: center;">
+                <strong>Ống 2 (Cl⁻):</strong> <span id="b22-res-cl">Chưa nhỏ AgNO₃</span>
               </div>
-              <div class="hud-data-tile" style="border-top: 3px solid #d97706;">
-                <span class="hud-lbl">Ống 3: NaBr ($Br^-$)</span>
-                <span class="hud-val" id="b22-res-br" style="font-size: 13px; color: #64748b;">Chưa nhỏ AgNO₃</span>
+              <div style="font-size: 11.5px; color: #d97706; text-align: center;">
+                <strong>Ống 3 (Br⁻):</strong> <span id="b22-res-br">Chưa nhỏ AgNO₃</span>
               </div>
-              <div class="hud-data-tile" style="border-top: 3px solid #ca8a04;">
-                <span class="hud-lbl">Ống 4: NaI ($I^-$)</span>
-                <span class="hud-val" id="b22-res-i" style="font-size: 13px; color: #64748b;">Chưa nhỏ AgNO₃</span>
+              <div style="font-size: 11.5px; color: #ca8a04; text-align: center;">
+                <strong>Ống 4 (I⁻):</strong> <span id="b22-res-i">Chưa nhỏ AgNO₃</span>
               </div>
             </div>
           </div>
 
-          <!-- KHỐI TƯƠNG TÁC TAB 4: ĐẤU TRƯỜNG BÀI TẬP -->
-          <div class="interactive-stage-card" id="b22-stage-part4" style="display: none;">
-            <div class="stage-header-clean">
-              <div class="stage-title-wrap">
-                <span class="hud-badge-live">● ĐẤU TRƯỜNG TRẮC NGHIỆM</span>
-                <h3 class="hud-big-title" id="b22-arena-q-title">Câu hỏi số 1</h3>
+          <!-- PANEL 4: Đấu Trường Trắc Nghiệm Bài 22 -->
+          <div id="panel-b22-part4" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;" id="b22-arena-q-title">Câu hỏi 1 / 5</h4>
+                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Trắc nghiệm chuẩn sư phạm bám sát SGK Hoá học 10</div>
               </div>
-              <div class="score-badge-clean">
-                <span>Điểm: </span>
-                <strong id="b22-arena-score" style="color: #0284c7; font-size: 16px;">0 / 50</strong>
-              </div>
+              <div style="font-size: 15px; font-weight: 800; color: #0284c7;" id="b22-arena-score">Điểm: 0 / 50</div>
             </div>
 
-            <!-- Vùng câu hỏi & 4 phương án -->
-            <div style="background: #ffffff; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 14px;">
-              <p id="b22-arena-question-text" style="font-size: 15px; font-weight: 600; color: #0f172a; line-height: 1.6; margin-bottom: 20px;">
-                Chất nào sau đây có nhiệt độ sôi cao bất thường do có khả năng tạo liên kết hydrogen liên phân tử?
+            <div style="flex: 1; display: flex; flex-direction: column;">
+              <p id="b22-arena-question-text" style="font-size: 14.5px; font-weight: 600; color: #0f172a; line-height: 1.6; margin-bottom: 18px;">
+                <!-- Nội dung câu hỏi -->
               </p>
-
               <div id="b22-arena-options-list" style="display: flex; flex-direction: column; gap: 10px;">
-                <!-- Render động các lựa chọn -->
+                <!-- Danh sách 4 lựa chọn -->
               </div>
-
-              <!-- Vùng giải thích cặn kẽ sau khi chọn -->
-              <div id="b22-arena-feedback-box" style="display: none; margin-top: 18px; padding: 14px 18px; border-radius: 8px; font-size: 13.5px; line-height: 1.6;">
+              <div id="b22-arena-feedback-box" style="display: none; margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; line-height: 1.6;">
               </div>
             </div>
 
             <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
-              <button class="btn-primary" id="btn-b22-next-q" onclick="nextB22Question()" style="display: none; padding: 10px 24px;">
+              <button class="btn-primary" id="btn-b22-next-q" onclick="nextB22Question()" style="display: none; padding: 8px 20px;">
                 <span>Câu tiếp theo ➔</span>
               </button>
             </div>
           </div>
 
-          <!-- Lab Action Footer -->
+          <!-- Lab Action Footer Chuẩn Mực Hệ Thống -->
           <footer class="lab-action-footer">
             <div style="font-size: 12px; color: #64748b;" id="b22-lab-status-tip">
-              💡 <em>Tương tác: Chọn phân tử để khảo sát cấu trúc liên kết và sự biến đổi nhiệt độ sôi.</em>
+              💡 <em>Tương tác: Chọn từng phân tử HX để quan sát cấu trúc không gian và liên kết hydrogen 2.5D.</em>
             </div>
             <div style="display: flex; gap: 8px;">
               <button class="btn-tool" onclick="resetB22InteractiveState()">
                 <span>↺</span>
-                <span>Đặt lại mô phỏng</span>
+                <span>Đặt lại</span>
               </button>
             </div>
           </footer>
 
-        </main>
+        </div>
       </div>
-
     </div>
   </div>
 
@@ -7401,205 +7356,218 @@
   <div id="view-studio-b23" class="view-screen">
     <div class="studio-container">
       
-      <!-- Studio Header với 3 Tab riêng biệt chuẩn mực cho Bài 23 -->
+      <!-- Studio Topbar Chuẩn Mực Hệ Thống -->
       <nav class="studio-topbar">
-        <div class="studio-breadcrumb">
-          <button class="btn-back-clean" onclick="backToDashboard()">
-            <span class="icon-back">←</span>
-            <span>Trang chủ</span>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
           </button>
-          <span class="breadcrumb-sep">/</span>
-          <span class="badge-tag-chap">Chương 7</span>
-          <span class="breadcrumb-sep">/</span>
-          <span class="current-lesson-name">Bài 23: Ôn Tập & Luyện Tập Chương 7</span>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 7 • Bài 23</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Ôn Tập & Luyện Tập Chương 7: Nhóm Halogen</h2>
+          </div>
         </div>
 
-        <div class="studio-tabs-nav">
-          <button class="tab-clean-item active" id="tab-btn-b23-p1" onclick="switchPartB23('part1')">
-            <span class="tab-order-badge">1</span>
-            <span>Sơ Đồ Hệ Thống Hoá Halogen 2.5D</span>
+        <!-- Segmented Tab Switcher Chuẩn Mực -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b23-p1" class="tab-seg-btn active" onclick="switchPartB23('part1')">
+            <span>I. Sơ Đồ Tư Duy Halogen 2.5D</span>
           </button>
-          <button class="tab-clean-item" id="tab-btn-b23-p2" onclick="switchPartB23('part2')">
-            <span class="tab-order-badge">2</span>
-            <span>Hoàn Thành Điền Khuyết SGK Tr. 118</span>
+          <button id="tab-btn-b23-p2" class="tab-seg-btn" onclick="switchPartB23('part2')">
+            <span>II. Điền Khuyết Hệ Thống Hoá Tr. 118</span>
           </button>
-          <button class="tab-clean-item" id="tab-btn-b23-p3" onclick="switchPartB23('part3')">
-            <span class="tab-order-badge">3</span>
-            <span>Đấu Trường 6 Bài Tập SGK Tr. 119</span>
+          <button id="tab-btn-b23-p3" class="tab-seg-btn" onclick="switchPartB23('part3')">
+            <span>III. Đấu Trường 6 Bài Tập Tr. 119</span>
           </button>
         </div>
       </nav>
 
-      <!-- Main Dual-Pane Studio Body -->
-      <div class="studio-body-layout">
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
         
-        <!-- CỘT TRÁI: Scrollable Theory Sheet -->
-        <aside class="theory-scroll-pane">
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
           
-          <!-- NỘI DUNG TAB 1: SƠ ĐỒ HỆ THỐNG HOÁ -->
-          <div class="theory-part-container" id="theory-b23-part1">
-            <div class="topic-indicator-tag">TỔNG KẾT TOÀN CHƯƠNG 7 • SGK TRANG 118</div>
-            <h2 class="theory-main-title">Hệ Thống Hoá Toàn Diện Nguyên Tố Nhóm Halogen</h2>
+          <!-- PHẦN 1: HỆ THỐNG HOÁ TOÀN DIỆN CHƯƠNG 7 -->
+          <div id="content-b23-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Tổng kết Chương 7 (SGK Trang 118 – 119)</h4>
+              <p>Hệ thống hoá toàn bộ mạng lưới kiến thức của nhóm Halogen: Cấu hình electron nguyên tử, quy luật tính oxi hoá đơn chất, tương tác Van der Waals và liên kết hydrogen ở hợp chất $HX$, tính acid tăng dần và nhận biết ion halide bằng thuốc thử $\text{AgNO}_3$.</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 118</div>
+            <h3 class="section-title">1. Bảng Hệ Thống Hoá Toàn Diện Nguyên Tố Nhóm Halogen</h3>
             
-            <p class="theory-paragraph">
-              Chương 7 khép lại toàn bộ chương trình Hoá học 10 với các quy luật hoá học cốt lõi của nhóm VIIA ($F, Cl, Br, I$):
-            </p>
+            <p><strong>A. Nguyên tử Halogen:</strong></p>
+            <ul style="padding-left: 20px; font-size: 13.5px; line-height: 1.6; color: #334155;">
+              <li>Cấu hình electron lớp ngoài cùng: $ns^2 np^5$ ($7$ electron hoá trị, thiếu $1e$ để đạt cấu hình octet bền vững của khí hiếm gần nhất).</li>
+              <li>Xu hướng nhận thêm $1e$ tạo ion halide: $\text{X} + 1e \longrightarrow \text{X}^-$ thể hiện <strong>tính oxi hoá mạnh</strong> đặc trưng của phi kim nhóm VIIA.</li>
+              <li>Độ âm điện lớn nhất trong chu kì và giảm dần từ $\text{F} (3,98) \to \text{I} (2,66)$.</li>
+            </ul>
 
-            <div class="card-formula-highlight" style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 14px 18px; border-radius: 8px; margin: 16px 0;">
-              <h4 style="color: #1e40af; font-size: 14px; font-weight: 700; margin: 0 0 6px 0;">1. Nguyên Tử & Đơn Chất Halogen</h4>
-              <p style="font-size: 13.5px; color: #1e293b; margin: 0; line-height: 1.6;">
-                • Cấu hình electron lớp ngoài cùng: $ns^2 np^5$ (có $7$ electron hoá trị).<br>
-                • Xu hướng nhận $1e$ tạo ion halide $X^-$ ($X + 1e \to X^-$) thể hiện <strong>tính oxi hoá mạnh</strong>.<br>
-                • Tính oxi hoá giảm dần từ $F_2$ đến $I_2$ ($F_2 > Cl_2 > Br_2 > I_2$).<br>
-                • Trạng thái và màu sắc: $F_2$ (khí, lục nhạt) $\to Cl_2$ (khí, vàng lục) $\to Br_2$ (lỏng, nâu đỏ) $\to I_2$ (rắn, tím đen). Nhiệt độ nóng chảy và nhiệt độ sôi tăng dần do tương tác Van der Waals tăng.
-              </p>
-            </div>
+            <p style="margin-top: 14px;"><strong>B. Đơn chất Halogen:</strong></p>
+            <ul style="padding-left: 20px; font-size: 13.5px; line-height: 1.6; color: #334155;">
+              <li>Phân tử gồm 2 nguyên tử $\text{X}_2$ liên kết cộng hoá trị không cực.</li>
+              <li>Nhiệt độ nóng chảy và nhiệt độ sôi <strong>tăng dần từ $\text{F}_2$ đến $\text{I}_2$</strong> do phân tử khối tăng và số electron tăng làm <em>tương tác Van der Waals tăng dần</em>.</li>
+              <li>Tính oxi hoá <strong>giảm dần từ $\text{F}_2$ đến $\text{I}_2$</strong> ($\text{F}_2 > \text{Cl}_2 > \text{Br}_2 > \text{I}_2$). Halogen đứng trước đẩy được halogen đứng sau ra khỏi dung dịch muối halide ($\text{Cl}_2 + 2\text{NaBr} \to 2\text{NaCl} + \text{Br}_2$).</li>
+            </ul>
 
-            <div class="card-formula-highlight" style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 14px 18px; border-radius: 8px; margin: 16px 0;">
-              <h4 style="color: #065f46; font-size: 14px; font-weight: 700; margin: 0 0 6px 0;">2. Hydrogen Halide & Muối Halide</h4>
-              <p style="font-size: 13.5px; color: #1e293b; margin: 0; line-height: 1.6;">
-                • $HF$ có nhiệt độ sôi cao bất thường ($+19,5^\circ C$) do liên kết hydrogen liên phân tử.<br>
-                • Tính acid tăng dần: $HF$ (axit yếu) $&lt; HCl &lt; HBr &lt; HI$ (axit rất mạnh). $HF$ có khả năng ăn mòn thuỷ tinh ($SiO_2 + 4HF \to SiF_4\uparrow + 2H_2O$).<br>
-                • Tính khử của ion halide tăng dần: $Cl^- &lt; Br^- &lt; I^-$.<br>
-                • Nhận biết bằng $AgNO_3$: $F^-$ không kết tủa; $Cl^-$ kết tủa trắng ($AgCl$); $Br^-$ kết tủa vàng nhạt ($AgBr$); $I^-$ kết tủa vàng đậm ($AgI$).
-              </p>
-            </div>
-          </div>
-
-          <!-- NỘI DUNG TAB 2: ĐIỀN KHUYẾT SGK -->
-          <div class="theory-part-container" id="theory-b23-part2" style="display: none;">
-            <div class="topic-indicator-tag">BÀI TẬP SGK TRANG 118</div>
-            <h2 class="theory-main-title">Hoàn Thành Nội Dung Điền Khuyết SGK Tr. 118</h2>
-            <p class="theory-paragraph">
-              Đối chiếu và hoàn thành các mệnh đề còn thiếu trong bảng hệ thống hoá kiến thức SGK:
-            </p>
-            <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 16px; border-radius: 8px; line-height: 1.7; font-size: 13.5px;">
-              <p>1. Cấu hình lớp electron ngoài cùng của halogen là: <strong>ns² np⁵</strong>.</p>
-              <p>2. Xu hướng nhận 1 electron của halogen thể hiện <strong>tính oxi hoá</strong>.</p>
-              <p>3. Nhiệt độ nóng chảy và sôi tăng từ F₂ đến I₂ do <strong>tương tác Van der Waals tăng</strong>.</p>
-              <p>4. Tính oxi hoá của halogen biến đổi theo xu hướng <strong>giảm dần từ F₂ đến I₂</strong>.</p>
-              <p>5. Thuốc thử để phân biệt các ion Cl⁻, Br⁻, I⁻ là <strong>dung dịch AgNO₃</strong>.</p>
-              <p>6. Sắp xếp tính khử tăng dần của ion halide: <strong>Cl⁻ &lt; Br⁻ &lt; I⁻</strong>.</p>
-            </div>
-          </div>
-
-          <!-- NỘI DUNG TAB 3: ĐẤU TRƯỜNG 6 BÀI TẬP SGK -->
-          <div class="theory-part-container" id="theory-b23-part3" style="display: none;">
-            <div class="topic-indicator-tag">LUYỆN TẬP TỔNG HỢP • SGK TRANG 119</div>
-            <h2 class="theory-main-title">Đấu Trường 6 Bài Tập SGK Hoá Học 10 Trang 119</h2>
-            <p class="theory-paragraph">
-              Toàn bộ 6 bài tập SGK nguyên bản có lời giải chi tiết và tính toán định lượng:
-            </p>
-            <ul style="font-size: 13.5px; color: #334155; line-height: 1.6; padding-left: 20px;">
-              <li><strong>Câu 1:</strong> Độ phân cực liên kết lớn nhất ($H-F$).</li>
-              <li><strong>Câu 2:</strong> Bán kính nguyên tử từ $F \to I$ tăng dần.</li>
-              <li><strong>Câu 3:</strong> Đơn chất có tính oxi hoá mạnh nhất ($F_2$).</li>
-              <li><strong>Câu 4:</strong> Nút bông tẩm dung dịch $NaOH$ để trung hoà khí độc $Cl_2$.</li>
-              <li><strong>Câu 5:</strong> Tính khối lượng muối ăn thu được từ $200\,000\,L$ nước biển (hiệu suất $60\%$): $m = 3\,600\,kg$.</li>
-              <li><strong>Câu 6:</strong> Xác định 2 halogen liên tiếp trong $0,402\,g$ muối sodium tác dụng $AgNO_3$ tạo $0,574\,g$ kết tủa: $F$ và $Cl$.</li>
+            <p style="margin-top: 14px;"><strong>C. Hợp chất Hydrogen Halide & Muối Halide:</strong></p>
+            <ul style="padding-left: 20px; font-size: 13.5px; line-height: 1.6; color: #334155;">
+              <li>$\text{HF}$ có nhiệt độ sôi cao bất thường ($+19,5^\circ\text{C}$) do liên kết hydrogen liên phân tử.</li>
+              <li>Tính acid tăng dần: $\text{HF} < \text{HCl} < \text{HBr} < \text{HI}$ (do năng lượng liên kết $E_b$ giảm mạnh).</li>
+              <li>$\text{HF}$ hoà tan thuỷ tinh: $\text{SiO}_2 + 4\text{HF} \to \text{SiF}_4\uparrow + 2\text{H}_2\text{O}$.</li>
+              <li>Thuốc thử $\text{AgNO}_3$ nhận biết ion halide: $\text{F}^-$ không tủa; $\text{Cl}^-$ tủa trắng $\text{AgCl}$; $\text{Br}^-$ tủa vàng nhạt $\text{AgBr}$; $\text{I}^-$ tủa vàng đậm $\text{AgI}$.</li>
+              <li>Tính khử của ion halide tăng dần: $\text{Cl}^- < \text{Br}^- < \text{I}^-$.</li>
             </ul>
           </div>
 
-        </aside>
-
-        <!-- CỘT PHẢI: Interactive Simulation / Lab Pane -->
-        <main class="lab-interactive-pane">
-          
-          <!-- KHỐI TƯƠNG TÁC TAB 1: SƠ ĐỒ TƯ DUY 2.5D -->
-          <div class="interactive-stage-card" id="b23-stage-part1">
-            <div class="stage-header-clean">
-              <div class="stage-title-wrap">
-                <span class="hud-badge-live">● SƠ ĐỒ TƯ DUY CHƯƠNG 7</span>
-                <h3 class="hud-big-title">Toàn Cảnh Kiến Thức Halogen & Hợp Chất 2.5D</h3>
-              </div>
+          <!-- PHẦN 2: ĐIỀN KHUYẾT HỆ THỐNG HOÁ SGK TRANG 118 -->
+          <div id="content-b23-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Bài Tập Điền Khuyết Củng Cố Bảng Tổng Kết (SGK Trang 118)</h4>
+              <p>Hoàn thành chính xác các mệnh đề khoa học còn thiếu trong bảng hệ thống hoá kiến thức SGK Hoá học 10.</p>
             </div>
 
-            <!-- Canvas mindmap -->
-            <div class="canvas-wrapper" style="height: 380px; position: relative; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
-              <canvas id="b23-mindmap-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
-            </div>
-
-            <!-- Hộp chi tiết nút mindmap được bấm -->
-            <div style="margin-top: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px 18px; border-radius: 8px;" id="b23-mindmap-info-box">
-              <h4 style="font-size: 14px; font-weight: 700; color: #0f172a; margin: 0 0 6px 0;" id="b23-node-title">Chọn một nhánh trên sơ đồ để xem chi tiết</h4>
-              <p style="font-size: 13px; color: #64748b; margin: 0; line-height: 1.6;" id="b23-node-desc">Nhấp chuột vào bất kỳ ô nào: Cấu tạo nguyên tử, Đơn chất Halogen, Hydrogen Halide, hoặc Muối Halide.</p>
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 18px; border-radius: 8px; line-height: 1.8; font-size: 13.5px; margin-top: 14px;">
+              <p>1. Cấu hình lớp electron ngoài cùng của nguyên tử halogen là: <strong>ns² np⁵</strong>.</p>
+              <p>2. Xu hướng nhận 1 electron của halogen thể hiện <strong>tính oxi hoá mạnh</strong>.</p>
+              <p>3. Nhiệt độ nóng chảy và sôi tăng từ F₂ đến I₂ do <strong>tương tác Van der Waals tăng dần</strong>.</p>
+              <p>4. Tính oxi hoá của halogen biến đổi theo xu hướng <strong>giảm dần từ F₂ đến I₂</strong>.</p>
+              <p>5. Thuốc thử để phân biệt các ion Cl⁻, Br⁻, I⁻ là <strong>dung dịch AgNO₃</strong>.</p>
+              <p>6. Sắp xếp tính khử tăng dần của ion halide: <strong>Cl⁻ &lt; Br⁻ &lt; I⁻</strong>.</p>
+              <p>7. HF sôi ở +19,5 °C cao bất thường do <strong>liên kết hydrogen liên phân tử</strong>.</p>
             </div>
           </div>
 
-          <!-- KHỐI TƯƠNG TÁC TAB 2: ĐIỀN KHUYẾT INTERACTIVE -->
-          <div class="interactive-stage-card" id="b23-stage-part2" style="display: none;">
-            <div class="stage-header-clean">
-              <div class="stage-title-wrap">
-                <span class="hud-badge-live">● BÀI TẬP TỰ ĐÁNH GIÁ</span>
-                <h3 class="hud-big-title">Điền Từ Còn Thiếu Vào Bảng Hệ Thống Hoá Tr. 118</h3>
+          <!-- PHẦN 3: ĐẤU TRƯỜNG 6 BÀI TẬP SGK TRANG 119 -->
+          <div id="content-b23-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Đấu Trường 6 Bài Tập Nguyên Bản SGK Trang 119</h4>
+              <p>Chinh phục toàn bộ 6 bài tập luyện tập cuối cùng của SGK Hoá học 10 với đầy đủ phương pháp tính toán định lượng và giải thích cơ chế vi mô.</p>
+            </div>
+
+            <div style="font-size: 13.5px; color: #334155; line-height: 1.7; margin-top: 14px;">
+              <p><strong>• Câu 1 (SGK Tr.119):</strong> So sánh độ phân cực liên kết giữa các phân tử $H-X$. Phân tử $H-F$ có hiệu độ âm điện lớn nhất ($\Delta\chi = 1,78$) nên liên kết phân cực mạnh nhất.</p>
+              <p><strong>• Câu 2 (SGK Tr.119):</strong> Xu hướng biến đổi bán kính nguyên tử từ $F$ đến $I$. Bán kính tăng dần do số lớp electron tăng từ $2$ lên $5$.</p>
+              <p><strong>• Câu 3 (SGK Tr.119):</strong> Đơn chất có tính oxi hoá mạnh nhất là $F_2$, oxi hoá mãnh liệt mọi kim loại và nước ở nhiệt độ thường.</p>
+              <p><strong>• Câu 4 (SGK Tr.119):</strong> Biện pháp an toàn phòng thí nghiệm: Dùng bông tẩm dung dịch $NaOH$ đậy bình thu khí để trung hoà khí độc $Cl_2$: $\text{Cl}_2 + 2\text{NaOH} \to \text{NaCl} + \text{NaClO} + \text{H}_2\text{O}$.</p>
+              <p><strong>• Câu 5 (SGK Tr.119):</strong> Bài toán sản xuất muối ăn từ ruộng $200\,000\,\text{L}$ nước biển ($30\,\text{g/L}$, hiệu suất $60\%$):
+              $$m = \frac{200\,000 \times 30}{1\,000} \times 60\% = 6\,000 \times 60\% = 3\,600\,\text{kg}$$</p>
+              <p><strong>• Câu 6 (SGK Tr.119):</strong> Biện luận tìm 2 halogen kế tiếp trong $0,402\,\text{g}$ muối tác dụng $\text{AgNO}_3$ dư tạo $0,574\,\text{g}$ kết tủa. Chứng minh tồn tại $\text{NaF}$ ($\text{AgF}$ tan) và $\text{NaCl}$ ($\text{AgCl}\downarrow$), đáp án là <strong>F và Cl</strong>.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng Thí Nghiệm & Sơ Đồ Tư Duy 2.5D -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar Chuẩn Mực Hệ Thống -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHƯƠNG TỔNG KẾT</span>
+              <span class="hud-value highlight">Chương 7 • Nhóm Halogen</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">SỐ BÀI HỌC</span>
+              <span class="hud-value">3 Bài (Bài 21 ➔ Bài 23)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">CƠ CHẾ CỐT TỬ</span>
+              <span class="hud-value" style="color: #2563eb;">Oxi hoá mạnh & Muối Halide</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">TIẾN ĐỘ SGK 10</span>
+              <span class="hud-value" style="color: #16a34a;">100% Tốt Nghiệp</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1: Sơ đồ Tư duy Toàn cảnh Halogen 2.5D Mindmap -->
+          <div id="panel-b23-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🗺️ Bản Đồ Tư Duy 2.5D Hệ Thống Hoá Toàn Bộ Nhóm Halogen</span>
+              <div style="font-size: 12px; color: #64748b;">Click từng nhánh để xem kiến thức mở rộng</div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative; background: #ffffff;">
+              <canvas id="b23MindmapCanvas"></canvas>
+            </div>
+            <div style="padding: 12px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0;" id="b23-mindmap-info-box">
+              <h4 style="font-size: 13.5px; font-weight: 700; color: #0f172a; margin: 0 0 4px 0;" id="b23-node-title">HALOGEN (VIIA) - F, Cl, Br, I</h4>
+              <p style="font-size: 12.5px; color: #64748b; margin: 0; line-height: 1.5;" id="b23-node-desc">Nhóm phi kim điển hình có 7 electron hoá trị, tính oxi hoá mạnh đặc trưng. Bấm vào từng nhánh để xem chi tiết.</p>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Bài Tập Điền Khuyết Tương Tác Trực Quan -->
+          <div id="panel-b23-part2" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 24px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">📝 Hoàn Thành Nội Dung Điền Khuyết SGK Trang 118</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 3px 0 0 0;">Điền từ hoặc kí hiệu hoá học còn thiếu vào các ô bên dưới rồi bấm Kiểm tra.</p>
               </div>
               <button class="btn-tool active" onclick="checkB23ClozeAll()">Kiểm tra kết quả</button>
             </div>
 
-            <div style="background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 14px; display: flex; flex-direction: column; gap: 14px;">
-              
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #f8fafc; border-radius: 6px;">
-                <span style="font-size: 13.5px; color: #1e293b;">1. Cấu hình e lớp ngoài cùng của halogen là:</span>
-                <input type="text" id="b23-cloze-q1" placeholder="Ví dụ: ns2 np5" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; width: 140px; font-family: 'JetBrains Mono', monospace;">
+            <div style="display: flex; flex-direction: column; gap: 14px; flex: 1;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <span style="font-size: 13.5px; color: #1e293b; font-weight: 600;">1. Cấu hình e lớp ngoài cùng của halogen:</span>
+                <input type="text" id="b23-cloze-q1" placeholder="Ví dụ: ns2 np5" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; width: 150px; font-family: 'JetBrains Mono', monospace;">
               </div>
 
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #f8fafc; border-radius: 6px;">
-                <span style="font-size: 13.5px; color: #1e293b;">2. Xu hướng nhận 1e thể hiện tính:</span>
-                <input type="text" id="b23-cloze-q2" placeholder="Ví dụ: oxi hoá" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; width: 140px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <span style="font-size: 13.5px; color: #1e293b; font-weight: 600;">2. Xu hướng nhận 1e thể hiện tính chất:</span>
+                <input type="text" id="b23-cloze-q2" placeholder="Ví dụ: oxi hoá" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; width: 150px;">
               </div>
 
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #f8fafc; border-radius: 6px;">
-                <span style="font-size: 13.5px; color: #1e293b;">3. Thuốc thử nhận biết các ion halide:</span>
-                <input type="text" id="b23-cloze-q3" placeholder="Ví dụ: AgNO3" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; width: 140px; font-family: 'JetBrains Mono', monospace;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <span style="font-size: 13.5px; color: #1e293b; font-weight: 600;">3. Thuốc thử nhận biết các ion halide:</span>
+                <input type="text" id="b23-cloze-q3" placeholder="Ví dụ: AgNO3" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; width: 150px; font-family: 'JetBrains Mono', monospace;">
               </div>
 
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #f8fafc; border-radius: 6px;">
-                <span style="font-size: 13.5px; color: #1e293b;">4. Chiều tính khử của ion halide tăng dần:</span>
-                <input type="text" id="b23-cloze-q4" placeholder="Ví dụ: Cl- < Br- < I-" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; width: 140px; font-family: 'JetBrains Mono', monospace;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <span style="font-size: 13.5px; color: #1e293b; font-weight: 600;">4. Chiều tính khử của ion halide tăng dần:</span>
+                <input type="text" id="b23-cloze-q4" placeholder="Ví dụ: Cl- < Br- < I-" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; width: 150px; font-family: 'JetBrains Mono', monospace;">
               </div>
 
-              <div id="b23-cloze-feedback" style="display: none; padding: 12px; border-radius: 6px; font-size: 13.5px; line-height: 1.5;"></div>
+              <div id="b23-cloze-feedback" style="display: none; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; line-height: 1.5;"></div>
             </div>
           </div>
 
-          <!-- KHỐI TƯƠNG TÁC TAB 3: ĐẤU TRƯỜNG 6 BÀI TẬP SGK -->
-          <div class="interactive-stage-card" id="b23-stage-part3" style="display: none;">
-            <div class="stage-header-clean">
-              <div class="stage-title-wrap">
-                <span class="hud-badge-live">● ĐẤU TRƯỜNG SGK TRANG 119</span>
-                <h3 class="hud-big-title" id="b23-arena-q-title">Bài tập 1 / 6</h3>
+          <!-- PANEL 3: Đấu Trường 6 Bài Tập SGK Trang 119 -->
+          <div id="panel-b23-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;" id="b23-arena-q-title">Bài tập 1 / 6 (SGK Trang 119)</h4>
+                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Bộ đề tốt nghiệp SGK Hoá học 10 chuẩn mực</div>
               </div>
-              <div class="score-badge-clean">
-                <span>Điểm: </span>
-                <strong id="b23-arena-score" style="color: #0284c7; font-size: 16px;">0 / 60</strong>
-              </div>
+              <div style="font-size: 15px; font-weight: 800; color: #0284c7;" id="b23-arena-score">Điểm: 0 / 60</div>
             </div>
 
-            <!-- Vùng câu hỏi & phương án -->
-            <div style="background: #ffffff; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 14px;">
-              <p id="b23-arena-question-text" style="font-size: 15px; font-weight: 600; color: #0f172a; line-height: 1.6; margin-bottom: 20px;">
+            <div style="flex: 1; display: flex; flex-direction: column;">
+              <p id="b23-arena-question-text" style="font-size: 14.5px; font-weight: 600; color: #0f172a; line-height: 1.6; margin-bottom: 18px;">
                 <!-- Nội dung câu hỏi -->
               </p>
-
               <div id="b23-arena-options-list" style="display: flex; flex-direction: column; gap: 10px;">
-                <!-- Render động -->
+                <!-- Danh sách 4 lựa chọn -->
               </div>
-
-              <div id="b23-arena-feedback-box" style="display: none; margin-top: 18px; padding: 14px 18px; border-radius: 8px; font-size: 13.5px; line-height: 1.6;">
+              <div id="b23-arena-feedback-box" style="display: none; margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; line-height: 1.6;">
               </div>
             </div>
 
             <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
-              <button class="btn-primary" id="btn-b23-next-q" onclick="nextB23Question()" style="display: none; padding: 10px 24px;">
+              <button class="btn-primary" id="btn-b23-next-q" onclick="nextB23Question()" style="display: none; padding: 8px 20px;">
                 <span>Câu tiếp theo ➔</span>
               </button>
             </div>
           </div>
 
-          <!-- Lab Action Footer -->
+          <!-- Lab Action Footer Chuẩn Mực Hệ Thống -->
           <footer class="lab-action-footer">
             <div style="font-size: 12px; color: #64748b;" id="b23-lab-status-tip">
-              💡 <em>Sơ đồ tư duy 2.5D: Bấm vào từng nhánh để ôn tập toàn diện nhóm Halogen.</em>
+              💡 <em>Sơ đồ tư duy 2.5D: Bấm vào từng nút để ôn tập toàn diện nhóm Halogen.</em>
             </div>
             <div style="display: flex; gap: 8px;">
               <button class="btn-tool" onclick="resetB23InteractiveState()">
@@ -7609,9 +7577,8 @@
             </div>
           </footer>
 
-        </main>
+        </div>
       </div>
-
     </div>
   </div>
 
@@ -17581,14 +17548,14 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
 
 
+    
     /* ==========================================================
        LOGIC BÀI 22: HYDROGEN HALIDE & MUỐI HALIDE (CHƯƠNG 7)
        ========================================================== */
     let currentPartB22 = 'part1';
     let b22SelectedMol = 'HF';
     let b22AcidExp = 'hf_glass';
-    let b22ExpRunning = false;
-    let b22AgNO3State = { dropped: false, p: 0 };
+    let b22AgNO3State = { dropped: false };
     let b22QuizStep = 0;
     let b22QuizScore = 0;
     let b22QuizAnswered = false;
@@ -17603,8 +17570,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         desc: '💡 HF có độ âm điện của F rất lớn (3,98). Liên kết H-F phân cực mạnh, tạo liên kết hydrogen liên phân tử mạnh (...H-F...H-F...), làm nhiệt độ sôi tăng vọt lên +19,5 °C (thể lỏng/khí dễ ngưng tụ).',
         hRadius: 16,
         xRadius: 28,
-        xColor: '#84cc16', // neon lime
-        hasHBridge: true
+        xColor: '#84cc16'
       },
       'HCl': {
         name: 'HCl (Hydrogen chloride)',
@@ -17615,8 +17581,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         desc: '💡 HCl không tạo được liên kết hydrogen. Lực hút giữa các phân tử chủ yếu là tương tác Van der Waals yếu nên nhiệt độ sôi thấp (-84,9 °C).',
         hRadius: 16,
         xRadius: 36,
-        xColor: '#22c55e',
-        hasHBridge: false
+        xColor: '#22c55e'
       },
       'HBr': {
         name: 'HBr (Hydrogen bromide)',
@@ -17627,8 +17592,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         desc: '💡 Từ HCl đến HBr, khối lượng phân tử tăng (36,5 -> 81), số electron tăng làm tương tác Van der Waals mạnh hơn, khiến nhiệt độ sôi tăng lên -66,7 °C.',
         hRadius: 16,
         xRadius: 44,
-        xColor: '#ea580c',
-        hasHBridge: false
+        xColor: '#ea580c'
       },
       'HI': {
         name: 'HI (Hydrogen iodide)',
@@ -17639,8 +17603,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         desc: '💡 HI có phân tử khối lớn nhất (128) và bán kính đám mây electron lớn nhất, tương tác Van der Waals mạnh nhất trong dãy HX (trừ HF có lk hydrogen), nhiệt độ sôi đạt -35,8 °C.',
         hRadius: 16,
         xRadius: 52,
-        xColor: '#7e22ce',
-        hasHBridge: false
+        xColor: '#7e22ce'
       }
     };
 
@@ -17704,29 +17667,40 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
     function switchPartB22(partId) {
       currentPartB22 = partId;
-      ['part1', 'part2', 'part3', 'part4'].forEach((p, idx) => {
-        const btn = document.getElementById('tab-btn-b22-p' + (idx + 1));
-        const theory = document.getElementById('theory-b22-' + p);
-        const stage = document.getElementById('b22-stage-' + p);
-        if (btn) btn.classList.toggle('active', p === partId);
-        if (theory) theory.style.display = (p === partId) ? 'block' : 'none';
-        if (stage) stage.style.display = (p === partId) ? 'block' : 'none';
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : (partId === 'part3' ? 'p3' : 'p4'));
+      
+      ['p1', 'p2', 'p3', 'p4'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b22-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
       });
 
-      renderMathInPane('theory-b22-' + partId);
+      ['part1', 'part2', 'part3', 'part4'].forEach(p => {
+        const sec = document.getElementById('content-b22-' + p);
+        const panel = document.getElementById('panel-b22-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
 
-      const statusTip = document.getElementById('b22-lab-status-tip');
+      renderMathInPane('content-b22-' + partId);
+
+      const tip = document.getElementById('b22-lab-status-tip');
+      const hudTool = document.getElementById('b22-hud-tool');
+
       if (partId === 'part1') {
-        if (statusTip) statusTip.innerHTML = '💡 <em>Tương tác: Chọn từng phân tử HX để quan sát cấu tạo và liên kết hydrogen 2.5D.</em>';
-        setTimeout(() => { drawB22MoleculeCanvas(); }, 50);
+        if (tip) tip.innerHTML = '💡 <em>Tương tác: Chọn từng phân tử HX để quan sát cấu trúc không gian và liên kết hydrogen 2.5D.</em>';
+        if (hudTool) hudTool.innerText = 'Mô Hình Liên Kết Phân Tử HX';
+        setTimeout(drawB22MoleculeCanvas, 50);
       } else if (partId === 'part2') {
-        if (statusTip) statusTip.innerHTML = '💡 <em>Tương tác: Bấm Bắt đầu phản ứng để xem axit HF ăn mòn kính thuỷ tinh hoặc HCl tác dụng kim loại.</em>';
-        setTimeout(() => { drawB22AcidCanvas(); }, 50);
+        if (tip) tip.innerHTML = '💡 <em>Thí nghiệm: Bấm "Bắt đầu phản ứng" để xem HF ăn mòn tấm thuỷ tinh hoặc HCl tác dụng kim loại.</em>';
+        if (hudTool) hudTool.innerText = 'Ăn Mòn Thuỷ Tinh & Axit HCl';
+        setTimeout(drawB22AcidCanvas, 50);
       } else if (partId === 'part3') {
-        if (statusTip) statusTip.innerHTML = '💡 <em>Tương tác: Bấm Nhỏ AgNO₃ để nhận biết 4 ion F⁻, Cl⁻, Br⁻, I⁻ bằng màu kết tủa thực nghiệm.</em>';
-        setTimeout(() => { drawB22SilverCanvas(); }, 50);
+        if (tip) tip.innerHTML = '💡 <em>Nhận biết: Bấm "Nhỏ AgNO₃ Cả 4 Ống" để phân biệt màu sắc kết tủa ion halide.</em>';
+        if (hudTool) hudTool.innerText = 'Giá 4 Ống Nghiệm Thuốc Thử AgNO₃';
+        setTimeout(drawB22SilverCanvas, 50);
       } else if (partId === 'part4') {
-        if (statusTip) statusTip.innerHTML = '💡 <em>Đấu trường trắc nghiệm: Kiểm tra 5 câu hỏi then chốt về Halogen & Hợp chất halide.</em>';
+        if (tip) tip.innerHTML = '💡 <em>Đấu trường trắc nghiệm: Hoàn thành 5 câu hỏi trọng tâm SGK Hoá học 10.</em>';
+        if (hudTool) hudTool.innerText = 'Đấu Trường Trắc Nghiệm Bài 22';
         renderB22QuizQuestion();
       }
     }
@@ -17740,29 +17714,19 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
       const d = b22MolData[mol];
       if (d) {
-        const hudName = document.getElementById('b22-hud-name');
-        const hudLen = document.getElementById('b22-hud-length');
-        const hudEng = document.getElementById('b22-hud-energy');
-        const hudBp = document.getElementById('b22-hud-bp');
-        const hudDesc = document.getElementById('b22-hud-desc');
-        if (hudName) hudName.textContent = mol;
-        if (hudLen) hudLen.textContent = d.length;
-        if (hudEng) hudEng.textContent = d.energy;
-        if (hudBp) {
-          hudBp.textContent = d.bp;
-          hudBp.style.color = d.bpColor;
-        }
-        if (hudDesc) hudDesc.innerHTML = d.desc;
+        const tipEl = document.getElementById('b22-mol-tip');
+        if (tipEl) tipEl.innerHTML = d.desc;
       }
       drawB22MoleculeCanvas();
     }
 
     function drawB22MoleculeCanvas() {
-      const canvas = document.getElementById('b22-mol-canvas');
+      const canvas = document.getElementById('b22MolCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
@@ -17774,7 +17738,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       const d = b22MolData[b22SelectedMol];
 
       if (b22SelectedMol === 'HF') {
-        // Vẽ 3 phân tử HF nối tiếp nhau qua liên kết hydrogen chấm chấm
+        // Chuỗi liên kết hydrogen
         ctx.fillStyle = '#0f172a';
         ctx.font = '700 13px Plus Jakarta Sans, sans-serif';
         ctx.textAlign = 'center';
@@ -17789,11 +17753,9 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ];
 
         chain.forEach((pair, idx) => {
-          // H atom
           const hX = pair.x + pair.hx;
           const fX = pair.x + pair.fx;
 
-          // Covalent bond H - F
           ctx.beginPath();
           ctx.moveTo(hX, cy);
           ctx.lineTo(fX, cy);
@@ -17801,7 +17763,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           ctx.strokeStyle = '#0284c7';
           ctx.stroke();
 
-          // H atom circle
           ctx.beginPath();
           ctx.arc(hX, cy, 14, 0, Math.PI * 2);
           ctx.fillStyle = '#f8fafc';
@@ -17813,12 +17774,10 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           ctx.font = '700 11px Plus Jakarta Sans';
           ctx.fillText('H', hX, cy + 4);
 
-          // Delta +
           ctx.font = '10px JetBrains Mono';
           ctx.fillStyle = '#0284c7';
           ctx.fillText('δ+', hX, cy - 20);
 
-          // F atom circle
           ctx.beginPath();
           ctx.arc(fX, cy, 26, 0, Math.PI * 2);
           const fGrad = ctx.createRadialGradient(fX - 8, cy - 8, 4, fX, cy, 26);
@@ -17833,12 +17792,10 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           ctx.font = '700 14px Plus Jakarta Sans';
           ctx.fillText('F', fX, cy + 5);
 
-          // Delta -
           ctx.font = '10px JetBrains Mono';
           ctx.fillStyle = '#dc2626';
           ctx.fillText('δ-', fX, cy - 32);
 
-          // Hydrogen bond dotted line to next
           if (idx < chain.length - 1) {
             const nextHx = chain[idx + 1].x + chain[idx + 1].hx;
             ctx.beginPath();
@@ -17850,7 +17807,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Label "Liên kết H"
             ctx.fillStyle = '#dc2626';
             ctx.font = '700 11px Plus Jakarta Sans';
             ctx.fillText('Liên kết H', (fX + nextHx) / 2, cy - 14);
@@ -17858,7 +17814,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         });
 
       } else {
-        // Đơn phân tử với đám mây electron Van der Waals
         const cx = w / 2;
         const cy = h / 2;
 
@@ -17870,7 +17825,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         const hX = cx - 70;
         const xX = cx + 50;
 
-        // Covalent bond
         ctx.beginPath();
         ctx.moveTo(hX, cy);
         ctx.lineTo(xX, cy);
@@ -17878,7 +17832,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.strokeStyle = '#0284c7';
         ctx.stroke();
 
-        // Van der Waals halo
         ctx.beginPath();
         ctx.ellipse(cx, cy, d.xRadius + 110, d.xRadius + 50, 0, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(2, 132, 199, 0.06)';
@@ -17892,7 +17845,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.fillStyle = '#64748b';
         ctx.fillText('Đám mây electron phân tử & Tương tác Van der Waals', cx, cy + d.xRadius + 75);
 
-        // H atom
         ctx.beginPath();
         ctx.arc(hX, cy, 18, 0, Math.PI * 2);
         ctx.fillStyle = '#f8fafc';
@@ -17907,7 +17859,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.fillStyle = '#0284c7';
         ctx.fillText('δ+', hX, cy - 26);
 
-        // Halogen atom
         ctx.beginPath();
         ctx.arc(xX, cy, d.xRadius, 0, Math.PI * 2);
         const xGrad = ctx.createRadialGradient(xX - d.xRadius*0.3, cy - d.xRadius*0.3, 4, xX, cy, d.xRadius);
@@ -17927,7 +17878,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.fillStyle = '#dc2626';
         ctx.fillText('δ-', xX, cy - d.xRadius - 8);
 
-        // Dữ liệu độ dài
         ctx.beginPath();
         ctx.moveTo(hX, cy + 35);
         ctx.lineTo(xX, cy + 35);
@@ -17936,7 +17886,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.stroke();
         ctx.font = '11px JetBrains Mono';
         ctx.fillStyle = '#475569';
-        ctx.fillText('d = ' + d.length, (hX + xX) / 2, cy + 50);
+        ctx.fillText('d = ' + d.length + ' • Eb = ' + d.energy, (hX + xX) / 2, cy + 50);
       }
     }
 
@@ -17947,21 +17897,15 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         if (btn) btn.classList.toggle('active', k === expKey);
       });
 
-      const titleEl = document.getElementById('b22-exp-title');
-      const subEl = document.getElementById('b22-exp-sub');
-
+      const descEl = document.getElementById('b22-acid-desc');
       if (expKey === 'hf_glass') {
-        if (titleEl) titleEl.textContent = 'Phản ứng: SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O';
-        if (subEl) subEl.textContent = 'Axit HF hoà tan thuỷ tinh silicat, tạo bọt khí SiF₄ và để lại nét khắc hoa văn vĩnh viễn trên kính.';
+        if (descEl) descEl.textContent = 'Phản ứng: SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O (Khí SiF₄ thoát ra để lại nét khắc rãnh sâu trên kính).';
       } else if (expKey === 'hcl_zn') {
-        if (titleEl) titleEl.textContent = 'Phản ứng: Zn + 2HCl ➔ ZnCl₂ + H₂↑';
-        if (subEl) subEl.textContent = 'Kẽm tan dần trong dung dịch HCl, sủi bọt khí H₂ không màu mạnh mẽ.';
+        if (descEl) descEl.textContent = 'Phản ứng: Zn + 2HCl ➔ ZnCl₂ + H₂↑ (Kẽm tan dần, sủi bọt khí hydrogen không màu mãnh liệt).';
       } else if (expKey === 'hcl_cu') {
-        if (titleEl) titleEl.textContent = 'Phản ứng: Cu + HCl ➔ KHÔNG PHẢN ỨNG';
-        if (subEl) subEl.textContent = 'Đồng (Cu) đứng sau hydrogen trong dãy hoạt động hoá học nên không tan trong HCl, dung dịch không có bọt khí.';
+        if (descEl) descEl.textContent = 'Phản ứng: Cu + HCl ➔ KHÔNG PHẢN ỨNG (Đồng đứng sau hydrogen trong dãy hoạt động hoá học).';
       } else if (expKey === 'hcl_carb') {
-        if (titleEl) titleEl.textContent = 'Phản ứng: NaHCO₃ + HCl ➔ NaCl + CO₂↑ + H₂O';
-        if (subEl) subEl.textContent = 'Bột NaHCO₃ tan nhanh với hiện tượng sủi bọt khí carbon dioxide (CO₂) mãnh liệt.';
+        if (descEl) descEl.textContent = 'Phản ứng: NaHCO₃ + HCl ➔ NaCl + CO₂↑ + H₂O (Bột NaHCO₃ tan nhanh với hiện tượng sủi bọt khí CO₂).';
       }
 
       drawB22AcidCanvas(false);
@@ -17972,11 +17916,12 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     }
 
     function drawB22AcidCanvas(isActive = false) {
-      const canvas = document.getElementById('b22-acid-canvas');
+      const canvas = document.getElementById('b22AcidCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
@@ -17986,27 +17931,23 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       ctx.clearRect(0, 0, w, h);
 
       if (b22AcidExp === 'hf_glass') {
-        // Thí nghiệm khắc thuỷ tinh
         const plateW = 320;
         const plateH = 200;
         const px = (w - plateW) / 2;
         const py = (h - plateH) / 2 + 10;
 
-        // Tấm kính thuỷ tinh trong suốt với viền sáng
         ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
         ctx.fillRect(px, py, plateW, plateH);
         ctx.lineWidth = 3;
         ctx.strokeStyle = '#38bdf8';
         ctx.strokeRect(px, py, plateW, plateH);
 
-        // Nhãn tấm kính
         ctx.fillStyle = '#94a3b8';
         ctx.font = '700 12px Plus Jakarta Sans';
         ctx.textAlign = 'left';
         ctx.fillText('TẤM THUỶ TINH (SiO₂)', px + 14, py + 24);
 
         if (isActive) {
-          // Ống nhỏ giọt axit HF
           ctx.beginPath();
           ctx.moveTo(px + plateW / 2 - 10, py - 40);
           ctx.lineTo(px + plateW / 2 + 10, py - 40);
@@ -18016,13 +17957,11 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           ctx.fillStyle = '#bef264';
           ctx.fill();
 
-          // Dòng axit HF nhỏ xuống
           ctx.beginPath();
           ctx.arc(px + plateW / 2, py + 15, 5, 0, Math.PI * 2);
           ctx.fillStyle = '#84cc16';
           ctx.fill();
 
-          // Nét khắc ăn mòn phát sáng rực rỡ
           ctx.beginPath();
           ctx.font = '800 24px Plus Jakarta Sans';
           ctx.fillStyle = '#f8fafc';
@@ -18035,7 +17974,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           ctx.fillText('(Nét khắc rãnh sâu do HF ăn mòn)', px + plateW / 2, py + plateH / 2 + 30);
           ctx.shadowBlur = 0;
 
-          // Bọt khí SiF4 thoát ra
           for (let i = 0; i < 12; i++) {
             const bx = px + 80 + Math.random() * 160;
             const by = py + 40 + Math.random() * 80;
@@ -18047,7 +17985,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
           ctx.fillStyle = '#38bdf8';
           ctx.font = '11px JetBrains Mono';
-          ctx.fillText('SiF₄↑ (Khí thoát ra)', px + plateW / 2 + 100, py + 40);
+          ctx.fillText('SiF₄↑ (Khí bay ra)', px + plateW / 2 + 100, py + 40);
         } else {
           ctx.fillStyle = '#64748b';
           ctx.font = '13px Plus Jakarta Sans';
@@ -18056,13 +17994,11 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         }
 
       } else {
-        // Ống nghiệm chứa dung dịch HCl tác dụng kim loại / muối
         const tubeW = 80;
         const tubeH = 220;
         const tx = (w - tubeW) / 2;
         const ty = 70;
 
-        // Vẽ thân ống nghiệm
         ctx.beginPath();
         ctx.moveTo(tx, ty);
         ctx.lineTo(tx, ty + tubeH - 40);
@@ -18072,7 +18008,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        // Mức dung dịch HCl trong suốt
         ctx.beginPath();
         ctx.moveTo(tx + 3, ty + 90);
         ctx.lineTo(tx + 3, ty + tubeH - 40);
@@ -18087,9 +18022,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.textAlign = 'center';
         ctx.fillText('dd HCl loãng', tx + tubeW / 2, ty + 115);
 
-        // Vật thể đáy ống
         if (b22AcidExp === 'hcl_zn') {
-          // Hạt kẽm Zn
           ctx.beginPath();
           ctx.arc(tx + tubeW / 2 - 12, ty + tubeH - 25, 10, 0, Math.PI * 2);
           ctx.arc(tx + tubeW / 2 + 12, ty + tubeH - 22, 12, 0, Math.PI * 2);
@@ -18100,7 +18033,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           ctx.fillText('Zn', tx + tubeW / 2, ty + tubeH - 20);
 
           if (isActive) {
-            // Sủi bọt khí H2 mạnh
             for (let i = 0; i < 20; i++) {
               const bx = tx + 15 + Math.random() * (tubeW - 30);
               const by = ty + 100 + Math.random() * 80;
@@ -18114,7 +18046,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
             ctx.fillText('Sủi bọt khí H₂ mãnh liệt!', tx + tubeW / 2, ty + 60);
           }
         } else if (b22AcidExp === 'hcl_cu') {
-          // Lá đồng Cu đỏ
           ctx.fillStyle = '#b45309';
           ctx.fillRect(tx + tubeW / 2 - 16, ty + tubeH - 35, 32, 14);
           ctx.fillStyle = '#ffffff';
@@ -18127,7 +18058,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
             ctx.fillText('Không sủi bọt khí (Cu không phản ứng)', tx + tubeW / 2, ty + 60);
           }
         } else if (b22AcidExp === 'hcl_carb') {
-          // Bột NaHCO3 trắng
           ctx.fillStyle = '#f1f5f9';
           ctx.fillRect(tx + tubeW / 2 - 20, ty + tubeH - 30, 40, 10);
           ctx.fillStyle = '#0f172a';
@@ -18135,7 +18065,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           ctx.fillText('NaHCO₃', tx + tubeW / 2, ty + tubeH - 22);
 
           if (isActive) {
-            // Sủi bọt khí CO2 tràn trề
             for (let i = 0; i < 30; i++) {
               const bx = tx + 10 + Math.random() * (tubeW - 20);
               const by = ty + 90 + Math.random() * 95;
@@ -18154,17 +18083,15 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
     function triggerAgNO3All() {
       b22AgNO3State.dropped = true;
-      document.getElementById('b22-res-f').textContent = 'Không có kết tủa (AgF tan)';
-      document.getElementById('b22-res-f').style.color = '#64748b';
+      const rf = document.getElementById('b22-res-f');
+      const rcl = document.getElementById('b22-res-cl');
+      const rbr = document.getElementById('b22-res-br');
+      const ri = document.getElementById('b22-res-i');
 
-      document.getElementById('b22-res-cl').textContent = 'Kết tủa trắng (AgCl↓)';
-      document.getElementById('b22-res-cl').style.color = '#0284c7';
-
-      document.getElementById('b22-res-br').textContent = 'Kết tủa vàng nhạt (AgBr↓)';
-      document.getElementById('b22-res-br').style.color = '#d97706';
-
-      document.getElementById('b22-res-i').textContent = 'Kết tủa vàng đậm (AgI↓)';
-      document.getElementById('b22-res-i').style.color = '#ca8a04';
+      if (rf) { rf.textContent = 'Tan (AgF tan)'; rf.style.color = '#64748b'; }
+      if (rcl) { rcl.textContent = 'AgCl↓ trắng'; rcl.style.color = '#0284c7'; }
+      if (rbr) { rbr.textContent = 'AgBr↓ vàng nhạt'; rbr.style.color = '#d97706'; }
+      if (ri) { ri.textContent = 'AgI↓ vàng đậm'; ri.style.color = '#ca8a04'; }
 
       drawB22SilverCanvas();
     }
@@ -18182,11 +18109,12 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     }
 
     function drawB22SilverCanvas() {
-      const canvas = document.getElementById('b22-silver-canvas');
+      const canvas = document.getElementById('b22SilverCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
@@ -18207,7 +18135,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       const tubeH = 200;
       const ty = 80;
 
-      // Giá đỡ ống nghiệm gỗ phía sau
       ctx.fillStyle = '#e2e8f0';
       ctx.fillRect(20, ty + tubeH - 20, w - 40, 24);
       ctx.strokeStyle = '#cbd5e1';
@@ -18217,7 +18144,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       tubes.forEach((t, i) => {
         const tx = gap * i + (gap - tubeW) / 2;
 
-        // Dung dịch ban đầu (trong suốt)
         ctx.beginPath();
         ctx.moveTo(tx + 2, ty + 70);
         ctx.lineTo(tx + 2, ty + tubeH - 20);
@@ -18227,16 +18153,13 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.fillStyle = 'rgba(241, 245, 249, 0.6)';
         ctx.fill();
 
-        // Nếu đã nhỏ AgNO3
         if (b22AgNO3State.dropped) {
-          // Giọt thuốc thử rơi
           ctx.beginPath();
           ctx.arc(tx + tubeW / 2, ty + 40, 4, 0, Math.PI * 2);
           ctx.fillStyle = '#38bdf8';
           ctx.fill();
 
           if (t.ppt) {
-            // Khối kết tủa lắng đáy ống nghiệm
             ctx.beginPath();
             ctx.moveTo(tx + 3, ty + tubeH - 55);
             ctx.lineTo(tx + 3, ty + tubeH - 20);
@@ -18249,7 +18172,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
             ctx.strokeStyle = t.strokePpt;
             ctx.stroke();
 
-            // Nhãn kết tủa
             ctx.fillStyle = '#0f172a';
             ctx.font = '700 11px Plus Jakarta Sans';
             ctx.textAlign = 'center';
@@ -18262,7 +18184,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           }
         }
 
-        // Vẽ thành ống thuỷ tinh
         ctx.beginPath();
         ctx.moveTo(tx, ty);
         ctx.lineTo(tx, ty + tubeH - 20);
@@ -18272,7 +18193,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.strokeStyle = '#94a3b8';
         ctx.stroke();
 
-        // Nhãn ống
         ctx.fillStyle = '#1e293b';
         ctx.font = '700 13px Plus Jakarta Sans';
         ctx.textAlign = 'center';
@@ -18280,7 +18200,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       });
     }
 
-    /* Đấu trường trắc nghiệm Bài 22 */
     function renderB22QuizQuestion() {
       const q = b22QuizList[b22QuizStep];
       const titleEl = document.getElementById('b22-arena-q-title');
@@ -18288,13 +18207,9 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       const optListEl = document.getElementById('b22-arena-options-list');
       const feedEl = document.getElementById('b22-arena-feedback-box');
       const nextBtn = document.getElementById('btn-b22-next-q');
-      const progressEl = document.getElementById('b22-quiz-progress');
-      const stepLabel = document.getElementById('b22-quiz-step-label');
 
-      if (titleEl) titleEl.textContent = 'Câu hỏi số ' + (b22QuizStep + 1);
+      if (titleEl) titleEl.textContent = 'Câu hỏi ' + (b22QuizStep + 1) + ' / ' + b22QuizList.length;
       if (textEl) textEl.textContent = q.q;
-      if (stepLabel) stepLabel.textContent = 'Câu hỏi ' + (b22QuizStep + 1) + ' / ' + b22QuizList.length;
-      if (progressEl) progressEl.style.width = ((b22QuizStep / b22QuizList.length) * 100) + '%';
       if (feedEl) feedEl.style.display = 'none';
       if (nextBtn) nextBtn.style.display = 'none';
 
@@ -18330,7 +18245,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
       if (isCorrect) {
         b22QuizScore += 10;
-        if (scoreEl) scoreEl.textContent = b22QuizScore + ' / 50';
+        if (scoreEl) scoreEl.textContent = 'Điểm: ' + b22QuizScore + ' / 50';
       }
 
       if (feedEl) {
@@ -18361,15 +18276,12 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         b22QuizStep++;
         renderB22QuizQuestion();
       } else {
-        // Hoàn thành
         const optListEl = document.getElementById('b22-arena-options-list');
         const textEl = document.getElementById('b22-arena-question-text');
         const titleEl = document.getElementById('b22-arena-q-title');
         const feedEl = document.getElementById('b22-arena-feedback-box');
         const nextBtn = document.getElementById('btn-b22-next-q');
-        const progressEl = document.getElementById('b22-quiz-progress');
 
-        if (progressEl) progressEl.style.width = '100%';
         if (titleEl) titleEl.textContent = '🎉 HOÀN THÀNH ĐẤU TRƯỜNG BÀI 22!';
         if (textEl) textEl.innerHTML = 'Bạn đã hoàn thành 5/5 câu hỏi! Điểm số đạt được: <strong style="color: #0284c7; font-size: 18px;">' + b22QuizScore + ' / 50 điểm</strong>.';
         if (optListEl) optListEl.innerHTML = '';
@@ -18385,7 +18297,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       b22QuizStep = 0;
       b22QuizScore = 0;
       const scoreEl = document.getElementById('b22-arena-score');
-      if (scoreEl) scoreEl.textContent = '0 / 50';
+      if (scoreEl) scoreEl.textContent = 'Điểm: 0 / 50';
       const nextBtn = document.getElementById('btn-b22-next-q');
       if (nextBtn) {
         nextBtn.onclick = nextB22Question;
@@ -18540,31 +18452,36 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
     function switchPartB23(partId) {
       currentPartB23 = partId;
-      ['part1', 'part2', 'part3'].forEach((p, idx) => {
-        const btn = document.getElementById('tab-btn-b23-p' + (idx + 1));
-        const theory = document.getElementById('theory-b23-' + p);
-        const stage = document.getElementById('b23-stage-' + p);
-        if (btn) btn.classList.toggle('active', p === partId);
-        if (theory) theory.style.display = (p === partId) ? 'block' : 'none';
-        if (stage) stage.style.display = (p === partId) ? 'block' : 'none';
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b23-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
       });
 
-      renderMathInPane('theory-b23-' + partId);
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b23-' + p);
+        const panel = document.getElementById('panel-b23-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
 
-      const statusTip = document.getElementById('b23-lab-status-tip');
+      renderMathInPane('content-b23-' + partId);
+
+      const tip = document.getElementById('b23-lab-status-tip');
       if (partId === 'part1') {
-        if (statusTip) statusTip.innerHTML = '💡 <em>Sơ đồ tư duy 2.5D: Nhấp vào từng nút để xem kiến thức cốt lõi của Chương 7.</em>';
-        setTimeout(() => { initB23Mindmap(); }, 50);
+        if (tip) tip.innerHTML = '💡 <em>Sơ đồ tư duy 2.5D: Nhấp vào từng nút để xem kiến thức cốt lõi của Chương 7.</em>';
+        setTimeout(initB23Mindmap, 50);
       } else if (partId === 'part2') {
-        if (statusTip) statusTip.innerHTML = '💡 <em>Điền khuyết SGK Tr. 118: Nhập câu trả lời và bấm Kiểm tra kết quả.</em>';
+        if (tip) tip.innerHTML = '💡 <em>Điền khuyết SGK Tr. 118: Nhập câu trả lời và bấm Kiểm tra kết quả.</em>';
       } else if (partId === 'part3') {
-        if (statusTip) statusTip.innerHTML = '💡 <em>Đấu trường 6 bài tập SGK Tr. 119: Hoàn thành để kết thúc trọn vẹn chương trình Hoá học 10!</em>';
+        if (tip) tip.innerHTML = '💡 <em>Đấu trường 6 bài tập SGK Tr. 119: Hoàn thành để kết thúc trọn vẹn chương trình Hoá học 10!</em>';
         renderB23QuizQuestion();
       }
     }
 
     function initB23Mindmap() {
-      const canvas = document.getElementById('b23-mindmap-canvas');
+      const canvas = document.getElementById('b23MindmapCanvas');
       if (!canvas) return;
 
       canvas.onclick = (e) => {
@@ -18598,11 +18515,12 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     }
 
     function drawB23Mindmap() {
-      const canvas = document.getElementById('b23-mindmap-canvas');
+      const canvas = document.getElementById('b23MindmapCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
@@ -18615,7 +18533,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       const cx = center.x * w;
       const cy = center.y * h;
 
-      // Đường liên kết từ tâm ra 4 nhánh
       ctx.lineWidth = 2.5;
       ctx.strokeStyle = '#cbd5e1';
       b23Nodes.slice(1).forEach(node => {
@@ -18627,18 +18544,15 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.stroke();
       });
 
-      // Vẽ từng node
       b23Nodes.forEach(node => {
         const nx = node.x * w;
         const ny = node.y * h;
         const isSelected = (b23SelectedNode && b23SelectedNode.id === node.id);
         const radius = (node.id === 'center') ? 48 : 40;
 
-        // Shadow
         ctx.shadowColor = isSelected ? node.color : 'rgba(0,0,0,0.06)';
         ctx.shadowBlur = isSelected ? 16 : 8;
 
-        // Nền node
         ctx.beginPath();
         ctx.arc(nx, ny, radius, 0, Math.PI * 2);
         ctx.fillStyle = node.bg;
@@ -18648,7 +18562,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.stroke();
         ctx.shadowBlur = 0;
 
-        // Text label
         ctx.fillStyle = node.color;
         ctx.font = '700 ' + (node.id === 'center' ? '12px' : '11px') + ' Plus Jakarta Sans';
         ctx.textAlign = 'center';
@@ -18710,7 +18623,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       const feedEl = document.getElementById('b23-arena-feedback-box');
       const nextBtn = document.getElementById('btn-b23-next-q');
 
-      if (titleEl) titleEl.textContent = 'Bài tập ' + (b23QuizStep + 1) + ' / ' + b23QuizList.length;
+      if (titleEl) titleEl.textContent = 'Bài tập ' + (b23QuizStep + 1) + ' / ' + b23QuizList.length + ' (SGK Trang 119)';
       if (textEl) textEl.textContent = q.q;
       if (feedEl) feedEl.style.display = 'none';
       if (nextBtn) nextBtn.style.display = 'none';
@@ -18747,7 +18660,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
       if (isCorrect) {
         b23QuizScore += 10;
-        if (scoreEl) scoreEl.textContent = b23QuizScore + ' / 60';
+        if (scoreEl) scoreEl.textContent = 'Điểm: ' + b23QuizScore + ' / 60';
       }
 
       if (feedEl) {
@@ -18778,7 +18691,6 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         b23QuizStep++;
         renderB23QuizQuestion();
       } else {
-        // Tốt nghiệp
         const optListEl = document.getElementById('b23-arena-options-list');
         const textEl = document.getElementById('b23-arena-question-text');
         const titleEl = document.getElementById('b23-arena-q-title');
@@ -18800,7 +18712,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       b23QuizStep = 0;
       b23QuizScore = 0;
       const scoreEl = document.getElementById('b23-arena-score');
-      if (scoreEl) scoreEl.textContent = '0 / 60';
+      if (scoreEl) scoreEl.textContent = 'Điểm: 0 / 60';
       const nextBtn = document.getElementById('btn-b23-next-q');
       if (nextBtn) {
         nextBtn.onclick = nextB23Question;
