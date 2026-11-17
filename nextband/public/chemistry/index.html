@@ -1350,6 +1350,49 @@
         </div>
       </section>
 
+      <!-- ========================================================
+           CHƯƠNG 5: NĂNG LƯỢNG HOÁ HỌC
+           ======================================================== -->
+      <section class="chapter-block" style="margin-top: 48px;">
+        <div class="chapter-header-strip">
+          <span class="chap-badge">Chương 5</span>
+          <div>
+            <h2 class="chap-title">Năng Lượng Hoá Học</h2>
+            <p class="chap-desc">Phản ứng toả nhiệt, thu nhiệt, điều kiện chuẩn, biến thiên enthalpy chuẩn ΔrH°₂₉₈ và 2 phương pháp tính toán theo nhiệt tạo thành và năng lượng liên kết.</p>
+          </div>
+          <span class="chap-progress-pill">Bài 17 • Chương 5</span>
+        </div>
+
+        <div class="cards-grid">
+          <!-- Bài 17: Biến thiên Enthalpy -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <rect x="30" y="25" width="60" height="40" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+                <text x="60" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#dc2626" text-anchor="middle">Toả nhiệt</text>
+                <path d="M 95 45 L 125 45" stroke="#f59e0b" stroke-width="3" marker-end="url(#arrow)"/>
+                <rect x="130" y="25" width="60" height="40" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+                <text x="160" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="middle">Thu nhiệt</text>
+                <text x="110" y="78" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#0284c7" text-anchor="middle">ΔrH°₂₉₈</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status active">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 17: Biến thiên Enthalpy trong phản ứng hoá học</h3>
+                <p>Khái niệm phản ứng toả nhiệt vs thu nhiệt, phương trình nhiệt hoá học, mô phỏng nhiệt kế & máy tính tính toán theo ΔfH°₂₉₈ và Eb.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b17')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
 
     </main>
   </div>
@@ -5503,6 +5546,256 @@
     </div>
   </div>
 
+
+  <!-- ========================================================
+       BÀI 17: BIẾN THIÊN ENTHALPY TRONG CÁC PHẢN ỨNG HOÁ HỌC
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM SGK TR. 81 - 89)
+       ======================================================== -->
+  <div id="view-studio-b17" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Topbar -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 5 • Bài 17</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Biến Thiên Enthalpy Trong Các Phản Ứng Hoá Học</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 17 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b17-p1" class="tab-seg-btn active" onclick="switchPartB17('part1')">
+            <span>I. Phản Ứng Toả Nhiệt vs Thu Nhiệt</span>
+          </button>
+          <button id="tab-btn-b17-p2" class="tab-seg-btn" onclick="switchPartB17('part2')">
+            <span>II. Biến Thiên Enthalpy Chuẩn & Điều Kiện</span>
+          </button>
+          <button id="tab-btn-b17-p3" class="tab-seg-btn" onclick="switchPartB17('part3')">
+            <span>III. Máy Tính Nhiệt Tạo Thành & Năng Lượng Liên Kết</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: PHẢN ỨNG TOẢ NHIỆT VÀ THU NHIỆT -->
+          <div id="content-b17-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần I (SGK Trang 81 – 83)</h4>
+              <p>Phân biệt rõ bản chất nhiệt động học của phản ứng toả nhiệt (giải phóng năng lượng ra môi trường) và phản ứng thu nhiệt (hấp thụ năng lượng từ môi trường); nhận diện dấu hiệu thực tế qua thí nghiệm hoà tan viên sủi, nung vôi và phản ứng trung hoà axit – bazơ.</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 81 – 83</div>
+            <h3 class="section-title">Bản chất Trao đổi Năng lượng Hoá học</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0;">
+              <div style="padding: 14px; background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 10px;">
+                <div style="font-weight: 800; color: #e11d48; font-size: 14px; margin-bottom: 6px;">🔥 PHẢN ỨNG TOẢ NHIỆT (Exothermic)</div>
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #1e293b;">
+                  • <strong>Đặc điểm:</strong> Giải phóng năng lượng ra môi trường xung quanh dưới dạng nhiệt.<br/>
+                  • <strong>Hệ quả:</strong> Nhiệt độ môi trường <strong>tăng lên</strong>.<br/>
+                  • <strong>Quy ước:</strong> $\Delta_r H < 0$ (Hệ mất bớt năng lượng).<br/>
+                  • <em>Ví dụ:</em> Đốt than, đốt xăng dầu, tôi vôi ($\text{CaO} + \text{H}_2\text{O}$), trung hoà ($\text{HCl} + \text{NaOH}$).
+                </p>
+              </div>
+
+              <div style="padding: 14px; background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px;">
+                <div style="font-weight: 800; color: #1d4ed8; font-size: 14px; margin-bottom: 6px;">❄️ PHẢN ỨNG THU NHIỆT (Endothermic)</div>
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #1e293b;">
+                  • <strong>Đặc điểm:</strong> Hấp thụ năng lượng từ môi trường xung quanh dưới dạng nhiệt.<br/>
+                  • <strong>Hệ quả:</strong> Nhiệt độ môi trường <strong>giảm xuống</strong>.<br/>
+                  • <strong>Quy ước:</strong> $\Delta_r H > 0$ (Hệ nhận thêm năng lượng).<br/>
+                  • <em>Ví dụ:</em> Hoà tan viên sủi vitamin C, nung đá vôi ($\text{CaCO}_3 \xrightarrow{t^\circ} \text{CaO} + \text{CO}_2$), nhiệt phân $\text{KMnO}_4$.
+                </p>
+              </div>
+            </div>
+
+            <div style="padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin: 14px 0;">
+              <h4 style="margin: 0 0 6px 0; font-size: 13.5px; color: #0f172a;">Thí nghiệm theo dõi biến thiên nhiệt độ phản ứng trung hoà (SGK Tr. 83)</h4>
+              <p style="font-size: 13px; color: #334155; line-height: 1.6; margin: 0;">
+                Cho $25\text{ mL HCl } 0.5\text{ M}$ vào cốc sứ, cắm nhiệt kế (nhiệt độ ban đầu $25^\circ\text{C}$). Thêm $25\text{ mL NaOH } 0.5\text{ M}$, khuấy nhẹ. Nhiệt độ nhanh chóng vọt lên $\approx 28.5^\circ\text{C}$. Đây là bằng chứng thực nghiệm rõ ràng phản ứng trung hoà toả nhiệt mạnh.
+              </p>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: BIẾN THIÊN ENTHALPY CHUẨN VÀ ĐIỀU KIỆN CHUẨN -->
+          <div id="content-b17-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần II (SGK Trang 83 – 85)</h4>
+              <p>Hiểu khái niệm biến thiên enthalpy phản ứng $\Delta_r H$, điều kiện chuẩn ($298\text{ K} = 25^\circ\text{C}$, áp suất $1\text{ bar}$, nồng độ $1\text{ M}$), phương trình nhiệt hoá học và ý nghĩa của dấu $\Delta_r H^\circ_{298}$.</p>
+            </div>
+
+            <div class="meta-citation">Mục II • SGK Trang 83 – 85</div>
+            <h3 class="section-title">Biến Thiên Enthalpy Chuẩn $\Delta_r H^\circ_{298}$</h3>
+
+            <p><strong>1. Khái niệm Biến thiên Enthalpy:</strong> Nhiệt lượng toả ra hay thu vào của phản ứng ở điều kiện áp suất không đổi gọi là <em>biến thiên enthalpy của phản ứng</em> (ký hiệu là $\Delta_r H$, với $r$ viết tắt của từ tiếng Anh <em>reaction</em>).</p>
+
+            <div style="padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin: 12px 0;">
+              <strong style="color: #166534; font-size: 13px;">📌 Điều kiện chuẩn (Standard state):</strong>
+              <ul style="margin: 4px 0 0 16px; font-size: 13px; color: #1e293b; line-height: 1.6;">
+                <li>Áp suất: $1\text{ bar}$ (đối với chất khí).</li>
+                <li>Nồng độ: $1\text{ mol/L}$ hay $1\text{ M}$ (đối với chất tan trong dung dịch).</li>
+                <li>Nhiệt độ thường chọn là $298\text{ K}$ ($25^\circ\text{C}$).</li>
+                <li>Ký hiệu biến thiên enthalpy chuẩn: <strong>$\Delta_r H^\circ_{298}$</strong>.</li>
+              </ul>
+            </div>
+
+            <p><strong>2. Phương trình nhiệt hoá học:</strong> Là phương trình phản ứng hoá học có ghi kèm <em>trạng thái vật lý</em> của các chất: rắn ($s$), lỏng ($l$), khí ($g$), dung dịch ($aq$) và giá trị <em>$\Delta_r H^\circ_{298}$</em> tương ứng.</p>
+
+            <div style="padding: 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #0369a1;">
+              $\text{H}_2(g) + \frac{1}{2}\text{O}_2(g) \rightarrow \text{H}_2\text{O}(l) \quad \Delta_r H^\circ_{298} = -285.84\text{ kJ}$<br/>
+              $\text{Cu(OH)}_2(s) \rightarrow \text{CuO}(s) + \text{H}_2\text{O}(l) \quad \Delta_r H^\circ_{298} = +9.0\text{ kJ}$
+            </div>
+
+            <div style="margin-top: 14px; padding: 10px 14px; background: #fefce8; border-left: 4px solid #eab308; font-size: 13px; color: #854d0e;">
+              <strong>Ý nghĩa của dấu:</strong><br/>
+              • $\Delta_r H^\circ_{298} < 0$: Phản ứng toả nhiệt, hệ giải phóng năng lượng, sản phẩm bền hơn chất phản ứng.<br/>
+              • $\Delta_r H^\circ_{298} > 0$: Phản ứng thu nhiệt, cần liên tục cung cấp nhiệt để phản ứng diễn ra.
+            </div>
+          </div>
+
+          <!-- PHẦN 3: 2 PHƯƠNG PHÁP TÍNH BIẾN THIÊN ENTHALPY -->
+          <div id="content-b17-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần III (SGK Trang 85 – 89)</h4>
+              <p>Nắm vững 2 công thức tính toán cốt lõi của nhiệt động hoá học 10: Theo nhiệt tạo thành chuẩn $\Delta_f H^\circ_{298}$ (Sản phẩm - Chất đầu) và Theo năng lượng liên kết $E_b$ (Chất đầu - Sản phẩm).</p>
+            </div>
+
+            <div class="meta-citation">Mục III & IV • SGK Trang 85 – 89</div>
+            <h3 class="section-title">2 Phương Pháp Tính $\Delta_r H^\circ_{298}$ Chuẩn Mực</h3>
+
+            <div style="display: flex; flex-direction: column; gap: 14px; margin: 14px 0;">
+              <div style="padding: 14px; background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px;">
+                <div style="font-weight: 800; color: #1e40af; font-size: 13.5px; margin-bottom: 6px;">
+                  1. Tính theo Nhiệt tạo thành chuẩn $\Delta_f H^\circ_{298}$:
+                </div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #1d4ed8; background: #ffffff; padding: 8px 12px; border-radius: 6px; border: 1px solid #93c5fd;">
+                  $$\Delta_r H^\circ_{298} = \sum \Delta_f H^\circ_{298}(\text{Sản phẩm}) - \sum \Delta_f H^\circ_{298}(\text{Chất đầu})$$
+                </div>
+                <p style="margin: 6px 0 0 0; font-size: 12.5px; color: #334155;">
+                  *Lưu ý cốt tử:* Nhiệt tạo thành chuẩn của các <strong>đơn chất bền nhất luôn bằng $0$</strong> (ví dụ: $\Delta_f H^\circ_{298}(\text{O}_2) = 0, \Delta_f H^\circ_{298}(\text{H}_2) = 0, \Delta_f H^\circ_{298}(\text{N}_2) = 0$).
+                </p>
+              </div>
+
+              <div style="padding: 14px; background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 10px;">
+                <div style="font-weight: 800; color: #166534; font-size: 13.5px; margin-bottom: 6px;">
+                  2. Tính theo Năng lượng liên kết $E_b$ (chất khí):
+                </div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #15803d; background: #ffffff; padding: 8px 12px; border-radius: 6px; border: 1px solid #86efac;">
+                  $$\Delta_r H^\circ_{298} = \sum E_b(\text{Chất đầu}) - \sum E_b(\text{Sản phẩm})$$
+                </div>
+                <p style="margin: 6px 0 0 0; font-size: 12.5px; color: #334155;">
+                  *Quy tắc ghi nhớ:* Nhiệt tạo thành lấy <strong>SAU trừ TRƯỚC</strong>, Năng lượng liên kết lấy <strong>TRƯỚC trừ SAU</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div class="box-target" style="margin-top: 14px;">
+              <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #0284c7;">🧪 Thực hành với Máy tính Nhiệt động học:</h5>
+              <p style="margin: 0; font-size: 13px; line-height: 1.5;">
+                Chọn các phản ứng mẫu ở cột bên phải để máy tính giải mã chi tiết từng số hạng và kết luận toả hay thu nhiệt.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHỦ ĐỀ ĐANG HỌC</span>
+              <span class="hud-value highlight">Chương 5 • Năng Lượng Hoá Học</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">CÔNG CỤ LAB</span>
+              <span id="b17-hud-tool" class="hud-value" style="color: #0284c7;">Nhiệt Kế Đo Nhiệt Độ</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">DẤU NHẬN DIỆN</span>
+              <span class="hud-value" style="color: #16a34a;">$\Delta_r H < 0 \text{ (Toả)} \mid \Delta_r H > 0 \text{ (Thu)}$</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1: Mô phỏng Thí nghiệm Nhiệt kế & Dòng nhiệt -->
+          <div id="panel-b17-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🌡️ Mô Phỏng Thí Nghiệm Đo Nhiệt Độ & Hướng Truyền Nhiệt</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" onclick="setB17SimType('neutralize')">Trung hoà (HCl + NaOH)</button>
+                <button class="btn-tool" onclick="setB17SimType('dissolve_c')">Viên sủi C (Thu nhiệt)</button>
+                <button class="btn-tool" onclick="setB17SimType('combust')">Đốt than C + O2</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b17ThermoCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Biểu đồ Mức Năng Lượng (Energy Profile Diagram) -->
+          <div id="panel-b17-part2" class="lab-canvas-area" style="display: none; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">📈 Biểu Đồ Mức Năng Lượng: Toả Nhiệt vs Thu Nhiệt</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" onclick="setB17EnergyProfile('exo')">Phản ứng Toả Nhiệt (ΔH < 0)</button>
+                <button class="btn-tool" onclick="setB17EnergyProfile('endo')">Phản ứng Thu Nhiệt (ΔH > 0)</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b17EnergyProfileCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 3: Máy Tính Enthalpy Tương Tác Theo ΔfH° và Eb -->
+          <div id="panel-b17-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">🧮 Máy Tính Nhiệt Phản Ứng $\Delta_r H^\circ_{298}$</h4>
+              <p style="font-size: 12px; color: #64748b; margin: 3px 0 0 0;">Chọn phản ứng mẫu để xem bảng tra dữ liệu và từng bước tính toán chi tiết.</p>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+              <button class="btn-tool active" onclick="calcB17Reaction('h2_cl2')">H₂ + Cl₂ → 2HCl (Theo Eb)</button>
+              <button class="btn-tool" onclick="calcB17Reaction('so2_o2')">SO₂ + ½O₂ → SO₃ (Theo ΔfH°)</button>
+              <button class="btn-tool" onclick="calcB17Reaction('ch4_o2')">CH₄ + 2O₂ → CO₂ + 2H₂O (Đốt methane)</button>
+              <button class="btn-tool" onclick="calcB17Reaction('caco3')">CaCO₃ → CaO + CO₂ (Nung vôi)</button>
+            </div>
+
+            <div id="b17-calc-display-card" style="padding: 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #cbd5e1; flex: 1;">
+              <!-- Render calculation step -->
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b17-lab-status-tip">
+              💡 <em>Quan sát nhiệt kế và dòng năng lượng toả ra/thu vào khi phản ứng hoá học diễn ra.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB17InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -5512,7 +5805,7 @@
     function openLesson(lessonId) {
       activeLesson = lessonId;
       document.getElementById('view-dashboard').classList.remove('active');
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -5618,8 +5911,17 @@
           if (typeof initB13InterLab === 'function') initB13InterLab();
           if (typeof initB13QuizArena === 'function') initB13QuizArena();
         }, 50);
-                  } else if (lessonId === 'b16') {
-        const studioB16 = document.getElementById('view-studio-b16');
+                        } else if (lessonId === 'b17') {
+        const studioB17 = document.getElementById('view-studio-b17');
+        if (studioB17) studioB17.classList.add('active');
+        switchPartB17('part1');
+        setTimeout(() => {
+          if (typeof setB17SimType === 'function') setB17SimType('neutralize');
+          if (typeof initB17EnergyProfile === 'function') initB17EnergyProfile();
+          if (typeof calcB17Reaction === 'function') calcB17Reaction('h2_cl2');
+        }, 50);
+      } else if (lessonId === 'b16') {
+        const studioB16 = document.getElementById('view-studio-b16', 'view-studio-b17');
         if (studioB16) studioB16.classList.add('active');
         switchPartB16('part1');
         setTimeout(() => {
@@ -5628,7 +5930,7 @@
           if (typeof initB16QuizArena === 'function') initB16QuizArena();
         }, 50);
       } else if (lessonId === 'b15') {
-        const studioB15 = document.getElementById('view-studio-b15', 'view-studio-b16');
+        const studioB15 = document.getElementById('view-studio-b15', 'view-studio-b16', 'view-studio-b17');
         if (studioB15) studioB15.classList.add('active');
         switchPartB15('part1');
         setTimeout(() => {
@@ -5637,7 +5939,7 @@
           if (typeof initB15QuizArena === 'function') initB15QuizArena();
         }, 50);
       } else if (lessonId === 'b14') {
-        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15', 'view-studio-b16');
+        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17');
         if (studioB14) studioB14.classList.add('active');
         switchPartB14('part1');
         setTimeout(() => {
@@ -5650,7 +5952,7 @@
     }
 
     function backToDashboard() {
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -13525,6 +13827,422 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         updateB16ClozeStatus();
       } else {
         resetB16QuizArena();
+      }
+    }
+
+
+
+    /* ==========================================================
+       BÀI 17: BIẾN THIÊN ENTHALPY TRONG CÁC PHẢN ỨNG HOÁ HỌC
+       ========================================================== */
+    let currentPartB17 = 'part1';
+
+    function switchPartB17(partId) {
+      currentPartB17 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b17-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b17-' + p);
+        const panel = document.getElementById('panel-b17-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
+
+      const tip = document.getElementById('b17-lab-status-tip');
+      const hudTool = document.getElementById('b17-hud-tool');
+      if (tip) {
+        if (partId === 'part1') {
+          tip.innerHTML = '💡 <em>Mô phỏng nhiệt kế: Quan sát cột thuỷ ngân tăng khi toả nhiệt và giảm khi thu nhiệt.</em>';
+          if (hudTool) hudTool.innerText = 'Nhiệt Kế Đo Nhiệt Độ';
+          setTimeout(initB17ThermoSim, 50);
+        } else if (partId === 'part2') {
+          tip.innerHTML = '💡 <em>Biểu đồ mức năng lượng: Quan sát sự chênh lệch enthalpy giữa Chất đầu và Sản phẩm.</em>';
+          if (hudTool) hudTool.innerText = 'Biểu Đồ Năng Lượng';
+          setTimeout(initB17EnergyProfile, 50);
+        } else {
+          tip.innerHTML = '💡 <em>Máy tính Nhiệt động học: Tra cứu và tính toán ΔrH°298 theo ΔfH° và Eb từng bước.</em>';
+          if (hudTool) hudTool.innerText = 'Máy Tính Enthalpy';
+          setTimeout(() => { calcB17Reaction('h2_cl2'); }, 50);
+        }
+      }
+    }
+
+    // --- PART 1: THERMOMETER & HEAT FLOW SIMULATOR ---
+    let b17ThermoAnimId = null;
+    let b17SimMode = 'neutralize';
+    let b17CurTemp = 25.0;
+    let b17TargetTemp = 28.5;
+
+    const b17ThermoConfigs = {
+      'neutralize': {
+        title: 'Phản ứng trung hoà: HCl + NaOH → NaCl + H₂O',
+        type: 'Toả nhiệt (Exothermic)',
+        initTemp: 25.0,
+        targetTemp: 29.5,
+        color: '#ef4444',
+        desc: 'Nhiệt lượng giải phóng ra môi trường làm cốc ấm lên, cột thuỷ ngân dâng cao.'
+      },
+      'dissolve_c': {
+        title: 'Hoà tan viên sủi Vitamin C vào nước',
+        type: 'Thu nhiệt (Endothermic)',
+        initTemp: 25.0,
+        targetTemp: 19.5,
+        color: '#0284c7',
+        desc: 'Phản ứng hấp thụ nhiệt từ nước xung quanh, nhiệt độ giảm xuống làm nước mát lạnh.'
+      },
+      'combust': {
+        title: 'Đốt cháy than đá: C + O₂ → CO₂',
+        type: 'Toả nhiệt mãnh liệt (Exothermic)',
+        initTemp: 25.0,
+        targetTemp: 85.0,
+        color: '#dc2626',
+        desc: 'Nhiệt lượng toả ra cực lớn, phản ứng duy trì tự phát và phát sáng rực rỡ.'
+      }
+    };
+
+    function setB17SimType(mode) {
+      b17SimMode = mode;
+      const conf = b17ThermoConfigs[mode];
+      b17CurTemp = conf.initTemp;
+      b17TargetTemp = conf.targetTemp;
+      initB17ThermoSim();
+    }
+
+    function initB17ThermoSim() {
+      const canvas = document.getElementById('b17ThermoCanvas');
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = (rect.width || 500) * dpr;
+      canvas.height = (rect.height || 420) * dpr;
+
+      if (b17ThermoAnimId) cancelAnimationFrame(b17ThermoAnimId);
+      renderB17ThermoLoop();
+    }
+
+    function renderB17ThermoLoop() {
+      const canvas = document.getElementById('b17ThermoCanvas');
+      if (!canvas || currentPartB17 !== 'part1') return;
+
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      const cw = canvas.getBoundingClientRect().width || 500;
+      const ch = canvas.getBoundingClientRect().height || 420;
+
+      // Animate temperature change smoothly
+      b17CurTemp += (b17TargetTemp - b17CurTemp) * 0.04;
+
+      const conf = b17ThermoConfigs[b17SimMode];
+
+      // Draw Title and Status
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 15px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(conf.title, cw / 2, 34);
+
+      ctx.fillStyle = conf.color;
+      ctx.font = 'bold 13px Plus Jakarta Sans, sans-serif';
+      ctx.fillText(`${conf.type} • Nhiệt độ hiện thời: ${b17CurTemp.toFixed(1)}°C`, cw / 2, 58);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '12px Plus Jakarta Sans, sans-serif';
+      ctx.fillText(conf.desc, cw / 2, 80);
+
+      // Draw Beaker (Left)
+      const bx = cw * 0.32;
+      const by = ch * 0.72;
+      const bw = 140;
+      const bh = 150;
+
+      // Beaker glass
+      ctx.fillStyle = 'rgba(224, 242, 254, 0.4)';
+      ctx.fillRect(bx - bw/2, by - bh, bw, bh);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(bx - bw/2, by - bh, bw, bh);
+
+      // Liquid inside beaker
+      const liquidHeight = bh * 0.65;
+      ctx.fillStyle = (b17SimMode === 'dissolve_c') ? 'rgba(56, 189, 248, 0.4)' : (b17SimMode === 'combust' ? 'rgba(239, 68, 68, 0.5)' : 'rgba(245, 158, 11, 0.35)');
+      ctx.fillRect(bx - bw/2 + 2, by - liquidHeight, bw - 4, liquidHeight);
+
+      ctx.fillStyle = '#1e293b';
+      ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Hỗn hợp phản ứng', bx, by - 20);
+
+      // Draw Thermometer (Right)
+      const tx = cw * 0.74;
+      const ty = ch * 0.72;
+      const th = 180;
+      const tw = 20;
+
+      // Thermometer stem
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(tx - tw/2, ty - th, tw, th);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(tx - tw/2, ty - th, tw, th);
+
+      // Bulb
+      ctx.beginPath();
+      ctx.arc(tx, ty + 10, 18, 0, Math.PI * 2);
+      ctx.fillStyle = conf.color;
+      ctx.fill();
+      ctx.stroke();
+
+      // Mercury column
+      const tempClamped = Math.max(0, Math.min(100, b17CurTemp));
+      const mercuryHeight = (tempClamped / 100) * (th - 20);
+      ctx.fillStyle = conf.color;
+      ctx.fillRect(tx - (tw - 8)/2, ty - mercuryHeight, tw - 8, mercuryHeight);
+
+      // Temperature scale ticks
+      ctx.fillStyle = '#475569';
+      ctx.font = '10px JetBrains Mono, monospace';
+      ctx.textAlign = 'left';
+      for (let t = 0; t <= 100; t += 20) {
+        const tickY = ty - (t / 100) * (th - 20);
+        ctx.fillRect(tx + tw/2, tickY, 6, 1.5);
+        ctx.fillText(t + '°C', tx + tw/2 + 10, tickY + 3);
+      }
+
+      ctx.restore();
+      b17ThermoAnimId = requestAnimationFrame(renderB17ThermoLoop);
+    }
+
+    // --- PART 2: ENERGY PROFILE DIAGRAM ---
+    let b17ProfileMode = 'exo';
+
+    function setB17EnergyProfile(mode) {
+      b17ProfileMode = mode;
+      drawB17EnergyProfile();
+    }
+
+    function initB17EnergyProfile() {
+      const canvas = document.getElementById('b17EnergyProfileCanvas');
+      if (!canvas) return;
+
+      window.removeEventListener('resize', drawB17EnergyProfile);
+      window.addEventListener('resize', drawB17EnergyProfile);
+
+      drawB17EnergyProfile();
+    }
+
+    function drawB17EnergyProfile() {
+      const canvas = document.getElementById('b17EnergyProfileCanvas');
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = (rect.width || 500) * dpr;
+      canvas.height = (rect.height || 420) * dpr;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      const cw = rect.width || 500;
+      const ch = rect.height || 420;
+
+      const isExo = (b17ProfileMode === 'exo');
+
+      // Draw Axes
+      const ox = 70;
+      const oy = ch - 60;
+      const axLenX = cw - 120;
+      const axLenY = ch - 120;
+
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      // Y axis
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(ox, oy - axLenY);
+      // X axis
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(ox + axLenX, oy);
+      ctx.stroke();
+
+      // Axis Labels
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 12.5px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Tiến trình phản ứng →', ox + axLenX / 2, oy + 36);
+
+      ctx.save();
+      ctx.translate(24, oy - axLenY / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('Enthalpy (H) →', 0, 0);
+      ctx.restore();
+
+      // Energy Levels
+      const reactantY = isExo ? (oy - axLenY * 0.7) : (oy - axLenY * 0.35);
+      const productY = isExo ? (oy - axLenY * 0.25) : (oy - axLenY * 0.75);
+
+      // Reactants line
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(ox + 30, reactantY);
+      ctx.lineTo(ox + 130, reactantY);
+      ctx.stroke();
+
+      ctx.fillStyle = '#1d4ed8';
+      ctx.font = 'bold 13px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('Chất đầu', ox + 30, reactantY - 10);
+
+      // Products line
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(ox + axLenX - 130, productY);
+      ctx.lineTo(ox + axLenX - 30, productY);
+      ctx.stroke();
+
+      ctx.fillStyle = '#047857';
+      ctx.font = 'bold 13px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('Sản phẩm', ox + axLenX - 130, productY - 10);
+
+      // Activation curve
+      const peakY = Math.min(reactantY, productY) - 50;
+      ctx.strokeStyle = isExo ? '#ef4444' : '#0284c7';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(ox + 130, reactantY);
+      ctx.bezierCurveTo(ox + 180, reactantY, ox + axLenX / 2 - 40, peakY, ox + axLenX / 2, peakY);
+      ctx.bezierCurveTo(ox + axLenX / 2 + 40, peakY, ox + axLenX - 180, productY, ox + axLenX - 130, productY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Delta H Arrow
+      const arrowX = ox + axLenX - 80;
+      ctx.strokeStyle = isExo ? '#dc2626' : '#2563eb';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(arrowX, reactantY);
+      ctx.lineTo(arrowX, productY);
+      ctx.stroke();
+
+      // Arrowhead
+      const ahY = productY;
+      const ahDir = isExo ? 1 : -1;
+      ctx.fillStyle = isExo ? '#dc2626' : '#2563eb';
+      ctx.beginPath();
+      ctx.moveTo(arrowX, ahY);
+      ctx.lineTo(arrowX - 6, ahY - 8 * ahDir);
+      ctx.lineTo(arrowX + 6, ahY - 8 * ahDir);
+      ctx.closePath();
+      ctx.fill();
+
+      // Delta H Text
+      ctx.font = 'bold 14px JetBrains Mono, monospace';
+      ctx.textAlign = 'center';
+      if (isExo) {
+        ctx.fillStyle = '#dc2626';
+        ctx.fillText('ΔrH°₂₉₈ < 0 (Toả nhiệt)', arrowX, (reactantY + productY) / 2);
+      } else {
+        ctx.fillStyle = '#2563eb';
+        ctx.fillText('ΔrH°₂₉₈ > 0 (Thu nhiệt)', arrowX, (reactantY + productY) / 2);
+      }
+
+      ctx.restore();
+    }
+
+    // --- PART 3: ENTHALPY CALCULATOR ---
+    const b17CalcDatabase = {
+      'h2_cl2': {
+        name: 'H₂(g) + Cl₂(g) → 2HCl(g)',
+        method: 'Theo Năng Lượng Liên Kết (Eb)',
+        formula: 'ΔrH°₂₉₈ = Eb(H-H) + Eb(Cl-Cl) - 2*Eb(H-Cl)',
+        data: 'Eb(H-H) = 436 kJ/mol; Eb(Cl-Cl) = 243 kJ/mol; Eb(H-Cl) = 432 kJ/mol',
+        calc: 'ΔrH°₂₉₈ = (436 + 243) - (2 * 432) = 679 - 864 = -185 kJ',
+        result: '-185 kJ',
+        conclusion: 'ΔrH°₂₉₈ = -185 kJ < 0 => Phản ứng toả nhiệt mạnh.'
+      },
+      'so2_o2': {
+        name: 'SO₂(g) + ½O₂(g) → SO₃(l)',
+        method: 'Theo Nhiệt Tạo Thành Chuẩn (ΔfH°₂₉₈)',
+        formula: 'ΔrH°₂₉₈ = ΔfH°₂₉₈(SO₃) - [ΔfH°₂₉₈(SO₂) + ½*ΔfH°₂₉₈(O₂)]',
+        data: 'ΔfH°₂₉₈(SO₃, l) = -441.0 kJ/mol; ΔfH°₂₉₈(SO₂, g) = -296.8 kJ/mol; ΔfH°₂₉₈(O₂, g) = 0 kJ/mol',
+        calc: 'ΔrH°₂₉₈ = -441.0 - (-296.8 + 0) = -144.2 kJ',
+        result: '-144.2 kJ',
+        conclusion: 'ΔrH°₂₉₈ = -144.2 kJ < 0 => Phản ứng toả nhiệt.'
+      },
+      'ch4_o2': {
+        name: 'CH₄(g) + 2O₂(g) → CO₂(g) + 2H₂O(l)',
+        method: 'Theo Nhiệt Tạo Thành Chuẩn (Đốt cháy Methane)',
+        formula: 'ΔrH°₂₉₈ = [ΔfH°(CO₂) + 2*ΔfH°(H₂O)] - [ΔfH°(CH₄) + 2*ΔfH°(O₂)]',
+        data: 'ΔfH°(CO₂) = -393.5 kJ/mol; ΔfH°(H₂O, l) = -285.8 kJ/mol; ΔfH°(CH₄) = -74.8 kJ/mol',
+        calc: 'ΔrH°₂₉₈ = [-393.5 + 2*(-285.8)] - [-74.8 + 0] = -965.1 - (-74.8) = -890.3 kJ',
+        result: '-890.3 kJ',
+        conclusion: 'ΔrH°₂₉₈ = -890.3 kJ < 0 => Khí methane là nhiên liệu cháy toả nhiệt rất lớn!'
+      },
+      'caco3': {
+        name: 'CaCO₃(s) → CaO(s) + CO₂(g) (Nung vôi)',
+        method: 'Theo Nhiệt Tạo Thành Chuẩn (Thu nhiệt nung)',
+        formula: 'ΔrH°₂₉₈ = [ΔfH°(CaO) + ΔfH°(CO₂)] - ΔfH°(CaCO₃)',
+        data: 'ΔfH°(CaO) = -635.1 kJ/mol; ΔfH°(CO₂) = -393.5 kJ/mol; ΔfH°(CaCO₃) = -1206.9 kJ/mol',
+        calc: 'ΔrH°₂₉₈ = [-635.1 + (-393.5)] - [-1206.9] = -1028.6 + 1206.9 = +178.3 kJ',
+        result: '+178.3 kJ',
+        conclusion: 'ΔrH°₂₉₈ = +178.3 kJ > 0 => Phản ứng thu nhiệt (phải đốt than liên tục để nung đá vôi).'
+      }
+    };
+
+    function calcB17Reaction(key) {
+      const item = b17CalcDatabase[key];
+      if (!item) return;
+
+      const card = document.getElementById('b17-calc-display-card');
+      if (!card) return;
+
+      const isExo = item.result.includes('-');
+
+      card.innerHTML = `
+        <div style="border-bottom: 1.5px solid #cbd5e1; padding-bottom: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a;">${item.name}</h3>
+            <span style="font-size: 12px; font-weight: 700; color: #0284c7;">${item.method}</span>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 20px; font-weight: 800; color: ${isExo ? '#dc2626' : '#2563eb'};">${item.result}</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #334155; line-height: 1.5;">
+          <div><strong>1. Biểu thức áp dụng:</strong> <span style="font-family: 'JetBrains Mono', monospace; color: #0284c7;">${item.formula}</span></div>
+          <div><strong>2. Dữ liệu nhiệt động:</strong> <span style="font-size: 12.5px; color: #475569;">${item.data}</span></div>
+          <div><strong>3. Quá trình tính:</strong> <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #0f172a;">${item.calc}</span></div>
+          <div style="margin-top: 6px; padding: 10px; border-radius: 6px; background: ${isExo ? '#fef2f2' : '#eff6ff'}; border-left: 4px solid ${isExo ? '#ef4444' : '#3b82f6'}; font-weight: 700; color: ${isExo ? '#b91c1c' : '#1d4ed8'};">
+            ${item.conclusion}
+          </div>
+        </div>
+      `;
+    }
+
+    function resetB17InteractiveState() {
+      if (currentPartB17 === 'part1') {
+        setB17SimType('neutralize');
+      } else if (currentPartB17 === 'part2') {
+        setB17EnergyProfile('exo');
+      } else {
+        calcB17Reaction('h2_cl2');
       }
     }
 
