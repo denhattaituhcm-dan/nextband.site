@@ -1456,6 +1456,35 @@
               </button>
             </div>
           </div>
+          <!-- Bài 20: Ôn tập Chương 6 -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <rect x="75" y="32" width="70" height="26" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+                <text x="110" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#166534" text-anchor="middle">Chương 6</text>
+                <line x1="75" y1="45" x2="35" y2="30" stroke="#cbd5e1" stroke-width="2"/>
+                <line x1="75" y1="45" x2="35" y2="60" stroke="#cbd5e1" stroke-width="2"/>
+                <line x1="145" y1="45" x2="185" y2="30" stroke="#cbd5e1" stroke-width="2"/>
+                <line x1="145" y1="45" x2="185" y2="60" stroke="#cbd5e1" stroke-width="2"/>
+                <circle cx="35" cy="30" r="6" fill="#22c55e"/>
+                <circle cx="35" cy="60" r="6" fill="#f59e0b"/>
+                <circle cx="185" cy="30" r="6" fill="#0284c7"/>
+                <circle cx="185" cy="60" r="6" fill="#ef4444"/>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status active">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 20: Ôn tập & Luyện tập Chương 6</h3>
+                <p>Sơ đồ động hoá học 2.5D, hoàn thành Điền khuyết SGK Tr.102 & Đấu trường 5 bài tập thực nghiệm phân huỷ H₂O₂ và quy tắc Van't Hoff SGK Tr.103.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b20')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -6353,6 +6382,248 @@
     </div>
   </div>
 
+
+  <!-- ========================================================
+       BÀI 20: ÔN TẬP & LUYỆN TẬP CHƯƠNG 6: TỐC ĐỘ PHẢN ỨNG HOÁ HỌC
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM SGK TR. 102 - 103)
+       ======================================================== -->
+  <div id="view-studio-b20" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Topbar -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 6 • Bài 20</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Ôn tập & Luyện tập Chương 6: Tốc Độ Phản Ứng</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 20 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b20-p1" class="tab-seg-btn active" onclick="switchPartB20('part1')">
+            <span>1 Sơ Đồ Động Học 2.5D</span>
+          </button>
+          <button id="tab-btn-b20-p2" class="tab-seg-btn" onclick="switchPartB20('part2')">
+            <span>2 Điền Khuyết Công Thức Tr. 102</span>
+          </button>
+          <button id="tab-btn-b20-p3" class="tab-seg-btn" onclick="switchPartB20('part3')">
+            <span>3 Đấu Trường 5 Bài Tập Tr. 103</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: HỆ THỐNG HOÁ TOÀN DIỆN CHƯƠNG 6 -->
+          <div id="content-b20-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu tổng kết Chương 6 (SGK Trang 102 – 103)</h4>
+              <p>Hệ thống hoá toàn bộ quy luật động hoá học: Công thức tốc độ trung bình $\bar{v}$, Định luật tác dụng khối lượng Guldberg – Waage ($v = k \cdot C_\text{A}^a \cdot C_\text{B}^b$), 5 yếu tố điều khiển tốc độ phản ứng (Nồng độ, Áp suất, Nhiệt độ, Bề mặt tiếp xúc, Xúc tác) và công thức hệ số nhiệt độ Van't Hoff.</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 102</div>
+            <h3 class="section-title">Hệ thống hoá Bản chất Động Hoá Học</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 14px 0;">
+              <div style="padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0;">
+                <strong style="color: #1e40af;">1. Tốc độ trung bình ($\bar{v}$):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  Phản ứng $a\text{A} + b\text{B} \rightarrow c\text{C} + d\text{D}$ có:
+                  $$\bar{v} = -\frac{1}{a} \frac{\Delta C_\text{A}}{\Delta t} = -\frac{1}{b} \frac{\Delta C_\text{B}}{\Delta t} = +\frac{1}{c} \frac{\Delta C_\text{C}}{\Delta t} = +\frac{1}{d} \frac{\Delta C_\text{D}}{\Delta t}$$
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0;">
+                <strong style="color: #166534;">2. Định luật tác dụng khối lượng (phản ứng đơn giản):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  $$v = k \cdot C_\text{A}^a \cdot C_\text{B}^b$$
+                  Hằng số $k$ chỉ phụ thuộc vào bản chất phản ứng và nhiệt độ, không phụ thuộc vào nồng độ.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #fefce8; border-left: 4px solid #eab308; border-radius: 0 8px 8px 0;">
+                <strong style="color: #854d0e;">3. 5 Yếu tố kiểm soát tốc độ & Cơ chế va chạm:</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • <strong>Nồng độ, Áp suất, Nhiệt độ, Bề mặt tiếp xúc:</strong> Làm tăng tần số và mật độ va chạm hiệu quả giữa các phân tử.<br/>
+                  • <strong>Chất xúc tác:</strong> Giảm năng lượng hoạt hoá ($E_a$), mở ra cơ chế phản ứng mới thuận lợi hơn.<br/>
+                  • <strong>Hệ số Van't Hoff:</strong> $\frac{v_2}{v_1} = \gamma^{\frac{T_2 - T_1}{10}}$.
+                </p>
+              </div>
+            </div>
+
+            <div class="box-target" style="margin-top: 14px;">
+              <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #0284c7;">💡 Khám phá sơ đồ động ở cột bên phải:</h5>
+              <p style="margin: 0; font-size: 13px; line-height: 1.5;">
+                Click các nút trên <strong>Bản đồ Động học 2.5D</strong> để xem chi tiết cơ chế vi mô của từng yếu tố điều khiển tốc độ phản ứng.
+              </p>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: ĐIỀN KHUYẾT CÔNG THỨC SGK TRANG 102 -->
+          <div id="content-b20-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Thử thách Điền khuyết SGK Trang 102</h4>
+              <p>Hoàn thành các mệnh đề về công thức tính tốc độ trung bình, biểu thức định luật tác dụng khối lượng và vai trò của chất xúc tác.</p>
+            </div>
+
+            <div class="meta-citation">SGK Trang 102</div>
+            <h3 class="section-title">Điền khuyết Biểu thức Động Hoá Học</h3>
+
+            <div id="b20-cloze-container" style="display: flex; flex-direction: column; gap: 14px; margin: 16px 0;">
+              <div style="padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <p style="margin: 0 0 10px 0; font-size: 13.5px; line-height: 1.6; color: #1e293b;">
+                  1. Với phản ứng tổng quát $a\text{A} + b\text{B} \rightarrow c\text{C} + d\text{D}$, biểu thức tốc độ trung bình theo chất đầu A là $\bar{v} =$ 
+                  <select id="b20-cloze-q1" onchange="checkB20Cloze()" style="padding: 4px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 700; color: #0284c7; background: #ffffff;">
+                    <option value="">-- Chọn biểu thức --</option>
+                    <option value="-(1/a)·(ΔCA/Δt)">-(1/a)·(ΔCA/Δt)</option>
+                    <option value="+(1/a)·(ΔCA/Δt)">+(1/a)·(ΔCA/Δt)</option>
+                    <option value="-(1/c)·(ΔCC/Δt)">-(1/c)·(ΔCC/Δt)</option>
+                  </select>.
+                </p>
+                <p style="margin: 0 0 10px 0; font-size: 13.5px; line-height: 1.6; color: #1e293b;">
+                  2. Nếu phản ứng trên là phản ứng đơn giản thì tốc độ phản ứng theo định luật Guldberg – Waage là $v =$ 
+                  <select id="b20-cloze-q2" onchange="checkB20Cloze()" style="padding: 4px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 700; color: #0284c7; background: #ffffff;">
+                    <option value="">-- Chọn biểu thức --</option>
+                    <option value="k·CAᵃ·CBᵇ">k·CAᵃ·CBᵇ</option>
+                    <option value="k·CA·CB">k·CA·CB</option>
+                    <option value="k·(CA + CB)">k·(CA + CB)</option>
+                  </select>.
+                </p>
+                <p style="margin: 0 0 10px 0; font-size: 13.5px; line-height: 1.6; color: #1e293b;">
+                  3. Khi tăng nồng độ, áp suất, diện tích tiếp xúc hay nhiệt độ thì làm 
+                  <select id="b20-cloze-q3" onchange="checkB20Cloze()" style="padding: 4px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 700; color: #0284c7; background: #ffffff;">
+                    <option value="">-- Chọn tác động --</option>
+                    <option value="tăng số va chạm hiệu quả">tăng số va chạm hiệu quả</option>
+                    <option value="giảm số va chạm hiệu quả">giảm số va chạm hiệu quả</option>
+                    <option value="giảm tốc độ phản ứng">giảm tốc độ phản ứng</option>
+                  </select> dẫn đến tốc độ phản ứng tăng.
+                </p>
+                <p style="margin: 0 0 10px 0; font-size: 13.5px; line-height: 1.6; color: #1e293b;">
+                  4. Khi có mặt chất xúc tác, 
+                  <select id="b20-cloze-q4" onchange="checkB20Cloze()" style="padding: 4px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 700; color: #0284c7; background: #ffffff;">
+                    <option value="">-- Chọn vai trò --</option>
+                    <option value="năng lượng hoạt hoá giảm">năng lượng hoạt hoá giảm</option>
+                    <option value="năng lượng hoạt hoá tăng">năng lượng hoạt hoá tăng</option>
+                    <option value="nhiệt độ hệ giảm">nhiệt độ hệ giảm</option>
+                  </select> dẫn đến tốc độ phản ứng tăng.
+                </p>
+                <button class="btn-tool active" onclick="checkB20Cloze()" style="margin-top: 6px; padding: 6px 14px; font-size: 12.5px;">Kiểm tra kết quả</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHẦN 3: ĐẤU TRƯỜNG 5 BÀI TẬP SGK TRANG 103 -->
+          <div id="content-b20-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Đấu trường luyện tập tổng hợp Chương 6 (SGK Trang 103)</h4>
+              <p>Chinh phục 5 bài tập lớn SGK: Nhận diện phản ứng nhanh/chậm (đốt cháy, gỉ sắt, trung hoà), biến đổi điều kiện Zn + H₂SO₄ (kẽm bột, nồng độ axit, nhiệt độ), tính toán tốc độ trung bình phân huỷ H₂O₂ theo thể tích O₂ đo được qua từng phút, thiết kế thí nghiệm nhiệt độ và bài toán hạ nhiệt độ tính theo hệ số Van't Hoff γ = 2.</p>
+            </div>
+
+            <div class="meta-citation">SGK Trang 103</div>
+            <h3 class="section-title">Luyện tập Tổng hợp & Thực nghiệm</h3>
+            
+            <div id="b20-quiz-active-question-card" style="padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+              <!-- Sẽ render qua hàm renderB20CurrentQuestion() -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHƯƠNG TỔNG KẾT</span>
+              <span class="hud-value highlight">Chương 6 • Tốc Độ Phản Ứng</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">SỐ BÀI HỌC</span>
+              <span class="hud-value">2 Bài (Bài 19 ➔ Bài 20)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">CƠ CHẾ VI MÔ</span>
+              <span class="hud-value" style="color: #2563eb;">Va chạm hiệu quả & Ea</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">TIẾN ĐỘ CHƯƠNG</span>
+              <span id="b20-hud-progress" class="hud-value" style="color: #16a34a;">100% Hoàn thiện</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1: Sơ đồ Tư duy Toàn cảnh 2.5D Mindmap -->
+          <div id="panel-b20-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🗺️ Bản đồ Động Hoá Học 2.5D Toàn Cảnh Chương 6</span>
+              <div style="font-size: 12px; color: #64748b;">
+                Click các nhánh để xem chi tiết
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b20MindmapCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Kiểm tra kết quả Điền khuyết -->
+          <div id="panel-b20-part2" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 24px;">
+            <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0 0 8px 0;">Kết quả bài tập Điền khuyết</h4>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Hoàn thành các mệnh đề ở cột bên trái để kiểm tra sự thấu hiểu các định luật và công thức động hoá học.</p>
+            <div id="b20-cloze-status-board" style="padding: 16px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 13px; line-height: 1.6;">
+              <!-- Status info -->
+            </div>
+          </div>
+
+          <!-- PANEL 3: Đấu trường luyện tập & strip 5 bài tập SGK -->
+          <div id="panel-b20-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">Đấu trường 5 Bài tập SGK Trang 103</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Bài 20: Ôn tập Chương 6</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b20-quiz-progress-text">
+                Đã hoàn thành: 0 / 5 câu
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="b20-question-selector-strip">
+              <!-- Render selector strip -->
+            </div>
+            <div id="b20-quiz-score-board" style="margin-top: 24px; padding: 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; display: none;">
+              <h3 style="font-size: 22px; font-weight: 800; color: #16a34a; margin: 0 0 8px 0;">🎉 CHÚC MỪNG BẠN ĐÃ TỐT NGHIỆP TOÀN DIỆN CHƯƠNG 6!</h3>
+              <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">Bạn đã hoàn thành xuất sắc 100% nội dung về Tốc Độ Phản Ứng Hoá Học!</p>
+              <button class="btn-tool active" onclick="resetB20QuizArena()" style="padding: 10px 20px; font-size: 14px;">Làm lại Đấu trường</button>
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b20-lab-status-tip">
+              💡 <em>Sơ đồ tư duy 2.5D: Bấm vào từng nút để xem cơ chế điều khiển tốc độ phản ứng.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB20InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -6362,7 +6633,7 @@
     function openLesson(lessonId) {
       activeLesson = lessonId;
       document.getElementById('view-dashboard').classList.remove('active');
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -6468,8 +6739,17 @@
           if (typeof initB13InterLab === 'function') initB13InterLab();
           if (typeof initB13QuizArena === 'function') initB13QuizArena();
         }, 50);
-                                    } else if (lessonId === 'b19') {
-        const studioB19 = document.getElementById('view-studio-b19');
+                                          } else if (lessonId === 'b20') {
+        const studioB20 = document.getElementById('view-studio-b20');
+        if (studioB20) studioB20.classList.add('active');
+        switchPartB20('part1');
+        setTimeout(() => {
+          if (typeof initB20Mindmap === 'function') initB20Mindmap();
+          if (typeof initB20ClozeLab === 'function') initB20ClozeLab();
+          if (typeof initB20QuizArena === 'function') initB20QuizArena();
+        }, 50);
+      } else if (lessonId === 'b19') {
+        const studioB19 = document.getElementById('view-studio-b19', 'view-studio-b20');
         if (studioB19) studioB19.classList.add('active');
         switchPartB19('part1');
         setTimeout(() => {
@@ -6478,7 +6758,7 @@
           if (typeof calcB19Vanthoff === 'function') calcB19Vanthoff();
         }, 50);
       } else if (lessonId === 'b18') {
-        const studioB18 = document.getElementById('view-studio-b18', 'view-studio-b19');
+        const studioB18 = document.getElementById('view-studio-b18', 'view-studio-b19', 'view-studio-b20');
         if (studioB18) studioB18.classList.add('active');
         switchPartB18('part1');
         setTimeout(() => {
@@ -6487,7 +6767,7 @@
           if (typeof initB18QuizArena === 'function') initB18QuizArena();
         }, 50);
       } else if (lessonId === 'b17') {
-        const studioB17 = document.getElementById('view-studio-b17', 'view-studio-b18', 'view-studio-b19');
+        const studioB17 = document.getElementById('view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20');
         if (studioB17) studioB17.classList.add('active');
         switchPartB17('part1');
         setTimeout(() => {
@@ -6496,7 +6776,7 @@
           if (typeof calcB17Reaction === 'function') calcB17Reaction('h2_cl2');
         }, 50);
       } else if (lessonId === 'b16') {
-        const studioB16 = document.getElementById('view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19');
+        const studioB16 = document.getElementById('view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20');
         if (studioB16) studioB16.classList.add('active');
         switchPartB16('part1');
         setTimeout(() => {
@@ -6505,7 +6785,7 @@
           if (typeof initB16QuizArena === 'function') initB16QuizArena();
         }, 50);
       } else if (lessonId === 'b15') {
-        const studioB15 = document.getElementById('view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19');
+        const studioB15 = document.getElementById('view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20');
         if (studioB15) studioB15.classList.add('active');
         switchPartB15('part1');
         setTimeout(() => {
@@ -6514,7 +6794,7 @@
           if (typeof initB15QuizArena === 'function') initB15QuizArena();
         }, 50);
       } else if (lessonId === 'b14') {
-        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19');
+        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20');
         if (studioB14) studioB14.classList.add('active');
         switchPartB14('part1');
         setTimeout(() => {
@@ -6527,7 +6807,7 @@
     }
 
     function backToDashboard() {
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -15534,6 +15814,431 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         if (inGamma) inGamma.value = 3.0;
         if (inTime1) inTime1.value = 270;
         calcB19Vanthoff();
+      }
+    }
+
+
+
+    /* ==========================================================
+       BÀI 20: ÔN TẬP VÀ LUYỆN TẬP CHƯƠNG 6 (TỐC ĐỘ PHẢN ỨNG)
+       ========================================================== */
+    let currentPartB20 = 'part1';
+
+    function switchPartB20(partId) {
+      currentPartB20 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b20-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b20-' + p);
+        const panel = document.getElementById('panel-b20-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
+
+      const tip = document.getElementById('b20-lab-status-tip');
+      if (tip) {
+        if (partId === 'part1') tip.innerHTML = '💡 <em>Sơ đồ tư duy 2.5D: Bấm vào từng nút để xem cơ chế điều khiển tốc độ phản ứng.</em>';
+        else if (partId === 'part2') tip.innerHTML = '💡 <em>Điền khuyết công thức SGK Trang 102: Hoàn thành các định luật và công thức chuẩn mực.</em>';
+        else tip.innerHTML = '💡 <em>Đấu trường 5 bài tập SGK Trang 103: Vận dụng thực nghiệm phân huỷ H₂O₂ và quy tắc Van\'t Hoff.</em>';
+      }
+
+      if (partId === 'part1') {
+        setTimeout(drawB20Mindmap, 50);
+      }
+    }
+
+    // --- PART 1: 2.5D MINDMAP LOGIC ---
+    let b20SelectedNode = null;
+    const b20MindmapNodes = [
+      { id: 'center', label: 'TỐC ĐỘ PHẢN ỨNG', x: 0.5, y: 0.5, r: 66, color: '#0284c7', desc: 'Đại lượng đo mức độ biến thiên nồng độ chất phản ứng/sản phẩm theo thời gian (Chương 6).' },
+      { id: 'v_tb', label: '1. Tốc độ trung bình', x: 0.2, y: 0.24, r: 52, color: '#3b82f6', desc: 'v_tb = -(1/a)·(ΔC_A/Δt) = +(1/c)·(ΔC_C/Δt). Dấu trừ đảm bảo tốc độ luôn mang giá trị dương.' },
+      { id: 'gw', label: '2. Định luật Guldberg', x: 0.8, y: 0.24, r: 52, color: '#8b5cf6', desc: 'v = k·C_Aᵃ·C_Bᵇ. Áp dụng cho phản ứng đơn giản. Hằng số k độc lập với nồng độ.' },
+      { id: 'collision', label: '3. 4 Yếu tố va chạm', x: 0.2, y: 0.76, r: 52, color: '#ef4444', desc: 'Nồng độ, Áp suất, Nhiệt độ, Bề mặt: Làm tăng số va chạm hiệu quả giữa các phân tử.' },
+      { id: 'catalyst', label: '4. Xúc tác & Van\'t Hoff', x: 0.8, y: 0.76, r: 52, color: '#10b981', desc: 'Xúc tác làm giảm năng lượng hoạt hoá Ea. Quy tắc Van\'t Hoff: v_T2 / v_T1 = γ^(ΔT/10).' }
+    ];
+
+    function initB20Mindmap() {
+      const canvas = document.getElementById('b20MindmapCanvas');
+      if (!canvas) return;
+
+      canvas.removeEventListener('click', handleB20CanvasClick);
+      canvas.addEventListener('click', handleB20CanvasClick);
+
+      window.removeEventListener('resize', resizeB20Mindmap);
+      window.addEventListener('resize', resizeB20Mindmap);
+
+      resizeB20Mindmap();
+    }
+
+    function resizeB20Mindmap() {
+      const canvas = document.getElementById('b20MindmapCanvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = (rect.width || 500) * dpr;
+      canvas.height = (rect.height || 450) * dpr;
+      drawB20Mindmap();
+    }
+
+    function handleB20CanvasClick(e) {
+      const canvas = document.getElementById('b20MindmapCanvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      let found = null;
+      for (const node of b20MindmapNodes) {
+        const nx = node.x * rect.width;
+        const ny = node.y * rect.height;
+        const dist = Math.hypot(clickX - nx, clickY - ny);
+        if (dist <= node.r) {
+          found = node;
+          break;
+        }
+      }
+      b20SelectedNode = found;
+      drawB20Mindmap();
+    }
+
+    function drawB20Mindmap() {
+      const canvas = document.getElementById('b20MindmapCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      const cw = rect.width || 500;
+      const ch = rect.height || 450;
+
+      // Draw connections
+      const centerNode = b20MindmapNodes[0];
+      const cx = centerNode.x * cw;
+      const cy = centerNode.y * ch;
+
+      for (let i = 1; i < b20MindmapNodes.length; i++) {
+        const node = b20MindmapNodes[i];
+        const nx = node.x * cw;
+        const ny = node.y * ch;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.bezierCurveTo(cx, ny, nx, cy, nx, ny);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.bezierCurveTo(cx, ny, nx, cy, nx, ny);
+        ctx.strokeStyle = node.color;
+        ctx.lineWidth = (b20SelectedNode && b20SelectedNode.id === node.id) ? 3.5 : 1.5;
+        ctx.setLineDash([6, 6]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Draw nodes
+      for (const node of b20MindmapNodes) {
+        const nx = node.x * cw;
+        const ny = node.y * ch;
+        const isSelected = (b20SelectedNode && b20SelectedNode.id === node.id);
+
+        ctx.save();
+        ctx.shadowColor = isSelected ? node.color : 'rgba(0, 0, 0, 0.08)';
+        ctx.shadowBlur = isSelected ? 18 : 8;
+        ctx.shadowOffsetY = 4;
+
+        ctx.beginPath();
+        ctx.arc(nx, ny, node.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+
+        ctx.lineWidth = isSelected ? 4 : 2.5;
+        ctx.strokeStyle = node.color;
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.font = node.id === 'center' ? 'bold 12.5px Plus Jakarta Sans, sans-serif' : '600 12px Plus Jakarta Sans, sans-serif';
+        ctx.fillStyle = node.id === 'center' ? '#0f172a' : '#1e293b';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.label, nx, ny);
+      }
+
+      // Tooltip / Details box
+      if (b20SelectedNode) {
+        const boxW = Math.min(cw - 32, 420);
+        const boxH = 64;
+        const bx = (cw - boxW) / 2;
+        const by = ch - boxH - 14;
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+        ctx.beginPath();
+        ctx.roundRect(bx, by, boxW, boxH, 10);
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = b20SelectedNode.color;
+        ctx.stroke();
+
+        ctx.font = 'bold 12.5px Plus Jakarta Sans, sans-serif';
+        ctx.fillStyle = b20SelectedNode.color;
+        ctx.textAlign = 'left';
+        ctx.fillText(b20SelectedNode.label, bx + 14, by + 22);
+
+        ctx.font = '11.5px Plus Jakarta Sans, sans-serif';
+        ctx.fillStyle = '#475569';
+        ctx.fillText(b20SelectedNode.desc, bx + 14, by + 44);
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+
+    // --- PART 2: CLOZE LAB (SGK TRANG 102) ---
+    const b20ClozeAnswers = {
+      q1: '-(1/a)·(ΔCA/Δt)',
+      q2: 'k·CAᵃ·CBᵇ',
+      q3: 'tăng số va chạm hiệu quả',
+      q4: 'năng lượng hoạt hoá giảm'
+    };
+
+    function initB20ClozeLab() {
+      updateB20ClozeStatus();
+    }
+
+    function checkB20Cloze() {
+      let correctCount = 0;
+      for (const [key, val] of Object.entries(b20ClozeAnswers)) {
+        const sel = document.getElementById('b20-cloze-' + key);
+        if (sel) {
+          if (sel.value === val) {
+            sel.style.borderColor = '#16a34a';
+            sel.style.backgroundColor = '#f0fdf4';
+            correctCount++;
+          } else if (sel.value !== '') {
+            sel.style.borderColor = '#dc2626';
+            sel.style.backgroundColor = '#fef2f2';
+          }
+        }
+      }
+
+      const board = document.getElementById('b20-cloze-status-board');
+      if (board) {
+        if (correctCount === 4) {
+          board.innerHTML = `<div style="color: #166534; font-weight: 700; font-size: 14px;">✨ Hoàn thành xuất sắc: 4/4 công thức chính xác!</div>
+          <p style="margin: 6px 0 0 0; color: #1e293b;">Bạn đã nắm vững: v_tb có dấu âm trước chất đầu, v = k·C_Aᵃ·C_Bᵇ cho phản ứng đơn giản, va chạm hiệu quả và chất xúc tác làm giảm Ea.</p>`;
+        } else {
+          board.innerHTML = `<div style="color: #0284c7; font-weight: 700;">Tiến độ: Đúng ${correctCount}/4 ô</div>
+          <p style="margin: 6px 0 0 0; color: #475569;">Gợi ý: Kiểm tra dấu của tốc độ trung bình và vai trò giảm rào cản năng lượng hoạt hoá của xúc tác.</p>`;
+        }
+      }
+    }
+
+    function updateB20ClozeStatus() {
+      const board = document.getElementById('b20-cloze-status-board');
+      if (board) {
+        board.innerHTML = `<div style="color: #64748b;">Chưa kiểm tra. Hãy chọn công thức thích hợp trong 4 ô trống ở cột bên trái rồi bấm <strong>"Kiểm tra kết quả"</strong>.</div>`;
+      }
+    }
+
+    // --- PART 3: QUIZ ARENA 5 BÀI TẬP SGK TRANG 103 ---
+    const b20QuizData = [
+      {
+        id: 1,
+        title: 'Câu 1 (SGK Tr. 103): Tốc độ nhanh / chậm',
+        question: 'Phản ứng nào sau đây xảy ra với tốc độ nhanh nhất trong điều kiện phòng thí nghiệm?',
+        options: [
+          'A. Phản ứng trung hoà axit - bazơ (HCl + NaOH)',
+          'B. Phản ứng kim loại sắt bị gỉ trong không khí ẩm',
+          'C. Quá trình lên men tinh bột tạo rượu',
+          'D. Quá trình tạo thạch nhũ trong hang động đá vôi'
+        ],
+        answer: 0,
+        explanation: 'Phản ứng trao đổi ion giữa axit mạnh và bazơ mạnh (H⁺ + OH⁻ → H₂O) xảy ra gần như tức thời (tốc độ cực nhanh). Trong khi gỉ sắt, lên men và tạo thạch nhũ mất từ vài ngày, vài tháng đến hàng ngàn năm.'
+      },
+      {
+        id: 2,
+        title: 'Câu 2 (SGK Tr. 103): Biến đổi điều kiện Zn + H₂SO₄',
+        question: 'Biện pháp nào sau đây sẽ làm GIẢM tốc độ phản ứng giữa hạt kẽm và dung dịch H₂SO₄ 1 M?',
+        options: [
+          'A. Thay dung dịch H₂SO₄ 1 M bằng dung dịch H₂SO₄ 0.5 M',
+          'B. Thay kẽm hạt bằng kẽm bột cùng khối lượng',
+          'C. Đun nóng dung dịch phản ứng lên 60°C',
+          'D. Khuấy đều dung dịch trong khi phản ứng'
+        ],
+        answer: 0,
+        explanation: 'Giảm nồng độ axit từ 1 M xuống 0.5 M làm giảm mật độ hạt H⁺, làm giảm tần số va chạm hiệu quả => Tốc độ phản ứng giảm xuống.'
+      },
+      {
+        id: 3,
+        title: 'Câu 3 (SGK Tr. 103): Thực nghiệm phân huỷ H₂O₂',
+        question: 'Phân huỷ H₂O₂: Từ t=0 đến t=1 min thu được 14 cm³ O₂; từ t=1 đến t=2 min thu được thêm (24 - 14) = 10 cm³ O₂. Nhận xét về tốc độ trung bình theo thời gian:',
+        options: [
+          'A. Tốc độ trung bình giảm dần theo thời gian (14 cm³/min ➔ 10 cm³/min ➔ ...)',
+          'B. Tốc độ trung bình tăng dần theo thời gian',
+          'C. Tốc độ phản ứng không đổi',
+          'D. Tốc độ biến đổi không theo quy luật'
+        ],
+        answer: 0,
+        explanation: 'Khi phản ứng diễn ra, nồng độ H₂O₂ giảm dần theo thời gian, dẫn đến tốc độ trung bình của phản ứng giảm dần (từ 0-1 min là 14 cm³/min, từ 1-2 min giảm còn 10 cm³/min, từ 2-3 min giảm còn 6 cm³/min).'
+      },
+      {
+        id: 4,
+        title: 'Câu 4 (SGK Tr. 103): Thiết kế thí nghiệm nhiệt độ',
+        question: 'Để chứng minh ảnh hưởng của nhiệt độ đến tốc độ phản ứng Zn + H₂SO₄ loãng, phương án thực nghiệm chuẩn xác là:',
+        options: [
+          'A. Dùng 2 ống nghiệm chứa cùng khối lượng kẽm hạt, cùng thể tích và nồng độ H₂SO₄; một ống ở nhiệt độ phòng (25°C), một ống ngâm trong cốc nước nóng (60°C)',
+          'B. Một ống dùng kẽm bột ở 25°C, một ống dùng kẽm hạt ở 60°C',
+          'C. Một ống dùng H₂SO₄ 1 M ở 25°C, một ống dùng H₂SO₄ 2 M ở 60°C',
+          'D. Dùng lượng kẽm khác nhau ở cùng một nhiệt độ'
+        ],
+        answer: 0,
+        explanation: 'Nguyên tắc kiểm soát biến số thực nghiệm (control variables): Để khảo sát ảnh hưởng của nhiệt độ, bắt buộc phải giữ cố định tất cả các yếu tố khác (kích thước hạt kẽm, khối lượng, nồng độ và thể tích axit).'
+      },
+      {
+        id: 5,
+        title: 'Câu 5 (SGK Tr. 103): Bài toán hạ nhiệt độ Van\'t Hoff',
+        question: 'Một phản ứng ở 50°C có tốc độ 0.18 mol/(L·min). Hỏi phải giảm xuống nhiệt độ bao nhiêu để tốc độ phản ứng chỉ còn 0.045 mol/(L·min), biết hệ số Van\'t Hoff γ = 2?',
+        options: [
+          'A. 30°C',
+          'B. 40°C',
+          'C. 20°C',
+          'D. 10°C'
+        ],
+        answer: 0,
+        explanation: 'Tỉ số tốc độ: v₁ / v₂ = 0.18 / 0.045 = 4 = 2². Theo Van\'t Hoff: v₁/v₂ = γ^((T₁ - T₂)/10) = 2^((50 - T₂)/10) = 2² => (50 - T₂)/10 = 2 => 50 - T₂ = 20 => T₂ = 30°C.'
+      }
+    ];
+
+    let b20UserAnswers = {};
+
+    function initB20QuizArena() {
+      b20UserAnswers = {};
+      renderB20QuestionStrip();
+      renderB20CurrentQuestion(0);
+    }
+
+    function renderB20QuestionStrip() {
+      const strip = document.getElementById('b20-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = b20QuizData.map((q, idx) => {
+        const isAnswered = b20UserAnswers[idx] !== undefined;
+        const isCorrect = isAnswered && (b20UserAnswers[idx] === q.answer);
+        let bg = '#f1f5f9';
+        let color = '#475569';
+        if (isAnswered) {
+          bg = isCorrect ? '#dcfce7' : '#fee2e2';
+          color = isCorrect ? '#166534' : '#991b1b';
+        }
+        return `<button onclick="renderB20CurrentQuestion(${idx})" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: ${bg}; color: ${color}; font-weight: 700; font-size: 12px; cursor: pointer;">Câu ${idx + 1}</button>`;
+      }).join('');
+    }
+
+    function renderB20CurrentQuestion(idx) {
+      const q = b20QuizData[idx];
+      const leftCol = document.getElementById('b20-quiz-active-question-card');
+      if (!leftCol) return;
+
+      const userChoice = b20UserAnswers[idx];
+      const isAnswered = userChoice !== undefined;
+
+      let optsHtml = q.options.map((opt, optIdx) => {
+        let optStyle = 'padding: 10px 14px; border-radius: 8px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; cursor: pointer; font-size: 13px; transition: all 0.15s; background: #ffffff;';
+        if (isAnswered) {
+          if (optIdx === q.answer) {
+            optStyle += ' border-color: #16a34a; background: #f0fdf4; color: #166534; font-weight: 700;';
+          } else if (optIdx === userChoice) {
+            optStyle += ' border-color: #dc2626; background: #fef2f2; color: #991b1b;';
+          }
+        }
+        return `<div onclick="handleB20Answer(${idx}, ${optIdx})" style="${optStyle}">${opt}</div>`;
+      }).join('');
+
+      let feedbackHtml = '';
+      if (isAnswered) {
+        const isCorrect = userChoice === q.answer;
+        feedbackHtml = `
+          <div style="margin-top: 14px; padding: 12px; border-radius: 8px; background: ${isCorrect ? '#f0fdf4' : '#fffbeb'}; border-left: 4px solid ${isCorrect ? '#16a34a' : '#f59e0b'};">
+            <div style="font-weight: 700; color: ${isCorrect ? '#166534' : '#b45309'};">
+              ${isCorrect ? '✅ Chính xác!' : '⚠️ Chưa chính xác!'}
+            </div>
+            <div style="font-size: 12.5px; color: #334155; margin-top: 4px; line-height: 1.5;">
+              <strong>Giải thích chi tiết:</strong> ${q.explanation}
+            </div>
+          </div>
+        `;
+      }
+
+      leftCol.innerHTML = `
+        <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 800; color: #0284c7; font-size: 14px;">${q.title}</span>
+          <span style="font-size: 12px; color: #64748b;">Câu ${idx + 1} / 5</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 14px;">
+          ${q.question}
+        </div>
+        <div>
+          ${optsHtml}
+        </div>
+        ${feedbackHtml}
+      `;
+    }
+
+    function handleB20Answer(qIdx, optIdx) {
+      if (b20UserAnswers[qIdx] !== undefined) return;
+      b20UserAnswers[qIdx] = optIdx;
+      renderB20QuestionStrip();
+      renderB20CurrentQuestion(qIdx);
+
+      const answeredCount = Object.keys(b20UserAnswers).length;
+      const progressText = document.getElementById('b20-quiz-progress-text');
+      if (progressText) {
+        progressText.innerText = `Đã hoàn thành: ${answeredCount} / 5 câu`;
+      }
+
+      if (answeredCount === 5) {
+        const scoreBoard = document.getElementById('b20-quiz-score-board');
+        if (scoreBoard) scoreBoard.style.display = 'block';
+      }
+    }
+
+    function resetB20QuizArena() {
+      initB20QuizArena();
+      const scoreBoard = document.getElementById('b20-quiz-score-board');
+      if (scoreBoard) scoreBoard.style.display = 'none';
+      const progressText = document.getElementById('b20-quiz-progress-text');
+      if (progressText) progressText.innerText = 'Đã hoàn thành: 0 / 5 câu';
+    }
+
+    function resetB20InteractiveState() {
+      if (currentPartB20 === 'part1') {
+        b20SelectedNode = null;
+        drawB20Mindmap();
+      } else if (currentPartB20 === 'part2') {
+        ['q1', 'q2', 'q3', 'q4'].forEach(k => {
+          const el = document.getElementById('b20-cloze-' + k);
+          if (el) {
+            el.value = '';
+            el.style.borderColor = '#cbd5e1';
+            el.style.backgroundColor = '#ffffff';
+          }
+        });
+        updateB20ClozeStatus();
+      } else {
+        resetB20QuizArena();
       }
     }
 
