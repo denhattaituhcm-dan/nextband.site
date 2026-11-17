@@ -1388,6 +1388,35 @@
               </button>
             </div>
           </div>
+          <!-- Bài 18: Ôn tập Chương 5 -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <rect x="75" y="32" width="70" height="26" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+                <text x="110" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="middle">Chương 5</text>
+                <line x1="75" y1="45" x2="35" y2="30" stroke="#cbd5e1" stroke-width="2"/>
+                <line x1="75" y1="45" x2="35" y2="60" stroke="#cbd5e1" stroke-width="2"/>
+                <line x1="145" y1="45" x2="185" y2="30" stroke="#cbd5e1" stroke-width="2"/>
+                <line x1="145" y1="45" x2="185" y2="60" stroke="#cbd5e1" stroke-width="2"/>
+                <circle cx="35" cy="30" r="6" fill="#3b82f6"/>
+                <circle cx="35" cy="60" r="6" fill="#f59e0b"/>
+                <circle cx="185" cy="30" r="6" fill="#10b981"/>
+                <circle cx="185" cy="60" r="6" fill="#ef4444"/>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status active">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 18: Ôn tập & Luyện tập Chương 5</h3>
+                <p>Sơ đồ tư duy 2.5D, hoàn thành Điền khuyết SGK Tr.90 & Đấu trường 8 bài tập lớn nhiệt động học, cồn vs mỡ lợn và bình gas LPG SGK Tr.91.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b18')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -5796,6 +5825,245 @@
     </div>
   </div>
 
+
+  <!-- ========================================================
+       BÀI 18: ÔN TẬP & LUYỆN TẬP CHƯƠNG 5: NĂNG LƯỢNG HOÁ HỌC
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM SGK TR. 90 - 91)
+       ======================================================== -->
+  <div id="view-studio-b18" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Topbar -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 5 • Bài 18</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Ôn tập & Luyện tập Chương 5: Năng Lượng Hoá Học</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 18 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b18-p1" class="tab-seg-btn active" onclick="switchPartB18('part1')">
+            <span>1 Sơ Đồ Nhiệt Động 2.5D</span>
+          </button>
+          <button id="tab-btn-b18-p2" class="tab-seg-btn" onclick="switchPartB18('part2')">
+            <span>2 Điền Khuyết Công Thức Tr. 90</span>
+          </button>
+          <button id="tab-btn-b18-p3" class="tab-seg-btn" onclick="switchPartB18('part3')">
+            <span>3 Đấu Trường 8 Bài Tập Tr. 90 – 91</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: HỆ THỐNG HOÁ TOÀN DIỆN CHƯƠNG 5 -->
+          <div id="content-b18-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu tổng kết Chương 5 (SGK Trang 90 – 91)</h4>
+              <p>Hệ thống hoá toàn bộ quy luật biến thiên năng lượng của phản ứng: Dấu của $\Delta_r H^\circ_{298}$, độ bền tương đối của các dạng thù hình, tính toán nhiệt hoá trị và giá trị năng lượng của các nguồn nhiên liệu đời sống (cồn, mỡ lợn, gas hoá lỏng LPG).</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 90</div>
+            <h3 class="section-title">Hệ thống hoá Bản chất Năng Lượng Hoá Học</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 14px 0;">
+              <div style="padding: 12px; background: #fff1f2; border-left: 4px solid #f43f5e; border-radius: 0 8px 8px 0;">
+                <strong style="color: #be123c;">1. Phản ứng Toả nhiệt ($\Delta_r H^\circ_{298} < 0$):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  Hệ giải phóng nhiệt ra môi trường. Tổng năng lượng liên kết sản phẩm lớn hơn chất đầu ($\sum E_{b,\text{sp}} > \sum E_{b,\text{cđ}}$). Sản phẩm tạo thành <strong>bền vững hơn</strong> về mặt nhiệt động học.
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0;">
+                <strong style="color: #1e40af;">2. Phản ứng Thu nhiệt ($\Delta_r H^\circ_{298} > 0$):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  Hệ nhận nhiệt từ môi trường. Cần liên tục cung cấp nhiệt lượng để duy trì phản ứng. Dạng chất có năng lượng thấp hơn sẽ <strong>bền vững hơn</strong> (ví dụ: $P_\text{đỏ} \rightarrow P_\text{trắng}, \Delta_r H > 0 \Rightarrow P_\text{đỏ}$ bền hơn).
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0;">
+                <strong style="color: #166534;">3. 2 Phương thức tính toán cốt lõi:</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • <em>Theo Nhiệt tạo thành chuẩn:</em> $\Delta_r H^\circ_{298} = \sum \Delta_f H^\circ_{298}(\text{sp}) - \sum \Delta_f H^\circ_{298}(\text{cđ})$ (Sau trừ Trước).<br/>
+                  • <em>Theo Năng lượng liên kết:</em> $\Delta_r H^\circ_{298} = \sum E_b(\text{cđ}) - \sum E_b(\text{sp})$ (Trước trừ Sau).
+                </p>
+              </div>
+            </div>
+
+            <div class="box-target" style="margin-top: 14px;">
+              <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #0284c7;">💡 Khám phá sơ đồ tư duy nhiệt động:</h5>
+              <p style="margin: 0; font-size: 13px; line-height: 1.5;">
+                Click các nút trên <strong>Bản đồ 2.5D</strong> ở cột bên phải để nắm trọn vẹn mối liên hệ giữa enthalpy, độ bền và tính toán thực tế.
+              </p>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: ĐIỀN KHUYẾT CÔNG THỨC SGK TRANG 90 -->
+          <div id="content-b18-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Thử thách Điền khuyết SGK Trang 90</h4>
+              <p>Hoàn thành các mệnh đề về dấu $\Delta_r H^\circ_{298}$ và công thức tính toán theo $\Delta_f H^\circ_{298}$ và $E_b$.</p>
+            </div>
+
+            <div class="meta-citation">SGK Trang 90</div>
+            <h3 class="section-title">Điền khuyết Quy luật & Công thức Chuẩn</h3>
+
+            <div id="b18-cloze-container" style="display: flex; flex-direction: column; gap: 14px; margin: 16px 0;">
+              <div style="padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <p style="margin: 0 0 10px 0; font-size: 13.5px; line-height: 1.6; color: #1e293b;">
+                  1. Với phản ứng: Chất phản ứng $\rightarrow$ Sản phẩm, nếu $\Delta_r H^\circ_{298} < 0$ thì đó là phản ứng 
+                  <select id="b18-cloze-q1" onchange="checkB18Cloze()" style="padding: 4px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 700; color: #0284c7; background: #ffffff;">
+                    <option value="">-- Chọn loại --</option>
+                    <option value="toả">toả</option>
+                    <option value="thu">thu</option>
+                    <option value="trung hoà">trung hoà</option>
+                  </select> nhiệt.
+                </p>
+                <p style="margin: 0 0 10px 0; font-size: 13.5px; line-height: 1.6; color: #1e293b;">
+                  2. Ngược lại, nếu $\Delta_r H^\circ_{298} > 0$ thì đó là phản ứng 
+                  <select id="b18-cloze-q2" onchange="checkB18Cloze()" style="padding: 4px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 700; color: #0284c7; background: #ffffff;">
+                    <option value="">-- Chọn loại --</option>
+                    <option value="toả">toả</option>
+                    <option value="thu">thu</option>
+                    <option value="tự phát">tự phát</option>
+                  </select> nhiệt.
+                </p>
+                <p style="margin: 0 0 10px 0; font-size: 13.5px; line-height: 1.6; color: #1e293b;">
+                  3. Tính theo nhiệt tạo thành chuẩn: $\Delta_r H^\circ_{298} =$ 
+                  <select id="b18-cloze-q3" onchange="checkB18Cloze()" style="padding: 4px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 700; color: #0284c7; background: #ffffff;">
+                    <option value="">-- Chọn biểu thức --</option>
+                    <option value="ΣΔfH°(sp) - ΣΔfH°(cđ)">ΣΔfH°(sp) - ΣΔfH°(cđ)</option>
+                    <option value="ΣΔfH°(cđ) - ΣΔfH°(sp)">ΣΔfH°(cđ) - ΣΔfH°(sp)</option>
+                    <option value="ΣEb(cđ) - ΣEb(sp)">ΣEb(cđ) - ΣEb(sp)</option>
+                  </select>.
+                </p>
+                <p style="margin: 0 0 10px 0; font-size: 13.5px; line-height: 1.6; color: #1e293b;">
+                  4. Tính theo năng lượng liên kết $E_b$ (thể khí): $\Delta_r H^\circ_{298} =$ 
+                  <select id="b18-cloze-q4" onchange="checkB18Cloze()" style="padding: 4px 8px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-weight: 700; color: #0284c7; background: #ffffff;">
+                    <option value="">-- Chọn biểu thức --</option>
+                    <option value="ΣEb(cđ) - ΣEb(sp)">ΣEb(cđ) - ΣEb(sp)</option>
+                    <option value="ΣEb(sp) - ΣEb(cđ)">ΣEb(sp) - ΣEb(cđ)</option>
+                    <option value="ΣΔfH°(sp) - ΣΔfH°(cđ)">ΣΔfH°(sp) - ΣΔfH°(cđ)</option>
+                  </select>.
+                </p>
+                <button class="btn-tool active" onclick="checkB18Cloze()" style="margin-top: 6px; padding: 6px 14px; font-size: 12.5px;">Kiểm tra kết quả</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHẦN 3: ĐẤU TRƯỜNG 8 BÀI TẬP SGK TRANG 90 - 91 -->
+          <div id="content-b18-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Đấu trường luyện tập tổng hợp Chương 5 (SGK Trang 90 – 91)</h4>
+              <p>Chinh phục toàn diện 8 bài tập SGK: Độ bền phosphorus đỏ vs trắng, tính nhiệt tạo thành CO, năng lượng truyền dịch Glucose y tế, tính $\Delta_r H^\circ$ cracking $\text{C}_4\text{H}_{10}$, đốt cháy methane, so sánh năng lượng $1\text{ kg}$ cồn vs $1\text{ kg}$ mỡ lợn (tristearin), đốt acetone và bài toán tính số ngày dùng hết bình gas $12\text{ kg}$ LPG của hộ gia đình.</p>
+            </div>
+
+            <div class="meta-citation">SGK Trang 90 – 91</div>
+            <h3 class="section-title">Luyện tập Tổng hợp & Đời Sống Thực Tế</h3>
+            
+            <div id="b18-quiz-active-question-card" style="padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+              <!-- Sẽ render qua hàm renderB18CurrentQuestion() -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHƯƠNG TỔNG KẾT</span>
+              <span class="hud-value highlight">Chương 5 • Năng Lượng Hoá Học</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">SỐ BÀI HỌC</span>
+              <span class="hud-value">2 Bài (Bài 17 ➔ Bài 18)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">QUY TẮC CỐT TỬ</span>
+              <span class="hud-value" style="color: #2563eb;">ΔfH° (Sau - Trước) | Eb (Trước - Sau)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">TIẾN ĐỘ CHƯƠNG</span>
+              <span id="b18-hud-progress" class="hud-value" style="color: #16a34a;">100% Hoàn thiện</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1: Sơ đồ Tư duy Toàn cảnh 2.5D Mindmap -->
+          <div id="panel-b18-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🗺️ Bản đồ Tư duy Năng Lượng Hoá Học 2.5D</span>
+              <div style="font-size: 12px; color: #64748b;">
+                Click các nhánh để xem chi tiết
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b18MindmapCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Kiểm tra kết quả Điền khuyết -->
+          <div id="panel-b18-part2" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 24px;">
+            <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0 0 8px 0;">Kết quả bài tập Điền khuyết</h4>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Hoàn thành các mệnh đề ở cột bên trái để kiểm tra sự thấu hiểu các công thức tính biến thiên enthalpy.</p>
+            <div id="b18-cloze-status-board" style="padding: 16px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 13px; line-height: 1.6;">
+              <!-- Status info -->
+            </div>
+          </div>
+
+          <!-- PANEL 3: Đấu trường luyện tập & strip 8 bài tập SGK -->
+          <div id="panel-b18-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">Đấu trường 8 Bài tập SGK Trang 90 – 91</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Bài 18: Ôn tập Chương 5</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b18-quiz-progress-text">
+                Đã hoàn thành: 0 / 8 câu
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="b18-question-selector-strip">
+              <!-- Render selector strip -->
+            </div>
+            <div id="b18-quiz-score-board" style="margin-top: 24px; padding: 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; display: none;">
+              <h3 style="font-size: 22px; font-weight: 800; color: #16a34a; margin: 0 0 8px 0;">🎉 CHÚC MỪNG BẠN ĐÃ TỐT NGHIỆP TOÀN DIỆN CHƯƠNG 5!</h3>
+              <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">Bạn đã hoàn thành xuất sắc 100% nội dung về Năng Lượng Hoá Học & Biến thiên Enthalpy!</p>
+              <button class="btn-tool active" onclick="resetB18QuizArena()" style="padding: 10px 20px; font-size: 14px;">Làm lại Đấu trường</button>
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b18-lab-status-tip">
+              💡 <em>Sơ đồ tư duy 2.5D: Bấm vào từng nhánh để xem tóm tắt nhiệt động hoá học.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB18InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -5805,7 +6073,7 @@
     function openLesson(lessonId) {
       activeLesson = lessonId;
       document.getElementById('view-dashboard').classList.remove('active');
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -5911,8 +6179,17 @@
           if (typeof initB13InterLab === 'function') initB13InterLab();
           if (typeof initB13QuizArena === 'function') initB13QuizArena();
         }, 50);
-                        } else if (lessonId === 'b17') {
-        const studioB17 = document.getElementById('view-studio-b17');
+                              } else if (lessonId === 'b18') {
+        const studioB18 = document.getElementById('view-studio-b18');
+        if (studioB18) studioB18.classList.add('active');
+        switchPartB18('part1');
+        setTimeout(() => {
+          if (typeof initB18Mindmap === 'function') initB18Mindmap();
+          if (typeof initB18ClozeLab === 'function') initB18ClozeLab();
+          if (typeof initB18QuizArena === 'function') initB18QuizArena();
+        }, 50);
+      } else if (lessonId === 'b17') {
+        const studioB17 = document.getElementById('view-studio-b17', 'view-studio-b18');
         if (studioB17) studioB17.classList.add('active');
         switchPartB17('part1');
         setTimeout(() => {
@@ -5921,7 +6198,7 @@
           if (typeof calcB17Reaction === 'function') calcB17Reaction('h2_cl2');
         }, 50);
       } else if (lessonId === 'b16') {
-        const studioB16 = document.getElementById('view-studio-b16', 'view-studio-b17');
+        const studioB16 = document.getElementById('view-studio-b16', 'view-studio-b17', 'view-studio-b18');
         if (studioB16) studioB16.classList.add('active');
         switchPartB16('part1');
         setTimeout(() => {
@@ -5930,7 +6207,7 @@
           if (typeof initB16QuizArena === 'function') initB16QuizArena();
         }, 50);
       } else if (lessonId === 'b15') {
-        const studioB15 = document.getElementById('view-studio-b15', 'view-studio-b16', 'view-studio-b17');
+        const studioB15 = document.getElementById('view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18');
         if (studioB15) studioB15.classList.add('active');
         switchPartB15('part1');
         setTimeout(() => {
@@ -5939,7 +6216,7 @@
           if (typeof initB15QuizArena === 'function') initB15QuizArena();
         }, 50);
       } else if (lessonId === 'b14') {
-        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17');
+        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18');
         if (studioB14) studioB14.classList.add('active');
         switchPartB14('part1');
         setTimeout(() => {
@@ -5952,7 +6229,7 @@
     }
 
     function backToDashboard() {
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -14243,6 +14520,470 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         setB17EnergyProfile('exo');
       } else {
         calcB17Reaction('h2_cl2');
+      }
+    }
+
+
+
+    /* ==========================================================
+       BÀI 18: ÔN TẬP VÀ LUYỆN TẬP CHƯƠNG 5 (NĂNG LƯỢNG HOÁ HỌC)
+       ========================================================== */
+    let currentPartB18 = 'part1';
+
+    function switchPartB18(partId) {
+      currentPartB18 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b18-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b18-' + p);
+        const panel = document.getElementById('panel-b18-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
+
+      const tip = document.getElementById('b18-lab-status-tip');
+      if (tip) {
+        if (partId === 'part1') tip.innerHTML = '💡 <em>Sơ đồ tư duy 2.5D: Bấm vào từng nhánh để xem tóm tắt nhiệt động hoá học.</em>';
+        else if (partId === 'part2') tip.innerHTML = '💡 <em>Điền khuyết công thức SGK Trang 90: Kiểm tra độ chuẩn xác của công thức ΔfH° và Eb.</em>';
+        else tip.innerHTML = '💡 <em>Đấu trường 8 bài tập SGK Trang 90 – 91: Tính toán nhiệt phản ứng và giá trị năng lượng thực tiễn.</em>';
+      }
+
+      if (partId === 'part1') {
+        setTimeout(drawB18Mindmap, 50);
+      }
+    }
+
+    // --- PART 1: 2.5D MINDMAP LOGIC ---
+    let b18SelectedNode = null;
+    const b18MindmapNodes = [
+      { id: 'center', label: 'NĂNG LƯỢNG HOÁ HỌC', x: 0.5, y: 0.5, r: 66, color: '#0284c7', desc: 'Biến thiên nhiệt lượng trong phản ứng hoá học ở điều kiện áp suất không đổi (Chương 5).' },
+      { id: 'exo', label: '1. Phản ứng Toả nhiệt', x: 0.2, y: 0.24, r: 52, color: '#ef4444', desc: 'ΔrH°₂₉₈ < 0. Giải phóng nhiệt ra môi trường, sản phẩm bền hơn chất đầu.' },
+      { id: 'endo', label: '2. Phản ứng Thu nhiệt', x: 0.8, y: 0.24, r: 52, color: '#3b82f6', desc: 'ΔrH°₂₉₈ > 0. Hấp thụ nhiệt từ môi trường, chất đầu bền hơn sản phẩm.' },
+      { id: 'delta_f', label: '3. Theo Nhiệt tạo thành', x: 0.2, y: 0.76, r: 52, color: '#10b981', desc: 'ΔrH°₂₉₈ = ΣΔfH°(sản phẩm) - ΣΔfH°(chất đầu). Đơn chất bền nhất có ΔfH° = 0.' },
+      { id: 'eb', label: '4. Theo Năng lượng liên kết', x: 0.8, y: 0.76, r: 52, color: '#f59e0b', desc: 'ΔrH°₂₉₈ = ΣEb(chất đầu) - ΣEb(sản phẩm) (áp dụng cho các chất ở thể khí).' }
+    ];
+
+    function initB18Mindmap() {
+      const canvas = document.getElementById('b18MindmapCanvas');
+      if (!canvas) return;
+
+      canvas.removeEventListener('click', handleB18CanvasClick);
+      canvas.addEventListener('click', handleB18CanvasClick);
+
+      window.removeEventListener('resize', resizeB18Mindmap);
+      window.addEventListener('resize', resizeB18Mindmap);
+
+      resizeB18Mindmap();
+    }
+
+    function resizeB18Mindmap() {
+      const canvas = document.getElementById('b18MindmapCanvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = (rect.width || 500) * dpr;
+      canvas.height = (rect.height || 450) * dpr;
+      drawB18Mindmap();
+    }
+
+    function handleB18CanvasClick(e) {
+      const canvas = document.getElementById('b18MindmapCanvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      let found = null;
+      for (const node of b18MindmapNodes) {
+        const nx = node.x * rect.width;
+        const ny = node.y * rect.height;
+        const dist = Math.hypot(clickX - nx, clickY - ny);
+        if (dist <= node.r) {
+          found = node;
+          break;
+        }
+      }
+      b18SelectedNode = found;
+      drawB18Mindmap();
+    }
+
+    function drawB18Mindmap() {
+      const canvas = document.getElementById('b18MindmapCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      const cw = rect.width || 500;
+      const ch = rect.height || 450;
+
+      // Draw connections
+      const centerNode = b18MindmapNodes[0];
+      const cx = centerNode.x * cw;
+      const cy = centerNode.y * ch;
+
+      for (let i = 1; i < b18MindmapNodes.length; i++) {
+        const node = b18MindmapNodes[i];
+        const nx = node.x * cw;
+        const ny = node.y * ch;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.bezierCurveTo(cx, ny, nx, cy, nx, ny);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.bezierCurveTo(cx, ny, nx, cy, nx, ny);
+        ctx.strokeStyle = node.color;
+        ctx.lineWidth = (b18SelectedNode && b18SelectedNode.id === node.id) ? 3.5 : 1.5;
+        ctx.setLineDash([6, 6]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Draw nodes
+      for (const node of b18MindmapNodes) {
+        const nx = node.x * cw;
+        const ny = node.y * ch;
+        const isSelected = (b18SelectedNode && b18SelectedNode.id === node.id);
+
+        ctx.save();
+        ctx.shadowColor = isSelected ? node.color : 'rgba(0, 0, 0, 0.08)';
+        ctx.shadowBlur = isSelected ? 18 : 8;
+        ctx.shadowOffsetY = 4;
+
+        ctx.beginPath();
+        ctx.arc(nx, ny, node.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+
+        ctx.lineWidth = isSelected ? 4 : 2.5;
+        ctx.strokeStyle = node.color;
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.font = node.id === 'center' ? 'bold 12.5px Plus Jakarta Sans, sans-serif' : '600 12px Plus Jakarta Sans, sans-serif';
+        ctx.fillStyle = node.id === 'center' ? '#0f172a' : '#1e293b';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.label, nx, ny);
+      }
+
+      // Tooltip / Details box
+      if (b18SelectedNode) {
+        const boxW = Math.min(cw - 32, 420);
+        const boxH = 64;
+        const bx = (cw - boxW) / 2;
+        const by = ch - boxH - 14;
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+        ctx.beginPath();
+        ctx.roundRect(bx, by, boxW, boxH, 10);
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = b18SelectedNode.color;
+        ctx.stroke();
+
+        ctx.font = 'bold 12.5px Plus Jakarta Sans, sans-serif';
+        ctx.fillStyle = b18SelectedNode.color;
+        ctx.textAlign = 'left';
+        ctx.fillText(b18SelectedNode.label, bx + 14, by + 22);
+
+        ctx.font = '11.5px Plus Jakarta Sans, sans-serif';
+        ctx.fillStyle = '#475569';
+        ctx.fillText(b18SelectedNode.desc, bx + 14, by + 44);
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+
+    // --- PART 2: CLOZE LAB (SGK TRANG 90) ---
+    const b18ClozeAnswers = {
+      q1: 'toả',
+      q2: 'thu',
+      q3: 'ΣΔfH°(sp) - ΣΔfH°(cđ)',
+      q4: 'ΣEb(cđ) - ΣEb(sp)'
+    };
+
+    function initB18ClozeLab() {
+      updateB18ClozeStatus();
+    }
+
+    function checkB18Cloze() {
+      let correctCount = 0;
+      for (const [key, val] of Object.entries(b18ClozeAnswers)) {
+        const sel = document.getElementById('b18-cloze-' + key);
+        if (sel) {
+          if (sel.value === val) {
+            sel.style.borderColor = '#16a34a';
+            sel.style.backgroundColor = '#f0fdf4';
+            correctCount++;
+          } else if (sel.value !== '') {
+            sel.style.borderColor = '#dc2626';
+            sel.style.backgroundColor = '#fef2f2';
+          }
+        }
+      }
+
+      const board = document.getElementById('b18-cloze-status-board');
+      if (board) {
+        if (correctCount === 4) {
+          board.innerHTML = `<div style="color: #166534; font-weight: 700; font-size: 14px;">✨ Hoàn thành xuất sắc: 4/4 công thức chính xác!</div>
+          <p style="margin: 6px 0 0 0; color: #1e293b;">Bạn đã nắm rất vững: ΔrH° < 0 là Toả nhiệt, ΔrH° > 0 là Thu nhiệt, ΔfH° lấy Sau trừ Trước, Eb lấy Trước trừ Sau.</p>`;
+        } else {
+          board.innerHTML = `<div style="color: #0284c7; font-weight: 700;">Tiến độ: Đúng ${correctCount}/4 ô</div>
+          <p style="margin: 6px 0 0 0; color: #475569;">Gợi ý: Hãy chú ý thứ tự trừ của Nhiệt tạo thành (Sản phẩm - Chất đầu) vs Năng lượng liên kết (Chất đầu - Sản phẩm).</p>`;
+        }
+      }
+    }
+
+    function updateB18ClozeStatus() {
+      const board = document.getElementById('b18-cloze-status-board');
+      if (board) {
+        board.innerHTML = `<div style="color: #64748b;">Chưa kiểm tra. Hãy chọn giá trị thích hợp trong 4 ô trống ở cột bên trái rồi bấm <strong>"Kiểm tra kết quả"</strong>.</div>`;
+      }
+    }
+
+    // --- PART 3: QUIZ ARENA 8 BÀI TẬP SGK TRANG 90 - 91 ---
+    const b18QuizData = [
+      {
+        id: 1,
+        title: 'Câu 1 (SGK Tr. 90): Thù hình Phosphorus',
+        question: 'Phản ứng: P(s, đỏ) → P(s, trắng) có ΔrH°₂₉₈ = +17.6 kJ. Điều này chứng tỏ:',
+        options: [
+          'A. Phản ứng thu nhiệt, P đỏ bền hơn P trắng',
+          'B. Phản ứng thu nhiệt, P trắng bền hơn P đỏ',
+          'C. Phản ứng toả nhiệt, P đỏ bền hơn P trắng',
+          'D. Phản ứng toả nhiệt, P trắng bền hơn P đỏ'
+        ],
+        answer: 0,
+        explanation: 'ΔrH°₂₉₈ = +17.6 kJ > 0 là phản ứng thu nhiệt. Hệ có mức năng lượng thấp hơn (P đỏ) sẽ có độ bền nhiệt động học cao hơn dạng có mức năng lượng cao hơn (P trắng).'
+      },
+      {
+        id: 2,
+        title: 'Câu 2 (SGK Tr. 90): Nhiệt tạo thành CO',
+        question: 'Biết CO(g) + ½O₂(g) → CO₂(g) có ΔrH°₂₉₈ = -283.0 kJ và ΔfH°₂₉₈(CO₂) = -393.5 kJ/mol. Nhiệt tạo thành chuẩn của CO(g) là:',
+        options: [
+          'A. -110.5 kJ/mol',
+          'B. +110.5 kJ/mol',
+          'C. -676.5 kJ/mol',
+          'D. +676.5 kJ/mol'
+        ],
+        answer: 0,
+        explanation: 'Công thức: ΔrH° = ΔfH°(CO₂) - [ΔfH°(CO) + ½ΔfH°(O₂)]. Ta có: -283.0 = -393.5 - ΔfH°(CO) => ΔfH°(CO) = -393.5 - (-283.0) = -110.5 kJ/mol.'
+      },
+      {
+        id: 3,
+        title: 'Câu 3 (SGK Tr. 90): Truyền dịch Glucose y tế',
+        question: 'Dung dịch glucose 5% (D = 1.02 g/mL), oxi hoá 1 mol glucose toả ra 2803 kJ. Năng lượng tối đa người bệnh nhận được khi truyền một chai 500 mL glucose 5% là:',
+        options: [
+          'A. 397.09 kJ',
+          'B. -397.09 kJ',
+          'C. 389.31 kJ',
+          'D. 412.50 kJ'
+        ],
+        answer: 0,
+        explanation: 'm_dd = 500 * 1.02 = 510 g => m_glucose = 510 * 5% = 25.5 g => n_glucose = 25.5 / 180 = 0.14167 mol. Năng lượng nhận được: 0.14167 * 2803 ≈ 397.09 kJ.'
+      },
+      {
+        id: 4,
+        title: 'Câu 4 (SGK Tr. 91): Cracking butane',
+        question: 'Cho Eb: C-H (414), C-C (347), C=C (611 kJ/mol). Biến thiên enthalpy của phản ứng cracking C₄H₁₀(g) → C₂H₆(g) + C₂H₄(g) là:',
+        options: [
+          'A. +80 kJ',
+          'B. -80 kJ',
+          'C. +120 kJ',
+          'D. -120 kJ'
+        ],
+        answer: 0,
+        explanation: 'Chất đầu C₄H₁₀ có 3 liên kết C-C và 10 liên kết C-H. Sản phẩm C₂H₆ (1 C-C, 6 C-H) và C₂H₄ (1 C=C, 4 C-H). ΔrH° = [3*Eb(C-C) + 10*Eb(C-H)] - [1*Eb(C-C) + 1*Eb(C=C) + 10*Eb(C-H)] = 2*Eb(C-C) - Eb(C=C) = 2*347 - 611 = 694 - 611 = +83 kJ (gần nhất với +80 kJ theo bảng dữ liệu chuẩn SGK).'
+      },
+      {
+        id: 5,
+        title: 'Câu 5 (SGK Tr. 91): Đốt cháy Methane',
+        question: 'Đốt cháy methane: CH₄(g) + 2O₂(g) → CO₂(g) + 2H₂O(l) có ΔrH°₂₉₈ = -890.3 kJ. Cho ΔfH°(CO₂) = -393.5 kJ/mol, ΔfH°(H₂O, l) = -285.8 kJ/mol. Nhiệt tạo thành của CH₄ là:',
+        options: [
+          'A. -74.8 kJ/mol',
+          'B. +74.8 kJ/mol',
+          'C. -120.5 kJ/mol',
+          'D. -965.1 kJ/mol'
+        ],
+        answer: 0,
+        explanation: 'Ta có: -890.3 = [-393.5 + 2*(-285.8)] - ΔfH°(CH₄) => ΔfH°(CH₄) = -965.1 - (-890.3) = -74.8 kJ/mol.'
+      },
+      {
+        id: 6,
+        title: 'Câu 6 (SGK Tr. 91): Cồn vs Mỡ lợn (Tristearin)',
+        question: 'So sánh nhiệt toả ra khi đốt cháy 1 kg cồn (C₂H₅OH, M=46) so với 1 kg tristearin (C₅₇H₁₁₀O₆, M=890 có trong mỡ lợn):',
+        options: [
+          'A. 1 kg mỡ lợn toả ra nhiệt lượng lớn hơn nhiều (≈39958 kJ vs ≈29713 kJ)',
+          'B. 1 kg cồn toả ra nhiệt lượng lớn hơn',
+          'C. Cả 2 toả ra nhiệt lượng bằng nhau',
+          'D. Tristearin không cháy toả nhiệt'
+        ],
+        answer: 0,
+        explanation: '1 kg cồn = 1000/46 mol => toả (1000/46)*1367 ≈ 29717 kJ. 1 kg tristearin = 1000/890 mol => toả (1000/890)*35563 ≈ 39958 kJ. Mỡ lợn (chất béo) cung cấp mật độ năng lượng trên mỗi kg cao hơn cồn.'
+      },
+      {
+        id: 7,
+        title: 'Câu 7 (SGK Tr. 91): Đốt cháy Acetone',
+        question: 'Biến thiên enthalpy của phản ứng đốt cháy acetone CH₃COCH₃(g) + 4O₂(g) → 3CO₂(g) + 3H₂O(g) có giá trị âm lớn biểu thị:',
+        options: [
+          'A. Phản ứng toả nhiệt lượng rất lớn',
+          'B. Phản ứng thu nhiệt',
+          'C. Acetone không phản ứng với oxy',
+          'D. Phản ứng không có biến thiên năng lượng'
+        ],
+        answer: 0,
+        explanation: 'Đốt cháy các hợp chất hữu cơ dễ bay hơi như acetone luôn có ΔrH° << 0, giải phóng nhiệt lượng lớn và tạo ra CO₂, H₂O thể hơi.'
+      },
+      {
+        id: 8,
+        title: 'Câu 8 (SGK Tr. 91): Tính ngày dùng bình gas 12 kg LPG',
+        question: 'Bình gas 12 kg (propane : butane tỉ lệ 1:2 về số mol). Mỗi ngày hộ gia đình cần 10000 kJ (hiệu suất 80% => tiêu thụ 12500 kJ nhiệt gas). Bình gas dùng được trong khoảng:',
+        options: [
+          'A. Khoảng 47 - 48 ngày',
+          'B. Khoảng 30 ngày',
+          'C. Khoảng 60 ngày',
+          'D. Khoảng 25 ngày'
+        ],
+        answer: 0,
+        explanation: 'Gọi x là n_propane => n_butane = 2x. Khối lượng: 44x + 58*(2x) = 160x = 12000 g => x = 75 mol. Nhiệt toả: 75*2220 + 150*2877 = 166500 + 431550 = 598050 kJ. Nhiệt thực dùng: 598050 * 80% = 478440 kJ. Số ngày: 478440 / 10000 ≈ 47.8 ngày.'
+      }
+    ];
+
+    let b18UserAnswers = {};
+
+    function initB18QuizArena() {
+      b18UserAnswers = {};
+      renderB18QuestionStrip();
+      renderB18CurrentQuestion(0);
+    }
+
+    function renderB18QuestionStrip() {
+      const strip = document.getElementById('b18-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = b18QuizData.map((q, idx) => {
+        const isAnswered = b18UserAnswers[idx] !== undefined;
+        const isCorrect = isAnswered && (b18UserAnswers[idx] === q.answer);
+        let bg = '#f1f5f9';
+        let color = '#475569';
+        if (isAnswered) {
+          bg = isCorrect ? '#dcfce7' : '#fee2e2';
+          color = isCorrect ? '#166534' : '#991b1b';
+        }
+        return `<button onclick="renderB18CurrentQuestion(${idx})" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: ${bg}; color: ${color}; font-weight: 700; font-size: 12px; cursor: pointer;">Câu ${idx + 1}</button>`;
+      }).join('');
+    }
+
+    function renderB18CurrentQuestion(idx) {
+      const q = b18QuizData[idx];
+      const leftCol = document.getElementById('b18-quiz-active-question-card');
+      if (!leftCol) return;
+
+      const userChoice = b18UserAnswers[idx];
+      const isAnswered = userChoice !== undefined;
+
+      let optsHtml = q.options.map((opt, optIdx) => {
+        let optStyle = 'padding: 10px 14px; border-radius: 8px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; cursor: pointer; font-size: 13px; transition: all 0.15s; background: #ffffff;';
+        if (isAnswered) {
+          if (optIdx === q.answer) {
+            optStyle += ' border-color: #16a34a; background: #f0fdf4; color: #166534; font-weight: 700;';
+          } else if (optIdx === userChoice) {
+            optStyle += ' border-color: #dc2626; background: #fef2f2; color: #991b1b;';
+          }
+        }
+        return `<div onclick="handleB18Answer(${idx}, ${optIdx})" style="${optStyle}">${opt}</div>`;
+      }).join('');
+
+      let feedbackHtml = '';
+      if (isAnswered) {
+        const isCorrect = userChoice === q.answer;
+        feedbackHtml = `
+          <div style="margin-top: 14px; padding: 12px; border-radius: 8px; background: ${isCorrect ? '#f0fdf4' : '#fffbeb'}; border-left: 4px solid ${isCorrect ? '#16a34a' : '#f59e0b'};">
+            <div style="font-weight: 700; color: ${isCorrect ? '#166534' : '#b45309'};">
+              ${isCorrect ? '✅ Chính xác!' : '⚠️ Chưa chính xác!'}
+            </div>
+            <div style="font-size: 12.5px; color: #334155; margin-top: 4px; line-height: 1.5;">
+              <strong>Giải thích chi tiết:</strong> ${q.explanation}
+            </div>
+          </div>
+        `;
+      }
+
+      leftCol.innerHTML = `
+        <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 800; color: #0284c7; font-size: 14px;">${q.title}</span>
+          <span style="font-size: 12px; color: #64748b;">Câu ${idx + 1} / 8</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 14px;">
+          ${q.question}
+        </div>
+        <div>
+          ${optsHtml}
+        </div>
+        ${feedbackHtml}
+      `;
+    }
+
+    function handleB18Answer(qIdx, optIdx) {
+      if (b18UserAnswers[qIdx] !== undefined) return;
+      b18UserAnswers[qIdx] = optIdx;
+      renderB18QuestionStrip();
+      renderB18CurrentQuestion(qIdx);
+
+      const answeredCount = Object.keys(b18UserAnswers).length;
+      const progressText = document.getElementById('b18-quiz-progress-text');
+      if (progressText) {
+        progressText.innerText = `Đã hoàn thành: ${answeredCount} / 8 câu`;
+      }
+
+      if (answeredCount === 8) {
+        const scoreBoard = document.getElementById('b18-quiz-score-board');
+        if (scoreBoard) scoreBoard.style.display = 'block';
+      }
+    }
+
+    function resetB18QuizArena() {
+      initB18QuizArena();
+      const scoreBoard = document.getElementById('b18-quiz-score-board');
+      if (scoreBoard) scoreBoard.style.display = 'none';
+      const progressText = document.getElementById('b18-quiz-progress-text');
+      if (progressText) progressText.innerText = 'Đã hoàn thành: 0 / 8 câu';
+    }
+
+    function resetB18InteractiveState() {
+      if (currentPartB18 === 'part1') {
+        b18SelectedNode = null;
+        drawB18Mindmap();
+      } else if (currentPartB18 === 'part2') {
+        ['q1', 'q2', 'q3', 'q4'].forEach(k => {
+          const el = document.getElementById('b18-cloze-' + k);
+          if (el) {
+            el.value = '';
+            el.style.borderColor = '#cbd5e1';
+            el.style.backgroundColor = '#ffffff';
+          }
+        });
+        updateB18ClozeStatus();
+      } else {
+        resetB18QuizArena();
       }
     }
 
