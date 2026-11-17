@@ -1161,6 +1161,34 @@
               </button>
             </div>
           </div>
+
+          <!-- Bài 11: Liên kết Ion (Đã hoàn thiện) -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <circle cx="70" cy="45" r="22" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+                <text x="70" y="50" font-size="12" font-weight="800" fill="#6d28d9" text-anchor="middle">Na⁺</text>
+                
+                <circle cx="150" cy="45" r="30" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+                <text x="150" y="50" font-size="12" font-weight="800" fill="#065f46" text-anchor="middle">Cl⁻</text>
+                
+                <path d="M 94 45 L 118 45" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3"/>
+                <text x="106" y="38" font-size="8" font-weight="700" fill="#d97706" text-anchor="middle">Lực hút</text>
+                <text x="110" y="84" font-size="8" font-weight="700" fill="#64748b" text-anchor="middle">Mạng tinh thể NaCl (801 °C)</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status ready">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 11: Liên kết Ion</h3>
+                <p>Quá trình tạo cation, anion, mạng tinh thể lập phương NaCl 3D tương tác và thí nghiệm đo độ dẫn điện của muối ăn.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b11')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -3909,6 +3937,215 @@
   </div>
 
 
+  
+
+
+  <!-- ========================================================
+       BÀI 11: LIÊN KẾT ION (CHƯƠNG 3: LIÊN KẾT HOÁ HỌC)
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM)
+       ======================================================== -->
+  <div id="view-studio-b11" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Header -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 3 • Bài 11</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Liên Kết Ion & Cấu Trúc Mạng Tinh Thể NaCl</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 11 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b11-p1" class="tab-seg-btn active" onclick="switchPartB11('part1')">
+            <span>1 Sự tạo thành Ion & Bản chất Liên kết Ion</span>
+          </button>
+          <button id="tab-btn-b11-p2" class="tab-seg-btn" onclick="switchPartB11('part2')">
+            <span>2 Mạng tinh thể NaCl 3D & Thí nghiệm dẫn điện</span>
+          </button>
+          <button id="tab-btn-b11-p3" class="tab-seg-btn" onclick="switchPartB11('part3')">
+            <span>3 Tính chất Hợp chất Ion & Đấu trường SGK</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: SỰ TẠO THÀNH ION & BẢN CHẤT LIÊN KẾT ION -->
+          <div id="content-b11-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu sư phạm (SGK Trang 51)</h4>
+              <p>Trình bày được khái niệm và sự hình thành liên kết ion thông qua quá trình nhường - nhận electron giữa kim loại điển hình và phi kim điển hình tuân theo quy tắc octet.</p>
+            </div>
+
+            <div class="meta-citation">Mục I & II • SGK Trang 51 - 52</div>
+            <h3 class="section-title">Quá trình Tạo thành Ion & Liên kết Ion</h3>
+            
+            <p>Kim loại điển hình (như Na, Mg, Ca) phản ứng rất mạnh với phi kim điển hình (như Cl, O, F). Nguyên tử kim loại nhường electron trở thành <strong>cation</strong> (ion dương), còn phi kim nhận electron trở thành <strong>anion</strong> (ion âm):</p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin: 12px 0;">
+              <div style="padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0;">
+                <strong style="color: #1e40af;">1. Sự tạo thành Cation (Ion dương):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • $\text{Na} \to \text{Na}^+ + 1e$ ($[\text{Ne}] 3s^1 \to [\text{Ne}]$)<br/>
+                  • $\text{Mg} \to \text{Mg}^{2+} + 2e$ ($[\text{Ne}] 3s^2 \to [\text{Ne}]$)<br/>
+                  • $\text{Al} \to \text{Al}^{3+} + 3e$ ($[\text{Ne}] 3s^2 3p^1 \to [\text{Ne}]$)
+                </p>
+              </div>
+
+              <div style="padding: 12px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0;">
+                <strong style="color: #166534;">2. Sự tạo thành Anion (Ion âm):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  • $\text{Cl} + 1e \to \text{Cl}^-$ ($[\text{Ne}] 3s^2 3p^5 \to [\text{Ar}]$)<br/>
+                  • $\text{O} + 2e \to \text{O}^{2-}$ ($1s^2 2s^2 2p^4 \to [\text{Ne}]$)<br/>
+                  • $\text{S} + 2e \to \text{S}^{2-}$ ($[\text{Ne}] 3s^2 3p^4 \to [\text{Ar}]$)
+                </p>
+              </div>
+            </div>
+
+            <div class="box-law" style="border-left: 5px solid #0284c7; background: #f0f9ff;">
+              <h4 style="color: #0369a1; font-size: 14px;">⚡ Khái niệm Liên kết Ion</h4>
+              <p style="font-size: 13.5px; font-weight: 600; color: #0f172a; line-height: 1.6; margin: 6px 0;">
+                "Lực hút tĩnh điện giữa các ion mang điện tích trái dấu trong phân tử hoặc tinh thể tạo ra <strong>liên kết ion</strong>. Hợp chất tạo nên từ các ion gọi là hợp chất ion."
+              </p>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; margin-top: 14px;">
+              <span style="font-size: 11px; font-weight: 700; color: #0284c7; text-transform: uppercase;">Ví dụ tạo thành liên kết ion (SGK Tr. 52):</span>
+              <p style="font-size: 13px; margin: 6px 0 0 0; color: #334155;">
+                • $\text{Na} + \text{Cl} \to \text{Na}^+ + \text{Cl}^- \to \text{NaCl}$<br/>
+                • $\text{Ca} + 2\text{Cl} \to \text{Ca}^{2+} + 2\text{Cl}^- \to \text{CaCl}_2$
+              </p>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: TINH THỂ NACL & THÍ NGHIỆM ĐO TÍNH DẪN ĐIỆN -->
+          <div id="content-b11-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Cấu tạo tinh thể ion & Khả năng dẫn điện (SGK Tr. 53 - 54)</h4>
+              <p>Mô hình mạng tinh thể lập phương tâm diện của NaCl: mỗi ion $\text{Na}^+$ được bao quanh bởi 6 ion $\text{Cl}^-$ gần nhất và ngược lại (số phối trí 6:6).</p>
+            </div>
+
+            <div class="meta-citation">Mục III • SGK Trang 53 - 54</div>
+            <h3 class="section-title">Mạng Tinh thể Lập phương NaCl</h3>
+            <p>Trong tinh thể ion, các ion cùng dấu và trái dấu được sắp xếp luân phiên, tạo thành mạng lưới lập phương chặt chẽ nhờ sự cân bằng giữa lực hút tĩnh điện và lực đẩy.</p>
+
+            <div class="box-law">
+              <h4>🔬 Thí nghiệm ảo kiểm tra tính dẫn điện (SGK Trang 54)</h4>
+              <p>Dùng mạch điện có bóng đèn thử lần lượt với các mẫu:</p>
+              <div style="font-size: 13px; line-height: 1.6; margin-top: 8px;">
+                <p>1. <strong>Dung dịch nước đường ($	ext{C}_{12}	ext{H}_{22}	ext{O}_{11}$):</strong> Đèn KHÔNG sáng (chất cộng hoá trị không phân li ra ion tự do).</p>
+                <p>2. <strong>Muối ăn tinh thể khan ($	ext{NaCl}$ rắn):</strong> Đèn KHÔNG sáng (các ion $	ext{Na}^+$, $	ext{Cl}^-$ bị cố định ở nút mạng, không chuyển động tự do).</p>
+                <p>3. <strong>Dung dịch muối ăn ($	ext{NaCl}$ trong nước) hoặc nóng chảy ($801^\circ	ext{C}$):</strong> Đèn <strong>SÁNG RỰC</strong> (nước tách các ion khỏi mạng tinh thể, trở thành các hạt mang điện tự do tải dòng điện!).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHẦN 3: TÍNH CHẤT HỢP CHẤT ION & ĐẤU TRƯỜNG SGK -->
+          <div id="content-b11-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Tính chất chung của Hợp chất Ion (SGK Trang 54)</h4>
+              <p>Do lực hút tĩnh điện trong mạng tinh thể rất lớn: Hợp chất ion là chất rắn, khó nóng chảy, khó bay hơi (nhiệt độ nóng chảy cao: $\text{NaCl}$ nóng chảy ở $801^\circ\text{C}$), giòn, dễ tan trong nước.</p>
+            </div>
+
+            <div class="meta-citation">SGK Trang 52 - 54</div>
+            <h3 class="section-title">Luyện tập & Vận dụng kiến thức</h3>
+            
+            <div id="b11-question-card-container">
+              <!-- Sẽ render qua hàm initB11QuizArena() -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">MÔ HÌNH KHẢO SÁT</span>
+              <span id="b11-hud-mode" class="hud-value highlight">Mô hình Tinh thể NaCl 3D</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">SỐ PHỐI TRÍ LẬP PHƯƠNG</span>
+              <span id="b11-hud-coord" class="hud-value">6 : 6 (1 Na⁺ tiếp xúc 6 Cl⁻)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">TRẠNG THÁI MẠCH ĐIỆN</span>
+              <span id="b11-hud-lamp" class="hud-value" style="color: #64748b;">Đang ngắt mạch</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">ĐỘ DẪN ĐIỆN</span>
+              <span id="b11-hud-conduc" class="hud-value" style="color: #2563eb;">0 mS/cm</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1 & 2: Mô phỏng Mạng tinh thể 3D NaCl & Mạch thử điện -->
+          <div id="panel-b11-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🧊 Tinh thể NaCl 3D tương tác & Thí nghiệm Dẫn điện</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" id="btn-b11-view-crystal" onclick="setB11InteractiveView('crystal')">Mạng Tinh thể NaCl 3D</button>
+                <button class="btn-tool" id="btn-b11-view-circuit" onclick="setB11InteractiveView('circuit')">Mạch Thử Dẫn Điện</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b11IonCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 3: Đấu trường luyện tập & strip câu hỏi -->
+          <div id="panel-b11-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">Bảng điều khiển câu hỏi SGK Trang 52 - 54</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Bài 11: Liên kết Ion</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b11-quiz-progress-text">
+                Đã hoàn thành: 0 / 3 câu
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;" id="b11-question-selector-strip">
+              <!-- Render selector strip -->
+            </div>
+            <div id="b11-quiz-score-board" style="margin-top: 30px; padding: 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; display: none;">
+              <h3 style="font-size: 22px; font-weight: 800; color: #16a34a; margin: 0 0 8px 0;">🎉 XUẤT SẮC! HOÀN THÀNH BÀI 11</h3>
+              <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">Bạn đã làm chủ cơ chế tạo thành cation, anion, lực hút liên kết ion và mạng tinh thể NaCl!</p>
+              <button class="btn-tool active" onclick="resetB11QuizArena()" style="padding: 10px 20px; font-size: 14px;">Làm lại Đấu trường</button>
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b11-lab-status-tip">
+              💡 <em>Kéo chuột để xoay khối lập phương NaCl 3D; chuyển sang Mạch điện để kiểm tra độ dẫn điện của muối ăn.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB11InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -3936,6 +4173,8 @@
       if (studioB9) studioB9.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
       if (studioB10) studioB10.classList.remove('active');
+      const studioB11 = document.getElementById('view-studio-b11');
+      if (studioB11) studioB11.classList.remove('active');
       const studioB7 = document.getElementById('view-studio-b7');
       if (studioB7) studioB7.classList.remove('active');
       const studioB8 = document.getElementById('view-studio-b8');
@@ -3944,18 +4183,28 @@
       if (studioB9) studioB9.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
       if (studioB10) studioB10.classList.remove('active');
+      const studioB11 = document.getElementById('view-studio-b11');
+      if (studioB11) studioB11.classList.remove('active');
       const studioB8 = document.getElementById('view-studio-b8');
       if (studioB8) studioB8.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
       if (studioB9) studioB9.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
       if (studioB10) studioB10.classList.remove('active');
+      const studioB11 = document.getElementById('view-studio-b11');
+      if (studioB11) studioB11.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
       if (studioB9) studioB9.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
       if (studioB10) studioB10.classList.remove('active');
+      const studioB11 = document.getElementById('view-studio-b11');
+      if (studioB11) studioB11.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
       if (studioB10) studioB10.classList.remove('active');
+      const studioB11 = document.getElementById('view-studio-b11');
+      if (studioB11) studioB11.classList.remove('active');
+      const studioB11 = document.getElementById('view-studio-b11');
+      if (studioB11) studioB11.classList.remove('active');
       
       if (lessonId === 'b1') {
         document.getElementById('view-studio').classList.add('active');
@@ -4025,6 +4274,13 @@
           if (typeof initB10OctetLab === 'function') initB10OctetLab();
           if (typeof initB10QuizArena === 'function') initB10QuizArena();
         }, 50);
+      } else if (lessonId === 'b11') {
+        if (studioB11) studioB11.classList.add('active');
+        switchPartB11('part1');
+        setTimeout(() => {
+          if (typeof initB11IonLab === 'function') initB11IonLab();
+          if (typeof initB11QuizArena === 'function') initB11QuizArena();
+        }, 50);
       }
       window.location.hash = lessonId;
     }
@@ -4048,6 +4304,8 @@
       if (studioB9) studioB9.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
       if (studioB10) studioB10.classList.remove('active');
+      const studioB11 = document.getElementById('view-studio-b11');
+      if (studioB11) studioB11.classList.remove('active');
       document.getElementById('view-dashboard').classList.add('active');
       window.location.hash = '';
     }
@@ -8849,6 +9107,564 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     function resetB10InteractiveState() {
       b10SimMode = 'cl2';
       selectB10SimMode('cl2');
+    }
+
+
+
+
+
+    /* ==========================================================
+       LOGIC BÀI 11: LIÊN KẾT ION & TINH THỂ NACL
+       ========================================================== */
+
+    let currentPartB11 = 'part1';
+    let b11InteractiveView = 'crystal'; // 'crystal' | 'circuit'
+    let b11CircuitSample = 'water'; // 'sugar' | 'solid_nacl' | 'sol_nacl'
+
+    function switchPartB11(partId) {
+      currentPartB11 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b11-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      // Show/hide sections in theory pane
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b11-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+      });
+
+      // Show/hide panels
+      const panelP1 = document.getElementById('panel-b11-part1');
+      const panelP3 = document.getElementById('panel-b11-part3');
+      if (panelP1) panelP1.style.display = (partId === 'part1' || partId === 'part2') ? 'flex' : 'none';
+      if (panelP3) panelP3.style.display = (partId === 'part3') ? 'flex' : 'none';
+
+      const activeSec = document.getElementById('content-b11-' + partId);
+      if (activeSec) activeSec.scrollTop = 0;
+
+      if (partId === 'part1' || partId === 'part2') {
+        setTimeout(initB11IonLab, 50);
+      } else if (partId === 'part3') {
+        setTimeout(initB11QuizArena, 50);
+      }
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function setB11InteractiveView(view) {
+      b11InteractiveView = view;
+      document.getElementById('btn-b11-view-crystal').classList.toggle('active', view === 'crystal');
+      document.getElementById('btn-b11-view-circuit').classList.toggle('active', view === 'circuit');
+      updateB11Hud();
+    }
+
+    /* -------------------------------------------------------------
+       LAB CANVAS: TINH THỂ NACL 3D & MẠCH THỬ ĐIỆN 2.5D (BÀI 11)
+       ------------------------------------------------------------- */
+    let b11IonCanvas, b11IonCtx;
+    let b11RotAngleX = 0.4, b11RotAngleY = 0.6;
+    let b11IsDragging = false, b11LastMouseX = 0, b11LastMouseY = 0;
+    let b11AnimFrameId;
+
+    function initB11IonLab() {
+      b11IonCanvas = document.getElementById('b11IonCanvas');
+      if (!b11IonCanvas) return;
+      b11IonCtx = b11IonCanvas.getContext('2d');
+      resizeB11IonCanvas();
+
+      b11IonCanvas.onmousedown = (e) => {
+        if (b11InteractiveView !== 'crystal') return;
+        b11IsDragging = true;
+        b11LastMouseX = e.clientX;
+        b11LastMouseY = e.clientY;
+      };
+
+      window.onmousemove = (e) => {
+        if (!b11IsDragging || b11InteractiveView !== 'crystal') return;
+        const dx = e.clientX - b11LastMouseX;
+        const dy = e.clientY - b11LastMouseY;
+        b11RotAngleY += dx * 0.01;
+        b11RotAngleX += dy * 0.01;
+        b11LastMouseX = e.clientX;
+        b11LastMouseY = e.clientY;
+      };
+
+      window.onmouseup = () => { b11IsDragging = false; };
+
+      b11IonCanvas.onclick = handleB11CircuitClick;
+
+      if (b11AnimFrameId) cancelAnimationFrame(b11AnimFrameId);
+      animateB11Lab();
+      updateB11Hud();
+    }
+
+    function resizeB11IonCanvas() {
+      if (!b11IonCanvas) return;
+      const rect = b11IonCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b11IonCanvas.width = rect.width * dpr;
+      b11IonCanvas.height = rect.height * dpr;
+      b11IonCtx.scale(dpr, dpr);
+    }
+
+    function handleB11CircuitClick(e) {
+      if (b11InteractiveView !== 'circuit') return;
+      const rect = b11IonCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const w = b11IonCanvas.parentElement.clientWidth;
+
+      // 3 beaker buttons at bottom
+      const bY = 60;
+      const step = 140;
+      const startX = w / 2 - step;
+
+      if (Math.hypot(x - startX, y - bY) < 45) {
+        b11CircuitSample = 'sugar';
+      } else if (Math.hypot(x - (startX + step), y - bY) < 45) {
+        b11CircuitSample = 'solid_nacl';
+      } else if (Math.hypot(x - (startX + step * 2), y - bY) < 45) {
+        b11CircuitSample = 'sol_nacl';
+      }
+      updateB11Hud();
+    }
+
+    function updateB11Hud() {
+      const modeText = document.getElementById('b11-hud-mode');
+      const coordText = document.getElementById('b11-hud-coord');
+      const lampText = document.getElementById('b11-hud-lamp');
+      const conducText = document.getElementById('b11-hud-conduc');
+      const tipText = document.getElementById('b11-lab-status-tip');
+
+      if (b11InteractiveView === 'crystal') {
+        if (modeText) modeText.innerText = 'Mô hình Tinh thể NaCl 3D';
+        if (coordText) coordText.innerText = '6 : 6 (Mỗi Na⁺ tiếp xúc 6 Cl⁻)';
+        if (lampText) {
+          lampText.innerText = 'Mạng lập phương tâm diện';
+          lampText.style.color = '#0284c7';
+        }
+        if (conducText) conducText.innerText = 'Nhiệt độ nóng chảy: 801 °C';
+        if (tipText) tipText.innerHTML = '💡 <em>Giữ chuột và kéo để xoay đa hướng tinh thể muối ăn NaCl 3D (Na⁺ màu tím nhỏ, Cl⁻ màu xanh lớn).</em>';
+      } else {
+        if (modeText) modeText.innerText = 'Thí nghiệm Đo Độ Dẫn Điện';
+        if (coordText) coordText.innerText = 'Mạch điện nguồn 6V + Bóng đèn';
+
+        if (b11CircuitSample === 'sugar') {
+          if (lampText) { lampText.innerText = 'Đèn TẮT (Không sáng)'; lampText.style.color = '#64748b'; }
+          if (conducText) conducText.innerText = '0 mS/cm (Không dẫn điện)';
+          if (tipText) tipText.innerHTML = '💡 <strong>Nước đường:</strong> Phân tử liên kết cộng hoá trị không phân li ra ion tự do nên không dẫn điện.';
+        } else if (b11CircuitSample === 'solid_nacl') {
+          if (lampText) { lampText.innerText = 'Đèn TẮT (Không sáng)'; lampText.style.color = '#64748b'; }
+          if (conducText) conducText.innerText = '0 mS/cm (Không dẫn điện)';
+          if (tipText) tipText.innerHTML = '💡 <strong>NaCl rắn khan:</strong> Các ion bị giam giữ chặt tại các nút mạng tinh thể, không tự do di chuyển được.';
+        } else if (b11CircuitSample === 'sol_nacl') {
+          if (lampText) { lampText.innerText = 'Đèn SÁNG RỰC RỠ 💡'; lampText.style.color = '#f59e0b'; }
+          if (conducText) conducText.innerText = '145 mS/cm (Dẫn điện cực mạnh)';
+          if (tipText) tipText.innerHTML = '💡 <strong>Dung dịch NaCl:</strong> Nước làm tan rã mạng tinh thể, giải phóng các ion Na⁺ và Cl⁻ tự do tải điện!';
+        }
+      }
+    }
+
+    function animateB11Lab() {
+      if (!b11IonCtx || !b11IonCanvas) return;
+      const w = b11IonCanvas.parentElement.clientWidth;
+      const h = b11IonCanvas.parentElement.clientHeight;
+      const ctx = b11IonCtx;
+
+      ctx.clearRect(0, 0, w, h);
+
+      if (b11InteractiveView === 'crystal') {
+        if (!b11IsDragging) {
+          b11RotAngleY += 0.005;
+        }
+        drawB11Crystal3D(ctx, w / 2, h / 2);
+      } else {
+        drawB11Circuit2D(ctx, w, h);
+      }
+
+      b11AnimFrameId = requestAnimationFrame(animateB11Lab);
+    }
+
+    function drawB11Crystal3D(ctx, cX, cY) {
+      // 3x3x3 grid of alternating Na+ and Cl-
+      const size = 65;
+      const nodes = [];
+
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          for (let z = -1; z <= 1; z++) {
+            const isNa = (Math.abs(x + y + z) % 2 === 0);
+            nodes.push({ x: x * size, y: y * size, z: z * size, isNa });
+          }
+        }
+      }
+
+      // Rotate nodes around X and Y axes
+      const cosY = Math.cos(b11RotAngleY), sinY = Math.sin(b11RotAngleY);
+      const cosX = Math.cos(b11RotAngleX), sinX = Math.sin(b11RotAngleX);
+
+      const projNodes = nodes.map(n => {
+        // Rot Y
+        let x1 = n.x * cosY + n.z * sinY;
+        let z1 = -n.x * sinY + n.z * cosY;
+        // Rot X
+        let y2 = n.y * cosX - z1 * sinX;
+        let z2 = n.y * sinX + z1 * cosX;
+
+        const scale = 280 / (280 + z2);
+        return {
+          px: cX + x1 * scale,
+          py: cY + y2 * scale,
+          z: z2,
+          isNa: n.isNa,
+          scale: scale
+        };
+      });
+
+      // Sort by depth (painter algorithm)
+      projNodes.sort((a, b) => b.z - a.z);
+
+      // Draw bounding box wireframe lines
+      ctx.save();
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1.5;
+      ctx.restore();
+
+      // Draw spheres
+      projNodes.forEach(n => {
+        const r = (n.isNa ? 10 : 16) * n.scale;
+        const color = n.isNa ? '#8b5cf6' : '#10b981'; // Na+ purple, Cl- emerald
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(n.px, n.py, r, 0, Math.PI * 2);
+        const grad = ctx.createRadialGradient(n.px - r * 0.3, n.py - r * 0.3, r * 0.1, n.px, n.py, r);
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.4, color);
+        grad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Legend in bottom left
+      ctx.save();
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#8b5cf6';
+      ctx.fillText('🟣 Cation Na⁺ (bán kính nhỏ)', 24, cY + 120);
+      ctx.fillStyle = '#10b981';
+      ctx.fillText('🟢 Anion Cl⁻ (bán kính lớn)', 24, cY + 140);
+      ctx.restore();
+    }
+
+    function drawB11Circuit2D(ctx, w, h) {
+      // Draw 3 Beaker selection tabs
+      const step = 140;
+      const startX = w / 2 - step;
+      const bY = 55;
+
+      const samples = [
+        { id: 'sugar', label: '1. Nước đường', color: '#64748b' },
+        { id: 'solid_nacl', label: '2. NaCl khan', color: '#64748b' },
+        { id: 'sol_nacl', label: '3. Dung dịch NaCl', color: '#0284c7' }
+      ];
+
+      samples.forEach((s, idx) => {
+        const sx = startX + idx * step;
+        const isSel = (s.id === b11CircuitSample);
+
+        ctx.save();
+        ctx.fillStyle = isSel ? '#0284c7' : '#f1f5f9';
+        ctx.strokeStyle = isSel ? '#0284c7' : '#cbd5e1';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(sx - 60, bY - 18, 120, 36, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = isSel ? '700 12px "Plus Jakarta Sans"' : '600 11px "Plus Jakarta Sans"';
+        ctx.fillStyle = isSel ? '#ffffff' : '#334155';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(s.label, sx, bY);
+        ctx.restore();
+      });
+
+      // Main Beaker apparatus
+      const bW = 180, bH = 150;
+      const bX = (w - bW) / 2, bCenterY = h / 2 + 50;
+
+      // Draw Beaker
+      ctx.save();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(bX, bCenterY);
+      ctx.lineTo(bX, bCenterY + bH);
+      ctx.lineTo(bX + bW, bCenterY + bH);
+      ctx.lineTo(bX + bW, bCenterY);
+      ctx.stroke();
+
+      // Liquid / Content
+      if (b11CircuitSample === 'sugar') {
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(bX + 3, bCenterY + 40, bW - 6, bH - 42);
+      } else if (b11CircuitSample === 'solid_nacl') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(bX + 3, bCenterY + 70, bW - 6, bH - 72);
+        // Salt grains
+        ctx.fillStyle = '#cbd5e1';
+        for (let i = 0; i < 40; i++) {
+          ctx.fillRect(bX + 15 + (i * 19) % (bW - 30), bCenterY + 80 + (i * 7) % 55, 3, 3);
+        }
+      } else {
+        ctx.fillStyle = '#dbeafe';
+        ctx.fillRect(bX + 3, bCenterY + 40, bW - 6, bH - 42);
+        // Floating ions
+        ctx.font = '700 10px "JetBrains Mono"';
+        ctx.fillStyle = '#8b5cf6';
+        ctx.fillText('Na⁺', bX + 40, bCenterY + 80);
+        ctx.fillText('Na⁺', bX + 120, bCenterY + 110);
+        ctx.fillStyle = '#10b981';
+        ctx.fillText('Cl⁻', bX + 90, bCenterY + 70);
+        ctx.fillText('Cl⁻', bX + 50, bCenterY + 120);
+      }
+
+      // Electrodes (2 que than điện cực)
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(bX + 45, bCenterY + 15, 14, bH - 30);
+      ctx.fillRect(bX + bW - 59, bCenterY + 15, 14, bH - 30);
+
+      // Light Bulb above
+      const lampX = w / 2, lampY = bCenterY - 70;
+      const isLighting = (b11CircuitSample === 'sol_nacl');
+
+      if (isLighting) {
+        // Glow
+        const glow = ctx.createRadialGradient(lampX, lampY, 5, lampX, lampY, 45);
+        glow.addColorStop(0, 'rgba(250, 204, 21, 0.9)');
+        glow.addColorStop(0.5, 'rgba(250, 204, 21, 0.4)');
+        glow.addColorStop(1, 'rgba(250, 204, 21, 0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(lampX, lampY, 45, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Bulb circle
+      ctx.beginPath();
+      ctx.arc(lampX, lampY, 18, 0, Math.PI * 2);
+      ctx.fillStyle = isLighting ? '#fde047' : '#f1f5f9';
+      ctx.strokeStyle = isLighting ? '#eab308' : '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.fill();
+      ctx.stroke();
+
+      // Wires
+      ctx.strokeStyle = isLighting ? '#eab308' : '#64748b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(bX + 52, bCenterY + 15);
+      ctx.lineTo(bX + 52, lampY);
+      ctx.lineTo(lampX - 18, lampY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(lampX + 18, lampY);
+      ctx.lineTo(bX + bW - 52, lampY);
+      ctx.lineTo(bX + bW - 52, bCenterY + 15);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    /* -------------------------------------------------------------
+       LAB 3: ĐẤU TRƯỜNG LUYỆN TẬP SGK TRANG 52 - 54 (BÀI 11)
+       ------------------------------------------------------------- */
+    const B11_EXERCISES_DATA = [
+      {
+        id: 1,
+        title: "Câu hỏi 3 (SGK Trang 51): Tại sao một O²⁻ kết hợp với 2 Li⁺?",
+        text: "Giải thích vì sao một ion oxide (O²⁻) kết hợp được với hai ion lithium (Li⁺) để tạo phân tử Li₂O:",
+        options: [
+          "A. O²⁻ có điện tích 2-, mỗi Li⁺ có điện tích 1+ ➔ Cần 2 ion Li⁺ để trung hoà về điện tích",
+          "B. O²⁻ và Li⁺ có cùng kích thước hạt nhân",
+          "C. Li nhường 2 electron cho 1 nguyên tử O",
+          "D. Tạo liên kết cộng hoá trị phân cực giữa Li và O"
+        ],
+        correct: 0, // A
+        explain: "Chính xác! Theo định luật bảo toàn điện tích, tinh thể hợp chất ion phải trung hoà về điện: Tổng điện tích dương = Tổng điện tích âm. 1 ion O²⁻ mang 2 đơn vị điện tích âm cần 2 ion Li⁺ (mỗi ion mang 1+) để tạo phân tử trung hoà Li₂O."
+      },
+      {
+        id: 2,
+        title: "Câu hỏi 6a (SGK Trang 54): Vì sao muối ăn có nhiệt độ nóng chảy cao (801 °C)?",
+        text: "Tại sao muối ăn (NaCl) ở điều kiện thường là chất rắn và có nhiệt độ nóng chảy rất cao (801 °C)?",
+        options: [
+          "A. Do tinh thể NaCl có khối lượng riêng rất lớn",
+          "B. Do lực hút tĩnh điện giữa các ion Na⁺ và Cl⁻ trong mạng tinh thể vô cùng lớn và bền chặt",
+          "C. Do các liên kết cộng hoá trị kim cương liên kết giữa các nguyên tử",
+          "D. Do sự có mặt của liên kết hydrogen giữa các ion"
+        ],
+        correct: 1, // B
+        explain: "Chính xác! Trong mạng tinh thể NaCl, mỗi ion Na⁺ được bao quanh bởi 6 ion Cl⁻ gần nhất và ngược lại. Lực hút tĩnh điện giữa các ion trái dấu cực kì mạnh mẽ và đan xen chặt chẽ khắp mạng lưới không gian 3 chiều, đòi hỏi cung cấp nhiệt lượng rất lớn (801 °C) mới có thể phá vỡ cấu trúc tinh thể."
+      },
+      {
+        id: 3,
+        title: "Câu hỏi 6b (SGK Trang 54): Điều kiện để hợp chất ion dẫn điện",
+        text: "Hợp chất ion có thể dẫn điện trong trường hợp nào dưới đây?",
+        options: [
+          "A. Khi ở trạng thái tinh thể rắn khan",
+          "B. Khi bị đập vỡ thành hạt mịn nhỏ",
+          "C. Khi nóng chảy hoặc khi hoà tan vào trong nước",
+          "D. Không bao giờ dẫn điện trong mọi điều kiện"
+        ],
+        correct: 2, // C
+        explain: "Chính xác! Điều kiện để một chất dẫn điện là phải có các hạt mang điện tự do. Ở trạng thái rắn, các ion bị khoá cứng tại các mắt xích mạng tinh thể. Chỉ khi nóng chảy hoặc hoà tan vào nước, lực tương tác mạng bị phá vỡ, các ion Na⁺ và Cl⁻ mới có thể chuyển động tự do để tải dòng điện."
+      }
+    ];
+
+    let b11CurrentQuestionIdx = 0;
+    let b11UserAnswers = {};
+
+    function initB11QuizArena() {
+      b11CurrentQuestionIdx = 0;
+      b11UserAnswers = {};
+      renderB11QuizStrip();
+      renderB11QuestionCard();
+    }
+
+    function renderB11QuizStrip() {
+      const strip = document.getElementById('b11-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = '';
+
+      B11_EXERCISES_DATA.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = 'b11-q-strip-btn-' + idx;
+        btn.className = 'btn-tool';
+        btn.style.minWidth = '42px';
+        btn.style.height = '36px';
+        btn.style.fontWeight = '700';
+
+        const isAnswered = (b11UserAnswers[idx] !== undefined);
+        const isCurrent = (idx === b11CurrentQuestionIdx);
+
+        if (isCurrent) {
+          btn.style.borderColor = '#0284c7';
+          btn.style.background = '#e0f2fe';
+          btn.style.color = '#0369a1';
+        } else if (isAnswered) {
+          const isCorrect = (b11UserAnswers[idx] === q.correct);
+          btn.style.background = isCorrect ? '#dcfce7' : '#fee2e2';
+          btn.style.borderColor = isCorrect ? '#16a34a' : '#dc2626';
+          btn.style.color = isCorrect ? '#15803d' : '#b91c1c';
+        } else {
+          btn.style.background = '#f8fafc';
+          btn.style.color = '#64748b';
+        }
+
+        btn.innerText = `Câu ${idx + 1}`;
+        btn.onclick = () => {
+          b11CurrentQuestionIdx = idx;
+          renderB11QuizStrip();
+          renderB11QuestionCard();
+        };
+        strip.appendChild(btn);
+      });
+
+      const prog = document.getElementById('b11-quiz-progress-text');
+      const answeredCount = Object.keys(b11UserAnswers).length;
+      if (prog) prog.innerText = `Đã hoàn thành: ${answeredCount} / ${B11_EXERCISES_DATA.length} câu`;
+
+      const scoreBoard = document.getElementById('b11-quiz-score-board');
+      if (scoreBoard) {
+        scoreBoard.style.display = (answeredCount === B11_EXERCISES_DATA.length) ? 'block' : 'none';
+      }
+    }
+
+    function renderB11QuestionCard() {
+      const container = document.getElementById('b11-question-card-container');
+      if (!container) return;
+
+      const q = B11_EXERCISES_DATA[b11CurrentQuestionIdx];
+      const userSelected = b11UserAnswers[b11CurrentQuestionIdx];
+      const isAnswered = (userSelected !== undefined);
+
+      let optionsHtml = '';
+      q.options.forEach((opt, optIdx) => {
+        let optStyle = 'width:100%; text-align:left; padding:12px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:8px; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between;';
+        if (isAnswered) {
+          if (optIdx === q.correct) {
+            optStyle += 'background:#dcfce7; border-color:#16a34a; color:#15803d; font-weight:700;';
+          } else if (optIdx === userSelected) {
+            optStyle += 'background:#fee2e2; border-color:#dc2626; color:#b91c1c; font-weight:700;';
+          } else {
+            optStyle += 'opacity:0.6;';
+          }
+        }
+
+        optionsHtml += `
+          <button style="${optStyle}" onclick="selectB11Answer(${optIdx})" ${isAnswered ? 'disabled' : ''}>
+            <span>${opt}</span>
+            ${isAnswered && optIdx === q.correct ? '<span style="color:#16a34a; font-weight:800;">✓</span>' : ''}
+            ${isAnswered && optIdx === userSelected && userSelected !== q.correct ? '<span style="color:#dc2626; font-weight:800;">✗</span>' : ''}
+          </button>
+        `;
+      });
+
+      let explainHtml = '';
+      if (isAnswered) {
+        const isCorrect = (userSelected === q.correct);
+        explainHtml = `
+          <div style="margin-top:14px; padding:12px; border-radius:8px; background:${isCorrect ? '#f0fdf4' : '#fef2f2'}; border:1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; font-size:13px; color:${isCorrect ? '#166534' : '#991b1b'}; line-height:1.5;">
+            <strong>${isCorrect ? '✓ Câu trả lời chính xác!' : '✗ Câu trả lời chưa chính xác!'}</strong><br/>
+            ${q.explain}
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11px; font-weight:700; color:#0284c7; text-transform:uppercase;">${q.title}</span>
+            <span style="font-size:11px; font-weight:600; color:#64748b;">Câu ${b11CurrentQuestionIdx + 1} / ${B11_EXERCISES_DATA.length}</span>
+          </div>
+          <p style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:14px; line-height:1.5;">${q.text}</p>
+          <div>
+            ${optionsHtml}
+          </div>
+          ${explainHtml}
+        </div>
+      `;
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function selectB11Answer(optIdx) {
+      if (b11UserAnswers[b11CurrentQuestionIdx] !== undefined) return;
+      b11UserAnswers[b11CurrentQuestionIdx] = optIdx;
+      renderB11QuizStrip();
+      renderB11QuestionCard();
+    }
+
+    function resetB11QuizArena() {
+      b11UserAnswers = {};
+      b11CurrentQuestionIdx = 0;
+      renderB11QuizStrip();
+      renderB11QuestionCard();
+    }
+
+    function resetB11InteractiveState() {
+      b11RotAngleX = 0.4;
+      b11RotAngleY = 0.6;
+      b11CircuitSample = 'sol_nacl';
+      updateB11Hud();
     }
 
 
