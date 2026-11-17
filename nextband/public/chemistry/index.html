@@ -1277,6 +1277,51 @@
 
         </div>
       </section>
+
+      <!-- ========================================================
+           CHƯƠNG 4: PHẢN ỨNG OXI HOÁ – KHỬ
+           ======================================================== -->
+      <section class="chapter-block" style="margin-top: 48px;">
+        <div class="chapter-header-strip">
+          <span class="chap-badge">Chương 4</span>
+          <div>
+            <h2 class="chap-title">Phản Ứng Oxi Hoá – Khử</h2>
+            <p class="chap-desc">Bản chất số oxi hoá, chất khử và chất oxi hoá, phương pháp thăng bằng electron & ứng dụng trong đời sống và sản xuất.</p>
+          </div>
+          <span class="chap-progress-pill">Bài 15 • Chương 4</span>
+        </div>
+
+        <div class="cards-grid">
+          <!-- Bài 15: Phản ứng Oxi hoá - Khử -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <circle cx="55" cy="45" r="28" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+                <text x="55" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="800" fill="#dc2626" text-anchor="middle">Fe⁰</text>
+                <circle cx="165" cy="45" r="28" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+                <text x="165" y="49" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="800" fill="#1d4ed8" text-anchor="middle">Cu²⁺</text>
+                <path d="M 85 45 Q 110 25 135 45" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="4,4"/>
+                <polygon points="135,45 125,40 128,45 125,50" fill="#f59e0b"/>
+                <circle cx="110" cy="34" r="5" fill="#f59e0b"/>
+                <text x="110" y="37" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" fill="#ffffff" text-anchor="middle">e⁻</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status active">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 15: Phản ứng Oxi hoá – Khử & Số oxi hoá</h3>
+                <p>Khái niệm số oxi hoá & 4 quy tắc, phân biệt chất khử - chất oxi hoá, phòng lab dòng electron và 4 bước thăng bằng electron.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b15')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
     </main>
   </div>
 
@@ -4919,6 +4964,275 @@
     </div>
   </div>
 
+
+  <!-- ========================================================
+       BÀI 15: PHẢN ỨNG OXI HOÁ - KHỬ & SỐ OXI HOÁ
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM SGK TR. 71 - 78)
+       ======================================================== -->
+  <div id="view-studio-b15" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Topbar -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 4 • Bài 15</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Phản Ứng Oxi Hoá – Khử & Số Oxi Hoá</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 15 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b15-p1" class="tab-seg-btn active" onclick="switchPartB15('part1')">
+            <span>I. Số Oxi Hoá & 4 Quy Tắc</span>
+          </button>
+          <button id="tab-btn-b15-p2" class="tab-seg-btn" onclick="switchPartB15('part2')">
+            <span>II. Chất Oxi Hoá & Chất Khử</span>
+          </button>
+          <button id="tab-btn-b15-p3" class="tab-seg-btn" onclick="switchPartB15('part3')">
+            <span>III. Thăng Bằng Electron & Thực Tiễn</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: KHÁI NIỆM SỐ OXI HOÁ VÀ 4 QUY TẮC -->
+          <div id="content-b15-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần I (SGK Trang 71 – 73)</h4>
+              <p>Hiểu bản chất số oxi hoá là điện tích quy ước của nguyên tử khi giả định mọi liên kết đều phân cực hoàn toàn thành liên kết ion; nắm vững và thuần thục 4 quy tắc xác định số oxi hoá.</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 71 – 73</div>
+            <h3 class="section-title">Khái niệm & 4 Quy tắc xác định số oxi hoá</h3>
+            
+            <p><strong>1. Định nghĩa chuẩn:</strong> <em>Số oxi hoá</em> là điện tích quy ước của nguyên tử trong phân tử nếu giả định rằng tất cả các liên kết trong phân tử đều là liên kết ion (cặp electron dùng chung chuyển hẳn về phía nguyên tử có độ âm điện lớn hơn).</p>
+            <p><strong>Quy ước cách viết:</strong> Dấu đặt trước, số đặt sau (ví dụ: $+1, +2, -2, -1$). Khác với điện tích ion ghi số trước dấu sau ($1+, 2+, 2-, 1-$).</p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin: 16px 0;">
+              <div style="padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; font-size: 13px;">
+                <strong style="color: #1e40af;">Quy tắc 1: Đơn chất</strong><br/>
+                Trong các đơn chất, số oxi hoá của nguyên tử luôn bằng <strong>$0$</strong>.<br/>
+                <em>Ví dụ:</em> $\overset{0}{\text{Na}}, \overset{0}{\text{Fe}}, \overset{0}{\text{H}_2}, \overset{0}{\text{O}_2}, \overset{0}{\text{Cl}_2}$.
+              </div>
+
+              <div style="padding: 12px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0; font-size: 13px;">
+                <strong style="color: #166534;">Quy tắc 2: Mức thường gặp trong hợp chất</strong><br/>
+                • Hydrogen thường là <strong>$+1$</strong> (trừ hydride kim loại như $\text{NaH}$ là $-1$).<br/>
+                • Oxygen thường là <strong>$-2$</strong> (trừ peroxide $\text{H}_2\text{O}_2$ là $-1$, $\text{OF}_2$ là $+2$).<br/>
+                • Kim loại kiềm (Nhóm IA) luôn là <strong>$+1$</strong>; Kiềm thổ (Nhóm IIA) là <strong>$+2$</strong>; $\text{Al}$ là <strong>$+3$</strong>.
+              </div>
+
+              <div style="padding: 12px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; font-size: 13px;">
+                <strong style="color: #b45309;">Quy tắc 3: Trung hoà điện trong phân tử</strong><br/>
+                Trong một phân tử trung hoà, <strong>tổng số oxi hoá của tất cả các nguyên tử bằng $0$</strong>.<br/>
+                <em>Ví dụ trong $\text{Al}_2\text{O}_3$:</em> $2 \times (+3) + 3 \times (-2) = +6 - 6 = 0$.
+              </div>
+
+              <div style="padding: 12px; background: #fdf2f8; border-left: 4px solid #ec4899; border-radius: 0 8px 8px 0; font-size: 13px;">
+                <strong style="color: #be185d;">Quy tắc 4: Ion đơn và đa nguyên tử</strong><br/>
+                • Ion đơn nguyên tử: số oxi hoá bằng điện tích ion ($\text{Fe}^{3+} \rightarrow +3$, $\text{Cl}^- \rightarrow -1$).<br/>
+                • Ion đa nguyên tử: <strong>tổng số oxi hoá bằng điện tích của ion đó</strong>.<br/>
+                <em>Ví dụ trong ion $\text{NH}_4^+$:</em> $x + 4 \times (+1) = +1 \Rightarrow x = -3$.
+              </div>
+            </div>
+
+            <div class="box-target" style="margin-top: 16px;">
+              <h5 style="margin: 0 0 6px 0; font-weight: 700; color: #0369a1;">💡 Thử thách SGK Trang 74: Xác định số oxi hoá</h5>
+              <p style="margin: 0; font-size: 13px; line-height: 1.5;">
+                Sử dụng <strong>Phòng Lab Máy Tính Số Oxi Hoá Tương Tác</strong> ở cột bên phải để tra cứu và tự tính từng bước cấu trúc của $\text{Fe}_2\text{O}_3, \text{KMnO}_4, \text{H}_2\text{SO}_4, \text{NO}_3^-, \text{SO}_4^{2-}$.
+              </p>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: CHẤT OXI HOÁ, CHẤT KHỬ VÀ BẢN CHẤT PHẢN ỨNG -->
+          <div id="content-b15-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần II (SGK Trang 74 – 75)</h4>
+              <p>Phân biệt chính xác Chất khử (nhường e) vs Chất oxi hoá (nhận e); Quá trình oxi hoá vs Quá trình khử; Nhận diện phản ứng oxi hoá – khử qua sự thay đổi số oxi hoá.</p>
+            </div>
+
+            <div class="meta-citation">Mục II • SGK Trang 74 – 75</div>
+            <h3 class="section-title">Khái niệm Chất Oxi Hoá & Chất Khử</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0;">
+              <div style="padding: 14px; background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 10px;">
+                <div style="font-weight: 800; color: #b91c1c; font-size: 14px; margin-bottom: 6px;">⚡ CHẤT KHỬ (Chất bị oxi hoá)</div>
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #1e293b;">
+                  • <strong>Hành động:</strong> <em>Nhường electron</em> (số oxi hoá tăng sau phản ứng).<br/>
+                  • <strong>Quá trình:</strong> Tham gia <em>quá trình oxi hoá</em>.<br/>
+                  • <em>Khẩu quyết:</em> <strong>"Khử cho - Tăng"</strong>.
+                </p>
+              </div>
+
+              <div style="padding: 14px; background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px;">
+                <div style="font-weight: 800; color: #1d4ed8; font-size: 14px; margin-bottom: 6px;">🛡️ CHẤT OXI HOÁ (Chất bị khử)</div>
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #1e293b;">
+                  • <strong>Hành động:</strong> <em>Nhận electron</em> (số oxi hoá giảm sau phản ứng).<br/>
+                  • <strong>Quá trình:</strong> Tham gia <em>quá trình khử</em>.<br/>
+                  • <em>Khẩu quyết:</em> <strong>"O nhận - Giảm"</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div style="padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin: 14px 0;">
+              <h4 style="margin: 0 0 6px 0; font-size: 13.5px; color: #0f172a;">Ví dụ SGK: Thí nghiệm đinh sắt vào dung dịch $\text{CuSO}_4$</h4>
+              <p style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #0284c7; margin: 4px 0;">
+                $\overset{0}{\text{Fe}} + \overset{+2}{\text{Cu}}\text{SO}_4 \rightarrow \overset{+2}{\text{Fe}}\text{SO}_4 + \overset{0}{\text{Cu}}\downarrow$
+              </p>
+              <ul style="margin: 6px 0 0 16px; font-size: 12.5px; color: #334155; line-height: 1.6;">
+                <li>$\text{Fe}$ nhường $2\text{e} \rightarrow \text{Fe}^{2+} + 2\text{e}$ (Chất khử, quá trình oxi hoá $\text{Fe}$).</li>
+                <li>$\text{Cu}^{2+}$ nhận $2\text{e} \rightarrow \text{Cu}$ (Chất oxi hoá, quá trình khử $\text{Cu}^{2+}$).</li>
+              </ul>
+            </div>
+
+            <div style="padding: 10px 14px; background: #ecfdf5; border-radius: 8px; border-left: 4px solid #10b981; font-size: 13px; color: #065f46;">
+              <strong>Quy tắc nhận diện nhanh:</strong> Phản ứng có đơn chất tham gia hoặc tạo thành luôn là phản ứng oxi hoá – khử (vì số oxi hoá của đơn chất = 0).
+            </div>
+          </div>
+
+          <!-- PHẦN 3: LẬP PHƯƠNG TRÌNH BẰNG PHƯƠNG PHÁP THĂNG BẰNG ELECTRON & THỰC TIỄN -->
+          <div id="content-b15-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần III (SGK Trang 75 – 78)</h4>
+              <p>Thành thạo phương pháp thăng bằng electron qua 4 bước chuẩn mực; tìm hiểu ứng dụng thực tiễn của phản ứng oxi hoá – khử: sự cháy nhiên liệu, sự gỉ kim loại, sản xuất gang thép và chu trình biến đổi sấm sét tạo đạm tự nhiên.</p>
+            </div>
+
+            <div class="meta-citation">Mục III & IV • SGK Trang 75 – 78</div>
+            <h3 class="section-title">4 Bước Thăng Bằng Electron & Hiện tượng Đời Sống</h3>
+
+            <div style="padding: 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; margin: 12px 0;">
+              <strong style="color: #0f172a; font-size: 13.5px;">Quy trình 4 bước thăng bằng electron:</strong>
+              <ol style="margin: 6px 0 0 16px; font-size: 13px; line-height: 1.6; color: #334155;">
+                <li><strong>Bước 1:</strong> Xác định số oxi hoá các nguyên tố $\rightarrow$ Tìm chất khử & chất oxi hoá.</li>
+                <li><strong>Bước 2:</strong> Viết quá trình oxi hoá và quá trình khử.</li>
+                <li><strong>Bước 3:</strong> Tìm hệ số thích hợp sao cho: $\sum \text{e nhường} = \sum \text{e nhận}$.</li>
+                <li><strong>Bước 4:</strong> Đặt hệ số vào phương trình và đếm cân bằng các nguyên tố còn lại (kim loại $\rightarrow$ phi kim $\rightarrow$ $\text{H} \rightarrow \text{O}$).</li>
+              </ol>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin: 14px 0;">
+              <div style="padding: 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;">
+                <span style="font-weight: 700; color: #b45309; font-size: 13px;">🌾 Câu ca dao Việt Nam & Sấm sét tạo phân đạm:</span>
+                <p style="font-style: italic; margin: 4px 0; font-size: 13px; color: #78350f;">
+                  "Lúa chiêm lấp ló đầu bờ,<br/>
+                  Hễ nghe tiếng sấm phất cờ mà lên."
+                </p>
+                <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #334155;">
+                  Tia sét $\approx 3000^\circ\text{C}$ kích hoạt $\text{N}_2 + \text{O}_2 \rightarrow 2\text{NO}$, tiếp tục oxi hoá thành $\text{NO}_2 \rightarrow \text{HNO}_3$, theo nước mưa thấm vào đất thành ion $\text{NO}_3^-$ cung cấp đạm dồi dào cho cây lúa phát triển thần tốc.
+                </p>
+              </div>
+            </div>
+
+            <div id="b15-quiz-container" style="margin-top: 16px;">
+              <!-- Sẽ render các câu hỏi trắc nghiệm kiểm tra SGK Tr. 78 -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHỦ ĐỀ ĐANG HỌC</span>
+              <span class="hud-value highlight">Chương 4 • Phản Ứng Oxi Hoá – Khử</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">CÔNG CỤ LAB</span>
+              <span id="b15-hud-tool" class="hud-value" style="color: #0284c7;">Máy tính Số Oxi Hoá</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">NGUYÊN TẮC CỐT LÕI</span>
+              <span class="hud-value" style="color: #16a34a;">$\sum e \text{ nhường} = \sum e \text{ nhận}$</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1: Máy tính Số Oxi Hoá Tương tác & Trực quan hoá liên kết giả định -->
+          <div id="panel-b15-part1" class="lab-canvas-area" style="display: flex; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">🔬 Máy Tính Tra Cứu & Xác Định Số Oxi Hoá</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 3px 0 0 0;">Nhập công thức hoặc chọn chất mẫu để xem từng bước giải chi tiết theo 4 quy tắc.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+              <button class="btn-tool active" onclick="selectB15SampleCompound('Fe2O3')">Fe2O3</button>
+              <button class="btn-tool" onclick="selectB15SampleCompound('KMnO4')">KMnO4</button>
+              <button class="btn-tool" onclick="selectB15SampleCompound('H2SO4')">H2SO4</button>
+              <button class="btn-tool" onclick="selectB15SampleCompound('NH4_plus')">NH4(+)</button>
+              <button class="btn-tool" onclick="selectB15SampleCompound('Cr2O7_2minus')">Cr2O7(2-)</button>
+              <button class="btn-tool" onclick="selectB15SampleCompound('HNO3')">HNO3</button>
+            </div>
+
+            <div id="b15-compound-display-card" style="padding: 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #cbd5e1; flex: 1;">
+              <!-- Render calculation step -->
+            </div>
+          </div>
+
+          <!-- PANEL 2: Phòng Lab Mô Phỏng Dòng Chuyển Electron (Redox Dynamic Simulator) -->
+          <div id="panel-b15-part2" class="lab-canvas-area" style="display: none; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">⚡ Mô Phỏng Dòng Electron Chuyển Dời: Chất Khử ➔ Chất Oxi Hoá</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" onclick="setB15RedoxReaction('fe_cu')">Fe + CuSO4</button>
+                <button class="btn-tool" onclick="setB15RedoxReaction('c_o2')">C + O2</button>
+                <button class="btn-tool" onclick="setB15RedoxReaction('nh3_o2')">NH3 + O2 (Ostwald)</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b15RedoxCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 3: Đấu trường Cân Bằng Phương Trình & Bài tập SGK Tr. 78 -->
+          <div id="panel-b15-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">🎯 Luyện Tập Cân Bằng Redox & Trắc Nghiệm</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Bài 15: Phản ứng Oxi hoá - Khử</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b15-quiz-progress-text">
+                Đã trả lời: 0 / 4 câu
+              </div>
+            </div>
+            <div id="b15-quiz-active-question-card" style="padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+              <!-- Render current quiz question -->
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b15-lab-status-tip">
+              💡 <em>Chọn chất mẫu ở trên để xem từng bước quy đổi số oxi hoá theo quy tắc trung hoà điện tích.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB15InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -4928,7 +5242,7 @@
     function openLesson(lessonId) {
       activeLesson = lessonId;
       document.getElementById('view-dashboard').classList.remove('active');
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -5034,8 +5348,17 @@
           if (typeof initB13InterLab === 'function') initB13InterLab();
           if (typeof initB13QuizArena === 'function') initB13QuizArena();
         }, 50);
+            } else if (lessonId === 'b15') {
+        const studioB15 = document.getElementById('view-studio-b15');
+        if (studioB15) studioB15.classList.add('active');
+        switchPartB15('part1');
+        setTimeout(() => {
+          if (typeof selectB15SampleCompound === 'function') selectB15SampleCompound('Fe2O3');
+          if (typeof initB15RedoxSim === 'function') initB15RedoxSim();
+          if (typeof initB15QuizArena === 'function') initB15QuizArena();
+        }, 50);
       } else if (lessonId === 'b14') {
-        const studioB14 = document.getElementById('view-studio-b14');
+        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15');
         if (studioB14) studioB14.classList.add('active');
         switchPartB14('part1');
         setTimeout(() => {
@@ -5048,7 +5371,7 @@
     }
 
     function backToDashboard() {
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -12010,6 +12333,468 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         updateB14ClozeStatus();
       } else {
         resetB14QuizArena();
+      }
+    }
+
+
+
+    /* ==========================================================
+       BÀI 15: PHẢN ỨNG OXI HOÁ - KHỬ & SỐ OXI HOÁ
+       ========================================================== */
+    let currentPartB15 = 'part1';
+
+    function switchPartB15(partId) {
+      currentPartB15 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b15-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b15-' + p);
+        const panel = document.getElementById('panel-b15-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
+
+      const tip = document.getElementById('b15-lab-status-tip');
+      const hudTool = document.getElementById('b15-hud-tool');
+      if (tip) {
+        if (partId === 'part1') {
+          tip.innerHTML = '💡 <em>Chọn chất mẫu ở trên để xem từng bước quy đổi số oxi hoá theo quy tắc trung hoà điện tích.</em>';
+          if (hudTool) hudTool.innerText = 'Máy tính Số Oxi Hoá';
+        } else if (partId === 'part2') {
+          tip.innerHTML = '💡 <em>Mô phỏng dòng electron: Quan sát electron bức ra từ chất khử và bay sang chất oxi hoá.</em>';
+          if (hudTool) hudTool.innerText = 'Dòng Chuyển Electron';
+          setTimeout(initB15RedoxSim, 50);
+        } else {
+          tip.innerHTML = '💡 <em>Thử thách 4 bước thăng bằng electron & các câu hỏi ứng dụng thực tiễn SGK Tr. 78.</em>';
+          if (hudTool) hudTool.innerText = 'Luyện Tập Cân Bằng';
+        }
+      }
+    }
+
+    // --- PART 1: MÁY TÍNH SỐ OXI HOÁ ---
+    const b15CompoundDatabase = {
+      'Fe2O3': {
+        formula: 'Fe₂O₃ (Iron(III) oxide)',
+        targetElem: 'Fe',
+        steps: [
+          'Theo Quy tắc 2: Oxygen trong hợp chất có số oxi hoá là -2.',
+          'Đặt số oxi hoá của Iron (Fe) là x.',
+          'Theo Quy tắc 3: Phân tử trung hoà điện => Tổng số oxi hoá = 0.',
+          'Biểu thức: 2 * (x) + 3 * (-2) = 0',
+          '2x - 6 = 0 => 2x = +6 => x = +3.',
+          'Kết luận: Fe có số oxi hoá là +3, O là -2. Ký hiệu: Fe₂(+3)O₃(-2).'
+        ],
+        stateHtml: '<span style="color: #ea580c; font-weight: 800; font-size: 20px;">Fe: +3</span> &nbsp;|&nbsp; <span style="color: #0284c7; font-weight: 800; font-size: 20px;">O: -2</span>'
+      },
+      'KMnO4': {
+        formula: 'KMnO₄ (Potassium permanganate)',
+        targetElem: 'Mn',
+        steps: [
+          'Theo Quy tắc 2: Kali (K thuộc nhóm IA) luôn là +1, Oxygen luôn là -2.',
+          'Đặt số oxi hoá của Mangan (Mn) là x.',
+          'Theo Quy tắc 3: 1*(+1) + 1*(x) + 4*(-2) = 0',
+          '+1 + x - 8 = 0 => x - 7 = 0 => x = +7.',
+          'Kết luận: Mn đạt số oxi hoá cực đại +7. Đây là chất oxi hoá rất mạnh trong thực tế!'
+        ],
+        stateHtml: '<span style="color: #7c3aed; font-weight: 800; font-size: 20px;">Mn: +7</span> &nbsp;|&nbsp; <span style="color: #16a34a; font-weight: 800; font-size: 20px;">K: +1</span> &nbsp;|&nbsp; <span style="color: #0284c7; font-weight: 800; font-size: 20px;">O: -2</span>'
+      },
+      'H2SO4': {
+        formula: 'H₂SO₄ (Sulfuric acid)',
+        targetElem: 'S',
+        steps: [
+          'Theo Quy tắc 2: H có số oxi hoá +1, O có số oxi hoá -2.',
+          'Đặt số oxi hoá của Sulfur (S) là x.',
+          'Theo Quy tắc 3: 2*(+1) + 1*(x) + 4*(-2) = 0',
+          '+2 + x - 8 = 0 => x - 6 = 0 => x = +6.',
+          'Kết luận: Sulfur có số oxi hoá cao nhất là +6.'
+        ],
+        stateHtml: '<span style="color: #f59e0b; font-weight: 800; font-size: 20px;">S: +6</span> &nbsp;|&nbsp; <span style="color: #0284c7; font-weight: 800; font-size: 20px;">H: +1</span> &nbsp;|&nbsp; <span style="color: #ef4444; font-weight: 800; font-size: 20px;">O: -2</span>'
+      },
+      'NH4_plus': {
+        formula: 'NH₄⁺ (Ammonium ion)',
+        targetElem: 'N',
+        steps: [
+          'Theo Quy tắc 2: H có số oxi hoá +1.',
+          'Đặt số oxi hoá của Nitrogen (N) là x.',
+          'Theo Quy tắc 4: Trong ion đa nguyên tử, tổng số oxi hoá bằng điện tích của ion (+1).',
+          'Biểu thức: 1*(x) + 4*(+1) = +1',
+          'x + 4 = +1 => x = -3.',
+          'Kết luận: Nitrogen trong NH₄⁺ có số oxi hoá là -3.'
+        ],
+        stateHtml: '<span style="color: #2563eb; font-weight: 800; font-size: 20px;">N: -3</span> &nbsp;|&nbsp; <span style="color: #10b981; font-weight: 800; font-size: 20px;">H: +1</span> &nbsp;(Điện tích ion: +1)'
+      },
+      'Cr2O7_2minus': {
+        formula: 'Cr₂O₇²⁻ (Dichromate ion)',
+        targetElem: 'Cr',
+        steps: [
+          'Theo Quy tắc 2: Oxygen có số oxi hoá là -2.',
+          'Đặt số oxi hoá của Chromium (Cr) là x.',
+          'Theo Quy tắc 4: Tổng số oxi hoá bằng điện tích của ion (-2).',
+          'Biểu thức: 2*(x) + 7*(-2) = -2',
+          '2x - 14 = -2 => 2x = +12 => x = +6.',
+          'Kết luận: Chromium trong ion dicromat đạt số oxi hoá +6.'
+        ],
+        stateHtml: '<span style="color: #ea580c; font-weight: 800; font-size: 20px;">Cr: +6</span> &nbsp;|&nbsp; <span style="color: #0284c7; font-weight: 800; font-size: 20px;">O: -2</span> &nbsp;(Điện tích ion: 2-)'
+      },
+      'HNO3': {
+        formula: 'HNO₃ (Nitric acid)',
+        targetElem: 'N',
+        steps: [
+          'Theo Quy tắc 2: H có số oxi hoá +1, O có số oxi hoá -2.',
+          'Đặt số oxi hoá của Nitrogen (N) là x.',
+          'Theo Quy tắc 3: 1*(+1) + 1*(x) + 3*(-2) = 0',
+          '+1 + x - 6 = 0 => x - 5 = 0 => x = +5.',
+          'Kết luận: Nitrogen trong HNO₃ đạt mức oxi hoá cao nhất là +5 (chất oxi hoá mạnh).'
+        ],
+        stateHtml: '<span style="color: #2563eb; font-weight: 800; font-size: 20px;">N: +5</span> &nbsp;|&nbsp; <span style="color: #10b981; font-weight: 800; font-size: 20px;">H: +1</span> &nbsp;|&nbsp; <span style="color: #ef4444; font-weight: 800; font-size: 20px;">O: -2</span>'
+      }
+    };
+
+    function selectB15SampleCompound(key) {
+      const data = b15CompoundDatabase[key];
+      if (!data) return;
+
+      const card = document.getElementById('b15-compound-display-card');
+      if (!card) return;
+
+      const stepsHtml = data.steps.map((st, i) => `
+        <div style="margin-bottom: 8px; display: flex; gap: 8px; align-items: flex-start;">
+          <span style="background: #e0f2fe; color: #0369a1; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0;">${i+1}</span>
+          <span style="font-size: 13px; color: #334155; line-height: 1.5;">${st}</span>
+        </div>
+      `).join('');
+
+      card.innerHTML = `
+        <div style="border-bottom: 1.5px solid #cbd5e1; padding-bottom: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">${data.formula}</h3>
+          <div>${data.stateHtml}</div>
+        </div>
+        <div style="background: #ffffff; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <div style="font-weight: 700; color: #0f172a; margin-bottom: 10px; font-size: 13px;">📝 Các bước giải chi tiết:</div>
+          ${stepsHtml}
+        </div>
+      `;
+    }
+
+    // --- PART 2: REDOX ELECTRON SIMULATOR ---
+    let b15AnimId = null;
+    let b15SimReac = 'fe_cu';
+    let b15Electrons = [];
+
+    const b15ReactionsConfig = {
+      'fe_cu': {
+        reducer: 'Fe (Chất khử)',
+        oxidizer: 'Cu²⁺ (Chất oxi hoá)',
+        equation: 'Fe⁰  +  Cu⁺²SO₄  →  Fe⁺²SO₄  +  Cu⁰↓',
+        eCount: 2,
+        desc: 'Fe nhường 2e tạo Fe²⁺. Cu²⁺ nhận 2e tạo Cu kim loại bám ngoài đinh sắt.'
+      },
+      'c_o2': {
+        reducer: 'C (Chất khử)',
+        oxidizer: 'O₂ (Chất oxi hoá)',
+        equation: 'C⁰  +  O₂⁰  →  C⁺⁴O₂⁻²',
+        eCount: 4,
+        desc: 'Carbon nhường 4e cho 2 nguyên tử O. C cháy sáng toả nhiệt mạnh.'
+      },
+      'nh3_o2': {
+        reducer: 'NH₃ (Chất khử)',
+        oxidizer: 'O₂ (Chất oxi hoá)',
+        equation: '4N⁻³H₃  +  5O₂⁰  →  4N⁺²O  +  6H₂O⁻²',
+        eCount: 5,
+        desc: 'Nitrogen từ -3 nhường 5e tăng lên +2 trong NO (Quá trình Ostwald sản xuất HNO₃).'
+      }
+    };
+
+    function setB15RedoxReaction(key) {
+      b15SimReac = key;
+      initB15RedoxSim();
+    }
+
+    function initB15RedoxSim() {
+      const canvas = document.getElementById('b15RedoxCanvas');
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = (rect.width || 500) * dpr;
+      canvas.height = (rect.height || 420) * dpr;
+
+      // Spawn initial electron stream
+      b15Electrons = [];
+      const eMax = b15ReactionsConfig[b15SimReac].eCount * 4;
+      for (let i = 0; i < eMax; i++) {
+        b15Electrons.push({
+          x: 0.25 + Math.random() * 0.1,
+          y: 0.5 + (Math.random() - 0.5) * 0.12,
+          speed: 0.003 + Math.random() * 0.004,
+          rad: 4 + Math.random() * 2
+        });
+      }
+
+      if (b15AnimId) cancelAnimationFrame(b15AnimId);
+      renderB15RedoxLoop();
+    }
+
+    function renderB15RedoxLoop() {
+      const canvas = document.getElementById('b15RedoxCanvas');
+      if (!canvas || currentPartB15 !== 'part2') return;
+
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      const cw = canvas.getBoundingClientRect().width || 500;
+      const ch = canvas.getBoundingClientRect().height || 420;
+
+      const conf = b15ReactionsConfig[b15SimReac];
+
+      // Draw Equation Header
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 15px JetBrains Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(conf.equation, cw / 2, 36);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '12px Plus Jakarta Sans, sans-serif';
+      ctx.fillText(conf.desc, cw / 2, 60);
+
+      // Reducer Sphere (Left)
+      const rx = cw * 0.22;
+      const ry = ch * 0.55;
+      ctx.save();
+      ctx.shadowColor = 'rgba(239, 68, 68, 0.3)';
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.arc(rx, ry, 54, 0, Math.PI * 2);
+      ctx.fillStyle = '#fee2e2';
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#ef4444';
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = '#b91c1c';
+      ctx.font = 'bold 13px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(conf.reducer, rx, ry - 6);
+      ctx.fillStyle = '#dc2626';
+      ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
+      ctx.fillText('NHƯỜNG e (Số oxh TĂNG)', rx, ry + 14);
+
+      // Oxidizer Sphere (Right)
+      const ox = cw * 0.78;
+      const oy = ch * 0.55;
+      ctx.save();
+      ctx.shadowColor = 'rgba(59, 130, 246, 0.3)';
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.arc(ox, oy, 54, 0, Math.PI * 2);
+      ctx.fillStyle = '#dbeafe';
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#3b82f6';
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = '#1d4ed8';
+      ctx.font = 'bold 13px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(conf.oxidizer, ox, oy - 6);
+      ctx.fillStyle = '#2563eb';
+      ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
+      ctx.fillText('NHẬN e (Số oxh GIẢM)', ox, oy + 14);
+
+      // Stream Flow Pipeline
+      ctx.beginPath();
+      ctx.moveTo(rx + 54, ry);
+      ctx.lineTo(ox - 54, oy);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      // Draw Flying Electrons
+      for (const el of b15Electrons) {
+        el.x += el.speed;
+        if (el.x > 0.75) {
+          el.x = 0.25;
+          el.y = 0.55 + (Math.random() - 0.5) * 0.12;
+        }
+
+        const ex = el.x * cw;
+        const ey = el.y * ch;
+
+        ctx.save();
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(ex, ey, el.rad, 0, Math.PI * 2);
+        ctx.fillStyle = '#f59e0b';
+        ctx.fill();
+        ctx.restore();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 8px Plus Jakarta Sans, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('e⁻', ex, ey);
+      }
+
+      ctx.restore();
+      b15AnimId = requestAnimationFrame(renderB15RedoxLoop);
+    }
+
+    // --- PART 3: BÀI TẬP SGK TRANG 78 & CÂN BẰNG THĂNG BẰNG ELECTRON ---
+    const b15QuizData = [
+      {
+        id: 1,
+        title: 'Câu 1 (SGK Tr. 78)',
+        question: 'Trong phản ứng: 2Fe + 3Cl₂ → 2FeCl₃, vai trò của các chất là:',
+        options: [
+          'A. Fe là chất oxi hoá, Cl₂ là chất khử',
+          'B. Fe là chất khử, Cl₂ là chất oxi hoá',
+          'C. Cả Fe và Cl₂ đều là chất khử',
+          'D. Cả Fe và Cl₂ đều là chất oxi hoá'
+        ],
+        answer: 1,
+        explanation: 'Fe từ 0 tăng lên +3 trong FeCl₃ (nhường e => chất khử). Cl₂ từ 0 giảm xuống -1 trong FeCl₃ (nhận e => chất oxi hoá).'
+      },
+      {
+        id: 2,
+        title: 'Câu 2 (SGK Tr. 78)',
+        question: 'Dãy gồm các chất và ion đều có tính khử là:',
+        options: [
+          'A. Fe²⁺, Cu, S²⁻',
+          'B. Fe³⁺, Cu²⁺, Cl⁻',
+          'C. KMnO₄, HNO₃, H₂SO₄ đặc',
+          'D. O₂, F₂, Cl₂'
+        ],
+        answer: 0,
+        explanation: 'Fe²⁺, Cu, S²⁻ đều chứa các nguyên tố ở mức oxi hoá trung gian hoặc thấp nhất, có khả năng nhường electron để tăng số oxi hoá lên mức cao hơn.'
+      },
+      {
+        id: 3,
+        title: 'Câu 3: Thăng bằng electron',
+        question: 'Cho phản ứng: a Cu + b HNO₃ → c Cu(NO₃)₂ + d NO↑ + e H₂O. Tổng hệ số nguyên tối giản (a + b + c + d + e) là:',
+        options: [
+          'A. 18',
+          'B. 20',
+          'C. 22',
+          'D. 24'
+        ],
+        answer: 1,
+        explanation: 'Quá trình: 3x(Cu → Cu²⁺ + 2e) và 2x(N⁺⁵ + 3e → N⁺²). Phương trình cân bằng: 3Cu + 8HNO₃ → 3Cu(NO₃)₂ + 2NO + 4H₂O. Tổng hệ số: 3 + 8 + 3 + 2 + 4 = 20.'
+      },
+      {
+        id: 4,
+        title: 'Câu 4: Thực tiễn đời sống',
+        question: 'Hiện tượng "lúa phất cờ" sau cơn mưa giông sấm sét liên quan trực tiếp đến phản ứng oxi hoá – khử nào?',
+        options: [
+          'A. S + O₂ → SO₂',
+          'B. N₂ + O₂ → 2NO (ở 3000°C do tia lửa điện sét)',
+          'C. C + O₂ → CO₂',
+          'D. Fe + H₂O + O₂ → gỉ sắt'
+        ],
+        answer: 1,
+        explanation: 'Tia sét tạo nhiệt độ cực lớn giúp N₂ phản ứng với O₂ tạo NO, sau đó tiếp tục chuỗi oxi hoá thành axit nitric rồi hoà tan thành phân đạm nitrate (NO₃⁻) bón tự nhiên cho cây trồng.'
+      }
+    ];
+
+    let b15UserAnswers = {};
+
+    function initB15QuizArena() {
+      b15UserAnswers = {};
+      renderB15QuizQuestion(0);
+    }
+
+    function renderB15QuizQuestion(idx) {
+      const q = b15QuizData[idx];
+      const card = document.getElementById('b15-quiz-active-question-card');
+      if (!card) return;
+
+      const userChoice = b15UserAnswers[idx];
+      const isAnswered = userChoice !== undefined;
+
+      let optsHtml = q.options.map((opt, optIdx) => {
+        let optStyle = 'padding: 10px 14px; border-radius: 8px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; cursor: pointer; font-size: 13px; transition: all 0.15s; background: #ffffff;';
+        if (isAnswered) {
+          if (optIdx === q.answer) {
+            optStyle += ' border-color: #16a34a; background: #f0fdf4; color: #166534; font-weight: 700;';
+          } else if (optIdx === userChoice) {
+            optStyle += ' border-color: #dc2626; background: #fef2f2; color: #991b1b;';
+          }
+        }
+        return `<div onclick="handleB15Answer(${idx}, ${optIdx})" style="${optStyle}">${opt}</div>`;
+      }).join('');
+
+      let feedbackHtml = '';
+      if (isAnswered) {
+        const isCorrect = userChoice === q.answer;
+        feedbackHtml = `
+          <div style="margin-top: 12px; padding: 12px; border-radius: 8px; background: ${isCorrect ? '#f0fdf4' : '#fffbeb'}; border-left: 4px solid ${isCorrect ? '#16a34a' : '#f59e0b'};">
+            <div style="font-weight: 700; color: ${isCorrect ? '#166534' : '#b45309'};">
+              ${isCorrect ? '✅ Chính xác!' : '⚠️ Chưa chính xác!'}
+            </div>
+            <div style="font-size: 12.5px; color: #334155; margin-top: 4px; line-height: 1.5;">
+              <strong>Giải thích:</strong> ${q.explanation}
+            </div>
+          </div>
+        `;
+      }
+
+      let navButtons = `
+        <div style="display: flex; justify-content: space-between; margin-top: 14px;">
+          <button class="btn-tool" onclick="renderB15QuizQuestion(${Math.max(0, idx - 1)})" ${idx === 0 ? 'disabled' : ''}>← Câu trước</button>
+          <button class="btn-tool" onclick="renderB15QuizQuestion(${Math.min(b15QuizData.length - 1, idx + 1)})" ${idx === b15QuizData.length - 1 ? 'disabled' : ''}>Câu sau →</button>
+        </div>
+      `;
+
+      card.innerHTML = `
+        <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 800; color: #0284c7; font-size: 14px;">${q.title}</span>
+          <span style="font-size: 12px; color: #64748b;">Câu ${idx + 1} / ${b15QuizData.length}</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 14px;">
+          ${q.question}
+        </div>
+        <div>
+          ${optsHtml}
+        </div>
+        ${feedbackHtml}
+        ${navButtons}
+      `;
+    }
+
+    function handleB15Answer(qIdx, optIdx) {
+      if (b15UserAnswers[qIdx] !== undefined) return;
+      b15UserAnswers[qIdx] = optIdx;
+      renderB15QuizQuestion(qIdx);
+
+      const answeredCount = Object.keys(b15UserAnswers).length;
+      const progressText = document.getElementById('b15-quiz-progress-text');
+      if (progressText) {
+        progressText.innerText = `Đã trả lời: ${answeredCount} / ${b15QuizData.length} câu`;
+      }
+    }
+
+    function resetB15InteractiveState() {
+      if (currentPartB15 === 'part1') {
+        selectB15SampleCompound('Fe2O3');
+      } else if (currentPartB15 === 'part2') {
+        initB15RedoxSim();
+      } else {
+        b15UserAnswers = {};
+        renderB15QuizQuestion(0);
+        const progressText = document.getElementById('b15-quiz-progress-text');
+        if (progressText) progressText.innerText = `Đã trả lời: 0 / ${b15QuizData.length} câu`;
       }
     }
 
