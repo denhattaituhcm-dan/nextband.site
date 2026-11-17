@@ -1121,6 +1121,48 @@
           </div>
         </div>
       </section>
+
+      <!-- ==========================================
+           CHƯƠNG 3: LIÊN KẾT HOÁ HỌC
+           ========================================== -->
+      <section class="chapter-block" style="margin-top: 48px;">
+        <div class="chapter-header-strip">
+          <span class="chap-badge">Chương 3</span>
+          <div>
+            <h2 class="chap-title">Liên Kết Hoá Học</h2>
+            <p class="chap-desc">Quy tắc octet bát tử, bản chất liên kết ion, liên kết cộng hoá trị phân cực/không phân cực, liên kết hydrogen & tương tác van der Waals.</p>
+          </div>
+          <span class="chap-progress-pill">Bài 10 - 14 • Chương 3</span>
+        </div>
+
+        <div class="cards-grid">
+          <!-- Bài 10: Quy tắc Octet (Đã hoàn thiện) -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <circle cx="80" cy="45" r="32" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+                <circle cx="140" cy="45" r="32" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+                <text x="80" y="50" font-size="14" font-weight="800" fill="#1d4ed8" text-anchor="middle">Cl</text>
+                <text x="140" y="50" font-size="14" font-weight="800" fill="#1d4ed8" text-anchor="middle">Cl</text>
+                <circle cx="110" cy="38" r="4" fill="#f59e0b"/>
+                <circle cx="110" cy="52" r="4" fill="#f59e0b"/>
+                <text x="110" y="84" font-size="8" font-weight="700" fill="#b45309" text-anchor="middle">Octet (8e bền vững)</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status ready">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 10: Quy tắc Octet (Bát tử)</h3>
+                <p>Khái niệm liên kết hoá học, electron hoá trị, mô phỏng chuyển động hạt và 3 con đường đạt cấu hình octet khí hiếm.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b10')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -3629,6 +3671,244 @@
   </div>
 
 
+  
+
+
+  <!-- ========================================================
+       BÀI 10: QUY TẮC OCTET (CHƯƠNG 3: LIÊN KẾT HOÁ HỌC)
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM)
+       ======================================================== -->
+  <div id="view-studio-b10" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Header -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 3 • Bài 10</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Quy tắc Octet (Bát tử) & Khái niệm Liên kết hoá học</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 10 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b10-p1" class="tab-seg-btn active" onclick="switchPartB10('part1')">
+            <span>1 Khái niệm Liên kết & Electron hoá trị</span>
+          </button>
+          <button id="tab-btn-b10-p2" class="tab-seg-btn" onclick="switchPartB10('part2')">
+            <span>2 Phòng Lab Mô phỏng 3 Con đường Octet</span>
+          </button>
+          <button id="tab-btn-b10-p3" class="tab-seg-btn" onclick="switchPartB10('part3')">
+            <span>3 Ngoại lệ Octet & Đấu trường SGK Tr. 50</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: KHÁI NIỆM LIÊN KẾT & ELECTRON HOÁ TRỊ -->
+          <div id="content-b10-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu sư phạm (SGK Trang 49)</h4>
+              <p>Trình bày được khái niệm liên kết hoá học, vai trò của electron hoá trị và cách biểu diễn electron hoá trị bằng dấu chấm Lewis xung quanh kí hiệu nguyên tố.</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 49</div>
+            <h3 class="section-title">Khái niệm Liên kết hoá học</h3>
+            <p>Theo thuyết cấu tạo hoá học, sự liên kết giữa các nguyên tử tạo thành phân tử hay tinh thể được giải thích bằng <strong>sự giảm năng lượng</strong> khi các nguyên tử kết hợp lại với nhau.</p>
+            
+            <div class="box-law" style="border-left: 5px solid #0284c7; background: #f0f9ff;">
+              <h4 style="color: #0369a1; font-size: 14px;">⚡ Bản chất Liên kết hoá học</h4>
+              <p style="font-size: 13.5px; font-weight: 600; color: #0f172a; line-height: 1.6; margin: 6px 0;">
+                "Liên kết hoá học là sự kết hợp giữa các nguyên tử tạo thành phân tử hay tinh thể bền vững hơn (có mức năng lượng thấp hơn so với các nguyên tử cô lập)."
+              </p>
+            </div>
+
+            <p style="font-size: 13.5px; line-height: 1.6; color: #334155; margin-top: 12px;">
+              Trong phản ứng hoá học, chỉ có các electron thuộc lớp ngoài cùng và phân lớp sát lớp ngoài cùng tham gia vào quá trình tạo thành liên kết, gọi là <strong>electron hoá trị</strong>.
+            </p>
+
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin: 14px 0;">
+              <h5 style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Bảng biểu diễn Lewis electron hoá trị 20 nguyên tố đầu (SGK Tr.49)</h5>
+              <div style="font-size: 13px; line-height: 1.8; color: #475569;">
+                <p>• <strong>Nhóm IA (1e):</strong> $\text{H}\cdot$, $\text{Li}\cdot$, $\text{Na}\cdot$, $\text{K}\cdot$</p>
+                <p>• <strong>Nhóm IIA (2e):</strong> $\cdot\text{Be}\cdot$, $\cdot\text{Mg}\cdot$, $\cdot\text{Ca}\cdot$</p>
+                <p>• <strong>Nhóm IIIA (3e):</strong> $\cdot\dot{\text{B}}\cdot$, $\cdot\dot{\text{Al}}\cdot$</p>
+                <p>• <strong>Nhóm IVA (4e):</strong> $\cdot\dot{\text{C}}\cdot\cdot$, $\cdot\dot{\text{Si}}\cdot\cdot$</p>
+                <p>• <strong>Nhóm VA (5e):</strong> $:\dot{\text{N}}\cdot\cdot$, $:\dot{\text{P}}\cdot\cdot$</p>
+                <p>• <strong>Nhóm VIA (6e):</strong> $:\ddot{\text{O}}\cdot\cdot$, $:\ddot{\text{S}}\cdot\cdot$</p>
+                <p>• <strong>Nhóm VIIA (7e):</strong> $:\ddot{\text{F}}\cdot:$, $:\ddot{\text{Cl}}\cdot:$</p>
+                <p>• <strong>Nhóm VIIIA (8e - Trừ He 2e):</strong> $:\ddot{\text{Ne}}::$, $:\ddot{\text{Ar}}::$ (bão hoà bền vững).</p>
+              </div>
+            </div>
+
+            <!-- Quiz nhanh Phần 1 -->
+            <div class="interactive-quiz-card" style="margin-top: 18px; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; background: #ffffff;">
+              <span style="font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase;">? Câu hỏi 1 (SGK Trang 49): Cấu hình khí hiếm</span>
+              <p style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 8px;">Khi nguyên tử Fluorine (F, Z=9) nhận thêm 1 electron để tạo thành ion fluoride (F⁻), ion này có cấu hình electron của nguyên tử khí hiếm nào?</p>
+              
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                <button class="opt-btn" onclick="checkB10MiniQuiz(this, false, 'Sai rồi! Helium chỉ có 2 electron (1s²).')" style="text-align: left; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;">A. Helium (He)</button>
+                <button class="opt-btn" onclick="checkB10MiniQuiz(this, true, 'Chính xác! F có Z=9 (1s² 2s² 2p⁵). Khi nhận 1e thành F⁻ có 10e (1s² 2s² 2p⁶), đạt cấu hình bền vững của khí hiếm Neon (Ne).')" style="text-align: left; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;">B. Neon (Ne)</button>
+                <button class="opt-btn" onclick="checkB10MiniQuiz(this, false, 'Sai rồi! Argon có Z=18 electron.')" style="text-align: left; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer;">C. Argon (Ar)</button>
+              </div>
+              <div class="quiz-feedback" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600; padding: 10px; border-radius: 6px;"></div>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: QUY TẮC OCTET VÀ 3 CON ĐƯỜNG ĐẠT BÁT TỬ -->
+          <div id="content-b10-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Quy tắc Octet (SGK Trang 50)</h4>
+              <p>Phát biểu quy tắc octet: Khi hình thành liên kết hoá học, các nguyên tử có xu hướng <strong>nhường, nhận hoặc góp chung electron</strong> để đạt cấu hình electron bền vững của khí hiếm (8 electron lớp ngoài cùng, trừ He có 2e).</p>
+            </div>
+
+            <div class="meta-citation">Mục II • SGK Trang 50</div>
+            <h3 class="section-title">Ba con đường chinh phục Bát tử Octet</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 14px 0;">
+              <div style="padding: 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0;">
+                <strong style="color: #1e40af;">1. Con đường Góp chung Electron (Tạo Phân tử Cl₂):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  Mỗi nguyên tử Cl có 7e hoá trị, cần thêm 1e để đạt 8e $	o$ Hai nguyên tử Cl mỗi bên góp 1e tạo thành 1 cặp electron dùng chung. Cả 2 nguyên tử đều đạt octet!
+                </p>
+                <span style="font-size: 12px; color: #2563eb;">$:\ddot{\text{Cl}}\cdot + \cdot\ddot{\text{Cl}}: \to :\ddot{\text{Cl}}:\ddot{\text{Cl}}:$ (hay $\text{Cl}-\text{Cl}$)</span>
+              </div>
+
+              <div style="padding: 12px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0;">
+                <strong style="color: #166534;">2. Con đường Nhường - Nhận Electron (Tạo Tinh thể NaF / NaCl):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  Na (1e ngoài cùng) dễ dàng <strong>nhường 1e</strong> thành cation $\text{Na}^+$ ($[\text{Ne}]$); F (7e ngoài cùng) <strong>nhận 1e</strong> thành anion $\text{F}^-$ ($[\text{Ne}]$). Cả hai ion trái dấu hút nhau bằng lực tĩnh điện bền chắc!
+                </p>
+                <span style="font-size: 12px; color: #15803d;">$\text{Na}\cdot + :\ddot{\text{F}}\cdot \to \text{Na}^+ + [:\ddot{\text{F}}:]^-$</span>
+              </div>
+
+              <div style="padding: 12px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0;">
+                <strong style="color: #b45309;">3. Nhiều liên kết góp chung (Phân tử Nước H₂O & Khí độc Phosphine PH₃):</strong>
+                <p style="margin: 4px 0; font-size: 13px; color: #1e293b;">
+                  Trong $\text{H}_2\text{O}$: O có 6e góp chung với 2 nguyên tử H (mỗi H góp 1e). O đạt 8e octet, mỗi H đạt 2e duplet của He.
+                </p>
+                <span style="font-size: 12px; color: #d97706;">Trong $\text{PH}_3$: P (nhóm VA) có 5e góp chung 3e với 3 nguyên tử H $	o$ P đạt octet 8e!</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHẦN 3: NGOẠI LỆ OCTET & ĐẤU TRƯỜNG SGK TRANG 50 -->
+          <div id="content-b10-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Em có biết: Các ngoại lệ của Quy tắc Octet (SGK Tr. 50)</h4>
+              <p>Quy tắc octet áp dụng đúng cho phần lớn các nguyên tố Chu kì 2 và kim loại/phi kim điển hình. Một số phân tử có số electron ngoài cùng ít hơn 8 (thiếu octet) hoặc nhiều hơn 8 (mở rộng octet).</p>
+            </div>
+
+            <div class="meta-citation">Em có biết • SGK Trang 50</div>
+            <h3 class="section-title">Ngoại lệ mở rộng Octet (PCl₅, SF₆)</h3>
+            <p style="font-size: 13.5px; line-height: 1.6; color: #334155;">
+              • <strong>Phân tử $\text{PCl}_5$:</strong> Nguyên tử Phosphorus ở tâm tạo 5 liên kết với 5 nguyên tử Cl, do đó lớp ngoài cùng của P có tới <strong>10 electron</strong> (vượt quá 8 electron).<br/>
+              • <strong>Phân tử $\text{SF}_6$:</strong> Sulfur tạo 6 liên kết, có <strong>12 electron</strong> lớp ngoài cùng.<br/>
+              • <strong>Phân tử $\text{BF}_3$:</strong> Boron chỉ có <strong>6 electron</strong> lớp ngoài cùng (thiếu octet).
+            </p>
+
+            <!-- Đấu trường luyện tập Bài 10 SGK -->
+            <div style="margin-top: 20px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 12px;">⚔️ Đấu trường bài tập SGK Trang 50</h4>
+              
+              <div id="b10-question-card-container">
+                <!-- Sẽ render qua hàm initB10QuizArena() -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">MÔ HÌNH KHẢO SÁT</span>
+              <span id="b10-hud-model" class="hud-value highlight">Góp chung electron: Cl₂</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">SỐ ELECTRON HOÁ TRỊ</span>
+              <span id="b10-hud-valence" class="hud-value">7e + 7e = 14e (1 cặp dùng chung)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">TRẠNG THÁI OCTET</span>
+              <span id="b10-hud-status" class="hud-value" style="color: #16a34a;">Đạt 8e Octet hoàn hảo</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">KIỂU LIÊN KẾT</span>
+              <span id="b10-hud-bond" class="hud-value" style="color: #2563eb;">Cộng hoá trị không phân cực</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1 & 2: Mô phỏng chuyển động hạt electron và hình thành liên kết 2.5D -->
+          <div id="panel-b10-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">⚛️ Phòng Lab Mô phỏng Quỹ đạo & Bát tử Octet 2.5D</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" id="btn-b10-sim-cl2" onclick="selectB10SimMode('cl2')">Cl₂ (Góp chung)</button>
+                <button class="btn-tool" id="btn-b10-sim-naf" onclick="selectB10SimMode('naf')">NaF (Nhường - Nhận)</button>
+                <button class="btn-tool" id="btn-b10-sim-h2o" onclick="selectB10SimMode('h2o')">H₂O (Nước)</button>
+                <button class="btn-tool" id="btn-b10-sim-pcl5" onclick="selectB10SimMode('pcl5')">PCl₅ (Ngoại lệ 10e)</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b10OctetCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 3: Đấu trường luyện tập & strip câu hỏi -->
+          <div id="panel-b10-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">Bảng điều khiển câu hỏi SGK Trang 50</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Bài 10: Quy tắc Octet</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b10-quiz-progress-text">
+                Đã hoàn thành: 0 / 3 câu
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;" id="b10-question-selector-strip">
+              <!-- Render selector strip -->
+            </div>
+            <div id="b10-quiz-score-board" style="margin-top: 30px; padding: 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; display: none;">
+              <h3 style="font-size: 22px; font-weight: 800; color: #16a34a; margin: 0 0 8px 0;">🎉 XUẤT SẮC! HOÀN THÀNH BÀI 10</h3>
+              <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">Bạn đã nắm vững Quy tắc Octet và cơ chế hình thành liên kết hoá học giữa các nguyên tử!</p>
+              <button class="btn-tool active" onclick="resetB10QuizArena()" style="padding: 10px 20px; font-size: 14px;">Làm lại Đấu trường</button>
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b10-lab-status-tip">
+              💡 <em>Quan sát electron quay quanh hạt nhân và đếm tổng số electron lớp ngoài cùng khi các nguyên tử liên kết.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB10InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -3654,18 +3934,28 @@
       if (studioB8) studioB8.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
       if (studioB9) studioB9.classList.remove('active');
+      const studioB10 = document.getElementById('view-studio-b10');
+      if (studioB10) studioB10.classList.remove('active');
       const studioB7 = document.getElementById('view-studio-b7');
       if (studioB7) studioB7.classList.remove('active');
       const studioB8 = document.getElementById('view-studio-b8');
       if (studioB8) studioB8.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
       if (studioB9) studioB9.classList.remove('active');
+      const studioB10 = document.getElementById('view-studio-b10');
+      if (studioB10) studioB10.classList.remove('active');
       const studioB8 = document.getElementById('view-studio-b8');
       if (studioB8) studioB8.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
       if (studioB9) studioB9.classList.remove('active');
+      const studioB10 = document.getElementById('view-studio-b10');
+      if (studioB10) studioB10.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
       if (studioB9) studioB9.classList.remove('active');
+      const studioB10 = document.getElementById('view-studio-b10');
+      if (studioB10) studioB10.classList.remove('active');
+      const studioB10 = document.getElementById('view-studio-b10');
+      if (studioB10) studioB10.classList.remove('active');
       
       if (lessonId === 'b1') {
         document.getElementById('view-studio').classList.add('active');
@@ -3728,6 +4018,13 @@
           if (typeof initB9ClozeLab === 'function') initB9ClozeLab();
           if (typeof initB9QuizArena === 'function') initB9QuizArena();
         }, 50);
+      } else if (lessonId === 'b10') {
+        if (studioB10) studioB10.classList.add('active');
+        switchPartB10('part1');
+        setTimeout(() => {
+          if (typeof initB10OctetLab === 'function') initB10OctetLab();
+          if (typeof initB10QuizArena === 'function') initB10QuizArena();
+        }, 50);
       }
       window.location.hash = lessonId;
     }
@@ -3749,6 +4046,8 @@
       if (studioB8) studioB8.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
       if (studioB9) studioB9.classList.remove('active');
+      const studioB10 = document.getElementById('view-studio-b10');
+      if (studioB10) studioB10.classList.remove('active');
       document.getElementById('view-dashboard').classList.add('active');
       window.location.hash = '';
     }
@@ -8006,6 +8305,550 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       b9SelectedBranch = 0;
       drawB9Mindmap();
       initB9ClozeLab();
+    }
+
+
+
+
+
+    /* ==========================================================
+       LOGIC BÀI 10: QUY TẮC OCTET & KHÁI NIỆM LIÊN KẾT HOÁ HỌC
+       ========================================================== */
+
+    let currentPartB10 = 'part1';
+    let b10SimMode = 'cl2'; // 'cl2' | 'naf' | 'h2o' | 'pcl5'
+
+    const B10_MODELS_DATA = {
+      'cl2': {
+        title: 'Phân tử Chlorine (Cl₂)',
+        valence: '7e (Cl trái) + 7e (Cl phải) ➔ Góp 1 cặp e dùng chung',
+        status: 'Cả 2 nguyên tử Cl đều đạt Octet (8e)',
+        statusColor: '#16a34a',
+        bond: 'Liên kết cộng hoá trị không phân cực (Cl — Cl)',
+        tip: 'Mỗi nguyên tử Chlorine góp 1 electron hoá trị độc thân để tạo thành 1 liên kết cộng hoá trị đơn.'
+      },
+      'naf': {
+        title: 'Hợp chất Sodium Fluoride (NaF)',
+        valence: 'Na (1e hoá trị) nhường 1e ➔ F (7e) nhận 1e',
+        status: 'Cả cation Na⁺ và anion F⁻ đều đạt Octet [Ne]',
+        statusColor: '#16a34a',
+        bond: 'Liên kết ion (Lực hút tĩnh điện giữa Na⁺ và F⁻)',
+        tip: 'Na nhường 1e ngoài cùng trở thành ion Na⁺ (10e giống Ne); F nhận 1e trở thành ion F⁻ (10e giống Ne).'
+      },
+      'h2o': {
+        title: 'Phân tử Nước (H₂O)',
+        valence: 'O (6e ngoài cùng) góp chung 2 cặp e với 2 nguyên tử H',
+        status: 'O đạt Octet (8e), mỗi H đạt Duplet (2e của He)',
+        statusColor: '#16a34a',
+        bond: 'Liên kết cộng hoá trị phân cực (H — O — H, góc 104.5°)',
+        tip: 'Oxygen ở tâm có 8e xung quanh (gồm 2 cặp liên kết và 2 cặp electron tự do không liên kết).'
+      },
+      'pcl5': {
+        title: 'Phân tử Phosphorus Pentachloride (PCl₅)',
+        valence: 'P (5e ngoài cùng) góp chung 5 cặp e với 5 nguyên tử Cl',
+        status: 'P có 10 electron ngoài cùng (NGOẠI LỆ MỞ RỘNG OCTET)',
+        statusColor: '#d97706',
+        bond: '5 liên kết cộng hoá trị đơn hình chóp đôi tam giác',
+        tip: 'Phosphorus ở chu kì 3 có phân lớp 3d còn trống nên có thể mở rộng lớp vỏ electron lên 10e.'
+      }
+    };
+
+    function switchPartB10(partId) {
+      currentPartB10 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b10-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      // Show/hide sections in theory pane
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b10-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+      });
+
+      // Show/hide panels
+      const panelP1 = document.getElementById('panel-b10-part1');
+      const panelP3 = document.getElementById('panel-b10-part3');
+      if (panelP1) panelP1.style.display = (partId === 'part1' || partId === 'part2') ? 'flex' : 'none';
+      if (panelP3) panelP3.style.display = (partId === 'part3') ? 'flex' : 'none';
+
+      const activeSec = document.getElementById('content-b10-' + partId);
+      if (activeSec) activeSec.scrollTop = 0;
+
+      if (partId === 'part1' || partId === 'part2') {
+        setTimeout(initB10OctetLab, 50);
+      } else if (partId === 'part3') {
+        setTimeout(initB10QuizArena, 50);
+      }
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function checkB10MiniQuiz(btn, isCorrect, feedback) {
+      const parent = btn.parentElement.parentElement;
+      const allBtns = parent.querySelectorAll('.opt-btn');
+      allBtns.forEach(b => {
+        b.style.pointerEvents = 'none';
+        b.style.opacity = '0.7';
+      });
+
+      if (isCorrect) {
+        btn.style.background = '#dcfce7';
+        btn.style.borderColor = '#16a34a';
+        btn.style.color = '#15803d';
+        btn.style.opacity = '1';
+      } else {
+        btn.style.background = '#fee2e2';
+        btn.style.borderColor = '#dc2626';
+        btn.style.color = '#b91c1c';
+        btn.style.opacity = '1';
+      }
+
+      const fb = parent.querySelector('.quiz-feedback');
+      if (fb) {
+        fb.style.display = 'block';
+        fb.style.background = isCorrect ? '#f0fdf4' : '#fef2f2';
+        fb.style.color = isCorrect ? '#166534' : '#991b1b';
+        fb.style.border = `1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}`;
+        fb.innerHTML = feedback;
+      }
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    /* -------------------------------------------------------------
+       LAB CANVAS: MÔ PHỎNG LIÊN KẾT & OCTET 2.5D (BÀI 10)
+       ------------------------------------------------------------- */
+    let b10OctetCanvas, b10OctetCtx;
+    let b10AnimAngle = 0;
+    let b10AnimFrameId;
+
+    function initB10OctetLab() {
+      b10OctetCanvas = document.getElementById('b10OctetCanvas');
+      if (!b10OctetCanvas) return;
+      b10OctetCtx = b10OctetCanvas.getContext('2d');
+      resizeB10OctetCanvas();
+
+      if (b10AnimFrameId) cancelAnimationFrame(b10AnimFrameId);
+      animateB10Octet();
+    }
+
+    function resizeB10OctetCanvas() {
+      if (!b10OctetCanvas) return;
+      const rect = b10OctetCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b10OctetCanvas.width = rect.width * dpr;
+      b10OctetCanvas.height = rect.height * dpr;
+      b10OctetCtx.scale(dpr, dpr);
+    }
+
+    function selectB10SimMode(mode) {
+      b10SimMode = mode;
+      ['cl2', 'naf', 'h2o', 'pcl5'].forEach(m => {
+        const btn = document.getElementById('btn-b10-sim-' + m);
+        if (btn) btn.classList.toggle('active', m === mode);
+      });
+      updateB10Hud();
+    }
+
+    function updateB10Hud() {
+      const d = B10_MODELS_DATA[b10SimMode];
+      const modelText = document.getElementById('b10-hud-model');
+      if (modelText) modelText.innerText = d.title;
+
+      const valText = document.getElementById('b10-hud-valence');
+      if (valText) valText.innerText = d.valence;
+
+      const statText = document.getElementById('b10-hud-status');
+      if (statText) {
+        statText.innerText = d.status;
+        statText.style.color = d.statusColor;
+      }
+
+      const bondText = document.getElementById('b10-hud-bond');
+      if (bondText) bondText.innerText = d.bond;
+
+      const tip = document.getElementById('b10-lab-status-tip');
+      if (tip) tip.innerHTML = `💡 <strong>${d.title}:</strong> ${d.tip}`;
+    }
+
+    function animateB10Octet() {
+      if (!b10OctetCtx || !b10OctetCanvas) return;
+      const w = b10OctetCanvas.parentElement.clientWidth;
+      const h = b10OctetCanvas.parentElement.clientHeight;
+      const ctx = b10OctetCtx;
+
+      ctx.clearRect(0, 0, w, h);
+      b10AnimAngle += 0.02;
+
+      const cX = w / 2, cY = h / 2 - 10;
+
+      if (b10SimMode === 'cl2') {
+        drawB10Cl2Sim(ctx, cX, cY);
+      } else if (b10SimMode === 'naf') {
+        drawB10NaFSim(ctx, cX, cY);
+      } else if (b10SimMode === 'h2o') {
+        drawB10H2OSim(ctx, cX, cY);
+      } else if (b10SimMode === 'pcl5') {
+        drawB10PCl5Sim(ctx, cX, cY);
+      }
+
+      b10AnimFrameId = requestAnimationFrame(animateB10Octet);
+    }
+
+    function drawB10Cl2Sim(ctx, cX, cY) {
+      const dist = 75;
+      const leftX = cX - dist, rightX = cX + dist;
+      const r = 58;
+
+      // Draw two overlapping atomic orbits
+      drawAtomCircle(ctx, leftX, cY, r, '#3b82f6', 'Cl');
+      drawAtomCircle(ctx, rightX, cY, r, '#3b82f6', 'Cl');
+
+      // Shared electron pair in overlap zone
+      const sharedX = cX;
+      drawElectron(ctx, sharedX, cY - 14 + Math.sin(b10AnimAngle * 2) * 4, '#f59e0b', 'e⁻');
+      drawElectron(ctx, sharedX, cY + 14 - Math.sin(b10AnimAngle * 2) * 4, '#f59e0b', 'e⁻');
+
+      // Draw 6 unshared electrons around left Cl
+      for (let i = 0; i < 3; i++) {
+        const ang = Math.PI * 0.7 + i * (Math.PI * 0.3);
+        const ex = leftX + Math.cos(ang + b10AnimAngle * 0.5) * (r - 10);
+        const ey = cY + Math.sin(ang + b10AnimAngle * 0.5) * (r - 10);
+        drawElectron(ctx, ex, ey, '#2563eb', 'e⁻');
+        const ex2 = leftX + Math.cos(ang + 0.15 + b10AnimAngle * 0.5) * (r - 10);
+        const ey2 = cY + Math.sin(ang + 0.15 + b10AnimAngle * 0.5) * (r - 10);
+        drawElectron(ctx, ex2, ey2, '#2563eb', 'e⁻');
+      }
+
+      // Draw 6 unshared electrons around right Cl
+      for (let i = 0; i < 3; i++) {
+        const ang = -Math.PI * 0.3 + i * (Math.PI * 0.3);
+        const ex = rightX + Math.cos(ang - b10AnimAngle * 0.5) * (r - 10);
+        const ey = cY + Math.sin(ang - b10AnimAngle * 0.5) * (r - 10);
+        drawElectron(ctx, ex, ey, '#2563eb', 'e⁻');
+        const ex2 = rightX + Math.cos(ang + 0.15 - b10AnimAngle * 0.5) * (r - 10);
+        const ey2 = cY + Math.sin(ang + 0.15 - b10AnimAngle * 0.5) * (r - 10);
+        drawElectron(ctx, ex2, ey2, '#2563eb', 'e⁻');
+      }
+
+      // Overlap label
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#b45309';
+      ctx.textAlign = 'center';
+      ctx.fillText('1 Cặp e dùng chung (Liên kết đơn)', cX, cY + r + 35);
+    }
+
+    function drawB10NaFSim(ctx, cX, cY) {
+      const leftX = cX - 110, rightX = cX + 110;
+
+      // Cation Na+ (nhỏ hơn, màu xanh)
+      drawAtomCircle(ctx, leftX, cY, 44, '#3b82f6', 'Na⁺');
+      ctx.font = '700 11px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#2563eb';
+      ctx.textAlign = 'center';
+      ctx.fillText('[Ne] (Đã nhường 1e)', leftX, cY + 65);
+
+      // Anion F- (lớn hơn, màu ngọc)
+      drawAtomCircle(ctx, rightX, cY, 62, '#10b981', 'F⁻');
+      ctx.fillStyle = '#059669';
+      ctx.fillText('[Ne] (Đã nhận 1e ➔ Đủ 8e)', rightX, cY + 80);
+
+      // 8 electrons around F-
+      for (let i = 0; i < 8; i++) {
+        const ang = (i * Math.PI / 4) + b10AnimAngle;
+        const ex = rightX + Math.cos(ang) * 48;
+        const ey = cY + Math.sin(ang) * 48;
+        drawElectron(ctx, ex, ey, '#059669', 'e⁻');
+      }
+
+      // Electrostatic attraction arrow between Na+ and F-
+      ctx.save();
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(leftX + 48, cY);
+      ctx.lineTo(rightX - 66, cY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#d97706';
+      ctx.fillText('⚡ Lực hút tĩnh điện (Liên kết ion)', cX, cY - 14);
+    }
+
+    function drawB10H2OSim(ctx, cX, cY) {
+      // Oxygen at center
+      drawAtomCircle(ctx, cX, cY - 20, 52, '#ef4444', 'O');
+
+      // Two Hydrogen atoms at angles 104.5 degrees
+      const h1X = cX - 90, h1Y = cY + 50;
+      const h2X = cX + 90, h2Y = cY + 50;
+
+      drawAtomCircle(ctx, h1X, h1Y, 30, '#0284c7', 'H');
+      drawAtomCircle(ctx, h2X, h2Y, 30, '#0284c7', 'H');
+
+      // Bonding electron pairs
+      drawElectron(ctx, (cX + h1X) / 2, (cY - 20 + h1Y) / 2 - 4, '#f59e0b', 'e⁻');
+      drawElectron(ctx, (cX + h1X) / 2, (cY - 20 + h1Y) / 2 + 6, '#f59e0b', 'e⁻');
+
+      drawElectron(ctx, (cX + h2X) / 2, (cY - 20 + h2Y) / 2 - 4, '#f59e0b', 'e⁻');
+      drawElectron(ctx, (cX + h2X) / 2, (cY - 20 + h2Y) / 2 + 6, '#f59e0b', 'e⁻');
+
+      // 2 lone pairs on top of Oxygen
+      drawElectron(ctx, cX - 16, cY - 70, '#dc2626', 'e⁻');
+      drawElectron(ctx, cX - 8, cY - 74, '#dc2626', 'e⁻');
+      drawElectron(ctx, cX + 16, cY - 70, '#dc2626', 'e⁻');
+      drawElectron(ctx, cX + 8, cY - 74, '#dc2626', 'e⁻');
+
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#dc2626';
+      ctx.textAlign = 'center';
+      ctx.fillText('2 Cặp e tự do (Lone pairs)', cX, cY - 86);
+      ctx.fillStyle = '#0284c7';
+      ctx.fillText('Góc liên kết 104.5° (Mô hình gấp khúc)', cX, cY + 95);
+    }
+
+    function drawB10PCl5Sim(ctx, cX, cY) {
+      // P at center
+      drawAtomCircle(ctx, cX, cY, 46, '#ea580c', 'P (10e)');
+
+      // 5 Cl atoms around (trigonal bipyramidal projection)
+      const angles = [0, Math.PI * 0.4, Math.PI * 0.8, Math.PI * 1.2, Math.PI * 1.6];
+      const dist = 110;
+
+      angles.forEach((ang, i) => {
+        const clX = cX + Math.cos(ang + b10AnimAngle * 0.3) * dist;
+        const clY = cY + Math.sin(ang + b10AnimAngle * 0.3) * dist;
+        drawAtomCircle(ctx, clX, clY, 30, '#10b981', 'Cl');
+
+        // Line connect to P
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cX, cY);
+        ctx.lineTo(clX, clY);
+        ctx.stroke();
+
+        // 2 electrons on bond
+        const midX = (cX + clX) / 2, midY = (cY + clY) / 2;
+        drawElectron(ctx, midX, midY, '#f59e0b', 'e⁻');
+      });
+
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#ea580c';
+      ctx.textAlign = 'center';
+      ctx.fillText('⚠️ Ngoại lệ mở rộng Octet: 5 liên kết = 10 electron', cX, cY + dist + 45);
+    }
+
+    function drawAtomCircle(ctx, x, y, r, color, label) {
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = '800 15px "Plus Jakarta Sans"';
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, x, y);
+      ctx.restore();
+    }
+
+    function drawElectron(ctx, x, y, color, label) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    /* -------------------------------------------------------------
+       LAB 3: ĐẤU TRƯỜNG LUYỆN TẬP SGK TRANG 50 (BÀI 10)
+       ------------------------------------------------------------- */
+    const B10_EXERCISES_DATA = [
+      {
+        id: 1,
+        title: "Câu hỏi 3 (SGK Trang 50): Giải thích liên kết trong CCl₄",
+        text: "Vận dụng quy tắc octet để giải thích sự hình thành liên kết trong phân tử Carbon tetrachloride (CCl₄):",
+        options: [
+          "A. C có 4e hoá trị, mỗi nguyên tử Cl có 7e hoá trị ➔ C góp chung 4 cặp e với 4 nguyên tử Cl, cả C và 4 Cl đều đạt 8e octet",
+          "B. C nhường 4 electron cho 4 nguyên tử Cl để tạo ion C⁴⁺ và 4 Cl⁻",
+          "C. C nhận 4 electron từ các nguyên tử Cl để đạt 8 electron",
+          "D. CCl₄ chỉ có liên kết cho - nhận giữa C và Cl"
+        ],
+        correct: 0, // A
+        explain: "Chính xác! Carbon có 4 electron lớp ngoài cùng (cần 4e), mỗi Chlorine có 7 electron (cần 1e). Carbon góp chung 1 electron với mỗi nguyên tử Chlorine tạo nên 4 liên kết cộng hoá trị đơn. Kết quả cả Carbon và 4 Chlorine đều đạt cơ cấu octet 8e bền vững."
+      },
+      {
+        id: 2,
+        title: "Câu hỏi 3b (SGK Trang 50): Sự hình thành liên kết trong NF₃",
+        text: "Sự phân bố electron trong phân tử Nitrogen trifluoride (NF₃) tuân theo quy tắc octet như thế nào?",
+        options: [
+          "A. N nhường 3 electron cho 3 nguyên tử F tạo thành hợp chất ion",
+          "B. N (có 5e hoá trị) góp chung 3e với 3 nguyên tử F, còn lại 1 cặp e tự do ➔ Cả N và 3 nguyên tử F đều đạt 8e octet",
+          "C. N tạo liên kết đôi với 1 nguyên tử F và liên kết đơn với 2 nguyên tử F",
+          "D. N có 10 electron lớp ngoài cùng (ngoại lệ octet)"
+        ],
+        correct: 1, // B
+        explain: "Chính xác! Nitrogen thuộc nhóm VA có 5e hoá trị (gồm 1 cặp e tự do và 3e độc thân). N đem 3e độc thân góp chung với 3 nguyên tử F (mỗi F góp 1e). Xung quanh N có 3 cặp e liên kết + 1 cặp e chưa liên kết = 8e (octet); mỗi F cũng đạt 8e."
+      },
+      {
+        id: 3,
+        title: "Câu hỏi 4 (SGK Trang 50): Khí Phosphine (PH₃) và hiện tượng ma trơi",
+        text: "Phosphine (PH₃) là khí độc, tự cháy ngoài không khí tạo hiện tượng 'ma trơi'. Vận dụng quy tắc octet giải thích liên kết trong PH₃:",
+        options: [
+          "A. P (nhóm VA, 5e hoá trị) góp chung 3 electron với 3 nguyên tử H (mỗi H góp 1e) ➔ P đạt octet 8e, mỗi H đạt duplet 2e",
+          "B. P nhường 3 electron cho 3 nguyên tử H tạo muối hydride ion",
+          "C. P nhận 3 electron từ 3 nguyên tử H để đạt cấu hình Neon",
+          "D. P có 6 electron lớp ngoài cùng trong phân tử PH₃"
+        ],
+        correct: 0, // A
+        explain: "Chính xác! P thuộc nhóm VA có 5e lớp ngoài cùng. P góp chung 3e với 3 nguyên tử H tạo 3 cặp e dùng chung. Xung quanh P có 3 cặp e liên kết và 1 cặp e không liên kết ➔ P đạt octet 8e bền của Argon (Ar). Mỗi H có 2e bền vững của Helium (He)."
+      }
+    ];
+
+    let b10CurrentQuestionIdx = 0;
+    let b10UserAnswers = {};
+
+    function initB10QuizArena() {
+      b10CurrentQuestionIdx = 0;
+      b10UserAnswers = {};
+      renderB10QuizStrip();
+      renderB10QuestionCard();
+    }
+
+    function renderB10QuizStrip() {
+      const strip = document.getElementById('b10-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = '';
+
+      B10_EXERCISES_DATA.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = 'b10-q-strip-btn-' + idx;
+        btn.className = 'btn-tool';
+        btn.style.minWidth = '42px';
+        btn.style.height = '36px';
+        btn.style.fontWeight = '700';
+
+        const isAnswered = (b10UserAnswers[idx] !== undefined);
+        const isCurrent = (idx === b10CurrentQuestionIdx);
+
+        if (isCurrent) {
+          btn.style.borderColor = '#0284c7';
+          btn.style.background = '#e0f2fe';
+          btn.style.color = '#0369a1';
+        } else if (isAnswered) {
+          const isCorrect = (b10UserAnswers[idx] === q.correct);
+          btn.style.background = isCorrect ? '#dcfce7' : '#fee2e2';
+          btn.style.borderColor = isCorrect ? '#16a34a' : '#dc2626';
+          btn.style.color = isCorrect ? '#15803d' : '#b91c1c';
+        } else {
+          btn.style.background = '#f8fafc';
+          btn.style.color = '#64748b';
+        }
+
+        btn.innerText = `Câu ${idx + 1}`;
+        btn.onclick = () => {
+          b10CurrentQuestionIdx = idx;
+          renderB10QuizStrip();
+          renderB10QuestionCard();
+        };
+        strip.appendChild(btn);
+      });
+
+      const prog = document.getElementById('b10-quiz-progress-text');
+      const answeredCount = Object.keys(b10UserAnswers).length;
+      if (prog) prog.innerText = `Đã hoàn thành: ${answeredCount} / ${B10_EXERCISES_DATA.length} câu`;
+
+      const scoreBoard = document.getElementById('b10-quiz-score-board');
+      if (scoreBoard) {
+        scoreBoard.style.display = (answeredCount === B10_EXERCISES_DATA.length) ? 'block' : 'none';
+      }
+    }
+
+    function renderB10QuestionCard() {
+      const container = document.getElementById('b10-question-card-container');
+      if (!container) return;
+
+      const q = B10_EXERCISES_DATA[b10CurrentQuestionIdx];
+      const userSelected = b10UserAnswers[b10CurrentQuestionIdx];
+      const isAnswered = (userSelected !== undefined);
+
+      let optionsHtml = '';
+      q.options.forEach((opt, optIdx) => {
+        let optStyle = 'width:100%; text-align:left; padding:12px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:8px; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between;';
+        if (isAnswered) {
+          if (optIdx === q.correct) {
+            optStyle += 'background:#dcfce7; border-color:#16a34a; color:#15803d; font-weight:700;';
+          } else if (optIdx === userSelected) {
+            optStyle += 'background:#fee2e2; border-color:#dc2626; color:#b91c1c; font-weight:700;';
+          } else {
+            optStyle += 'opacity:0.6;';
+          }
+        }
+
+        optionsHtml += `
+          <button style="${optStyle}" onclick="selectB10Answer(${optIdx})" ${isAnswered ? 'disabled' : ''}>
+            <span>${opt}</span>
+            ${isAnswered && optIdx === q.correct ? '<span style="color:#16a34a; font-weight:800;">✓</span>' : ''}
+            ${isAnswered && optIdx === userSelected && userSelected !== q.correct ? '<span style="color:#dc2626; font-weight:800;">✗</span>' : ''}
+          </button>
+        `;
+      });
+
+      let explainHtml = '';
+      if (isAnswered) {
+        const isCorrect = (userSelected === q.correct);
+        explainHtml = `
+          <div style="margin-top:14px; padding:12px; border-radius:8px; background:${isCorrect ? '#f0fdf4' : '#fef2f2'}; border:1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; font-size:13px; color:${isCorrect ? '#166534' : '#991b1b'}; line-height:1.5;">
+            <strong>${isCorrect ? '✓ Câu trả lời chính xác!' : '✗ Câu trả lời chưa chính xác!'}</strong><br/>
+            ${q.explain}
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11px; font-weight:700; color:#0284c7; text-transform:uppercase;">${q.title}</span>
+            <span style="font-size:11px; font-weight:600; color:#64748b;">Câu ${b10CurrentQuestionIdx + 1} / ${B10_EXERCISES_DATA.length}</span>
+          </div>
+          <p style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:14px; line-height:1.5;">${q.text}</p>
+          <div>
+            ${optionsHtml}
+          </div>
+          ${explainHtml}
+        </div>
+      `;
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function selectB10Answer(optIdx) {
+      if (b10UserAnswers[b10CurrentQuestionIdx] !== undefined) return;
+      b10UserAnswers[b10CurrentQuestionIdx] = optIdx;
+      renderB10QuizStrip();
+      renderB10QuestionCard();
+    }
+
+    function resetB10QuizArena() {
+      b10UserAnswers = {};
+      b10CurrentQuestionIdx = 0;
+      renderB10QuizStrip();
+      renderB10QuestionCard();
+    }
+
+    function resetB10InteractiveState() {
+      b10SimMode = 'cl2';
+      selectB10SimMode('cl2');
     }
 
 
