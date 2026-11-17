@@ -1420,6 +1420,47 @@
         </div>
       </section>
 
+      <!-- ========================================================
+           CHƯƠNG 6: TỐC ĐỘ PHẢN ỨNG HOÁ HỌC
+           ======================================================== -->
+      <section class="chapter-block" style="margin-top: 48px;">
+        <div class="chapter-header-strip">
+          <span class="chap-badge">Chương 6</span>
+          <div>
+            <h2 class="chap-title">Tốc Độ Phản Ứng Hoá Học</h2>
+            <p class="chap-desc">Tốc độ trung bình v_tb, định luật tác dụng khối lượng Guldberg - Waage, 5 yếu tố ảnh hưởng & quy tắc hệ số nhiệt độ Van't Hoff.</p>
+          </div>
+          <span class="chap-progress-pill">Bài 19 • Chương 6</span>
+        </div>
+
+        <div class="cards-grid">
+          <!-- Bài 19: Tốc độ phản ứng -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <path d="M 30 70 Q 70 70 90 45 T 180 25" fill="none" stroke="#10b981" stroke-width="2.5"/>
+                <path d="M 30 25 Q 70 25 90 45 T 180 70" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+                <circle cx="110" cy="45" r="5" fill="#f59e0b"/>
+                <text x="110" y="82" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#0284c7" text-anchor="middle">v = k·C_Aᵃ·C_Bᵇ</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status active">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 19: Tốc độ phản ứng hoá học</h3>
+                <p>Khái niệm tốc độ phản ứng, công thức v_tb, định luật tác dụng khối lượng Guldberg - Waage, 5 yếu tố ảnh hưởng & quy tắc Van't Hoff.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b19')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
 
 
 
@@ -6064,6 +6105,254 @@
     </div>
   </div>
 
+
+  <!-- ========================================================
+       BÀI 19: TỐC ĐỘ PHẢN ỨNG HOÁ HỌC
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM SGK TR. 92 - 101)
+       ======================================================== -->
+  <div id="view-studio-b19" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Topbar -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 6 • Bài 19</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Tốc Độ Phản Ứng Hoá Học</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 19 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b19-p1" class="tab-seg-btn active" onclick="switchPartB19('part1')">
+            <span>I. Khái Niệm & Tốc Độ Trung Bình</span>
+          </button>
+          <button id="tab-btn-b19-p2" class="tab-seg-btn" onclick="switchPartB19('part2')">
+            <span>II. Định Luật Guldberg – Waage</span>
+          </button>
+          <button id="tab-btn-b19-p3" class="tab-seg-btn" onclick="switchPartB19('part3')">
+            <span>III. 5 Yếu Tố Ảnh Hưởng & Van't Hoff</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: KHÁI NIỆM TỐC ĐỘ PHẢN ỨNG VÀ TỐC ĐỘ TRUNG BÌNH -->
+          <div id="content-b19-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần I (SGK Trang 92 – 95)</h4>
+              <p>Hiểu khái niệm tốc độ phản ứng hoá học đặc trưng cho sự nhanh hay chậm của phản ứng; thành thạo công thức tính tốc độ trung bình $\bar{v}$ theo độ biến thiên nồng độ chất đầu (dấu trừ) và sản phẩm (dấu cộng).</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 92 – 95</div>
+            <h3 class="section-title">Khái Niệm Tốc Độ Phản Ứng & Tốc Độ Trung Bình</h3>
+            
+            <p><strong>1. Định nghĩa chuẩn:</strong> <em>Tốc độ phản ứng hoá học</em> là đại lượng đặc trưng cho sự biến thiên nồng độ của một trong các chất phản ứng hoặc sản phẩm trong một đơn vị thời gian.</p>
+            <p><strong>Đơn vị thường dùng:</strong> $\text{mol} \cdot \text{L}^{-1} \cdot \text{s}^{-1}$ ($\text{M} \cdot \text{s}^{-1}$) hoặc $\text{mol} \cdot \text{L}^{-1} \cdot \text{min}^{-1}$ ($\text{M} \cdot \text{min}^{-1}$).</p>
+
+            <div style="padding: 14px; background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px; margin: 14px 0;">
+              <strong style="color: #1e40af; font-size: 13.5px;">Công thức tính tốc độ trung bình ($\bar{v}$):</strong>
+              <p style="margin: 6px 0; font-size: 13px; color: #1e293b;">
+                Xét phản ứng tổng quát: $a\text{A} + b\text{B} \rightarrow c\text{C} + d\text{D}$
+              </p>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #1d4ed8; background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #93c5fd;">
+                $$\bar{v} = -\frac{1}{a} \frac{\Delta C_\text{A}}{\Delta t} = -\frac{1}{b} \frac{\Delta C_\text{B}}{\Delta t} = +\frac{1}{c} \frac{\Delta C_\text{C}}{\Delta t} = +\frac{1}{d} \frac{\Delta C_\text{D}}{\Delta t}$$
+              </div>
+              <ul style="margin: 8px 0 0 16px; font-size: 12.5px; color: #475569; line-height: 1.6;">
+                <li>Dấu <strong>$-$</strong>: Dành cho chất phản ứng vì nồng độ giảm dần theo thời gian ($\Delta C < 0$), giúp $\bar{v}$ luôn mang giá trị dương.</li>
+                <li>Dấu <strong>$+$</strong>: Dành cho chất sản phẩm vì nồng độ tăng dần ($\Delta C > 0$).</li>
+                <li>Hệ số $\frac{1}{a}, \frac{1}{b}, \frac{1}{c}, \frac{1}{d}$: Giúp quy đổi về cùng một tốc độ chuẩn độc lập với chất được chọn theo dõi.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: ĐỊNH LUẬT TÁC DỤNG KHỐI LƯỢNG GULDBERG - WAAGE -->
+          <div id="content-b19-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần II (SGK Trang 96 – 97)</h4>
+              <p>Hiểu định luật tác dụng khối lượng (chỉ áp dụng cho phản ứng đơn giản 1 giai đoạn); ý nghĩa của hằng số tốc độ phản ứng $k$ (tốc độ khi nồng độ các chất đều bằng $1\text{ M}$, chỉ phụ thuộc vào bản chất phản ứng và nhiệt độ).</p>
+            </div>
+
+            <div class="meta-citation">Mục II • SGK Trang 96 – 97</div>
+            <h3 class="section-title">Định Luật Tác Dụng Khối Lượng (Guldberg – Waage)</h3>
+
+            <div style="padding: 14px; background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 10px; margin: 14px 0;">
+              <strong style="color: #166534; font-size: 13.5px;">Biểu thức định luật đối với phản ứng đơn giản:</strong>
+              <p style="margin: 6px 0; font-size: 13px; color: #1e293b;">
+                Xét phản ứng đơn giản: $a\text{A} + b\text{B} \rightarrow \text{Sản phẩm}$
+              </p>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #15803d; background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #86efac;">
+                $$v = k \cdot C_\text{A}^a \cdot C_\text{B}^b$$
+              </div>
+              <ul style="margin: 8px 0 0 16px; font-size: 12.5px; color: #334155; line-height: 1.6;">
+                <li>$k$: <em>Hằng số tốc độ phản ứng</em> (chỉ phụ thuộc vào bản chất chất phản ứng và nhiệt độ, <strong>không phụ thuộc vào nồng độ</strong>).</li>
+                <li>Khi $C_\text{A} = C_\text{B} = 1\text{ M}$ thì $v = k$ (tốc độ riêng của phản ứng).</li>
+                <li>Giá trị $k$ càng lớn thì phản ứng xảy ra càng nhanh.</li>
+              </ul>
+            </div>
+
+            <div style="padding: 10px 14px; background: #fefce8; border-left: 4px solid #facc15; font-size: 13px; color: #854d0e;">
+              <strong>Cảnh báo sư phạm quan trọng:</strong> Định luật tác dụng khối lượng với số mũ trùng hệ số tỉ lượng $a, b$ chỉ đúng tuyệt đối cho <em>phản ứng đơn giản</em> (xảy ra trong 1 va chạm duy nhất). Phản ứng phức tạp nhiều giai đoạn phải xác định số mũ bằng thực nghiệm.
+            </div>
+          </div>
+
+          <!-- PHẦN 3: 5 YẾU TỐ ẢNH HƯỞNG & HỆ SỐ NHIỆT ĐỘ VAN'T HOFF -->
+          <div id="content-b19-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu Phần III (SGK Trang 97 – 101)</h4>
+              <p>Nắm vững cơ chế va chạm hiệu quả giải thích 5 yếu tố ảnh hưởng: Nồng độ, Áp suất, Nhiệt độ, Diện tích bề mặt tiếp xúc và Chất xúc tác; công thức hệ số nhiệt độ Van't Hoff $\gamma$ và ứng dụng bảo quản thực phẩm, đèn xì oxy-acetylene.</p>
+            </div>
+
+            <div class="meta-citation">Mục III • SGK Trang 97 – 101</div>
+            <h3 class="section-title">5 Yếu Tố Ảnh Hưởng Tốc Độ Phản Ứng</h3>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin: 14px 0;">
+              <div style="padding: 10px 12px; background: #f8fafc; border-left: 4px solid #3b82f6; border-radius: 0 6px 6px 0; font-size: 13px;">
+                <strong>1. Nồng độ:</strong> Tăng nồng độ chất phản ứng $\rightarrow$ Mật độ hạt tăng $\rightarrow$ Số va chạm hiệu quả tăng $\rightarrow$ $v$ tăng.
+              </div>
+              <div style="padding: 10px 12px; background: #f8fafc; border-left: 4px solid #06b6d4; border-radius: 0 6px 6px 0; font-size: 13px;">
+                <strong>2. Áp suất (chất khí):</strong> Tăng áp suất $\rightarrow$ Thể tích thu hẹp, nồng độ khí tăng $\rightarrow$ $v$ tăng.
+              </div>
+              <div style="padding: 10px 12px; background: #f8fafc; border-left: 4px solid #ef4444; border-radius: 0 6px 6px 0; font-size: 13px;">
+                <strong>3. Nhiệt độ & Quy tắc Van't Hoff:</strong> Tăng nhiệt độ $\rightarrow$ Động năng phân tử tăng $\rightarrow$ Tần số và tỉ lệ va chạm vượt rào cản năng lượng hoạt hoá tăng.
+                <div style="margin-top: 6px; font-family: 'JetBrains Mono', monospace; color: #dc2626; background: #ffffff; padding: 6px 10px; border-radius: 4px; border: 1px solid #fca5a5;">
+                  $$\frac{v_{T_2}}{v_{T_1}} = \gamma^{\frac{T_2 - T_1}{10}}$$
+                </div>
+                <em>Quy tắc:</em> Khi nhiệt độ tăng $10^\circ\text{C}$, tốc độ phản ứng thường tăng từ $2$ đến $4$ lần ($\gamma \approx 2 - 4$).
+              </div>
+              <div style="padding: 10px 12px; background: #f8fafc; border-left: 4px solid #f59e0b; border-radius: 0 6px 6px 0; font-size: 13px;">
+                <strong>4. Diện tích bề mặt tiếp xúc (chất rắn):</strong> Chia nhỏ hạt (đập vụn, nghiền bột) làm tăng diện tích tiếp xúc với dung dịch $\rightarrow$ $v$ tăng mạnh (ví dụ: đá vôi đập nhỏ tan nhanh hơn đá viên).
+              </div>
+              <div style="padding: 10px 12px; background: #f8fafc; border-left: 4px solid #10b981; border-radius: 0 6px 6px 0; font-size: 13px;">
+                <strong>5. Chất xúc tác:</strong> Làm giảm năng lượng hoạt hoá ($E_a$) của phản ứng mà không bị tiêu hao sau phản ứng $\rightarrow$ Tạo con đường phản ứng mới dễ dàng hơn (ví dụ: $\text{MnO}_2$ xúc tác phân huỷ $\text{H}_2\text{O}_2$).
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">CHỦ ĐỀ ĐANG HỌC</span>
+              <span class="hud-value highlight">Chương 6 • Tốc Độ Phản Ứng</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">CÔNG CỤ LAB</span>
+              <span id="b19-hud-tool" class="hud-value" style="color: #0284c7;">Đồ Thị Nồng Độ - Thời Gian</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">QUY TẮC CỐT TỬ</span>
+              <span class="hud-value" style="color: #16a34a;">$v_2 / v_1 = \gamma^{\Delta T / 10}$</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1: Đồ Thị Biến Thiên Nồng Độ Theo Thời Gian (Kinetics Graph) -->
+          <div id="panel-b19-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">📈 Đồ Thị Động Học: Nồng Độ Chất Phản Ứng & Sản Phẩm</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" onclick="setB19KineticsReaction('h2o2')">2H₂O₂ → 2H₂O + O₂</button>
+                <button class="btn-tool" onclick="setB19KineticsReaction('n2_h2')">N₂ + 3H₂ → 2NH₃</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b19KineticsCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Máy Tính Định Luật Tác Dụng Khối Lượng (Guldberg - Waage) -->
+          <div id="panel-b19-part2" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">⚡ Mô Phỏng Biểu Thức Định Luật Tác Dụng Khối Lượng</h4>
+              <p style="font-size: 12px; color: #64748b; margin: 3px 0 0 0;">Điều chỉnh nồng độ các chất để quan sát tốc độ tức thời $v = k \cdot C_\text{A}^a \cdot C_\text{B}^b$.</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px;">
+              <div>
+                <label style="font-size: 13px; font-weight: 700; color: #1e293b; display: flex; justify-content: space-between;">
+                  <span>Nồng độ NO [M]:</span>
+                  <span id="b19-val-cno" style="color: #0284c7;">1.0 M</span>
+                </label>
+                <input type="range" id="b19-slider-cno" min="0.2" max="3.0" step="0.2" value="1.0" oninput="updateB19RateCalc()" style="width: 100%; margin-top: 4px;">
+              </div>
+              <div>
+                <label style="font-size: 13px; font-weight: 700; color: #1e293b; display: flex; justify-content: space-between;">
+                  <span>Nồng độ O₂ [M]:</span>
+                  <span id="b19-val-co2" style="color: #16a34a;">1.0 M</span>
+                </label>
+                <input type="range" id="b19-slider-co2" min="0.2" max="3.0" step="0.2" value="1.0" oninput="updateB19RateCalc()" style="width: 100%; margin-top: 4px;">
+              </div>
+            </div>
+
+            <div id="b19-rate-calc-card" style="padding: 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #cbd5e1; flex: 1;">
+              <!-- Render calculation step -->
+            </div>
+          </div>
+
+          <!-- PANEL 3: Máy Tính Hệ Số Nhiệt Độ Van't Hoff & 5 Yếu Tố -->
+          <div id="panel-b19-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">🔥 Máy Tính Quy Tắc Van't Hoff ($\gamma = 2 \rightarrow 4$)</h4>
+              <p style="font-size: 12px; color: #64748b; margin: 3px 0 0 0;">Tính sự tăng vọt tốc độ phản ứng hoặc thời gian hoàn thành khi thay đổi nhiệt độ.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+              <div>
+                <label style="font-size: 12px; font-weight: 700; color: #475569;">Nhiệt độ ban đầu T₁ (°C):</label>
+                <input type="number" id="b19-vh-t1" value="20" onchange="calcB19Vanthoff()" style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 700;">
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 700; color: #475569;">Nhiệt độ sau T₂ (°C):</label>
+                <input type="number" id="b19-vh-t2" value="50" onchange="calcB19Vanthoff()" style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 700;">
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 700; color: #475569;">Hệ số Van't Hoff (γ):</label>
+                <input type="number" id="b19-vh-gamma" value="3.0" step="0.1" onchange="calcB19Vanthoff()" style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 700;">
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 700; color: #475569;">Thời gian ở T₁ (giây):</label>
+                <input type="number" id="b19-vh-time1" value="270" onchange="calcB19Vanthoff()" style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 700;">
+              </div>
+            </div>
+
+            <div id="b19-vh-result-card" style="padding: 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #cbd5e1; flex: 1;">
+              <!-- Render calculation step -->
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b19-lab-status-tip">
+              💡 <em>Đồ thị nồng độ giảm dần của chất đầu (đường cong đi xuống) và nồng độ tăng dần của sản phẩm.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB19InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -6073,7 +6362,7 @@
     function openLesson(lessonId) {
       activeLesson = lessonId;
       document.getElementById('view-dashboard').classList.remove('active');
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -6179,8 +6468,17 @@
           if (typeof initB13InterLab === 'function') initB13InterLab();
           if (typeof initB13QuizArena === 'function') initB13QuizArena();
         }, 50);
-                              } else if (lessonId === 'b18') {
-        const studioB18 = document.getElementById('view-studio-b18');
+                                    } else if (lessonId === 'b19') {
+        const studioB19 = document.getElementById('view-studio-b19');
+        if (studioB19) studioB19.classList.add('active');
+        switchPartB19('part1');
+        setTimeout(() => {
+          if (typeof initB19KineticsGraph === 'function') initB19KineticsGraph();
+          if (typeof updateB19RateCalc === 'function') updateB19RateCalc();
+          if (typeof calcB19Vanthoff === 'function') calcB19Vanthoff();
+        }, 50);
+      } else if (lessonId === 'b18') {
+        const studioB18 = document.getElementById('view-studio-b18', 'view-studio-b19');
         if (studioB18) studioB18.classList.add('active');
         switchPartB18('part1');
         setTimeout(() => {
@@ -6189,7 +6487,7 @@
           if (typeof initB18QuizArena === 'function') initB18QuizArena();
         }, 50);
       } else if (lessonId === 'b17') {
-        const studioB17 = document.getElementById('view-studio-b17', 'view-studio-b18');
+        const studioB17 = document.getElementById('view-studio-b17', 'view-studio-b18', 'view-studio-b19');
         if (studioB17) studioB17.classList.add('active');
         switchPartB17('part1');
         setTimeout(() => {
@@ -6198,7 +6496,7 @@
           if (typeof calcB17Reaction === 'function') calcB17Reaction('h2_cl2');
         }, 50);
       } else if (lessonId === 'b16') {
-        const studioB16 = document.getElementById('view-studio-b16', 'view-studio-b17', 'view-studio-b18');
+        const studioB16 = document.getElementById('view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19');
         if (studioB16) studioB16.classList.add('active');
         switchPartB16('part1');
         setTimeout(() => {
@@ -6207,7 +6505,7 @@
           if (typeof initB16QuizArena === 'function') initB16QuizArena();
         }, 50);
       } else if (lessonId === 'b15') {
-        const studioB15 = document.getElementById('view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18');
+        const studioB15 = document.getElementById('view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19');
         if (studioB15) studioB15.classList.add('active');
         switchPartB15('part1');
         setTimeout(() => {
@@ -6216,7 +6514,7 @@
           if (typeof initB15QuizArena === 'function') initB15QuizArena();
         }, 50);
       } else if (lessonId === 'b14') {
-        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18');
+        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19');
         if (studioB14) studioB14.classList.add('active');
         switchPartB14('part1');
         setTimeout(() => {
@@ -6229,7 +6527,7 @@
     }
 
     function backToDashboard() {
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18'];
+      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19'];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -14984,6 +15282,258 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         updateB18ClozeStatus();
       } else {
         resetB18QuizArena();
+      }
+    }
+
+
+
+    /* ==========================================================
+       BÀI 19: TỐC ĐỘ PHẢN ỨNG HOÁ HỌC
+       ========================================================== */
+    let currentPartB19 = 'part1';
+
+    function switchPartB19(partId) {
+      currentPartB19 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b19-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b19-' + p);
+        const panel = document.getElementById('panel-b19-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+        if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
+      });
+
+      const tip = document.getElementById('b19-lab-status-tip');
+      const hudTool = document.getElementById('b19-hud-tool');
+      if (tip) {
+        if (partId === 'part1') {
+          tip.innerHTML = '💡 <em>Đồ thị nồng độ giảm dần của chất đầu (đường cong đi xuống) và nồng độ tăng dần của sản phẩm.</em>';
+          if (hudTool) hudTool.innerText = 'Đồ Thị Nồng Độ - Thời Gian';
+          setTimeout(initB19KineticsGraph, 50);
+        } else if (partId === 'part2') {
+          tip.innerHTML = '💡 <em>Mô phỏng Guldberg - Waage: Kéo thanh trượt nồng độ để thấy tốc độ tức thời thay đổi theo luỹ thừa bậc 2.</em>';
+          if (hudTool) hudTool.innerText = 'Định Luật Khối Lượng';
+          setTimeout(updateB19RateCalc, 50);
+        } else {
+          tip.innerHTML = '💡 <em>Quy tắc Van\'t Hoff: Xem tốc độ tăng vọt theo cấp số nhân và thời gian phản ứng rút ngắn ngoạn mục.</em>';
+          if (hudTool) hudTool.innerText = 'Máy Tính Van\'t Hoff';
+          setTimeout(calcB19Vanthoff, 50);
+        }
+      }
+    }
+
+    // --- PART 1: KINETICS GRAPH ---
+    let b19KinReac = 'h2o2';
+
+    function setB19KineticsReaction(key) {
+      b19KinReac = key;
+      drawB19Kinetics();
+    }
+
+    function initB19KineticsGraph() {
+      const canvas = document.getElementById('b19KineticsCanvas');
+      if (!canvas) return;
+
+      window.removeEventListener('resize', drawB19Kinetics);
+      window.addEventListener('resize', drawB19Kinetics);
+
+      drawB19Kinetics();
+    }
+
+    function drawB19Kinetics() {
+      const canvas = document.getElementById('b19KineticsCanvas');
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = (rect.width || 500) * dpr;
+      canvas.height = (rect.height || 420) * dpr;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      const cw = rect.width || 500;
+      const ch = rect.height || 420;
+
+      // Draw Axes
+      const ox = 60;
+      const oy = ch - 50;
+      const axLenX = cw - 100;
+      const axLenY = ch - 100;
+
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      // Y axis
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(ox, oy - axLenY);
+      // X axis
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(ox + axLenX, oy);
+      ctx.stroke();
+
+      // Axis labels
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 12px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Thời gian (giây) →', ox + axLenX / 2, oy + 36);
+
+      ctx.save();
+      ctx.translate(20, oy - axLenY / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('Nồng độ (mol/L) →', 0, 0);
+      ctx.restore();
+
+      // Draw Reactant Decay Curve (Exponential)
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      const pointsR = [];
+      for (let t = 0; t <= axLenX; t += 10) {
+        const conc = Math.exp(-t / (axLenX * 0.35));
+        const px = ox + t;
+        const py = oy - conc * (axLenY * 0.85);
+        if (t === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+        pointsR.push({x: px, y: py});
+      }
+      ctx.stroke();
+
+      // Draw Product Growth Curve
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let t = 0; t <= axLenX; t += 10) {
+        const conc = 1 - Math.exp(-t / (axLenX * 0.35));
+        const px = ox + t;
+        const py = oy - conc * (axLenY * 0.85);
+        if (t === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Legend & Formula
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 12.5px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('— Nồng độ Chất phản ứng (giảm dần, ΔC < 0)', ox + 20, 36);
+
+      ctx.fillStyle = '#10b981';
+      ctx.fillText('— Nồng độ Sản phẩm (tăng dần, ΔC > 0)', ox + 20, 56);
+
+      ctx.fillStyle = '#0284c7';
+      ctx.font = 'bold 12.5px JetBrains Mono, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText('v_tb = -(1/a)·(ΔC_A/Δt) = +(1/c)·(ΔC_C/Δt)', cw - 40, 46);
+
+      ctx.restore();
+    }
+
+    // --- PART 2: GULDBERG - WAAGE RATE CALCULATOR ---
+    function updateB19RateCalc() {
+      const sliderNO = document.getElementById('b19-slider-cno');
+      const sliderO2 = document.getElementById('b19-slider-co2');
+      const valNO = document.getElementById('b19-val-cno');
+      const valO2 = document.getElementById('b19-val-co2');
+      const card = document.getElementById('b19-rate-calc-card');
+      if (!sliderNO || !sliderO2 || !card) return;
+
+      const cNO = parseFloat(sliderNO.value);
+      const cO2 = parseFloat(sliderO2.value);
+      if (valNO) valNO.innerText = cNO.toFixed(1) + ' M';
+      if (valO2) valO2.innerText = cO2.toFixed(1) + ' M';
+
+      const k = 0.5; // hằng số giả định
+      const rate = k * Math.pow(cNO, 2) * Math.pow(cO2, 1);
+      const standardRate = k * 1.0 * 1.0;
+      const ratio = rate / standardRate;
+
+      card.innerHTML = `
+        <div style="border-bottom: 1.5px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">Phản ứng đơn giản: 2NO(g) + O₂(g) → 2NO₂(g)</h3>
+            <span style="font-size: 12px; color: #64748b;">Định luật Guldberg - Waage: v = k · [NO]² · [O₂]</span>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 20px; font-weight: 800; color: #0284c7;">v = ${rate.toFixed(3)} M/s</span>
+          </div>
+        </div>
+        <div style="font-size: 13px; color: #334155; line-height: 1.6;">
+          <div><strong>1. Biểu thức tỉ lệ:</strong> $v = 0.5 \\times (${cNO})^2 \\times (${cO2})^1$</div>
+          <div><strong>2. Nhận xét độ nhạy:</strong> Do NO có hệ số là <strong>2</strong> nên nồng độ NO ảnh hưởng theo <em>bậc hai (luỹ thừa 2)</em>: tăng gấp 2 lần NO thì tốc độ tăng vọt gấp <strong>4 lần</strong>!</div>
+          <div style="margin-top: 8px; padding: 10px; border-radius: 6px; background: #f0fdf4; border-left: 4px solid #16a34a; font-weight: 700; color: #166534;">
+            ⚡ Tốc độ hiện tại nhanh gấp ${ratio.toFixed(2)} lần so với điều kiện chuẩn nồng độ 1 M.
+          </div>
+        </div>
+      `;
+    }
+
+    // --- PART 3: VAN'T HOFF TEMPERATURE COEFFICIENT CALCULATOR ---
+    function calcB19Vanthoff() {
+      const inT1 = document.getElementById('b19-vh-t1');
+      const inT2 = document.getElementById('b19-vh-t2');
+      const inGamma = document.getElementById('b19-vh-gamma');
+      const inTime1 = document.getElementById('b19-vh-time1');
+      const card = document.getElementById('b19-vh-result-card');
+      if (!inT1 || !inT2 || !inGamma || !inTime1 || !card) return;
+
+      const t1 = parseFloat(inT1.value);
+      const t2 = parseFloat(inT2.value);
+      const gamma = parseFloat(inGamma.value);
+      const time1 = parseFloat(inTime1.value);
+
+      const deltaT = t2 - t1;
+      const exponent = deltaT / 10;
+      const speedMultiplier = Math.pow(gamma, exponent);
+      const time2 = time1 / speedMultiplier;
+
+      card.innerHTML = `
+        <div style="border-bottom: 1.5px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">Quy tắc Van't Hoff: T₁ = ${t1}°C ➔ T₂ = ${t2}°C (ΔT = ${deltaT}°C)</h3>
+            <span style="font-size: 12px; color: #64748b;">Hệ số γ = ${gamma}</span>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 18px; font-weight: 800; color: #dc2626;">Tốc độ tăng: ×${speedMultiplier.toFixed(1)} lần</span>
+          </div>
+        </div>
+        <div style="font-size: 13px; color: #334155; line-height: 1.6;">
+          <div><strong>1. Công thức áp dụng:</strong> $\\frac{v_{T_2}}{v_{T_1}} = \\gamma^{\\frac{T_2 - T_1}{10}} = ${gamma}^{\\frac{${deltaT}}{10}} = ${gamma}^{${exponent.toFixed(1)}} = ${speedMultiplier.toFixed(2)}$</div>
+          <div><strong>2. Thời gian phản ứng tương ứng:</strong> Thời gian tỉ lệ nghịch với tốc độ phản ứng: $t_2 = \\frac{t_1}{${speedMultiplier.toFixed(2)}} = \\frac{${time1}\\text{ s}}{${speedMultiplier.toFixed(2)}} \\approx$ <strong style="color: #16a34a; font-size: 15px;">${time2.toFixed(1)} giây</strong>.</div>
+          <div style="margin-top: 8px; padding: 10px; border-radius: 6px; background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e40af;">
+            💡 <strong>Ý nghĩa thực tế:</strong> Tăng nhiệt độ từ ${t1}°C lên ${t2}°C giúp rút ngắn thời gian từ ${time1}s xuống chỉ còn ${time2.toFixed(1)}s (giải thích tại sao hầm nhừ thực phẩm bằng nồi áp suất nhanh hơn gấp bội).
+          </div>
+        </div>
+      `;
+    }
+
+    function resetB19InteractiveState() {
+      if (currentPartB19 === 'part1') {
+        drawB19Kinetics();
+      } else if (currentPartB19 === 'part2') {
+        const sliderNO = document.getElementById('b19-slider-cno');
+        const sliderO2 = document.getElementById('b19-slider-co2');
+        if (sliderNO) sliderNO.value = 1.0;
+        if (sliderO2) sliderO2.value = 1.0;
+        updateB19RateCalc();
+      } else {
+        const inT1 = document.getElementById('b19-vh-t1');
+        const inT2 = document.getElementById('b19-vh-t2');
+        const inGamma = document.getElementById('b19-vh-gamma');
+        const inTime1 = document.getElementById('b19-vh-time1');
+        if (inT1) inT1.value = 20;
+        if (inT2) inT2.value = 50;
+        if (inGamma) inGamma.value = 3.0;
+        if (inTime1) inTime1.value = 270;
+        calcB19Vanthoff();
       }
     }
 
