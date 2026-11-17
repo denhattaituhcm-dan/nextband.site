@@ -1216,6 +1216,36 @@
               </button>
             </div>
           </div>
+
+          <!-- Bài 13: Liên kết Hydrogen & Van der Waals (Đã hoàn thiện) -->
+          <div class="lesson-item-card ready">
+            <div class="card-thumb-svg">
+              <svg width="220" height="90" viewBox="0 0 220 90">
+                <circle cx="70" cy="45" r="18" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+                <text x="70" y="49" font-size="10" font-weight="800" fill="#991b1b" text-anchor="middle">Oᵟ⁻</text>
+                <circle cx="95" cy="30" r="8" fill="#e0f2fe" stroke="#38bdf8"/>
+                <text x="95" y="33" font-size="7" font-weight="700" fill="#0369a1" text-anchor="middle">H</text>
+                
+                <path d="M 103 33 L 135 38" stroke="#0284c7" stroke-width="2" stroke-dasharray="3,3"/>
+                
+                <circle cx="150" cy="45" r="18" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+                <text x="150" y="49" font-size="10" font-weight="800" fill="#991b1b" text-anchor="middle">Oᵟ⁻</text>
+                
+                <text x="110" y="84" font-size="8" font-weight="700" fill="#0284c7" text-anchor="middle">Liên kết Hydrogen ··· (H₂O sôi 100°C)</text>
+              </svg>
+            </div>
+            <div class="card-content-wrap">
+              <div>
+                <span class="badge-status ready">● ĐÃ HOÀN THIỆN ĐẦY ĐỦ</span>
+                <h3>Bài 13: LK Hydrogen & Tương tác Van der Waals</h3>
+                <p>Điều kiện tạo liên kết H, mạng nước đá tứ diện mở, cơ chế lưỡng cực tạm thời Van der Waals và quy luật nhiệt độ sôi.</p>
+              </div>
+              <button class="btn-enter-lesson btn-primary" onclick="openLesson('b13')">
+                <span>Vào học & Làm thí nghiệm</span>
+                <span>➔</span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -4418,6 +4448,216 @@
   </div>
 
 
+  
+
+
+  <!-- ========================================================
+       BÀI 13: LIÊN KẾT HYDROGEN & TƯƠNG TÁC VAN DER WAALS
+       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM)
+       ======================================================== -->
+  <div id="view-studio-b13" class="view-screen">
+    <div class="studio-container">
+      
+      <!-- Studio Header -->
+      <nav class="studio-topbar">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <button class="btn-back-hub" onclick="backToDashboard()">
+            <span>←</span>
+            <span>Mục lục</span>
+          </button>
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase;">Chương 3 • Bài 13</span>
+            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">Liên Kết Hydrogen & Tương Tác Van Der Waals</h2>
+          </div>
+        </div>
+
+        <!-- Segmented Tab Switcher Bài 13 -->
+        <div class="nav-tabs-segmented">
+          <button id="tab-btn-b13-p1" class="tab-seg-btn active" onclick="switchPartB13('part1')">
+            <span>1 Bản chất Liên kết Hydrogen & Mạng Nước Đá</span>
+          </button>
+          <button id="tab-btn-b13-p2" class="tab-seg-btn" onclick="switchPartB13('part2')">
+            <span>2 Tương tác Van der Waals & Lưỡng cực (Lab 2.5D)</span>
+          </button>
+          <button id="tab-btn-b13-p3" class="tab-seg-btn" onclick="switchPartB13('part3')">
+            <span>3 Ảnh hưởng T° sôi & Đấu trường SGK Tr. 66 - 67</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Dual Pane Body -->
+      <div class="studio-main-body">
+        
+        <!-- LEFT COLUMN: Sư phạm học tập có thanh cuộn mượt -->
+        <div class="theory-scroll-pane">
+          
+          <!-- PHẦN 1: BẢN CHẤT LIÊN KẾT HYDROGEN & MẠNG NƯỚC ĐÁ -->
+          <div id="content-b13-part1" class="lesson-section-content active">
+            <div class="box-target">
+              <h4>🎯 Mục tiêu sư phạm (SGK Trang 63 - 65)</h4>
+              <p>Trình bày được khái niệm liên kết hydrogen, điều kiện hình thành (nguyên tử H liên kết với N, O, F có độ âm điện lớn và còn cặp e tự do), vai trò làm tăng nhiệt độ sôi bất thường và cấu trúc rỗng của nước đá.</p>
+            </div>
+
+            <div class="meta-citation">Mục I • SGK Trang 63 - 65</div>
+            <h3 class="section-title">Bản chất Liên kết Hydrogen</h3>
+            
+            <p>Trong các phân tử $\text{HF}, \text{H}_2\text{O}, \text{NH}_3$, nguyên tử $\text{H}$ liên kết với các nguyên tố có độ âm điện rất lớn (F: 3.98; O: 3.44; N: 3.04). Sự chênh lệch độ âm điện lớn làm cặp e dùng chung bị hút lệch mạnh, nguyên tử H trở nên mang một phần điện tích dương $(\delta^+)$ linh động.</p>
+
+            <div class="box-law" style="border-left: 5px solid #0284c7; background: #f0f9ff;">
+              <h4 style="color: #0369a1; font-size: 14px;">⚡ Điều kiện cần và đủ tạo Liên kết Hydrogen</h4>
+              <p style="font-size: 13.5px; line-height: 1.6; margin: 6px 0; color: #0f172a;">
+                1. Nguyên tử $\text{H}$ đã liên kết cộng hoá trị với một nguyên tố có độ âm điện lớn ($	ext{F}, 	ext{O}, 	ext{N}$).<br/>
+                2. Nguyên tử $\text{F}, \text{O}, \text{N}$ của phân tử bên cạnh phải còn <strong>ít nhất một cặp electron tự do</strong> (chưa liên kết).<br/>
+                <em>Kí hiệu:</em> Biểu diễn bằng dấu ba chấm $(\cdots)$, ví dụ: $\text{O}-\text{H} \cdots \text{O}-\text{H}$.
+              </p>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin: 14px 0;">
+              <span style="font-size: 11px; font-weight: 700; color: #d97706; text-transform: uppercase;">🧊 Cấu trúc rỗng kỳ diệu của Nước đá (SGK Tr. 64)</span>
+              <p style="font-size: 13px; color: #334155; margin: 6px 0; line-height: 1.6;">
+                Mỗi phân tử $\text{H}_2\text{O}$ tạo được 4 liên kết hydrogen với 4 phân tử nước xung quanh theo cấu trúc <strong>tứ diện mở</strong>. Mạng tinh thể này khá "rỗng", làm cho <strong>thể tích nước đá nở ra và nhẹ hơn nước lỏng</strong> (nổi trên mặt nước), giúp bảo vệ sự sống thuỷ sinh dưới lòng sông hồ đóng băng vào mùa đông!
+              </p>
+            </div>
+          </div>
+
+          <!-- PHẦN 2: TƯƠNG TÁC VAN DER WAALS & LƯỠNG CỰC -->
+          <div id="content-b13-part2" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Tương tác Van der Waals (SGK Trang 65 - 66)</h4>
+              <p>Khái niệm tương tác tĩnh điện yếu giữa các lưỡng cực cảm ứng / tạm thời hoặc lưỡng cực vĩnh viễn. Giải thích sự hoá lỏng của khí hiếm và các chất không phân cực.</p>
+            </div>
+
+            <div class="meta-citation">Mục II • SGK Trang 65 - 66</div>
+            <h3 class="section-title">Cơ chế Lưỡng cực Tạm thời</h3>
+            
+            <p>Ở các phân tử không phân cực (như $\text{Cl}_2, \text{CH}_4$) hoặc nguyên tử khí hiếm (Ne, Ar), đám mây electron luôn chuyển động không ngừng. Trong từng khoảnh khắc ngắn ngủi, mật độ electron có thể phân bố lệch về một phía, tạo ra một <strong>lưỡng cực tạm thời</strong> $(\delta^+ \cdots \delta^-)$.</p>
+
+            <div class="box-law" style="border-left: 5px solid #ea580c; background: #fff7ed;">
+              <h4 style="color: #c2410c; font-size: 14px;">Cơ chế Lưỡng cực cảm ứng</h4>
+              <p style="font-size: 13.5px; line-height: 1.6; margin: 6px 0; color: #0f172a;">
+                Lưỡng cực tạm thời của hạt này sẽ cảm ứng và làm biến dạng đám mây electron của hạt lân cận, tạo nên lực hút tĩnh điện giữa đầu âm và đầu dương. Lực hút yếu này chính là <strong>Tương tác Van der Waals</strong>.
+              </p>
+            </div>
+
+            <p style="font-size: 13px; color: #475569; margin-top: 10px; line-height: 1.6;">
+              Mặc dù yếu hơn liên kết ion và cộng hoá trị hàng chục lần, tương tác Van der Waals có vai trò tối quan trọng quyết định trạng thái ngưng tụ (khí ➔ lỏng ➔ rắn) của các chất hữu cơ và đơn chất phi kim.
+            </p>
+          </div>
+
+          <!-- PHẦN 3: ẢNH HƯỞNG T° SÔI & ĐẤU TRƯỜNG SGK -->
+          <div id="content-b13-part3" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Ảnh hưởng đến Nhiệt độ sôi & Diện tích tiếp xúc (SGK Tr. 66 - 67)</h4>
+              <p>Phân tích quy luật: Khối lượng phân tử tăng $\to$ tương tác Van der Waals tăng $\to$ nhiệt độ sôi tăng (Dãy Halogen $\text{F}_2 < \text{Cl}_2 < \text{Br}_2 < \text{I}_2$). Đồng phân mạch thẳng có diện tích tiếp xúc lớn hơn mạch nhánh nên nhiệt độ sôi cao hơn (pentane > neopentane).</p>
+            </div>
+
+            <div class="meta-citation">Bảng 13.1 & 13.2 • SGK Trang 66 - 67</div>
+            <h3 class="section-title">Quy luật Tăng dần Nhiệt độ sôi</h3>
+
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin: 12px 0;">
+              <strong style="color: #0f172a; font-size: 13px;">1. Bất thường do Liên kết Hydrogen (SGK Tr. 64):</strong>
+              <p style="font-size: 13px; color: #334155; margin: 4px 0 10px 0;">
+                Nhiệt độ sôi: $\text{H}_2\text{O} (100^\circ\text{C}) \gg \text{H}_2\text{S} (-60.7^\circ\text{C}) > \text{CH}_4 (-161.5^\circ\text{C})$. Nước có liên kết H liên phân tử rất bền chặt làm tăng vọt nhiệt độ sôi!
+              </p>
+
+              <strong style="color: #0f172a; font-size: 13px;">2. Tăng đều theo Tương tác Van der Waals (Dãy Halogen):</strong>
+              <p style="font-size: 13px; color: #334155; margin: 4px 0 0 0;">
+                $\text{F}_2 (-188^\circ\text{C}, \text{khí}) < \text{Cl}_2 (-34.6^\circ\text{C}, \text{khí}) < \text{Br}_2 (58.8^\circ\text{C}, \text{lỏng}) < \text{I}_2 (184.4^\circ\text{C}, \text{rắn})$. Số e tăng $\to$ đám mây e càng dễ bị phân cực $	o$ Van der Waals tăng.
+              </p>
+            </div>
+
+            <!-- Đấu trường luyện tập Bài 13 SGK -->
+            <div style="margin-top: 20px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 12px;">⚔️ Đấu trường bài tập SGK Trang 65 - 67</h4>
+              <div id="b13-question-card-container">
+                <!-- Sẽ render qua hàm initB13QuizArena() -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Phòng thí nghiệm tương tác (HUD + Canvas + Footer) -->
+        <div class="lab-interactive-pane">
+          
+          <!-- HUD Scientific Bar -->
+          <div class="hud-scientific">
+            <div class="hud-chip">
+              <span class="hud-label">MÔ HÌNH KHẢO SÁT</span>
+              <span id="b13-hud-mode" class="hud-value highlight">Mạng lưới Liên kết H: Nước (H₂O)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">ĐIỆN TÍCH LƯỠNG CỰC</span>
+              <span id="b13-hud-dipole" class="hud-value">O(δ⁻ = -0.66) • H(δ⁺ = +0.33)</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">LOẠI TƯƠNG TÁC</span>
+              <span id="b13-hud-type" class="hud-value" style="color: #2563eb;">Liên kết Hydrogen liên phân tử</span>
+            </div>
+            <div class="hud-chip">
+              <span class="hud-label">NHIỆT ĐỘ SÔI (1 ATM)</span>
+              <span id="b13-hud-boil" class="hud-value" style="color: #dc2626;">100 °C (Rất cao)</span>
+            </div>
+          </div>
+
+          <!-- Interactive Workspace Panels -->
+          
+          <!-- PANEL 1 & 2: Mô phỏng Mạng liên kết H và Tương tác Van der Waals 2.5D -->
+          <div id="panel-b13-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">💧 Phòng Lab Tương tác Phân tử 2.5D</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" id="btn-b13-sim-water" onclick="selectB13SimMode('water')">Nước (Liên kết H)</button>
+                <button class="btn-tool" id="btn-b13-sim-hf" onclick="selectB13SimMode('hf')">HF ... NH₃</button>
+                <button class="btn-tool" id="btn-b13-sim-vdw" onclick="selectB13SimMode('vdw')">Van der Waals (Cl₂/Ar)</button>
+                <button class="btn-tool" id="btn-b13-sim-pentane" onclick="selectB13SimMode('pentane')">Pentane vs Neopentane</button>
+              </div>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative;">
+              <canvas id="b13InterCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- PANEL 3: Đấu trường luyện tập & strip câu hỏi -->
+          <div id="panel-b13-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
+            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">Bảng điều khiển câu hỏi SGK Trang 65 - 67</h4>
+                <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">SGK Hoá học 10 • Bài 13: Liên kết Hydrogen & Van der Waals</p>
+              </div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;" id="b13-quiz-progress-text">
+                Đã hoàn thành: 0 / 3 câu
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px;" id="b13-question-selector-strip">
+              <!-- Render selector strip -->
+            </div>
+            <div id="b13-quiz-score-board" style="margin-top: 30px; padding: 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; display: none;">
+              <h3 style="font-size: 22px; font-weight: 800; color: #16a34a; margin: 0 0 8px 0;">🎉 XUẤT SẮC! HOÀN THÀNH BÀI 13</h3>
+              <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">Bạn đã thấu hiểu toàn bộ cơ chế liên kết Hydrogen, tương tác Van der Waals và ảnh hưởng tới tính chất vật lí!</p>
+              <button class="btn-tool active" onclick="resetB13QuizArena()" style="padding: 10px 20px; font-size: 14px;">Làm lại Đấu trường</button>
+            </div>
+          </div>
+
+          <!-- Lab Action Footer -->
+          <footer class="lab-action-footer">
+            <div style="font-size: 12px; color: #64748b;" id="b13-lab-status-tip">
+              💡 <em>Các đường chấm nét đứt biểu diễn liên kết Hydrogen hoặc tương tác Van der Waals giữa các phân tử.</em>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-tool" onclick="resetB13InteractiveState()">
+                <span>↺</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script>
     /* ==========================================================
        VIEW ROUTING LOGIC
@@ -4449,6 +4689,8 @@
       if (studioB11) studioB11.classList.remove('active');
       const studioB12 = document.getElementById('view-studio-b12');
       if (studioB12) studioB12.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
       const studioB7 = document.getElementById('view-studio-b7');
       if (studioB7) studioB7.classList.remove('active');
       const studioB8 = document.getElementById('view-studio-b8');
@@ -4461,6 +4703,8 @@
       if (studioB11) studioB11.classList.remove('active');
       const studioB12 = document.getElementById('view-studio-b12');
       if (studioB12) studioB12.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
       const studioB8 = document.getElementById('view-studio-b8');
       if (studioB8) studioB8.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
@@ -4471,6 +4715,8 @@
       if (studioB11) studioB11.classList.remove('active');
       const studioB12 = document.getElementById('view-studio-b12');
       if (studioB12) studioB12.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
       const studioB9 = document.getElementById('view-studio-b9');
       if (studioB9) studioB9.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
@@ -4479,18 +4725,28 @@
       if (studioB11) studioB11.classList.remove('active');
       const studioB12 = document.getElementById('view-studio-b12');
       if (studioB12) studioB12.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
       const studioB10 = document.getElementById('view-studio-b10');
       if (studioB10) studioB10.classList.remove('active');
       const studioB11 = document.getElementById('view-studio-b11');
       if (studioB11) studioB11.classList.remove('active');
       const studioB12 = document.getElementById('view-studio-b12');
       if (studioB12) studioB12.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
       const studioB11 = document.getElementById('view-studio-b11');
       if (studioB11) studioB11.classList.remove('active');
       const studioB12 = document.getElementById('view-studio-b12');
       if (studioB12) studioB12.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
       const studioB12 = document.getElementById('view-studio-b12');
       if (studioB12) studioB12.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
       
       if (lessonId === 'b1') {
         document.getElementById('view-studio').classList.add('active');
@@ -4574,6 +4830,13 @@
           if (typeof initB12AOLab === 'function') initB12AOLab();
           if (typeof initB12QuizArena === 'function') initB12QuizArena();
         }, 50);
+      } else if (lessonId === 'b13') {
+        if (studioB13) studioB13.classList.add('active');
+        switchPartB13('part1');
+        setTimeout(() => {
+          if (typeof initB13InterLab === 'function') initB13InterLab();
+          if (typeof initB13QuizArena === 'function') initB13QuizArena();
+        }, 50);
       }
       window.location.hash = lessonId;
     }
@@ -4601,6 +4864,8 @@
       if (studioB11) studioB11.classList.remove('active');
       const studioB12 = document.getElementById('view-studio-b12');
       if (studioB12) studioB12.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
       document.getElementById('view-dashboard').classList.add('active');
       window.location.hash = '';
     }
@@ -10519,6 +10784,603 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     function resetB12InteractiveState() {
       b12CurMol = 'c2h4';
       selectB12Molecule('c2h4');
+    }
+
+
+
+
+
+    /* ==========================================================
+       LOGIC BÀI 13: LIÊN KẾT HYDROGEN & TƯƠNG TÁC VAN DER WAALS
+       ========================================================== */
+
+    let currentPartB13 = 'part1';
+    let b13SimMode = 'water'; // 'water' | 'hf' | 'vdw' | 'pentane'
+
+    const B13_MODELS_DATA = {
+      'water': {
+        title: 'Mạng lưới Liên kết Hydrogen: Nước (H₂O)',
+        dipole: 'O(δ⁻ = -0.66) • H(δ⁺ = +0.33)',
+        type: 'Liên kết Hydrogen liên phân tử (O-H ··· O)',
+        typeColor: '#2563eb',
+        boil: '100 °C (Bất thường so với H₂S: -60.7 °C)',
+        tip: 'Mỗi phân tử H₂O tạo tối đa 4 liên kết hydrogen tứ diện, tạo nên sức căng bề mặt lớn và cấu trúc rỗng của băng tuyết.'
+      },
+      'hf': {
+        title: 'Liên kết Hydrogen dị loại: HF ··· NH₃',
+        dipole: 'F(δ⁻ = -0.45) • H(δ⁺ = +0.45) • N(δ⁻ = -0.80)',
+        type: 'Liên kết Hydrogen giữa 2 chất khác nhau (F-H ··· N)',
+        typeColor: '#16a34a',
+        boil: 'HF sôi ở 19.5 °C (khí dễ hoá lỏng)',
+        tip: 'Nguyên tử H linh động của HF bị hút mạnh bởi cặp electron tự do của nguyên tử Nitrogen trong phân tử Ammonia.'
+      },
+      'vdw': {
+        title: 'Tương tác Van der Waals: Lưỡng cực tạm thời (Cl₂ / Ar)',
+        dipole: 'Lưỡng cực tức thời: δ⁺ ··· δ⁻',
+        type: 'Lực hút tĩnh điện yếu giữa các lưỡng cực cảm ứng',
+        typeColor: '#d97706',
+        boil: 'Cl₂: -34.6 °C; Br₂: 58.8 °C; I₂: 184.4 °C',
+        tip: 'Sự dao động mây electron sinh ra các cực tức thời hút nhau, tăng nhanh theo khối lượng phân tử M và số e.'
+      },
+      'pentane': {
+        title: 'Diện tích tiếp xúc: Pentane vs Neopentane (C₅H₁₂)',
+        dipole: 'Cùng CTPT C₅H₁₂ (M = 72 g/mol)',
+        type: 'Van der Waals phụ thuộc hình dạng phân tử',
+        typeColor: '#dc2626',
+        boil: 'Pentane (36.1 °C) > Neopentane (9.5 °C)',
+        tip: 'Pentane mạch thẳng dài tiếp xúc diện rộng hút chặt hơn neopentane hình cầu tiếp xúc điểm nhỏ.'
+      }
+    };
+
+    function switchPartB13(partId) {
+      currentPartB13 = partId;
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
+      ['p1', 'p2', 'p3'].forEach(p => {
+        const btn = document.getElementById('tab-btn-b13-' + p);
+        if (btn) btn.classList.toggle('active', p === partNum);
+      });
+
+      // Show/hide sections in theory pane
+      ['part1', 'part2', 'part3'].forEach(p => {
+        const sec = document.getElementById('content-b13-' + p);
+        if (sec) sec.classList.toggle('active', p === partId);
+      });
+
+      // Show/hide panels
+      const panelP1 = document.getElementById('panel-b13-part1');
+      const panelP3 = document.getElementById('panel-b13-part3');
+      if (panelP1) panelP1.style.display = (partId === 'part1' || partId === 'part2') ? 'flex' : 'none';
+      if (panelP3) panelP3.style.display = (partId === 'part3') ? 'flex' : 'none';
+
+      const activeSec = document.getElementById('content-b13-' + partId);
+      if (activeSec) activeSec.scrollTop = 0;
+
+      if (partId === 'part1' || partId === 'part2') {
+        setTimeout(initB13InterLab, 50);
+      } else if (partId === 'part3') {
+        setTimeout(initB13QuizArena, 50);
+      }
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function selectB13SimMode(mode) {
+      b13SimMode = mode;
+      ['water', 'hf', 'vdw', 'pentane'].forEach(m => {
+        const btn = document.getElementById('btn-b13-sim-' + m);
+        if (btn) btn.classList.toggle('active', m === mode);
+      });
+      updateB13Hud();
+    }
+
+    function updateB13Hud() {
+      const d = B13_MODELS_DATA[b13SimMode];
+      const modeText = document.getElementById('b13-hud-mode');
+      if (modeText) modeText.innerText = d.title;
+
+      const dipText = document.getElementById('b13-hud-dipole');
+      if (dipText) dipText.innerText = d.dipole;
+
+      const typeText = document.getElementById('b13-hud-type');
+      if (typeText) {
+        typeText.innerText = d.type;
+        typeText.style.color = d.typeColor;
+      }
+
+      const boilText = document.getElementById('b13-hud-boil');
+      if (boilText) boilText.innerText = d.boil;
+
+      const tipText = document.getElementById('b13-lab-status-tip');
+      if (tipText) tipText.innerHTML = `💡 <strong>${d.title}:</strong> ${d.tip}`;
+    }
+
+    /* -------------------------------------------------------------
+       LAB CANVAS: MÔ PHỎNG LIÊN KẾT H & VAN DER WAALS 2.5D (BÀI 13)
+       ------------------------------------------------------------- */
+    let b13InterCanvas, b13InterCtx;
+    let b13AnimTime = 0;
+    let b13AnimId;
+
+    function initB13InterLab() {
+      b13InterCanvas = document.getElementById('b13InterCanvas');
+      if (!b13InterCanvas) return;
+      b13InterCtx = b13InterCanvas.getContext('2d');
+      resizeB13InterCanvas();
+
+      if (b13AnimId) cancelAnimationFrame(b13AnimId);
+      animateB13Inter();
+      updateB13Hud();
+    }
+
+    function resizeB13InterCanvas() {
+      if (!b13InterCanvas) return;
+      const rect = b13InterCanvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      b13InterCanvas.width = rect.width * dpr;
+      b13InterCanvas.height = rect.height * dpr;
+      b13InterCtx.scale(dpr, dpr);
+    }
+
+    function animateB13Inter() {
+      if (!b13InterCtx || !b13InterCanvas) return;
+      const w = b13InterCanvas.parentElement.clientWidth;
+      const h = b13InterCanvas.parentElement.clientHeight;
+      const ctx = b13InterCtx;
+
+      ctx.clearRect(0, 0, w, h);
+      b13AnimTime += 0.025;
+
+      const cX = w / 2, cY = h / 2 - 10;
+
+      if (b13SimMode === 'water') {
+        drawB13WaterNetwork(ctx, cX, cY);
+      } else if (b13SimMode === 'hf') {
+        drawB13HFNH3(ctx, cX, cY);
+      } else if (b13SimMode === 'vdw') {
+        drawB13VDWInteraction(ctx, cX, cY);
+      } else if (b13SimMode === 'pentane') {
+        drawB13PentaneComparison(ctx, cX, cY);
+      }
+
+      b13AnimId = requestAnimationFrame(animateB13Inter);
+    }
+
+    function drawB13WaterNetwork(ctx, cX, cY) {
+      // 3 Water molecules linked by dotted lines
+      const m1 = { x: cX - 100, y: cY - 20 };
+      const m2 = { x: cX + 40, y: cY - 40 };
+      const m3 = { x: cX - 20, y: cY + 80 };
+
+      // Draw H-bond lines between Oxygen and Hydrogen
+      ctx.save();
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([4, 4]);
+
+      // m1(H) to m2(O)
+      ctx.beginPath();
+      ctx.moveTo(m1.x + 30, m1.y + 10);
+      ctx.lineTo(m2.x - 25, m2.y);
+      ctx.stroke();
+
+      // m1(O) to m3(H)
+      ctx.beginPath();
+      ctx.moveTo(m1.x, m1.y + 20);
+      ctx.lineTo(m3.x - 20, m3.y - 15);
+      ctx.stroke();
+
+      // m2(H) to m3(O)
+      ctx.beginPath();
+      ctx.moveTo(m2.x - 10, m2.y + 25);
+      ctx.lineTo(m3.x + 10, m3.y - 10);
+      ctx.stroke();
+      ctx.restore();
+
+      // Draw molecules
+      drawWaterMol(ctx, m1.x, m1.y, 0.2);
+      drawWaterMol(ctx, m2.x, m2.y, -0.4);
+      drawWaterMol(ctx, m3.x, m3.y, 0.8);
+
+      // Label
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#0284c7';
+      ctx.textAlign = 'center';
+      ctx.fillText('Đường chấm xanh: Liên kết Hydrogen liên phân tử (···)', cX, cY + 130);
+    }
+
+    function drawWaterMol(ctx, x, y, rot) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+
+      // Oxygen
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(0, 0, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.font = '800 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Oᵟ⁻', 0, 0);
+
+      // 2 Hydrogens
+      const hDist = 32;
+      const h1 = { x: -Math.cos(0.55) * hDist, y: Math.sin(0.55) * hDist };
+      const h2 = { x: Math.cos(0.55) * hDist, y: Math.sin(0.55) * hDist };
+
+      // Bonds
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(h1.x, h1.y);
+      ctx.moveTo(0, 0);
+      ctx.lineTo(h2.x, h2.y);
+      ctx.stroke();
+
+      // H circles
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(h1.x, h1.y, 11, 0, Math.PI * 2);
+      ctx.arc(h2.x, h2.y, 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '700 9px "Plus Jakarta Sans"';
+      ctx.fillText('Hᵟ⁺', h1.x, h1.y);
+      ctx.fillText('Hᵟ⁺', h2.x, h2.y);
+      ctx.restore();
+    }
+
+    function drawB13HFNH3(ctx, cX, cY) {
+      const hfX = cX - 110, nh3X = cX + 90;
+
+      // HF on left
+      ctx.save();
+      // F atom
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath();
+      ctx.arc(hfX - 25, cY, 26, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 13px "Plus Jakarta Sans"';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Fᵟ⁻', hfX - 25, cY);
+
+      // Covalent bond
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(hfX - 25, cY);
+      ctx.lineTo(hfX + 25, cY);
+      ctx.stroke();
+
+      // H atom
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(hfX + 25, cY, 13, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '700 9px "Plus Jakarta Sans"';
+      ctx.fillText('Hᵟ⁺', hfX + 25, cY);
+
+      // NH3 on right (N at center)
+      ctx.fillStyle = '#3b82f6';
+      ctx.beginPath();
+      ctx.arc(nh3X, cY, 24, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 13px "Plus Jakarta Sans"';
+      ctx.fillText('Nᵟ⁻', nh3X, cY);
+
+      // 3 H of NH3
+      const nhAngles = [-0.6, 0.4, 1.4];
+      nhAngles.forEach(ang => {
+        const hx = nh3X + Math.cos(ang) * 36;
+        const hy = cY + Math.sin(ang) * 36;
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(nh3X, cY);
+        ctx.lineTo(hx, hy);
+        ctx.stroke();
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(hx, hy, 10, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Hydrogen Bond: F-H ··· N
+      ctx.strokeStyle = '#16a34a';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(hfX + 38, cY);
+      ctx.lineTo(nh3X - 24, cY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.font = '700 13px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#16a34a';
+      ctx.textAlign = 'center';
+      ctx.fillText('F — H ··· N  (Liên kết Hydrogen rất mạnh)', cX, cY - 50);
+      ctx.restore();
+    }
+
+    function drawB13VDWInteraction(ctx, cX, cY) {
+      const p1X = cX - 100, p2X = cX + 100;
+
+      // Oscillating temporary dipoles
+      const osc = Math.sin(b13AnimTime * 3);
+      const shift = osc * 8;
+
+      ctx.save();
+      // Particle 1 (Cl2 / Ar)
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(p1X + shift, cY, 65, 45, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = '700 11px "JetBrains Mono"';
+      ctx.fillStyle = '#ea580c';
+      ctx.textAlign = 'center';
+      ctx.fillText('δ⁺', p1X - 35 + shift, cY);
+      ctx.fillText('δ⁻', p1X + 35 + shift, cY);
+      ctx.font = '600 10px "Plus Jakarta Sans"';
+      ctx.fillText('Lưỡng cực tạm thời 1', p1X, cY + 65);
+
+      // Particle 2 (Induced dipole)
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(p2X + shift * 0.9, cY, 65, 45, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = '700 11px "JetBrains Mono"';
+      ctx.fillStyle = '#ea580c';
+      ctx.fillText('δ⁺', p2X - 35 + shift * 0.9, cY);
+      ctx.fillText('δ⁻', p2X + 35 + shift * 0.9, cY);
+      ctx.font = '600 10px "Plus Jakarta Sans"';
+      ctx.fillText('Lưỡng cực cảm ứng 2', p2X, cY + 65);
+
+      // Weak attraction arrows
+      ctx.strokeStyle = '#dc2626';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(p1X + 50 + shift, cY);
+      ctx.lineTo(p2X - 50 + shift * 0.9, cY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.font = '700 12px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#dc2626';
+      ctx.fillText('⚡ Lực hút tĩnh điện Van der Waals (δ⁻ ··· δ⁺)', cX, cY - 40);
+      ctx.restore();
+    }
+
+    function drawB13PentaneComparison(ctx, cX, cY) {
+      // Top: Pentane (mạch thẳng tiếp xúc diện rộng)
+      // Bottom: Neopentane (hình cầu tiếp xúc điểm nhỏ)
+      const topY = cY - 50, botY = cY + 50;
+
+      ctx.save();
+      // Pentane 1 & 2
+      ctx.fillStyle = '#dbeafe';
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(cX - 130, topY - 24, 260, 20, 6);
+      ctx.roundRect(cX - 130, topY + 4, 260, 20, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = '700 11px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#1e40af';
+      ctx.textAlign = 'center';
+      ctx.fillText('Pentane mạch thẳng: DIỆN TÍCH TIẾP XÚC LỚN (T° sôi = 36.1 °C)', cX, topY - 35);
+
+      // Neopentane 1 & 2
+      ctx.fillStyle = '#fee2e2';
+      ctx.strokeStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(cX - 45, botY, 26, 0, Math.PI * 2);
+      ctx.arc(cX + 45, botY, 26, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#991b1b';
+      ctx.fillText('Neopentane phân nhánh hình cầu: TIẾP XÚC ĐIỂM NHỎ (T° sôi = 9.5 °C)', cX, botY + 45);
+      ctx.restore();
+    }
+
+    /* -------------------------------------------------------------
+       LAB 3: ĐẤU TRƯỜNG LUYỆN TẬP SGK TRANG 65 - 67 (BÀI 13)
+       ------------------------------------------------------------- */
+    const B13_EXERCISES_DATA = [
+      {
+        id: 1,
+        title: "Câu hỏi 2 (SGK Trang 65): Nguyên tử H nào trong Ethanol không tạo liên kết H?",
+        text: "Trong phân tử ethanol (CH₃-CH₂-OH), những nguyên tử hydrogen nào KHÔNG tham gia vào liên kết hydrogen?",
+        options: [
+          "A. Nguyên tử H trong nhóm -OH",
+          "B. 5 nguyên tử H liên kết trực tiếp với nguyên tử Carbon trong gốc ethyl (-C₂H₅)",
+          "C. Cả 6 nguyên tử H đều tạo được liên kết hydrogen",
+          "D. Không có nguyên tử H nào tạo được liên kết hydrogen"
+        ],
+        correct: 1, // B
+        explain: "Chính xác! 5 nguyên tử H liên kết với Carbon (độ âm điện 2.55) có hiệu độ âm điện nhỏ (0.35), liên kết C-H hầu như không phân cực, không mang điện tích dương đủ lớn và C không còn cặp e tự do. Chỉ có nguyên tử H liên kết trực tiếp với Oxygen linh động mới tạo được liên kết hydrogen."
+      },
+      {
+        id: 2,
+        title: "Câu hỏi 3 (SGK Trang 66): So sánh nhiệt độ sôi của Butane và Isobutane",
+        text: "Butane (CH₃-CH₂-CH₂-CH₃, t° sôi = -0.5 °C) và Isobutane ((CH₃)₂CH-CH₃, t° sôi = -11.7 °C) có cùng công thức phân tử C₄H₁₀. Nguyên nhân butane có nhiệt độ sôi cao hơn là:",
+        options: [
+          "A. Butane có liên kết cộng hoá trị bền hơn",
+          "B. Butane có khối lượng phân tử lớn hơn isobutane",
+          "C. Butane có mạch thẳng không nhánh, diện tích tiếp xúc giữa các phân tử lớn hơn nên tương tác Van der Waals mạnh hơn",
+          "D. Butane tạo được liên kết hydrogen liên phân tử"
+        ],
+        correct: 2, // C
+        explain: "Chính xác! Butane có cấu trúc mạch thẳng dài, diện tích bề mặt tiếp xúc giữa các phân tử lớn hơn nhiều so với phân tử isobutane phân nhánh dạng cầu. Do đó lực hút Van der Waals giữa các phân tử butane mạnh hơn, đòi hỏi nhiệt độ cao hơn (-0.5 °C so với -11.7 °C) để hoá hơi."
+      },
+      {
+        id: 3,
+        title: "SGK Trang 64: Nguyên nhân nước đá nổi trên mặt nước lỏng",
+        text: "Tại sao băng tuyết (nước đá) lại có khối lượng riêng nhỏ hơn nước lỏng và có thể nổi trên mặt nước?",
+        options: [
+          "A. Do nước đá bẫy nhiều bọt khí nitrogen bên trong",
+          "B. Do cấu trúc mạng tinh thể nước đá rỗng hơn vì mỗi phân tử H₂O tạo 4 liên kết hydrogen tứ diện mở",
+          "C. Do các liên kết cộng hoá trị O-H dãn dài ra khi đông đặc",
+          "D. Do lực đẩy Archimedes của muối khoáng hoà tan"
+        ],
+        correct: 1, // B
+        explain: "Chính xác! Trong tinh thể nước đá, mỗi phân tử nước liên kết với 4 phân tử nước xung quanh bằng 4 liên kết hydrogen định hướng theo cấu trúc tứ diện mở. Mạng lưới này tạo nhiều khoang trống rỗng khiến thể tích dãn nở và khối lượng riêng của nước đá nhỏ hơn nước lỏng, làm băng nổi lên trên."
+      }
+    ];
+
+    let b13CurrentQuestionIdx = 0;
+    let b13UserAnswers = {};
+
+    function initB13QuizArena() {
+      b13CurrentQuestionIdx = 0;
+      b13UserAnswers = {};
+      renderB13QuizStrip();
+      renderB13QuestionCard();
+    }
+
+    function renderB13QuizStrip() {
+      const strip = document.getElementById('b13-question-selector-strip');
+      if (!strip) return;
+      strip.innerHTML = '';
+
+      B13_EXERCISES_DATA.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = 'b13-q-strip-btn-' + idx;
+        btn.className = 'btn-tool';
+        btn.style.minWidth = '42px';
+        btn.style.height = '36px';
+        btn.style.fontWeight = '700';
+
+        const isAnswered = (b13UserAnswers[idx] !== undefined);
+        const isCurrent = (idx === b13CurrentQuestionIdx);
+
+        if (isCurrent) {
+          btn.style.borderColor = '#0284c7';
+          btn.style.background = '#e0f2fe';
+          btn.style.color = '#0369a1';
+        } else if (isAnswered) {
+          const isCorrect = (b13UserAnswers[idx] === q.correct);
+          btn.style.background = isCorrect ? '#dcfce7' : '#fee2e2';
+          btn.style.borderColor = isCorrect ? '#16a34a' : '#dc2626';
+          btn.style.color = isCorrect ? '#15803d' : '#b91c1c';
+        } else {
+          btn.style.background = '#f8fafc';
+          btn.style.color = '#64748b';
+        }
+
+        btn.innerText = `Câu ${idx + 1}`;
+        btn.onclick = () => {
+          b13CurrentQuestionIdx = idx;
+          renderB13QuizStrip();
+          renderB13QuestionCard();
+        };
+        strip.appendChild(btn);
+      });
+
+      const prog = document.getElementById('b13-quiz-progress-text');
+      const answeredCount = Object.keys(b13UserAnswers).length;
+      if (prog) prog.innerText = `Đã hoàn thành: ${answeredCount} / ${B13_EXERCISES_DATA.length} câu`;
+
+      const scoreBoard = document.getElementById('b13-quiz-score-board');
+      if (scoreBoard) {
+        scoreBoard.style.display = (answeredCount === B13_EXERCISES_DATA.length) ? 'block' : 'none';
+      }
+    }
+
+    function renderB13QuestionCard() {
+      const container = document.getElementById('b13-question-card-container');
+      if (!container) return;
+
+      const q = B13_EXERCISES_DATA[b13CurrentQuestionIdx];
+      const userSelected = b13UserAnswers[b13CurrentQuestionIdx];
+      const isAnswered = (userSelected !== undefined);
+
+      let optionsHtml = '';
+      q.options.forEach((opt, optIdx) => {
+        let optStyle = 'width:100%; text-align:left; padding:12px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:8px; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between;';
+        if (isAnswered) {
+          if (optIdx === q.correct) {
+            optStyle += 'background:#dcfce7; border-color:#16a34a; color:#15803d; font-weight:700;';
+          } else if (optIdx === userSelected) {
+            optStyle += 'background:#fee2e2; border-color:#dc2626; color:#b91c1c; font-weight:700;';
+          } else {
+            optStyle += 'opacity:0.6;';
+          }
+        }
+
+        optionsHtml += `
+          <button style="${optStyle}" onclick="selectB13Answer(${optIdx})" ${isAnswered ? 'disabled' : ''}>
+            <span>${opt}</span>
+            ${isAnswered && optIdx === q.correct ? '<span style="color:#16a34a; font-weight:800;">✓</span>' : ''}
+            ${isAnswered && optIdx === userSelected && userSelected !== q.correct ? '<span style="color:#dc2626; font-weight:800;">✗</span>' : ''}
+          </button>
+        `;
+      });
+
+      let explainHtml = '';
+      if (isAnswered) {
+        const isCorrect = (userSelected === q.correct);
+        explainHtml = `
+          <div style="margin-top:14px; padding:12px; border-radius:8px; background:${isCorrect ? '#f0fdf4' : '#fef2f2'}; border:1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; font-size:13px; color:${isCorrect ? '#166534' : '#991b1b'}; line-height:1.5;">
+            <strong>${isCorrect ? '✓ Câu trả lời chính xác!' : '✗ Câu trả lời chưa chính xác!'}</strong><br/>
+            ${q.explain}
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:11px; font-weight:700; color:#0284c7; text-transform:uppercase;">${q.title}</span>
+            <span style="font-size:11px; font-weight:600; color:#64748b;">Câu ${b13CurrentQuestionIdx + 1} / ${B13_EXERCISES_DATA.length}</span>
+          </div>
+          <p style="font-size:14px; font-weight:600; color:#0f172a; margin-bottom:14px; line-height:1.5;">${q.text}</p>
+          <div>
+            ${optionsHtml}
+          </div>
+          ${explainHtml}
+        </div>
+      `;
+
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+    }
+
+    function selectB13Answer(optIdx) {
+      if (b13UserAnswers[b13CurrentQuestionIdx] !== undefined) return;
+      b13UserAnswers[b13CurrentQuestionIdx] = optIdx;
+      renderB13QuizStrip();
+      renderB13QuestionCard();
+    }
+
+    function resetB13QuizArena() {
+      b13UserAnswers = {};
+      b13CurrentQuestionIdx = 0;
+      renderB13QuizStrip();
+      renderB13QuestionCard();
+    }
+
+    function resetB13InteractiveState() {
+      b13SimMode = 'water';
+      selectB13SimMode('water');
     }
 
 
