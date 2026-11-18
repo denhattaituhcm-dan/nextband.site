@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getUnitByNumber } from '../data';
-import { useUnitProgress } from '../hooks/useUnitProgress';
+import { useUnitProgress, ORDERED_STEPS } from '../hooks/useUnitProgress';
 import { ChallengeHeader } from '../components/layout/ChallengeHeader';
 
 // 10 Steps
@@ -16,8 +16,9 @@ import { GrammarInlineStep } from '../components/steps/08_GrammarInlineStep';
 import { GuidedWritingStep } from '../components/steps/09_GuidedWritingStep';
 import { ReviewQuizStep } from '../components/steps/10_ReviewQuizStep';
 import { SidePassageDrawer } from '../components/shared/SidePassageDrawer';
+import { ReadingPassagePane } from '../components/shared/ReadingPassagePane';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const ChallengeUnitPage: React.FC = () => {
   const { unitId } = useParams<{ unitId: string }>();
@@ -25,13 +26,16 @@ export const ChallengeUnitPage: React.FC = () => {
   const unit = getUnitByNumber(parsedUnitNumber);
 
   const {
+    progress,
     currentStep,
     currentStepIndex,
     completedSteps,
-    progress,
+    syncStatus,
+    isAuthenticated,
     goToStepIndex,
     completeStep,
     nextStep,
+    prevStep,
     saveWritingDraft,
     resetProgress,
   } = useUnitProgress(unit ? unit.unitNumber : 0);
@@ -40,20 +44,22 @@ export const ChallengeUnitPage: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
-          <h2 className="text-2xl font-bold">Unit not found</h2>
+          <h2 className="text-2xl font-bold">Không tìm thấy bài học</h2>
           <p className="text-muted-foreground text-sm">
-            Unit {unitId} is not available or still under development.
+            Unit {unitId} hiện chưa khả dụng hoặc đang được hoàn thiện.
           </p>
           <Link to="/reading-challenge">
             <Button className="rounded-2xl">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Catalog
+              Quay lại danh sách Unit
             </Button>
           </Link>
         </div>
       </div>
     );
   }
+
+  const isSplitScreenStep = currentStep === 'comprehension' || currentStep === 'idioms' || currentStep === 'summary';
 
   const renderActiveStep = () => {
     switch (currentStep) {
@@ -72,6 +78,8 @@ export const ChallengeUnitPage: React.FC = () => {
         return (
           <VocabPreviewStep
             config={unit.vocabPreview}
+            savedAnswers={progress.stepAnswers?.vocab_preview}
+            savedScore={progress.scores?.vocabPreviewScore}
             onComplete={(score, answers) => {
               completeStep('vocab_preview', answers, { vocabPreviewScore: score });
               nextStep();
@@ -83,6 +91,8 @@ export const ChallengeUnitPage: React.FC = () => {
         return (
           <ReadingPassageStep
             unit={unit}
+            savedWpm={progress.readingWpm}
+            savedSeconds={progress.readingSeconds}
             onComplete={(wpm, readingSeconds) => {
               completeStep('reading_passage', { wpm, readingSeconds });
               nextStep();
@@ -94,6 +104,8 @@ export const ChallengeUnitPage: React.FC = () => {
         return (
           <ComprehensionStep
             questions={unit.readingComprehension}
+            savedAnswers={progress.stepAnswers?.comprehension}
+            savedScore={progress.scores?.comprehensionScore}
             onComplete={(score, answers) => {
               completeStep('comprehension', answers, { comprehensionScore: score });
               nextStep();
@@ -105,6 +117,8 @@ export const ChallengeUnitPage: React.FC = () => {
         return (
           <IdiomsStep
             idioms={unit.idioms}
+            savedAnswers={progress.stepAnswers?.idioms}
+            savedScore={progress.scores?.idiomsScore}
             onComplete={(score, answers) => {
               completeStep('idioms', answers, { idiomsScore: score });
               nextStep();
@@ -116,6 +130,8 @@ export const ChallengeUnitPage: React.FC = () => {
         return (
           <SummaryStep
             summary={unit.summary}
+            savedAnswers={progress.stepAnswers?.summary}
+            savedScore={progress.scores?.summaryScore}
             onComplete={(score, answers) => {
               completeStep('summary', answers, { summaryScore: score });
               nextStep();
@@ -127,6 +143,9 @@ export const ChallengeUnitPage: React.FC = () => {
         return (
           <ListeningDictationStep
             config={unit.listeningDictation}
+            savedAnswers={progress.stepAnswers?.listening_dictation}
+            savedComprehensionScore={progress.scores?.listeningScore}
+            savedAccuracy={progress.scores?.dictationAccuracy}
             onComplete={(comprehensionScore, accuracy) => {
               completeStep('listening_dictation', null, { 
                 listeningScore: comprehensionScore,
@@ -141,6 +160,8 @@ export const ChallengeUnitPage: React.FC = () => {
         return (
           <GrammarInlineStep
             config={unit.grammar}
+            savedAnswers={progress.stepAnswers?.grammar_inline}
+            savedScore={progress.scores?.grammarScore}
             onComplete={(score, answers) => {
               completeStep('grammar_inline', answers, { grammarScore: score });
               nextStep();
@@ -167,8 +188,11 @@ export const ChallengeUnitPage: React.FC = () => {
           <ReviewQuizStep
             questions={unit.reviewQuiz}
             unitNumber={unit.unitNumber}
-            onComplete={(score) => {
-              completeStep('review_quiz', null, { reviewQuizScore: score });
+            savedAnswers={progress.stepAnswers?.review_quiz}
+            savedScore={progress.scores?.reviewQuizScore}
+            readingWpm={progress.readingWpm}
+            onComplete={(score, answers) => {
+              completeStep('review_quiz', answers, { reviewQuizScore: score });
             }}
             onResetUnit={resetProgress}
           />
@@ -185,16 +209,66 @@ export const ChallengeUnitPage: React.FC = () => {
         unit={unit}
         currentStepIndex={currentStepIndex}
         completedSteps={completedSteps}
+        syncStatus={syncStatus}
+        isAuthenticated={isAuthenticated}
         onSelectStep={goToStepIndex}
       />
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
-        {renderActiveStep()}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+        {/* Split-screen layout for comprehension, idioms, summary on desktop */}
+        {isSplitScreenStep ? (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left Column: Sticky Reading Passage Reference */}
+            <aside className="hidden lg:block lg:col-span-5 lg:sticky lg:top-20">
+              <ReadingPassagePane unit={unit} />
+            </aside>
+
+            {/* Right Column: Step exercise */}
+            <div className="lg:col-span-7">
+              {renderActiveStep()}
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-5xl mx-auto">
+            {renderActiveStep()}
+          </div>
+        )}
+
+        {/* Global Bottom Step Navigation */}
+        <div className="max-w-4xl mx-auto mt-10 pt-6 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={currentStepIndex === 0}
+            onClick={prevStep}
+            className="rounded-xl text-xs"
+          >
+            <ChevronLeft className="w-4 h-4 mr-1" />
+            Bước trước
+          </Button>
+
+          <span>
+            Bước {currentStepIndex + 1} / {ORDERED_STEPS.length}
+          </span>
+
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={currentStepIndex === ORDERED_STEPS.length - 1}
+            onClick={nextStep}
+            className="rounded-xl text-xs"
+          >
+            Bước tiếp theo
+            <ChevronRight className="w-4 h-4 ml-1" />
+          </Button>
+        </div>
       </main>
 
-      {/* Side-Passage Slide-over Drawer for Steps 4 (Comprehension), 5 (Idioms), 6 (Summary) */}
-      {(currentStep === 'comprehension' || currentStep === 'idioms' || currentStep === 'summary') && (
-        <SidePassageDrawer unit={unit} />
+      {/* Floating Side-Passage Slide-over Drawer for mobile screens */}
+      {isSplitScreenStep && (
+        <div className="lg:hidden">
+          <SidePassageDrawer unit={unit} />
+        </div>
       )}
     </div>
   );

@@ -167,6 +167,7 @@ export interface UnitConfig {
   audioReadingUrl: string;
   audioListeningUrl: string;
   wordCount: number; // e.g. 223 words
+  isLocked?: boolean;
   passageNumberedLines: PassageNumberedLine[];
   glossary: GlossaryItem[];
   passageParagraphs: string[];
@@ -201,3 +202,59 @@ export interface UnitProgressState {
   isUnitCompleted: boolean;
   lastUpdated: string;
 }
+
+export type PhaseId = 1 | 2 | 3 | 4;
+
+export interface LearningPhase {
+  id: PhaseId;
+  name: string;
+  subtitle: string;
+  stepIndexes: number[];
+  steps: StepType[];
+}
+
+export const LEARNING_PHASES: LearningPhase[] = [
+  {
+    id: 1,
+    name: 'Khởi động',
+    subtitle: 'Kích hoạt từ vựng & tư duy',
+    stepIndexes: [0, 1],
+    steps: ['pre_reading', 'vocab_preview'],
+  },
+  {
+    id: 2,
+    name: 'Đọc hiểu sâu',
+    subtitle: 'Nắm chắc cấu trúc & chi tiết bài đọc',
+    stepIndexes: [2, 3, 4, 5],
+    steps: ['reading_passage', 'comprehension', 'idioms', 'summary'],
+  },
+  {
+    id: 3,
+    name: 'Mở rộng kỹ năng',
+    subtitle: 'Nghe hội thoại, Ngữ pháp & Viết',
+    stepIndexes: [6, 7, 8],
+    steps: ['listening_dictation', 'grammar_inline', 'guided_writing'],
+  },
+  {
+    id: 4,
+    name: 'Về đích',
+    subtitle: 'Kiểm tra tổng hợp 10 câu',
+    stepIndexes: [9],
+    steps: ['review_quiz'],
+  },
+];
+
+export const ORDERED_STEPS: StepType[] = [
+  'pre_reading',
+  'vocab_preview',
+  'reading_passage',
+  'comprehension',
+  'idioms',
+  'summary',
+  'listening_dictation',
+  'grammar_inline',
+  'guided_writing',
+  'review_quiz',
+];
+
+

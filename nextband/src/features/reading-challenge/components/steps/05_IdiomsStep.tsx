@@ -3,16 +3,25 @@ import { IdiomItem } from '../../types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { CheckCircle2, ChevronRight, Layers, ArrowRight, BookOpen } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Layers, ArrowRight, RotateCcw } from 'lucide-react';
 
 interface IdiomsStepProps {
   idioms: IdiomItem[];
+  savedAnswers?: Record<string, string>;
+  savedScore?: number;
   onComplete: (score: number, answers: Record<string, string>) => void;
 }
 
-export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) => {
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+export const IdiomsStep: React.FC<IdiomsStepProps> = ({
+  idioms,
+  savedAnswers = {},
+  savedScore,
+  onComplete,
+}) => {
+  const [answers, setAnswers] = useState<Record<string, string>>(() => savedAnswers);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(() => {
+    return savedScore !== undefined || (Object.keys(savedAnswers).length >= idioms.length && idioms.every((i) => Boolean(savedAnswers[i.id])));
+  });
 
   const handleInputChange = (idiomId: string, val: string) => {
     if (isSubmitted) return;
@@ -49,6 +58,11 @@ export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) =>
     setIsSubmitted(true);
   };
 
+  const handleReset = () => {
+    setAnswers({});
+    setIsSubmitted(false);
+  };
+
   const handleContinue = () => {
     const score = calculateScore();
     onComplete(score, answers);
@@ -67,19 +81,31 @@ export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) =>
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                Idiomatic Expressions
+                Idiomatic Expressions (Thành ngữ theo bài)
               </h2>
-              <p className="text-sm text-muted-foreground">
-                Fill in the blank with one of the idioms. Change its form if necessary.
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Điền thành ngữ phù hợp vào chỗ trống (lưu ý chia thì hoặc dạng phù hợp nếu cần).
               </p>
             </div>
           </div>
           {isSubmitted && (
-            <div className="text-right">
-              <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Score</span>
-              <p className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">
-                {score} / {idioms.length}
-              </p>
+            <div className="text-right flex items-center gap-3">
+              <div>
+                <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Kết quả</span>
+                <p className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">
+                  {score} / {idioms.length}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="rounded-xl text-xs h-8"
+              >
+                <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                Làm lại
+              </Button>
             </div>
           )}
         </div>
@@ -89,7 +115,7 @@ export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) =>
       <Card className="border border-indigo-200/60 dark:border-indigo-900/40 bg-indigo-50/30 dark:bg-indigo-950/20 rounded-3xl overflow-hidden">
         <CardContent className="p-5 space-y-3">
           <span className="text-xs font-bold uppercase tracking-wider text-indigo-800 dark:text-indigo-300 block">
-            Target Idioms in this Unit:
+            Thành ngữ trọng tâm trong Unit:
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {idioms.map((item) => (
@@ -101,13 +127,12 @@ export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) =>
                   <button
                     type="button"
                     onClick={() => {
-                      // Find first unfilled idiom or current
                       const targetId = idioms.find((i) => !answers[i.id])?.id || item.id;
                       handleQuickInsert(targetId, item.idiom);
                     }}
-                    className="text-[10px] text-muted-foreground hover:text-indigo-600 font-semibold"
+                    className="text-[10px] text-muted-foreground hover:text-indigo-600 font-semibold px-1.5 py-0.5 rounded bg-muted hover:bg-indigo-50"
                   >
-                    + Tap
+                    + Điền nhanh
                   </button>
                 </div>
                 <p className="text-muted-foreground">[{item.definition}]</p>
@@ -123,18 +148,16 @@ export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) =>
         {idioms.map((item, idx) => {
           const userVal = answers[item.id] || '';
           const isCorrect = isAnswerCorrect(item, userVal);
-
-          // Split prompt by [BLANK]
           const parts = item.sentencePrompt.split('[BLANK]');
 
           return (
             <Card key={item.id} className="border border-border/70 rounded-3xl overflow-hidden shadow-xs">
               <CardContent className="p-6 space-y-3">
                 <div className="flex items-center justify-between border-b pb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  <span>Exercise {idx + 1}</span>
+                  <span>Câu hỏi {idx + 1}</span>
                   {isSubmitted && (
-                    <span className={isCorrect ? 'text-emerald-600' : 'text-rose-500'}>
-                      {isCorrect ? 'Correct!' : `Answer: ${item.correctAnswer}`}
+                    <span className={isCorrect ? 'text-emerald-600 font-bold' : 'text-rose-500 font-bold'}>
+                      {isCorrect ? 'Chính xác! ✓' : `Đáp án đúng: ${item.correctAnswer}`}
                     </span>
                   )}
                 </div>
@@ -145,7 +168,7 @@ export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) =>
                     value={userVal}
                     disabled={isSubmitted}
                     onChange={(e) => handleInputChange(item.id, e.target.value)}
-                    placeholder="type idiom..."
+                    placeholder="nhập thành ngữ..."
                     className={`inline-block w-40 sm:w-48 h-9 text-sm font-sans font-semibold rounded-xl border-2 ${
                       isSubmitted
                         ? isCorrect
@@ -158,8 +181,8 @@ export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) =>
                 </div>
 
                 {isSubmitted && (
-                  <div className="p-3 bg-muted/60 rounded-xl text-xs text-foreground/80">
-                    <span className="font-bold text-indigo-600">Note: </span>
+                  <div className="p-3 bg-muted/60 rounded-xl text-xs text-foreground/80 animate-in fade-in">
+                    <span className="font-bold text-indigo-600">Ghi chú ngữ pháp: </span>
                     {item.explanation}
                   </div>
                 )}
@@ -177,7 +200,7 @@ export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) =>
             onClick={handleSubmit}
             className="rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-5 shadow-lg shadow-indigo-600/20"
           >
-            Check Idioms Answers
+            Kiểm tra đáp án
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         ) : (
@@ -186,7 +209,7 @@ export const IdiomsStep: React.FC<IdiomsStepProps> = ({ idioms, onComplete }) =>
             onClick={handleContinue}
             className="rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-5 shadow-lg shadow-emerald-600/20"
           >
-            Continue to Summary
+            Tiếp tục sang Tóm tắt bài (Summary)
             <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         )}

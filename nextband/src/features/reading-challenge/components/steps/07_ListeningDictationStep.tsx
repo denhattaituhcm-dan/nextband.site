@@ -4,34 +4,45 @@ import { ModernAudioBar } from '../shared/ModernAudioBar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Volume2, CheckCircle2, ChevronRight, ArrowRight, Eye, HelpCircle } from 'lucide-react';
+import { Volume2, CheckCircle2, ChevronRight, Eye, HelpCircle, RotateCcw } from 'lucide-react';
 import * as Diff from 'diff';
 
 interface ListeningDictationStepProps {
   config: ListeningDictationConfig;
+  savedAnswers?: Record<string, string>;
+  savedComprehensionScore?: number;
+  savedAccuracy?: number;
   onComplete: (comprehensionScore: number, dictationAccuracy: number) => void;
 }
 
 export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
   config,
+  savedAnswers = {},
+  savedComprehensionScore,
+  savedAccuracy,
   onComplete,
 }) => {
   const [userTranscript, setUserTranscript] = useState('');
-  const [isDictationEvaluated, setIsDictationEvaluated] = useState(false);
+  const [isDictationEvaluated, setIsDictationEvaluated] = useState(Boolean(savedAccuracy !== undefined));
   const [showFullTranscript, setShowFullTranscript] = useState(false);
 
   // Comprehension questions state (3 questions from textbook)
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [isComprehensionSubmitted, setIsComprehensionSubmitted] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>(() => savedAnswers);
+  const [isComprehensionSubmitted, setIsComprehensionSubmitted] = useState<boolean>(() => {
+    return savedComprehensionScore !== undefined || (Object.keys(savedAnswers).length >= config.questions.length);
+  });
 
   const cleanText = (str: string) =>
     str
+      .replace(/\b(man|woman):/gi, '')
       .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'’]/g, '')
       .replace(/\s+/g, ' ')
       .trim()
       .toLowerCase();
 
   const calculateAccuracy = () => {
+    if (savedAccuracy !== undefined && !userTranscript) return savedAccuracy;
+
     const original = cleanText(config.fullTranscript);
     const typed = cleanText(userTranscript);
 
@@ -85,10 +96,10 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                Listening & Dictation (Track {config.trackNumber})
+                Listening & Dictation (Nghe hội thoại Track {config.trackNumber})
               </h2>
-              <p className="text-sm text-muted-foreground">
-                Listen to the dialogue, answer comprehension questions, and practice dictation.
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Nghe đoạn đối thoại ngắn, trả lời câu hỏi đọc hiểu và luyện nghe chép từ khóa.
               </p>
             </div>
           </div>
@@ -100,10 +111,32 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
 
       {/* Section 1: Textbook 3 Comprehension Questions */}
       <div className="space-y-4">
-        <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-          <HelpCircle className="w-4 h-4 text-violet-600" />
-          Listening Comprehension Questions
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+            <HelpCircle className="w-4 h-4 text-violet-600" />
+            Listening Comprehension (3 câu hỏi hiểu bài)
+          </h3>
+          {isComprehensionSubmitted && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-violet-600">
+                Đúng: {comprehensionScore}/{config.questions.length}
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedAnswers({});
+                  setIsComprehensionSubmitted(false);
+                }}
+                className="text-xs h-7 rounded-xl"
+              >
+                <RotateCcw className="w-3 h-3 mr-1" />
+                Làm lại
+              </Button>
+            </div>
+          )}
+        </div>
 
         {config.questions.map((q) => {
           const userAns = selectedAnswers[q.id];
@@ -157,7 +190,7 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
 
                 {isComprehensionSubmitted && q.explanation && (
                   <p className="text-xs text-muted-foreground pt-1 italic">
-                    💡 {q.explanation}
+                    💡 Giải thích: {q.explanation}
                   </p>
                 )}
               </CardContent>
@@ -173,7 +206,7 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
               onClick={() => setIsComprehensionSubmitted(true)}
               className="rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs h-9 font-semibold"
             >
-              Check Listening Comprehension
+              Kiểm tra câu hỏi nghe
             </Button>
           </div>
         )}
@@ -184,7 +217,7 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Transcript Dictation Practice:
+              Luyện nghe chép chính tả (Dictation Practice):
             </span>
             <Button
               type="button"
@@ -194,13 +227,13 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
               className="text-xs h-7 rounded-xl"
             >
               <Eye className="w-3.5 h-3.5 mr-1" />
-              {showFullTranscript ? 'Hide Dialogue Transcript' : 'Show Dialogue Transcript'}
+              {showFullTranscript ? 'Ẩn lời thoại đầy đủ' : 'Xem lời thoại đầy đủ'}
             </Button>
           </div>
 
           {showFullTranscript && (
             <div className="p-4 bg-muted/60 rounded-2xl text-xs sm:text-sm text-foreground/80 space-y-1.5 animate-in fade-in">
-              <p className="font-bold text-sky-600">Full Transcript:</p>
+              <p className="font-bold text-sky-600">Lời thoại đầy đủ (Transcript):</p>
               <pre className="whitespace-pre-wrap font-sans leading-relaxed">
                 {config.fullTranscript}
               </pre>
@@ -211,7 +244,7 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
             value={userTranscript}
             onChange={(e) => setUserTranscript(e.target.value)}
             disabled={isDictationEvaluated}
-            placeholder="Type what you hear from the audio track here..."
+            placeholder="Gõ lại những gì bạn nghe được từ đoạn hội thoại audio tại đây..."
             className="min-h-[120px] rounded-2xl resize-none font-sans text-sm p-4 border-dashed"
           />
 
@@ -219,10 +252,10 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
             <div className="p-4 rounded-2xl bg-muted/30 border space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-muted-foreground uppercase">
-                  Real-time Diff Analysis:
+                  Phân tích độ chính xác từ vựng (Diff):
                 </span>
                 <span className="text-xs font-bold text-violet-600">
-                  Accuracy: {accuracy}%
+                  Độ chính xác: {accuracy}%
                 </span>
               </div>
               <div className="text-sm leading-relaxed font-mono flex flex-wrap gap-1.5">
@@ -247,17 +280,28 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
             </div>
           )}
 
-          {!isDictationEvaluated && (
-            <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            {isDictationEvaluated ? (
               <Button
                 type="button"
-                onClick={() => setIsDictationEvaluated(true)}
-                className="rounded-xl text-xs h-9 bg-slate-800 text-white"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsDictationEvaluated(false)}
+                className="rounded-xl text-xs h-9"
               >
-                Evaluate Dictation
+                Gõ lại
               </Button>
-            </div>
-          )}
+            ) : (
+              <Button
+                type="button"
+                disabled={!userTranscript.trim()}
+                onClick={() => setIsDictationEvaluated(true)}
+                className="rounded-xl text-xs h-9 bg-slate-800 text-white hover:bg-slate-700"
+              >
+                Chấm điểm nghe chép
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -268,7 +312,7 @@ export const ListeningDictationStep: React.FC<ListeningDictationStepProps> = ({
           onClick={() => onComplete(comprehensionScore, accuracy)}
           className="rounded-2xl bg-violet-600 hover:bg-violet-500 text-white font-semibold px-6 py-5 shadow-lg shadow-violet-600/20"
         >
-          Continue to Grammar
+          Tiếp tục sang Ngữ pháp (Grammar Focus)
           <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>

@@ -1,22 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import { StepType, UnitProgressState } from '../types';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { StepType, UnitProgressState, ORDERED_STEPS } from '../types';
+import { useAuth } from '@/hooks/useAuth';
+import { readingChallengeApi, SaveUnitProgressPayload } from '@/lib/api/domains/reading-challenge.api';
 
-export const ORDERED_STEPS: StepType[] = [
-  'pre_reading',
-  'vocab_preview',
-  'reading_passage',
-  'comprehension',
-  'idioms',
-  'summary',
-  'listening_dictation',
-  'grammar_inline',
-  'guided_writing',
-  'review_quiz',
-];
+export { ORDERED_STEPS };
 
-const LOCAL_STORAGE_PREFIX = 'rc1_unit_progress_';
+export const LOCAL_STORAGE_PREFIX = 'rc1_unit_progress_';
 
-const getDefaultProgress = (): UnitProgressState => ({
+export const getDefaultProgress = (): UnitProgressState => ({
   currentStepIndex: 0,
   completedSteps: [],
   stepAnswers: {},
@@ -26,41 +17,157 @@ const getDefaultProgress = (): UnitProgressState => ({
   lastUpdated: new Date().toISOString(),
 });
 
-export function useUnitProgress(unitNumber: number) {
-  const storageKey = `${LOCAL_STORAGE_PREFIX}${unitNumber}`;
+export type SyncStatus = 'synced' | 'syncing' | 'local' | 'error';
 
-  const [progress, setProgress] = useState<UnitProgressState>(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch (e) {
-      console.warn('Failed to read progress from localStorage', e);
+export function readLocalUnitProgress(unitNumber: number): UnitProgressState | null {
+  try {
+    const raw = localStorage.getItem(`${LOCAL_STORAGE_PREFIX}${unitNumber}`);
+    if (raw) {
+      return JSON.parse(raw);
     }
-    return getDefaultProgress();
+  } catch (e) {
+    console.warn(`Failed to read Unit ${unitNumber} from localStorage`, e);
+  }
+  return null;
+}
+
+export function writeLocalUnitProgress(unitNumber: number, state: UnitProgressState): void {
+  try {
+    localStorage.setItem(`${LOCAL_STORAGE_PREFIX}${unitNumber}`, JSON.stringify(state));
+  } catch (e) {
+    console.error(`Failed to write Unit ${unitNumber} to localStorage`, e);
+  }
+}
+
+export function useUnitProgress(unitNumber: number) {
+  const { isAuthenticated, user } = useAuth();
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(isAuthenticated ? 'syncing' : 'local');
+  const [syncError, setSyncError] = useState<string | null>(null);
+
+  // 1. Initial State from localStorage (Local-first, 0 latency)
+  const [progress, setProgress] = useState<UnitProgressState>(() => {
+    return readLocalUnitProgress(unitNumber) || getDefaultProgress();
   });
 
-  // Sync to localStorage
+  const hasCloudReconciledRef = useRef(false);
+
+  // 2. Cloud Reconciliation on mount or when user logs in
   useEffect(() => {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(progress));
-    } catch (e) {
-      console.error('Failed to save progress to localStorage', e);
+    if (!isAuthenticated || hasCloudReconciledRef.current || unitNumber < 1) return;
+
+    let isMounted = true;
+    const reconcileFromCloud = async () => {
+      setSyncStatus('syncing');
+      setSyncError(null);
+      try {
+        const cloudRecord = await readingChallengeApi.getUnitProgress(unitNumber);
+        if (!isMounted) return;
+
+        if (cloudRecord) {
+          setProgress((prevLocal) => {
+            const mergedCompleted = Array.from(
+              new Set([...prevLocal.completedSteps, ...(cloudRecord.completedSteps as StepType[])])
+            );
+
+            const mergedAnswers = {
+              ...(cloudRecord.stepAnswers || {}),
+              ...prevLocal.stepAnswers,
+            };
+
+            const mergedScores = {
+              ...(cloudRecord.scores || {}),
+              ...prevLocal.scores,
+            };
+
+            // Keep max scores
+            for (const [k, v] of Object.entries(cloudRecord.scores || {})) {
+              if (typeof v === 'number') {
+                mergedScores[k] = Math.max(mergedScores[k] ?? 0, v);
+              }
+            }
+
+            const isCompleted = prevLocal.isUnitCompleted || cloudRecord.isUnitCompleted || mergedCompleted.length >= 10;
+            const currentIdx = Math.max(prevLocal.currentStepIndex, cloudRecord.currentStepIndex);
+
+            const reconciled: UnitProgressState = {
+              currentStepIndex: currentIdx,
+              completedSteps: mergedCompleted,
+              stepAnswers: mergedAnswers,
+              readingWpm: prevLocal.readingWpm || cloudRecord.readingWpm || undefined,
+              readingSeconds: prevLocal.readingSeconds || cloudRecord.readingSeconds || undefined,
+              scores: mergedScores,
+              writingDraft: prevLocal.writingDraft || cloudRecord.writingDraft || '',
+              isUnitCompleted: isCompleted,
+              lastUpdated: new Date().toISOString(),
+            };
+
+            writeLocalUnitProgress(unitNumber, reconciled);
+            return reconciled;
+          });
+        }
+        hasCloudReconciledRef.current = true;
+        setSyncStatus('synced');
+      } catch (err: any) {
+        if (!isMounted) return;
+        console.warn(`[Sync] Cloud load for Unit ${unitNumber} failed:`, err?.message);
+        setSyncStatus('local');
+        setSyncError(err?.message || 'Không thể đồng bộ từ máy chủ');
+      }
+    };
+
+    reconcileFromCloud();
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthenticated, unitNumber]);
+
+  // Sync to Cloud helper
+  const syncToCloud = useCallback(async (stateToSync: UnitProgressState) => {
+    if (!isAuthenticated || unitNumber < 1) {
+      setSyncStatus('local');
+      return;
     }
-  }, [storageKey, progress]);
+
+    setSyncStatus('syncing');
+    setSyncError(null);
+    try {
+      const payload: SaveUnitProgressPayload = {
+        unitNumber,
+        currentStepIndex: stateToSync.currentStepIndex,
+        completedSteps: stateToSync.completedSteps,
+        stepAnswers: stateToSync.stepAnswers,
+        readingWpm: stateToSync.readingWpm,
+        readingSeconds: stateToSync.readingSeconds,
+        scores: stateToSync.scores,
+        writingDraft: stateToSync.writingDraft,
+        isUnitCompleted: stateToSync.isUnitCompleted,
+      };
+
+      await readingChallengeApi.saveUnitProgress(unitNumber, payload);
+      setSyncStatus('synced');
+    } catch (err: any) {
+      console.warn(`[Sync] Save to cloud failed for Unit ${unitNumber}:`, err?.message);
+      setSyncStatus('error');
+      setSyncError(err?.message || 'Lỗi lưu lên máy chủ');
+    }
+  }, [isAuthenticated, unitNumber]);
 
   const currentStep = ORDERED_STEPS[progress.currentStepIndex] || 'pre_reading';
 
   const goToStepIndex = useCallback((index: number) => {
     if (index >= 0 && index < ORDERED_STEPS.length) {
-      setProgress((prev) => ({
-        ...prev,
-        currentStepIndex: index,
-        lastUpdated: new Date().toISOString(),
-      }));
+      setProgress((prev) => {
+        const nextState = {
+          ...prev,
+          currentStepIndex: index,
+          lastUpdated: new Date().toISOString(),
+        };
+        writeLocalUnitProgress(unitNumber, nextState);
+        syncToCloud(nextState);
+        return nextState;
+      });
     }
-  }, []);
+  }, [unitNumber, syncToCloud]);
 
   const goToStep = useCallback((step: StepType) => {
     const idx = ORDERED_STEPS.indexOf(step);
@@ -78,8 +185,8 @@ export function useUnitProgress(unitNumber: number) {
       const newCompleted = prev.completedSteps.includes(step)
         ? prev.completedSteps
         : [...prev.completedSteps, step];
-      
-      const newStepAnswers = answers
+
+      const newStepAnswers = answers !== undefined
         ? { ...prev.stepAnswers, [step]: answers }
         : prev.stepAnswers;
 
@@ -98,45 +205,61 @@ export function useUnitProgress(unitNumber: number) {
         lastUpdated: new Date().toISOString(),
       };
 
+      writeLocalUnitProgress(unitNumber, updatedState);
+      syncToCloud(updatedState);
       return updatedState;
     });
-  }, []);
+  }, [unitNumber, syncToCloud]);
 
   const nextStep = useCallback(() => {
     setProgress((prev) => {
       const nextIdx = Math.min(prev.currentStepIndex + 1, ORDERED_STEPS.length - 1);
-      return {
+      const nextState = {
         ...prev,
         currentStepIndex: nextIdx,
         lastUpdated: new Date().toISOString(),
       };
+      writeLocalUnitProgress(unitNumber, nextState);
+      syncToCloud(nextState);
+      return nextState;
     });
-  }, []);
+  }, [unitNumber, syncToCloud]);
 
   const prevStep = useCallback(() => {
     setProgress((prev) => {
       const nextIdx = Math.max(prev.currentStepIndex - 1, 0);
-      return {
+      const nextState = {
         ...prev,
         currentStepIndex: nextIdx,
         lastUpdated: new Date().toISOString(),
       };
+      writeLocalUnitProgress(unitNumber, nextState);
+      syncToCloud(nextState);
+      return nextState;
     });
-  }, []);
+  }, [unitNumber, syncToCloud]);
 
   const saveWritingDraft = useCallback((draft: string) => {
-    setProgress((prev) => ({
-      ...prev,
-      writingDraft: draft,
-      lastUpdated: new Date().toISOString(),
-    }));
-  }, []);
+    setProgress((prev) => {
+      const nextState = {
+        ...prev,
+        writingDraft: draft,
+        lastUpdated: new Date().toISOString(),
+      };
+      writeLocalUnitProgress(unitNumber, nextState);
+      syncToCloud(nextState);
+      return nextState;
+    });
+  }, [unitNumber, syncToCloud]);
 
   const resetProgress = useCallback(() => {
     const fresh = getDefaultProgress();
     setProgress(fresh);
-    localStorage.removeItem(storageKey);
-  }, [storageKey]);
+    writeLocalUnitProgress(unitNumber, fresh);
+    if (isAuthenticated) {
+      syncToCloud(fresh);
+    }
+  }, [unitNumber, isAuthenticated, syncToCloud]);
 
   return {
     progress,
@@ -147,6 +270,9 @@ export function useUnitProgress(unitNumber: number) {
     isLastStep: progress.currentStepIndex === ORDERED_STEPS.length - 1,
     isCompleted: progress.isUnitCompleted,
     completedSteps: progress.completedSteps,
+    syncStatus,
+    syncError,
+    isAuthenticated,
     goToStep,
     goToStepIndex,
     completeStep,

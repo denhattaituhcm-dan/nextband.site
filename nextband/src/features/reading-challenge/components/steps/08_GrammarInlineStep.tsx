@@ -2,19 +2,25 @@ import React, { useState } from 'react';
 import { GrammarConfig } from '../../types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, CheckCircle2, ChevronRight, ArrowRight, BookMarked } from 'lucide-react';
+import { Sparkles, CheckCircle2, ChevronRight, ArrowRight, BookMarked, RotateCcw } from 'lucide-react';
 
 interface GrammarInlineStepProps {
   config: GrammarConfig;
+  savedAnswers?: Record<string, string>;
+  savedScore?: number;
   onComplete: (score: number, answers: Record<string, string>) => void;
 }
 
 export const GrammarInlineStep: React.FC<GrammarInlineStepProps> = ({
   config,
+  savedAnswers = {},
+  savedScore,
   onComplete,
 }) => {
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>(() => savedAnswers);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(() => {
+    return savedScore !== undefined || (Object.keys(savedAnswers).length >= config.questions.length);
+  });
 
   const handleSelect = (questionId: string, option: string) => {
     if (isSubmitted) return;
@@ -33,6 +39,11 @@ export const GrammarInlineStep: React.FC<GrammarInlineStepProps> = ({
 
   const handleSubmit = () => {
     setIsSubmitted(true);
+  };
+
+  const handleReset = () => {
+    setSelectedAnswers({});
+    setIsSubmitted(false);
   };
 
   const handleContinue = () => {
@@ -56,18 +67,30 @@ export const GrammarInlineStep: React.FC<GrammarInlineStepProps> = ({
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                 Grammar Focus: {config.title}
               </h2>
-              <p className="text-sm text-muted-foreground">
-                Read the grammar principle and choose the correct word in parentheses.
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Đọc quy tắc ngữ pháp trong bài và chọn từ chính xác trong ngoặc đơn.
               </p>
             </div>
           </div>
 
           {isSubmitted && (
-            <div className="text-right">
-              <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Score</span>
-              <p className="text-2xl font-extrabold text-cyan-600 dark:text-cyan-400">
-                {score} / {config.questions.length}
-              </p>
+            <div className="text-right flex items-center gap-3">
+              <div>
+                <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Kết quả</span>
+                <p className="text-2xl font-extrabold text-cyan-600 dark:text-cyan-400">
+                  {score} / {config.questions.length}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="rounded-xl text-xs h-8"
+              >
+                <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                Làm lại
+              </Button>
             </div>
           )}
         </div>
@@ -78,14 +101,14 @@ export const GrammarInlineStep: React.FC<GrammarInlineStepProps> = ({
         <CardContent className="p-6 space-y-3">
           <div className="flex items-center gap-2 text-cyan-700 dark:text-cyan-300 font-bold text-sm">
             <BookMarked className="w-4 h-4" />
-            <span>Grammar Rule & Context</span>
+            <span>Quy tắc ngữ pháp & Ví dụ từ bài đọc</span>
           </div>
           <p className="text-sm leading-relaxed text-foreground/90 font-medium">
             {config.ruleExplanation}
           </p>
           {config.sampleSentences && config.sampleSentences.length > 0 && (
             <div className="pt-2 border-t border-cyan-200/40 dark:border-cyan-800/40 text-xs text-muted-foreground space-y-1">
-              <span className="font-semibold text-foreground">Examples from the reading:</span>
+              <span className="font-semibold text-foreground">Câu mẫu từ bài đọc:</span>
               <ul className="list-disc pl-4 space-y-0.5 italic">
                 {config.sampleSentences.map((s, idx) => (
                   <li key={idx}>"{s}"</li>
@@ -106,10 +129,10 @@ export const GrammarInlineStep: React.FC<GrammarInlineStepProps> = ({
             <Card key={q.id} className="border border-border/70 rounded-3xl overflow-hidden shadow-xs">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center justify-between border-b pb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  <span>Exercise {idx + 1}</span>
+                  <span>Bài tập {idx + 1}</span>
                   {isSubmitted && (
-                    <span className={isCorrect ? 'text-emerald-600' : 'text-rose-500'}>
-                      {isCorrect ? 'Correct!' : 'Incorrect'}
+                    <span className={isCorrect ? 'text-emerald-600 font-bold' : 'text-rose-500 font-bold'}>
+                      {isCorrect ? 'Chính xác! ✓' : `Đáp án đúng: ${q.correctAnswer}`}
                     </span>
                   )}
                 </div>
@@ -153,8 +176,8 @@ export const GrammarInlineStep: React.FC<GrammarInlineStepProps> = ({
                 </div>
 
                 {isSubmitted && (
-                  <div className="p-3 bg-muted/60 rounded-xl text-xs text-foreground/80">
-                    <span className="font-bold text-cyan-600">Explanation: </span>
+                  <div className="p-3 bg-muted/60 rounded-xl text-xs text-foreground/80 animate-in fade-in">
+                    <span className="font-bold text-cyan-600">Giải thích: </span>
                     {q.explanation}
                   </div>
                 )}
@@ -173,7 +196,7 @@ export const GrammarInlineStep: React.FC<GrammarInlineStepProps> = ({
             onClick={handleSubmit}
             className="rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-6 py-5 shadow-lg shadow-cyan-600/20"
           >
-            Check Grammar Choices
+            Kiểm tra ngữ pháp
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         ) : (
@@ -182,7 +205,7 @@ export const GrammarInlineStep: React.FC<GrammarInlineStepProps> = ({
             onClick={handleContinue}
             className="rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-semibold px-6 py-5 shadow-lg shadow-sky-600/20"
           >
-            Continue to Guided Writing
+            Tiếp tục sang Luyện viết (Guided Writing)
             <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         )}

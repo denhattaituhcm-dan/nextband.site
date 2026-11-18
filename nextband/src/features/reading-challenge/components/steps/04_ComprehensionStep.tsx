@@ -2,16 +2,25 @@ import React, { useState } from 'react';
 import { ReadingComprehensionQuestion } from '../../types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, XCircle, ChevronRight, HelpCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle2, XCircle, ChevronRight, ArrowRight, RotateCcw } from 'lucide-react';
 
 interface ComprehensionStepProps {
   questions: ReadingComprehensionQuestion[];
+  savedAnswers?: Record<string, string>;
+  savedScore?: number;
   onComplete: (score: number, answers: Record<string, string>) => void;
 }
 
-export const ComprehensionStep: React.FC<ComprehensionStepProps> = ({ questions, onComplete }) => {
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+export const ComprehensionStep: React.FC<ComprehensionStepProps> = ({
+  questions,
+  savedAnswers = {},
+  savedScore,
+  onComplete,
+}) => {
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>(() => savedAnswers);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(() => {
+    return savedScore !== undefined || (Object.keys(savedAnswers).length >= questions.length);
+  });
 
   const handleSelect = (questionId: string, optionKey: string) => {
     if (isSubmitted) return;
@@ -32,6 +41,11 @@ export const ComprehensionStep: React.FC<ComprehensionStepProps> = ({ questions,
     setIsSubmitted(true);
   };
 
+  const handleReset = () => {
+    setSelectedAnswers({});
+    setIsSubmitted(false);
+  };
+
   const handleContinue = () => {
     const score = calculateScore();
     onComplete(score, selectedAnswers);
@@ -46,18 +60,30 @@ export const ComprehensionStep: React.FC<ComprehensionStepProps> = ({ questions,
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-              Reading Comprehension
+              Reading Comprehension (Đọc hiểu câu hỏi)
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Select the best answer for each question based on the reading text.
+              Chọn đáp án đúng nhất cho từng câu hỏi dựa theo thông tin trong bài đọc.
             </p>
           </div>
           {isSubmitted && (
-            <div className="text-right">
-              <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Score</span>
-              <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                {score} / {questions.length}
-              </p>
+            <div className="text-right flex items-center gap-3">
+              <div>
+                <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Kết quả</span>
+                <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                  {score} / {questions.length}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="rounded-xl text-xs h-8"
+              >
+                <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                Làm lại
+              </Button>
             </div>
           )}
         </div>
@@ -125,7 +151,7 @@ export const ComprehensionStep: React.FC<ComprehensionStepProps> = ({ questions,
 
                 {isSubmitted && (
                   <div className="mt-4 p-3.5 rounded-2xl bg-muted/50 border text-xs sm:text-sm text-foreground/80">
-                    <span className="font-bold text-sky-600 block mb-0.5">Explanation:</span>
+                    <span className="font-bold text-sky-600 block mb-0.5">Giải thích chi tiết:</span>
                     {q.explanation}
                   </div>
                 )}
@@ -143,7 +169,7 @@ export const ComprehensionStep: React.FC<ComprehensionStepProps> = ({ questions,
             onClick={handleSubmit}
             className="rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-semibold px-6 py-5 shadow-lg shadow-sky-600/20"
           >
-            Check Answers
+            Kiểm tra đáp án
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         ) : (
@@ -152,7 +178,7 @@ export const ComprehensionStep: React.FC<ComprehensionStepProps> = ({ questions,
             onClick={handleContinue}
             className="rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-5 shadow-lg shadow-emerald-600/20"
           >
-            Continue to Idioms
+            Tiếp tục sang Thành ngữ (Idioms)
             <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         )}

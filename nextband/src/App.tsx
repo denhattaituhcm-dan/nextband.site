@@ -422,6 +422,8 @@ const App = () => (
               {/* Reading Challenge 1 Module Routes */}
               <Route path="/reading-challenge" element={<ChallengeHubPage />} />
               <Route path="/reading-challenge/:unitId" element={<ChallengeUnitPage />} />
+              <Route path="/reading/challenge" element={<ChallengeHubPage />} />
+              <Route path="/reading/challenge/:unitId" element={<ChallengeUnitPage />} />
               <Route path="/cambridge/test/:testCode" element={<CambridgeStudentExam />} />
               <Route path="/cambridge/room/:roomCode" element={<CambridgeStudentRoomJoin />} />
               

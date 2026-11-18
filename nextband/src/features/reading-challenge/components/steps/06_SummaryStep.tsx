@@ -2,19 +2,31 @@ import React, { useState } from 'react';
 import { SummaryConfig } from '../../types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PenTool, CheckCircle2, ChevronRight, ArrowRight, Languages } from 'lucide-react';
+import { PenTool, CheckCircle2, ChevronRight, ArrowRight, Languages, RotateCcw } from 'lucide-react';
 
 interface SummaryStepProps {
   summary: SummaryConfig;
+  savedAnswers?: string[];
+  savedScore?: number;
   onComplete: (score: number, answers: string[]) => void;
 }
 
-export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete }) => {
-  const [blankAnswers, setBlankAnswers] = useState<string[]>(
-    new Array(summary.correctAnswers.length).fill('')
-  );
+export const SummaryStep: React.FC<SummaryStepProps> = ({
+  summary,
+  savedAnswers,
+  savedScore,
+  onComplete,
+}) => {
+  const [blankAnswers, setBlankAnswers] = useState<string[]>(() => {
+    if (savedAnswers && savedAnswers.length === summary.correctAnswers.length) {
+      return savedAnswers;
+    }
+    return new Array(summary.correctAnswers.length).fill('');
+  });
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(() => {
+    return savedScore !== undefined || (Boolean(savedAnswers) && savedAnswers!.every(Boolean));
+  });
   const [showVietnamese, setShowVietnamese] = useState(false);
 
   const handleWordSelect = (word: string) => {
@@ -30,7 +42,6 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete })
       setBlankAnswers(next);
       setSelectedWord(null);
     } else {
-      // Clear blank
       const next = [...blankAnswers];
       next[blankIdx] = '';
       setBlankAnswers(next);
@@ -51,6 +62,12 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete })
     setIsSubmitted(true);
   };
 
+  const handleReset = () => {
+    setBlankAnswers(new Array(summary.correctAnswers.length).fill(''));
+    setSelectedWord(null);
+    setIsSubmitted(false);
+  };
+
   const handleContinue = () => {
     onComplete(calculateScore(), blankAnswers);
   };
@@ -58,7 +75,6 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete })
   const allFilled = blankAnswers.every((ans) => Boolean(ans));
   const score = calculateScore();
 
-  // Render text segments
   const parts = summary.passageTemplate.split(/\[BLANK_\d+\]/);
 
   return (
@@ -71,20 +87,32 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete })
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                Unit Summary
+                Unit Summary (Tóm tắt đoạn văn)
               </h2>
-              <p className="text-sm text-muted-foreground">
-                Fill in the blanks with the correct words to summarize the reading.
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Chọn từ trong ngân hàng từ để điền vào chỗ trống tóm tắt ý chính của bài đọc.
               </p>
             </div>
           </div>
 
           {isSubmitted && (
-            <div className="text-right">
-              <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Score</span>
-              <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                {score} / {summary.correctAnswers.length}
-              </p>
+            <div className="text-right flex items-center gap-3">
+              <div>
+                <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Kết quả</span>
+                <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                  {score} / {summary.correctAnswers.length}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="rounded-xl text-xs h-8"
+              >
+                <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                Làm lại
+              </Button>
             </div>
           )}
         </div>
@@ -94,7 +122,7 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete })
       <Card className="border border-border/70 rounded-3xl overflow-hidden shadow-xs">
         <CardContent className="p-5">
           <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-2">
-            Target Word Bank:
+            Ngân hàng từ vựng (Word Bank):
           </span>
           <div className="flex flex-wrap gap-2.5">
             {summary.wordBank.map((word) => {
@@ -121,7 +149,7 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete })
             })}
           </div>
           <p className="text-xs text-muted-foreground mt-3 italic">
-            💡 Tap a word above, then tap a blank line below to place it.
+            💡 Chạm vào từ ở trên, sau đó chạm vào vị trí ô trống bên dưới để đặt từ vào.
           </p>
         </CardContent>
       </Card>
@@ -179,11 +207,11 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete })
                 className="text-xs rounded-xl"
               >
                 <Languages className="w-3.5 h-3.5 mr-1" />
-                {showVietnamese ? 'Hide Translation' : 'View Vietnamese Translation'}
+                {showVietnamese ? 'Ẩn bản dịch tiếng Việt' : 'Xem bản dịch tiếng Việt'}
               </Button>
 
               {showVietnamese && (
-                <p className="mt-2 text-xs sm:text-sm text-muted-foreground p-3 bg-muted/40 rounded-xl leading-relaxed animate-in fade-in">
+                <p className="mt-2 text-xs sm:text-sm text-muted-foreground p-3.5 bg-muted/40 rounded-xl leading-relaxed animate-in fade-in">
                   {summary.vietnameseTranslation}
                 </p>
               )}
@@ -200,7 +228,7 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete })
             onClick={handleSubmit}
             className="rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-5 shadow-lg shadow-emerald-600/20"
           >
-            Check Summary
+            Kiểm tra tóm tắt
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         ) : (
@@ -209,7 +237,7 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ summary, onComplete })
             onClick={handleContinue}
             className="rounded-2xl bg-teal-600 hover:bg-teal-500 text-white font-semibold px-6 py-5 shadow-lg shadow-teal-600/20"
           >
-            Continue to Listening & Dictation
+            Tiếp tục sang Luyện nghe (Listening & Dictation)
             <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         )}

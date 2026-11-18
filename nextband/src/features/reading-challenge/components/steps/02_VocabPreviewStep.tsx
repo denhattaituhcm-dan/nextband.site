@@ -2,16 +2,25 @@ import React, { useState } from 'react';
 import { VocabPreviewConfig } from '../../types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, CheckCircle2, ChevronRight, XCircle, ArrowRight, RefreshCcw } from 'lucide-react';
+import { Sparkles, CheckCircle2, ChevronRight, ArrowRight, RotateCcw } from 'lucide-react';
 
 interface VocabPreviewStepProps {
   config: VocabPreviewConfig;
+  savedAnswers?: Record<string, string>;
+  savedScore?: number;
   onComplete: (score: number, answers: Record<string, string>) => void;
 }
 
-export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({ config, onComplete }) => {
-  const [userMatches, setUserMatches] = useState<Record<string, string>>({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({
+  config,
+  savedAnswers = {},
+  savedScore,
+  onComplete,
+}) => {
+  const [userMatches, setUserMatches] = useState<Record<string, string>>(() => savedAnswers);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(() => {
+    return savedScore !== undefined || (Object.keys(savedAnswers).length >= config.items.length);
+  });
 
   const handleSelectLetter = (itemId: string, letter: string) => {
     if (isSubmitted) return;
@@ -30,6 +39,11 @@ export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({ config, onCo
 
   const handleSubmit = () => {
     setIsSubmitted(true);
+  };
+
+  const handleReset = () => {
+    setUserMatches({});
+    setIsSubmitted(false);
   };
 
   const handleContinue = () => {
@@ -51,7 +65,7 @@ export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({ config, onCo
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                Vocabulary Preview (Matching)
+                Vocabulary Preview (Nối nghĩa từ vựng)
               </h2>
               <p className="text-sm text-muted-foreground mt-0.5">
                 {config.instruction}
@@ -60,11 +74,24 @@ export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({ config, onCo
           </div>
 
           {isSubmitted && (
-            <div className="text-right">
-              <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Score</span>
-              <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                {score} / {config.items.length}
-              </p>
+            <div className="text-right flex items-center gap-3">
+              <div>
+                <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Kết quả</span>
+                <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                  {score} / {config.items.length}
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="rounded-xl text-xs h-8"
+                title="Làm lại bước nối từ vựng"
+              >
+                <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                Làm lại
+              </Button>
             </div>
           )}
         </div>
@@ -74,7 +101,7 @@ export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({ config, onCo
       <Card className="border border-sky-200/60 dark:border-sky-900/40 bg-sky-50/40 dark:bg-sky-950/20 rounded-3xl overflow-hidden">
         <CardContent className="p-5">
           <span className="text-xs font-bold uppercase tracking-wider text-sky-800 dark:text-sky-300 block mb-3">
-            Available Definitions & Synonyms:
+            Danh sách nghĩa & từ đồng nghĩa tương ứng (Definitions & Synonyms):
           </span>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             {config.definitions.map((def) => (
@@ -85,7 +112,7 @@ export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({ config, onCo
                 <span className="w-6 h-6 rounded-lg bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300 font-bold flex items-center justify-center shrink-0 uppercase">
                   {def.letter}
                 </span>
-                <span className="text-foreground/90">{def.text}</span>
+                <span className="text-foreground/90 font-semibold">{def.text}</span>
               </div>
             ))}
           </div>
@@ -127,9 +154,10 @@ export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({ config, onCo
                     </p>
                   </div>
 
-                  {item.vietnameseMeaning && (
-                    <p className="text-xs text-muted-foreground pl-6 italic">
-                      🇻🇳 Nghĩa: {item.vietnameseMeaning}
+                  {/* Vietnamese Meaning revealed only after checking */}
+                  {isSubmitted && item.vietnameseMeaning && (
+                    <p className="text-xs text-muted-foreground pl-6 italic animate-in fade-in">
+                      🇻🇳 Nghĩa tiếng Việt: <span className="font-medium text-foreground">{item.vietnameseMeaning}</span>
                     </p>
                   )}
                 </div>
@@ -180,7 +208,7 @@ export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({ config, onCo
             onClick={handleSubmit}
             className="rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-semibold px-6 py-5 shadow-lg shadow-sky-600/20"
           >
-            Check Matching Answers
+            Kiểm tra đáp án
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         ) : (
@@ -189,7 +217,7 @@ export const VocabPreviewStep: React.FC<VocabPreviewStepProps> = ({ config, onCo
             onClick={handleContinue}
             className="rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-5 shadow-lg shadow-emerald-600/20"
           >
-            Continue to Reading Passage
+            Tiếp tục sang Bài đọc (Reading Passage)
             <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         )}
