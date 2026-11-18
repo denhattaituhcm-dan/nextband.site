@@ -401,8 +401,6 @@ const App = () => (
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/reading" element={<ReadingUniversePage />} />
-                <Route path="/reading/idioms" element={<EnglishIdiomsCatalogPage />} />
-                <Route path="/reading/idioms/:unitId" element={<EnglishIdiomsHubPage />} />
                 <Route path="/self-study-courses" element={<SelfStudyPage />} />
                 <Route path="/tu-hoc" element={<Navigate to="/self-study-courses" replace />} />
                 <Route path="/self-study" element={<Navigate to="/self-study-courses" replace />} />
@@ -412,6 +410,9 @@ const App = () => (
               {/* ============================================================ */}
               {/* 1.1 CLEAN-ROOM ASSESSMENT & READING INTERFACE (Focus Mode)   */}
               {/* ============================================================ */}
+              {/* English Idioms Focus App (Standalone Specialized Environment) */}
+              <Route path="/reading/idioms" element={<EnglishIdiomsCatalogPage />} />
+              <Route path="/reading/idioms/:unitId" element={<EnglishIdiomsHubPage />} />
               <Route path="/diagnostic" element={<DiagnosticLandingPage />} />
               <Route path="/kiem-tra" element={<DiagnosticLandingPage />} />
               <Route path="/test20" element={<DiagnosticLandingPage />} />

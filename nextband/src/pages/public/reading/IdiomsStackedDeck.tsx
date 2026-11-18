@@ -38,10 +38,13 @@ export interface IdiomItemForDeck {
   ielts_speaking_application?: string;
   ielts_writing_application?: string;
   cognitive_anchor?: {
-    hook_question: string;
-    vivid_mental_image: string;
-    core_essence: string;
-    quick_scenario: string;
+    hook_question?: string;
+    vivid_mental_image?: string;
+    core_essence?: string;
+    quick_scenario?: string;
+    metaphor_core?: string;
+    visual_equation?: string;
+    origin_summary?: string;
   };
   register_info?: {
     badge: string;
@@ -450,19 +453,7 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
                           )}
                         </div>
 
-                        {/* Cognitive Mental Hook if available */}
-                        {item.cognitive_anchor && (
-                          <div className="bg-indigo-50/70 border border-indigo-200 rounded-2xl p-3 text-xs text-indigo-950">
-                            <span className="font-extrabold text-indigo-800 flex items-center gap-1 mb-1">
-                              <Lightbulb className="w-3.5 h-3.5" /> Bản chất nhận thức:
-                            </span>
-                            <p className="italic leading-relaxed">
-                              "{item.cognitive_anchor.core_essence}"
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Example Sentence with highlight */}
+                        {/* Example Sentence with highlight (Primary Anchor) */}
                         <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-1">
                           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
                             Ví dụ thực tế:
@@ -476,6 +467,29 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
                             </p>
                           )}
                         </div>
+
+                        {/* Cognitive Mental Hook (Clean & Only when actual text exists) */}
+                        {(() => {
+                          const mentalImage =
+                            item.cognitive_anchor?.metaphor_core ||
+                            item.cognitive_anchor?.core_essence ||
+                            item.cognitive_anchor?.vivid_mental_image ||
+                            item.cognitive_anchor?.quick_scenario ||
+                            item.metaphor_breakdown;
+
+                          if (!mentalImage || !mentalImage.trim()) return null;
+
+                          return (
+                            <div className="bg-indigo-50/70 border border-indigo-200 rounded-2xl p-3 text-xs text-indigo-950">
+                              <span className="font-extrabold text-indigo-800 flex items-center gap-1 mb-1">
+                                <Lightbulb className="w-3.5 h-3.5 text-amber-500" /> Hình dung nhanh:
+                              </span>
+                              <p className="italic leading-relaxed text-indigo-900">
+                                "{mentalImage.trim()}"
+                              </p>
+                            </div>
+                          );
+                        })()}
 
                         {/* Doraemon Manga Quick Action Teaser */}
                         {(mangaData[item.id] || item.comic_dialogue) && (
@@ -685,20 +699,19 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
                         >
                           Cơ bản
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => setCardTab("comic")}
-                          className={`px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1 ${
-                            cardTab === "comic"
-                              ? "bg-amber-500 text-white font-bold shadow-xs"
-                              : "text-amber-900 hover:text-amber-950 hover:bg-amber-100/60"
-                          }`}
-                        >
-                          <span>💬</span> Manga
-                          {mangaData[item.id] && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block animate-pulse" />
-                          )}
-                        </button>
+                        {(mangaData[item.id] || item.comic_dialogue) && (
+                          <button
+                            type="button"
+                            onClick={() => setCardTab("comic")}
+                            className={`px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1 ${
+                              cardTab === "comic"
+                                ? "bg-amber-500 text-white font-bold shadow-xs"
+                                : "text-amber-900 hover:text-amber-950 hover:bg-amber-100/60"
+                            }`}
+                          >
+                            <span>💬</span> Manga
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => setCardTab("etymology")}
