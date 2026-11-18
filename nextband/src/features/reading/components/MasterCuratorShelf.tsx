@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CuratorBook {
@@ -177,10 +177,41 @@ const CURATED_BOOKS: CuratorBook[] = [
 export const MasterCuratorShelf: React.FC = () => {
   const [activeCaseId, setActiveCaseId] = useState<string>("case-015");
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const bookRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const navigate = useNavigate();
 
-  const handleMouseEnter = (caseId: string) => {
-    if (activeCaseId !== caseId) {
-      setActiveCaseId(caseId);
+  const centerBook = (caseId: string, behavior: ScrollBehavior = "smooth") => {
+    const el = bookRefs.current[caseId];
+    const container = scrollContainerRef.current;
+    if (!el || !container) return;
+
+    const containerWidth = container.clientWidth;
+    const elementLeft = el.offsetLeft;
+    const elementWidth = el.offsetWidth;
+    const targetScrollLeft = elementLeft - containerWidth / 2 + elementWidth / 2;
+
+    container.scrollTo({
+      left: Math.max(0, targetScrollLeft),
+      behavior,
+    });
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      centerBook(activeCaseId, "smooth");
+    }, 200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleBookClick = (book: CuratorBook, e: React.MouseEvent) => {
+    e.preventDefault();
+    if (activeCaseId === book.caseId) {
+      // Click 2: Sách đã được chọn và đặt ở tiêu điểm -> mở đọc
+      navigate(`/reading/${book.caseId}`);
+    } else {
+      // Click 1: Chọn sách và trượt mượt mà ra chính giữa kệ
+      setActiveCaseId(book.caseId);
+      centerBook(book.caseId, "smooth");
     }
   };
 
@@ -218,7 +249,7 @@ export const MasterCuratorShelf: React.FC = () => {
         {/* Navigation & Hint */}
         <div className="flex items-center gap-3">
           <div className="text-[11px] font-medium text-[#7A6452] hidden sm:block">
-            Rê chuột để nhấc sách • Cuộn ngang để xem đủ 10 cuốn
+            Chạm lần 1 đưa ra giữa kệ • Chạm lần 2 mở bài đọc
           </div>
           <div className="flex items-center gap-1.5">
             <button
@@ -244,7 +275,7 @@ export const MasterCuratorShelf: React.FC = () => {
       {/* 3D Shelf Stage: Books standing firmly upright on shelf with realistic perspective */}
       <div 
         ref={scrollContainerRef}
-        className="relative pt-8 pb-3 px-6 flex items-end gap-5 overflow-x-auto scroll-smooth no-scrollbar min-h-[360px]"
+        className="relative pt-8 pb-3 px-6 flex items-end gap-5 overflow-x-auto scroll-smooth scrollbar-hide [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden min-h-[360px]"
         style={{
           perspective: "1000px",
           perspectiveOrigin: "50% 80%",
@@ -254,22 +285,41 @@ export const MasterCuratorShelf: React.FC = () => {
           const isActive = book.caseId === activeCaseId;
 
           return (
-            <Link
+            <div
               key={book.caseId}
-              to={`/reading/${book.caseId}`}
-              onMouseEnter={() => handleMouseEnter(book.caseId)}
-              className={`relative block shrink-0 cursor-pointer select-none transition-transform duration-200 ease-out will-change-transform ${
-                isActive ? "z-30" : "z-10"
+              ref={(node) => {
+                bookRefs.current[book.caseId] = node;
+              }}
+              onClick={(e) => handleBookClick(book, e)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleBookClick(book, e as unknown as React.MouseEvent);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`${book.coverTitle} - ${isActive ? "Nhấn lần nữa để mở bài đọc" : "Nhấn để đưa ra giữa kệ"}`}
+              title={isActive ? "Ấn bản đang chọn: Click lần nữa để mở bài đọc" : "Click lần 1: Kéo sách ra giữa kệ ngắm bìa"}
+              className={`relative block shrink-0 cursor-pointer select-none transition-transform duration-250 ease-out will-change-transform outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-md ${
+                isActive ? "z-30" : "z-10 hover:-translate-y-2"
               }`}
               style={{
                 width: "172px",
                 height: "268px",
                 transform: isActive
                   ? "translateY(-22px) scale(1.03)"
-                  : "translateY(0px) scale(1)",
+                  : undefined,
                 transformOrigin: "bottom center",
               }}
             >
+              {/* Active Pill Cue on Center Stage */}
+              {isActive && (
+                <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-600 to-amber-700 text-white text-[9.5px] font-sans font-bold px-2.5 py-0.5 rounded-full shadow-lg border border-amber-300/40 whitespace-nowrap z-40 pointer-events-none animate-in fade-in zoom-in-95 duration-200 flex items-center gap-1">
+                  <span>Click để đọc</span>
+                  <ArrowRight className="w-2.5 h-2.5 inline" />
+                </span>
+              )}
+
               {/* Natural Book Spine with 3D Bevel Edge */}
               <div
                 className="absolute left-0 top-0 h-full flex flex-col justify-between items-center py-2 px-1 rounded-l-[3px] border-r border-black/30"
@@ -371,7 +421,7 @@ export const MasterCuratorShelf: React.FC = () => {
                   isActive ? "opacity-20 scale-95" : "opacity-50"
                 }`}
               />
-            </Link>
+            </div>
           );
         })}
       </div>
