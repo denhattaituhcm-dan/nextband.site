@@ -10,7 +10,10 @@ let hasErrors = false;
 // Gate 1: Check Circular Dependencies
 console.log("👉 [Gate 1] Checking Circular Dependencies...");
 try {
-  const madgeOutput = execSync("npx madge --circular --extensions ts server/ nextband/src/", { encoding: "utf8" });
+  const madgeOutput = execSync("npx madge --circular --extensions ts server/ nextband/src/", {
+    encoding: "utf8",
+    env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=4096" }
+  });
   if (madgeOutput.includes("Found")) {
     console.error("❌ FAILED: Circular dependencies detected!\n", madgeOutput);
     hasErrors = true;

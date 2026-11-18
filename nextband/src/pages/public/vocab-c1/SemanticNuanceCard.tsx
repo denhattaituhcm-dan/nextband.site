@@ -17,6 +17,7 @@ interface SemanticNuanceCardProps {
   isWordPronouncing: boolean;
   onPronounce: (word: string) => void;
   onSelfAssess: (status: "review" | "mastered") => void;
+  podWords?: WordInAction[];
 }
 
 export const SemanticNuanceCard: React.FC<SemanticNuanceCardProps> = ({
@@ -25,23 +26,25 @@ export const SemanticNuanceCard: React.FC<SemanticNuanceCardProps> = ({
   isWordPronouncing,
   onPronounce,
   onSelfAssess,
+  podWords,
 }) => {
   const [selectedRecallOption, setSelectedRecallOption] = useState<string | null>(null);
-  const [showVisualCue, setShowVisualCue] = useState<boolean>(false);
+  const [showVisualCue, setShowVisualCue] = useState<boolean>(true);
 
   // Reset local interactive state when word changes
   useEffect(() => {
     setSelectedRecallOption(null);
-    setShowVisualCue(false);
+    setShowVisualCue(true);
   }, [item.id]);
 
-  // Fallback contrast words if not explicitly defined on the item (for Units 2-12)
+  // Fallback contrast words prioritizing sibling words in the current pod
+  const siblingCandidates = podWords && podWords.length > 1 ? podWords : unitWords;
   const effectiveContrastWords =
     item.contrastWords && item.contrastWords.length > 0
       ? item.contrastWords
-      : unitWords
+      : siblingCandidates
           .filter((w) => w.id !== item.id)
-          .slice(0, 2)
+          .slice(0, 3)
           .map((w) => ({
             word: w.word,
             distinction: `${w.nuance.replace(/^\[|\]$/g, "")} — ${w.viDef}`,

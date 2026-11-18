@@ -23,6 +23,8 @@ import { CAMBRIDGE_VOCAB_UNITS } from "./unitsMeta";
 
 export * from "./types";
 export * from "./unitsMeta";
+export * from "./cambridgeContextGlossary";
+export * from "./lookupService";
 export * from "./unit01";
 export * from "./unit02";
 export * from "./unit03";

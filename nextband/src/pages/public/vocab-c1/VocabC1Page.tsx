@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Volume2,
   ChevronRight,
@@ -15,7 +15,16 @@ import {
   Zap,
   RotateCcw,
   Trophy,
-  Eye
+  Eye,
+  Flame,
+  Scale,
+  Swords,
+  BookOpen,
+  HelpCircle,
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+  SlidersHorizontal,
 } from "lucide-react";
 import {
   VOCAB_C1_UNITS,
@@ -28,6 +37,7 @@ import {
 } from "@/data/vocabC1Unit1";
 import { C1UnitHub25DSelector } from "./C1UnitHub25DSelector";
 import { SemanticNuanceCard } from "./SemanticNuanceCard";
+import { getPodsForUnit, SemanticPod, NuanceDilemma } from "./c1ClusterEngine";
 
 export interface MistakeItem {
   id: string;
@@ -195,7 +205,25 @@ export const VocabC1Page: React.FC = () => {
     localStorage.removeItem("vocab_c1_mistakes_v2");
   };
 
-  // STAGE 1: Words in Action (Active Recall)
+  // STAGE 1: Semantic Pods & Challenge-First Exploration
+  const pods = useMemo(() => getPodsForUnit(VOCAB_C1_UNIT_1), [VOCAB_C1_UNIT_1]);
+  const [selectedPodIndex, setSelectedPodIndex] = useState<number>(0);
+  const activePod = pods[selectedPodIndex] || pods[0];
+
+  const [podWordIndex, setPodWordIndex] = useState<number>(0);
+  const activeDilemma = activePod?.dilemmas[podWordIndex] || activePod?.dilemmas[0];
+  const activePodWord = activePod?.words[podWordIndex] || activePod?.words[0];
+
+  const [stage1SubMode, setStage1SubMode] = useState<'challenge' | 'spectrum' | 'flashcard'>('challenge');
+  const [dilemmaSelectedOption, setDilemmaSelectedOption] = useState<string | null>(null);
+  const [dilemmaAnswered, setDilemmaAnswered] = useState<boolean>(false);
+  const [dilemmaIsCorrect, setDilemmaIsCorrect] = useState<boolean | null>(null);
+  const [comboStreak, setComboStreak] = useState<number>(0);
+  const [maxComboStreak, setMaxComboStreak] = useState<number>(0);
+  const [showDeepNuanceDrawer, setShowDeepNuanceDrawer] = useState<boolean>(false);
+  const [masteredWordIds, setMasteredWordIds] = useState<Record<string, boolean>>({});
+
+  // Legacy flashcard indices (synced with activePodWord)
   const [stage1Index, setStage1Index] = useState(0);
   const [stage1IsFlipped, setStage1IsFlipped] = useState(false);
   const [stage1SelfAssessments, setStage1SelfAssessments] = useState<Record<string, 'review' | 'mastered'>>({});
@@ -207,6 +235,71 @@ export const VocabC1Page: React.FC = () => {
     setTimeout(() => {
       setIsWordPronouncing(false);
     }, 1800);
+  };
+
+  // Dilemma Handlers
+  const handleDilemmaSelect = (option: string) => {
+    if (dilemmaAnswered || !activeDilemma) return;
+    setDilemmaSelectedOption(option);
+    setDilemmaAnswered(true);
+
+    const isCorrect = option.toLowerCase() === activeDilemma.correctWord.toLowerCase();
+    setDilemmaIsCorrect(isCorrect);
+    triggerLivingAudio(activeDilemma.correctWord);
+
+    setQuizStats((prev) => ({
+      totalAttempts: prev.totalAttempts + 1,
+      correctAttempts: prev.correctAttempts + (isCorrect ? 1 : 0),
+    }));
+
+    if (isCorrect) {
+      setComboStreak((prev) => {
+        const next = prev + 1;
+        if (next > maxComboStreak) setMaxComboStreak(next);
+        return next;
+      });
+      setMasteredWordIds((prev) => ({ ...prev, [activeDilemma.wordId]: true }));
+    } else {
+      setComboStreak(0);
+      addMistake({
+        id: `dilemma-${activeDilemma.wordId}`,
+        stage: `Words in Action • ${activePod?.titleVi || "C1"}`,
+        word: activeDilemma.correctWord,
+        context: activeDilemma.scenarioEn,
+        userChoice: option,
+        correctAnswer: `${activeDilemma.correctWord} (${activeDilemma.nuanceHint}) - ${activeDilemma.explanationVi}`,
+      });
+    }
+  };
+
+  const handleDilemmaNext = () => {
+    if (!activePod) return;
+    if (podWordIndex < activePod.words.length - 1) {
+      setPodWordIndex((prev) => prev + 1);
+      setDilemmaSelectedOption(null);
+      setDilemmaAnswered(false);
+      setDilemmaIsCorrect(null);
+      setShowDeepNuanceDrawer(false);
+    } else if (selectedPodIndex < pods.length - 1) {
+      setSelectedPodIndex((prev) => prev + 1);
+      setPodWordIndex(0);
+      setDilemmaSelectedOption(null);
+      setDilemmaAnswered(false);
+      setDilemmaIsCorrect(null);
+      setShowDeepNuanceDrawer(false);
+    } else {
+      setCurrentStage(2);
+    }
+  };
+
+  const handleSelectPod = (idx: number) => {
+    setSelectedPodIndex(idx);
+    setPodWordIndex(0);
+    setDilemmaSelectedOption(null);
+    setDilemmaAnswered(false);
+    setDilemmaIsCorrect(null);
+    setShowDeepNuanceDrawer(false);
+    setStage1IsFlipped(false);
   };
 
   // STAGE 2: Word Formation
@@ -242,7 +335,7 @@ export const VocabC1Page: React.FC = () => {
   const [quizStats, setQuizStats] = useState({ totalAttempts: 0, correctAttempts: 0 });
 
   // Navigation handlers
-  const currentWia = VOCAB_C1_UNIT_1.wordsInAction[stage1Index] || VOCAB_C1_UNIT_1.wordsInAction[0];
+  const currentWia = activePodWord || VOCAB_C1_UNIT_1.wordsInAction[stage1Index] || VOCAB_C1_UNIT_1.wordsInAction[0];
   const hasCurrentVisualCue = Boolean(currentWia?.visualCueUrl || currentWia?.visualCueType);
   const currentWf = VOCAB_C1_UNIT_1.wordFormation[stage2Index] || VOCAB_C1_UNIT_1.wordFormation[0];
   const currentCw = VOCAB_C1_UNIT_1.confusableWords[stage3Index] || VOCAB_C1_UNIT_1.confusableWords[0];
@@ -264,8 +357,12 @@ export const VocabC1Page: React.FC = () => {
       });
     }
 
-    if (stage1Index < VOCAB_C1_UNIT_1.wordsInAction.length - 1) {
-      setStage1Index((prev) => prev + 1);
+    if (podWordIndex < activePod.words.length - 1) {
+      setPodWordIndex((prev) => prev + 1);
+      setStage1IsFlipped(false);
+    } else if (selectedPodIndex < pods.length - 1) {
+      setSelectedPodIndex((prev) => prev + 1);
+      setPodWordIndex(0);
       setStage1IsFlipped(false);
     } else {
       setCurrentStage(2);
@@ -276,6 +373,14 @@ export const VocabC1Page: React.FC = () => {
   const handleRestartUnit = () => {
     setIsUnitCompleted(false);
     setCurrentStage(1);
+    setSelectedPodIndex(0);
+    setPodWordIndex(0);
+    setStage1SubMode('challenge');
+    setDilemmaSelectedOption(null);
+    setDilemmaAnswered(false);
+    setDilemmaIsCorrect(null);
+    setComboStreak(0);
+    setShowDeepNuanceDrawer(false);
     setStage1Index(0);
     setStage1IsFlipped(false);
     setStage2Index(0);
@@ -485,34 +590,62 @@ export const VocabC1Page: React.FC = () => {
         return;
       }
 
-      // STAGE 1: Words in Action (Active Recall)
+      // STAGE 1: Words in Action (Semantic Pods & Challenge)
       if (currentStage === 1) {
-        if (key === " " || key === "Spacebar") {
-          e.preventDefault();
-          setStage1IsFlipped((prev) => !prev);
-          triggerLivingAudio(currentWia.word);
-        } else if (key === "1") {
-          if (stage1IsFlipped) {
+        if (stage1SubMode === "challenge") {
+          if (!dilemmaAnswered && activeDilemma) {
+            if (["1", "2", "3", "4"].includes(key)) {
+              e.preventDefault();
+              const idx = parseInt(key) - 1;
+              if (activeDilemma.options[idx]) {
+                handleDilemmaSelect(activeDilemma.options[idx]);
+              }
+            } else if (["a", "b", "c", "d"].includes(key.toLowerCase())) {
+              e.preventDefault();
+              const keyMap: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 };
+              const idx = keyMap[key.toLowerCase()];
+              if (activeDilemma.options[idx]) {
+                handleDilemmaSelect(activeDilemma.options[idx]);
+              }
+            } else if (key === " " || key === "Spacebar") {
+              e.preventDefault();
+              triggerLivingAudio(activeDilemma.correctWord);
+            }
+          } else if (key === "Enter") {
             e.preventDefault();
-            handleStage1SelfAssess("review");
-          }
-        } else if (key === "2") {
-          if (stage1IsFlipped) {
+            handleDilemmaNext();
+          } else if (key === " " || key === "Spacebar") {
             e.preventDefault();
-            handleStage1SelfAssess("mastered");
+            triggerLivingAudio(activeDilemma.correctWord);
           }
-        } else if (key === "ArrowLeft") {
-          e.preventDefault();
-          if (stage1Index > 0) {
-            setStage1Index((prev) => prev - 1);
-            setStage1IsFlipped(false);
-          }
-        } else if (key === "ArrowRight" || key === "Enter") {
-          e.preventDefault();
-          if (!stage1IsFlipped) {
-            setStage1IsFlipped(true);
-          } else {
-            handleStage1SelfAssess("mastered");
+        } else if (stage1SubMode === "flashcard") {
+          if (key === " " || key === "Spacebar") {
+            e.preventDefault();
+            setStage1IsFlipped((prev) => !prev);
+            triggerLivingAudio(currentWia.word);
+          } else if (key === "1") {
+            if (stage1IsFlipped) {
+              e.preventDefault();
+              handleStage1SelfAssess("review");
+            }
+          } else if (key === "2") {
+            if (stage1IsFlipped) {
+              e.preventDefault();
+              handleStage1SelfAssess("mastered");
+            }
+          } else if (key === "ArrowLeft") {
+            e.preventDefault();
+            if (podWordIndex > 0) {
+              setPodWordIndex((prev) => prev - 1);
+              setStage1IsFlipped(false);
+            }
+          } else if (key === "ArrowRight" || key === "Enter") {
+            e.preventDefault();
+            if (!stage1IsFlipped) {
+              setStage1IsFlipped(true);
+            } else {
+              handleStage1SelfAssess("mastered");
+            }
           }
         }
       }
@@ -820,217 +953,505 @@ export const VocabC1Page: React.FC = () => {
             </div>
           ) : null}
 
-          {/* STAGE 1: WORDS IN ACTION (ACTIVE RECALL) */}
+          {/* STAGE 1: SEMANTIC PODS & CHALLENGE-FIRST EXPLORATION */}
           {!isUnitCompleted && currentStage === 1 && (
-          <div
-            className={`w-full max-w-3xl bg-white rounded-2xl p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 h-full max-h-[calc(100vh-88px)] ${
-              hasCurrentVisualCue
-                ? "border-2 border-amber-400 ring-4 ring-amber-400/15 shadow-xl shadow-amber-500/15"
-                : "border border-slate-200 shadow-xl shadow-slate-200/60"
-            }`}
-          >
-            {/* Header info */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3 shrink-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs sm:text-sm font-mono font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">
-                  WORD {stage1Index + 1} / {VOCAB_C1_UNIT_1.wordsInAction.length}
-                </span>
-                <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200">
-                  {currentWia.pos || "Vocabulary · C1"}
-                </span>
-                {currentWia.register && (
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-50 text-slate-600 border border-slate-200">
-                    {currentWia.register}
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={() => triggerLivingAudio(currentWia.word)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-semibold border border-indigo-200 transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
-                title="Phát âm từ vựng (phím Space hoặc click trực tiếp vào từ)"
-              >
-                <Volume2 className={`w-4 h-4 ${isWordPronouncing ? "text-indigo-600 animate-bounce" : ""}`} />
-                <span className="font-mono">{isWordPronouncing ? "Playing..." : "Listen"}</span>
-                <kbd className="text-xs bg-white px-1.5 py-0.5 rounded border border-indigo-300 font-mono text-indigo-800 shadow-2xs">Space</kbd>
-              </button>
-            </div>
+            <div className="w-full max-w-4xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 rounded-3xl p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 min-h-[580px] max-h-[calc(100vh-84px)] overflow-y-auto">
+              {/* TOP HEADER: Pod Selector & Sub-Mode Switcher */}
+              <div className="border-b border-slate-100 pb-3 mb-3 shrink-0 space-y-2.5">
+                {/* Row 1: Horizontal Semantic Pod Pills */}
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full no-scrollbar">
+                    {pods.map((pod, pIdx) => {
+                      const isSelected = selectedPodIndex === pIdx;
+                      const masteredInPod = pod.words.filter((w) => masteredWordIds[w.id]).length;
+                      return (
+                        <button
+                          key={pod.id}
+                          onClick={() => handleSelectPod(pIdx)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer border flex items-center gap-1.5 ${
+                            isSelected
+                              ? "bg-indigo-600 text-white border-indigo-700 shadow-sm shadow-indigo-500/25"
+                              : "bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200"
+                          }`}
+                        >
+                          <span className={`px-1.5 py-0.2 rounded font-mono text-[10px] ${isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-800"}`}>
+                            {pod.badge}
+                          </span>
+                          <span>{pod.titleVi.replace(/^Chùm \d+:\s*/, "")}</span>
+                          <span className={`text-[10px] font-mono ${isSelected ? "text-indigo-200" : "text-slate-400"}`}>
+                            ({masteredInPod}/{pod.words.length})
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
 
-            {/* Card Body: CSS 3D Flip Card (both faces always in DOM, exact viewport fit) */}
-            <div className="flex-1 min-h-0 relative" style={{ perspective: '1200px' }}>
-              <div
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  height: '100%',
-                  transformStyle: 'preserve-3d',
-                  transition: 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
-                  transform: stage1IsFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                }}
-              >
-                {/* FRONT FACE (Step 1: Pure Retrieval) */}
-                <div
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                    position: 'absolute',
-                    inset: 0,
-                  }}
-                  className={`flex flex-col items-center justify-center text-center py-4 bg-white ${
-                    stage1IsFlipped ? "pointer-events-none" : ""
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2 flex-wrap mb-4">
-                    <div className="px-3 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-full text-xs font-bold font-mono uppercase tracking-wider">
-                      Step 1 • Retrieval (Tự truy xuất nghĩa &amp; sắc thái)
+                  {/* Combo Streak & Accuracy HUD */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {comboStreak >= 2 && (
+                      <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-500 text-white font-mono text-xs font-black animate-pulse shadow-sm shadow-amber-500/30">
+                        <Flame className="w-3.5 h-3.5 fill-current" />
+                        <span>COMBO x{comboStreak}</span>
+                      </div>
+                    )}
+                    <button
+                      onClick={() => triggerLivingAudio(activeDilemma?.correctWord || currentWia.word)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200 transition-all cursor-pointer"
+                      title="Phát âm từ vựng (phím Space)"
+                    >
+                      <Volume2 className={`w-3.5 h-3.5 ${isWordPronouncing ? "text-indigo-600 animate-bounce" : ""}`} />
+                      <span className="font-mono">{isWordPronouncing ? "Playing..." : "Listen"}</span>
+                      <kbd className="text-[10px] bg-white px-1.5 py-0.5 rounded border border-indigo-300 font-mono text-indigo-800">Space</kbd>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Row 2: Sub-Mode Toggle Bar */}
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 flex-wrap">
+                  <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                    <button
+                      onClick={() => setStage1SubMode("challenge")}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        stage1SubMode === "challenge"
+                          ? "bg-white text-indigo-700 shadow-xs"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <Swords className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>Thử thách Tình huống</span>
+                    </button>
+                    <button
+                      onClick={() => setStage1SubMode("spectrum")}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        stage1SubMode === "spectrum"
+                          ? "bg-white text-indigo-700 shadow-xs"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <Scale className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Bàn cân Chùm từ</span>
+                    </button>
+                    <button
+                      onClick={() => setStage1SubMode("flashcard")}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        stage1SubMode === "flashcard"
+                          ? "bg-white text-indigo-700 shadow-xs"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <BookOpen className="w-3.5 h-3.5 text-slate-600" />
+                      <span>Thẻ lật Ghi nhớ</span>
+                    </button>
+                  </div>
+
+                  <div className="text-xs text-slate-500 font-medium">
+                    {activePod?.titleVi}: <strong className="text-slate-800">{activePod?.descVi}</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* ============================================================ */}
+              {/* SUB-MODE A: NUANCE DILEMMA CHALLENGE (Default & Recommended) */}
+              {/* ============================================================ */}
+              {stage1SubMode === "challenge" && activeDilemma && (
+                <div className="flex-1 flex flex-col justify-between py-1 animate-in fade-in duration-200">
+                  {/* Scenario Question Box */}
+                  <div>
+                    {/* Clue Header Tags */}
+                    <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono font-bold bg-indigo-50 border border-indigo-200 text-indigo-700 px-2.5 py-0.5 rounded-lg">
+                          TỪ {podWordIndex + 1} / {activePod.words.length} TRONG CHÙM
+                        </span>
+                        {activeDilemma.registerHint && (
+                          <span className="text-xs font-semibold bg-slate-100 border border-slate-200 text-slate-600 px-2.5 py-0.5 rounded-lg">
+                            Ngữ vực: {activeDilemma.registerHint}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-lg">
+                        Sắc thái: {activeDilemma.nuanceHint}
+                      </span>
                     </div>
-                    {hasCurrentVisualCue && (
-                      <div className="inline-flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-bold">
-                        <Eye className="w-3.5 h-3.5 text-amber-600" />
-                        <span>Kèm Visual Cue ở mặt sau</span>
+
+                    {/* Scenario English with Interactive Gap */}
+                    <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center my-2">
+                      <p className="text-lg sm:text-2xl font-semibold text-slate-900 leading-relaxed font-sans mb-3">
+                        {activeDilemma.scenarioEn.split("________").map((chunk, i) => (
+                          <React.Fragment key={i}>
+                            {chunk}
+                            {i === 0 && (
+                              <span
+                                className={`inline-block font-mono font-black px-3.5 py-1 rounded-xl border mx-1.5 transition-all ${
+                                  dilemmaAnswered
+                                    ? dilemmaIsCorrect
+                                      ? "bg-emerald-100 border-emerald-500 text-emerald-950 shadow-sm"
+                                      : "bg-rose-100 border-rose-500 text-rose-950"
+                                    : "bg-white border-indigo-400 text-indigo-700 border-dashed animate-pulse"
+                                }`}
+                              >
+                                {dilemmaAnswered ? activeDilemma.correctWord : "________"}
+                              </span>
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </p>
+                      <p className="text-sm text-slate-600 font-medium">
+                        💡 Ngữ cảnh: <span className="italic">{activeDilemma.scenarioVi}</span>
+                      </p>
+                    </div>
+
+                    {/* 4 Interactive Option Buttons */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+                      {activeDilemma.options.map((opt, oIdx) => {
+                        const isSelected = dilemmaSelectedOption?.toLowerCase() === opt.toLowerCase();
+                        const isTarget = opt.toLowerCase() === activeDilemma.correctWord.toLowerCase();
+
+                        let optClass = "bg-white border-slate-200 text-slate-800 hover:border-indigo-400 hover:bg-indigo-50/40 shadow-xs cursor-pointer";
+                        if (dilemmaAnswered) {
+                          if (isTarget) {
+                            optClass = "bg-emerald-50 border-emerald-500 text-emerald-950 font-black shadow-md shadow-emerald-200/50 ring-2 ring-emerald-400/30";
+                          } else if (isSelected && !isTarget) {
+                            optClass = "bg-rose-50 border-rose-400 text-rose-950 font-bold line-through";
+                          } else {
+                            optClass = "opacity-40 border-slate-200 bg-slate-50 text-slate-400";
+                          }
+                        }
+
+                        return (
+                          <button
+                            key={opt}
+                            onClick={() => handleDilemmaSelect(opt)}
+                            disabled={dilemmaAnswered}
+                            className={`p-4 rounded-2xl border text-left font-mono text-base font-bold transition-all flex items-center justify-between ${optClass}`}
+                          >
+                            <span className="flex items-center gap-2">
+                              {dilemmaAnswered && isTarget && <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />}
+                              {dilemmaAnswered && isSelected && !isTarget && <XCircle className="w-5 h-5 text-rose-600 shrink-0" />}
+                              <span>{opt}</span>
+                            </span>
+                            <kbd className="text-xs font-mono bg-slate-100 px-2 py-0.5 rounded border border-slate-300 text-slate-600 font-bold">
+                              [{oIdx + 1}]
+                            </kbd>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Immediate Post-Answer Pedagogical Drawer */}
+                    {dilemmaAnswered && (
+                      <div className={`p-4 rounded-2xl border mb-3 animate-in fade-in duration-200 ${
+                        dilemmaIsCorrect ? "bg-emerald-50/80 border-emerald-300 text-emerald-950" : "bg-amber-50/80 border-amber-300 text-amber-950"
+                      }`}>
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                          <span className="font-bold text-sm flex items-center gap-1.5">
+                            {dilemmaIsCorrect ? (
+                              <Check className="w-4 h-4 text-emerald-700" />
+                            ) : (
+                              <X className="w-4 h-4 text-rose-600" />
+                            )}
+                            <span>{dilemmaIsCorrect ? "Chính xác! Sắc thái ngữ cảnh chuẩn C1" : "Chưa chính xác — Hãy đối chiếu lý do"}</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setShowDeepNuanceDrawer((prev) => !prev)}
+                            className="text-xs font-bold underline cursor-pointer text-indigo-700 hover:text-indigo-900"
+                          >
+                            {showDeepNuanceDrawer ? "Thu gọn giải phẫu" : "Xem sâu Giải phẫu Sắc thái & Visual Cue ▾"}
+                          </button>
+                        </div>
+                        <p className="text-xs sm:text-sm leading-relaxed">{activeDilemma.explanationVi}</p>
+
+                        {/* Collapsible Deep Nuance Card View */}
+                        {showDeepNuanceDrawer && (
+                          <div className="mt-3 pt-3 border-t border-slate-200/80 bg-white p-3 rounded-xl border">
+                            <SemanticNuanceCard
+                              item={activePodWord}
+                              unitWords={VOCAB_C1_UNIT_1.wordsInAction}
+                              podWords={activePod.words}
+                              isWordPronouncing={isWordPronouncing}
+                              onPronounce={triggerLivingAudio}
+                              onSelfAssess={handleStage1SelfAssess}
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
 
-                  {/* Living Word on Click / Pronounce */}
-                  <div className="mb-2">
-                    <h2
-                      onClick={() => triggerLivingAudio(currentWia.word)}
-                      className="text-5xl sm:text-6xl font-black tracking-tight font-mono inline-block cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 select-none"
-                      title="Bấm vào để nghe phát âm & kích hoạt hiệu ứng sống động"
-                    >
-                      {isWordPronouncing ? (
-                        <span
-                          className="inline-flex whitespace-nowrap"
-                          style={{ '--total-chars': currentWia.word.length } as React.CSSProperties}
-                        >
-                          {Array.from(currentWia.word).map((char, cIdx) => (
-                            <span
-                              key={cIdx}
-                              className="academic-char-living"
-                              style={{ '--char-index': cIdx } as React.CSSProperties}
-                            >
-                              {char}
-                            </span>
-                          ))}
-                        </span>
-                      ) : (
-                        <span className="text-slate-900 hover:text-indigo-600 transition-colors">
-                          {currentWia.word}
-                        </span>
-                      )}
-                    </h2>
-                  </div>
-
-                  <p className="font-mono text-slate-500 text-xl font-medium mb-6">{currentWia.ipa}</p>
-
-                  <div>
+                  {/* Dilemma Bottom Action Bar */}
+                  <div className="flex items-center justify-between pt-3 border-t border-slate-100 shrink-0">
                     <button
                       onClick={() => {
-                        setStage1IsFlipped(true);
-                        triggerLivingAudio(currentWia.word);
+                        if (podWordIndex > 0) {
+                          setPodWordIndex((prev) => prev - 1);
+                          setDilemmaSelectedOption(null);
+                          setDilemmaAnswered(false);
+                          setDilemmaIsCorrect(null);
+                          setShowDeepNuanceDrawer(false);
+                        }
                       }}
-                      className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base shadow-lg shadow-indigo-500/25 transition-all transform active:scale-95 cursor-pointer"
+                      disabled={podWordIndex === 0}
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed text-xs sm:text-sm font-semibold text-slate-700 transition-all cursor-pointer"
                     >
-                      <span>Lật thẻ đối chiếu sắc thái</span>
-                      <kbd className="text-xs font-mono bg-white/20 text-white px-2 py-0.5 rounded">Space</kbd>
+                      <ChevronLeft className="w-4 h-4" />
+                      <span>Câu trước</span>
                     </button>
-                    <p className="text-xs text-slate-400 mt-2.5">
-                      Thử tự nhớ nghĩa, sắc thái cốt lõi và ngữ cảnh dùng từ trước khi lật thẻ
-                    </p>
+
+                    <span className="text-xs text-slate-500 font-mono hidden sm:inline">
+                      {dilemmaAnswered ? "Bấm [Enter ↵] để tiếp tục" : "Bấm phím [1]-[4] để chọn từ"}
+                    </span>
+
+                    <button
+                      onClick={handleDilemmaNext}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-indigo-600/25 transition-all cursor-pointer"
+                    >
+                      <span>
+                        {!dilemmaAnswered
+                          ? "Bỏ qua & Xem đáp án"
+                          : podWordIndex === activePod.words.length - 1
+                          ? selectedPodIndex === pods.length - 1
+                            ? "Hoàn thành ➔ Sang Chặng 2"
+                            : `Sang ${pods[selectedPodIndex + 1]?.titleVi || "Chùm tiếp"}`
+                          : "Câu kế tiếp"}
+                      </span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
+              )}
 
-                {/* BACK FACE (Steps 2-4: Multi-dimensional Semantic Nuance & Contrastive Recall) */}
-                <div
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                    position: 'absolute',
-                    inset: 0,
-                    transform: 'rotateY(180deg)',
-                  }}
-                  className={`overflow-y-auto pr-1 bg-white ${
-                    !stage1IsFlipped ? "pointer-events-none" : ""
-                  }`}
-                >
-                  <SemanticNuanceCard
-                    item={currentWia}
-                    unitWords={VOCAB_C1_UNIT_1.wordsInAction}
-                    isWordPronouncing={isWordPronouncing}
-                    onPronounce={triggerLivingAudio}
-                    onSelfAssess={handleStage1SelfAssess}
-                  />
+              {/* ============================================================ */}
+              {/* SUB-MODE B: CLUSTER SPECTRUM OVERVIEW (Bàn cân Chùm từ)      */}
+              {/* ============================================================ */}
+              {stage1SubMode === "spectrum" && (
+                <div className="flex-1 flex flex-col justify-between py-2 space-y-4 animate-in fade-in duration-200">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h3 className="text-base sm:text-lg font-black text-slate-900">
+                          Bàn Cân Sắc Thái: {activePod.titleVi}
+                        </h3>
+                        <p className="text-xs text-slate-600">
+                          So sánh trực quan {activePod.words.length} từ vựng nằm trên cùng một trục ngữ nghĩa
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setStage1SubMode("challenge")}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer shrink-0"
+                      >
+                        <Swords className="w-3.5 h-3.5" />
+                        <span>Bắt đầu Thử thách Chùm này ➔</span>
+                      </button>
+                    </div>
+
+                    {/* Spectrum Word Cards Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[460px] overflow-y-auto pr-1">
+                      {activePod.words.map((w, wIdx) => {
+                        const isAnswered = masteredWordIds[w.id];
+                        return (
+                          <div
+                            key={w.id}
+                            className="p-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-indigo-50/30 hover:border-indigo-300 transition-all space-y-2 flex flex-col justify-between"
+                          >
+                            <div>
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-baseline gap-2">
+                                  <h4
+                                    onClick={() => triggerLivingAudio(w.word)}
+                                    className="text-xl font-black font-mono text-slate-900 hover:text-indigo-600 cursor-pointer transition-colors"
+                                    title="Click để nghe phát âm"
+                                  >
+                                    {w.word}
+                                  </h4>
+                                  <span className="text-xs font-mono text-slate-500">{w.ipa}</span>
+                                </div>
+                                <span className="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
+                                  {w.nuance}
+                                </span>
+                              </div>
+
+                              <p className="text-xs sm:text-sm font-bold text-emerald-800 leading-snug mt-1">
+                                {w.viDef}
+                              </p>
+
+                              {w.register && (
+                                <span className="inline-block text-[10px] font-semibold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded mt-1.5">
+                                  Ngữ vực: {w.register}
+                                </span>
+                              )}
+
+                              <p className="text-xs text-slate-700 bg-white p-2.5 rounded-xl border border-slate-200/80 mt-2 leading-relaxed">
+                                <strong>Ví dụ:</strong>{" "}
+                                {w.example.split("**").map((chunk, i) =>
+                                  i % 2 === 1 ? (
+                                    <strong key={i} className="text-indigo-700 underline">
+                                      {chunk}
+                                    </strong>
+                                  ) : (
+                                    chunk
+                                  )
+                                )}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center justify-between pt-2 border-t border-slate-200/70 text-xs">
+                              <button
+                                onClick={() => triggerLivingAudio(w.word)}
+                                className="flex items-center gap-1 text-indigo-700 hover:text-indigo-900 font-semibold cursor-pointer"
+                              >
+                                <Volume2 className="w-3.5 h-3.5" />
+                                <span>Nghe âm chuẩn</span>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setPodWordIndex(wIdx);
+                                  setStage1SubMode("challenge");
+                                }}
+                                className="flex items-center gap-1 text-slate-700 hover:text-indigo-600 font-bold cursor-pointer"
+                              >
+                                <span>Làm câu đố từ này</span>
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
 
-            {/* Navigation Stepper buttons inside card */}
-            <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 shrink-0">
-              <button
-                onClick={() => {
-                  if (stage1Index > 0) {
-                    setStage1Index(stage1Index - 1);
-                    setStage1IsFlipped(false);
-                  }
-                }}
-                disabled={stage1Index === 0}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed text-sm font-semibold text-slate-700 transition-all cursor-pointer"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Từ trước</span>
-                <kbd className="font-mono text-xs bg-white px-2 py-0.5 rounded border border-slate-300">←</kbd>
-              </button>
-
-              <div className="flex flex-wrap justify-center items-center gap-1.5 max-w-xs sm:max-w-md px-2">
-                {VOCAB_C1_UNIT_1.wordsInAction.map((w, idx) => {
-                  const assessment = stage1SelfAssessments[w.id];
-                  const wordHasVisualCue = Boolean(w.visualCueUrl || w.visualCueType);
-                  let dotColor = wordHasVisualCue
-                    ? "bg-amber-400 hover:bg-amber-500 ring-2 ring-amber-300/60"
-                    : "bg-slate-300 hover:bg-slate-400";
-                  if (assessment === "mastered") dotColor = "bg-emerald-500";
-                  if (assessment === "review") dotColor = "bg-rose-400";
-
-                  return (
+              {/* ============================================================ */}
+              {/* SUB-MODE C: FLASHCARD (Thẻ lật scoped theo Pod)             */}
+              {/* ============================================================ */}
+              {stage1SubMode === "flashcard" && (
+                <div className="flex-1 flex flex-col justify-between py-1 animate-in fade-in duration-200 min-h-0">
+                  {/* Card Body: CSS 3D Flip Card */}
+                  <div className="flex-1 min-h-[360px] relative my-2" style={{ perspective: "1200px" }}>
                     <div
-                      key={idx}
-                      onClick={() => {
-                        setStage1Index(idx);
-                        setStage1IsFlipped(false);
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        height: "100%",
+                        transformStyle: "preserve-3d",
+                        transition: "transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)",
+                        transform: stage1IsFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
                       }}
-                      className={`h-2.5 rounded-full cursor-pointer transition-all ${
-                        idx === stage1Index
-                          ? wordHasVisualCue
-                            ? "w-6 bg-amber-500 ring-2 ring-amber-300"
-                            : "w-6 bg-indigo-600"
-                          : `w-2.5 ${dotColor}`
-                      }`}
-                      title={
-                        wordHasVisualCue
-                          ? `${w.word} (Có gợi ý trực quan - Visual Cue)`
-                          : w.word
-                      }
-                    />
-                  );
-                })}
-              </div>
+                    >
+                      {/* FRONT FACE */}
+                      <div
+                        style={{
+                          backfaceVisibility: "hidden",
+                          WebkitBackfaceVisibility: "hidden",
+                          position: "absolute",
+                          inset: 0,
+                        }}
+                        className={`flex flex-col items-center justify-center text-center p-6 bg-white rounded-2xl border border-slate-200 shadow-md ${
+                          stage1IsFlipped ? "pointer-events-none" : ""
+                        }`}
+                      >
+                        <div className="px-3 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-full text-xs font-bold font-mono uppercase tracking-wider mb-4">
+                          {activePod.badge} • TỪ {podWordIndex + 1} / {activePod.words.length}
+                        </div>
 
-              <button
-                onClick={() => {
-                  if (!stage1IsFlipped) {
-                    setStage1IsFlipped(true);
-                  } else {
-                    handleStage1SelfAssess("mastered");
-                  }
-                }}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-md shadow-indigo-600/25 transition-all cursor-pointer"
-              >
-                <span>{!stage1IsFlipped ? "Xem đáp án" : stage1Index === VOCAB_C1_UNIT_1.wordsInAction.length - 1 ? "Sang Chặng 2" : "Từ kế tiếp"}</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
+                        <h2
+                          onClick={() => triggerLivingAudio(activePodWord.word)}
+                          className="text-5xl sm:text-6xl font-black tracking-tight font-mono cursor-pointer transition-all hover:scale-105 active:scale-95 text-slate-900 hover:text-indigo-600 mb-2"
+                          title="Click để nghe phát âm"
+                        >
+                          {activePodWord.word}
+                        </h2>
+
+                        <p className="font-mono text-slate-500 text-xl font-medium mb-6">{activePodWord.ipa}</p>
+
+                        <button
+                          onClick={() => {
+                            setStage1IsFlipped(true);
+                            triggerLivingAudio(activePodWord.word);
+                          }}
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base shadow-lg shadow-indigo-500/25 transition-all cursor-pointer"
+                        >
+                          <span>Lật thẻ đối chiếu sắc thái</span>
+                          <kbd className="text-xs font-mono bg-white/20 text-white px-2 py-0.5 rounded">Space</kbd>
+                        </button>
+                      </div>
+
+                      {/* BACK FACE */}
+                      <div
+                        style={{
+                          backfaceVisibility: "hidden",
+                          WebkitBackfaceVisibility: "hidden",
+                          position: "absolute",
+                          inset: 0,
+                          transform: "rotateY(180deg)",
+                        }}
+                        className={`overflow-y-auto pr-1 bg-white rounded-2xl border border-slate-200 shadow-md p-4 ${
+                          !stage1IsFlipped ? "pointer-events-none" : ""
+                        }`}
+                      >
+                        <SemanticNuanceCard
+                          item={activePodWord}
+                          unitWords={VOCAB_C1_UNIT_1.wordsInAction}
+                          podWords={activePod.words}
+                          isWordPronouncing={isWordPronouncing}
+                          onPronounce={triggerLivingAudio}
+                          onSelfAssess={handleStage1SelfAssess}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Stepper Dots inside Pod */}
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 shrink-0">
+                    <button
+                      onClick={() => {
+                        if (podWordIndex > 0) {
+                          setPodWordIndex(podWordIndex - 1);
+                          setStage1IsFlipped(false);
+                        }
+                      }}
+                      disabled={podWordIndex === 0}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-semibold text-slate-700 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      <span>Từ trước</span>
+                    </button>
+
+                    <div className="flex items-center gap-1.5">
+                      {activePod.words.map((w, wIdx) => (
+                        <div
+                          key={w.id}
+                          onClick={() => {
+                            setPodWordIndex(wIdx);
+                            setStage1IsFlipped(false);
+                          }}
+                          className={`h-2.5 rounded-full cursor-pointer transition-all ${
+                            wIdx === podWordIndex ? "w-6 bg-indigo-600" : "w-2.5 bg-slate-200 hover:bg-slate-300"
+                          }`}
+                          title={w.word}
+                        />
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        if (!stage1IsFlipped) {
+                          setStage1IsFlipped(true);
+                        } else {
+                          handleStage1SelfAssess("mastered");
+                        }
+                      }}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md cursor-pointer"
+                    >
+                      <span>{!stage1IsFlipped ? "Xem đáp án" : "Từ kế tiếp"}</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          )}
 
         {/* STAGE 2: WORD FORMATION (Morphology Builder) */}
         {currentStage === 2 && (

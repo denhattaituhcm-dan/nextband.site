@@ -33,7 +33,10 @@ import {
   Gauge,
   Timer,
   Eye,
-  AlertCircle
+  AlertCircle,
+  Globe,
+  BookmarkPlus,
+  Loader2
 } from "lucide-react";
 import {
   CAMBRIDGE_VOCAB_UNITS,
@@ -45,7 +48,16 @@ import {
   Stage2Milestone,
   EssayBlank,
   MorphologyVariant,
-  LexiconEntry
+  LexiconEntry,
+  XrayHighlights,
+  lookupCambridgeWord,
+  hasOfflineDefinition,
+  getUnitCoreReviewWords,
+  getStage1SentenceVi,
+  getStage3ParagraphVi,
+  extractKeyVocabularyHints,
+  fetchOnlineDictionaryFallback,
+  fetchOnlineSentenceTranslation
 } from "@/data/cambridgeVocab";
 
 /* =========================================================================
@@ -155,6 +167,200 @@ function shuffleArray<T>(arr: T[]): T[] {
   return copy;
 }
 
+const getReviewStorageKey = (unitId: number | null) =>
+  unitId ? `nb_cambridge_vocab_review_v1_u${unitId}` : null;
+
+interface InteractiveLookupTextProps {
+  text: string;
+  contextSentence?: string;
+  onWordClick: (word: string, sentence?: string) => void;
+  tokenClassName?: string;
+}
+
+function InteractiveLookupText({
+  text,
+  contextSentence,
+  onWordClick,
+  tokenClassName
+}: InteractiveLookupTextProps) {
+  if (!text) return null;
+  const parts = text.split(/([a-zA-Z]+(?:-[a-zA-Z]+)*)/g);
+
+  return (
+    <>
+      {parts.map((part, idx) => {
+        if (!part) return null;
+        const isWord = /^[a-zA-Z]+(?:-[a-zA-Z]+)*$/.test(part) && part.length >= 2 && !/^BLANK_\d+$/i.test(part);
+        if (!isWord) {
+          return <React.Fragment key={idx}>{part}</React.Fragment>;
+        }
+        return (
+          <span
+            key={idx}
+            role="button"
+            tabIndex={0}
+            onClick={e => {
+              e.stopPropagation();
+              onWordClick(part, contextSentence || text);
+            }}
+            onKeyDown={e => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                e.stopPropagation();
+                onWordClick(part, contextSentence || text);
+              }
+            }}
+            title={`Tra nghĩa & phát âm từ "${part}"`}
+            className={
+              tokenClassName ||
+              "cursor-pointer rounded px-0.5 -mx-0.5 hover:bg-indigo-100/80 hover:text-indigo-800 underline decoration-dotted decoration-slate-300 hover:decoration-indigo-500 underline-offset-4 transition-colors"
+            }
+          >
+            {part}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+type HighlightType = "lexical" | "cohesion";
+
+function renderSegmentWithXray(
+  segment: string,
+  contextSentence: string,
+  xrayActive: boolean,
+  xrayHighlights: XrayHighlights,
+  onWordClick: (word: string, sentence?: string) => void,
+  keyPrefix: string
+): React.ReactNode {
+  if (!segment) return null;
+  if (!xrayActive) {
+    return (
+      <InteractiveLookupText
+        text={segment}
+        contextSentence={contextSentence}
+        onWordClick={onWordClick}
+      />
+    );
+  }
+
+  // Build non-overlapping phrase matches (lexical priority, longest first)
+  const candidates: Array<{ phrase: string; type: HighlightType }> = [];
+  for (const p of xrayHighlights.lexical) {
+    if (p && p.trim().length >= 3) candidates.push({ phrase: p.trim(), type: "lexical" });
+  }
+  for (const p of xrayHighlights.cohesion) {
+    if (p && p.trim().length >= 3) candidates.push({ phrase: p.trim(), type: "cohesion" });
+  }
+  candidates.sort((a, b) => b.phrase.length - a.phrase.length);
+
+  const ranges: Array<{ start: number; end: number; type: HighlightType; phrase: string }> = [];
+  const occupied = new Array<boolean>(segment.length).fill(false);
+
+  for (const cand of candidates) {
+    const escaped = cand.phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(?<![a-zA-Z])${escaped}(?![a-zA-Z])`, "gi");
+    let m: RegExpExecArray | null;
+    while ((m = regex.exec(segment)) !== null) {
+      const start = m.index;
+      const end = start + m[0].length;
+      let overlaps = false;
+      for (let i = start; i < end; i++) {
+        if (occupied[i]) {
+          overlaps = true;
+          break;
+        }
+      }
+      if (!overlaps) {
+        for (let i = start; i < end; i++) occupied[i] = true;
+        ranges.push({ start, end, type: cand.type, phrase: m[0] });
+      }
+    }
+  }
+
+  if (ranges.length === 0) {
+    return (
+      <InteractiveLookupText
+        text={segment}
+        contextSentence={contextSentence}
+        onWordClick={onWordClick}
+      />
+    );
+  }
+
+  ranges.sort((a, b) => a.start - b.start);
+  const nodes: React.ReactNode[] = [];
+  let cursor = 0;
+
+  ranges.forEach((r, idx) => {
+    if (r.start > cursor) {
+      nodes.push(
+        <InteractiveLookupText
+          key={`${keyPrefix}-plain-${idx}`}
+          text={segment.slice(cursor, r.start)}
+          contextSentence={contextSentence}
+          onWordClick={onWordClick}
+        />
+      );
+    }
+
+    if (r.type === "lexical") {
+      nodes.push(
+        <span
+          key={`${keyPrefix}-lex-${idx}`}
+          role="button"
+          tabIndex={0}
+          onClick={e => {
+            e.stopPropagation();
+            onWordClick(r.phrase, contextSentence);
+          }}
+          onKeyDown={e => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              e.stopPropagation();
+              onWordClick(r.phrase, contextSentence);
+            }
+          }}
+          title={`Cụm từ Band 8+ "${r.phrase}" — Chạm để tra nghĩa & phát âm`}
+          className="cursor-pointer bg-emerald-100/90 hover:bg-emerald-200/90 text-emerald-950 border-b-2 border-emerald-500 rounded px-1 py-0.5 font-semibold transition-colors"
+        >
+          {r.phrase}
+        </span>
+      );
+    } else {
+      nodes.push(
+        <span
+          key={`${keyPrefix}-coh-${idx}`}
+          title="Từ nối / Cấu trúc liên kết học thuật (Cohesion)"
+          className="bg-purple-100/90 text-purple-950 border-b-2 border-purple-400 rounded px-1 py-0.5 font-medium"
+        >
+          <InteractiveLookupText
+            text={r.phrase}
+            contextSentence={contextSentence}
+            onWordClick={onWordClick}
+            tokenClassName="cursor-pointer rounded px-0.5 -mx-0.5 hover:bg-purple-200/80 underline decoration-dotted decoration-purple-300 underline-offset-4 transition-colors"
+          />
+        </span>
+      );
+    }
+    cursor = r.end;
+  });
+
+  if (cursor < segment.length) {
+    nodes.push(
+      <InteractiveLookupText
+        key={`${keyPrefix}-tail`}
+        text={segment.slice(cursor)}
+        contextSentence={contextSentence}
+        onWordClick={onWordClick}
+      />
+    );
+  }
+
+  return <>{nodes}</>;
+}
+
 export default function CambridgeVocabHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
@@ -180,12 +386,14 @@ export default function CambridgeVocabHubPage() {
   const [stage1ActiveSlotWord, setStage1ActiveSlotWord] = useState<string | null>(null);
   const [stage1WrongMessage, setStage1WrongMessage] = useState<{ title: string; exp: string } | null>(null);
   const [stage1ShuffledOptions, setStage1ShuffledOptions] = useState<MagnetOption[]>([]);
+  const [stage1ShowTranslation, setStage1ShowTranslation] = useState<boolean>(false);
 
   // Stage 2 State
   const [stage2Index, setStage2Index] = useState<number>(0);
   const [stage2UnlockedUpTo, setStage2UnlockedUpTo] = useState<number>(0);
   const [stage2Solved, setStage2Solved] = useState<boolean>(false);
   const [stage2SlotWord, setStage2SlotWord] = useState<string | null>(null);
+  const [stage2WrongMessage, setStage2WrongMessage] = useState<{ word: string; pos: string; meaning: string } | null>(null);
   const [stage2ShuffledCandidates, setStage2ShuffledCandidates] = useState<string[]>([]);
   const [stage2ShuffleSeed, setStage2ShuffleSeed] = useState<number>(0);
 
@@ -194,17 +402,79 @@ export default function CambridgeVocabHubPage() {
   const [stage3ForgedBlanks, setStage3ForgedBlanks] = useState<Record<string, string>>({});
   const [stage3DialOpen, setStage3DialOpen] = useState<boolean>(false);
   const [stage3ShuffledVariants, setStage3ShuffledVariants] = useState<MorphologyVariant[]>([]);
+  const [stage3DialWrongMessage, setStage3DialWrongMessage] = useState<{ word: string; label: string } | null>(null);
+  const [stage3DialShowHints, setStage3DialShowHints] = useState<boolean>(true);
   const [stage3XrayActive, setStage3XrayActive] = useState<boolean>(false);
+  const [stage3ShowBilingual, setStage3ShowBilingual] = useState<boolean>(false);
   const [stage3ArsenalSearch, setStage3ArsenalSearch] = useState<string>("");
 
-  // Living Lexicon Deck State (Spaced Repetition Flashcards)
-  const [reviewQueue, setReviewQueue] = useState<string[]>(["resit", "mature", "grant"]);
+  // Instant Word Lookup Popover & Online Bilingual Assist
+  const [lookupModal, setLookupModal] = useState<{
+    word: string;
+    contextSentence?: string;
+    entry: LexiconEntry;
+    isLoadingOnline: boolean;
+    onlineTried: boolean;
+  } | null>(null);
+  const [onlineTranslations, setOnlineTranslations] = useState<Record<string, string>>({});
+  const [loadingTranslationKey, setLoadingTranslationKey] = useState<string | null>(null);
+
+  // Living Lexicon Deck State (Spaced Repetition Flashcards - persisted per Unit)
+  const [reviewQueue, setReviewQueue] = useState<string[]>([]);
   const [lexiconModalOpen, setLexiconModalOpen] = useState<boolean>(false);
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [cardFlipped, setCardFlipped] = useState<boolean>(false);
 
   // Keyboard Guide Modal
   const [keyboardModalOpen, setKeyboardModalOpen] = useState<boolean>(false);
+
+  // Reset stage state & load unit-scoped review queue when switching units
+  useEffect(() => {
+    setCurrentStage(1);
+    setStage1Index(0);
+    setStage1Solved(false);
+    setStage1ActiveSlotWord(null);
+    setStage1WrongMessage(null);
+    setStage1ShowTranslation(false);
+    setStage2Index(0);
+    setStage2UnlockedUpTo(0);
+    setStage2Solved(false);
+    setStage2SlotWord(null);
+    setStage2WrongMessage(null);
+    setStage3ActiveBlankId(null);
+    setStage3ForgedBlanks({});
+    setStage3DialOpen(false);
+    setStage3DialWrongMessage(null);
+    setStage3XrayActive(false);
+    setStage3ShowBilingual(false);
+    setLookupModal(null);
+    setCurrentCardIndex(0);
+    setCardFlipped(false);
+
+    const key = getReviewStorageKey(selectedUnitId);
+    if (key && typeof window !== "undefined") {
+      try {
+        const raw = window.localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : [];
+        setReviewQueue(Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === "string") : []);
+      } catch {
+        setReviewQueue([]);
+      }
+    } else {
+      setReviewQueue([]);
+    }
+  }, [selectedUnitId]);
+
+  // Persist unit-scoped reviewQueue to localStorage
+  useEffect(() => {
+    const key = getReviewStorageKey(selectedUnitId);
+    if (!key || typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(key, JSON.stringify(reviewQueue));
+    } catch {
+      // Ignore storage quota issues
+    }
+  }, [reviewQueue, selectedUnitId]);
 
   // Canvas confetti ref
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -276,15 +546,77 @@ export default function CambridgeVocabHubPage() {
     setReviewQueue(prev => (prev.includes(clean) ? prev : [...prev, clean]));
   };
 
+  const triggerOnlineWordLookup = async (rawWord: string) => {
+    setLookupModal(prev =>
+      prev && prev.word.toLowerCase() === rawWord.toLowerCase()
+        ? { ...prev, isLoadingOnline: true }
+        : prev
+    );
+    const enriched = await fetchOnlineDictionaryFallback(rawWord);
+    setLookupModal(prev => {
+      if (!prev || prev.word.toLowerCase() !== rawWord.toLowerCase()) return prev;
+      if (!enriched) {
+        return { ...prev, isLoadingOnline: false, onlineTried: true };
+      }
+      return {
+        ...prev,
+        isLoadingOnline: false,
+        onlineTried: true,
+        entry: {
+          ...prev.entry,
+          ipa: prev.entry.ipa || enriched.ipa || "",
+          pos: prev.entry.pos === "từ tiếng Anh" && enriched.pos ? enriched.pos : prev.entry.pos,
+          def_en: prev.entry.def_en || enriched.def_en || "",
+          def_vi: !hasOfflineDefinition(prev.entry) && enriched.def_vi ? enriched.def_vi : prev.entry.def_vi,
+          example: prev.entry.example || enriched.example || ""
+        }
+      };
+    });
+  };
+
+  const openWordLookup = (rawWord: string, contextSentence?: string) => {
+    audioSynth.playClick();
+    const entry = lookupCambridgeWord(rawWord, selectedUnitId || undefined, contextSentence);
+    const targetWord = rawWord.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, "") || entry.word;
+    const needsOnline = !hasOfflineDefinition(entry);
+
+    setLookupModal({
+      word: targetWord,
+      contextSentence,
+      entry,
+      isLoadingOnline: needsOnline,
+      onlineTried: false
+    });
+
+    if (needsOnline) {
+      void triggerOnlineWordLookup(targetWord);
+    }
+  };
+
+  const requestSentenceTranslation = async (cacheKey: string, sourceText: string) => {
+    if (onlineTranslations[cacheKey] || loadingTranslationKey === cacheKey) return;
+    setLoadingTranslationKey(cacheKey);
+    const translated = await fetchOnlineSentenceTranslation(sourceText);
+    if (translated) {
+      setOnlineTranslations(prev => ({ ...prev, [cacheKey]: translated }));
+    }
+    setLoadingTranslationKey(prev => (prev === cacheKey ? null : prev));
+  };
+
   // Keyboard Event Dispatcher
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (document.activeElement && document.activeElement.tagName === "INPUT") return;
 
       if (e.key === "Escape") {
+        setLookupModal(null);
         setLexiconModalOpen(false);
         setStage3DialOpen(false);
         setKeyboardModalOpen(false);
+        return;
+      }
+
+      if (lookupModal) {
         return;
       }
 
@@ -292,11 +624,11 @@ export default function CambridgeVocabHubPage() {
         if (e.code === "Space") {
           e.preventDefault();
           setCardFlipped(f => !f);
-        } else if (e.key === "ArrowRight" || e.key === "Tab") {
+        } else if (reviewQueue.length > 0 && (e.key === "ArrowRight" || e.key === "Tab")) {
           e.preventDefault();
           setCurrentCardIndex(i => (i + 1) % reviewQueue.length);
           setCardFlipped(false);
-        } else if (e.key === "ArrowLeft") {
+        } else if (reviewQueue.length > 0 && e.key === "ArrowLeft") {
           e.preventDefault();
           setCurrentCardIndex(i => (i - 1 + reviewQueue.length) % reviewQueue.length);
           setCardFlipped(false);
@@ -345,7 +677,7 @@ export default function CambridgeVocabHubPage() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [lexiconModalOpen, stage3DialOpen, currentUnitData, currentStage, stage1Solved, stage2Solved, stage1Index, stage1ShuffledOptions, stage2Index, stage2ShuffledCandidates, stage3ActiveBlankId, stage3ShuffledVariants, reviewQueue.length]);
+  }, [lookupModal, lexiconModalOpen, stage3DialOpen, currentUnitData, currentStage, stage1Solved, stage2Solved, stage1Index, stage1ShuffledOptions, stage2Index, stage2ShuffledCandidates, stage3ActiveBlankId, stage3ShuffledVariants, reviewQueue.length]);
 
   // STAGE 1 HANDLERS
   // Shuffle Stage 1 options on unit load or item change
@@ -387,6 +719,7 @@ export default function CambridgeVocabHubPage() {
   const handleNextStage1Item = () => {
     audioSynth.playClick();
     if (!currentUnitData) return;
+    setStage1ShowTranslation(false);
     if (stage1Index < currentUnitData.stage1_magnets.length - 1) {
       setStage1Index(i => i + 1);
       setStage1Solved(false);
@@ -418,6 +751,7 @@ export default function CambridgeVocabHubPage() {
       setStreak(s => s + 1);
       setWordsCompleted(w => w + 1);
       setStage2SlotWord(candidateWord);
+      setStage2WrongMessage(null);
       audioSynth.playSuccess();
       fireConfetti(window.innerWidth / 2, window.innerHeight / 2, 35);
       if (stage2Index + 1 > stage2UnlockedUpTo) {
@@ -426,6 +760,12 @@ export default function CambridgeVocabHubPage() {
     } else {
       setStreak(0);
       audioSynth.playError();
+      const wrongEntry = lookupCambridgeWord(candidateWord, selectedUnitId || undefined);
+      setStage2WrongMessage({
+        word: candidateWord,
+        pos: wrongEntry.pos,
+        meaning: wrongEntry.def_vi
+      });
       addToReviewQueue(cur.target);
       addToReviewQueue(candidateWord);
     }
@@ -434,6 +774,7 @@ export default function CambridgeVocabHubPage() {
   const handleAdvanceStage2Milestone = () => {
     audioSynth.playClick();
     if (!currentUnitData) return;
+    setStage2WrongMessage(null);
     if (stage2Index < currentUnitData.stage2_timeline.length - 1) {
       setStage2Index(i => i + 1);
       setStage2Solved(false);
@@ -449,6 +790,7 @@ export default function CambridgeVocabHubPage() {
     if (!currentUnitData) return;
     audioSynth.playClick();
     setStage3ActiveBlankId(blankId);
+    setStage3DialWrongMessage(null);
     const blank = currentUnitData.stage3_essay.blanks.find(b => b.id === blankId);
     if (blank) {
       // Shuffle options so it is never always A!
@@ -465,6 +807,7 @@ export default function CambridgeVocabHubPage() {
       setStreak(s => s + 1);
       setWordsCompleted(w => w + 1);
       setStage3ForgedBlanks(prev => ({ ...prev, [blank.id]: variant.form }));
+      setStage3DialWrongMessage(null);
       fireConfetti(window.innerWidth / 2, window.innerHeight / 2, 40);
       setStage3DialOpen(false);
 
@@ -476,6 +819,10 @@ export default function CambridgeVocabHubPage() {
     } else {
       setStreak(0);
       audioSynth.playError();
+      setStage3DialWrongMessage({
+        word: variant.form,
+        label: variant.label
+      });
       addToReviewQueue(blank.rootWord);
     }
   };
@@ -872,10 +1219,20 @@ export default function CambridgeVocabHubPage() {
               <div className="max-w-5xl mx-auto text-center space-y-6">
                 {/*  Sentence with Magnetic Slot  */}
                 <div className="text-xl sm:text-2xl font-medium text-slate-800 leading-relaxed sm:leading-snug px-2">
-                  <span>{currentMagnet.sentenceBefore} </span>
+                  <InteractiveLookupText
+                    text={currentMagnet.sentenceBefore}
+                    contextSentence={`${currentMagnet.sentenceBefore} ${currentMagnet.target} ${currentMagnet.sentenceAfter}`}
+                    onWordClick={openWordLookup}
+                  />{" "}
 
                   {stage1Solved ? (
-                    <span className="inline-flex items-center justify-center min-w-[140px] px-4 py-1 mx-2 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold font-mono text-base shadow-sm align-middle">
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => openWordLookup(stage1ActiveSlotWord || currentMagnet.target, `${currentMagnet.sentenceBefore} ${currentMagnet.target} ${currentMagnet.sentenceAfter}`)}
+                      title="Bấm để xem chi tiết & phát âm"
+                      className="cursor-pointer inline-flex items-center justify-center min-w-[140px] px-4 py-1 mx-2 rounded-xl border-2 border-emerald-500 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold font-mono text-base shadow-sm align-middle transition-colors"
+                    >
                       <Check className="w-4 h-4 text-emerald-600 mr-1.5" />
                       {stage1ActiveSlotWord}
                     </span>
@@ -884,10 +1241,109 @@ export default function CambridgeVocabHubPage() {
                       <Magnet className="w-4 h-4 text-indigo-600 mr-1.5" />
                       <span className="font-mono text-base">[ ? ]</span>
                     </span>
-                  )}
+                  )}{" "}
 
-                  <span> {currentMagnet.sentenceAfter}</span>
+                  <InteractiveLookupText
+                    text={currentMagnet.sentenceAfter}
+                    contextSentence={`${currentMagnet.sentenceBefore} ${currentMagnet.target} ${currentMagnet.sentenceAfter}`}
+                    onWordClick={openWordLookup}
+                  />
                 </div>
+
+                {/*  B1 Assist Toolbar: Click-to-lookup tip + Sentence Audio + Bilingual Toggle  */}
+                <div className="flex flex-wrap items-center justify-center sm:justify-between gap-2.5 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
+                  <span className="text-slate-500 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
+                    <span>Mẹo B1: Chạm vào <strong>bất kỳ từ tiếng Anh nào</strong> trong câu để tra nghĩa &amp; nghe phát âm</span>
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const sentence = stage1Solved
+                          ? `${currentMagnet.sentenceBefore} ${currentMagnet.target} ${currentMagnet.sentenceAfter}`
+                          : `${currentMagnet.sentenceBefore} ... ${currentMagnet.sentenceAfter}`;
+                        speakWord(sentence);
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-700 text-slate-700 font-medium flex items-center gap-1.5 transition-colors shadow-sm"
+                    >
+                      <Volume2 className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>Nghe câu</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = !stage1ShowTranslation;
+                        setStage1ShowTranslation(next);
+                        if (next && selectedUnitId) {
+                          const curated = getStage1SentenceVi(selectedUnitId, currentMagnet, stage1Solved);
+                          if (!curated) {
+                            const key = `s1_${currentMagnet.id}_${stage1Solved ? "full" : "masked"}`;
+                            const source = stage1Solved
+                              ? `${currentMagnet.sentenceBefore} ${currentMagnet.target} ${currentMagnet.sentenceAfter}`
+                              : `${currentMagnet.sentenceBefore} [...] ${currentMagnet.sentenceAfter}`;
+                            void requestSentenceTranslation(key, source);
+                          }
+                        }
+                      }}
+                      className={`px-2.5 py-1 rounded-lg border font-medium flex items-center gap-1.5 transition-colors shadow-sm ${
+                        stage1ShowTranslation
+                          ? "bg-indigo-600 text-white border-indigo-700"
+                          : "bg-white border-slate-200 hover:border-indigo-300 hover:text-indigo-700 text-slate-700"
+                      }`}
+                    >
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>{stage1ShowTranslation ? "Ẩn dịch nghĩa" : "Dịch nghĩa câu (B1)"}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/*  B1 Bilingual Sentence Assist Box  */}
+                {(stage1ShowTranslation || stage1Solved) && (() => {
+                  const curatedVi = selectedUnitId
+                    ? getStage1SentenceVi(selectedUnitId, currentMagnet, stage1Solved)
+                    : null;
+                  const transKey = `s1_${currentMagnet.id}_${stage1Solved ? "full" : "masked"}`;
+                  const onlineVi = onlineTranslations[transKey];
+                  const isTranslating = loadingTranslationKey === transKey;
+                  const fullEn = `${currentMagnet.sentenceBefore} ${stage1Solved ? currentMagnet.target : ""} ${currentMagnet.sentenceAfter}`;
+                  const keyHints = extractKeyVocabularyHints(fullEn, selectedUnitId || undefined, 6);
+
+                  if (!stage1ShowTranslation && !curatedVi) return null;
+
+                  return (
+                    <div className="text-left bg-indigo-50/70 border border-indigo-200 rounded-xl p-3.5 text-xs sm:text-sm text-slate-700 space-y-2">
+                      <div className="flex items-center gap-1.5 font-bold text-indigo-800 text-xs">
+                        <Globe className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>Nghĩa tiếng Việt tham khảo {stage1Solved ? "(Hoàn chỉnh)" : "(Đã ẩn từ cần điền)"}:</span>
+                      </div>
+                      {curatedVi || onlineVi ? (
+                        <p className="leading-relaxed text-slate-800">{curatedVi || onlineVi}</p>
+                      ) : isTranslating ? (
+                        <p className="text-slate-500 flex items-center gap-1.5">
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-600" />
+                          <span>Đang tải bản dịch câu...</span>
+                        </p>
+                      ) : (
+                        <p className="text-slate-600 italic">Gợi ý các từ khóa trong câu (chạm vào từ ở trên để tra chi tiết):</p>
+                      )}
+                      {keyHints.length > 0 && !curatedVi && (
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {keyHints.map(h => (
+                            <button
+                              key={h.word}
+                              type="button"
+                              onClick={() => openWordLookup(h.word, fullEn)}
+                              className="px-2 py-0.5 rounded-md bg-white border border-indigo-200/80 text-[11px] text-slate-700 hover:border-indigo-400 transition-colors"
+                            >
+                              <strong className="font-mono text-indigo-700">{h.word}</strong>: {h.def_vi}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/*  3 Magnetic Word Pills  */}
                 <div className="pt-2">
@@ -897,13 +1353,14 @@ export default function CambridgeVocabHubPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
                     {(stage1ShuffledOptions.length > 0 ? stage1ShuffledOptions : currentMagnet.options).map((opt, idx) => {
                       const isTarget = opt.word.toLowerCase() === currentMagnet.target.toLowerCase();
+                      const optEntry = lookupCambridgeWord(opt.word, selectedUnitId || undefined);
 
                       let cardStyle = "bg-white border-slate-200 hover:border-indigo-400 hover:shadow-md";
                       if (stage1Solved) {
                         if (isTarget) {
                           cardStyle = "bg-emerald-50/40 border-emerald-500 ring-2 ring-emerald-200 shadow-sm";
                         } else {
-                          cardStyle = "bg-slate-50/60 border-slate-200 opacity-60";
+                          cardStyle = "bg-slate-50/60 border-slate-200 opacity-75";
                         }
                       }
 
@@ -920,14 +1377,31 @@ export default function CambridgeVocabHubPage() {
                           }`}>
                             [{idx + 1}]
                           </span>
+
+                          <button
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              speakWord(opt.word);
+                            }}
+                            title={`Nghe phát âm "${opt.word}"`}
+                            className="absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-slate-100 hover:bg-indigo-100 text-slate-600 hover:text-indigo-700 flex items-center justify-center transition-colors"
+                          >
+                            <Volume2 className="w-3.5 h-3.5" />
+                          </button>
                           
-                          <div className="pt-1.5 pb-2.5 w-full">
-                            <span className={`text-xl sm:text-2xl font-bold font-mono transition-colors tracking-tight ${
-                              stage1Solved && isTarget ? "text-emerald-700" : "text-slate-900 group-hover:text-indigo-600"
-                            }`}>
-                              {opt.word}
-                            </span>
-                            <span className="text-xs font-mono text-slate-400 ml-1.5 font-normal">({opt.pos})</span>
+                          <div className="pt-3 pb-2.5 w-full">
+                            <div>
+                              <span className={`text-xl sm:text-2xl font-bold font-mono transition-colors tracking-tight ${
+                                stage1Solved && isTarget ? "text-emerald-700" : "text-slate-900 group-hover:text-indigo-600"
+                              }`}>
+                                {opt.word}
+                              </span>
+                              <span className="text-xs font-mono text-slate-400 ml-1.5 font-normal">({opt.pos})</span>
+                            </div>
+                            {optEntry.ipa && (
+                              <p className="text-[11px] font-mono text-slate-400 mt-0.5">{optEntry.ipa}</p>
+                            )}
                           </div>
 
                           {/* Radar Hint */}
@@ -997,15 +1471,38 @@ export default function CambridgeVocabHubPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div className="space-y-1.5">
                         <span className="font-bold text-slate-800 text-xs uppercase tracking-wider">Cụm Collocation Chuẩn:</span>
-                        <p className="font-mono text-indigo-800 font-semibold bg-white/80 p-2.5 rounded-xl border border-emerald-200/80">
-                          {currentMagnet.ieltsInsight.collocation}
-                        </p>
+                        <div className="font-mono text-indigo-800 font-semibold bg-white/80 p-2.5 rounded-xl border border-emerald-200/80 flex items-center justify-between gap-2">
+                          <span>{currentMagnet.ieltsInsight.collocation}</span>
+                          <button
+                            type="button"
+                            onClick={() => speakWord(currentMagnet.ieltsInsight.collocation.split("/")[0].trim())}
+                            title="Nghe phát âm cụm collocation"
+                            className="p-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 transition-colors flex-shrink-0"
+                          >
+                            <Volume2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                       <div className="space-y-1.5">
-                        <span className="font-bold text-slate-800 text-xs uppercase tracking-wider">Từ Đồng Nghĩa Thay Thế:</span>
-                        <p className="text-slate-700 bg-white/80 p-2.5 rounded-xl border border-emerald-200/80 font-medium">
-                          {currentMagnet.ieltsInsight.synonyms.join(", ")}
-                        </p>
+                        <span className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                          Từ Đồng Nghĩa Thay Thế <span className="font-normal text-emerald-700 normal-case">(chạm để tra nghĩa &amp; nghe)</span>:
+                        </span>
+                        <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-200/80 flex flex-wrap gap-1.5">
+                          {currentMagnet.ieltsInsight.synonyms.map((syn, sIdx) => (
+                            <button
+                              key={sIdx}
+                              type="button"
+                              onClick={() => {
+                                speakWord(syn);
+                                openWordLookup(syn, `${currentMagnet.sentenceBefore} ${currentMagnet.target} ${currentMagnet.sentenceAfter}`);
+                              }}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-indigo-50 text-slate-800 hover:text-indigo-800 border border-emerald-200 hover:border-indigo-300 text-xs font-medium transition-colors"
+                            >
+                              <Volume2 className="w-3 h-3 text-emerald-600" />
+                              <span>{syn}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
@@ -1036,7 +1533,7 @@ export default function CambridgeVocabHubPage() {
                   <span className="font-bold text-violet-600">{stage2Index + 1} / {milestones.length}</span>
                 </div>
                 <button
-                  onClick={() => { setStage2Index(0); setStage2Solved(false); setStage2SlotWord(null); setStage2ShuffleSeed(s => s + 1); }}
+                  onClick={() => { setStage2Index(0); setStage2Solved(false); setStage2SlotWord(null); setStage2WrongMessage(null); setStage2ShuffleSeed(s => s + 1); }}
                   className="text-xs text-slate-400 hover:text-slate-600 underline font-medium"
                 >
                   Làm lại
@@ -1068,6 +1565,7 @@ export default function CambridgeVocabHubPage() {
                             setStage2Index(idx);
                             setStage2Solved(false);
                             setStage2SlotWord(null);
+                            setStage2WrongMessage(null);
                           }
                         }}
                         className="flex flex-col items-center cursor-pointer select-none"
@@ -1123,20 +1621,55 @@ export default function CambridgeVocabHubPage() {
                 </p>
 
                 {/*  English narrative with slot  */}
-                <div className="text-base sm:text-lg font-medium text-slate-800 leading-relaxed bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <span>{currentMilestone.storyEn.split("[BLANK]")[0]}</span>
+                <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                  <div className="text-base sm:text-lg font-medium text-slate-800 leading-relaxed">
+                    <InteractiveLookupText
+                      text={currentMilestone.storyEn.split("[BLANK]")[0]}
+                      contextSentence={currentMilestone.storyEn.replace("[BLANK]", currentMilestone.target)}
+                      onWordClick={openWordLookup}
+                    />
 
-                  {stage2Solved ? (
-                    <span className="inline-flex items-center justify-center min-w-[130px] px-3.5 py-1 mx-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold font-mono text-base shadow-sm">
-                      {stage2SlotWord}
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center justify-center min-w-[130px] px-3.5 py-1 mx-1.5 rounded-lg border-2 border-dashed border-violet-400 bg-violet-50 text-violet-700 font-bold font-mono text-sm">
-                      [ ? ]
-                    </span>
-                  )}
+                    {stage2Solved ? (
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => openWordLookup(stage2SlotWord || currentMilestone.target, currentMilestone.storyEn.replace("[BLANK]", currentMilestone.target))}
+                        title="Bấm để xem chi tiết & phát âm"
+                        className="cursor-pointer inline-flex items-center justify-center min-w-[130px] px-3.5 py-1 mx-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold font-mono text-base shadow-sm transition-colors"
+                      >
+                        {stage2SlotWord}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center justify-center min-w-[130px] px-3.5 py-1 mx-1.5 rounded-lg border-2 border-dashed border-violet-400 bg-violet-50 text-violet-700 font-bold font-mono text-sm">
+                        [ ? ]
+                      </span>
+                    )}
 
-                  <span>{currentMilestone.storyEn.split("[BLANK]")[1]}</span>
+                    <InteractiveLookupText
+                      text={currentMilestone.storyEn.split("[BLANK]")[1] || ""}
+                      contextSentence={currentMilestone.storyEn.replace("[BLANK]", currentMilestone.target)}
+                      onWordClick={openWordLookup}
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-violet-500" />
+                      Chạm vào bất kỳ từ tiếng Anh nào trong câu để tra nghĩa &amp; nghe phát âm
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const s = stage2Solved
+                          ? currentMilestone.storyEn.replace("[BLANK]", currentMilestone.target)
+                          : currentMilestone.storyEn.replace("[BLANK]", "...");
+                        speakWord(s);
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-violet-50 border border-slate-200 hover:border-violet-300 text-slate-700 hover:text-violet-700 font-medium flex items-center gap-1 transition-colors"
+                    >
+                      <Volume2 className="w-3.5 h-3.5 text-violet-600" />
+                      <span>Nghe câu</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/*  SMART FILTER TRAY (4 candidates)  */}
@@ -1148,40 +1681,122 @@ export default function CambridgeVocabHubPage() {
                         Chọn từ phù hợp [1-4]
                       </span>
                     </div>
+                    <span className="text-[11px] text-slate-500">
+                      Bấm biểu tượng loa 🔊 để nghe trước khi chọn
+                    </span>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {(stage2ShuffledCandidates.length > 0 ? stage2ShuffledCandidates : currentMilestone.candidates).map((cand, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => handleSelectStage2Candidate(cand)}
-                        className="bg-white border border-slate-200 rounded-xl p-3.5 cursor-pointer hover:border-violet-500 hover:shadow-md transition-all flex items-center justify-between group"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="px-1.5 py-0.5 rounded font-mono text-[10px] font-bold bg-slate-100 text-slate-500 group-hover:bg-violet-100 group-hover:text-violet-700 transition-colors">
-                            [{idx + 1}]
-                          </span>
-                          <span className="font-mono text-sm font-bold text-slate-800 group-hover:text-violet-700 transition-colors">
-                            {cand}
-                          </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {(stage2ShuffledCandidates.length > 0 ? stage2ShuffledCandidates : currentMilestone.candidates).map((cand, idx) => {
+                      const isTarget = cand.toLowerCase() === currentMilestone.target.toLowerCase();
+                      const candEntry = lookupCambridgeWord(cand, selectedUnitId || undefined);
+
+                      let cardClass = "bg-white border-slate-200 hover:border-violet-500 hover:shadow-md cursor-pointer";
+                      if (stage2Solved) {
+                        cardClass = isTarget
+                          ? "bg-emerald-50/70 border-emerald-500 ring-2 ring-emerald-200 shadow-sm cursor-default"
+                          : "bg-white/90 border-slate-200 cursor-pointer hover:border-indigo-300";
+                      }
+
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => {
+                            if (stage2Solved) {
+                              openWordLookup(cand);
+                            } else {
+                              handleSelectStage2Candidate(cand);
+                            }
+                          }}
+                          className={`border rounded-xl p-3.5 transition-all flex flex-col justify-between gap-2 group ${cardClass}`}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className={`px-1.5 py-0.5 rounded font-mono text-[10px] font-bold transition-colors ${
+                                stage2Solved && isTarget
+                                  ? "bg-emerald-600 text-white"
+                                  : "bg-slate-100 text-slate-500 group-hover:bg-violet-100 group-hover:text-violet-700"
+                              }`}>
+                                [{idx + 1}]
+                              </span>
+                              <span className={`font-mono text-sm font-bold truncate transition-colors ${
+                                stage2Solved && isTarget ? "text-emerald-800" : "text-slate-800 group-hover:text-violet-700"
+                              }`}>
+                                {cand}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              <button
+                                type="button"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  speakWord(cand);
+                                }}
+                                title={`Nghe phát âm "${cand}"`}
+                                className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-violet-100 text-slate-600 hover:text-violet-700 flex items-center justify-center transition-colors"
+                              >
+                                <Volume2 className="w-3.5 h-3.5" />
+                              </button>
+                              {!stage2Solved && <Puzzle className="w-3.5 h-3.5 text-slate-300 group-hover:text-violet-500 hidden sm:block" />}
+                            </div>
+                          </div>
+
+                          {stage2Solved && (
+                            <div className="pt-2 border-t border-slate-100 text-left space-y-0.5">
+                              <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                                <span>({candEntry.pos}) {candEntry.ipa}</span>
+                                <span className="text-indigo-600 font-semibold">Chi tiết &rarr;</span>
+                              </div>
+                              <p className="text-xs text-slate-700 leading-snug line-clamp-2">
+                                {candEntry.def_vi}
+                              </p>
+                            </div>
+                          )}
                         </div>
-                        <Puzzle className="w-3.5 h-3.5 text-slate-400 group-hover:text-violet-500" />
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
+
+                {/*  Wrong Feedback in Stage 2  */}
+                {stage2WrongMessage && !stage2Solved && (
+                  <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 text-xs sm:text-sm text-rose-800 space-y-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 font-bold text-rose-900">
+                        <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                        <span>
+                          "{stage2WrongMessage.word}" ({stage2WrongMessage.pos}) chưa khớp với chỗ trống [{currentMilestone.targetVi}]!
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => openWordLookup(stage2WrongMessage.word)}
+                        className="text-xs font-semibold text-rose-700 hover:text-rose-900 underline flex-shrink-0"
+                      >
+                        Xem thẻ từ
+                      </button>
+                    </div>
+                    <p className="text-rose-700">
+                      <strong>Nghĩa của "{stage2WrongMessage.word}":</strong> {stage2WrongMessage.meaning}.
+                    </p>
+                    <p className="text-[11px] text-rose-600 italic">
+                      Đã tự động thêm cả từ đúng và từ nhầm vào "Cần Ôn Tập" để bạn ghi nhớ thêm.
+                    </p>
+                  </div>
+                )}
 
                 {/*  Milestone Success  */}
                 {stage2Solved && (
                   <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs space-y-2 text-emerald-800">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 font-bold text-emerald-900">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                        <span>Cột mốc hoàn thành! Đường dẫn sang độ tuổi tiếp theo đã được thắp sáng.</span>
+                        <span>Cột mốc hoàn thành! Đã mở nghĩa cả 4 phương án ở trên để bạn học thêm từ mới.</span>
                       </div>
                       <button
                         onClick={handleAdvanceStage2Milestone}
-                        className="px-3 py-1 rounded-lg bg-emerald-600 text-white font-semibold flex items-center gap-1.5 hover:bg-emerald-700 transition-colors"
+                        className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-semibold flex items-center gap-1.5 hover:bg-emerald-700 transition-colors flex-shrink-0"
                       >
                         <span>Cột Mốc Tiếp Theo</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -1207,7 +1822,36 @@ export default function CambridgeVocabHubPage() {
                 </h2>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = !stage3ShowBilingual;
+                    setStage3ShowBilingual(next);
+                    if (next && selectedUnitId) {
+                      essay.paragraphs.forEach(p => {
+                        const curated = getStage3ParagraphVi(selectedUnitId, p.pIndex);
+                        if (!curated) {
+                          const key = `s3_u${selectedUnitId}_p${p.pIndex}`;
+                          const cleanText = p.text.replace(/\[BLANK_(\d+)\]/g, (_, n) => {
+                            const b = essay.blanks.find(x => x.num === parseInt(n, 10));
+                            return b ? (stage3ForgedBlanks[b.id] || b.targetForm) : "...";
+                          });
+                          void requestSentenceTranslation(key, cleanText);
+                        }
+                      });
+                    }
+                  }}
+                  className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all shadow-sm ${
+                    stage3ShowBilingual
+                      ? "bg-emerald-600 text-white border-emerald-700"
+                      : "border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 text-emerald-700"
+                  }`}
+                >
+                  <Globe className="w-4 h-4" />
+                  <span>{stage3ShowBilingual ? "Ẩn dịch song ngữ" : "Dịch song ngữ (B1)"}</span>
+                </button>
+
                 <button
                   onClick={() => setStage3XrayActive(x => !x)}
                   className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all shadow-sm ${
@@ -1246,7 +1890,7 @@ export default function CambridgeVocabHubPage() {
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <span className="w-3 h-3 rounded bg-emerald-400"></span>
-                    <span className="text-slate-300">Cụm Từ Vựng Band 8+</span>
+                    <span className="text-slate-300">Cụm Từ Vựng Band 8+ (Chạm để tra)</span>
                   </span>
                 </div>
                 <button onClick={() => setStage3XrayActive(false)} className="text-slate-400 hover:text-white underline text-[11px]">
@@ -1264,45 +1908,83 @@ export default function CambridgeVocabHubPage() {
                 <div className="bg-gradient-to-r from-slate-50 to-indigo-50/30 border-l-4 border-l-indigo-600 p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
                   <div className="flex items-center justify-between text-xs font-mono text-slate-500 mb-1">
                     <span className="font-bold text-indigo-700">IELTS WRITING TASK 2 TOPIC</span>
-                    <span>Academic &bull; 250+ Words</span>
+                    <button
+                      type="button"
+                      onClick={() => speakWord(essay.prompt)}
+                      className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 font-sans font-semibold"
+                    >
+                      <Volume2 className="w-3.5 h-3.5" />
+                      <span>Nghe đề bài</span>
+                    </button>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-700 font-medium italic">
-                    "{essay.prompt}"
+                  <p className="text-xs sm:text-sm text-slate-700 font-medium italic leading-relaxed">
+                    "<InteractiveLookupText text={essay.prompt} contextSentence={essay.prompt} onWordClick={openWordLookup} />"
                   </p>
                 </div>
 
                 {/*  Essay Article Container  */}
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6 text-slate-800 text-sm sm:text-base leading-relaxed sm:leading-loose shadow-sm">
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                    <h3 className="font-bold text-slate-900 text-base sm:text-lg">{essay.title}</h3>
-                    <span className="text-xs font-mono text-slate-400">4 Paragraphs &bull; 12 Blanks</span>
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-base sm:text-lg">{essay.title}</h3>
+                      <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+                        <Sparkles className="w-3 h-3 text-amber-500" />
+                        <span>Mẹo B1: Chạm vào bất kỳ từ khó nào trong bài luận để tra nghĩa, phiên âm IPA &amp; lưu vào Cần Ôn Tập</span>
+                      </p>
+                    </div>
+                    <span className="text-xs font-mono text-slate-400">
+                      {essay.paragraphs.length} Paragraphs &bull; {essay.blanks.length} Blanks
+                    </span>
                   </div>
 
                   {essay.paragraphs.map(p => {
-                    // Render paragraph text with interactive blank buttons
-                    const parts: React.ReactNode[] = [];
-                    let remaining = p.text;
+                    const blankByNum = new Map<number, EssayBlank>();
+                    essay.blanks.forEach(b => blankByNum.set(b.num, b));
 
-                    essay.blanks.forEach(b => {
-                      const token = `[BLANK_${b.num}]`;
-                      if (remaining.includes(token)) {
-                        const splitParts = remaining.split(token);
-                        parts.push(splitParts[0]);
+                    const fullParagraphForContext = p.text.replace(/\[BLANK_(\d+)\]/g, (_, n) => {
+                      const b = blankByNum.get(parseInt(n, 10));
+                      return b ? (stage3ForgedBlanks[b.id] || b.targetForm) : "";
+                    });
 
-                        const forgedForm = stage3ForgedBlanks[b.id];
-                        if (forgedForm) {
-                          parts.push(
-                            <span
-                              key={b.id}
-                              onClick={() => openMorphologyForBlank(b.id)}
-                              className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-0.5 mx-1 rounded-md bg-emerald-100 text-emerald-900 border border-emerald-300 font-mono font-bold text-xs sm:text-sm hover:bg-emerald-200 transition-all shadow-sm"
-                            >
-                              <span>{forgedForm}</span>
-                              <Check className="w-3 h-3 text-emerald-700" />
-                            </span>
-                          );
-                        } else {
-                          parts.push(
+                    const sentenceChunks = p.text.split(/(?<=[.!?])\s+/);
+
+                    const renderedParagraph = sentenceChunks.map((sentenceChunk, sIdx) => {
+                      const reconstructedSentence = sentenceChunk.replace(/\[BLANK_(\d+)\]/g, (_, n) => {
+                        const b = blankByNum.get(parseInt(n, 10));
+                        return b ? b.targetForm : "";
+                      });
+                      const normSent = reconstructedSentence.replace(/\s+/g, " ").trim().toLowerCase();
+                      const isThesisSentence =
+                        stage3XrayActive &&
+                        normSent.length >= 12 &&
+                        essay.xrayHighlights.thesis.some(t => {
+                          const nt = t.replace(/\s+/g, " ").trim().toLowerCase();
+                          return nt.length > 0 && (normSent.includes(nt) || nt.includes(normSent));
+                        });
+
+                      const tokens = sentenceChunk.split(/(\[BLANK_\d+\])/g);
+                      const sentenceNodes = tokens.map((tok, tIdx) => {
+                        const blankMatch = tok.match(/^\[BLANK_(\d+)\]$/);
+                        if (blankMatch) {
+                          const num = parseInt(blankMatch[1], 10);
+                          const b = blankByNum.get(num);
+                          if (!b) return <React.Fragment key={`${p.pIndex}-${sIdx}-${tIdx}`}>{tok}</React.Fragment>;
+
+                          const forgedForm = stage3ForgedBlanks[b.id];
+                          if (forgedForm) {
+                            return (
+                              <span
+                                key={b.id}
+                                onClick={() => openMorphologyForBlank(b.id)}
+                                className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-0.5 mx-1 rounded-md bg-emerald-100 text-emerald-900 border border-emerald-300 font-mono font-bold text-xs sm:text-sm hover:bg-emerald-200 transition-all shadow-sm"
+                              >
+                                <span>{forgedForm}</span>
+                                <Check className="w-3 h-3 text-emerald-700" />
+                              </span>
+                            );
+                          }
+
+                          return (
                             <span
                               key={b.id}
                               onClick={() => openMorphologyForBlank(b.id)}
@@ -1317,16 +1999,94 @@ export default function CambridgeVocabHubPage() {
                             </span>
                           );
                         }
-                        remaining = splitParts[1] || "";
-                      }
+
+                        return (
+                          <React.Fragment key={`${p.pIndex}-${sIdx}-${tIdx}`}>
+                            {renderSegmentWithXray(
+                              tok,
+                              fullParagraphForContext,
+                              stage3XrayActive,
+                              essay.xrayHighlights,
+                              openWordLookup,
+                              `p${p.pIndex}-s${sIdx}-t${tIdx}`
+                            )}
+                          </React.Fragment>
+                        );
+                      });
+
+                      return (
+                        <React.Fragment key={`${p.pIndex}-sent-${sIdx}`}>
+                          {sIdx > 0 && " "}
+                          {isThesisSentence ? (
+                            <span
+                              title="Luận điểm cốt lõi (Thesis Statement)"
+                              className="bg-amber-100/85 border-b-2 border-amber-400 rounded px-0.5"
+                            >
+                              {sentenceNodes}
+                            </span>
+                          ) : (
+                            sentenceNodes
+                          )}
+                        </React.Fragment>
+                      );
                     });
 
-                    parts.push(remaining);
+                    const curatedParaVi = selectedUnitId
+                      ? getStage3ParagraphVi(selectedUnitId, p.pIndex)
+                      : null;
+                    const paraTransKey = `s3_u${selectedUnitId}_p${p.pIndex}`;
+                    const onlineParaVi = onlineTranslations[paraTransKey];
+                    const isParaLoading = loadingTranslationKey === paraTransKey;
+                    const paraHints = extractKeyVocabularyHints(fullParagraphForContext, selectedUnitId || undefined, 8);
 
                     return (
-                      <p key={p.pIndex} className="text-justify">
-                        {parts}
-                      </p>
+                      <div key={p.pIndex} className="space-y-2.5">
+                        <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                          <span className="uppercase tracking-wider font-bold text-indigo-600">{p.type}</span>
+                          <button
+                            type="button"
+                            onClick={() => speakWord(fullParagraphForContext)}
+                            className="inline-flex items-center gap-1 text-slate-400 hover:text-indigo-600 transition-colors"
+                          >
+                            <Volume2 className="w-3.5 h-3.5" />
+                            <span>Nghe đoạn</span>
+                          </button>
+                        </div>
+                        <p className="text-justify">{renderedParagraph}</p>
+
+                        {stage3ShowBilingual && (
+                          <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5 text-xs sm:text-sm text-slate-700 space-y-2">
+                            <div className="flex items-center gap-1.5 font-bold text-emerald-800 text-[11px] uppercase font-mono">
+                              <Globe className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Bản dịch tiếng Việt — {p.type}:</span>
+                            </div>
+                            {curatedParaVi || onlineParaVi ? (
+                              <p className="leading-relaxed text-slate-800">{curatedParaVi || onlineParaVi}</p>
+                            ) : isParaLoading ? (
+                              <p className="text-slate-500 flex items-center gap-1.5">
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />
+                                <span>Đang tải bản dịch đoạn văn...</span>
+                              </p>
+                            ) : (
+                              <p className="text-slate-600 italic">Các từ khóa chính trong đoạn (chạm để xem chi tiết):</p>
+                            )}
+                            {!curatedParaVi && paraHints.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5 pt-1">
+                                {paraHints.map(h => (
+                                  <button
+                                    key={h.word}
+                                    type="button"
+                                    onClick={() => openWordLookup(h.word, fullParagraphForContext)}
+                                    className="px-2 py-0.5 rounded-md bg-white border border-emerald-200 text-[11px] text-slate-700 hover:border-indigo-400 transition-colors"
+                                  >
+                                    <strong className="font-mono text-emerald-800">{h.word}</strong>: {h.def_vi}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
@@ -1361,7 +2121,7 @@ export default function CambridgeVocabHubPage() {
                       <span className="w-5 h-5 rounded bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs font-mono">⚡</span>
                       <h4 className="font-bold text-sm text-slate-900">Từ vựng cốt lõi</h4>
                     </div>
-                    <span className="text-[11px] font-mono text-slate-400">12 từ gốc</span>
+                    <span className="text-[11px] font-mono text-slate-400">{essay.wordArsenal.length} từ gốc</span>
                   </div>
 
                   {/*  Search Input  */}
@@ -1403,11 +2163,13 @@ export default function CambridgeVocabHubPage() {
                             }
                             if (targetBlank) {
                               openMorphologyForBlank(targetBlank.id);
+                            } else {
+                              openWordLookup(item.root);
                             }
                           }}
-                          className="border border-slate-200 rounded-xl p-2.5 cursor-pointer hover:border-amber-400 hover:shadow-sm transition-all flex items-center justify-between text-xs group bg-white"
+                          className="border border-slate-200 rounded-xl p-2.5 cursor-pointer hover:border-amber-400 hover:shadow-sm transition-all flex items-center justify-between gap-2 text-xs group bg-white"
                         >
-                          <div>
+                          <div className="min-w-0">
                             <div className="flex items-center gap-1.5">
                               <span className="font-mono font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
                                 {item.root}
@@ -1416,9 +2178,30 @@ export default function CambridgeVocabHubPage() {
                             </div>
                             <p className="text-[11px] text-slate-500 mt-0.5">{item.vi}</p>
                           </div>
-                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">
-                            {item.cat}
-                          </span>
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                speakWord(item.root);
+                              }}
+                              title={`Nghe phát âm "${item.root}"`}
+                              className="p-1.5 rounded-lg bg-slate-50 hover:bg-amber-100 text-slate-500 hover:text-amber-700 transition-colors"
+                            >
+                              <Volume2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                openWordLookup(item.root);
+                              }}
+                              title={`Xem chi tiết từ "${item.root}"`}
+                              className="p-1.5 rounded-lg bg-slate-50 hover:bg-indigo-100 text-slate-500 hover:text-indigo-700 transition-colors"
+                            >
+                              <BookOpen className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
                       ))}
                   </div>
@@ -1473,6 +2256,14 @@ export default function CambridgeVocabHubPage() {
                       <span className="font-mono font-bold text-slate-900 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 text-sm">
                         {blank.rootWord}
                       </span>
+                      <button
+                        type="button"
+                        onClick={() => speakWord(blank.rootWord)}
+                        className="p-1 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-amber-700"
+                        title="Nghe từ gốc"
+                      >
+                        <Volume2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                   <div className="text-xs sm:text-sm text-amber-900 flex items-start gap-1.5 pt-1.5 border-t border-amber-200/60 font-medium">
@@ -1483,30 +2274,69 @@ export default function CambridgeVocabHubPage() {
 
                 {/*  3 Options  */}
                 <div className="space-y-3">
-                  <p className="text-xs font-mono uppercase text-slate-500 font-bold tracking-wider">
-                    CHỌN DẠNG TỪ PHÙ HỢP VỚI CÂU (PHÍM 1, 2, 3)
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-mono uppercase text-slate-500 font-bold tracking-wider">
+                      CHỌN DẠNG TỪ PHÙ HỢP (PHÍM 1, 2, 3)
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setStage3DialShowHints(h => !h)}
+                      className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 underline"
+                    >
+                      {stage3DialShowHints ? "Ẩn gợi ý nghĩa B1" : "Hiện gợi ý nghĩa B1"}
+                    </button>
+                  </div>
                   <div className="space-y-2.5">
                     {stage3ShuffledVariants.map((v, idx) => (
-                      <button
+                      <div
                         key={idx}
                         onClick={() => handleSelectMorphologyVariant(blank, v)}
-                        className="w-full text-left p-3.5 sm:p-4 rounded-xl border-2 border-slate-200 hover:border-amber-500 hover:bg-amber-50/50 flex items-center justify-between transition-all group shadow-sm bg-white"
+                        className="w-full cursor-pointer text-left p-3.5 sm:p-4 rounded-xl border-2 border-slate-200 hover:border-amber-500 hover:bg-amber-50/50 flex items-center justify-between gap-3 transition-all group shadow-sm bg-white"
                       >
-                        <div className="flex items-center gap-3">
-                          <span className="w-6 h-6 rounded-lg font-mono text-xs font-extrabold bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-800 transition-colors border border-slate-200">
-                            {idx + 1}
-                          </span>
-                          <span className="font-mono text-base sm:text-lg font-bold text-slate-900 group-hover:text-amber-900">
-                            {v.form}
-                          </span>
-                          <span className="font-mono text-xs sm:text-sm text-slate-500 font-medium">({v.pos})</span>
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="flex items-center gap-3">
+                            <span className="w-6 h-6 rounded-lg font-mono text-xs font-extrabold bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-800 transition-colors border border-slate-200 flex-shrink-0">
+                              {idx + 1}
+                            </span>
+                            <span className="font-mono text-base sm:text-lg font-bold text-slate-900 group-hover:text-amber-900">
+                              {v.form}
+                            </span>
+                            <span className="font-mono text-xs sm:text-sm text-slate-500 font-medium">({v.pos})</span>
+                          </div>
+                          {stage3DialShowHints && (
+                            <p className="text-xs text-slate-600 pl-9">{v.label}</p>
+                          )}
                         </div>
-                        <Hammer className="w-4 h-4 text-slate-300 group-hover:text-amber-600 transition-colors" />
-                      </button>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <button
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              speakWord(v.form);
+                            }}
+                            title={`Nghe phát âm "${v.form}"`}
+                            className="p-1.5 rounded-lg bg-slate-100 hover:bg-amber-100 text-slate-600 hover:text-amber-800 transition-colors"
+                          >
+                            <Volume2 className="w-4 h-4" />
+                          </button>
+                          <Hammer className="w-4 h-4 text-slate-300 group-hover:text-amber-600 transition-colors" />
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
+
+                {stage3DialWrongMessage && (
+                  <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 text-xs text-rose-800 space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-rose-900">
+                      <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                      <span>"{stage3DialWrongMessage.word}" chưa khớp ngữ pháp của ô số [{blank.num}]!</span>
+                    </div>
+                    <p className="text-rose-700">
+                      Lựa chọn vừa rồi là: <strong>{stage3DialWrongMessage.label}</strong>. Hãy xem lại gợi ý từ loại bên trên nhé.
+                    </p>
+                  </div>
+                )}
 
                 {/*  Footer  */}
                 <div className="flex items-center justify-between text-xs font-mono text-slate-500 pt-2 border-t border-slate-200">
@@ -1522,170 +2352,395 @@ export default function CambridgeVocabHubPage() {
         </div>
       )}
 
-      {/* ================= MODAL: LIVING LEXICON DECK (FLASHCARD LẬT 3D) ================= */}
-      {lexiconModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-sm">
-                  <Layers className="w-4 h-4" />
-                </span>
-                <div>
-                  <h3 className="font-bold text-base text-slate-900">LIVING LEXICON DECK</h3>
-                  <span className="text-xs text-slate-500">Ngăn Ôn Tập Lặp Lại Ngắt Quãng</span>
+      {/* ================= MODAL: INSTANT WORD LOOKUP POPOVER ================= */}
+      {lookupModal && (
+        <div
+          onClick={() => setLookupModal(null)}
+          className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-[2px] flex items-center justify-center p-4"
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 animate-in fade-in zoom-in-95 duration-150"
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
+              <div className="space-y-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight font-mono">
+                    {lookupModal.entry.word || lookupModal.word}
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-md font-mono text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    {lookupModal.entry.pos}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-500 font-mono">
+                  {lookupModal.entry.ipa ? (
+                    <span>{lookupModal.entry.ipa}</span>
+                  ) : (
+                    <span className="text-slate-400 italic font-sans">Bấm loa để nghe phát âm</span>
+                  )}
+                  {lookupModal.word.toLowerCase() !== lookupModal.entry.word.toLowerCase() && (
+                    <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-sans text-[11px]">
+                      Dạng trong câu: <strong>{lookupModal.word}</strong>
+                    </span>
+                  )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">
-                  {reviewQueue.length} từ cần ôn
-                </span>
+
+              <div className="flex items-center gap-1.5 flex-shrink-0">
                 <button
-                  onClick={() => setLexiconModalOpen(false)}
-                  className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+                  type="button"
+                  onClick={() => speakWord(lookupModal.word)}
+                  title="Nghe phát âm Anh–Anh"
+                  className="w-9 h-9 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 flex items-center justify-center transition-colors shadow-sm"
                 >
-                  <X className="w-5 h-5" />
+                  <Volume2 className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLookupModal(null)}
+                  className="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/*  Card View  */}
-            {reviewQueue.length === 0 ? (
-              <div className="p-8 text-center space-y-2">
-                <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto" />
-                <h4 className="font-bold text-slate-800 text-base">Hàng đợi trống!</h4>
-                <p className="text-xs text-slate-500">Bạn đã thành thạo toàn bộ từ vựng trong phiên học này.</p>
+            {/* Body */}
+            <div className="space-y-3 text-xs sm:text-sm">
+              <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-3.5 space-y-1">
+                <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-amber-700">
+                  Nghĩa tiếng Việt
+                </span>
+                {lookupModal.isLoadingOnline ? (
+                  <p className="text-slate-600 flex items-center gap-2 text-xs">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-600" />
+                    <span>Đang tra từ điển trực tuyến...</span>
+                  </p>
+                ) : (
+                  <p className="text-amber-950 font-semibold leading-relaxed">
+                    {lookupModal.entry.def_vi}
+                  </p>
+                )}
               </div>
-            ) : (
-              (() => {
-                const wordKey = reviewQueue[currentCardIndex % reviewQueue.length];
-                const entry: LexiconEntry = currentUnitData.lexicon_notes[wordKey] || {
-                  word: wordKey,
-                  ipa: `/${wordKey}/`,
-                  pos: "vocabulary",
-                  def_en: "Academic lexical item from Cambridge IELTS.",
-                  def_vi: "Thuật ngữ học thuật cần ghi nhớ.",
-                  collocations: `${wordKey} in academic contexts`,
-                  example: `Students should master ${wordKey} for IELTS Writing Task 2.`,
-                  ielts_tip: "Ghi điểm cao tiêu chí Lexical Resource."
-                };
 
-                return (
-                  <div
-                    onClick={() => setCardFlipped(f => !f)}
-                    className="cursor-pointer min-h-[300px] rounded-2xl border border-slate-200 p-6 flex flex-col justify-between transition-all bg-slate-50 hover:bg-slate-100/70 select-none shadow-sm"
-                  >
-                    {!cardFlipped ? (
-                      <>
-                        <div className="flex items-center justify-between">
-                          <span className="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                            {entry.pos.toUpperCase()}
-                          </span>
-                          <button
-                            onClick={e => {
-                              e.stopPropagation();
-                              speakWord(entry.word);
-                            }}
-                            className="w-8 h-8 rounded-full bg-white hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 flex items-center justify-center shadow-sm"
-                          >
-                            <Volume2 className="w-4 h-4" />
-                          </button>
-                        </div>
-
-                        <div className="text-center space-y-2 py-6">
-                          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">{entry.word}</h2>
-                          <p className="font-mono text-sm text-slate-500">{entry.ipa}</p>
-                        </div>
-
-                        <div className="text-center text-[11px] text-slate-400 font-mono">
-                          Chạm vào thẻ hoặc bấm [Space] để lật xem định nghĩa
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                          <span className="text-[11px] font-mono text-amber-700 font-bold uppercase">ĐỊNH NGHĨA & TIẾNG VIỆT</span>
-                          <span className="font-mono text-xs text-slate-500">{entry.word}</span>
-                        </div>
-
-                        <div className="space-y-3 text-xs leading-relaxed py-2">
-                          <div>
-                            <span className="text-slate-400 block text-[10px] uppercase font-mono">Định nghĩa tiếng Anh:</span>
-                            <p className="text-slate-800 font-medium">{entry.def_en}</p>
-                          </div>
-                          <div>
-                            <span className="text-slate-400 block text-[10px] uppercase font-mono">Nghĩa tiếng Việt:</span>
-                            <p className="text-amber-800 font-semibold text-sm">{entry.def_vi}</p>
-                          </div>
-                          <div>
-                            <span className="text-slate-400 block text-[10px] uppercase font-mono">Ví dụ ngữ cảnh:</span>
-                            <p className="text-slate-600 italic">"{entry.example}"</p>
-                          </div>
-                        </div>
-
-                        <div className="border-t border-slate-200 pt-2 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                          <span className="truncate max-w-[280px]">Collocation: {entry.collocations}</span>
-                          <span className="text-indigo-600 font-semibold">[Space] lật lại</span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })()
-            )}
-
-            {/*  Controls  */}
-            {reviewQueue.length > 0 && (
-              <div className="flex items-center justify-between gap-3 pt-2">
-                <button
-                  onClick={() => {
-                    setCurrentCardIndex(i => (i - 1 + reviewQueue.length) % reviewQueue.length);
-                    setCardFlipped(false);
-                  }}
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                <div className="flex items-center gap-2 flex-1">
-                  <button
-                    onClick={() => {
-                      audioSynth.playSuccess();
-                      setReviewQueue(q => q.filter((_, idx) => idx !== currentCardIndex % q.length));
-                      setCardFlipped(false);
-                    }}
-                    className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors"
-                  >
-                    <Check className="w-3.5 h-3.5" />
-                    <span>Đã Nhớ (Xóa)</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      audioSynth.playClick();
-                      setCurrentCardIndex(i => (i + 1) % reviewQueue.length);
-                      setCardFlipped(false);
-                    }}
-                    className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Luyện Lại Sau</span>
-                  </button>
+              {lookupModal.entry.def_en && (
+                <div className="space-y-0.5 px-1">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                    Định nghĩa tiếng Anh
+                  </span>
+                  <p className="text-slate-700 text-xs leading-relaxed">{lookupModal.entry.def_en}</p>
                 </div>
+              )}
 
+              {lookupModal.entry.collocations &&
+                lookupModal.entry.collocations.toLowerCase() !== lookupModal.entry.word.toLowerCase() && (
+                  <div className="space-y-0.5 px-1">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                      Cụm từ đi kèm (Collocations)
+                    </span>
+                    <p className="text-indigo-700 font-mono text-xs font-semibold">
+                      {lookupModal.entry.collocations}
+                    </p>
+                  </div>
+                )}
+
+              {lookupModal.entry.example && (
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                      Ví dụ ngữ cảnh
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => speakWord(lookupModal.entry.example)}
+                      className="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1"
+                    >
+                      <Volume2 className="w-3 h-3" />
+                      <span>Nghe</span>
+                    </button>
+                  </div>
+                  <p className="text-slate-700 italic text-xs leading-relaxed">"{lookupModal.entry.example}"</p>
+                </div>
+              )}
+
+              {lookupModal.entry.ielts_tip && (
+                <div className="flex items-start gap-2 text-xs text-slate-600 bg-emerald-50/60 border border-emerald-200/80 rounded-xl p-2.5">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <p className="leading-relaxed">{lookupModal.entry.ielts_tip}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer actions */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+              {(!hasOfflineDefinition(lookupModal.entry) || !lookupModal.entry.ipa) && !lookupModal.onlineTried && (
                 <button
-                  onClick={() => {
-                    setCurrentCardIndex(i => (i + 1) % reviewQueue.length);
-                    setCardFlipped(false);
-                  }}
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
+                  type="button"
+                  disabled={lookupModal.isLoadingOnline}
+                  onClick={() => void triggerOnlineWordLookup(lookupModal.word)}
+                  className="px-3 py-2 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs flex items-center gap-1.5 transition-colors disabled:opacity-50"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>{lookupModal.isLoadingOnline ? "Đang tra..." : "Tra thêm từ điển"}</span>
                 </button>
+              )}
+
+              <div className="flex items-center gap-2 ml-auto">
+                {(() => {
+                  const saveKey = (lookupModal.entry.word || lookupModal.word).toLowerCase().trim();
+                  const alreadySaved = reviewQueue.includes(saveKey);
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!alreadySaved) {
+                          audioSynth.playSuccess();
+                          addToReviewQueue(saveKey);
+                        }
+                      }}
+                      className={`px-3.5 py-2 rounded-xl font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-sm ${
+                        alreadySaved
+                          ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                          : "bg-slate-900 hover:bg-slate-800 text-white"
+                      }`}
+                    >
+                      {alreadySaved ? <Check className="w-3.5 h-3.5" /> : <BookmarkPlus className="w-3.5 h-3.5 text-amber-400" />}
+                      <span>{alreadySaved ? "Đã có trong Cần Ôn Tập" : "Lưu vào Cần Ôn Tập"}</span>
+                    </button>
+                  );
+                })()}
               </div>
-            )}
+            </div>
           </div>
         </div>
       )}
+
+      {/* ================= MODAL: LIVING LEXICON DECK (FLASHCARD LẬT 3D) ================= */}
+      {lexiconModalOpen && (() => {
+        const coreWords = getUnitCoreReviewWords(currentUnitData);
+        return (
+          <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-sm">
+                    <Layers className="w-4 h-4" />
+                  </span>
+                  <div>
+                    <h3 className="font-bold text-base text-slate-900">LIVING LEXICON DECK</h3>
+                    <span className="text-xs text-slate-500">Sổ Tay Ôn Tập Unit {currentUnitData.meta.unit}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">
+                    {reviewQueue.length} từ cần ôn
+                  </span>
+                  <button
+                    onClick={() => setLexiconModalOpen(false)}
+                    className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/*  Card View  */}
+              {reviewQueue.length === 0 ? (
+                <div className="p-6 text-center space-y-4">
+                  <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto" />
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-slate-800 text-base">Sổ tay ôn tập đang trống!</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Các từ bạn chọn sai hoặc tự bấm <strong>"Lưu vào Cần Ôn Tập"</strong> khi tra từ sẽ tự động xuất hiện ở đây.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      audioSynth.playSuccess();
+                      setReviewQueue(coreWords);
+                      setCurrentCardIndex(0);
+                      setCardFlipped(false);
+                    }}
+                    className="mx-auto px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center gap-2 shadow-sm transition-colors"
+                  >
+                    <Zap className="w-4 h-4 text-amber-300" />
+                    <span>Nạp {coreWords.length} từ trọng tâm Unit {currentUnitData.meta.unit}</span>
+                  </button>
+                </div>
+              ) : (
+                (() => {
+                  const wordKey = reviewQueue[currentCardIndex % reviewQueue.length];
+                  const entry: LexiconEntry = lookupCambridgeWord(wordKey, selectedUnitId || undefined);
+
+                  return (
+                    <div
+                      onClick={() => setCardFlipped(f => !f)}
+                      className="cursor-pointer min-h-[300px] rounded-2xl border border-slate-200 p-6 flex flex-col justify-between transition-all bg-slate-50 hover:bg-slate-100/70 select-none shadow-sm"
+                    >
+                      {!cardFlipped ? (
+                        <>
+                          <div className="flex items-center justify-between">
+                            <span className="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                              {entry.pos.toUpperCase()}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                speakWord(entry.word);
+                              }}
+                              className="w-8 h-8 rounded-full bg-white hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 flex items-center justify-center shadow-sm"
+                            >
+                              <Volume2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="text-center space-y-2 py-6">
+                            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">{entry.word}</h2>
+                            {entry.ipa ? (
+                              <p className="font-mono text-sm text-slate-500">{entry.ipa}</p>
+                            ) : (
+                              <p className="text-xs text-slate-400">Bấm biểu tượng loa ở góc trên để nghe phát âm</p>
+                            )}
+                          </div>
+
+                          <div className="text-center text-[11px] text-slate-400 font-mono">
+                            Chạm vào thẻ hoặc bấm [Space] để lật xem nghĩa tiếng Việt
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <span className="text-[11px] font-mono text-amber-700 font-bold uppercase">ĐỊNH NGHĨA &amp; TIẾNG VIỆT</span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs text-slate-500">{entry.word}</span>
+                              <button
+                                type="button"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  speakWord(entry.word);
+                                }}
+                                className="p-1 rounded-md bg-white hover:bg-indigo-50 text-slate-600 hover:text-indigo-600"
+                              >
+                                <Volume2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="space-y-3 text-xs leading-relaxed py-2">
+                            {entry.def_en && (
+                              <div>
+                                <span className="text-slate-400 block text-[10px] uppercase font-mono">Định nghĩa tiếng Anh:</span>
+                                <p className="text-slate-800 font-medium">{entry.def_en}</p>
+                              </div>
+                            )}
+                            <div>
+                              <span className="text-slate-400 block text-[10px] uppercase font-mono">Nghĩa tiếng Việt:</span>
+                              <p className="text-amber-800 font-semibold text-sm">{entry.def_vi}</p>
+                            </div>
+                            {entry.example && (
+                              <div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-slate-400 block text-[10px] uppercase font-mono">Ví dụ ngữ cảnh:</span>
+                                  <button
+                                    type="button"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      speakWord(entry.example);
+                                    }}
+                                    className="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                                  >
+                                    <Volume2 className="w-3 h-3" />
+                                    <span>Nghe câu</span>
+                                  </button>
+                                </div>
+                                <p className="text-slate-600 italic">"{entry.example}"</p>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="border-t border-slate-200 pt-2 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                            <span className="truncate max-w-[280px]">Collocation: {entry.collocations}</span>
+                            <span className="text-indigo-600 font-semibold">[Space] lật lại</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })()
+              )}
+
+              {/*  Controls  */}
+              {reviewQueue.length > 0 && (
+                <div className="space-y-2.5 pt-1">
+                  <div className="flex items-center justify-between gap-3">
+                    <button
+                      onClick={() => {
+                        setCurrentCardIndex(i => (i - 1 + reviewQueue.length) % reviewQueue.length);
+                        setCardFlipped(false);
+                      }}
+                      className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    <div className="flex items-center gap-2 flex-1">
+                      <button
+                        onClick={() => {
+                          audioSynth.playSuccess();
+                          setReviewQueue(q => q.filter((_, idx) => idx !== currentCardIndex % q.length));
+                          setCardFlipped(false);
+                        }}
+                        className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Đã Nhớ (Xóa)</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          audioSynth.playClick();
+                          setCurrentCardIndex(i => (i + 1) % reviewQueue.length);
+                          setCardFlipped(false);
+                        }}
+                        className="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Luyện Lại Sau</span>
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setCurrentCardIndex(i => (i + 1) % reviewQueue.length);
+                        setCardFlipped(false);
+                      }}
+                      className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+                    <span>Thẻ {(currentCardIndex % reviewQueue.length) + 1} / {reviewQueue.length}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        audioSynth.playClick();
+                        setReviewQueue(prev => Array.from(new Set([...prev, ...coreWords])));
+                      }}
+                      className="text-indigo-600 hover:text-indigo-800 font-medium"
+                    >
+                      + Nạp thêm từ trọng tâm Unit {currentUnitData.meta.unit}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ================= MODAL: KEYBOARD GUIDE ================= */}
       {keyboardModalOpen && (

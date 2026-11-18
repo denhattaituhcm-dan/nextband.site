@@ -122,3 +122,13 @@ export interface UnitOverviewItem {
   isAvailable: boolean;
   coreCollocationsPreview: string[];
 }
+
+export interface Stage1Translation {
+  maskedVi: string;
+  fullVi: string;
+}
+
+export interface UnitBilingualTranslation {
+  stage1: Record<string, Stage1Translation>;
+  stage3Paragraphs: Record<number, string>;
+}
