@@ -471,14 +471,7 @@ const App = () => (
               {/* Class Arena Live Routes */}
               <Route path="/arena" element={<ArenaHubPage />} />
               <Route path="/arena/solo" element={<ArenaSoloPlayPage />} />
-              <Route
-                path="/arena/host"
-                element={
-                  <ProtectedRoute requiredRoles={["admin", "teacher"]}>
-                    <ArenaHostPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/arena/host" element={<ArenaHostPage />} />
               <Route path="/arena/join" element={<ArenaJoinPage />} />
               <Route path="/arena/play" element={<ArenaPlayPage />} />
 

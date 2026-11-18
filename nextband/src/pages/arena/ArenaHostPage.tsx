@@ -26,7 +26,23 @@ import { PlayerReactionPayload } from '@/lib/arena/types';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Maximize, Minimize, Flame, Zap, Users, BookOpen, Shield } from 'lucide-react';
+import {
+  Volume2,
+  VolumeX,
+  CheckCircle2,
+  Sparkles,
+  Settings,
+  Maximize,
+  Minimize,
+  Flame,
+  Zap,
+  Users,
+  BookOpen,
+  Shield,
+  Bot,
+  LogOut,
+} from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface PlayerAnswerRecord {
   playerId: string;
@@ -40,21 +56,23 @@ interface PlayerAnswerRecord {
 export default function ArenaHostPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { isAdmin, isTeacher, isLoading: isAuthLoading } = useAuth();
   const rawPin = searchParams.get('pin');
   const [pinCode] = useState<string>(() => {
     if (rawPin && rawPin.trim().length === 6) return rawPin.trim();
     return '';
   });
 
-  // Chặn truy cập nếu không có mã PIN hợp lệ từ router/admin
+  // Chặn truy cập nếu không có mã PIN hợp lệ
   useEffect(() => {
-    if (!pinCode) {
-      alert('Không tìm thấy mã PIN phòng thi đấu hợp lệ. Vui lòng mở phòng từ trang Quản Trị Trò Chơi!');
-      navigate('/admin/game-arena');
+    if (!pinCode && !isAuthLoading) {
+      alert('Không tìm thấy mã PIN phòng thi đấu hợp lệ. Vui lòng tạo hoặc mở phòng từ sảnh Đấu Trường!');
+      navigate(isAdmin || isTeacher ? '/admin/game-arena' : '/arena?tab=pin');
     }
-  }, [pinCode, navigate]);
+  }, [pinCode, isAuthLoading, isAdmin, isTeacher, navigate]);
 
   const [state, setState] = useState<ArenaState>('LOBBY');
+  const [isAutoPilot, setIsAutoPilot] = useState<boolean>(false);
   
   // Cài đặt thông số phòng (Mặc định chuẩn nếu giáo viên không chỉnh gì)
   const [roomSettings, setRoomSettings] = useState<RoomSettings>(DEFAULT_ROOM_SETTINGS);
@@ -282,6 +300,16 @@ export default function ArenaHostPage() {
           }
           if (snapshot.roomId) {
             setRoomId(snapshot.roomId);
+          }
+          if (snapshot.config) {
+            setRoomSettings((prev) => ({
+              ...prev,
+              gameMode: snapshot.config?.gameMode || prev.gameMode,
+              maxSlots:
+                typeof snapshot.config?.maxPlayers === 'number'
+                  ? Math.min(24, Math.max(10, snapshot.config.maxPlayers))
+                  : prev.maxSlots,
+            }));
           }
           if (snapshot.question) {
             setActiveQuestion(snapshot.question);
@@ -1314,6 +1342,60 @@ export default function ArenaHostPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [state, effectiveIsLastRound, isSettingsOpen, isRulesOpen, handleExecuteCommand]);
 
+  // Chế độ Tự động chuyển câu (Auto-Pilot) dành cho Màn chiếu
+  useEffect(() => {
+    if (!isAutoPilot) return;
+    let delayMs: number | null = null;
+    let nextCmd: HostCommandType | null = null;
+
+    if (state === 'ANSWER_LOCKED') {
+      delayMs = 1800;
+      nextCmd = 'REVEAL_DISTRIBUTION';
+    } else if (state === 'REVEAL_DISTRIBUTION') {
+      delayMs = 2500;
+      nextCmd = 'REVEAL_PERSONAL';
+    } else if (state === 'REVEAL_PERSONAL') {
+      delayMs = 4000;
+      nextCmd = effectiveIsLastRound ? 'NEXT_ROUND' : 'SHOW_LEADERBOARD';
+    } else if (state === 'TEACHER_DEBRIEF') {
+      delayMs = 4500;
+      nextCmd = effectiveIsLastRound ? 'NEXT_ROUND' : 'SHOW_LEADERBOARD';
+    } else if (state === 'LEADERBOARD') {
+      delayMs = 4000;
+      nextCmd = 'NEXT_ROUND';
+    }
+
+    if (!delayMs || !nextCmd) return;
+    const timer = setTimeout(() => {
+      handleExecuteCommand(nextCmd!);
+    }, delayMs);
+
+    return () => clearTimeout(timer);
+  }, [isAutoPilot, state, effectiveIsLastRound, handleExecuteCommand]);
+
+  const handleCloseRoom = useCallback(async () => {
+    const confirmClose = window.confirm(
+      `Bạn có chắc muốn đóng phòng #${pinCode} và kết thúc trận đấu ngay không?`
+    );
+    if (!confirmClose) return;
+
+    const hostToken =
+      typeof window !== 'undefined' ? sessionStorage.getItem(`arena_host_token_${pinCode}`) : null;
+    if (hostToken) {
+      try {
+        await arenaApi.closeRoom({ pin: pinCode, hostToken });
+      } catch (err) {
+        console.warn('[ArenaHost] Close room warning:', err);
+      }
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem(`arena_host_token_${pinCode}`);
+        sessionStorage.removeItem(`arena_host_mode_${pinCode}`);
+        sessionStorage.removeItem(`arena_room_config_${pinCode}`);
+      }
+    }
+    navigate(isAdmin || isTeacher ? '/admin/game-arena' : '/arena?tab=pin');
+  }, [pinCode, navigate, isAdmin, isTeacher]);
+
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : '/arena/join';
 
   const modeBadgeLabel =
@@ -1403,6 +1485,21 @@ export default function ArenaHostPage() {
             )}
           </button>
 
+          {/* Nút Bật/Tắt Tự động chuyển câu (Auto-Pilot) */}
+          <button
+            type="button"
+            onClick={() => setIsAutoPilot((prev) => !prev)}
+            className={`flex items-center gap-2 px-3.5 py-1.5 border text-xs font-bold rounded-full transition-all cursor-pointer ${
+              isAutoPilot
+                ? 'bg-emerald-500/25 border-emerald-400 text-emerald-200 shadow-sm'
+                : 'bg-purple-950/60 hover:bg-purple-900/60 border-purple-800/60 text-slate-300 hover:text-white'
+            }`}
+            title="Khi bật, hệ thống tự động chuyển từ khóa câu -> đáp án -> bảng xếp hạng -> câu tiếp theo"
+          >
+            <Bot className={`w-4 h-4 ${isAutoPilot ? 'text-emerald-300 animate-pulse' : 'text-purple-300'}`} />
+            <span>{isAutoPilot ? 'Tự chuyển: BẬT' : 'Tự chuyển: TẮT'}</span>
+          </button>
+
           {/* Nút Toàn màn hình cho Máy chiếu lớp học */}
           <button
             onClick={toggleFullScreen}
@@ -1420,6 +1517,17 @@ export default function ArenaHostPage() {
                 <span>Toàn màn hình</span>
               </>
             )}
+          </button>
+
+          {/* Nút Đóng Phòng chủ động để giải phóng slot */}
+          <button
+            type="button"
+            onClick={handleCloseRoom}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-500/15 hover:bg-rose-500/30 border border-rose-500/40 text-xs font-bold rounded-full transition-all cursor-pointer text-rose-200 hover:text-white"
+            title="Đóng phòng đấu và giải phóng slot ngay lập tức"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Đóng phòng</span>
           </button>
         </div>
       </header>

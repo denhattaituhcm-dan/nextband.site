@@ -1,5 +1,30 @@
 import { API_BASE_URL, getAuthToken, handleApiResponse } from "../client";
 
+export interface PublicArenaRoomSummary {
+  id: string;
+  pin: string;
+  status: string;
+  roomTitle: string;
+  hostNickname: string;
+  topicKey: string;
+  gameMode: string;
+  hostMode: string;
+  playerCount: number;
+  maxPlayers: number;
+  createdAt: string;
+  expiresAt?: string | null;
+}
+
+export interface PublicArenaLobbyResponse {
+  capacity: {
+    activeCommunityRooms: number;
+    maxCommunityRooms: number;
+    availableCommunitySlots: number;
+    maxPlayersPerCommunityRoom: number;
+  };
+  rooms: PublicArenaRoomSummary[];
+}
+
 export const arenaApi = {
   async createRoom(params: { examId?: string; config?: any }): Promise<{
     roomId: string;
@@ -7,19 +32,52 @@ export const arenaApi = {
     hostToken: string;
     status: string;
     createdAt: string;
+    expiresAt?: string | null;
+    config?: Record<string, any>;
   }> {
     const token = await getAuthToken();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
     const res = await fetch(`${API_BASE_URL}/arena/rooms`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `Bearer ${token}` : "",
-      },
+      headers,
       body: JSON.stringify(params),
     });
     const json = await handleApiResponse<{ success: boolean; data: any }>(
       res,
       "Không thể tạo phòng đấu Arena"
+    );
+    return json.data;
+  },
+
+  async getPublicRooms(): Promise<PublicArenaLobbyResponse> {
+    const res = await fetch(`${API_BASE_URL}/arena/rooms/public`);
+    const json = await handleApiResponse<{ success: boolean; data: PublicArenaLobbyResponse }>(
+      res,
+      "Không thể tải danh sách phòng công khai"
+    );
+    return json.data;
+  },
+
+  async closeRoom(params: { pin: string; hostToken: string }): Promise<{
+    success: boolean;
+    pin: string;
+    status: string;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/arena/rooms/${encodeURIComponent(params.pin)}/close`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ hostToken: params.hostToken }),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể đóng phòng thi đấu"
     );
     return json.data;
   },
@@ -30,8 +88,17 @@ export const arenaApi = {
     status: string;
     currentRound: number;
     examId?: string;
+    config?: Record<string, any>;
     createdAt: string;
     expiresAt?: string;
+    participants?: Array<{
+      id: string;
+      nickname: string;
+      avatarId: number;
+      totalScore: number;
+      totalGold: number;
+      joinedAt: string;
+    }>;
   }> {
     const res = await fetch(`${API_BASE_URL}/arena/rooms/${encodeURIComponent(pin)}`);
     const json = await handleApiResponse<{ success: boolean; data: any }>(
@@ -162,6 +229,7 @@ export const arenaApi = {
     totalQuestions: number;
     roundStartedAt: string | null;
     roundDeadlineAt: string | null;
+    config?: Record<string, any>;
     participants: Array<{
       id: string;
       nickname: string;
@@ -278,12 +346,15 @@ export const arenaApi = {
     createdAt: string;
   }> {
     const token = await getAuthToken();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
     const res = await fetch(`${API_BASE_URL}/arena/solo/runs`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `Bearer ${token}` : "",
-      },
+      headers,
       body: JSON.stringify(params),
     });
     const json = await handleApiResponse<{ success: boolean; data: any }>(

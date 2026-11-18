@@ -5,7 +5,7 @@ import { ArenaRoomService } from "../services/arena-room.service.js";
 export default async function arenaRoutes(fastify: FastifyInstance) {
   const roomService = new ArenaRoomService(fastify.prisma);
 
-  // POST /arena/rooms - Giáo viên tạo phòng thi đấu mới
+  // POST /arena/rooms - Tạo phòng thi đấu mới (Mở cho cộng đồng có quota 20 phòng + Luồng VIP Giáo viên/Admin)
   fastify.post<{
     Body: {
       examId?: string;
@@ -13,21 +13,91 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
     };
   }>(
     "/rooms",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [optionalAuthenticate] },
     async (request, reply) => {
-      const user = request.user as any;
-      const hostUserId = user?.userId || user?.id;
+      try {
+        const user = request.user as any;
+        const hostUserId = user?.userId || user?.id || undefined;
+        const hostRoles: string[] = Array.isArray(user?.roles)
+          ? user.roles
+          : user?.role
+          ? [user.role]
+          : [];
+        const isVip = hostRoles.includes("admin") || hostRoles.includes("teacher");
+        const forwarded = request.headers["x-forwarded-for"];
+        const clientIp =
+          (Array.isArray(forwarded) ? forwarded[0] : forwarded)
+            ?.split(",")[0]
+            ?.trim() ||
+          request.ip ||
+          "unknown";
 
-      const room = await roomService.createRoom({
-        hostUserId,
-        examId: request.body?.examId,
-        config: request.body?.config,
-      });
+        const room = await roomService.createRoom({
+          hostUserId,
+          hostRoles,
+          clientIp,
+          isCommunityRoom: !isVip,
+          examId: request.body?.examId,
+          config: request.body?.config,
+        });
 
-      return reply.code(201).send({
+        return reply.code(201).send({
+          success: true,
+          data: room,
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Không thể khởi tạo phòng thi đấu.",
+          code: err?.code || "INTERNAL_ERROR",
+        });
+      }
+    }
+  );
+
+  // GET /arena/rooms/public - Lấy danh sách phòng công khai đang ở sảnh chờ & trạng thái quota
+  fastify.get("/rooms/public", async (_request, reply) => {
+    try {
+      const data = await roomService.getPublicLobbyRooms();
+      return reply.send({
         success: true,
-        data: room,
+        data,
       });
+    } catch (err: any) {
+      const statusCode = err?.statusCode || 500;
+      return reply.code(statusCode).send({
+        success: false,
+        error: err?.message || "Không thể tải danh sách phòng công khai.",
+        code: err?.code || "INTERNAL_ERROR",
+      });
+    }
+  });
+
+  // POST /arena/rooms/:pin/close - Chủ phòng chủ động đóng phòng để giải phóng slot
+  fastify.post<{
+    Params: { pin: string };
+    Body: { hostToken: string };
+  }>(
+    "/rooms/:pin/close",
+    async (request, reply) => {
+      try {
+        const result = await roomService.closeRoom({
+          pin: request.params.pin,
+          hostToken: request.body?.hostToken,
+        });
+        return reply.code(200).send({
+          success: true,
+          data: result,
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Không thể đóng phòng thi đấu.",
+          code: err?.code || "INTERNAL_ERROR",
+        });
+      }
     }
   );
 

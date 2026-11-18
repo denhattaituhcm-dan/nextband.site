@@ -4300,7 +4300,7 @@ export { teachersApi } from "./api/domains/teachers.api";
 
 export { studentPracticeApi } from "./api/domains/student-practice.api";
 
-export { arenaApi } from "./api/domains/arena.api";
+export { arenaApi, type PublicArenaRoomSummary, type PublicArenaLobbyResponse } from "./api/domains/arena.api";
 
 export { facultyApi } from "./api/domains/faculty.api";
 

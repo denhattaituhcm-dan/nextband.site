@@ -97648,8 +97648,469 @@ var init_arena_pin_service = __esm({
   }
 });
 
+// server/services/arena-room.service.ts
+function sanitizePublicArenaConfig(rawConfig) {
+  if (!rawConfig || typeof rawConfig !== "object") {
+    return {};
+  }
+  const { creatorIp: _ignored, ...safeConfig } = rawConfig;
+  return safeConfig;
+}
+var MAX_CONCURRENT_COMMUNITY_ROOMS, MAX_COMMUNITY_PLAYERS_PER_ROOM, MAX_VIP_PLAYERS_PER_ROOM, COMMUNITY_LOBBY_TTL_MS, VIP_ROOM_TTL_MS, ArenaRoomService;
+var init_arena_room_service = __esm({
+  "server/services/arena-room.service.ts"() {
+    init_arena_pin_service();
+    MAX_CONCURRENT_COMMUNITY_ROOMS = 20;
+    MAX_COMMUNITY_PLAYERS_PER_ROOM = 20;
+    MAX_VIP_PLAYERS_PER_ROOM = 60;
+    COMMUNITY_LOBBY_TTL_MS = 20 * 60 * 1e3;
+    VIP_ROOM_TTL_MS = 4 * 60 * 60 * 1e3;
+    ArenaRoomService = class {
+      constructor(prisma) {
+        this.prisma = prisma;
+        this.pinService = new ArenaPinService(prisma);
+      }
+      pinService;
+      /**
+       * Lazy garbage collector: marks expired non-ENDED rooms as ENDED so stale lobby slots are reclaimed.
+       */
+      async sweepExpiredRooms() {
+        const res = await this.prisma.arenaRoom.updateMany({
+          where: {
+            status: { not: "ENDED" },
+            expiresAt: { lte: /* @__PURE__ */ new Date() }
+          },
+          data: {
+            status: "ENDED"
+          }
+        });
+        return res.count;
+      }
+      /**
+       * Creates a new Arena room with a collision-free PIN, securely hashed host token,
+       * and community concurrency quota protection (20-room cap + VIP priority lane for teachers/admins).
+       */
+      async createRoom(input) {
+        await this.sweepExpiredRooms();
+        const now = /* @__PURE__ */ new Date();
+        const roles = Array.isArray(input.hostRoles) ? input.hostRoles : input.hostRole ? [input.hostRole] : [];
+        const isVipHost = roles.includes("admin") || roles.includes("teacher");
+        const isCommunity = !isVipHost && Boolean(
+          input.isCommunityRoom || input.config?.isCommunityRoom || input.clientIp || input.hostUserId
+        );
+        if (isCommunity) {
+          const activeRooms = await this.prisma.arenaRoom.findMany({
+            where: {
+              status: { not: "ENDED" },
+              OR: [{ expiresAt: null }, { expiresAt: { gt: now } }]
+            },
+            select: {
+              id: true,
+              hostUserId: true,
+              config: true
+            }
+          });
+          const ownedRoomIds = [];
+          for (const r of activeRooms) {
+            const cfg = r.config && typeof r.config === "object" ? r.config : {};
+            if (cfg.isVipRoom === true) continue;
+            const matchesUser = Boolean(input.hostUserId && r.hostUserId === input.hostUserId);
+            const matchesIp = Boolean(
+              !input.hostUserId && input.clientIp && input.clientIp !== "unknown" && cfg.creatorIp === input.clientIp
+            );
+            if (matchesUser || matchesIp) {
+              ownedRoomIds.push(r.id);
+            }
+          }
+          if (ownedRoomIds.length > 0) {
+            await this.prisma.arenaRoom.updateMany({
+              where: { id: { in: ownedRoomIds } },
+              data: { status: "ENDED", expiresAt: now }
+            });
+          }
+          const ownedSet = new Set(ownedRoomIds);
+          const activeCommunityCount = activeRooms.filter((r) => {
+            if (ownedSet.has(r.id)) return false;
+            const cfg = r.config && typeof r.config === "object" ? r.config : {};
+            return cfg.isCommunityRoom === true && cfg.isVipRoom !== true;
+          }).length;
+          if (activeCommunityCount >= MAX_CONCURRENT_COMMUNITY_ROOMS) {
+            const err = new Error(
+              `H\u1EC7 th\u1ED1ng \u0110\u1EA5u tr\u01B0\u1EDDng C\u1ED9ng \u0111\u1ED3ng \u0111ang \u0111\u1EA7y (${MAX_CONCURRENT_COMMUNITY_ROOMS}/${MAX_CONCURRENT_COMMUNITY_ROOMS} ph\xF2ng ho\u1EA1t \u0111\u1ED9ng). Vui l\xF2ng tham gia ph\xF2ng c\xF4ng khai \u0111ang m\u1EDF ho\u1EB7c th\u1EED l\u1EA1i sau \xEDt ph\xFAt!`
+            );
+            err.statusCode = 429;
+            err.code = "ARENA_CAPACITY_REACHED";
+            throw err;
+          }
+        }
+        const pin = await this.pinService.generateUniqueActivePin();
+        const hostToken = this.pinService.generateHostToken();
+        const hostTokenHash = this.pinService.hashHostToken(hostToken);
+        const rawCfg = input.config && typeof input.config === "object" ? input.config : {};
+        const requestedMaxPlayers = Number(rawCfg.maxPlayers);
+        const maxPlayers = isVipHost ? Math.min(
+          100,
+          Math.max(2, Number.isFinite(requestedMaxPlayers) ? requestedMaxPlayers : MAX_VIP_PLAYERS_PER_ROOM)
+        ) : Math.min(
+          MAX_COMMUNITY_PLAYERS_PER_ROOM,
+          Math.max(2, Number.isFinite(requestedMaxPlayers) ? requestedMaxPlayers : MAX_COMMUNITY_PLAYERS_PER_ROOM)
+        );
+        const storedConfig = {
+          ...rawCfg,
+          isVipRoom: isVipHost,
+          isCommunityRoom: isCommunity,
+          isPublic: isCommunity ? Boolean(rawCfg.isPublic ?? true) : Boolean(rawCfg.isPublic),
+          topicKey: rawCfg.topicKey || (isCommunity ? "RANDOM_MIX" : void 0),
+          gameMode: rawCfg.gameMode || "CLASSIC",
+          hostMode: rawCfg.hostMode || (isCommunity ? "AUTO_PARTY" : "PROJECTOR_HOST"),
+          roomTitle: String(rawCfg.roomTitle || "\u0110\u1EA5u Tr\u01B0\u1EDDng IELTS Live").trim().slice(0, 60) || "\u0110\u1EA5u Tr\u01B0\u1EDDng IELTS Live",
+          hostNickname: String(rawCfg.hostNickname || "Ch\u1EE7 Ph\xF2ng").trim().slice(0, 30) || "Ch\u1EE7 Ph\xF2ng",
+          maxPlayers
+        };
+        if (isCommunity && input.clientIp && input.clientIp !== "unknown") {
+          storedConfig.creatorIp = input.clientIp;
+        }
+        const expiresAt = new Date(
+          Date.now() + (isVipHost || !isCommunity ? VIP_ROOM_TTL_MS : COMMUNITY_LOBBY_TTL_MS)
+        );
+        const room = await this.prisma.arenaRoom.create({
+          data: {
+            pin,
+            hostUserId: input.hostUserId || null,
+            hostTokenHash,
+            examId: input.examId || null,
+            status: "LOBBY",
+            currentRound: 0,
+            config: storedConfig,
+            expiresAt
+          }
+        });
+        return {
+          roomId: room.id,
+          pin: room.pin,
+          hostToken,
+          // Plaintext returned only once upon creation
+          status: room.status,
+          createdAt: room.createdAt,
+          expiresAt: room.expiresAt,
+          config: sanitizePublicArenaConfig(room.config)
+        };
+      }
+      /**
+       * Lists public LOBBY rooms and live community capacity telemetry.
+       */
+      async getPublicLobbyRooms() {
+        await this.sweepExpiredRooms();
+        const now = /* @__PURE__ */ new Date();
+        const activeRooms = await this.prisma.arenaRoom.findMany({
+          where: {
+            status: { not: "ENDED" },
+            OR: [{ expiresAt: null }, { expiresAt: { gt: now } }]
+          },
+          select: {
+            id: true,
+            pin: true,
+            status: true,
+            examId: true,
+            config: true,
+            createdAt: true,
+            expiresAt: true,
+            _count: {
+              select: {
+                participants: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: "desc"
+          }
+        });
+        const activeCommunityRooms = activeRooms.filter((r) => {
+          const cfg = r.config && typeof r.config === "object" ? r.config : {};
+          return cfg.isCommunityRoom === true && cfg.isVipRoom !== true;
+        }).length;
+        const rooms = activeRooms.filter((r) => {
+          if (r.status !== "LOBBY") return false;
+          const cfg = r.config && typeof r.config === "object" ? r.config : {};
+          if (cfg.isPublic !== true) return false;
+          const maxPlayers = Number(cfg.maxPlayers) || MAX_COMMUNITY_PLAYERS_PER_ROOM;
+          return r._count.participants < maxPlayers;
+        }).map((r) => {
+          const cfg = sanitizePublicArenaConfig(r.config);
+          return {
+            id: r.id,
+            pin: r.pin,
+            status: r.status,
+            roomTitle: cfg.roomTitle || "\u0110\u1EA5u Tr\u01B0\u1EDDng IELTS Live",
+            hostNickname: cfg.hostNickname || "Ch\u1EE7 Ph\xF2ng",
+            topicKey: cfg.topicKey || "COLLOCATION",
+            gameMode: cfg.gameMode || "CLASSIC",
+            hostMode: cfg.hostMode || "AUTO_PARTY",
+            playerCount: r._count.participants,
+            maxPlayers: Number(cfg.maxPlayers) || MAX_COMMUNITY_PLAYERS_PER_ROOM,
+            createdAt: r.createdAt,
+            expiresAt: r.expiresAt
+          };
+        });
+        return {
+          capacity: {
+            activeCommunityRooms,
+            maxCommunityRooms: MAX_CONCURRENT_COMMUNITY_ROOMS,
+            availableCommunitySlots: Math.max(0, MAX_CONCURRENT_COMMUNITY_ROOMS - activeCommunityRooms),
+            maxPlayersPerCommunityRoom: MAX_COMMUNITY_PLAYERS_PER_ROOM
+          },
+          rooms
+        };
+      }
+      /**
+       * Retrieves active room metadata by PIN (without leaking hostTokenHash or creatorIp)
+       */
+      async getRoomByPin(pin) {
+        await this.sweepExpiredRooms();
+        const room = await this.prisma.arenaRoom.findFirst({
+          where: {
+            pin: pin.trim(),
+            status: {
+              not: "ENDED"
+            },
+            OR: [{ expiresAt: null }, { expiresAt: { gt: /* @__PURE__ */ new Date() } }]
+          },
+          select: {
+            id: true,
+            pin: true,
+            status: true,
+            currentRound: true,
+            examId: true,
+            config: true,
+            createdAt: true,
+            expiresAt: true,
+            participants: {
+              select: {
+                id: true,
+                nickname: true,
+                avatarId: true,
+                totalScore: true,
+                totalGold: true,
+                joinedAt: true
+              },
+              orderBy: {
+                joinedAt: "asc"
+              }
+            }
+          }
+        });
+        if (!room) return null;
+        return {
+          ...room,
+          config: sanitizePublicArenaConfig(room.config)
+        };
+      }
+      /**
+       * Validates room status, capacity limits, and registers a participant atomically.
+       */
+      async joinRoom(input) {
+        const cleanPin = input.pin?.trim();
+        const cleanNickname = input.nickname?.trim();
+        const avatarId = Number.isInteger(input.avatarId) ? Number(input.avatarId) : 0;
+        if (!cleanPin || cleanPin.length !== 6) {
+          const err = new Error("M\xE3 PIN ph\u1EA3i g\u1ED3m \u0111\xFAng 6 ch\u1EEF s\u1ED1.");
+          err.statusCode = 400;
+          err.code = "INVALID_PIN";
+          throw err;
+        }
+        if (!cleanNickname) {
+          const err = new Error("Vui l\xF2ng nh\u1EADp t\xEAn / bi\u1EC7t danh c\u1EE7a b\u1EA1n.");
+          err.statusCode = 400;
+          err.code = "INVALID_NICKNAME";
+          throw err;
+        }
+        const normalizedNickname = cleanNickname.toLowerCase().normalize("NFC");
+        const room = await this.prisma.arenaRoom.findFirst({
+          where: {
+            pin: cleanPin,
+            status: {
+              not: "ENDED"
+            },
+            OR: [{ expiresAt: null }, { expiresAt: { gt: /* @__PURE__ */ new Date() } }]
+          },
+          select: {
+            id: true,
+            pin: true,
+            status: true,
+            config: true,
+            _count: {
+              select: {
+                participants: true
+              }
+            }
+          }
+        });
+        if (!room) {
+          const err = new Error("M\xE3 PIN kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c ph\xF2ng thi \u0111\u1EA5u \u0111\xE3 k\u1EBFt th\xFAc.");
+          err.statusCode = 404;
+          err.code = "ROOM_NOT_FOUND";
+          throw err;
+        }
+        if (room.status !== "LOBBY") {
+          const err = new Error("Tr\u1EADn \u0111\u1EA5u \u0111\xE3 di\u1EC5n ra ho\u1EB7c \u0111\xE3 \u0111\xF3ng s\u1EA3nh ch\u1EDD. Kh\xF4ng th\u1EC3 tham gia l\xFAc n\xE0y.");
+          err.statusCode = 403;
+          err.code = "ROOM_NOT_IN_LOBBY";
+          throw err;
+        }
+        const existingByName = await this.prisma.arenaParticipant.findFirst({
+          where: {
+            roomId: room.id,
+            normalizedNickname
+          },
+          select: { id: true }
+        });
+        if (existingByName) {
+          const err = new Error(
+            `T\xEAn "${cleanNickname}" \u0111\xE3 c\xF3 b\u1EA1n kh\xE1c trong ph\xF2ng s\u1EED d\u1EE5ng. Vui l\xF2ng ch\u1ECDn m\u1ED9t t\xEAn kh\xE1c!`
+          );
+          err.statusCode = 409;
+          err.code = "DUPLICATE_NICKNAME";
+          throw err;
+        }
+        const cfg = room.config && typeof room.config === "object" ? room.config : {};
+        const maxPlayers = Number(cfg.maxPlayers) || (cfg.isCommunityRoom ? MAX_COMMUNITY_PLAYERS_PER_ROOM : MAX_VIP_PLAYERS_PER_ROOM);
+        if (room._count.participants >= maxPlayers) {
+          const err = new Error(
+            `Ph\xF2ng thi \u0111\u1EA5u n\xE0y \u0111\xE3 \u0111\u1EE7 t\u1ED1i \u0111a ${maxPlayers}/${maxPlayers} ng\u01B0\u1EDDi ch\u01A1i. Vui l\xF2ng ch\u1ECDn ho\u1EB7c t\u1EA1o ph\xF2ng kh\xE1c!`
+          );
+          err.statusCode = 403;
+          err.code = "ROOM_FULL";
+          throw err;
+        }
+        const playerSessionToken = this.pinService.generatePlayerSessionToken();
+        try {
+          const participant = await this.prisma.arenaParticipant.create({
+            data: {
+              roomId: room.id,
+              playerSessionToken,
+              nickname: cleanNickname,
+              normalizedNickname,
+              avatarId,
+              totalScore: 0,
+              totalGold: 0
+            }
+          });
+          return {
+            participantId: participant.id,
+            roomId: room.id,
+            pin: room.pin,
+            playerSessionToken: participant.playerSessionToken,
+            nickname: participant.nickname,
+            avatarId: participant.avatarId,
+            roomStatus: room.status
+          };
+        } catch (dbError) {
+          if (dbError?.code === "P2002" || dbError?.message?.includes("normalized_nickname") || dbError?.message?.includes("23505")) {
+            const err = new Error(
+              `T\xEAn "${cleanNickname}" \u0111\xE3 c\xF3 b\u1EA1n kh\xE1c trong ph\xF2ng s\u1EED d\u1EE5ng. Vui l\xF2ng ch\u1ECDn m\u1ED9t t\xEAn kh\xE1c!`
+            );
+            err.statusCode = 409;
+            err.code = "DUPLICATE_NICKNAME";
+            throw err;
+          }
+          throw dbError;
+        }
+      }
+      /**
+       * Host explicitly closes a room to immediately release capacity slots.
+       */
+      async closeRoom(input) {
+        const cleanPin = input.pin?.trim();
+        if (!cleanPin || !input.hostToken) {
+          const err = new Error("Thi\u1EBFu m\xE3 PIN ho\u1EB7c Host Token \u0111\u1EC3 \u0111\xF3ng ph\xF2ng.");
+          err.statusCode = 400;
+          err.code = "BAD_REQUEST";
+          throw err;
+        }
+        const room = await this.prisma.arenaRoom.findFirst({
+          where: {
+            pin: cleanPin,
+            status: { not: "ENDED" }
+          }
+        });
+        if (!room) {
+          const err = new Error("Ph\xF2ng thi \u0111\u1EA5u kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 \u0111\xF3ng tr\u01B0\u1EDBc \u0111\xF3.");
+          err.statusCode = 404;
+          err.code = "ROOM_NOT_FOUND";
+          throw err;
+        }
+        const isTokenValid = this.pinService.verifyHostToken(input.hostToken, room.hostTokenHash);
+        if (!isTokenValid) {
+          const err = new Error("Host Token kh\xF4ng h\u1EE3p l\u1EC7. B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n \u0111\xF3ng ph\xF2ng n\xE0y.");
+          err.statusCode = 403;
+          err.code = "INVALID_HOST_TOKEN";
+          throw err;
+        }
+        await this.prisma.arenaRoom.update({
+          where: { id: room.id },
+          data: {
+            status: "ENDED",
+            expiresAt: /* @__PURE__ */ new Date()
+          }
+        });
+        return {
+          success: true,
+          pin: room.pin,
+          status: "ENDED"
+        };
+      }
+      /**
+       * Kicks a participant from the lobby, removing them from ArenaParticipant
+       * so their nickname is freed and they can rejoin cleanly.
+       */
+      async kickParticipant(input) {
+        const { pin, hostToken, participantId } = input;
+        const room = await this.prisma.arenaRoom.findFirst({
+          where: {
+            pin: pin.trim(),
+            status: { not: "ENDED" }
+          }
+        });
+        if (!room) {
+          const err = new Error("Ph\xF2ng thi \u0111\u1EA5u kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 k\u1EBFt th\xFAc.");
+          err.statusCode = 404;
+          err.code = "ROOM_NOT_FOUND";
+          throw err;
+        }
+        const isTokenValid = this.pinService.verifyHostToken(hostToken, room.hostTokenHash);
+        if (!isTokenValid) {
+          const err = new Error("Host Token kh\xF4ng h\u1EE3p l\u1EC7. B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n m\u1EDDi h\u1ECDc sinh ra kh\u1ECFi ph\xF2ng.");
+          err.statusCode = 403;
+          err.code = "INVALID_HOST_TOKEN";
+          throw err;
+        }
+        const participant = await this.prisma.arenaParticipant.findFirst({
+          where: {
+            id: participantId,
+            roomId: room.id
+          }
+        });
+        if (!participant) {
+          const err = new Error("H\u1ECDc sinh kh\xF4ng t\u1ED3n t\u1EA1i trong ph\xF2ng thi \u0111\u1EA5u n\xE0y.");
+          err.statusCode = 404;
+          err.code = "PARTICIPANT_NOT_FOUND";
+          throw err;
+        }
+        await this.prisma.arenaParticipant.delete({
+          where: { id: participant.id }
+        });
+        return {
+          success: true,
+          kickedParticipantId: participant.id,
+          nickname: participant.nickname
+        };
+      }
+    };
+  }
+});
+
 // server/services/arena-questions.data.ts
-var ARENA_STANDARD_QUESTIONS;
+var ARENA_STANDARD_QUESTIONS, ARENA_COLLOCATION_EXTENDED_QUESTIONS, ARENA_COLLOCATION_DECK_QUESTIONS;
 var init_arena_questions_data = __esm({
   "server/services/arena-questions.data.ts"() {
     ARENA_STANDARD_QUESTIONS = [
@@ -97753,6 +98214,312 @@ var init_arena_questions_data = __esm({
           explanation: '"Rise" l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB (kh\xF4ng bao gi\u1EDD c\xF3 t\xE2n ng\u1EEF ph\xEDa sau, v\xED d\u1EE5: the sun rises). Do \u0111\xF3 kh\xF4ng th\u1EC3 n\xF3i "rise awareness".'
         }
       }
+    ];
+    ARENA_COLLOCATION_EXTENDED_QUESTIONS = [
+      {
+        id: "q_colloc_06",
+        roundIndex: 5,
+        prompt: "The government needs to ______ urgent action to curb plastic pollution.",
+        options: [
+          { id: "opt_A", label: "A", text: "take" },
+          { id: "opt_B", label: "B", text: "make" },
+          { id: "opt_C", label: "C", text: "do" },
+          { id: "opt_D", label: "D", text: "give" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. take",
+        correctExplanation: 'Collocation h\u1ECDc thu\u1EADt chu\u1EA9n: "take action" (h\xE0nh \u0111\u1ED9ng). Tuy\u1EC7t \u0111\u1ED1i kh\xF4ng d\xF9ng do/make action.',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. make",
+          diagnosticTitle: "B\u1EABy d\u1ECBch t\u1EEB ti\u1EBFng Vi\u1EC7t (L\xE0m h\xE0nh \u0111\u1ED9ng)",
+          explanation: 'H\u1ECDc vi\xEAn hay nh\u1EA7m "l\xE0m h\xE0nh \u0111\u1ED9ng" v\u1EDBi "make action" ho\u1EB7c "do action". C\u1EE5m c\u1ED1 \u0111\u1ECBnh c\u1EE7a ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 lu\xF4n l\xE0 "take action" ho\u1EB7c "take measures".'
+        }
+      },
+      {
+        id: "q_colloc_07",
+        roundIndex: 6,
+        prompt: "Working parents often struggle to ______ a balance between career and family obligations.",
+        options: [
+          { id: "opt_A", label: "A", text: "strike" },
+          { id: "opt_B", label: "B", text: "hit" },
+          { id: "opt_C", label: "C", text: "catch" },
+          { id: "opt_D", label: "D", text: "hold" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. strike",
+        correctExplanation: 'Collocation band 7.5+: "strike a balance (between A and B)" mang ngh\u0129a \u0111\u1EA1t \u0111\u01B0\u1EE3c tr\u1EA1ng th\xE1i c\xE2n b\u1EB1ng ho\xE0n h\u1EA3o.',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. hit",
+          diagnosticTitle: "Nh\u1EA7m l\u1EABn \u0111\u1ED9ng t\u1EEB va ch\u1EA1m (Hit vs Strike)",
+          explanation: '"Hit" v\xE0 "Strike" \u0111\u1EC1u c\xF3 ngh\u0129a \u0111\xE1nh/ch\u1EA1m, nh\u01B0ng th\xE0nh ng\u1EEF c\u1ED1 \u0111\u1ECBnh ch\u1EC9 \u0111i v\u1EDBi "strike a balance".'
+        }
+      },
+      {
+        id: "q_colloc_08",
+        roundIndex: 7,
+        prompt: "Excessive screen time can ______ a detrimental impact on adolescent mental health.",
+        options: [
+          { id: "opt_A", label: "A", text: "have" },
+          { id: "opt_B", label: "B", text: "give" },
+          { id: "opt_C", label: "C", text: "bring" },
+          { id: "opt_D", label: "D", text: "create" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. have",
+        correctExplanation: 'C\u1EE5m chu\u1EA9n trong IELTS Writing Task 2: "have an impact / effect on something" (g\xE2y ra t\xE1c \u0111\u1ED9ng l\xEAn \u0111i\u1EC1u g\xEC).',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. give",
+          diagnosticTitle: 'B\u1EABy "Trao/\u0110em l\u1EA1i t\xE1c \u0111\u1ED9ng" (Give an impact)',
+          explanation: 'H\u1ECDc vi\xEAn d\u1ECBch ngh\u0129a ti\u1EBFng Vi\u1EC7t "cho/g\xE2y ra t\xE1c \u0111\u1ED9ng" th\xE0nh "give an impact". Trong ti\u1EBFng Anh h\u1ECDc thu\u1EADt chu\u1EA9n, danh t\u1EEB impact lu\xF4n \u0111i v\u1EDBi "have an impact on".'
+        }
+      },
+      {
+        id: "q_colloc_09",
+        roundIndex: 8,
+        prompt: "In academic writing, candidates are expected to ______ an argument with concrete evidence.",
+        options: [
+          { id: "opt_A", label: "A", text: "substantiate" },
+          { id: "opt_B", label: "B", text: "solidify" },
+          { id: "opt_C", label: "C", text: "materialize" },
+          { id: "opt_D", label: "D", text: "condense" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. substantiate",
+        correctExplanation: 'Collocation C1-C2: "substantiate an argument / a claim" ngh\u0129a l\xE0 ch\u1EE9ng minh, c\u1EE7ng c\u1ED1 lu\u1EADn \u0111i\u1EC3m b\u1EB1ng b\u1EB1ng ch\u1EE9ng c\u1EE5 th\u1EC3.',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. solidify",
+          diagnosticTitle: 'Nh\u1EA7m l\u1EABn ngh\u0129a \u0111en "L\xE0m v\u1EEFng ch\u1EAFc"',
+          explanation: '"Solidify" th\u01B0\u1EDDng d\xF9ng cho ch\u1EA5t l\u1ECFng \u0111\xF4ng \u0111\u1EB7c ho\u1EB7c k\u1EBF ho\u1EA1ch k\u1EBFt tinh. V\u1EDBi lu\u1EADn \u0111i\u1EC3m h\u1ECDc thu\u1EADt, \u0111\u1ED9ng t\u1EEB chu\u1EA9n nh\u1EA5t l\xE0 "substantiate" ho\u1EB7c "support".'
+        }
+      },
+      {
+        id: "q_colloc_10",
+        roundIndex: 9,
+        prompt: "The research team was able to ______ a conclusion based on extensive field data.",
+        options: [
+          { id: "opt_A", label: "A", text: "draw" },
+          { id: "opt_B", label: "B", text: "pull" },
+          { id: "opt_C", label: "C", text: "take" },
+          { id: "opt_D", label: "D", text: "extract" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. draw",
+        correctExplanation: 'Collocation chu\u1EA9n: "draw a conclusion" (r\xFAt ra k\u1EBFt lu\u1EADn).',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. pull",
+          diagnosticTitle: "Nh\u1EA7m l\u1EABn \u0111\u1ED9ng t\u1EEB k\xE9o/r\xFAt (Pull vs Draw)",
+          explanation: 'D\xF9 "draw" v\xE0 "pull" \u0111\u1EC1u c\xF3 n\xE9t ngh\u0129a k\xE9o/r\xFAt, nh\u01B0ng ch\u1EC9 c\xF3 "draw a conclusion" m\u1EDBi l\xE0 collocation chu\u1EA9n trong v\u0103n phong nghi\xEAn c\u1EE9u.'
+        }
+      },
+      {
+        id: "q_colloc_11",
+        roundIndex: 10,
+        prompt: "The factory failed to ______ with international safety standards.",
+        options: [
+          { id: "opt_A", label: "A", text: "comply" },
+          { id: "opt_B", label: "B", text: "obey" },
+          { id: "opt_C", label: "C", text: "conform" },
+          { id: "opt_D", label: "D", text: "adhere" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. comply",
+        correctExplanation: 'Gi\u1EDBi t\u1EEB "with" \u0111i k\xE8m v\u1EDBi "comply" (comply with standards). L\u01B0u \xFD: conform to, adhere to, obey + t\xE2n ng\u1EEF tr\u1EF1c ti\u1EBFp.',
+        misconception: {
+          baitOptionId: "opt_D",
+          baitOptionText: "D. adhere",
+          diagnosticTitle: "B\u1EABy gi\u1EDBi t\u1EEB (Comply with vs Adhere to)",
+          explanation: '"Adhere" lu\xF4n \u0111i v\u1EDBi gi\u1EDBi t\u1EEB "to" (adhere to standards), trong khi c\xE2u c\xF3 gi\u1EDBi t\u1EEB "with" n\xEAn b\u1EAFt bu\u1ED9c ph\u1EA3i ch\u1ECDn "comply with".'
+        }
+      },
+      {
+        id: "q_colloc_12",
+        roundIndex: 11,
+        prompt: "Urban planners must ______ measures to prevent suburban sprawl.",
+        options: [
+          { id: "opt_A", label: "A", text: "adopt" },
+          { id: "opt_B", label: "B", text: "accept" },
+          { id: "opt_C", label: "C", text: "adapt" },
+          { id: "opt_D", label: "D", text: "receive" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. adopt",
+        correctExplanation: 'C\u1EE5m chu\u1EA9n: "adopt measures / adopt policies" mang ngh\u0129a th\xF4ng qua ho\u1EB7c \xE1p d\u1EE5ng c\xE1c bi\u1EC7n ph\xE1p, ch\xEDnh s\xE1ch.',
+        misconception: {
+          baitOptionId: "opt_C",
+          baitOptionText: "C. adapt",
+          diagnosticTitle: "B\u1EABy t\u1EEB v\u1EF1ng ch\xEDnh t\u1EA3: Adopt vs Adapt",
+          explanation: '"Adapt" l\xE0 th\xEDch nghi (adapt to something). "Adopt" l\xE0 \xE1p d\u1EE5ng, ti\u1EBFp nh\u1EADn ho\u1EB7c nh\u1EADn nu\xF4i. \u1EDE \u0111\xE2y c\u1EA7n \u0111\u1ED9ng t\u1EEB mang ngh\u0129a \xE1p d\u1EE5ng gi\u1EA3i ph\xE1p: "adopt measures".'
+        }
+      },
+      {
+        id: "q_colloc_13",
+        roundIndex: 12,
+        prompt: "The minister was pressured to ______ full responsibility for the policy failure.",
+        options: [
+          { id: "opt_A", label: "A", text: "take" },
+          { id: "opt_B", label: "B", text: "get" },
+          { id: "opt_C", label: "C", text: "make" },
+          { id: "opt_D", label: "D", text: "hold" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. take",
+        correctExplanation: 'Collocation h\u1ECDc thu\u1EADt: "take responsibility" ho\u1EB7c "assume responsibility" (ch\u1ECBu tr\xE1ch nhi\u1EC7m). Kh\xF4ng d\xF9ng get/make responsibility.',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. get",
+          diagnosticTitle: "B\u1EABy d\u1ECBch t\u1EEB ti\u1EBFng Vi\u1EC7t (Nh\u1EADn tr\xE1ch nhi\u1EC7m = Get)",
+          explanation: 'H\u1ECDc vi\xEAn hay d\u1ECBch t\u1EEB "nh\u1EADn" th\xE0nh "get". Nh\u01B0ng tr\xE1ch nhi\u1EC7m l\xE0 ngh\u0129a v\u1EE5 \u0111\u1EA1o \u0111\u1EE9c/ph\xE1p l\xFD, ti\u1EBFng Anh lu\xF4n d\xF9ng "take full responsibility".'
+        }
+      },
+      {
+        id: "q_colloc_14",
+        roundIndex: 13,
+        prompt: "Educational institutions should ______ a culture of curiosity and critical thinking.",
+        options: [
+          { id: "opt_A", label: "A", text: "foster" },
+          { id: "opt_B", label: "B", text: "raise" },
+          { id: "opt_C", label: "C", text: "feed" },
+          { id: "opt_D", label: "D", text: "breed" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. foster",
+        correctExplanation: 'Collocation band 8.0: "foster a culture / environment of something" (nu\xF4i d\u01B0\u1EE1ng, khuy\u1EBFn kh\xEDch s\u1EF1 ph\xE1t tri\u1EC3n c\u1EE7a m\xF4i tr\u01B0\u1EDDng/v\u0103n h\xF3a).',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. raise",
+          diagnosticTitle: "Nh\u1EA7m l\u1EABn nu\xF4i d\u01B0\u1EE1ng con ng\u01B0\u1EDDi vs nu\xF4i d\u01B0\u1EE1ng v\u0103n h\xF3a",
+          explanation: '"Raise" d\xF9ng cho nu\xF4i con c\xE1i ho\u1EB7c gia s\xFAc (raise children). \u0110\u1ED1i v\u1EDBi gi\xE1 tr\u1ECB tinh th\u1EA7n, t\u01B0 duy hay v\u0103n h\xF3a t\u1ED5 ch\u1EE9c, t\u1EEB h\u1ECDc thu\u1EADt chu\u1EA9n l\xE0 "foster".'
+        }
+      },
+      {
+        id: "q_colloc_15",
+        roundIndex: 14,
+        prompt: "Uncontrolled deforestation poses an imminent ______ to regional biodiversity.",
+        options: [
+          { id: "opt_A", label: "A", text: "threat" },
+          { id: "opt_B", label: "B", text: "danger" },
+          { id: "opt_C", label: "C", text: "risk" },
+          { id: "opt_D", label: "D", text: "harm" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. threat",
+        correctExplanation: 'C\u1EE5m c\u1ED1 \u0111\u1ECBnh kinh \u0111i\u1EC3n trong IELTS Writing: "pose a threat to something" (\u0111\u1EB7t ra m\u1ED1i \u0111e d\u1ECDa l\u1EDBn \u0111\u1ED1i v\u1EDBi c\xE1i g\xEC).',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. danger",
+          diagnosticTitle: "B\u1EABy danh t\u1EEB g\u1EA7n ngh\u0129a (Danger vs Threat)",
+          explanation: 'D\xF9 "danger" l\xE0 s\u1EF1 nguy hi\u1EC3m, nh\u01B0ng \u0111\u1ED9ng t\u1EEB "pose" ch\u1EC9 \u0111i c\u1EB7p t\u1EF1 nhi\xEAn v\u1EDBi "threat" (pose a threat) ho\u1EB7c "challenge" (pose a challenge).'
+        }
+      },
+      {
+        id: "q_colloc_16",
+        roundIndex: 15,
+        prompt: "Before publishing, the laboratory must ______ conclusive evidence to support its claims.",
+        options: [
+          { id: "opt_A", label: "A", text: "provide" },
+          { id: "opt_B", label: "B", text: "make" },
+          { id: "opt_C", label: "C", text: "perform" },
+          { id: "opt_D", label: "D", text: "invent" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. provide",
+        correctExplanation: 'Collocation chu\u1EA9n: "provide / produce conclusive evidence" (cung c\u1EA5p b\u1EB1ng ch\u1EE9ng thuy\u1EBFt ph\u1EE5c/ch\u1EAFc ch\u1EAFn).',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. make",
+          diagnosticTitle: 'B\u1EABy "T\u1EA1o ra b\u1EB1ng ch\u1EE9ng" (Make evidence)',
+          explanation: 'Trong nghi\xEAn c\u1EE9u khoa h\u1ECDc, b\u1EB1ng ch\u1EE9ng kh\xF4ng th\u1EC3 "l\xE0m ra/ch\u1EBF t\u1EA1o" (make). Ta ph\u1EA3i d\xF9ng "provide" ho\u1EB7c "yield evidence".'
+        }
+      },
+      {
+        id: "q_colloc_17",
+        roundIndex: 16,
+        prompt: "Chemical leaks have ______ irreparable damage to the marine habitat.",
+        options: [
+          { id: "opt_A", label: "A", text: "caused" },
+          { id: "opt_B", label: "B", text: "made" },
+          { id: "opt_C", label: "C", text: "given" },
+          { id: "opt_D", label: "D", text: "done" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. caused",
+        correctExplanation: 'Collocation chu\u1EA9n: "cause damage to something" (g\xE2y thi\u1EC7t h\u1EA1i cho c\xE1i g\xEC). Ho\u1EB7c d\xF9ng "inflict damage".',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. made",
+          diagnosticTitle: "Nh\u1EA7m l\u1EABn Make vs Cause (L\xE0m h\u1ECFng = Make damage)",
+          explanation: 'Tuy\u1EC7t \u0111\u1ED1i kh\xF4ng d\xF9ng "make damage". Khi n\xF3i v\u1EC1 s\u1EF1 t\xE0n ph\xE1, h\u1EE7y ho\u1EA1i, ti\u1EBFng Anh chu\u1EA9n lu\xF4n d\xF9ng "cause damage" ho\u1EB7c "do damage". \u1EDE \u0111\xE2y "cause irreparable damage" l\xE0 c\xE1ch di\u1EC5n \u0111\u1EA1t ph\u1ED5 bi\u1EBFn nh\u1EA5t.'
+        }
+      },
+      {
+        id: "q_colloc_18",
+        roundIndex: 17,
+        prompt: "The new emission regulations will ______ into effect on the first of January.",
+        options: [
+          { id: "opt_A", label: "A", text: "come" },
+          { id: "opt_B", label: "B", text: "go" },
+          { id: "opt_C", label: "C", text: "bring" },
+          { id: "opt_D", label: "D", text: "put" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. come",
+        correctExplanation: 'Collocation ph\xE1p l\xFD v\xE0 ch\xEDnh s\xE1ch: "come into effect" (b\u1EAFt \u0111\u1EA7u c\xF3 hi\u1EC7u l\u1EF1c). L\u01B0u \xFD c\u1EA5u tr\xFAc ch\u1EE7 \u0111\u1ED9ng: "bring something into effect".',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. go",
+          diagnosticTitle: 'Nh\u1EA7m l\u1EABn v\u1EDBi "go into operation"',
+          explanation: 'Quy \u0111\u1ECBnh/lu\u1EADt l\u1EC7 t\u1EF1 th\xE2n c\xF3 hi\u1EC7u l\u1EF1c lu\xF4n d\xF9ng "come into effect", kh\xF4ng d\xF9ng "go into effect" trong v\u0103n phong h\u1ECDc thu\u1EADt chu\u1EA9n m\u1EF1c.'
+        }
+      },
+      {
+        id: "q_colloc_19",
+        roundIndex: 18,
+        prompt: "Working professionals often find it demanding to ______ the competing priorities of career and self-care.",
+        options: [
+          { id: "opt_A", label: "A", text: "juggle" },
+          { id: "opt_B", label: "B", text: "struggle" },
+          { id: "opt_C", label: "C", text: "shuttle" },
+          { id: "opt_D", label: "D", text: "stumble" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. juggle",
+        correctExplanation: '\u1EA8n d\u1EE5 C1-C2: "juggle priorities / demands" (tung h\u1EE9ng, xoay x\u1EDF nhi\u1EC1u vi\u1EC7c c\xF9ng m\u1ED9t l\xFAc m\u1ED9t c\xE1ch kh\xE9o l\xE9o).',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. struggle",
+          diagnosticTitle: "Nh\u1EA7m l\u1EABn ng\u1EEF ph\xE1p (Struggle with vs Juggle something)",
+          explanation: '"Struggle" l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB c\u1EA7n gi\u1EDBi t\u1EEB "with" (struggle with priorities). \u1EDE \u0111\xE2y kh\xF4ng c\xF3 "with" m\xE0 c\xF3 t\xE2n ng\u1EEF tr\u1EF1c ti\u1EBFp, do \u0111\xF3 ph\u1EA3i d\xF9ng ngo\u1EA1i \u0111\u1ED9ng t\u1EEB "juggle".'
+        }
+      },
+      {
+        id: "q_colloc_20",
+        roundIndex: 19,
+        prompt: "Empirical studies have struggled to ______ a direct causal link between social media and anxiety.",
+        options: [
+          { id: "opt_A", label: "A", text: "establish" },
+          { id: "opt_B", label: "B", text: "build" },
+          { id: "opt_C", label: "C", text: "settle" },
+          { id: "opt_D", label: "D", text: "construct" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. establish",
+        correctExplanation: 'Collocation nghi\xEAn c\u1EE9u \u0111\u1EC9nh cao (Band 8.0+): "establish a link / connection / relationship" (ch\u1EE9ng minh, thi\u1EBFt l\u1EADp m\u1ED1i quan h\u1EC7 nh\xE2n qu\u1EA3).',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. build",
+          diagnosticTitle: 'D\u1ECBch ngh\u0129a \u0111en "X\xE2y d\u1EF1ng m\u1ED1i li\xEAn h\u1EC7"',
+          explanation: '"Build a relationship" d\xF9ng cho m\u1ED1i quan h\u1EC7 t\xECnh c\u1EA3m/giao ti\u1EBFp gi\u1EEFa ng\u01B0\u1EDDi v\u1EDBi ng\u01B0\u1EDDi. Trong nghi\xEAn c\u1EE9u h\u1ECDc thu\u1EADt v\u1EC1 d\u1EEF li\u1EC7u, ta d\xF9ng "establish a link".'
+        }
+      }
+    ];
+    ARENA_COLLOCATION_DECK_QUESTIONS = [
+      ...ARENA_STANDARD_QUESTIONS,
+      ...ARENA_COLLOCATION_EXTENDED_QUESTIONS
     ];
   }
 });
@@ -123040,7 +123807,9 @@ var init_leader_questions_bank_data = __esm({
 var arena_bank_service_exports = {};
 __export(arena_bank_service_exports, {
   ArenaBankService: () => ArenaBankService,
+  VALID_ARENA_TOPIC_KEYS: () => VALID_ARENA_TOPIC_KEYS,
   hashSeed: () => hashSeed,
+  shuffleArraySeeded: () => shuffleArraySeeded,
   shuffleQuestionOptions: () => shuffleQuestionOptions
 });
 function cleanHtml(raw) {
@@ -123108,7 +123877,49 @@ function shuffleQuestionOptions(question, seedStr) {
     misconception: newMisconception
   };
 }
-var ArenaBankService;
+function shuffleArraySeeded(items, seedStr) {
+  const result = [...items];
+  let curSeed = hashSeed(seedStr || "arena_deck");
+  for (let i = result.length - 1; i > 0; i--) {
+    curSeed = (curSeed * 1664525 + 1013904223) % 4294967296;
+    const j = Math.floor(curSeed / 4294967296 * (i + 1));
+    const tmp = result[i];
+    result[i] = result[j];
+    result[j] = tmp;
+  }
+  return result;
+}
+function convertItemToArenaQuestion(bq, idx) {
+  const options = bq.options || [];
+  const correctOpt = options.find((o) => o.id === bq.correctOptionId) || options[0] || {
+    id: "opt_A",
+    label: "A",
+    text: ""
+  };
+  return {
+    id: bq.id || `bank_q_${idx}`,
+    roundIndex: idx,
+    prompt: bq.prompt,
+    options,
+    correctOptionId: bq.correctOptionId,
+    correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
+    correctExplanation: bq.explanation || `\u0110\xE1p \xE1n ch\xEDnh x\xE1c: ${correctOpt.label}. ${correctOpt.text}`,
+    misconception: normalizeMisconception(bq.misconception)
+  };
+}
+function flattenBankItems(bank) {
+  const out = [];
+  for (const list of Object.values(bank)) {
+    if (!Array.isArray(list)) continue;
+    for (const item of list) {
+      if (item && item.prompt && Array.isArray(item.options) && item.options.length >= 2) {
+        out.push(convertItemToArenaQuestion(item, out.length));
+      }
+    }
+  }
+  return out;
+}
+var VALID_ARENA_TOPIC_KEYS, ArenaBankService;
 var init_arena_bank_service = __esm({
   "server/services/arena-bank.service.ts"() {
     init_arena_questions_data();
@@ -123117,6 +123928,12 @@ var init_arena_bank_service = __esm({
     init_grade8_questions_bank_data();
     init_master_questions_bank_data();
     init_leader_questions_bank_data();
+    VALID_ARENA_TOPIC_KEYS = /* @__PURE__ */ new Set([
+      "RANDOM_MIX",
+      "COLLOCATION",
+      "FOUNDATION_DOER",
+      "MASTER_ACADEMIC"
+    ]);
     ArenaBankService = class {
       constructor(prisma) {
         this.prisma = prisma;
@@ -123298,8 +124115,66 @@ var init_arena_bank_service = __esm({
        * Checks custom override first -> then DB questions -> then DOER textbook bank -> fallback.
        * Options are shuffled deterministically per room/seed so correct answers are not predictably 'A'.
        */
-      async getQuestionsForRoom(examId, seed) {
+      /**
+       * Builds a deterministic 10-question deck for a community topic key based on room PIN seed.
+       */
+      getQuestionsByTopicDeck(topicKey, seed) {
+        const normalizedTopic = (topicKey || "RANDOM_MIX").toUpperCase();
+        const effectiveSeed = `${seed || "arena_default"}_${normalizedTopic}`;
+        let pool = [];
+        switch (normalizedTopic) {
+          case "COLLOCATION":
+            pool = [...ARENA_COLLOCATION_DECK_QUESTIONS];
+            break;
+          case "FOUNDATION_DOER":
+            pool = [
+              ...flattenBankItems(DOER_ARENA_LESSON_QUESTIONS),
+              ...flattenBankItems(BUILDER_ARENA_LESSON_QUESTIONS)
+            ];
+            break;
+          case "MASTER_ACADEMIC":
+            pool = [
+              ...flattenBankItems(MASTER_ARENA_LESSON_QUESTIONS),
+              ...flattenBankItems(LEADER_ARENA_LESSON_QUESTIONS)
+            ];
+            break;
+          case "RANDOM_MIX":
+          default:
+            pool = [
+              ...ARENA_COLLOCATION_DECK_QUESTIONS,
+              ...flattenBankItems(DOER_ARENA_LESSON_QUESTIONS),
+              ...flattenBankItems(BUILDER_ARENA_LESSON_QUESTIONS),
+              ...flattenBankItems(MASTER_ARENA_LESSON_QUESTIONS),
+              ...flattenBankItems(LEADER_ARENA_LESSON_QUESTIONS)
+            ];
+            break;
+        }
+        const seen = /* @__PURE__ */ new Set();
+        const uniquePool = [];
+        for (const q of pool) {
+          const dedupeKey = q.prompt.trim().toLowerCase();
+          if (!seen.has(dedupeKey)) {
+            seen.add(dedupeKey);
+            uniquePool.push(q);
+          }
+        }
+        const shuffledPool = shuffleArraySeeded(uniquePool, effectiveSeed);
+        const selected = shuffledPool.slice(0, 10);
+        return selected.map(
+          (q, idx) => shuffleQuestionOptions(
+            {
+              ...q,
+              roundIndex: idx
+            },
+            `${effectiveSeed}_${q.id}_${idx}`
+          )
+        );
+      }
+      async getQuestionsForRoom(examId, seed, topicKey) {
         if (!examId) {
+          if (topicKey && VALID_ARENA_TOPIC_KEYS.has(topicKey.toUpperCase())) {
+            return this.getQuestionsByTopicDeck(topicKey, seed);
+          }
           return ARENA_STANDARD_QUESTIONS;
         }
         try {
@@ -123524,6 +124399,7 @@ var init_arena_engine_service = __esm({
   "server/services/arena-engine.service.ts"() {
     init_arena_pin_service();
     init_arena_bank_service();
+    init_arena_room_service();
     ArenaEngineService = class {
       constructor(prisma) {
         this.prisma = prisma;
@@ -123562,7 +124438,8 @@ var init_arena_engine_service = __esm({
           err.code = "INVALID_HOST_TOKEN";
           throw err;
         }
-        const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
+        const currentConfig = room.config && typeof room.config === "object" ? room.config : {};
+        const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin, currentConfig.topicKey);
         const totalQuestions = questions.length;
         if (room.lastCommandId === commandId) {
           return {
@@ -123656,8 +124533,13 @@ var init_arena_engine_service = __esm({
             throw err;
           }
         }
-        const currentConfig = room.config && typeof room.config === "object" ? room.config : {};
         const nextConfig = input.gameMode ? { ...currentConfig, gameMode: input.gameMode } : room.config;
+        let nextExpiresAt = void 0;
+        if (nextStatus === "PODIUM") {
+          nextExpiresAt = new Date(now.getTime() + 3 * 60 * 1e3);
+        } else if (currentConfig.isCommunityRoom === true && (action === "START_ARENA" || action === "NEXT_ROUND" || action === "RESTART_ARENA")) {
+          nextExpiresAt = new Date(now.getTime() + COMMUNITY_LOBBY_TTL_MS);
+        }
         const updatedRoom = await this.prisma.arenaRoom.update({
           where: { id: room.id },
           data: {
@@ -123667,7 +124549,8 @@ var init_arena_engine_service = __esm({
             roundStartedAt: nextStatus === "QUESTION_LIVE" ? now : room.roundStartedAt,
             roundDeadlineAt: deadlineAt,
             lastCommandId: commandId,
-            config: nextConfig
+            config: nextConfig,
+            ...nextExpiresAt ? { expiresAt: nextExpiresAt } : {}
           }
         });
         return {
@@ -123730,7 +124613,8 @@ var init_arena_engine_service = __esm({
             throw err;
           }
         }
-        const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
+        const submitConfig = room.config && typeof room.config === "object" ? room.config : {};
+        const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin, submitConfig.topicKey);
         const totalQuestions = questions.length;
         const question = questions[roundIndex];
         const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
@@ -123879,7 +124763,8 @@ var init_arena_engine_service = __esm({
             score: ans.scoreAwarded
           };
         }
-        const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
+        const reclaimConfig = room.config && typeof room.config === "object" ? room.config : {};
+        const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin, reclaimConfig.topicKey);
         return {
           roomId: room.id,
           pin: room.pin,
@@ -123890,6 +124775,7 @@ var init_arena_engine_service = __esm({
           totalQuestions: questions.length,
           roundStartedAt: room.roundStartedAt,
           roundDeadlineAt: room.roundDeadlineAt,
+          config: sanitizePublicArenaConfig(room.config),
           participants: room.participants,
           currentRoundAnswers: answersMap
         };
@@ -144811,221 +145697,79 @@ async function seasonalRoutes(fastify) {
   );
 }
 
-// server/services/arena-room.service.ts
-init_arena_pin_service();
-var ArenaRoomService = class {
-  constructor(prisma) {
-    this.prisma = prisma;
-    this.pinService = new ArenaPinService(prisma);
-  }
-  pinService;
-  /**
-   * Creates a new Arena room with a collision-free PIN and securely hashed host token.
-   */
-  async createRoom(input) {
-    const pin = await this.pinService.generateUniqueActivePin();
-    const hostToken = this.pinService.generateHostToken();
-    const hostTokenHash = this.pinService.hashHostToken(hostToken);
-    const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1e3);
-    const room = await this.prisma.arenaRoom.create({
-      data: {
-        pin,
-        hostUserId: input.hostUserId || null,
-        hostTokenHash,
-        examId: input.examId || null,
-        status: "LOBBY",
-        currentRound: 0,
-        config: input.config || {},
-        expiresAt
-      }
-    });
-    return {
-      roomId: room.id,
-      pin: room.pin,
-      hostToken,
-      // Plaintext returned only once upon creation
-      status: room.status,
-      createdAt: room.createdAt
-    };
-  }
-  /**
-   * Retrieves active room metadata by PIN (without leaking hostTokenHash)
-   */
-  async getRoomByPin(pin) {
-    return this.prisma.arenaRoom.findFirst({
-      where: {
-        pin,
-        status: {
-          not: "ENDED"
-        }
-      },
-      select: {
-        id: true,
-        pin: true,
-        status: true,
-        currentRound: true,
-        examId: true,
-        createdAt: true,
-        expiresAt: true,
-        participants: {
-          select: {
-            id: true,
-            nickname: true,
-            avatarId: true,
-            totalScore: true,
-            totalGold: true,
-            joinedAt: true
-          },
-          orderBy: {
-            joinedAt: "asc"
-          }
-        }
-      }
-    });
-  }
-  /**
-   * Validates room status and registers a participant atomically.
-   */
-  async joinRoom(input) {
-    const cleanPin = input.pin?.trim();
-    const cleanNickname = input.nickname?.trim();
-    const avatarId = Number.isInteger(input.avatarId) ? Number(input.avatarId) : 0;
-    if (!cleanPin || cleanPin.length !== 6) {
-      const err = new Error("M\xE3 PIN ph\u1EA3i g\u1ED3m \u0111\xFAng 6 ch\u1EEF s\u1ED1.");
-      err.statusCode = 400;
-      err.code = "INVALID_PIN";
-      throw err;
-    }
-    if (!cleanNickname) {
-      const err = new Error("Vui l\xF2ng nh\u1EADp t\xEAn / bi\u1EC7t danh c\u1EE7a b\u1EA1n.");
-      err.statusCode = 400;
-      err.code = "INVALID_NICKNAME";
-      throw err;
-    }
-    const normalizedNickname = cleanNickname.toLowerCase().normalize("NFC");
-    const room = await this.prisma.arenaRoom.findFirst({
-      where: {
-        pin: cleanPin,
-        status: {
-          not: "ENDED"
-        }
-      },
-      select: {
-        id: true,
-        pin: true,
-        status: true
-      }
-    });
-    if (!room) {
-      const err = new Error("M\xE3 PIN kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c ph\xF2ng thi \u0111\u1EA5u \u0111\xE3 k\u1EBFt th\xFAc.");
-      err.statusCode = 404;
-      err.code = "ROOM_NOT_FOUND";
-      throw err;
-    }
-    if (room.status !== "LOBBY") {
-      const err = new Error("Tr\u1EADn \u0111\u1EA5u \u0111\xE3 di\u1EC5n ra ho\u1EB7c \u0111\xE3 \u0111\xF3ng s\u1EA3nh ch\u1EDD. Kh\xF4ng th\u1EC3 tham gia l\xFAc n\xE0y.");
-      err.statusCode = 403;
-      err.code = "ROOM_NOT_IN_LOBBY";
-      throw err;
-    }
-    const playerSessionToken = this.pinService.generatePlayerSessionToken();
-    try {
-      const participant = await this.prisma.arenaParticipant.create({
-        data: {
-          roomId: room.id,
-          playerSessionToken,
-          nickname: cleanNickname,
-          normalizedNickname,
-          avatarId,
-          totalScore: 0,
-          totalGold: 0
-        }
-      });
-      return {
-        participantId: participant.id,
-        roomId: room.id,
-        pin: room.pin,
-        playerSessionToken: participant.playerSessionToken,
-        nickname: participant.nickname,
-        avatarId: participant.avatarId,
-        roomStatus: room.status
-      };
-    } catch (dbError) {
-      if (dbError?.code === "P2002" || dbError?.message?.includes("normalized_nickname") || dbError?.message?.includes("23505")) {
-        const err = new Error(`T\xEAn "${cleanNickname}" \u0111\xE3 c\xF3 b\u1EA1n kh\xE1c trong ph\xF2ng s\u1EED d\u1EE5ng. Vui l\xF2ng ch\u1ECDn m\u1ED9t t\xEAn kh\xE1c!`);
-        err.statusCode = 409;
-        err.code = "DUPLICATE_NICKNAME";
-        throw err;
-      }
-      throw dbError;
-    }
-  }
-  /**
-   * Kicks a participant from the lobby, removing them from ArenaParticipant
-   * so their nickname is freed and they can rejoin cleanly.
-   */
-  async kickParticipant(input) {
-    const { pin, hostToken, participantId } = input;
-    const room = await this.prisma.arenaRoom.findFirst({
-      where: {
-        pin: pin.trim(),
-        status: { not: "ENDED" }
-      }
-    });
-    if (!room) {
-      const err = new Error("Ph\xF2ng thi \u0111\u1EA5u kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 k\u1EBFt th\xFAc.");
-      err.statusCode = 404;
-      err.code = "ROOM_NOT_FOUND";
-      throw err;
-    }
-    const isTokenValid = this.pinService.verifyHostToken(hostToken, room.hostTokenHash);
-    if (!isTokenValid) {
-      const err = new Error("Host Token kh\xF4ng h\u1EE3p l\u1EC7. B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n m\u1EDDi h\u1ECDc sinh ra kh\u1ECFi ph\xF2ng.");
-      err.statusCode = 403;
-      err.code = "INVALID_HOST_TOKEN";
-      throw err;
-    }
-    const participant = await this.prisma.arenaParticipant.findFirst({
-      where: {
-        id: participantId,
-        roomId: room.id
-      }
-    });
-    if (!participant) {
-      const err = new Error("H\u1ECDc sinh kh\xF4ng t\u1ED3n t\u1EA1i trong ph\xF2ng thi \u0111\u1EA5u n\xE0y.");
-      err.statusCode = 404;
-      err.code = "PARTICIPANT_NOT_FOUND";
-      throw err;
-    }
-    await this.prisma.arenaParticipant.delete({
-      where: { id: participant.id }
-    });
-    return {
-      success: true,
-      kickedParticipantId: participant.id,
-      nickname: participant.nickname
-    };
-  }
-};
-
 // server/routes/arena.routes.ts
+init_arena_room_service();
 async function arenaRoutes(fastify) {
   const roomService = new ArenaRoomService(fastify.prisma);
   fastify.post(
     "/rooms",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [optionalAuthenticate] },
     async (request, reply) => {
-      const user = request.user;
-      const hostUserId = user?.userId || user?.id;
-      const room = await roomService.createRoom({
-        hostUserId,
-        examId: request.body?.examId,
-        config: request.body?.config
-      });
-      return reply.code(201).send({
+      try {
+        const user = request.user;
+        const hostUserId = user?.userId || user?.id || void 0;
+        const hostRoles = Array.isArray(user?.roles) ? user.roles : user?.role ? [user.role] : [];
+        const isVip = hostRoles.includes("admin") || hostRoles.includes("teacher");
+        const forwarded = request.headers["x-forwarded-for"];
+        const clientIp = (Array.isArray(forwarded) ? forwarded[0] : forwarded)?.split(",")[0]?.trim() || request.ip || "unknown";
+        const room = await roomService.createRoom({
+          hostUserId,
+          hostRoles,
+          clientIp,
+          isCommunityRoom: !isVip,
+          examId: request.body?.examId,
+          config: request.body?.config
+        });
+        return reply.code(201).send({
+          success: true,
+          data: room
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Kh\xF4ng th\u1EC3 kh\u1EDFi t\u1EA1o ph\xF2ng thi \u0111\u1EA5u.",
+          code: err?.code || "INTERNAL_ERROR"
+        });
+      }
+    }
+  );
+  fastify.get("/rooms/public", async (_request, reply) => {
+    try {
+      const data = await roomService.getPublicLobbyRooms();
+      return reply.send({
         success: true,
-        data: room
+        data
       });
+    } catch (err) {
+      const statusCode = err?.statusCode || 500;
+      return reply.code(statusCode).send({
+        success: false,
+        error: err?.message || "Kh\xF4ng th\u1EC3 t\u1EA3i danh s\xE1ch ph\xF2ng c\xF4ng khai.",
+        code: err?.code || "INTERNAL_ERROR"
+      });
+    }
+  });
+  fastify.post(
+    "/rooms/:pin/close",
+    async (request, reply) => {
+      try {
+        const result = await roomService.closeRoom({
+          pin: request.params.pin,
+          hostToken: request.body?.hostToken
+        });
+        return reply.code(200).send({
+          success: true,
+          data: result
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Kh\xF4ng th\u1EC3 \u0111\xF3ng ph\xF2ng thi \u0111\u1EA5u.",
+          code: err?.code || "INTERNAL_ERROR"
+        });
+      }
     }
   );
   fastify.get(

@@ -1,5 +1,23 @@
 import { PrismaClient } from "@prisma/client";
-import { ARENA_STANDARD_QUESTIONS, ArenaQuestion, ArenaQuestionOption } from "./arena-questions.data.js";
+import {
+  ARENA_STANDARD_QUESTIONS,
+  ARENA_COLLOCATION_DECK_QUESTIONS,
+  ArenaQuestion,
+  ArenaQuestionOption,
+} from "./arena-questions.data.js";
+
+export type ArenaTopicKey =
+  | "RANDOM_MIX"
+  | "COLLOCATION"
+  | "FOUNDATION_DOER"
+  | "MASTER_ACADEMIC";
+
+export const VALID_ARENA_TOPIC_KEYS: ReadonlySet<string> = new Set([
+  "RANDOM_MIX",
+  "COLLOCATION",
+  "FOUNDATION_DOER",
+  "MASTER_ACADEMIC",
+]);
 import { DOER_ARENA_LESSON_QUESTIONS, matchDoerLessonKey, ArenaQuestionItem } from "./doer-questions-bank.data.js";
 import { BUILDER_ARENA_LESSON_QUESTIONS, matchBuilderLessonKey } from "./builder-questions-bank.data.js";
 import { GRADE8_ARENA_LESSON_QUESTIONS, matchGrade8LessonKey } from "./grade8-questions-bank.data.js";
@@ -105,6 +123,54 @@ export function shuffleQuestionOptions(question: ArenaQuestion, seedStr?: string
     correctAnswerText: newCorrectAnswerText,
     misconception: newMisconception,
   };
+}
+
+/**
+ * Deterministic seeded Fisher-Yates shuffle for selecting randomized decks per room PIN.
+ */
+export function shuffleArraySeeded<T>(items: T[], seedStr: string): T[] {
+  const result = [...items];
+  let curSeed = hashSeed(seedStr || "arena_deck");
+  for (let i = result.length - 1; i > 0; i--) {
+    curSeed = (curSeed * 1664525 + 1013904223) % 4294967296;
+    const j = Math.floor((curSeed / 4294967296) * (i + 1));
+    const tmp = result[i];
+    result[i] = result[j];
+    result[j] = tmp;
+  }
+  return result;
+}
+
+function convertItemToArenaQuestion(bq: ArenaQuestionItem, idx: number): ArenaQuestion {
+  const options = (bq.options || []) as ArenaQuestionOption[];
+  const correctOpt = options.find((o) => o.id === bq.correctOptionId) || options[0] || {
+    id: "opt_A",
+    label: "A" as const,
+    text: "",
+  };
+  return {
+    id: bq.id || `bank_q_${idx}`,
+    roundIndex: idx,
+    prompt: bq.prompt,
+    options,
+    correctOptionId: bq.correctOptionId,
+    correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
+    correctExplanation: bq.explanation || `Đáp án chính xác: ${correctOpt.label}. ${correctOpt.text}`,
+    misconception: normalizeMisconception(bq.misconception),
+  };
+}
+
+function flattenBankItems(bank: Record<string, ArenaQuestionItem[]>): ArenaQuestion[] {
+  const out: ArenaQuestion[] = [];
+  for (const list of Object.values(bank)) {
+    if (!Array.isArray(list)) continue;
+    for (const item of list) {
+      if (item && item.prompt && Array.isArray(item.options) && item.options.length >= 2) {
+        out.push(convertItemToArenaQuestion(item, out.length));
+      }
+    }
+  }
+  return out;
 }
 
 export class ArenaBankService {
@@ -319,8 +385,76 @@ export class ArenaBankService {
    * Checks custom override first -> then DB questions -> then DOER textbook bank -> fallback.
    * Options are shuffled deterministically per room/seed so correct answers are not predictably 'A'.
    */
-  public async getQuestionsForRoom(examId?: string | null, seed?: string): Promise<ArenaQuestion[]> {
+  /**
+   * Builds a deterministic 10-question deck for a community topic key based on room PIN seed.
+   */
+  public getQuestionsByTopicDeck(topicKey?: string | null, seed?: string): ArenaQuestion[] {
+    const normalizedTopic = (topicKey || "RANDOM_MIX").toUpperCase();
+    const effectiveSeed = `${seed || "arena_default"}_${normalizedTopic}`;
+
+    let pool: ArenaQuestion[] = [];
+    switch (normalizedTopic) {
+      case "COLLOCATION":
+        pool = [...ARENA_COLLOCATION_DECK_QUESTIONS];
+        break;
+      case "FOUNDATION_DOER":
+        pool = [
+          ...flattenBankItems(DOER_ARENA_LESSON_QUESTIONS),
+          ...flattenBankItems(BUILDER_ARENA_LESSON_QUESTIONS),
+        ];
+        break;
+      case "MASTER_ACADEMIC":
+        pool = [
+          ...flattenBankItems(MASTER_ARENA_LESSON_QUESTIONS),
+          ...flattenBankItems(LEADER_ARENA_LESSON_QUESTIONS),
+        ];
+        break;
+      case "RANDOM_MIX":
+      default:
+        pool = [
+          ...ARENA_COLLOCATION_DECK_QUESTIONS,
+          ...flattenBankItems(DOER_ARENA_LESSON_QUESTIONS),
+          ...flattenBankItems(BUILDER_ARENA_LESSON_QUESTIONS),
+          ...flattenBankItems(MASTER_ARENA_LESSON_QUESTIONS),
+          ...flattenBankItems(LEADER_ARENA_LESSON_QUESTIONS),
+        ];
+        break;
+    }
+
+    // Deduplicate by prompt to guarantee no repeats in one match
+    const seen = new Set<string>();
+    const uniquePool: ArenaQuestion[] = [];
+    for (const q of pool) {
+      const dedupeKey = q.prompt.trim().toLowerCase();
+      if (!seen.has(dedupeKey)) {
+        seen.add(dedupeKey);
+        uniquePool.push(q);
+      }
+    }
+
+    const shuffledPool = shuffleArraySeeded(uniquePool, effectiveSeed);
+    const selected = shuffledPool.slice(0, 10);
+
+    return selected.map((q, idx) =>
+      shuffleQuestionOptions(
+        {
+          ...q,
+          roundIndex: idx,
+        },
+        `${effectiveSeed}_${q.id}_${idx}`
+      )
+    );
+  }
+
+  public async getQuestionsForRoom(
+    examId?: string | null,
+    seed?: string,
+    topicKey?: string | null
+  ): Promise<ArenaQuestion[]> {
     if (!examId) {
+      if (topicKey && VALID_ARENA_TOPIC_KEYS.has(topicKey.toUpperCase())) {
+        return this.getQuestionsByTopicDeck(topicKey, seed);
+      }
       return ARENA_STANDARD_QUESTIONS;
     }
 

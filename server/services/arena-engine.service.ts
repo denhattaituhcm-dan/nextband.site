@@ -2,6 +2,7 @@ import { PrismaClient, ArenaRoomStatus } from "@prisma/client";
 import { ArenaPinService } from "./arena-pin.service.js";
 import { ArenaBankService } from "./arena-bank.service.js";
 import { ARENA_STANDARD_QUESTIONS, ArenaQuestion } from "./arena-questions.data.js";
+import { COMMUNITY_LOBBY_TTL_MS, sanitizePublicArenaConfig } from "./arena-room.service.js";
 
 export type HostCommandAction =
   | "START_ARENA"
@@ -76,7 +77,8 @@ export class ArenaEngineService {
     }
 
     // 2. Idempotency Check: Nếu lệnh này đã được xử lý thành công trước đó (do mạng retry)
-    const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
+    const currentConfig = (room.config && typeof room.config === "object") ? (room.config as Record<string, any>) : {};
+    const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin, currentConfig.topicKey);
     const totalQuestions = questions.length;
 
     if (room.lastCommandId === commandId) {
@@ -187,8 +189,16 @@ export class ArenaEngineService {
     }
 
     // Ghi nhận Database an toàn trước khi trả kết quả
-    const currentConfig = (room.config && typeof room.config === "object") ? (room.config as Record<string, any>) : {};
     const nextConfig = input.gameMode ? { ...currentConfig, gameMode: input.gameMode } : room.config;
+    let nextExpiresAt: Date | undefined = undefined;
+    if (nextStatus === "PODIUM") {
+      nextExpiresAt = new Date(now.getTime() + 3 * 60 * 1000);
+    } else if (
+      currentConfig.isCommunityRoom === true &&
+      (action === "START_ARENA" || action === "NEXT_ROUND" || action === "RESTART_ARENA")
+    ) {
+      nextExpiresAt = new Date(now.getTime() + COMMUNITY_LOBBY_TTL_MS);
+    }
 
     const updatedRoom = await this.prisma.arenaRoom.update({
       where: { id: room.id },
@@ -200,6 +210,7 @@ export class ArenaEngineService {
         roundDeadlineAt: deadlineAt,
         lastCommandId: commandId,
         config: nextConfig,
+        ...(nextExpiresAt ? { expiresAt: nextExpiresAt } : {}),
       },
     });
 
@@ -276,7 +287,8 @@ export class ArenaEngineService {
     }
 
     // 3. Server tính điểm: Tuyệt đối không dùng điểm số do Client gửi lên
-    const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
+    const submitConfig = (room.config && typeof room.config === "object") ? (room.config as Record<string, any>) : {};
+    const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin, submitConfig.topicKey);
     const totalQuestions = questions.length;
     const question = questions[roundIndex];
     const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
@@ -456,7 +468,8 @@ export class ArenaEngineService {
       };
     }
 
-    const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin);
+    const reclaimConfig = (room.config && typeof room.config === "object") ? (room.config as Record<string, any>) : {};
+    const questions = await this.bankService.getQuestionsForRoom(room.examId, room.pin, reclaimConfig.topicKey);
 
     return {
       roomId: room.id,
@@ -468,6 +481,7 @@ export class ArenaEngineService {
       totalQuestions: questions.length,
       roundStartedAt: room.roundStartedAt,
       roundDeadlineAt: room.roundDeadlineAt,
+      config: sanitizePublicArenaConfig(room.config),
       participants: room.participants,
       currentRoundAnswers: answersMap,
     };

@@ -17,7 +17,25 @@ import { GoldQuestChestModal } from '@/components/arena/GoldQuestChestModal';
 import { QuestionTypeRevengeModal, RevengeQuestionItem } from '@/components/arena/QuestionTypeRevengeModal';
 import { ArenaQuestionOption, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
-import { CheckCircle2, XCircle, Trophy, Sparkles, Crown, BookOpen, Flame, Zap, Clock } from 'lucide-react';
+import {
+  CheckCircle2,
+  XCircle,
+  Trophy,
+  Sparkles,
+  Crown,
+  BookOpen,
+  Flame,
+  Zap,
+  Clock,
+  Users,
+  Copy,
+  Check,
+  Monitor,
+  Play,
+  FastForward,
+  LogOut,
+  RotateCcw,
+} from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
 import { ArenaErrorBoundary } from '@/components/arena/ArenaErrorBoundary';
@@ -54,6 +72,29 @@ export default function ArenaPlayPage() {
   const rawRoomId = searchParams.get('roomId') || (typeof window !== 'undefined' ? sessionStorage.getItem('arena_room_id') : '');
   const [roomId, setRoomId] = useState<string>(rawRoomId || '');
   const playerToken = typeof window !== 'undefined' ? sessionStorage.getItem('arena_player_token') || '' : '';
+  const hostToken = typeof window !== 'undefined' && pin ? sessionStorage.getItem(`arena_host_token_${pin}`) || '' : '';
+  const storedHostMode = typeof window !== 'undefined' && pin ? sessionStorage.getItem(`arena_host_mode_${pin}`) : '';
+  const [roomMeta, setRoomMeta] = useState<Record<string, any> | null>(() => {
+    if (typeof window !== 'undefined' && pin) {
+      try {
+        const raw = sessionStorage.getItem(`arena_room_config_${pin}`);
+        return raw ? JSON.parse(raw) : null;
+      } catch {}
+    }
+    return null;
+  });
+  const [lobbyParticipants, setLobbyParticipants] = useState<
+    Array<{ id: string; nickname: string; avatarId: number }>
+  >([]);
+  const [isCopiedInvite, setIsCopiedInvite] = useState<boolean>(false);
+  const [isStartingAutoHost, setIsStartingAutoHost] = useState<boolean>(false);
+  const [autoNextSeconds, setAutoNextSeconds] = useState<number | null>(null);
+  const isAutoHost = Boolean(
+    hostToken &&
+      (searchParams.get('hostMode') === 'auto' ||
+        storedHostMode === 'AUTO_PARTY' ||
+        roomMeta?.hostMode === 'AUTO_PARTY')
+  );
   const paramAvatarId = searchParams.get('plantId');
   const storedAvatarId = typeof window !== 'undefined' ? sessionStorage.getItem('arena_plant_id') : null;
   const avatarId = paramAvatarId !== null && paramAvatarId !== undefined 
@@ -139,6 +180,40 @@ export default function ArenaPlayPage() {
   const livesRef = useRef<number>(lives);
   livesRef.current = lives;
 
+  // Auto-Party Host Refs (cho phép Chủ phòng tự điều khiển & chơi cùng bạn bè trên 1 màn hình)
+  const isAutoHostRef = useRef<boolean>(isAutoHost);
+  isAutoHostRef.current = isAutoHost;
+  const roomIdRef = useRef<string>(roomId);
+  roomIdRef.current = roomId;
+  const gameModeRef = useRef(gameMode);
+  gameModeRef.current = gameMode;
+  const questionIndexRef = useRef<number>(questionIndex);
+  questionIndexRef.current = questionIndex;
+  const totalQuestionsRef = useRef<number>(totalQuestions);
+  totalQuestionsRef.current = totalQuestions;
+  const currentQuestionRef = useRef<ArenaQuestion>(currentQuestion);
+  currentQuestionRef.current = currentQuestion;
+  const timeLeftRef = useRef<number>(timeLeft);
+  timeLeftRef.current = timeLeft;
+  const lobbyParticipantsRef = useRef(lobbyParticipants);
+  lobbyParticipantsRef.current = lobbyParticipants;
+  const processedHostEventsRef = useRef<Set<string>>(new Set());
+  const autoHostGuardRef = useRef<string>('');
+  const autoHostAnswersRef = useRef<Record<string, string>>({});
+  const autoHostLivesRef = useRef<Record<string, number>>({});
+  const autoHostGoldRef = useRef<Record<string, number>>({});
+  const autoCountdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const autoAdvanceIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const autoRevealDelayTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (autoCountdownIntervalRef.current) clearInterval(autoCountdownIntervalRef.current);
+      if (autoAdvanceIntervalRef.current) clearInterval(autoAdvanceIntervalRef.current);
+      if (autoRevealDelayTimerRef.current) clearTimeout(autoRevealDelayTimerRef.current);
+    };
+  }, []);
+
   // Self-Healing Watchdog: Tự động khôi phục nếu mất đồng bộ hoặc drop kết nối
   const handleResyncRequired = useCallback(() => {
     if (channelRef.current) {
@@ -190,6 +265,56 @@ export default function ArenaPlayPage() {
       return () => bc.close();
     } catch {}
   }, [pin, playerId, nickname, avatarId]);
+
+  // Đồng bộ danh sách người chơi và cấu hình phòng ở sảnh chờ (cho cả khách và Chủ phòng)
+  useEffect(() => {
+    if (!pin || gameState !== 'LOBBY_WAITING') return;
+    let isMounted = true;
+
+    const syncRoomLobby = async () => {
+      try {
+        const roomData = await arenaApi.getRoomByPin(pin);
+        if (!isMounted || !roomData) return;
+        if (roomData.id && !roomIdRef.current) {
+          setRoomId(roomData.id);
+        }
+        if (roomData.config) {
+          setRoomMeta(roomData.config);
+          if (roomData.config.gameMode) {
+            setGameMode(roomData.config.gameMode);
+          }
+        }
+        if (Array.isArray(roomData.participants)) {
+          setLobbyParticipants(roomData.participants);
+          setPlayersList(
+            roomData.participants.map((p) => ({
+              name: p.nickname,
+              gold: p.totalGold || 0,
+            }))
+          );
+          if (isAutoHostRef.current) {
+            roomData.participants.forEach((p) => {
+              if (autoHostLivesRef.current[p.nickname] === undefined) {
+                autoHostLivesRef.current[p.nickname] = 3;
+              }
+            });
+          }
+        }
+        if (isAutoHostRef.current && channelRef.current) {
+          try {
+            channelRef.current.send({ type: 'broadcast', event: 'lobby-ping' });
+          } catch {}
+        }
+      } catch {}
+    };
+
+    syncRoomLobby();
+    const timer = setInterval(syncRoomLobby, 2500);
+    return () => {
+      isMounted = false;
+      clearInterval(timer);
+    };
+  }, [pin, gameState]);
 
   // Lắng nghe broadcast và Presence từ Host
   useEffect(() => {
@@ -256,6 +381,7 @@ export default function ArenaPlayPage() {
         setIsJoinedAcknowledged(true);
       })
       .on('broadcast', { event: 'arena-countdown' }, ({ payload }) => {
+        if (payload?.hostEventId && processedHostEventsRef.current.has(payload.hostEventId)) return;
         if (gameStateRef.current === 'PODIUM') return;
         setIsJoinedAcknowledged(true);
         if (typeof payload?.countdown === 'number') {
@@ -295,6 +421,7 @@ export default function ArenaPlayPage() {
         setIsChestModalOpen(false);
       })
       .on('broadcast', { event: 'question-live' }, ({ payload }) => {
+        if (payload?.hostEventId && processedHostEventsRef.current.has(payload.hostEventId)) return;
         if (gameStateRef.current === 'PODIUM') return;
         recordHeartbeat('question-live');
         setIsJoinedAcknowledged(true);
@@ -334,6 +461,7 @@ export default function ArenaPlayPage() {
         playClickSoundRef.current();
       })
       .on('broadcast', { event: 'arena-started' }, ({ payload }) => {
+        if (payload?.hostEventId && processedHostEventsRef.current.has(payload.hostEventId)) return;
         setIsJoinedAcknowledged(true);
         setStartCountdown(null);
         if (payload?.gameMode) setGameMode(payload.gameMode);
@@ -364,12 +492,14 @@ export default function ArenaPlayPage() {
         setIsChestModalOpen(false);
         playClickSoundRef.current();
       })
-      .on('broadcast', { event: 'round-locked' }, () => {
+      .on('broadcast', { event: 'round-locked' }, ({ payload }) => {
+        if (payload?.hostEventId && processedHostEventsRef.current.has(payload.hostEventId)) return;
         // Khi Host khóa câu hỏi, chỉ khóa giao diện, tuyệt đối không tự động nộp câu trả lời chưa xác nhận
         setIsLocked(true);
         setGameState('ROUND_LOCKED');
       })
       .on('broadcast', { event: 'round-reveal' }, ({ payload }) => {
+        if (payload?.hostEventId && processedHostEventsRef.current.has(payload.hostEventId)) return;
         if (payload?.survivalUpdates) {
           const myKey = Object.keys(payload.survivalUpdates).find(
             (k) => k.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase()
@@ -388,6 +518,7 @@ export default function ArenaPlayPage() {
         setGameState('ROUND_REVEAL');
       })
       .on('broadcast', { event: 'show-leaderboard' }, ({ payload }) => {
+        if (payload?.hostEventId && processedHostEventsRef.current.has(payload.hostEventId)) return;
         setIsChestModalOpen(false);
         setGameState('LEADERBOARD');
         if (payload?.biggestClimber && payload.biggestClimber.name?.trim().toLowerCase() === nicknameRef.current?.trim().toLowerCase()) {
@@ -408,6 +539,7 @@ export default function ArenaPlayPage() {
         }
       })
       .on('broadcast', { event: 'arena-finished' }, ({ payload }) => {
+        if (payload?.hostEventId && processedHostEventsRef.current.has(payload.hostEventId)) return;
         setIsChestModalOpen(false);
         setStartCountdown(null);
         setGameState('PODIUM');
@@ -423,7 +555,11 @@ export default function ArenaPlayPage() {
           }
         }
       })
-      .on('broadcast', { event: 'arena-reset' }, () => {
+      .on('broadcast', { event: 'arena-reset' }, ({ payload }) => {
+        if (payload?.hostEventId && processedHostEventsRef.current.has(payload.hostEventId)) return;
+        submittedQuestionIdsRef.current.clear();
+        autoHostGuardRef.current = '';
+        setAutoNextSeconds(null);
         setGameState('LOBBY_WAITING');
         setIsLocked(false);
         setHasSubmitted(false);
@@ -437,6 +573,61 @@ export default function ArenaPlayPage() {
         setMyRanking(null);
         setQuestionIndex(0);
         setCurrentQuestion(ARENA_COLLOCATION_QUESTIONS[0]);
+      })
+      .on('broadcast', { event: 'player-answered' }, ({ payload }) => {
+        if (!isAutoHostRef.current || !payload?.nickname || !payload?.optionId) return;
+        autoHostAnswersRef.current[payload.nickname.trim()] = payload.optionId;
+      })
+      .on('broadcast', { event: 'gold-updated' }, ({ payload }) => {
+        if (!isAutoHostRef.current || !payload?.nickname || typeof payload.gold !== 'number') return;
+        autoHostGoldRef.current[payload.nickname.trim()] = payload.gold;
+      })
+      .on('broadcast', { event: 'gold-steal-event' }, ({ payload }) => {
+        if (!isAutoHostRef.current) return;
+        const { thiefName, victimName, amount } = payload || {};
+        if (thiefName && victimName && amount) {
+          const victimCur = autoHostGoldRef.current[victimName] || 0;
+          const thiefCur = autoHostGoldRef.current[thiefName] || 0;
+          autoHostGoldRef.current[victimName] = Math.max(0, victimCur - amount);
+          autoHostGoldRef.current[thiefName] = thiefCur + amount;
+          try {
+            channel.send({
+              type: 'broadcast',
+              event: 'gold-stolen-from-you',
+              payload: { victimName, amount },
+            });
+          } catch {}
+        }
+      })
+      .on('broadcast', { event: 'player-sync-request' }, ({ payload }) => {
+        if (!isAutoHostRef.current || !payload?.playerId) return;
+        const reqName = (payload.nickname || payload.name || '').trim();
+        const mappedHostState =
+          gameStateRef.current === 'LOBBY_WAITING'
+            ? 'LOBBY'
+            : gameStateRef.current === 'ROUND_LOCKED'
+            ? 'ANSWER_LOCKED'
+            : gameStateRef.current === 'ROUND_REVEAL'
+            ? 'REVEAL_PERSONAL'
+            : gameStateRef.current;
+        try {
+          channel.send({
+            type: 'broadcast',
+            event: 'player-sync-response',
+            payload: {
+              targetPlayerId: payload.playerId,
+              pin,
+              state: mappedHostState,
+              questionIndex: questionIndexRef.current,
+              totalQuestions: totalQuestionsRef.current,
+              question: currentQuestionRef.current,
+              timeLeft: timeLeftRef.current,
+              gameMode: gameModeRef.current,
+              survivalInitialLives: 3,
+              lives: reqName ? autoHostLivesRef.current[reqName] : undefined,
+            },
+          });
+        } catch {}
       })
       .on('broadcast', { event: 'players-sync' }, ({ payload }) => {
         if (payload?.gameMode) setGameMode(payload.gameMode);
@@ -503,10 +694,12 @@ export default function ArenaPlayPage() {
           // Khi hết thời gian, khóa vòng thi ngay lập tức. Tuyệt đối không tự động nộp bài (auto-submit) nếu học sinh chưa chủ động bấm Xác nhận.
           setIsLocked(true);
           setGameState('ROUND_LOCKED');
-          setTimeout(() => {
-            setShowResult(true);
-            setGameState('ROUND_REVEAL');
-          }, 2500);
+          if (!isAutoHostRef.current) {
+            setTimeout(() => {
+              setShowResult(true);
+              setGameState('ROUND_REVEAL');
+            }, 2500);
+          }
           return 0;
         }
         return prev - 1;
@@ -514,6 +707,513 @@ export default function ArenaPlayPage() {
     }, 1000);
     return () => clearInterval(timer);
   }, [gameState, isLocked]);
+
+  // =========================================================================
+  // AUTO-HOST ENGINE (Chủ phòng vừa điều phối tự động vừa chơi trên 1 máy)
+  // =========================================================================
+  const createHostEventId = useCallback(() => {
+    const id = `he_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    processedHostEventsRef.current.add(id);
+    return id;
+  }, []);
+
+  const buildRankingsFromSnapshot = useCallback(
+    (participants: Array<{ id: string; nickname: string; avatarId: number; totalScore: number; totalGold: number }>) => {
+      const mode = gameModeRef.current;
+      const list = participants.map((p) => ({
+        id: p.id,
+        nickname: p.nickname,
+        avatarId: p.avatarId,
+        score: mode === 'GOLD_QUEST' ? (autoHostGoldRef.current[p.nickname] ?? p.totalGold ?? 0) : p.totalScore || 0,
+        lives: autoHostLivesRef.current[p.nickname] ?? 3,
+      }));
+
+      if (mode === 'ARENA_100') {
+        list.sort((a, b) => {
+          const aOut = a.lives <= 0;
+          const bOut = b.lives <= 0;
+          if (aOut !== bOut) return aOut ? 1 : -1;
+          if (b.lives !== a.lives) return b.lives - a.lives;
+          return b.score - a.score;
+        });
+      } else {
+        list.sort((a, b) => b.score - a.score);
+      }
+
+      return list.map((item, idx) => ({
+        rank: idx + 1,
+        playerId: item.id,
+        nickname: item.nickname,
+        totalScore: item.score,
+        avatarSeed: item.avatarId,
+        ...(mode === 'ARENA_100'
+          ? { lives: item.lives, maxLives: 3, isEliminated: item.lives <= 0 }
+          : {}),
+      })) as PlayerPublicRank[];
+    },
+    []
+  );
+
+  const runAutoHostCountdownAndGoLive = useCallback(
+    (targetIndex: number, targetQuestion: any, totalQ: number, isInitialStart: boolean) => {
+      if (autoCountdownIntervalRef.current) {
+        clearInterval(autoCountdownIntervalRef.current);
+        autoCountdownIntervalRef.current = null;
+      }
+      if (autoAdvanceIntervalRef.current) {
+        clearInterval(autoAdvanceIntervalRef.current);
+        autoAdvanceIntervalRef.current = null;
+      }
+      setAutoNextSeconds(null);
+      autoHostAnswersRef.current = {};
+
+      if (targetQuestion) setCurrentQuestion(targetQuestion);
+      setQuestionIndex(targetIndex);
+      setTotalQuestions(totalQ);
+      setHasSubmitted(false);
+      hasSubmittedRef.current = false;
+      isSubmittingRef.current = false;
+      setSelectedOptionId(null);
+      setShowResult(false);
+      setIsLocked(false);
+      setIsChestModalOpen(false);
+      setLastLifeDelta(0);
+      setTimeLeft(15);
+      setRoundTimeLimit(15);
+      if (isInitialStart) {
+        setLives(3);
+        setMaxLives(3);
+        setWasEliminatedBeforeRound(false);
+        roundRevealAppliedRef.current = -1;
+      } else {
+        setWasEliminatedBeforeRound(livesRef.current <= 0);
+      }
+
+      const basePayload = {
+        pin,
+        timeLimit: 15,
+        gameMode: gameModeRef.current,
+        survivalInitialLives: 3,
+        questionIndex: targetIndex,
+        totalQuestions: totalQ,
+        question: targetQuestion || currentQuestionRef.current,
+        isFinalQuestion: targetIndex >= totalQ - 1,
+      };
+
+      const sendCountdown = (num: number) => {
+        setStartCountdown(num);
+        const hostEventId = createHostEventId();
+        try {
+          channelRef.current?.send({
+            type: 'broadcast',
+            event: 'arena-countdown',
+            payload: { ...basePayload, countdown: num, hostEventId },
+          });
+        } catch {}
+      };
+
+      sendCountdown(3);
+      let count = 3;
+      autoCountdownIntervalRef.current = setInterval(() => {
+        count -= 1;
+        if (count >= 0) {
+          sendCountdown(count);
+        } else {
+          if (autoCountdownIntervalRef.current) {
+            clearInterval(autoCountdownIntervalRef.current);
+            autoCountdownIntervalRef.current = null;
+          }
+          recordHeartbeat('auto-host-live');
+          setStartCountdown(null);
+          setGameState('QUESTION_LIVE');
+          setIsLocked(false);
+          setHasSubmitted(false);
+          hasSubmittedRef.current = false;
+          setSelectedOptionId(null);
+          setShowResult(false);
+          playClickSoundRef.current();
+
+          const liveEventId = createHostEventId();
+          try {
+            channelRef.current?.send({
+              type: 'broadcast',
+              event: 'question-live',
+              payload: { ...basePayload, hostEventId: liveEventId },
+            });
+            if (isInitialStart) {
+              channelRef.current?.send({
+                type: 'broadcast',
+                event: 'arena-started',
+                payload: { ...basePayload, hostEventId: liveEventId },
+              });
+            }
+          } catch {}
+        }
+      }, 1000);
+    },
+    [createHostEventId, pin, recordHeartbeat]
+  );
+
+  const handleAutoHostStart = useCallback(async () => {
+    if (!isAutoHostRef.current || !hostToken || !roomIdRef.current || isStartingAutoHost) return;
+    setIsStartingAutoHost(true);
+    try {
+      autoHostGuardRef.current = '';
+      submittedQuestionIdsRef.current.clear();
+      const livesInit: Record<string, number> = {};
+      lobbyParticipantsRef.current.forEach((p) => {
+        livesInit[p.nickname] = 3;
+      });
+      autoHostLivesRef.current = livesInit;
+      autoHostGoldRef.current = {};
+
+      const cmdId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cmd_${Date.now()}`;
+      const res = await arenaApi.executeHostCommand({
+        roomId: roomIdRef.current,
+        commandId: cmdId,
+        action: 'START_ARENA',
+        pin,
+        hostToken,
+        gameMode: gameModeRef.current,
+      });
+
+      runAutoHostCountdownAndGoLive(
+        res?.currentRound ?? 0,
+        res?.question || currentQuestionRef.current,
+        res?.totalQuestions || totalQuestionsRef.current,
+        true
+      );
+    } catch (err) {
+      console.warn('[AutoHost] Start failed:', err);
+    } finally {
+      setIsStartingAutoHost(false);
+    }
+  }, [hostToken, isStartingAutoHost, pin, runAutoHostCountdownAndGoLive]);
+
+  const handleAutoHostLockNow = useCallback(() => {
+    if (!isAutoHostRef.current || gameStateRef.current !== 'QUESTION_LIVE') return;
+    setIsLocked(true);
+    setGameState('ROUND_LOCKED');
+  }, []);
+
+  const handleAutoHostToLeaderboard = useCallback(async () => {
+    const qIdx = questionIndexRef.current;
+    const guardKey = `to_lb_${qIdx}`;
+    if (!isAutoHostRef.current || !hostToken || !roomIdRef.current || autoHostGuardRef.current === guardKey) {
+      return;
+    }
+    autoHostGuardRef.current = guardKey;
+    if (autoAdvanceIntervalRef.current) {
+      clearInterval(autoAdvanceIntervalRef.current);
+      autoAdvanceIntervalRef.current = null;
+    }
+    setAutoNextSeconds(null);
+
+    try {
+      const cmdId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cmd_${Date.now()}`;
+      await arenaApi.executeHostCommand({
+        roomId: roomIdRef.current,
+        commandId: cmdId,
+        action: 'SHOW_LEADERBOARD',
+        pin,
+        hostToken,
+        gameMode: gameModeRef.current,
+      });
+
+      const snapshot = await arenaApi.reclaimHostSnapshot({ pin, hostToken });
+      const rankings = buildRankingsFromSnapshot(snapshot?.participants || []);
+      const totalQ = snapshot?.totalQuestions || totalQuestionsRef.current;
+      const isFinal = qIdx >= totalQ - 1 || snapshot?.status === 'PODIUM';
+
+      const me = rankings.find(
+        (r) => r.playerId === playerId || r.nickname.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase()
+      );
+      if (me) {
+        setMyRanking({ rank: me.rank, totalScore: me.totalScore });
+        if (typeof me.lives === 'number') setLives(me.lives);
+      }
+
+      const hostEventId = createHostEventId();
+      if (isFinal) {
+        setTopRankings(rankings.slice(0, 3));
+        setIsChestModalOpen(false);
+        setStartCountdown(null);
+        setGameState('PODIUM');
+        channelRef.current?.send({
+          type: 'broadcast',
+          event: 'arena-finished',
+          payload: { podium: rankings.slice(0, 3), rankings, hostEventId },
+        });
+      } else {
+        setTopRankings(rankings.slice(0, 5));
+        setIsChestModalOpen(false);
+        setGameState('LEADERBOARD');
+        channelRef.current?.send({
+          type: 'broadcast',
+          event: 'show-leaderboard',
+          payload: { rankings, hostEventId },
+        });
+      }
+    } catch (err) {
+      console.warn('[AutoHost] ToLeaderboard failed:', err);
+      autoHostGuardRef.current = '';
+    }
+  }, [buildRankingsFromSnapshot, createHostEventId, hostToken, pin, playerId]);
+
+  const handleAutoHostNextRound = useCallback(async () => {
+    const qIdx = questionIndexRef.current;
+    const guardKey = `next_${qIdx}`;
+    if (!isAutoHostRef.current || !hostToken || !roomIdRef.current || autoHostGuardRef.current === guardKey) {
+      return;
+    }
+    autoHostGuardRef.current = guardKey;
+    if (autoAdvanceIntervalRef.current) {
+      clearInterval(autoAdvanceIntervalRef.current);
+      autoAdvanceIntervalRef.current = null;
+    }
+    setAutoNextSeconds(null);
+
+    try {
+      const cmdId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cmd_${Date.now()}`;
+      const res = await arenaApi.executeHostCommand({
+        roomId: roomIdRef.current,
+        commandId: cmdId,
+        action: 'NEXT_ROUND',
+        pin,
+        hostToken,
+        gameMode: gameModeRef.current,
+      });
+
+      if (res?.status === 'PODIUM' || !res?.question) {
+        const snapshot = await arenaApi.reclaimHostSnapshot({ pin, hostToken });
+        const rankings = buildRankingsFromSnapshot(snapshot?.participants || []);
+        setTopRankings(rankings.slice(0, 3));
+        setGameState('PODIUM');
+        const hostEventId = createHostEventId();
+        channelRef.current?.send({
+          type: 'broadcast',
+          event: 'arena-finished',
+          payload: { podium: rankings.slice(0, 3), rankings, hostEventId },
+        });
+      } else {
+        runAutoHostCountdownAndGoLive(
+          res.currentRound,
+          res.question,
+          res.totalQuestions || totalQuestionsRef.current,
+          false
+        );
+      }
+    } catch (err) {
+      console.warn('[AutoHost] NextRound failed:', err);
+      autoHostGuardRef.current = '';
+    }
+  }, [buildRankingsFromSnapshot, createHostEventId, hostToken, pin, runAutoHostCountdownAndGoLive]);
+
+  const handleAutoHostRestart = useCallback(async () => {
+    if (!isAutoHostRef.current || !hostToken || !roomIdRef.current) return;
+    try {
+      const cmdId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cmd_${Date.now()}`;
+      await arenaApi.executeHostCommand({
+        roomId: roomIdRef.current,
+        commandId: cmdId,
+        action: 'RESTART_ARENA',
+        pin,
+        hostToken,
+      });
+    } catch {}
+
+    submittedQuestionIdsRef.current.clear();
+    autoHostGuardRef.current = '';
+    setAutoNextSeconds(null);
+    setGameState('LOBBY_WAITING');
+    setIsLocked(false);
+    setHasSubmitted(false);
+    hasSubmittedRef.current = false;
+    setSelectedOptionId(null);
+    setShowResult(false);
+    setIsChestModalOpen(false);
+    setGold(0);
+    setLives(3);
+    setWasEliminatedBeforeRound(false);
+    setLastLifeDelta(0);
+    setMyRanking(null);
+    setQuestionIndex(0);
+
+    const hostEventId = createHostEventId();
+    try {
+      channelRef.current?.send({
+        type: 'broadcast',
+        event: 'arena-reset',
+        payload: { hostEventId },
+      });
+    } catch {}
+  }, [createHostEventId, hostToken, pin]);
+
+  const handleAutoHostCloseRoom = useCallback(async () => {
+    if (hostToken && pin) {
+      try {
+        await arenaApi.closeRoom({ pin, hostToken });
+      } catch {}
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem(`arena_host_token_${pin}`);
+        sessionStorage.removeItem(`arena_host_mode_${pin}`);
+        sessionStorage.removeItem(`arena_room_config_${pin}`);
+      }
+    }
+    navigate('/arena?tab=pin');
+  }, [hostToken, navigate, pin]);
+
+  // Auto-Host Driver 1: ROUND_LOCKED -> LOCK_ROUND + REVEAL_PERSONAL -> ROUND_REVEAL
+  useEffect(() => {
+    if (!isAutoHost || gameState !== 'ROUND_LOCKED' || !hostToken || !roomId) return;
+    const qIdx = questionIndex;
+    const lockKey = `locked_${qIdx}`;
+    if (autoHostGuardRef.current === lockKey) return;
+
+    const lockedEventId = createHostEventId();
+    try {
+      channelRef.current?.send({
+        type: 'broadcast',
+        event: 'round-locked',
+        payload: { hostEventId: lockedEventId },
+      });
+    } catch {}
+
+    arenaApi
+      .executeHostCommand({
+        roomId,
+        commandId: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cmd_lock_${Date.now()}`,
+        action: 'LOCK_ROUND',
+        pin,
+        hostToken,
+      })
+      .catch(() => {});
+
+    autoRevealDelayTimerRef.current = setTimeout(async () => {
+      autoHostGuardRef.current = lockKey;
+      try {
+        await arenaApi.executeHostCommand({
+          roomId,
+          commandId: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `cmd_rev_${Date.now()}`,
+          action: 'REVEAL_PERSONAL',
+          pin,
+          hostToken,
+        });
+      } catch {}
+
+      let survivalUpdates: Record<string, { lives: number; maxLives: number; delta: number; streak: number; isEliminated: boolean }> | undefined;
+      if (gameModeRef.current === 'ARENA_100') {
+        survivalUpdates = {};
+        const participants = lobbyParticipantsRef.current;
+        const correctId = currentQuestionRef.current.correctOptionId;
+        participants.forEach((p) => {
+          const prevLives = autoHostLivesRef.current[p.nickname] ?? 3;
+          if (prevLives <= 0) {
+            survivalUpdates![p.nickname] = { lives: 0, maxLives: 3, delta: 0, streak: 0, isEliminated: true };
+            return;
+          }
+          const chosen = autoHostAnswersRef.current[p.nickname];
+          const ok = chosen === correctId;
+          const nextLives = ok ? prevLives : Math.max(0, prevLives - 1);
+          autoHostLivesRef.current[p.nickname] = nextLives;
+          survivalUpdates![p.nickname] = {
+            lives: nextLives,
+            maxLives: 3,
+            delta: ok ? 0 : -1,
+            streak: ok ? 1 : 0,
+            isEliminated: nextLives === 0,
+          };
+        });
+        const myStat = survivalUpdates[nicknameRef.current];
+        if (myStat) {
+          setLives(myStat.lives);
+          setLastLifeDelta(myStat.delta);
+          roundRevealAppliedRef.current = Date.now();
+        }
+      }
+
+      setShowResult(true);
+      setIsChestModalOpen(false);
+      setGameState('ROUND_REVEAL');
+
+      const revealEventId = createHostEventId();
+      try {
+        channelRef.current?.send({
+          type: 'broadcast',
+          event: 'round-reveal',
+          payload: {
+            correctOptionId: currentQuestionRef.current.correctOptionId,
+            explanation: currentQuestionRef.current.correctExplanation,
+            survivalUpdates,
+            hostEventId: revealEventId,
+          },
+        });
+      } catch {}
+    }, 1500);
+
+    return () => {
+      if (autoRevealDelayTimerRef.current) {
+        clearTimeout(autoRevealDelayTimerRef.current);
+        autoRevealDelayTimerRef.current = null;
+      }
+    };
+  }, [createHostEventId, gameState, hostToken, isAutoHost, pin, questionIndex, roomId]);
+
+  // Auto-Host Driver 2: ROUND_REVEAL -> Auto countdown 5s -> LEADERBOARD / PODIUM
+  useEffect(() => {
+    if (!isAutoHost || gameState !== 'ROUND_REVEAL' || !showResult) return;
+    let remaining = 5;
+    setAutoNextSeconds(remaining);
+
+    autoAdvanceIntervalRef.current = setInterval(() => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        if (autoAdvanceIntervalRef.current) {
+          clearInterval(autoAdvanceIntervalRef.current);
+          autoAdvanceIntervalRef.current = null;
+        }
+        setAutoNextSeconds(null);
+        handleAutoHostToLeaderboard();
+      } else {
+        setAutoNextSeconds(remaining);
+      }
+    }, 1000);
+
+    return () => {
+      if (autoAdvanceIntervalRef.current) {
+        clearInterval(autoAdvanceIntervalRef.current);
+        autoAdvanceIntervalRef.current = null;
+      }
+    };
+  }, [gameState, handleAutoHostToLeaderboard, isAutoHost, questionIndex, showResult]);
+
+  // Auto-Host Driver 3: LEADERBOARD -> Auto countdown 4s -> NEXT_ROUND
+  useEffect(() => {
+    if (!isAutoHost || gameState !== 'LEADERBOARD') return;
+    let remaining = 4;
+    setAutoNextSeconds(remaining);
+
+    autoAdvanceIntervalRef.current = setInterval(() => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        if (autoAdvanceIntervalRef.current) {
+          clearInterval(autoAdvanceIntervalRef.current);
+          autoAdvanceIntervalRef.current = null;
+        }
+        setAutoNextSeconds(null);
+        handleAutoHostNextRound();
+      } else {
+        setAutoNextSeconds(remaining);
+      }
+    }, 1000);
+
+    return () => {
+      if (autoAdvanceIntervalRef.current) {
+        clearInterval(autoAdvanceIntervalRef.current);
+        autoAdvanceIntervalRef.current = null;
+      }
+    };
+  }, [gameState, handleAutoHostNextRound, isAutoHost, questionIndex]);
 
   const isCorrect = hasSubmitted && selectedOptionId === currentQuestion.correctOptionId;
   const isUnanswered = !hasSubmitted;
@@ -608,6 +1308,9 @@ export default function ArenaPlayPage() {
       }
 
       // Gửi broadcast đáp án của học sinh lên Host để hiển thị real-time
+      if (isAutoHostRef.current) {
+        autoHostAnswersRef.current[nickname] = optionId;
+      }
       if (channelRef.current) {
         channelRef.current.send({
           type: 'broadcast',
@@ -650,6 +1353,9 @@ export default function ArenaPlayPage() {
   const handleApplyChestReward = (goldDelta: number) => {
     setGold((prev) => {
       const updated = Math.max(0, prev + goldDelta);
+      if (isAutoHostRef.current) {
+        autoHostGoldRef.current[nickname] = updated;
+      }
       if (channelRef.current) {
         channelRef.current.send({
           type: 'broadcast',
@@ -665,6 +1371,13 @@ export default function ArenaPlayPage() {
   const handleStealGold = (victimName: string, stolenAmount: number) => {
     setGold((prev) => {
       const updated = prev + stolenAmount;
+      if (isAutoHostRef.current) {
+        autoHostGoldRef.current[victimName] = Math.max(
+          0,
+          (autoHostGoldRef.current[victimName] || 0) - stolenAmount
+        );
+        autoHostGoldRef.current[nickname] = updated;
+      }
       if (channelRef.current) {
         // Báo cho Host và cả phòng
         channelRef.current.send({
@@ -857,46 +1570,143 @@ export default function ArenaPlayPage() {
             )}
           </div>
         ) : gameState === 'LOBBY_WAITING' ? (
-          /* SẢNH CHỜ HỌC VIÊN - CHUẨN KAHOOT ZERO-FLUFF & PVZ AVATAR */
-          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-5 py-4 animate-fadeIn">
+          /* SẢNH CHỜ HỌC VIÊN & BẢNG ĐIỀU KHIỂN AUTO-PARTY HOST */
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 py-3 animate-fadeIn">
             <div className="relative">
-              <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="xl" />
+              <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="lg" />
               <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-emerald-500 border-3 border-[#150a33] flex items-center justify-center shadow-lg">
                 <span className="w-3 h-3 rounded-full bg-white animate-ping" />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <div className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold shadow-sm ${
-                isJoinedAcknowledged 
-                  ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400' 
-                  : 'bg-amber-500/15 border border-amber-500/30 text-amber-300'
-              }`}>
-                <span className={`w-2 h-2 rounded-full ${isJoinedAcknowledged ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400 animate-ping'}`} /> 
-                {isJoinedAcknowledged ? 'ĐÃ VÀO PHÒNG (ĐÃ KẾT NỐI MÀN CHIẾU)' : 'ĐANG KẾT NỐI MÀN CHIẾU...'}
+            <div className="space-y-1">
+              <div
+                className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold shadow-sm ${
+                  isAutoHost
+                    ? 'bg-amber-500/20 border border-amber-400/50 text-amber-300'
+                    : isJoinedAcknowledged
+                    ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400'
+                    : 'bg-amber-500/15 border border-amber-500/30 text-amber-300'
+                }`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    isAutoHost || isJoinedAcknowledged ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400 animate-ping'
+                  }`}
+                />
+                {isAutoHost
+                  ? '👑 BẠN LÀ CHỦ PHÒNG (CHƠI CÙNG BẠN BÈ)'
+                  : isJoinedAcknowledged
+                  ? 'ĐÃ VÀO PHÒNG (SẴN SÀNG THI ĐẤU)'
+                  : 'ĐANG ĐỒNG BỘ PHÒNG...'}
               </div>
               <h2 className="text-2xl font-black text-white tracking-tight">{nickname}</h2>
-              <p className="text-sm font-bold text-amber-300">
-                ⭐ Linh vật: {currentCharacter.name}
-              </p>
-              <p className="text-xs text-slate-300 max-w-xs mx-auto pt-1">
-                Nhìn lên màn chiếu của giáo viên. Trận đấu sẽ bắt đầu ngay khi giáo viên bấm Bắt đầu!
+              {roomMeta?.roomTitle && (
+                <p className="text-xs font-bold text-purple-200">{roomMeta.roomTitle}</p>
+              )}
+              <p className="text-xs text-slate-300 max-w-xs mx-auto">
+                {isAutoHost
+                  ? 'Mời bạn bè nhập mã PIN hoặc gửi link dưới đây, sau đó bấm Bắt Đầu!'
+                  : 'Trận đấu sẽ tự động bắt đầu ngay khi Chủ phòng bấm Bắt đầu!'}
               </p>
             </div>
 
-            <div className="p-4 bg-white/5 border border-white/10 rounded-2xl w-full max-w-xs space-y-2.5 text-xs text-slate-300 backdrop-blur-sm">
-              <div className="flex justify-between items-center text-slate-400">
-                <span>Phòng đấu PIN:</span>
-                <span className="font-mono font-black text-orange-400 text-sm tracking-wider">{pin}</span>
+            {/* Thẻ thông tin phòng & Nút Copy Link Mời */}
+            <div className="p-3.5 bg-white/5 border border-white/15 rounded-2xl w-full max-w-sm space-y-2.5 text-xs text-slate-300 backdrop-blur-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400">Mã PIN phòng:</span>
+                <span className="font-mono font-black text-orange-400 text-lg tracking-widest">{pin}</span>
               </div>
-              <div className="flex justify-between items-center text-slate-400">
-                <span>Trạng thái:</span>
-                <span className={`font-bold flex items-center gap-1.5 ${isJoinedAcknowledged ? 'text-emerald-400' : 'text-amber-400'}`}>
-                  <span className={`w-2 h-2 rounded-full ${isJoinedAcknowledged ? 'bg-emerald-400 animate-ping' : 'bg-amber-400 animate-pulse'}`} /> 
-                  {isJoinedAcknowledged ? 'Sẵn sàng thi đấu' : 'Đang đồng bộ với Host...'}
+
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400">Sĩ số trong phòng:</span>
+                <span className="font-mono font-black text-emerald-300 flex items-center gap-1">
+                  <Users className="w-3.5 h-3.5" />
+                  {lobbyParticipants.length} / {roomMeta?.maxPlayers || 20}
                 </span>
               </div>
+
+              {/* Danh sách người chơi đã vào sảnh chờ */}
+              {lobbyParticipants.length > 0 && (
+                <div className="pt-2 border-t border-white/10 flex flex-wrap gap-1.5 justify-center max-h-24 overflow-y-auto">
+                  {lobbyParticipants.map((p) => (
+                    <span
+                      key={p.id}
+                      className={`px-2 py-1 rounded-lg text-[11px] font-bold border ${
+                        p.nickname.trim().toLowerCase() === nickname.trim().toLowerCase()
+                          ? 'bg-amber-500/20 border-amber-400/50 text-amber-200'
+                          : 'bg-purple-900/50 border-purple-500/30 text-purple-100'
+                      }`}
+                    >
+                      {p.nickname}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  const inviteUrl = `${window.location.origin}/arena?pin=${pin}`;
+                  if (navigator.clipboard) {
+                    navigator.clipboard.writeText(inviteUrl).catch(() => {});
+                  }
+                  setIsCopiedInvite(true);
+                  setTimeout(() => setIsCopiedInvite(false), 2000);
+                }}
+                className="w-full py-2 px-3 rounded-xl bg-purple-800/60 hover:bg-purple-700/70 border border-purple-400/40 text-purple-100 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+              >
+                {isCopiedInvite ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="text-emerald-300">Đã sao chép link mời phòng #{pin}!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Sao chép Link mời bạn bè</span>
+                  </>
+                )}
+              </button>
             </div>
+
+            {/* Điều khiển Chủ Phòng Auto-Party */}
+            {isAutoHost && (
+              <div className="w-full max-w-sm space-y-2">
+                <button
+                  type="button"
+                  onClick={handleAutoHostStart}
+                  disabled={isStartingAutoHost || !roomId}
+                  className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 text-slate-950 font-black text-sm uppercase tracking-wider shadow-[0_4px_0_0_#065f46] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2 cursor-pointer transition select-none disabled:opacity-50"
+                >
+                  <Play className="w-5 h-5 fill-slate-950" />
+                  <span>
+                    {isStartingAutoHost
+                      ? 'ĐANG KHỞI ĐỘNG...'
+                      : `BẮT ĐẦU TRẬN ĐẤU (${lobbyParticipants.length} NGƯỜI)`}
+                  </span>
+                </button>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => window.open(`/arena/host?pin=${pin}&roomId=${encodeURIComponent(roomId)}`, '_blank')}
+                    className="py-2 px-3 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-400/40 text-indigo-200 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition"
+                  >
+                    <Monitor className="w-3.5 h-3.5" />
+                    <span>Mở màn chiếu</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAutoHostCloseRoom}
+                    className="py-2 px-3 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 border border-rose-400/40 text-rose-200 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Đóng phòng</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         ) : gameState === 'LEADERBOARD' ? (
           /* MÀN HÌNH BẢNG XẾP HẠNG TRÊN ĐIỆN THOẠI */
@@ -961,10 +1771,27 @@ export default function ArenaPlayPage() {
               )}
             </div>
 
-            <div className="text-xs text-purple-300/80 flex items-center justify-center gap-2 pt-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              Đang đợi giáo viên chuyển câu tiếp theo...
-            </div>
+            {isAutoHost ? (
+              <div className="w-full space-y-2">
+                <div className="text-xs font-bold text-emerald-300 flex items-center justify-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span>Tự động sang câu tiếp theo sau {autoNextSeconds ?? 4}s...</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAutoHostNextRound}
+                  className="w-full py-2.5 px-4 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 text-emerald-200 font-black text-xs flex items-center justify-center gap-1.5 cursor-pointer transition"
+                >
+                  <FastForward className="w-4 h-4" />
+                  <span>Qua Câu Tiếp Theo Ngay</span>
+                </button>
+              </div>
+            ) : (
+              <div className="text-xs text-purple-300/80 flex items-center justify-center gap-2 pt-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                Đang đợi chuyển câu tiếp theo...
+              </div>
+            )}
           </div>
         ) : gameState === 'PODIUM' ? (
           /* MÀN HÌNH KẾT THÚC / PODIUM TRÊN ĐIỆN THOẠI */
@@ -976,18 +1803,32 @@ export default function ArenaPlayPage() {
               </div>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1 w-full max-w-xs">
               <h2 className="text-2xl sm:text-3xl font-black text-white">TRẬN ĐẤU HOÀN TẤT!</h2>
               <p className="text-amber-300 font-black text-lg sm:text-xl">
                 Hạng #{myRanking?.rank ?? 1} · {myRanking?.totalScore ?? (gameMode === 'GOLD_QUEST' ? gold : 0)}{' '}
                 {gameMode === 'GOLD_QUEST' ? '🪙 Vàng' : 'Điểm'}
               </p>
-              <p className="text-xs text-purple-200/80 max-w-xs mx-auto">
+              <p className="text-xs text-purple-200/80">
                 Chúc mừng {nickname} ({currentCharacter.name}) đã hoàn thành tất cả các câu hỏi!
               </p>
 
-              {/* Nút Mở Sổ Tay Học Thuật & Luyện Lại Câu Sai */}
-              <div className="pt-3 max-w-xs mx-auto">
+              {/* Top 3 Podium Preview */}
+              {topRankings.length > 0 && (
+                <div className="mt-3 p-3 rounded-2xl bg-purple-950/60 border border-purple-500/30 space-y-1.5 text-left">
+                  {topRankings.slice(0, 3).map((r) => (
+                    <div key={r.playerId} className="flex items-center justify-between text-xs font-bold">
+                      <span className="truncate text-white">
+                        {r.rank === 1 ? '👑' : r.rank === 2 ? '🥈' : '🥉'} {r.nickname}
+                      </span>
+                      <span className="font-mono text-amber-300">{r.totalScore}đ</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Nút Mở Sổ Tay Học Thuật & Điều Khiển Sau Trận */}
+              <div className="pt-3 space-y-2">
                 <button
                   onClick={() => setIsRevengeModalOpen(true)}
                   className="w-full py-3.5 px-5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-sm border-2 border-purple-400 shadow-[0_4px_0_0_#3b0764] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2.5 transition select-none cursor-pointer"
@@ -995,6 +1836,35 @@ export default function ArenaPlayPage() {
                   <BookOpen className="w-5 h-5 text-purple-200" />
                   <span>Sổ Tay Học Thuật ({wrongQuestions.length} câu)</span>
                 </button>
+
+                {isAutoHost ? (
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={handleAutoHostRestart}
+                      className="py-2.5 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 text-emerald-200 text-xs font-black flex items-center justify-center gap-1.5 cursor-pointer transition"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Chơi lại</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAutoHostCloseRoom}
+                      className="py-2.5 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/35 border border-rose-400/50 text-rose-200 text-xs font-black flex items-center justify-center gap-1.5 cursor-pointer transition"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Đóng phòng</span>
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => navigate('/arena?tab=pin')}
+                    className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold cursor-pointer transition"
+                  >
+                    Về Sảnh Đấu Trường
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -1067,20 +1937,32 @@ export default function ArenaPlayPage() {
               </div>
             ) : (
               /* Status notice when submitted or locked: Ghim cố định rõ ràng */
-              <div className="sticky bottom-0 z-30 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-[#150a33] via-[#150a33]/95 to-transparent text-center backdrop-blur-sm">
+              <div className="sticky bottom-0 z-30 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-[#150a33] via-[#150a33]/95 to-transparent text-center backdrop-blur-sm space-y-2">
                 {hasSubmitted ? (
                   <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400/50 text-emerald-200 font-extrabold text-xs sm:text-sm shadow-xl shadow-emerald-950/60">
                     <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
                     <span>
                       {gameMode === 'GOLD_QUEST' && isCorrect
                         ? '✓ Đã chốt đáp án! Đang chuẩn bị mở Rương Kho Báu...'
-                        : `✓ Đã chốt đáp án ${currentQuestion.options.find((o) => o.id === selectedOptionId)?.label || ''}! Hãy nhìn lên màn hình.`}
+                        : `✓ Đã chốt đáp án ${currentQuestion.options.find((o) => o.id === selectedOptionId)?.label || ''}!`}
                     </span>
                   </div>
                 ) : (
                   <span className="text-xs text-amber-300 font-semibold inline-block py-2">
                     ⏱ Đã hết thời gian trả lời câu này
                   </span>
+                )}
+                {isAutoHost && hasSubmitted && !isLocked && (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={handleAutoHostLockNow}
+                      className="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/35 border border-amber-400/50 text-amber-200 text-xs font-black inline-flex items-center gap-1.5 cursor-pointer transition"
+                    >
+                      <FastForward className="w-3.5 h-3.5" />
+                      <span>Chốt câu & Xem đáp án ngay</span>
+                    </button>
+                  </div>
                 )}
               </div>
             )}
@@ -1156,16 +2038,35 @@ export default function ArenaPlayPage() {
               </p>
             </div>
 
-            <div className="pt-1">
-              <span className="text-xs text-purple-300/80 font-medium">
-                {questionIndex >= totalQuestions - 1 ? (
-                  <span className="text-amber-300 font-bold block bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl animate-pulse">
-                    🏁 Câu hỏi cuối cùng đã kết thúc! Hãy ngẩng đầu nhìn lên màn chiếu lớn để theo dõi BỤC VINH DANH QUÁN QUÂN!
+            <div className="pt-1 space-y-2">
+              {isAutoHost ? (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-emerald-300 flex items-center justify-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    {questionIndex >= totalQuestions - 1
+                      ? `Tự động mở Bục Vinh Danh sau ${autoNextSeconds ?? 5}s...`
+                      : `Tự động mở Bảng Xếp Hạng sau ${autoNextSeconds ?? 5}s...`}
                   </span>
-                ) : (
-                  'Nhìn lên màn hình của Thầy/Cô để xem phân tích chi tiết.'
-                )}
-              </span>
+                  <button
+                    type="button"
+                    onClick={handleAutoHostToLeaderboard}
+                    className="px-4 py-2 rounded-xl bg-purple-600/40 hover:bg-purple-600/60 border border-purple-400/50 text-white text-xs font-black inline-flex items-center gap-1.5 cursor-pointer transition"
+                  >
+                    <FastForward className="w-3.5 h-3.5" />
+                    <span>{questionIndex >= totalQuestions - 1 ? 'Lên Bục Vinh Danh Ngay' : 'Xem Bảng Xếp Hạng Ngay'}</span>
+                  </button>
+                </div>
+              ) : (
+                <span className="text-xs text-purple-300/80 font-medium">
+                  {questionIndex >= totalQuestions - 1 ? (
+                    <span className="text-amber-300 font-bold block bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl animate-pulse">
+                      🏁 Câu hỏi cuối cùng đã kết thúc! Đang tổng kết BỤC VINH DANH QUÁN QUÂN!
+                    </span>
+                  ) : (
+                    'Đang chuẩn bị chuyển sang bảng xếp hạng...'
+                  )}
+                </span>
+              )}
             </div>
           </div>
         )}
