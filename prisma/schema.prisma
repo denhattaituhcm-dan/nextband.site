@@ -73,6 +73,7 @@ model User {
   cambridgeSessionsGraded  CambridgeSession[]    @relation("GradedCambridgeSessions")
   cambridgeRoomsCreated    CambridgeRoom[]       @relation("TeacherCambridgeRooms")
   arenaSoloRuns            ArenaSoloRun[]        @relation("UserArenaSoloRuns")
+  readingChallengeProgress ReadingChallengeUnitProgress[]
 
   @@map("profiles")
 }
@@ -1814,6 +1815,30 @@ model StudentEvidence {
 
   @@index([published, displayOrder])
   @@map("evidence")
+}
+
+model ReadingChallengeUnitProgress {
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  unitNumber       Int       @map("unit_number")
+  currentStepIndex Int       @default(0) @map("current_step_index")
+  completedSteps   Json      @default("[]") @map("completed_steps")
+  stepAnswers      Json      @default("{}") @map("step_answers")
+  readingWpm       Int?      @map("reading_wpm")
+  readingSeconds   Int?      @map("reading_seconds")
+  scores           Json      @default("{}") @map("scores")
+  writingDraft     String?   @map("writing_draft") @db.Text
+  isUnitCompleted  Boolean   @default(false) @map("is_unit_completed")
+  completedAt      DateTime? @map("completed_at")
+  lastPracticedAt  DateTime  @default(now()) @map("last_practiced_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  user             User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([userId, unitNumber])
+  @@index([userId])
+  @@map("reading_challenge_progress")
 }
 
 

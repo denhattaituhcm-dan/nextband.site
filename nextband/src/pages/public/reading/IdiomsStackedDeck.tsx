@@ -15,7 +15,9 @@ import {
   ArrowRight,
   FileCheck2,
   ExternalLink,
+  MessageCircle,
 } from "lucide-react";
+import { MangaComicDialogueBox } from "./components/MangaComicDialogueBox";
 
 export interface IdiomItemForDeck {
   id: string;
@@ -46,11 +48,13 @@ export interface IdiomItemForDeck {
     explanation: string;
     is_ielts_writing_safe: boolean;
   };
+  comic_dialogue?: any;
 }
 
 interface IdiomsStackedDeckProps {
   idioms: IdiomItemForDeck[];
   etymologyData?: Record<string, any>;
+  mangaData?: Record<string, any>;
   bookmarkedIds: Set<string>;
   onToggleBookmark: (id: string) => void;
   listenedIds: Set<string>;
@@ -61,6 +65,7 @@ interface IdiomsStackedDeckProps {
 export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
   idioms,
   etymologyData = {},
+  mangaData = {},
   bookmarkedIds,
   onToggleBookmark,
   listenedIds,
@@ -69,7 +74,7 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [deckList, setDeckList] = useState<IdiomItemForDeck[]>(() => idioms ?? []);
-  const [cardTab, setCardTab] = useState<"front" | "context" | "etymology" | "exam">("front");
+  const [cardTab, setCardTab] = useState<"front" | "comic" | "context" | "etymology" | "exam">("front");
   
   // Drag and dismiss state
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -471,6 +476,33 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
                             </p>
                           )}
                         </div>
+
+                        {/* Doraemon Manga Quick Action Teaser */}
+                        {(mangaData[item.id] || item.comic_dialogue) && (
+                          <button
+                            type="button"
+                            onClick={() => setCardTab("comic")}
+                            className="w-full mt-2 py-2 px-3 rounded-xl bg-linear-to-r from-amber-500/15 via-amber-400/25 to-orange-500/15 border border-amber-300 hover:border-amber-400 text-amber-950 font-bold text-xs flex items-center justify-between transition cursor-pointer group shadow-2xs"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <span className="text-base group-hover:scale-110 transition">💬</span>
+                              <span>Xem đối đáp Doraemon (Học trong bối cảnh)</span>
+                            </span>
+                            <span className="text-[11px] font-extrabold text-amber-800 flex items-center gap-0.5 group-hover:translate-x-0.5 transition">
+                              Mở Manga <ArrowRight className="w-3 h-3" />
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Comic Manga Mode (Doraemon Dialogue & Punchline Tip) */}
+                    {cardTab === "comic" && (
+                      <div className="pt-1">
+                        <MangaComicDialogueBox
+                          dialogue={mangaData[item.id] || item.comic_dialogue}
+                          targetIdiom={item.idiom}
+                        />
                       </div>
                     )}
 
@@ -652,6 +684,20 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
                           }`}
                         >
                           Cơ bản
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCardTab("comic")}
+                          className={`px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1 ${
+                            cardTab === "comic"
+                              ? "bg-amber-500 text-white font-bold shadow-xs"
+                              : "text-amber-900 hover:text-amber-950 hover:bg-amber-100/60"
+                          }`}
+                        >
+                          <span>💬</span> Manga
+                          {mangaData[item.id] && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block animate-pulse" />
+                          )}
                         </button>
                         <button
                           type="button"

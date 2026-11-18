@@ -46,6 +46,7 @@ import readingDiscussionRoutes from "./reading-discussion.routes.js";
 import cambridgeRoutes from "./cambridge.routes.js";
 import facultyRoutes from "./faculty.routes.js";
 import evidenceRoutes from "./evidence.routes.js";
+import readingChallengeRoutes from "./reading-challenge.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -104,6 +105,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(cambridgeRoutes, { prefix: "/cambridge" });
   await fastify.register(facultyRoutes, { prefix: "/faculty" });
   await fastify.register(evidenceRoutes, { prefix: "/evidence" });
+  await fastify.register(readingChallengeRoutes, { prefix: "/reading-challenge" });
 };
 
 export default routes;
