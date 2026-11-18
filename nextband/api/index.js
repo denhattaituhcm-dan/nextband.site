@@ -149358,6 +149358,282 @@ var evidenceRoutes = async (fastify) => {
 };
 var evidence_routes_default = evidenceRoutes;
 
+// server/routes/reading-challenge.routes.ts
+init_zod();
+var unitProgressPayloadSchema = external_exports.object({
+  unitNumber: external_exports.number().int().min(1).max(20),
+  currentStepIndex: external_exports.number().int().min(0).max(9).default(0),
+  completedSteps: external_exports.array(external_exports.string()).default([]),
+  stepAnswers: external_exports.record(external_exports.any()).default({}),
+  readingWpm: external_exports.number().int().positive().nullable().optional(),
+  readingSeconds: external_exports.number().int().nonnegative().nullable().optional(),
+  scores: external_exports.record(external_exports.number()).default({}),
+  writingDraft: external_exports.string().nullable().optional(),
+  isUnitCompleted: external_exports.boolean().default(false),
+  lastPracticedAt: external_exports.string().optional()
+});
+var batchSyncSchema = external_exports.object({
+  units: external_exports.array(unitProgressPayloadSchema).max(50)
+});
+function mergeStepAnswers(existing, incoming) {
+  const merged = { ...existing };
+  for (const [key, value] of Object.entries(incoming)) {
+    if (value !== void 0 && value !== null) {
+      if (typeof value === "object" && !Array.isArray(value)) {
+        merged[key] = { ...merged[key] || {}, ...value };
+      } else {
+        merged[key] = value;
+      }
+    }
+  }
+  return merged;
+}
+function mergeScores(existing, incoming) {
+  const merged = { ...existing };
+  for (const [key, value] of Object.entries(incoming)) {
+    if (typeof value === "number") {
+      merged[key] = Math.max(merged[key] ?? 0, value);
+    }
+  }
+  return merged;
+}
+function mergeCompletedSteps(existing, incoming) {
+  return Array.from(/* @__PURE__ */ new Set([...existing, ...incoming]));
+}
+var readingChallengeRoutes = async (fastify) => {
+  fastify.get(
+    "/progress",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const units = await fastify.prisma.readingChallengeUnitProgress.findMany({
+        where: { userId },
+        orderBy: { unitNumber: "asc" }
+      });
+      const completedUnitsCount = units.filter((u) => u.isUnitCompleted).length;
+      const startedUnitsCount = units.length;
+      const wpmRecords = units.map((u) => u.readingWpm).filter((w) => typeof w === "number" && w > 0);
+      const averageWpm = wpmRecords.length > 0 ? Math.round(wpmRecords.reduce((acc, curr) => acc + curr, 0) / wpmRecords.length) : null;
+      return reply.send({
+        status: "success",
+        data: {
+          units,
+          summary: {
+            startedUnitsCount,
+            completedUnitsCount,
+            averageWpm,
+            totalUnits: 20
+          }
+        }
+      });
+    }
+  );
+  fastify.get(
+    "/progress/:unitNumber",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const { unitNumber } = request.params;
+      const parsedUnitNumber = parseInt(unitNumber, 10);
+      if (isNaN(parsedUnitNumber) || parsedUnitNumber < 1 || parsedUnitNumber > 20) {
+        return reply.status(400).send({
+          status: "error",
+          message: "Unit number kh\xF4ng h\u1EE3p l\u1EC7 (1-20)"
+        });
+      }
+      const progress = await fastify.prisma.readingChallengeUnitProgress.findUnique({
+        where: {
+          userId_unitNumber: {
+            userId,
+            unitNumber: parsedUnitNumber
+          }
+        }
+      });
+      return reply.send({
+        status: "success",
+        data: progress
+      });
+    }
+  );
+  fastify.post(
+    "/progress/:unitNumber",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const { unitNumber } = request.params;
+      const parsedUnitNumber = parseInt(unitNumber, 10);
+      if (isNaN(parsedUnitNumber) || parsedUnitNumber < 1 || parsedUnitNumber > 20) {
+        return reply.status(400).send({
+          status: "error",
+          message: "Unit number kh\xF4ng h\u1EE3p l\u1EC7 (1-20)"
+        });
+      }
+      const parsed = unitProgressPayloadSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          status: "error",
+          error: "VALIDATION_ERROR",
+          message: "D\u1EEF li\u1EC7u ti\u1EBFn \u0111\u1ED9 kh\xF4ng h\u1EE3p l\u1EC7",
+          details: parsed.error.flatten()
+        });
+      }
+      const payload = parsed.data;
+      const now = /* @__PURE__ */ new Date();
+      const existing = await fastify.prisma.readingChallengeUnitProgress.findUnique({
+        where: {
+          userId_unitNumber: {
+            userId,
+            unitNumber: parsedUnitNumber
+          }
+        }
+      });
+      const existingCompletedSteps = existing?.completedSteps || [];
+      const existingStepAnswers = existing?.stepAnswers || {};
+      const existingScores = existing?.scores || {};
+      const mergedCompletedSteps = mergeCompletedSteps(existingCompletedSteps, payload.completedSteps);
+      const mergedStepAnswers = mergeStepAnswers(existingStepAnswers, payload.stepAnswers);
+      const mergedScores = mergeScores(existingScores, payload.scores);
+      const isCompleted = existing?.isUnitCompleted || payload.isUnitCompleted || mergedCompletedSteps.length >= 10;
+      const completedAt = isCompleted ? existing?.completedAt || now : null;
+      const record = await fastify.prisma.readingChallengeUnitProgress.upsert({
+        where: {
+          userId_unitNumber: {
+            userId,
+            unitNumber: parsedUnitNumber
+          }
+        },
+        create: {
+          userId,
+          unitNumber: parsedUnitNumber,
+          currentStepIndex: payload.currentStepIndex,
+          completedSteps: mergedCompletedSteps,
+          stepAnswers: mergedStepAnswers,
+          readingWpm: payload.readingWpm ?? null,
+          readingSeconds: payload.readingSeconds ?? null,
+          scores: mergedScores,
+          writingDraft: payload.writingDraft ?? null,
+          isUnitCompleted: isCompleted,
+          completedAt,
+          lastPracticedAt: now
+        },
+        update: {
+          currentStepIndex: payload.currentStepIndex,
+          completedSteps: mergedCompletedSteps,
+          stepAnswers: mergedStepAnswers,
+          readingWpm: payload.readingWpm ?? existing?.readingWpm ?? null,
+          readingSeconds: payload.readingSeconds ?? existing?.readingSeconds ?? null,
+          scores: mergedScores,
+          writingDraft: payload.writingDraft ?? existing?.writingDraft ?? null,
+          isUnitCompleted: isCompleted,
+          completedAt,
+          lastPracticedAt: now
+        }
+      });
+      return reply.send({
+        status: "success",
+        data: record
+      });
+    }
+  );
+  fastify.post(
+    "/sync",
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const userId = user.userId || user.id;
+      const parsed = batchSyncSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          status: "error",
+          error: "VALIDATION_ERROR",
+          message: "D\u1EEF li\u1EC7u \u0111\u1ED3ng b\u1ED9 kh\xF4ng h\u1EE3p l\u1EC7",
+          details: parsed.error.flatten()
+        });
+      }
+      const { units } = parsed.data;
+      const now = /* @__PURE__ */ new Date();
+      await fastify.prisma.$transaction(async (tx) => {
+        for (const item of units) {
+          const existing = await tx.readingChallengeUnitProgress.findUnique({
+            where: {
+              userId_unitNumber: {
+                userId,
+                unitNumber: item.unitNumber
+              }
+            }
+          });
+          const existingCompletedSteps = existing?.completedSteps || [];
+          const existingStepAnswers = existing?.stepAnswers || {};
+          const existingScores = existing?.scores || {};
+          const mergedCompletedSteps = mergeCompletedSteps(existingCompletedSteps, item.completedSteps);
+          const mergedStepAnswers = mergeStepAnswers(existingStepAnswers, item.stepAnswers);
+          const mergedScores = mergeScores(existingScores, item.scores);
+          const isCompleted = existing?.isUnitCompleted || item.isUnitCompleted || mergedCompletedSteps.length >= 10;
+          const completedAt = isCompleted ? existing?.completedAt || now : null;
+          await tx.readingChallengeUnitProgress.upsert({
+            where: {
+              userId_unitNumber: {
+                userId,
+                unitNumber: item.unitNumber
+              }
+            },
+            create: {
+              userId,
+              unitNumber: item.unitNumber,
+              currentStepIndex: item.currentStepIndex,
+              completedSteps: mergedCompletedSteps,
+              stepAnswers: mergedStepAnswers,
+              readingWpm: item.readingWpm ?? null,
+              readingSeconds: item.readingSeconds ?? null,
+              scores: mergedScores,
+              writingDraft: item.writingDraft ?? null,
+              isUnitCompleted: isCompleted,
+              completedAt,
+              lastPracticedAt: now
+            },
+            update: {
+              currentStepIndex: Math.max(existing?.currentStepIndex ?? 0, item.currentStepIndex),
+              completedSteps: mergedCompletedSteps,
+              stepAnswers: mergedStepAnswers,
+              readingWpm: item.readingWpm ?? existing?.readingWpm ?? null,
+              readingSeconds: item.readingSeconds ?? existing?.readingSeconds ?? null,
+              scores: mergedScores,
+              writingDraft: item.writingDraft || existing?.writingDraft || null,
+              isUnitCompleted: isCompleted,
+              completedAt,
+              lastPracticedAt: now
+            }
+          });
+        }
+      });
+      const allUnits = await fastify.prisma.readingChallengeUnitProgress.findMany({
+        where: { userId },
+        orderBy: { unitNumber: "asc" }
+      });
+      const completedUnitsCount = allUnits.filter((u) => u.isUnitCompleted).length;
+      const startedUnitsCount = allUnits.length;
+      const wpmRecords = allUnits.map((u) => u.readingWpm).filter((w) => typeof w === "number" && w > 0);
+      const averageWpm = wpmRecords.length > 0 ? Math.round(wpmRecords.reduce((acc, curr) => acc + curr, 0) / wpmRecords.length) : null;
+      return reply.send({
+        status: "success",
+        data: {
+          units: allUnits,
+          summary: {
+            startedUnitsCount,
+            completedUnitsCount,
+            averageWpm,
+            totalUnits: 20
+          }
+        }
+      });
+    }
+  );
+};
+var reading_challenge_routes_default = readingChallengeRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -149413,6 +149689,7 @@ var routes = async (fastify) => {
   await fastify.register(cambridge_routes_default, { prefix: "/cambridge" });
   await fastify.register(faculty_routes_default, { prefix: "/faculty" });
   await fastify.register(evidence_routes_default, { prefix: "/evidence" });
+  await fastify.register(reading_challenge_routes_default, { prefix: "/reading-challenge" });
 };
 var routes_default = routes;
 

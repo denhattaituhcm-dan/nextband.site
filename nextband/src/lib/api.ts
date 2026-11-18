@@ -4321,3 +4321,10 @@ export {
   type SubmitEvcAttemptPayload,
   type EvcBookProgressSummary,
 } from "./api/domains/essential-vocabulary.api";
+
+export {
+  readingChallengeApi,
+  type ReadingChallengeProgressRecord,
+  type ReadingChallengeSummary,
+  type SaveUnitProgressPayload,
+} from "./api/domains/reading-challenge.api";

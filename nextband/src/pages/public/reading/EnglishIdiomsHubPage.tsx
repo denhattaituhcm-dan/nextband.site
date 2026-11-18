@@ -62,6 +62,9 @@ import unit19Data from "@/data/idioms/unit19";
 import { UNIT_19_ETYMOLOGY } from "@/data/idioms/unit19_etymology";
 import unit20Data from "@/data/idioms/unit20";
 import { UNIT_20_ETYMOLOGY } from "@/data/idioms/unit20_etymology";
+import { UNIT_01_MANGA } from "@/data/idioms/unit01_manga";
+import { UNIT_02_MANGA } from "@/data/idioms/unit02_manga";
+import { MangaComicDialogueBox } from "./components/MangaComicDialogueBox";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
@@ -77,7 +80,12 @@ export default function EnglishIdiomsHubPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [openDrawers, setOpenDrawers] = useState<Record<string, boolean>>({});
   const [openEtymologyDrawers, setOpenEtymologyDrawers] = useState<Record<string, boolean>>({});
+  const [openMangaDrawers, setOpenMangaDrawers] = useState<Record<string, boolean>>({});
   const [currentlyPlayingAudio, setCurrentlyPlayingAudio] = useState<string | null>(null);
+
+  const toggleMangaDrawer = (id: string) => {
+    setOpenMangaDrawers((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   // Audio listened tracking persisted in localStorage
   const [listenedIds, setListenedIds] = useState<Set<string>>(() => {
@@ -110,7 +118,7 @@ export default function EnglishIdiomsHubPage() {
     return new Set<string>();
   });
   const [onlyBookmarkedFilter, setOnlyBookmarkedFilter] = useState(false);
-  const [cardActiveTabs, setCardActiveTabs] = useState<Record<string, "context" | "metaphor" | "quiz">>({});
+  const [cardActiveTabs, setCardActiveTabs] = useState<Record<string, "context" | "metaphor" | "quiz" | "manga">>({});
   const [microQuizAnswers, setMicroQuizAnswers] = useState<Record<string, string>>({});
 
   const toggleBookmark = (id: string) => {
@@ -404,6 +412,13 @@ export default function EnglishIdiomsHubPage() {
       : selectedUnitId === 19
       ? UNIT_19_ETYMOLOGY
       : UNIT_20_ETYMOLOGY;
+
+  const currentMangaData =
+    selectedUnitId === 1
+      ? UNIT_01_MANGA
+      : selectedUnitId === 2
+      ? UNIT_02_MANGA
+      : {};
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -1548,8 +1563,10 @@ export default function EnglishIdiomsHubPage() {
                       : undefined),
                   cognitive_anchor: item.cognitive_anchor,
                   register_info: item.register_info,
+                  comic_dialogue: currentMangaData[item.id],
                 }))}
                 etymologyData={currentEtymologyData as any}
+                mangaData={currentMangaData as any}
                 bookmarkedIds={bookmarkedIds}
                 onToggleBookmark={toggleBookmark}
                 listenedIds={listenedIds}
@@ -1686,6 +1703,19 @@ export default function EnglishIdiomsHubPage() {
                           >
                             🎯 Phản xạ
                           </button>
+                          {currentMangaData[item.id] && (
+                            <button
+                              type="button"
+                              onClick={() => setCardActiveTabs((prev) => ({ ...prev, [item.id]: "manga" }))}
+                              className={`flex-1 py-1.5 px-2 rounded-md transition text-center text-[11px] cursor-pointer ${
+                                activeCardTab === "manga"
+                                  ? "bg-amber-400 text-slate-950 shadow-xs font-bold"
+                                  : "text-amber-800 hover:text-amber-950"
+                              }`}
+                            >
+                              💬 Manga
+                            </button>
+                          )}
                         </div>
 
                         {/* TAB 1: Ngữ cảnh */}
@@ -1818,6 +1848,16 @@ export default function EnglishIdiomsHubPage() {
                             )}
                           </div>
                         )}
+
+                        {/* TAB 4: Manga Doraemon Đối đáp */}
+                        {activeCardTab === "manga" && currentMangaData[item.id] && (
+                          <div className="pt-1">
+                            <MangaComicDialogueBox
+                              dialogue={currentMangaData[item.id]}
+                              targetIdiom={item.headword}
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -1886,6 +1926,40 @@ export default function EnglishIdiomsHubPage() {
                     </div>
 
                     <div className="pt-4 border-t border-slate-100 mt-4 space-y-2">
+                      {/* Button 0: Hội thoại Doraemon Manga (Bối cảnh thực tế) */}
+                      {currentMangaData[item.id] && (
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => toggleMangaDrawer(item.id)}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer border ${
+                              openMangaDrawers[item.id]
+                                ? "bg-amber-400 text-slate-950 border-amber-500 shadow-xs"
+                                : "bg-linear-to-r from-amber-50 to-orange-50 hover:bg-amber-100 text-amber-950 border-amber-300 shadow-2xs"
+                            }`}
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <span className="text-base">💬</span>
+                              <span>{openMangaDrawers[item.id] ? "Thu gọn Manga Doraemon" : "Hội thoại Doraemon (Bối cảnh thực tế)"}</span>
+                            </span>
+                            <ChevronDown
+                              className={`w-4 h-4 transition-transform text-amber-900 ${
+                                openMangaDrawers[item.id] ? "rotate-180" : ""
+                              }`}
+                            />
+                          </button>
+
+                          {openMangaDrawers[item.id] && (
+                            <div className="mt-2.5 animate-fadeIn">
+                              <MangaComicDialogueBox
+                                dialogue={currentMangaData[item.id]}
+                                targetIdiom={item.headword}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       {/* Button 1: Ngữ pháp & IELTS */}
                       <button
                         type="button"
