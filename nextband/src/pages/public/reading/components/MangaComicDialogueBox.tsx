@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Volume2, Sparkles, Lightbulb, MessageCircle } from "lucide-react";
-import { MangaComicDialogue, MangaCharacter } from "@/data/idioms/unit02_manga";
+import { MangaComicDialogue, MangaCharacter } from "@/data/idioms/manga/types";
 
 interface MangaComicDialogueBoxProps {
   dialogue?: MangaComicDialogue;
