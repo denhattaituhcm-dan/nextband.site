@@ -795,6 +795,190 @@
       color: #0284c7;
       font-weight: 600;
     }
+  
+    /* ==========================================================
+       BỔ SUNG HỆ THỐNG CSS CHUẨN MỰC CHO TOÀN BỘ 7 CHƯƠNG (23 BÀI)
+       ========================================================== */
+    .chapter-block {
+      margin-top: 44px;
+    }
+    .chapter-header-strip {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+      border: 1px solid #bae6fd;
+      border-radius: var(--radius-lg);
+      padding: 24px 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .chap-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 7px 14px;
+      background: #0284c7;
+      color: #ffffff;
+      border-radius: 20px;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+    }
+    .chap-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 4px 0;
+      letter-spacing: -0.3px;
+    }
+    .chap-desc {
+      font-size: 13.5px;
+      color: #475569;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .chap-progress-pill {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #6ee7b7;
+      white-space: nowrap;
+    }
+
+    /* HUD Scientific Bar cho các bài dùng .hud-chip (Bài 7 -> Bài 23) */
+    .hud-scientific:has(.hud-chip) {
+      position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 18px;
+      background: #f8fafc;
+      border: none;
+      border-bottom: 1px solid var(--border-color);
+      border-radius: 0;
+      box-shadow: none;
+      pointer-events: auto;
+      z-index: 15;
+    }
+    .hud-chip {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 6px 12px;
+      flex: 1;
+      min-width: 0;
+    }
+    .hud-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+    }
+    .hud-value {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hud-value.highlight {
+      color: #0284c7;
+    }
+
+    /* Khu vực Lab Canvas Area (Bài 7 -> Bài 23) */
+    .lab-canvas-area {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      background: #ffffff;
+    }
+
+    /* Các hộp lý thuyết chuẩn Sư phạm (Bài 7 -> Bài 23) */
+    .box-target h4, .box-law h4 {
+      font-size: 14px;
+      font-weight: 800;
+      margin: 0 0 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .box-target {
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+    }
+    .box-law {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #0284c7;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 13.5px;
+      color: #1e293b;
+      line-height: 1.65;
+    }
+    .meta-citation {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0284c7;
+      background: #e0f2fe;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin: 10px 0 6px 0;
+    }
+    .section-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 8px 0 10px 0;
+      line-height: 1.35;
+    }
+    .theory-paragraph {
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .btn-tool.active {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+    .btn-tool {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+    .btn-tool:hover:not(.active) {
+      background: #e2e8f0;
+    }
+
   </style>
 </head>
 <body>
@@ -1288,7 +1472,7 @@
             <h2 class="chap-title">Phản Ứng Oxi Hoá – Khử</h2>
             <p class="chap-desc">Bản chất số oxi hoá, chất khử và chất oxi hoá, phương pháp thăng bằng electron & ứng dụng trong đời sống và sản xuất.</p>
           </div>
-          <span class="chap-progress-pill">Bài 15 • Chương 4</span>
+          <span class="chap-progress-pill">Bài 15 – 16 • Chương 4</span>
         </div>
 
         <div class="cards-grid">
@@ -1360,7 +1544,7 @@
             <h2 class="chap-title">Năng Lượng Hoá Học</h2>
             <p class="chap-desc">Phản ứng toả nhiệt, thu nhiệt, điều kiện chuẩn, biến thiên enthalpy chuẩn ΔrH°₂₉₈ và 2 phương pháp tính toán theo nhiệt tạo thành và năng lượng liên kết.</p>
           </div>
-          <span class="chap-progress-pill">Bài 17 • Chương 5</span>
+          <span class="chap-progress-pill">Bài 17 – 18 • Chương 5</span>
         </div>
 
         <div class="cards-grid">
@@ -1430,7 +1614,7 @@
             <h2 class="chap-title">Tốc Độ Phản Ứng Hoá Học</h2>
             <p class="chap-desc">Tốc độ trung bình v_tb, định luật tác dụng khối lượng Guldberg - Waage, 5 yếu tố ảnh hưởng & quy tắc hệ số nhiệt độ Van't Hoff.</p>
           </div>
-          <span class="chap-progress-pill">Bài 19 • Chương 6</span>
+          <span class="chap-progress-pill">Bài 19 – 20 • Chương 6</span>
         </div>
 
         <div class="cards-grid">
@@ -6734,14 +6918,15 @@
   </div>
 
 
+  
   <!-- ========================================================
-       BÀI 21: NHÓM HALOGEN (NHÓM VIIA)
-       (DUAL-PANE FOCUS STUDIO CHUẨN SƯ PHẠM SGK TR. 104 - 112)
+       TRANG: PHÒNG HỌC & THÍ NGHIỆM CHUẨN MỰC BÀI 21 (FOCUS STUDIO)
+       CHƯƠNG 7: NHÓM HALOGEN (NHÓM VIIA)
        ======================================================== -->
   <div id="view-studio-b21" class="view-screen">
     <div class="studio-container">
       
-      <!-- Studio Topbar -->
+      <!-- Studio Topbar Chuẩn Mực Hệ Thống -->
       <nav class="studio-topbar">
         <div style="display: flex; align-items: center; gap: 14px;">
           <button class="btn-back-hub" onclick="backToDashboard()">
@@ -6754,16 +6939,19 @@
           </div>
         </div>
 
-        <!-- Segmented Tab Switcher Bài 21 -->
+        <!-- Segmented Tab Switcher Bài 21 (4 Tabs) -->
         <div class="nav-tabs-segmented">
           <button id="tab-btn-b21-p1" class="tab-seg-btn active" onclick="switchPartB21('part1')">
-            <span>I. Trạng Thái Tự Nhiên & Tính Chất Vật Lí</span>
+            <span>I. Tự Nhiên & Tính Chất Vật Lí</span>
           </button>
           <button id="tab-btn-b21-p2" class="tab-seg-btn" onclick="switchPartB21('part2')">
-            <span>II. Tính Oxi Hoá Mạnh & Quy Luật Phản Ứng</span>
+            <span>II. Tính Oxi Hoá & Đẩy Muối Halide</span>
           </button>
           <button id="tab-btn-b21-p3" class="tab-seg-btn" onclick="switchPartB21('part3')">
-            <span>III. Tự Oxi Hoá – Khử & Điều Chế Chlorine</span>
+            <span>III. Điều Chế Chlorine & Nước Javel</span>
+          </button>
+          <button id="tab-btn-b21-p4" class="tab-seg-btn" onclick="switchPartB21('part4')">
+            <span>IV. Đấu Trường Bài 21</span>
           </button>
         </div>
       </nav>
@@ -6778,60 +6966,70 @@
           <div id="content-b21-part1" class="lesson-section-content active">
             <div class="box-target">
               <h4>🎯 Mục tiêu Phần I (SGK Trang 104 – 108)</h4>
-              <p>Nắm vững nguồn gốc tên gọi Halogen ("sinh ra muối"); trạng thái tự nhiên trong nước biển, mỏ muối và tuyến giáp; quy luật biến đổi trạng thái tập hợp (Khí ➔ Lỏng ➔ Rắn), màu sắc đậm dần và nhiệt độ nóng chảy, nhiệt độ sôi tăng dần theo tương tác Van der Waals.</p>
+              <p>Phát biểu được trạng thái tự nhiên của các nguyên tố halogen; mô tả trạng thái, màu sắc, nhiệt độ nóng chảy ($t_\text{nc}$), nhiệt độ sôi ($t_\text{s}$) của các đơn chất halogen và giải thích xu hướng biến đổi dựa vào tương tác van der Waals.</p>
             </div>
 
-            <div class="meta-citation">Mục I & III • SGK Trang 104 – 108</div>
-            <h3 class="section-title">Vị Trí, Cấu Tạo & Xu Hướng Vật Lí Nhóm VIIA</h3>
+            <div class="meta-citation">Mục I, II & III • SGK Trang 104 – 108</div>
+            <h3 class="section-title">1. Vị Trí, Cấu Tạo & Trạng Thái Tự Nhiên</h3>
             
-            <p><strong>1. Tên gọi & Trạng thái tự nhiên:</strong> Nhóm VIIA gồm các nguyên tố: <strong>Fluorine (F), Chlorine (Cl), Bromine (Br), Iodine (I)</strong>, và 2 nguyên tố phóng xạ Astatine (At), Tennessine (Ts). Do có tính hoạt động hoá học rất mạnh nên trong tự nhiên các halogen <em>chỉ tồn tại ở dạng hợp chất</em> (chủ yếu là muối halide $\text{NaCl}, \text{CaF}_2, \text{NaBr}, \text{NaI}$ trong nước biển).</p>
+            <p class="theory-paragraph">Nhóm VIIA (nhóm <strong>halogen</strong> — tiếng Hy Lạp nghĩa là <em>"sinh ra muối"</em>) gồm 6 nguyên tố: <strong>fluorine ($\text{F}$), chlorine ($\text{Cl}$), bromine ($\text{Br}$), iodine ($\text{I}$)</strong> và hai nguyên tố phóng xạ là astatine ($\text{At}$), tennessine ($\text{Ts}$).</p>
 
+            <p class="theory-paragraph">• <strong>Cấu hình electron lớp ngoài cùng:</strong> $ns^2 np^5$ ($7$ electron hoá trị). Ở trạng thái tự do, hai nguyên tử halogen góp chung 1 cặp electron tạo phân tử hai nguyên tử $\text{X} - \text{X}$ ($\text{X}_2$).<br>
+            • <strong>Trạng thái tự nhiên:</strong> Do hoạt động hoá học mạnh nên trong tự nhiên halogen <strong>chỉ tồn tại ở dạng hợp chất</strong> (chủ yếu là muối halide):<br>
+            – <em>Fluorine:</em> Trong khoáng vật fluorite ($\text{CaF}_2$), cryolite ($\text{Na}_3\text{AlF}_6$) và men răng.<br>
+            – <em>Chlorine:</em> Phổ biến nhất dưới dạng muối ăn sodium chloride ($\text{NaCl}$) trong nước biển, mỏ muối khoáng halite, sylvite ($\text{KCl}\cdot\text{NaCl}$) và trong dịch vị dạ dày ($\text{HCl}$).<br>
+            – <em>Bromine & Iodine:</em> Muối bromide và iodide trong nước biển, rong biển và tuyến giáp của người.</p>
+
+            <h3 class="section-title">2. Tính Chất Vật Lí & Giải Thích Bằng Tương Tác Van der Waals</h3>
             <div style="margin: 14px 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: center;">
-                <thead style="background: #f8fafc; font-weight: 700; color: #0f172a; border-bottom: 1.5px solid #cbd5e1;">
+              <table class="book-table" style="text-align: center;">
+                <thead>
                   <tr>
-                    <th style="padding: 8px;">Đơn chất</th>
-                    <th>Trạng thái (25°C)</th>
+                    <th>Đơn chất</th>
+                    <th>Trạng thái ($20^\circ\text{C}$)</th>
                     <th>Màu sắc</th>
-                    <th>$t_\text{nc} (^\circ\text{C})$</th>
-                    <th>$t_\text{s} (^\circ\text{C})$</th>
+                    <th>$t_\text{nc}\ (^\circ\text{C})$</th>
+                    <th>$t_\text{s}\ (^\circ\text{C})$</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 8px; font-weight: 700; color: #0284c7;">$\text{F}_2$</td>
-                    <td>Thể khí</td>
-                    <td>Vàng lục nhạt</td>
-                    <td>$-219.6$</td>
-                    <td>$-188.1$</td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                    <td style="padding: 8px; font-weight: 700; color: #16a34a;">$\text{Cl}_2$</td>
-                    <td>Thể khí</td>
-                    <td>Vàng lục</td>
-                    <td>$-101.5$</td>
-                    <td>$-34.0$</td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 8px; font-weight: 700; color: #ea580c;">$\text{Br}_2$</td>
-                    <td>Thể lỏng</td>
-                    <td>Đỏ nâu (dễ bay hơi)</td>
-                    <td>$-7.2$</td>
-                    <td>$58.8$</td>
+                  <tr>
+                    <td style="font-weight: 800; color: #ca8a04;">$\text{F}_2$ (Fluorine)</td>
+                    <td>Khí</td>
+                    <td>Lục nhạt</td>
+                    <td>$-219,6$</td>
+                    <td>$-188,1$</td>
                   </tr>
                   <tr style="background: #f8fafc;">
-                    <td style="padding: 8px; font-weight: 700; color: #7c3aed;">$\text{I}_2$</td>
-                    <td>Thể rắn</td>
-                    <td>Tím đen (thăng hoa)</td>
-                    <td>$113.7$</td>
-                    <td>$184.3$</td>
+                    <td style="font-weight: 800; color: #16a34a;">$\text{Cl}_2$ (Chlorine)</td>
+                    <td>Khí</td>
+                    <td>Vàng lục</td>
+                    <td>$-101,0$</td>
+                    <td>$-34,1$</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight: 800; color: #ea580c;">$\text{Br}_2$ (Bromine)</td>
+                    <td>Lỏng (dễ bay hơi)</td>
+                    <td>Nâu đỏ</td>
+                    <td>$-7,3$</td>
+                    <td>$+59,2$</td>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    <td style="font-weight: 800; color: #7c3aed;">$\text{I}_2$ (Iodine)</td>
+                    <td>Rắn (thăng hoa)</td>
+                    <td>Đen tím</td>
+                    <td>$+113,6$</td>
+                    <td>$+185,5$</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <div style="padding: 10px 14px; background: #eff6ff; border-left: 4px solid #3b82f6; font-size: 13px; color: #1e40af;">
-              <strong>Giải thích quy luật nhiệt độ tăng dần từ $\text{F}_2 \rightarrow \text{I}_2$:</strong> Khi đi từ fluorine đến iodine, phân tử khối tăng và số lượng electron trong phân tử tăng, làm cho <strong>tương tác Van der Waals giữa các phân tử $\text{X}_2$ tăng mạnh</strong>, dẫn đến nhiệt độ nóng chảy và nhiệt độ sôi tăng đều đặn.
+            <div class="box-law">
+              <h4>⚖️ Giải thích quy luật biến đổi vật lí từ $\text{F}_2$ đến $\text{I}_2$</h4>
+              <p>• <strong>Trạng thái tập hợp:</strong> Chuyển từ thể khí ($\text{F}_2, \text{Cl}_2$) sang thể lỏng ($\text{Br}_2$) và thể rắn ($\text{I}_2$); màu sắc đậm dần.<br>
+              • <strong>Nhiệt độ nóng chảy và nhiệt độ sôi tăng dần:</strong> Các phân tử $\text{X}_2$ đều không phân cực. Khi đi từ $\text{F}_2$ đến $\text{I}_2$, khối lượng phân tử và kích thước đám mây electron tăng mạnh, dẫn đến <strong>tương tác van der Waals giữa các phân tử tăng dần</strong>, đòi hỏi nhiều năng lượng nhiệt hơn để phá vỡ liên kết liên phân tử.<br>
+              • <strong>Hiện tượng thăng hoa của iodine:</strong> Khi đun nóng ở áp suất thường, $\text{I}_2$ rắn chuyển thẳng thành hơi màu tím mà không qua trạng thái lỏng.</p>
             </div>
           </div>
 
@@ -6839,71 +7037,90 @@
           <div id="content-b21-part2" class="lesson-section-content">
             <div class="box-target">
               <h4>🎯 Mục tiêu Phần II (SGK Trang 108 – 111)</h4>
-              <p>Hiểu cấu hình electron lớp ngoài cùng $ns^2 np^5$ (7 electron hoá trị, thiếu 1e để đạt bát tử octet); quy luật giảm dần tính oxi hoá từ $\text{F}_2 \rightarrow \text{I}_2$; phản ứng với kim loại ($\text{Fe} \rightarrow \text{Fe}^{3+}$ khi gặp $\text{Cl}_2$), với $\text{H}_2$ và phản ứng đẩy muối halide.</p>
+              <p>Giải thích vì sao các đơn chất halogen có <strong>tính oxi hoá mạnh</strong> và giảm dần từ $\text{F}_2$ đến $\text{I}_2$; viết phương trình phản ứng với kim loại, với hydrogen và phản ứng thế halogen trong dung dịch muối halide.</p>
             </div>
 
             <div class="meta-citation">Mục IV • SGK Trang 108 – 111</div>
-            <h3 class="section-title">Xu Hướng Oxi Hoá Mạnh Giảm Dần ($\text{F}_2 > \text{Cl}_2 > \text{Br}_2 > \text{I}_2$)</h3>
+            <h3 class="section-title">1. Bản Chất Tính Oxi Hoá Mạnh Của Nhóm Halogen</h3>
+            <p class="theory-paragraph">Nguyên tử halogen có 7 electron lớp ngoài cùng ($ns^2 np^5$) và độ âm điện lớn, nên rất dễ nhận thêm 1 electron để đạt cấu hình bền vững của khí hiếm (quy tắc octet):
+            $$\text{X} + 1e \longrightarrow \text{X}^-$$
+            Đi từ $\text{F}_2$ đến $\text{I}_2$, bán kính nguyên tử tăng dần và độ âm điện giảm dần, nên khả năng hút electron giảm, tức là <strong>tính oxi hoá giảm dần: $\text{F}_2 > \text{Cl}_2 > \text{Br}_2 > \text{I}_2$</strong>.</p>
 
-            <div style="display: flex; flex-direction: column; gap: 10px; margin: 14px 0;">
-              <div style="padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;">
-                <strong style="color: #b91c1c; font-size: 13px;">1. Phản ứng với Kim loại (Tạo muối halide):</strong>
-                <p style="margin: 4px 0; font-size: 12.5px; color: #1e293b;">
-                  Chlorine oxi hoá sắt lên mức oxi hoá cao nhất (+3):
-                  $$2\text{Fe} + 3\text{Cl}_2 \xrightarrow{t^\circ} 2\text{FeCl}_3 \quad (\text{Khói màu nâu đỏ})$$
-                  Trong khi đó, Iodine yếu hơn chỉ oxi hoá sắt lên mức (+2): $\text{Fe} + \text{I}_2 \xrightarrow{t^\circ} \text{FeI}_2$.
-                </p>
-              </div>
-
-              <div style="padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
-                <strong style="color: #166534; font-size: 13px;">2. Phản ứng với Hydrogen ($\text{H}_2$):</strong>
-                <p style="margin: 4px 0; font-size: 12.5px; color: #1e293b;">
-                  Điều kiện phản ứng khắc nghiệt dần chứng tỏ tính oxi hoá suy giảm:
-                  <br/>• $\text{H}_2 + \text{F}_2 \rightarrow 2\text{HF}$ (Nổ ngay trong bóng tối, $-252^\circ\text{C}$).
-                  <br/>• $\text{H}_2 + \text{Cl}_2 \xrightarrow{\text{ánh sáng}} 2\text{HCl}$ (Nổ khi có ánh sáng).
-                  <br/>• $\text{H}_2 + \text{Br}_2 \xrightarrow{t^\circ \approx 400^\circ\text{C}} 2\text{HBr}$ (Cần đun nóng).
-                  <br/>• $\text{H}_2 + \text{I}_2 \xrightleftharpoons[t^\circ]{\text{Pt}} 2\text{HI}$ (Thuận nghịch, cần xúc tác Pt ở $350 - 500^\circ\text{C}$).
-                </p>
-              </div>
-
-              <div style="padding: 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;">
-                <strong style="color: #b45309; font-size: 13px;">3. Quy tắc đẩy muối Halide (Halogen mạnh đẩy halogen yếu):</strong>
-                <p style="margin: 4px 0; font-size: 12.5px; color: #1e293b;">
-                  $$\text{Cl}_2 + 2\text{NaBr} \rightarrow 2\text{NaCl} + \text{Br}_2 \quad (\text{Dung dịch chuyển sang màu vàng nâu})$$
-                  $$\text{Br}_2 + 2\text{NaI} \rightarrow 2\text{NaBr} + \text{I}_2 \quad (\text{Iodine sinh ra làm xanh hồ tinh bột})$$
-                  *Ứng dụng:* Dùng $\text{Cl}_2$ để chiết tách và sản xuất Bromine thương mại từ nước biển.
-                </p>
-              </div>
+            <h3 class="section-title">2. Tác Dụng Với Kim Loại & Với Hydrogen</h3>
+            <p class="theory-paragraph">• <strong>Tác dụng với kim loại:</strong> Oxi hoá hầu hết kim loại tạo muối halide. Đặc biệt, $\text{Cl}_2$ oxi hoá sắt ($\text{Fe}$) lên số oxi hoá $+3$:
+            $$2\text{Na} + \text{Cl}_2 \xrightarrow{t^\circ} 2\text{NaCl} \quad;\quad 2\text{Fe} + 3\text{Cl}_2 \xrightarrow{t^\circ} 2\text{FeCl}_3\text{ (khói nâu đỏ)}$$
+            • <strong>Tác dụng với hydrogen ($\text{H}_2$):</strong> Mức độ phản ứng giảm rõ rệt từ $\text{F}_2$ đến $\text{I}_2$ (chứng minh tính oxi hoá giảm dần):</p>
+            <div style="margin: 12px 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+              <table class="book-table">
+                <thead>
+                  <tr>
+                    <th>Phương trình phản ứng</th>
+                    <th>Điều kiện & Mức độ phản ứng</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>$\text{H}_2 + \text{F}_2 \longrightarrow 2\text{HF}$</td>
+                    <td>Bóng tối, nhiệt độ rất thấp ($-252^\circ\text{C}$), <strong>nổ rất mạnh</strong>.</td>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    <td>$\text{H}_2 + \text{Cl}_2 \xrightarrow{as / t^\circ} 2\text{HCl}$</td>
+                    <td>Cần chiếu sáng hoặc đun nóng, <strong>gây nổ</strong>.</td>
+                  </tr>
+                  <tr>
+                    <td>$\text{H}_2 + \text{Br}_2 \xrightarrow{t^\circ\ (200-400^\circ\text{C})} 2\text{HBr}$</td>
+                    <td>Đun nóng cao, <strong>không gây nổ</strong>.</td>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    <td>$\text{H}_2 + \text{I}_2 \underset{xt}{\overset{t^\circ\ (350-500^\circ\text{C})}{\rightleftharpoons}} 2\text{HI}$</td>
+                    <td>Đun nóng và chất xúc tác ($\text{Pt}$), <strong>thuận nghịch</strong>.</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+
+            <h3 class="section-title">3. Tác Dụng Với Dung Dịch Muối Halide (Phản Ứng Thế Halogen)</h3>
+            <p class="theory-paragraph">Từ $\text{Cl}_2$ đến $\text{I}_2$, đơn chất halogen có tính oxi hoá mạnh hơn sẽ đẩy được halogen có tính oxi hoá yếu hơn ra khỏi dung dịch muối halide:
+            $$\text{Cl}_2 + 2\text{NaBr} \longrightarrow 2\text{NaCl} + \text{Br}_2\text{ (dung dịch hoá vàng cam)}$$
+            $$\text{Br}_2 + 2\text{NaI} \longrightarrow 2\text{NaBr} + \text{I}_2\text{ (dung dịch hoá nâu tím)}$$
+            <em>Lưu ý:</em> $\text{F}_2$ không thực hiện được phản ứng đẩy trong dung dịch vì $\text{F}_2$ phản ứng mãnh liệt với nước giải phóng khí oxygen: $2\text{F}_2 + 2\text{H}_2\text{O} \longrightarrow 4\text{HF} + \text{O}_2\uparrow$ (bốc cháy trên mặt nước).</p>
           </div>
 
           <!-- PHẦN 3: TỰ OXI HOÁ - KHỬ & ĐIỀU CHẾ CHLORINE -->
           <div id="content-b21-part3" class="lesson-section-content">
             <div class="box-target">
               <h4>🎯 Mục tiêu Phần III (SGK Trang 110 – 112)</h4>
-              <p>Hiểu phản ứng tự oxi hoá – khử của Chlorine trong nước và dung dịch kiềm ($\text{NaOH} \rightarrow$ Nước Javel); nguyên tắc điều chế Chlorine trong phòng thí nghiệm ($\text{MnO}_2 + \text{HCl}$) và trong công nghiệp (điện phân dung dịch $\text{NaCl}$ có màng ngăn xốp).</p>
+              <p>Viết được phương trình tự oxi hoá – khử của chlorine với nước và với dung dịch sodium hydroxide (sản xuất nước Javel, chloramine B); trình bày nguyên tắc điều chế chlorine trong phòng thí nghiệm và trong công nghiệp.</p>
             </div>
 
-            <div class="meta-citation">Mục IV & V • SGK Trang 110 – 112</div>
-            <h3 class="section-title">Phản Ứng Tự Oxi Hoá – Khử & Điều Chế $\text{Cl}_2$</h3>
+            <div class="meta-citation">Mục IV.3, IV.4 & V • SGK Trang 110 – 112</div>
+            <h3 class="section-title">1. Phản Ứng Tự Oxi Hoá – Khử Của Chlorine</h3>
+            <p class="theory-paragraph">• <strong>Tác dụng với nước (Nước chlorine):</strong> Khi tan vào nước, một phần $\text{Cl}_2$ tác dụng thuận nghịch với nước tạo hydrochloric acid và hypochlorous acid:
+            $$\overset{0}{\text{Cl}}_2 + \text{H}_2\text{O} \rightleftharpoons \text{H}\overset{-1}{\text{Cl}} + \text{H}\overset{+1}{\text{Cl}}\text{O}$$
+            Hypochlorous acid ($\text{HClO}$) có tính oxi hoá rất mạnh nên nước chlorine có tính tẩy màu và sát khuẩn (dùng xử lí nước sinh hoạt).<br>
+            • <strong>Tác dụng với dung dịch kiềm (Sản xuất nước Javel):</strong> Ở nhiệt độ thường, $\text{Cl}_2$ phản ứng với dung dịch $\text{NaOH}$ tạo hỗn hợp muối sodium chloride và sodium hypochlorite (gọi là <strong>nước Javel</strong>):
+            $$\overset{0}{\text{Cl}}_2 + 2\text{NaOH} \longrightarrow \text{Na}\overset{-1}{\text{Cl}} + \text{Na}\overset{+1}{\text{Cl}}\text{O} + \text{H}_2\text{O}$$</p>
 
-            <div style="padding: 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; margin: 12px 0;">
-              <strong style="color: #0f172a; font-size: 13px;">1. Tác dụng với Nước & Nước Javel (Tự oxi hoá – khử):</strong>
-              <p style="margin: 4px 0; font-size: 12.5px; color: #334155; line-height: 1.6;">
-                $\overset{0}{\text{Cl}_2} + \text{H}_2\text{O} \rightleftharpoons \text{H}\overset{-1}{\text{Cl}} + \text{H}\overset{+1}{\text{Cl}}\text{O}$<br/>
-                $\overset{0}{\text{Cl}_2} + 2\text{NaOH} \rightarrow \text{Na}\overset{-1}{\text{Cl}} + \text{Na}\overset{+1}{\text{Cl}}\text{O} + \text{H}_2\text{O} \quad (\text{Nước Javel})$<br/>
-                *Giải thích:* $\text{Cl}_2$ vừa đóng vai trò là chất oxi hoá (về $-1$), vừa là chất khử (lên $+1$). Axit $\text{HClO}$ và muối $\text{NaClO}$ có tính oxi hoá cực mạnh nên nước clo và nước Javel có khả năng <strong>tẩy màu và diệt khuẩn</strong> mạnh mẽ.
-              </p>
+            <h3 class="section-title">2. Điều Chế Khí Chlorine</h3>
+            <p class="theory-paragraph">• <strong>Trong phòng thí nghiệm (Phương pháp C. W. Scheele, 1774):</strong> Cho hydrochloric acid đặc tác dụng với các chất oxi hoá mạnh như $\text{MnO}_2$ (đun nóng) hoặc $\text{KMnO}_4$:
+            $$\text{MnO}_2 + 4\text{HCl (đặc)} \xrightarrow{t^\circ} \text{MnCl}_2 + \text{Cl}_2\uparrow + 2\text{H}_2\text{O}$$
+            $$2\text{KMnO}_4 + 16\text{HCl (đặc)} \longrightarrow 2\text{KCl} + 2\text{MnCl}_2 + 5\text{Cl}_2\uparrow + 8\text{H}_2\text{O}$$
+            • <strong>Trong công nghiệp:</strong> Điện phân dung dịch $\text{NaCl}$ bão hoà có màng ngăn xốp giữa hai điện cực:
+            $$2\text{NaCl} + 2\text{H}_2\text{O} \xrightarrow{\text{đpdd, có màng ngăn}} 2\text{NaOH} + \text{H}_2\uparrow + \text{Cl}_2\uparrow$$
+            <em>(Nếu không có màng ngăn, $\text{Cl}_2$ thoát ra ở anode sẽ tác dụng ngay với $\text{NaOH}$ ở cathode tạo thành nước Javel).</em></p>
+          </div>
+
+          <!-- PHẦN 4: ĐẤU TRƯỜNG BÀI 21 -->
+          <div id="content-b21-part4" class="lesson-section-content">
+            <div class="box-target">
+              <h4>🎯 Đấu Trường Luyện Tập Trọng Tâm Bài 21</h4>
+              <p>Kiểm tra mức độ nắm vững kiến thức về tính chất vật lí, tương tác van der Waals, quy luật tính oxi hoá và hệ thống điều chế khí chlorine.</p>
             </div>
-
-            <div style="padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; margin: 12px 0;">
-              <strong style="color: #1e40af; font-size: 13px;">2. Phương pháp điều chế $\text{Cl}_2$:</strong>
-              <p style="margin: 4px 0; font-size: 12.5px; color: #1e293b; line-height: 1.6;">
-                • <strong>Trong phòng thí nghiệm:</strong> Dùng chất oxi hoá mạnh ($\text{MnO}_2, \text{KMnO}_4$) tác dụng với $\text{HCl}$ đặc:<br/>
-                $$\text{MnO}_2 + 4\text{HCl}(\text{đặc}) \xrightarrow{t^\circ} \text{MnCl}_2 + \text{Cl}_2\uparrow + 2\text{H}_2\text{O}$$
-                • <strong>Trong công nghiệp:</strong> Điện phân dung dịch $\text{NaCl}$ bão hoà có màng ngăn xốp:<br/>
-                $$2\text{NaCl} + 2\text{H}_2\text{O} \xrightarrow[\text{màng ngăn}]{\text{đpdd}} 2\text{NaOH} + \text{Cl}_2\uparrow + \text{H}_2\uparrow$$
-              </p>
+            <div class="box-law">
+              <h4>📌 Tóm tắt các điểm nhấn dễ sai trong đề thi</h4>
+              <p>1. $\text{F}_2$ đẩy được $\text{O}_2$ ra khỏi nước chứ <strong>không đẩy được</strong> $\text{Cl}_2$ ra khỏi dung dịch $\text{NaCl}$.<br>
+              2. $\text{I}_2$ tác dụng với sắt ($\text{Fe}$) chỉ tạo muối sắt(II) iodide ($\text{FeI}_2$), trong khi $\text{Cl}_2$ và $\text{Br}_2$ oxi hoá sắt lên tận sắt(III) ($\text{FeCl}_3, \text{FeBr}_3$).<br>
+              3. Trong hệ thống điều chế $\text{Cl}_2$ từ $\text{MnO}_2 + \text{HCl}$ đặc: Bình 1 chứa dung dịch $\text{NaCl}$ bão hoà dùng để giữ khí $\text{HCl}$; Bình 2 chứa $\text{H}_2\text{SO}_4$ đặc dùng để giữ hơi nước; bông ở miệng bình thu tẩm dung dịch $\text{NaOH}$ để ngăn $\text{Cl}_2$ độc thoát ra.</p>
             </div>
           </div>
 
@@ -6916,60 +7133,81 @@
           <div class="hud-scientific">
             <div class="hud-chip">
               <span class="hud-label">CHỦ ĐỀ ĐANG HỌC</span>
-              <span class="hud-value highlight">Chương 7 • Nhóm Halogen</span>
+              <span class="hud-value highlight">Chương 7 • Bài 21: Nhóm Halogen</span>
             </div>
             <div class="hud-chip">
               <span class="hud-label">CÔNG CỤ LAB</span>
-              <span id="b21-hud-tool" class="hud-value" style="color: #0284c7;">Bảng Màu & Trạng Thái 4 Halogen</span>
+              <span id="b21-hud-tool" class="hud-value" style="color: #0284c7;">Bộ 4 Lọ Đơn Chất Halogen 2.5D</span>
             </div>
             <div class="hud-chip">
               <span class="hud-label">QUY LUẬT CỐT TỬ</span>
-              <span class="hud-value" style="color: #16a34a;">Tính oxi hoá: F₂ > Cl₂ > Br₂ > I₂</span>
+              <span class="hud-value" style="color: #16a34a;">Tính oxi hoá: F₂ &gt; Cl₂ &gt; Br₂ &gt; I₂</span>
             </div>
           </div>
 
-          <!-- Interactive Workspace Panels -->
-          
           <!-- PANEL 1: Bộ 4 Lọ Đơn Chất Halogen Tương Tác 2.5D -->
           <div id="panel-b21-part1" class="lab-canvas-area" style="display: flex; flex-direction: column;">
             <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🧪 Bộ Lọ Khí & Tinh Thể 4 Halogen (F₂ - Cl₂ - Br₂ - I₂)</span>
-              <div style="font-size: 12px; color: #64748b;">Click từng lọ để xem thông số nhiệt động</div>
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🧪 Bộ Lọ Khí, Lỏng & Tinh Thể 4 Halogen (F₂ - Cl₂ - Br₂ - I₂)</span>
+              <div style="font-size: 12px; color: #64748b;">Click từng lọ để khảo sát thông số vật lí</div>
             </div>
             <div class="canvas-wrapper" style="flex: 1; position: relative;">
               <canvas id="b21HalogenCanvas"></canvas>
             </div>
           </div>
 
-          <!-- PANEL 2: Thí Nghiệm Đẩy Muối Halide (Displacement Reaction Simulator) -->
-          <div id="panel-b21-part2" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
-            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">⚡ Phòng Thí Nghiệm Ống Nghiệm: Đẩy Muối Halide</h4>
-                <p style="font-size: 12px; color: #64748b; margin: 3px 0 0 0;">Chọn thuốc thử để quan sát màu sắc dung dịch biến đổi theo quy luật Halogen mạnh đẩy Halogen yếu.</p>
+          <!-- PANEL 2: Mô phỏng Ống Nghiệm Phản Ứng Thế Halogen (Canvas 2.5D) -->
+          <div id="panel-b21-part2" class="lab-canvas-area" style="display: none; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">⚡ Thí Nghiệm Đẩy Halogen Khỏi Muối Halide & Nhận Biết I₂</span>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-tool active" id="btn-b21-disp-1" onclick="simB21Displacement('cl2_nabr')">Cl₂ + dd NaBr</button>
+                <button class="btn-tool" id="btn-b21-disp-2" onclick="simB21Displacement('br2_nai')">Br₂ + dd NaI</button>
+                <button class="btn-tool" id="btn-b21-disp-3" onclick="simB21Displacement('i2_starch')">I₂ + Hồ tinh bột</button>
+                <button class="btn-tool" id="btn-b21-disp-4" onclick="simB21Displacement('f2_h2o')">F₂ + Nước (Nổ cháy)</button>
               </div>
             </div>
-
-            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-              <button class="btn-tool active" onclick="simB21Displacement('cl2_nabr')">Cl₂ + NaBr (Tạo Br₂ nâu)</button>
-              <button class="btn-tool" onclick="simB21Displacement('br2_nai')">Br₂ + NaI (Tạo I₂ tím)</button>
-              <button class="btn-tool" onclick="simB21Displacement('i2_starch')">I₂ + Hồ tinh bột (Xanh đặc trưng)</button>
+            <div class="canvas-wrapper" style="flex: 1; position: relative; background: #ffffff;">
+              <canvas id="b21DispCanvas"></canvas>
             </div>
-
-            <div id="b21-disp-result-card" style="padding: 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #cbd5e1; flex: 1;">
-              <!-- Render displacement step -->
+            <div id="b21-disp-result-card" style="padding: 12px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 13px; color: #1e293b;">
             </div>
           </div>
 
-          <!-- PANEL 3: Mô Phỏng Thiết Bị Điều Chế Khí Chlorine Trong Phòng Thí Nghiệm -->
-          <div id="panel-b21-part3" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 20px;">
-            <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px;">
-              <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">🏭 Mô Hình Hệ Thống Điều Chế & Thu Khí Cl₂</h4>
-              <p style="font-size: 12px; color: #64748b; margin: 3px 0 0 0;">Phương pháp đun nóng MnO₂ với HCl đặc và bình rửa khí NaCl, H₂SO₄ đặc.</p>
+          <!-- PANEL 3: Mô Phỏng Dây Chuyền Điều Chế & Làm Khô Khí Chlorine (Canvas 2.5D) -->
+          <div id="panel-b21-part3" class="lab-canvas-area" style="display: none; flex-direction: column;">
+            <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🏭 Dây Chuyền Điều Chế, Rửa & Làm Khô Khí Chlorine (SGK Hình 21.4)</span>
+              <button class="btn-tool active" id="btn-b21-prep-toggle" onclick="toggleB21PrepFlow()">▶ Đun nóng & Mở khoá HCl</button>
+            </div>
+            <div class="canvas-wrapper" style="flex: 1; position: relative; background: #ffffff;">
+              <canvas id="b21PrepCanvas"></canvas>
+            </div>
+            <div id="b21-prep-display-card" style="padding: 10px 16px; background: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 12.5px; color: #334155;">
+              💡 <strong>Quy trình chuẩn:</strong> Khí sinh ra ($\text{Cl}_2$ lẫn $\text{HCl}$ và hơi $\text{H}_2\text{O}$) $\rightarrow$ Bình 1 ($\text{NaCl}$ bão hoà giữ $\text{HCl}$) $\rightarrow$ Bình 2 ($\text{H}_2\text{SO}_4$ đặc giữ $\text{H}_2\text{O}$) $\rightarrow$ Bình thu $\text{Cl}_2$ khô đậy bông tẩm $\text{NaOH}$.
+            </div>
+          </div>
+
+          <!-- PANEL 4: Đấu Trường Trắc Nghiệm Bài 21 -->
+          <div id="panel-b21-part4" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 24px; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+              <div>
+                <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;" id="b21-arena-q-title">Câu hỏi 1 / 5</h4>
+                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Trắc nghiệm chuẩn GDPT 2018 – Bài 21: Nhóm Halogen</div>
+              </div>
+              <div style="font-size: 15px; font-weight: 800; color: #0284c7;" id="b21-arena-score">Điểm: 0 / 50</div>
             </div>
 
-            <div id="b21-prep-display-card" style="padding: 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #cbd5e1; flex: 1;">
-              <!-- Render preparation scheme -->
+            <div style="flex: 1; display: flex; flex-direction: column;">
+              <p id="b21-arena-question-text" style="font-size: 14.5px; font-weight: 600; color: #0f172a; line-height: 1.6; margin-bottom: 18px;"></p>
+              <div id="b21-arena-options-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+              <div id="b21-arena-feedback-box" style="display: none; margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; line-height: 1.6;"></div>
+            </div>
+
+            <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+              <button class="btn-primary" id="btn-b21-next-q" onclick="nextB21Question()" style="display: none; padding: 8px 20px;">
+                <span>Câu tiếp theo ➔</span>
+              </button>
             </div>
           </div>
 
@@ -6993,7 +7231,6 @@
 
 
 
-  
   <!-- ========================================================
        TRANG: PHÒNG HỌC & THÍ NGHIỆM CHUẨN MỰC BÀI 22 (FOCUS STUDIO)
        CHƯƠNG 7: HYDROGEN HALIDE & MUỐI HALIDE
@@ -7041,21 +7278,21 @@
           <div id="content-b22-part1" class="lesson-section-content active">
             <div class="box-target">
               <h4>🎯 Mục tiêu Phần I (SGK Trang 112 – 114)</h4>
-              <p>Mô tả cấu tạo phân tử hydrogen halide ($HX$); giải thích xu hướng biến đổi độ dài liên kết và năng lượng liên kết; giải thích hiện tượng <strong>nhiệt độ sôi cao bất thường của $HF$ ($+19,5^\circ\text{C}$)</strong> do liên kết hydrogen liên phân tử và xu hướng tăng dần nhiệt độ sôi từ $HCl$ đến $HI$ theo tương tác Van der Waals.</p>
+              <p>Mô tả cấu tạo phân tử hydrogen halide ($\text{HX}$); nhận xét và giải thích xu hướng biến đổi nhiệt độ sôi của các hydrogen halide từ $\text{HCl}$ tới $\text{HI}$; giải thích sự bất thường về nhiệt độ sôi của $\text{HF}$ ($+19,5^\circ\text{C}$) so với các $\text{HX}$ khác.</p>
             </div>
 
             <div class="meta-citation">Mục I • SGK Trang 112 – 114</div>
             <h3 class="section-title">1. Cấu Tạo Phân Tử Hydrogen Halide (HX)</h3>
             
-            <p>Ở điều kiện thường, các hydrogen halide ($HF, HCl, HBr, HI$) đều là chất khí không màu, mùi xốc, độc, tan rất nhiều trong nước tạo thành dung dịch hydrohalic acid tương ứng.</p>
+            <p class="theory-paragraph">Ở điều kiện thường, các hydrogen halide ($\text{HF}, \text{HCl}, \text{HBr}, \text{HI}$) đều tồn tại ở thể khí, không màu, mùi xốc, tan rất tốt trong nước tạo thành dung dịch hydrohalic acid tương ứng.</p>
 
-            <p>Phân tử $HX$ gồm một liên kết cộng hoá trị phân cực hình thành do sự xen phủ giữa orbital $1s$ của nguyên tử $H$ và orbital $np$ chứa electron độc thân của nguyên tử halogen $X$ ($H-X$). Do halogen có độ âm điện lớn hơn hydrogen nên cặp electron dùng chung lệch về phía nguyên tử halogen ($H^{\delta+} - X^{\delta-}$).</p>
+            <p class="theory-paragraph">Phân tử $\text{HX}$ gồm một liên kết cộng hoá trị phân cực hình thành do sự xen phủ giữa orbital $1s$ của nguyên tử hydrogen và orbital $np$ chứa electron độc thân của nguyên tử halogen ($\text{H} - \text{X}$). Do nguyên tử halogen có độ âm điện lớn hơn hydrogen nên cặp electron dùng chung bị hút lệch về phía nguyên tử halogen ($\overset{\delta+}{\text{H}} - \overset{\delta-}{\text{X}}$). Độ phân cực giảm dần từ $\text{HF}$ đến $\text{HI}$.</p>
 
             <div style="margin: 16px 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: center;">
-                <thead style="background: #f8fafc; font-weight: 700; color: #0f172a; border-bottom: 1.5px solid #cbd5e1;">
+              <table class="book-table" style="text-align: center;">
+                <thead>
                   <tr>
-                    <th style="padding: 9px;">Đặc điểm phân tử</th>
+                    <th style="text-align: left;">Đặc điểm phân tử (SGK Bảng 22.1 & 22.2)</th>
                     <th style="color: #0284c7;">HF</th>
                     <th style="color: #16a34a;">HCl</th>
                     <th style="color: #ea580c;">HBr</th>
@@ -7063,23 +7300,30 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 8px; font-weight: 700; text-align: left; padding-left: 14px;">Độ dài liên kết ($pm$)</td>
+                  <tr>
+                    <td style="font-weight: 700; text-align: left;">Tên gọi IUPAC (Khí)</td>
+                    <td>Hydrogen fluoride</td>
+                    <td>Hydrogen chloride</td>
+                    <td>Hydrogen bromide</td>
+                    <td>Hydrogen iodide</td>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    <td style="font-weight: 700; text-align: left;">Độ dài liên kết ($pm$)</td>
                     <td>$92$</td>
                     <td>$127$</td>
                     <td>$141$</td>
                     <td>$161$</td>
                   </tr>
-                  <tr style="border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                    <td style="padding: 8px; font-weight: 700; text-align: left; padding-left: 14px;">Năng lượng liên kết ($E_b, \text{kJ/mol}$)</td>
+                  <tr>
+                    <td style="font-weight: 700; text-align: left;">Năng lượng liên kết ($E_b, \text{kJ/mol}$)</td>
                     <td style="font-weight: 700; color: #0284c7;">$565$</td>
                     <td>$431$</td>
                     <td>$364$</td>
                     <td>$297$</td>
                   </tr>
                   <tr style="background: #fefce8;">
-                    <td style="padding: 8px; font-weight: 700; text-align: left; padding-left: 14px;">Nhiệt độ sôi ($t_\text{s}, ^\circ\text{C}$)</td>
-                    <td style="font-weight: 800; color: #dc2626;">$+19,5$ (Cao vọt)</td>
+                    <td style="font-weight: 700; text-align: left;">Nhiệt độ sôi ($t_\text{s}, ^\circ\text{C}$)</td>
+                    <td style="font-weight: 800; color: #dc2626;">$+19,5$ (Cao bất thường)</td>
                     <td>$-84,9$</td>
                     <td>$-66,7$</td>
                     <td>$-35,8$</td>
@@ -7088,10 +7332,12 @@
               </table>
             </div>
 
-            <div style="padding: 12px 16px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 6px; font-size: 13px; color: #1e40af; line-height: 1.6; margin-top: 14px;">
-              <strong>Cơ chế khoa học cốt lõi (SGK Trang 113):</strong><br>
-              • <strong>HF lỏng có nhiệt độ sôi cao bất thường ($+19,5^\circ\text{C}$):</strong> Do nguyên tử $F$ có độ âm điện rất lớn ($3,98$) và bán kính nhỏ, liên kết $H-F$ phân cực cực mạnh khiến giữa các phân tử $HF$ hình thành <em>chuỗi liên kết hydrogen liên phân tử bền vững</em>: $\cdots \text{H}-\text{F}\cdots\text{H}-\text{F}\cdots\text{H}-\text{F}\cdots$<br>
-              • <strong>Từ HCl đến HI, nhiệt độ sôi tăng dần ($-84,9^\circ\text{C} \to -35,8^\circ\text{C}$):</strong> Các phân tử không tạo được liên kết hydrogen; tuy nhiên khối lượng phân tử và bán kính đám mây electron tăng dần làm <em>tương tác Van der Waals giữa các phân tử tăng đều đặn</em>.
+            <div class="box-law">
+              <h4>⚖️ Giải thích cơ chế biến thiên nhiệt độ sôi (SGK Trang 113)</h4>
+              <p>• <strong>Vì sao $\text{HF}$ lỏng có nhiệt độ sôi cao bất thường ($+19,5^\circ\text{C}$)?</strong> Do nguyên tử fluorine có độ âm điện rất lớn ($3,98$) và bán kính nguyên tử nhỏ, phân tử $\text{HF}$ phân cực rất mạnh, tạo thành <strong>liên kết hydrogen liên phân tử bền vững</strong>:
+              $$\cdots \text{H} - \text{F} \cdots \text{H} - \text{F} \cdots \text{H} - \text{F} \cdots$$
+              Muốn làm sôi $\text{HF}$ cần cung cấp thêm năng lượng nhiệt lớn để bẻ gãy các liên kết hydrogen này.<br>
+              • <strong>Vì sao từ $\text{HCl}$ đến $\text{HI}$, nhiệt độ sôi lại tăng dần ($-84,9^\circ\text{C} \to -35,8^\circ\text{C}$)?</strong> Giữa các phân tử $\text{HCl}, \text{HBr}, \text{HI}$ không có liên kết hydrogen; khi đi từ $\text{HCl}$ đến $\text{HI}$, khối lượng phân tử tăng ($36,5 \to 128$) và kích thước đám mây electron tăng làm <strong>tương tác van der Waals giữa các phân tử tăng dần</strong>.</p>
             </div>
           </div>
 
@@ -7099,97 +7345,117 @@
           <div id="content-b22-part2" class="lesson-section-content">
             <div class="box-target">
               <h4>🎯 Mục tiêu Phần II (SGK Trang 114 – 115)</h4>
-              <p>Nắm vững xu hướng tăng dần tính acid trong dãy $\text{HF} < \text{HCl} < \text{HBr} < \text{HI}$; tính chất hoá học điển hình của acid vô cơ; tính khử của dung dịch $\text{HCl}$ và phản ứng đặc biệt <strong>ăn mòn thuỷ tinh của hydrofluoric acid ($\text{HF}$)</strong>.</p>
+              <p>Trình bày xu hướng biến đổi tính acid của dãy hydrohalic acid; giải thích bằng năng lượng liên kết; viết phương trình minh hoạ tính chất của hydrochloric acid và phản ứng đặc biệt ăn mòn thuỷ tinh của hydrofluoric acid.</p>
             </div>
 
             <div class="meta-citation">Mục II • SGK Trang 114 – 115</div>
-            <h3 class="section-title">1. Quy Luật Biến Đổi Tính Acid Của Dãy Hydrohalic Acid</h3>
+            <h3 class="section-title">1. Xu Hướng Biến Đổi Tính Acid Của Dãy Hydrohalic Acid</h3>
             
-            <p>Khi hoà tan vào nước, các phân tử hydrogen halide phân li ra cation $\text{H}^+$ thể hiện tính acid. Tính acid trong dung dịch biến đổi theo chiều:</p>
+            <p class="theory-paragraph">Trong dung dịch nước, tính acid của dãy hydrohalic acid tăng dần từ <strong>hydrofluoric acid ($\text{HF}$ – acid yếu)</strong> đến <strong>hydroiodic acid ($\text{HI}$ – acid rất mạnh)</strong>:</p>
 
             <div style="background: #fdf2f8; border: 1.5px solid #fbcfe8; padding: 12px 18px; border-radius: 8px; text-align: center; margin: 12px 0;">
-              <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: #be185d;">
-                HF (axit yếu) &lt; HCl (axit mạnh) &lt; HBr (axit rất mạnh) &lt; HI (axit rất mạnh)
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 800; color: #be185d;">
+                HF (acid yếu) &lt; HCl (acid mạnh) &lt; HBr (acid rất mạnh) &lt; HI (acid rất mạnh)
               </span>
             </div>
 
-            <p><strong>Giải thích bản chất năng lượng:</strong> Từ $HF$ đến $HI$, bán kính nguyên tử halogen tăng dần làm độ dài liên kết $H-X$ tăng từ $92\,pm$ lên $161\,pm$, năng lượng liên kết $E_b$ giảm mạnh từ $565\,kJ/mol$ xuống $297\,kJ/mol$. Liên kết $H-X$ càng kém bền thì trong dung dịch nước phân tử càng dễ đứt gãy để giải phóng proton $\text{H}^+$, do đó tính acid càng mạnh.</p>
+            <p class="theory-paragraph"><strong>Giải thích theo độ bền liên kết:</strong> Từ $\text{HF}$ đến $\text{HI}$, bán kính nguyên tử halogen tăng làm độ dài liên kết $\text{H}-\text{X}$ tăng ($92 \to 161\,\text{pm}$), năng lượng liên kết $E_b$ giảm mạnh ($565 \to 297\,\text{kJ/mol}$). Độ bền liên kết giảm khiến khả năng phân li ra ion $\text{H}^+$ trong nước tăng lên.</p>
 
-            <h3 class="section-title" style="margin-top: 24px;">2. Phản Ứng Độc Đáo: Khắc Chữ Lên Thuỷ Tinh Bằng HF</h3>
-            <p>Hydrofluoric acid ($\text{HF}$) là một acid yếu nhưng có tính chất đặc biệt mà không acid nào khác có: <strong>hoà tan được silica ($\text{SiO}_2$) trong thuỷ tinh vô cơ</strong>.</p>
+            <h3 class="section-title">2. Phản Ứng Đặc Trưng Của Hydrofluoric Acid: Ăn Mòn Thuỷ Tinh</h3>
+            <p class="theory-paragraph">Tuy là một acid yếu nhưng dung dịch $\text{HF}$ có khả năng đặc biệt là <strong>ăn mòn thuỷ tinh vô cơ</strong> (thành phần chính là silicon dioxide $\text{SiO}_2$):</p>
 
-            <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 8px; margin: 12px 0;">
-              <p style="font-size: 13.5px; color: #78350f; margin: 0; line-height: 1.6;">
-                $$\text{SiO}_2 + 4\text{HF} \longrightarrow \text{SiF}_4\uparrow + 2\text{H}_2\text{O}$$
-                <em>Khí silicon tetrafluoride ($\text{SiF}_4$) thoát ra ngoài làm bề mặt thuỷ tinh bị ăn mòn thành các rãnh sâu. Ứng dụng để khắc hoa văn, chữ viết trên các sản phẩm thuỷ tinh mỹ nghệ, gương, kính thí nghiệm.</em>
-              </p>
+            <div class="box-law">
+              <h4>🔬 Phương trình khắc chữ lên thuỷ tinh & Ứng dụng</h4>
+              <p>$$\text{SiO}_2 + 4\text{HF} \longrightarrow \text{SiF}_4\uparrow + 2\text{H}_2\text{O}$$
+              • Do đó, không thể đựng dung dịch $\text{HF}$ trong bình thuỷ tinh mà phải bảo quản trong bình nhựa chất dẻo (như polyethylene hoặc Teflon).<br>
+              • Trong công nghiệp, $\text{HF}$ còn được dùng để tổng hợp chất chống dính <strong>Teflon</strong> $\text{-(CF}_2-\text{CF}_2\text{)}_n\text{-}$.</p>
             </div>
 
-            <h3 class="section-title" style="margin-top: 24px;">3. Tính Chất Hoá Học & Điều Chế HCl</h3>
-            <p>• <strong>Tính acid:</strong> Tác dụng với kim loại đứng trước $\text{H}$ ($\text{Zn} + 2\text{HCl} \to \text{ZnCl}_2 + \text{H}_2\uparrow$; đồng $\text{Cu}$ đứng sau $\text{H}$ không phản ứng); tác dụng base ($\text{NaOH}, \text{Cu(OH)}_2$), basic oxide ($\text{CuO}, \text{Fe}_2\text{O}_3$) và muối carbonate ($\text{NaHCO}_3 + \text{HCl} \to \text{NaCl} + \text{CO}_2\uparrow + \text{H}_2\text{O}$).<br>
-            • <strong>Tính khử (do $\text{Cl}^-$ có số oxi hoá $-1$):</strong> Bị oxi hoá bởi $\text{KMnO}_4, \text{MnO}_2$ tạo khí $\text{Cl}_2$:
-            $$16\text{HCl} + 2\text{KMnO}_4 \longrightarrow 2\text{KCl} + 2\text{MnCl}_2 + 5\text{Cl}_2\uparrow + 8\text{H}_2\text{O}$$
-            </p>
+            <h3 class="section-title">3. Tính Chất Hoá Học Của Hydrochloric Acid (HCl)</h3>
+            <p class="theory-paragraph">• <strong>Tính acid mạnh điển hình:</strong> Làm quỳ tím hoá đỏ; tác dụng với kim loại đứng trước hydrogen ($\text{Zn}, \text{Fe}$) giải phóng khí $\text{H}_2$ (không tác dụng với $\text{Cu}, \text{Ag}$); tác dụng với basic oxide ($\text{MgO}, \text{Fe}_2\text{O}_3$), base ($\text{Cu(OH)}_2$) và muối ($\text{NaHCO}_3 + \text{HCl} \to \text{NaCl} + \text{CO}_2\uparrow + \text{H}_2\text{O}$). Trong công nghiệp, $\text{HCl}$ được dùng để tẩy gỉ thép trước khi sơn, hàn, mạ.<br>
+            • <strong>Tính khử:</strong> Do chứa ion $\text{Cl}^-$ có số oxi hoá thấp nhất ($-1$), dung dịch $\text{HCl}$ đặc thể hiện tính khử khi gặp chất oxi hoá mạnh như $\text{KMnO}_4, \text{MnO}_2$.</p>
           </div>
 
           <!-- PHẦN 3: MUỐI HALIDE & NHẬN BIẾT BẰNG AGNO3 -->
           <div id="content-b22-part3" class="lesson-section-content">
             <div class="box-target">
               <h4>🎯 Mục tiêu Phần III (SGK Trang 116 – 117)</h4>
-              <p>Phân biệt tính tan của các muối halide; sử dụng thuốc thử <strong>$\text{AgNO}_3$</strong> để nhận biết ion $\text{F}^-, \text{Cl}^-, \text{Br}^-, \text{I}^-$; quy luật tính khử tăng dần của ion halide với $\text{H}_2\text{SO}_4$ đặc và vai trò của muối ăn $\text{NaCl}$.</p>
+              <p>Thực hiện thí nghiệm phân biệt các ion $\text{F}^-, \text{Cl}^-, \text{Br}^-, \text{I}^-$ bằng dung dịch silver nitrate ($\text{AgNO}_3$); trình bày và giải thích tính khử của các ion halide tăng dần theo thứ tự $\text{Cl}^- < \text{Br}^- < \text{I}^-$ thông qua phản ứng với sulfuric acid đặc.</p>
             </div>
 
             <div class="meta-citation">Mục III • SGK Trang 116 – 117</div>
-            <h3 class="section-title">1. Nhận Biết Ion Halide Bằng Dung Dịch AgNO₃</h3>
-            <p>Hầu hết muối halide đều tan trong nước, trừ $\text{AgCl}, \text{AgBr}, \text{AgI}$. Do đó dung dịch silver nitrate ($\text{AgNO}_3$) là thuốc thử đặc trưng để phân biệt 4 ion halide:</p>
+            <h3 class="section-title">1. Nhận Biết Ion Halide Bằng Thuốc Thử Silver Nitrate ($\text{AgNO}_3$)</h3>
+            <p class="theory-paragraph">Hầu hết các muối halide đều dễ tan trong nước, ngoại trừ một số muối không tan như silver chloride ($\text{AgCl}$), silver bromide ($\text{AgBr}$), silver iodide ($\text{AgI}$) và muối ít tan như lead(II) chloride ($\text{PbCl}_2$).</p>
 
             <div style="margin: 14px 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
-                <thead style="background: #f8fafc; font-weight: 700; color: #0f172a; border-bottom: 1.5px solid #cbd5e1;">
+              <table class="book-table">
+                <thead>
                   <tr>
-                    <th style="padding: 9px;">Ion Halide</th>
+                    <th>Dung dịch muối</th>
                     <th>Thuốc thử $\text{AgNO}_3$</th>
                     <th>Hiện tượng quan sát</th>
-                    <th>Phương trình hoá học</th>
+                    <th>Phương trình ion rút gọn</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 8px; font-weight: 700;">$\text{F}^-$ ($\text{NaF}$)</td>
-                    <td>Không có kết tủa</td>
-                    <td style="color: #64748b;">Dung dịch trong suốt ($\text{AgF}$ tan)</td>
-                    <td>Không phản ứng</td>
+                  <tr>
+                    <td style="font-weight: 700;">$\text{NaF}$ (chứa $\text{F}^-$)</td>
+                    <td>Không kết tủa</td>
+                    <td style="color: #64748b;">Không hiện tượng ($\text{AgF}$ tan tốt)</td>
+                    <td>Không xảy ra phản ứng</td>
                   </tr>
-                  <tr style="border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                    <td style="padding: 8px; font-weight: 700; color: #0284c7;">$\text{Cl}^-$ ($\text{NaCl}$)</td>
+                  <tr style="background: #f8fafc;">
+                    <td style="font-weight: 700; color: #0284c7;">$\text{NaCl}$ (chứa $\text{Cl}^-$)</td>
                     <td>$\text{AgCl}\downarrow$</td>
-                    <td style="color: #0284c7; font-weight: 700;">Kết tủa trắng</td>
-                    <td>$\text{Ag}^+ + \text{Cl}^- \to \text{AgCl}\downarrow$</td>
+                    <td style="color: #0284c7; font-weight: 700;">Kết tủa màu trắng</td>
+                    <td>$\text{Ag}^+ + \text{Cl}^- \longrightarrow \text{AgCl}\downarrow$</td>
                   </tr>
-                  <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 8px; font-weight: 700; color: #d97706;">$\text{Br}^-$ ($\text{NaBr}$)</td>
+                  <tr>
+                    <td style="font-weight: 700; color: #d97706;">$\text{NaBr}$ (chứa $\text{Br}^-$)</td>
                     <td>$\text{AgBr}\downarrow$</td>
-                    <td style="color: #d97706; font-weight: 700;">Kết tủa vàng nhạt</td>
-                    <td>$\text{Ag}^+ + \text{Br}^- \to \text{AgBr}\downarrow$</td>
+                    <td style="color: #d97706; font-weight: 700;">Kết tủa màu vàng nhạt</td>
+                    <td>$\text{Ag}^+ + \text{Br}^- \longrightarrow \text{AgBr}\downarrow$</td>
                   </tr>
                   <tr style="background: #fefce8;">
-                    <td style="padding: 8px; font-weight: 700; color: #ca8a04;">$\text{I}^-$ ($\text{NaI}$)</td>
+                    <td style="font-weight: 700; color: #ca8a04;">$\text{NaI}$ (chứa $\text{I}^-$)</td>
                     <td>$\text{AgI}\downarrow$</td>
-                    <td style="color: #ca8a04; font-weight: 700;">Kết tủa vàng đậm</td>
-                    <td>$\text{Ag}^+ + \text{I}^- \to \text{AgI}\downarrow$</td>
+                    <td style="color: #ca8a04; font-weight: 700;">Kết tủa màu vàng đậm</td>
+                    <td>$\text{Ag}^+ + \text{I}^- \longrightarrow \text{AgI}\downarrow$</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <h3 class="section-title" style="margin-top: 24px;">2. Tính Khử Của Các Ion Halide Với H₂SO₄ Đặc</h3>
-            <p>Tính khử của các ion halide tăng dần theo chiều: $\text{Cl}^- < \text{Br}^- < \text{I}^-$.<br>
-            • $\text{NaCl} + \text{H}_2\text{SO}_4\text{ (đ)}$: chỉ xảy ra phản ứng trao đổi tạo khí $\text{HCl}$ (ion $\text{Cl}^-$ không khử được $\text{H}_2\text{SO}_4$).<br>
-            • $\text{NaBr}$ khử được $\text{H}_2\text{SO}_4$ đặc xuống khí $\text{SO}_2$, xuất hiện màu nâu đỏ của $\text{Br}_2$:
-            $$2\text{NaBr} + 2\text{H}_2\text{SO}_4\text{ (đ)} \longrightarrow \text{Na}_2\text{SO}_4 + \text{Br}_2 + \text{SO}_2\uparrow + 2\text{H}_2\text{O}$$
-            • $\text{NaI}$ có tính khử mạnh nhất, khử $\text{H}_2\text{SO}_4$ đặc xuống khí $\text{H}_2\text{S}$ (mùi trứng thối), xuất hiện hơi tím và tinh thể $\text{I}_2$:
-            $$8\text{NaI} + 5\text{H}_2\text{SO}_4\text{ (đ)} \longrightarrow 4\text{Na}_2\text{SO}_4 + 4\text{I}_2 + \text{H}_2\text{S}\uparrow + 4\text{H}_2\text{O}$$
-            </p>
+            <h3 class="section-title">2. Tính Khử Của Các Ion Halide Với Sulfuric Acid Đặc ($\text{H}_2\text{SO}_4$)</h3>
+            <p class="theory-paragraph">Trong ion halide $\text{X}^-$, halogen có số oxi hoá $-1$ (thấp nhất) nên chỉ thể hiện <strong>tính khử</strong>. Đi từ $\text{F}^-$ đến $\text{I}^-$, bán kính ion tăng dần nên lực hút của hạt nhân đối với electron lớp ngoài cùng yếu dần, khả năng nhường electron tăng lên $\Rightarrow$ <strong>tính khử tăng dần: $\text{Cl}^- < \text{Br}^- < \text{I}^-$</strong> (ion $\text{F}^-$ hầu như không có tính khử).</p>
+
+            <div style="margin: 14px 0; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+              <table class="book-table">
+                <thead>
+                  <tr>
+                    <th>Muối rắn + $\text{H}_2\text{SO}_4$ đặc</th>
+                    <th>Bản chất phản ứng & Sự thay đổi số oxi hoá của $\overset{+6}{\text{S}}$</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-weight: 700;">$\text{NaCl}$</td>
+                    <td><strong>Chỉ xảy ra phản ứng trao đổi</strong> (ion $\text{Cl}^-$ tính khử yếu, không khử được $\text{H}_2\text{SO}_4$ đặc):<br>
+                    $\text{NaCl} + \text{H}_2\text{SO}_4\text{ (đặc)} \xrightarrow{t^\circ} \text{NaHSO}_4 + \text{HCl}\uparrow$</td>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    <td style="font-weight: 700; color: #d97706;">$\text{NaBr}$</td>
+                    <td>Ion $\text{Br}^-$ khử được $\overset{+6}{\text{S}}$ trong $\text{H}_2\text{SO}_4$ đặc xuống $\overset{+4}{\text{S}}\text{O}_2$ (khí mùi hắc) và tạo $\text{Br}_2$ nâu đỏ:<br>
+                    $2\text{NaBr} + 2\text{H}_2\text{SO}_4\text{ (đặc)} \longrightarrow \text{Na}_2\text{SO}_4 + \overset{0}{\text{Br}}_2 + \overset{+4}{\text{S}}\text{O}_2\uparrow + 2\text{H}_2\text{O}$</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight: 700; color: #7c3aed;">$\text{NaI}$</td>
+                    <td>Ion $\text{I}^-$ có tính khử rất mạnh, khử $\overset{+6}{\text{S}}$ xuống tận $\text{H}_2\overset{-2}{\text{S}}$ (mùi trứng thối) và tạo $\text{I}_2$ đen tím:<br>
+                    $8\text{NaI} + 5\text{H}_2\text{SO}_4\text{ (đặc)} \longrightarrow 4\text{Na}_2\text{SO}_4 + 4\overset{0}{\text{I}}_2 + \text{H}_2\overset{-2}{\text{S}}\uparrow + 4\text{H}_2\text{O}$</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <!-- PHẦN 4: ĐẤU TRƯỜNG BÀI 22 -->
@@ -7198,12 +7464,12 @@
               <h4>🎯 Đấu Trường Luyện Tập Củng Cố Bài 22</h4>
               <p>Hoàn thành 5 câu hỏi trọng tâm bám sát SGK Hoá học 10 để nắm vững toàn diện kiến thức Hydrogen Halide và Muối Halide.</p>
             </div>
-            <div style="font-size: 13.5px; color: #475569; line-height: 1.6; margin-top: 14px;">
-              • Khảo sát nhiệt độ sôi bất thường của $\text{HF}$ so với $\text{HCl}, \text{HBr}, \text{HI}$.<br>
-              • Quy luật năng lượng liên kết $E_b$ và tính acid tăng dần trong dung dịch nước.<br>
-              • Ứng dụng ăn mòn thuỷ tinh độc nhất của hydrofluoric acid.<br>
-              • Nhận biết 4 ion halide bằng thuốc thử $\text{AgNO}_3$.<br>
-              • Phản ứng tính khử của ion halide với sulfuric acid đặc.
+            <div class="box-law">
+              <h4>📌 Tóm tắt quy luật cốt tử Bài 22</h4>
+              <p>• <strong>Nhiệt độ sôi:</strong> $\text{HCl} (-84,9^\circ\text{C}) < \text{HBr} (-66,7^\circ\text{C}) < \text{HI} (-35,8^\circ\text{C}) < \text{HF} (+19,5^\circ\text{C}$, do liên kết hydrogen).<br>
+              • <strong>Độ dài liên kết tăng, năng lượng liên kết giảm $\Rightarrow$ Tính acid tăng:</strong> $\text{HF} < \text{HCl} < \text{HBr} < \text{HI}$.<br>
+              • <strong>Tính khử của ion halide tăng dần:</strong> $\text{Cl}^- < \text{Br}^- < \text{I}^-$.<br>
+              • <strong>Nước muối sinh lí:</strong> Dung dịch $\text{NaCl}\ 0,9\%$ (tức $9\,\text{g NaCl}$ trong $1\,\text{L}$ dung dịch).</p>
             </div>
           </div>
 
@@ -7235,7 +7501,7 @@
             <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
               <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🔬 Khảo Sát Liên Kết Phân Tử HX & Liên Kết Hydrogen 2.5D</span>
               <div style="display: flex; gap: 6px;">
-                <button class="btn-tool active" id="btn-b22-mol-hf" onclick="selectB22Molecule('HF')">HF (Khí / Lỏng)</button>
+                <button class="btn-tool active" id="btn-b22-mol-hf" onclick="selectB22Molecule('HF')">HF (Liên kết H)</button>
                 <button class="btn-tool" id="btn-b22-mol-hcl" onclick="selectB22Molecule('HCl')">HCl</button>
                 <button class="btn-tool" id="btn-b22-mol-hbr" onclick="selectB22Molecule('HBr')">HBr</button>
                 <button class="btn-tool" id="btn-b22-mol-hi" onclick="selectB22Molecule('HI')">HI</button>
@@ -7249,10 +7515,10 @@
             </div>
           </div>
 
-          <!-- PANEL 2: Thí Nghiệm Khắc Thuỷ Tinh & Phản Ứng Axit HCl -->
+          <!-- PANEL 2: Thí Nghiệm Khắc Thuỷ Tinh & Phản Ứng Hydrochloric Acid (Animation) -->
           <div id="panel-b22-part2" class="lab-canvas-area" style="display: none; flex-direction: column;">
             <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🧪 Thí Nghiệm HF Khắc Thuỷ Tinh & Tính Chất Axit HCl</span>
+              <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🧪 Thí Nghiệm HF Khắc Thuỷ Tinh & Tính Chất Dung Dịch HCl</span>
               <div style="display: flex; gap: 6px;">
                 <button class="btn-tool active" id="btn-b22-exp-hf" onclick="selectB22AcidExp('hf_glass')">Khắc Kính HF + SiO₂</button>
                 <button class="btn-tool" id="btn-b22-exp-zn" onclick="selectB22AcidExp('hcl_zn')">HCl + Kẽm (Zn)</button>
@@ -7267,18 +7533,18 @@
               <span style="font-size: 12.5px; color: #1e293b; font-weight: 600;" id="b22-acid-desc">
                 Phản ứng: SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O (Khí SiF₄ bay ra để lại nét khắc hoa văn rãnh sâu trên kính).
               </span>
-              <button class="btn-tool active" onclick="runB22AcidReaction()" style="padding: 6px 14px;">
+              <button class="btn-tool active" id="btn-b22-run-acid" onclick="runB22AcidReaction()" style="padding: 6px 14px;">
                 <span>▶ Bắt đầu phản ứng</span>
               </button>
             </div>
           </div>
 
-          <!-- PANEL 3: Giá 4 Ống Nghiệm Nhận Biết Bằng AgNO3 -->
+          <!-- PANEL 3: Giá 4 Ống Nghiệm Nhận Biết Bằng AgNO3 (Animation Nhỏ Giọt & Lắng Tủa) -->
           <div id="panel-b22-part3" class="lab-canvas-area" style="display: none; flex-direction: column;">
             <div style="padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
               <span style="font-size: 13px; font-weight: 700; color: #0f172a;">🔬 Giá 4 Ống Nghiệm Nhận Biết Ion Halide Bằng Thuốc Thử AgNO₃</span>
               <div style="display: flex; gap: 8px;">
-                <button class="btn-tool active" onclick="triggerAgNO3All()">Nhỏ AgNO₃ Cả 4 Ống</button>
+                <button class="btn-tool active" onclick="triggerAgNO3All()">💧 Nhỏ AgNO₃ Cả 4 Ống</button>
                 <button class="btn-tool" onclick="resetAgNO3Rack()">↺ Rửa ống nghiệm</button>
               </div>
             </div>
@@ -7302,24 +7568,19 @@
           </div>
 
           <!-- PANEL 4: Đấu Trường Trắc Nghiệm Bài 22 -->
-          <div id="panel-b22-part4" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 24px;">
+          <div id="panel-b22-part4" class="lab-canvas-area" style="display: none; flex-direction: column; background: #ffffff; padding: 24px; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
               <div>
                 <h4 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;" id="b22-arena-q-title">Câu hỏi 1 / 5</h4>
-                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Trắc nghiệm chuẩn sư phạm bám sát SGK Hoá học 10</div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Trắc nghiệm chuẩn GDPT 2018 – Bài 22: Hydrogen Halide & Muối Halide</div>
               </div>
               <div style="font-size: 15px; font-weight: 800; color: #0284c7;" id="b22-arena-score">Điểm: 0 / 50</div>
             </div>
 
             <div style="flex: 1; display: flex; flex-direction: column;">
-              <p id="b22-arena-question-text" style="font-size: 14.5px; font-weight: 600; color: #0f172a; line-height: 1.6; margin-bottom: 18px;">
-                <!-- Nội dung câu hỏi -->
-              </p>
-              <div id="b22-arena-options-list" style="display: flex; flex-direction: column; gap: 10px;">
-                <!-- Danh sách 4 lựa chọn -->
-              </div>
-              <div id="b22-arena-feedback-box" style="display: none; margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; line-height: 1.6;">
-              </div>
+              <p id="b22-arena-question-text" style="font-size: 14.5px; font-weight: 600; color: #0f172a; line-height: 1.6; margin-bottom: 18px;"></p>
+              <div id="b22-arena-options-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+              <div id="b22-arena-feedback-box" style="display: none; margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; line-height: 1.6;"></div>
             </div>
 
             <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
@@ -7589,15 +7850,21 @@
        ========================================================== */
     let activeLesson = 'b1';
 
-    function openLesson(lessonId) {
+        function openLesson(lessonId) {
       activeLesson = lessonId;
       document.getElementById('view-dashboard').classList.remove('active');
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20', 'view-studio-b21', 'view-studio-b22', 'view-studio-b23'];
+      const studioIds = [
+        'view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4',
+        'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9',
+        'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14',
+        'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18',
+        'view-studio-b19', 'view-studio-b20', 'view-studio-b21', 'view-studio-b22', 'view-studio-b23'
+      ];
       studioIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
       });
-      
+
       if (lessonId === 'b1') {
         document.getElementById('view-studio').classList.add('active');
         switchPart('part1a');
@@ -7607,8 +7874,8 @@
         switchPartB2('b2_p1');
         setTimeout(() => { resizeStageCanvasB2(); }, 50);
       } else if (lessonId === 'b3') {
-        const studioB3 = document.getElementById('view-studio-b3');
-        if (studioB3) studioB3.classList.add('active');
+        const el = document.getElementById('view-studio-b3');
+        if (el) el.classList.add('active');
         switchPartB3('part1');
         setTimeout(() => {
           if (typeof initB3CloudSim === 'function') initB3CloudSim();
@@ -7616,24 +7883,24 @@
           if (typeof initB3OrbitalLab === 'function') initB3OrbitalLab();
         }, 50);
       } else if (lessonId === 'b4') {
-        const studioB4 = document.getElementById('view-studio-b4');
-        if (studioB4) studioB4.classList.add('active');
+        const el = document.getElementById('view-studio-b4');
+        if (el) el.classList.add('active');
         switchPartB4('part1');
         setTimeout(() => {
           if (typeof initB4Mindmap === 'function') initB4Mindmap();
           if (typeof initB4QuizArena === 'function') initB4QuizArena();
         }, 50);
       } else if (lessonId === 'b5') {
-        const studioB5 = document.getElementById('view-studio-b5');
-        if (studioB5) studioB5.classList.add('active');
+        const el = document.getElementById('view-studio-b5');
+        if (el) el.classList.add('active');
         switchPartB5('part1');
         setTimeout(() => {
           if (typeof initB5PeriodicTable === 'function') initB5PeriodicTable();
           if (typeof initB5QuizArena === 'function') initB5QuizArena();
         }, 50);
       } else if (lessonId === 'b6') {
-        const studioB6 = document.getElementById('view-studio-b6');
-        if (studioB6) studioB6.classList.add('active');
+        const el = document.getElementById('view-studio-b6');
+        if (el) el.classList.add('active');
         switchPartB6('part1');
         setTimeout(() => {
           if (typeof initB6RadiusLab === 'function') initB6RadiusLab();
@@ -7641,8 +7908,8 @@
           if (typeof initB6QuizArena === 'function') initB6QuizArena();
         }, 50);
       } else if (lessonId === 'b7') {
-        const studioB7 = document.getElementById('view-studio-b7');
-        if (studioB7) studioB7.classList.add('active');
+        const el = document.getElementById('view-studio-b7');
+        if (el) el.classList.add('active');
         switchPartB7('part1');
         setTimeout(() => {
           if (typeof initB7CompoundLab === 'function') initB7CompoundLab();
@@ -7650,16 +7917,16 @@
           if (typeof initB7QuizArena === 'function') initB7QuizArena();
         }, 50);
       } else if (lessonId === 'b8') {
-        const studioB8 = document.getElementById('view-studio-b8');
-        if (studioB8) studioB8.classList.add('active');
+        const el = document.getElementById('view-studio-b8');
+        if (el) el.classList.add('active');
         switchPartB8('part1');
         setTimeout(() => {
           if (typeof initB8TriangleLab === 'function') initB8TriangleLab();
           if (typeof initB8QuizArena === 'function') initB8QuizArena();
         }, 50);
       } else if (lessonId === 'b9') {
-        const studioB9 = document.getElementById('view-studio-b9');
-        if (studioB9) studioB9.classList.add('active');
+        const el = document.getElementById('view-studio-b9');
+        if (el) el.classList.add('active');
         switchPartB9('part1');
         setTimeout(() => {
           if (typeof initB9Mindmap === 'function') initB9Mindmap();
@@ -7667,135 +7934,151 @@
           if (typeof initB9QuizArena === 'function') initB9QuizArena();
         }, 50);
       } else if (lessonId === 'b10') {
-        const studioB10 = document.getElementById('view-studio-b10');
-        if (studioB10) studioB10.classList.add('active');
+        const el = document.getElementById('view-studio-b10');
+        if (el) el.classList.add('active');
         switchPartB10('part1');
         setTimeout(() => {
           if (typeof initB10OctetLab === 'function') initB10OctetLab();
           if (typeof initB10QuizArena === 'function') initB10QuizArena();
         }, 50);
       } else if (lessonId === 'b11') {
-        const studioB11 = document.getElementById('view-studio-b11');
-        if (studioB11) studioB11.classList.add('active');
+        const el = document.getElementById('view-studio-b11');
+        if (el) el.classList.add('active');
         switchPartB11('part1');
         setTimeout(() => {
           if (typeof initB11IonLab === 'function') initB11IonLab();
           if (typeof initB11QuizArena === 'function') initB11QuizArena();
         }, 50);
       } else if (lessonId === 'b12') {
-        const studioB12 = document.getElementById('view-studio-b12');
-        if (studioB12) studioB12.classList.add('active');
+        const el = document.getElementById('view-studio-b12');
+        if (el) el.classList.add('active');
         switchPartB12('part1');
         setTimeout(() => {
           if (typeof initB12AOLab === 'function') initB12AOLab();
           if (typeof initB12QuizArena === 'function') initB12QuizArena();
         }, 50);
       } else if (lessonId === 'b13') {
-        const studioB13 = document.getElementById('view-studio-b13');
-        if (studioB13) studioB13.classList.add('active');
+        const el = document.getElementById('view-studio-b13');
+        if (el) el.classList.add('active');
         switchPartB13('part1');
         setTimeout(() => {
           if (typeof initB13InterLab === 'function') initB13InterLab();
           if (typeof initB13QuizArena === 'function') initB13QuizArena();
         }, 50);
-                                          } else if (lessonId === 'b23') {
-        const studioB23 = document.getElementById('view-studio-b23');
-        if (studioB23) studioB23.classList.add('active');
-        switchPartB23('part1');
-        setTimeout(() => {
-          if (typeof initB23Mindmap === 'function') initB23Mindmap();
-        }, 50);
-      } else if (lessonId === 'b22') {
-        const studioB22 = document.getElementById('view-studio-b22');
-        if (studioB22) studioB22.classList.add('active');
-        switchPartB22('part1');
-        setTimeout(() => {
-          if (typeof selectB22Molecule === 'function') selectB22Molecule('HF');
-          if (typeof drawB22SilverCanvas === 'function') drawB22SilverCanvas();
-          if (typeof initB22QuizArena === 'function') initB22QuizArena();
-        }, 50);
-      } else if (lessonId === 'b21') {
-        const studioB21 = document.getElementById('view-studio-b21');
-        if (studioB21) studioB21.classList.add('active');
-        switchPartB21('part1');
-        setTimeout(() => {
-          if (typeof selectB21HalogenBottle === 'function') selectB21HalogenBottle('Cl2');
-          if (typeof initB21DisplacementSim === 'function') initB21DisplacementSim();
-          if (typeof initB21QuizArena === 'function') initB21QuizArena();
-        }, 50);
-      } else if (lessonId === 'b20') {
-        const studioB20 = document.getElementById('view-studio-b20');
-        if (studioB20) studioB20.classList.add('active');
-        switchPartB20('part1');
-        setTimeout(() => {
-          if (typeof initB20Mindmap === 'function') initB20Mindmap();
-          if (typeof initB20ClozeLab === 'function') initB20ClozeLab();
-          if (typeof initB20QuizArena === 'function') initB20QuizArena();
-        }, 50);
-      } else if (lessonId === 'b19') {
-        const studioB19 = document.getElementById('view-studio-b19', 'view-studio-b20');
-        if (studioB19) studioB19.classList.add('active');
-        switchPartB19('part1');
-        setTimeout(() => {
-          if (typeof initB19KineticsGraph === 'function') initB19KineticsGraph();
-          if (typeof updateB19RateCalc === 'function') updateB19RateCalc();
-          if (typeof calcB19Vanthoff === 'function') calcB19Vanthoff();
-        }, 50);
-      } else if (lessonId === 'b18') {
-        const studioB18 = document.getElementById('view-studio-b18', 'view-studio-b19', 'view-studio-b20');
-        if (studioB18) studioB18.classList.add('active');
-        switchPartB18('part1');
-        setTimeout(() => {
-          if (typeof initB18Mindmap === 'function') initB18Mindmap();
-          if (typeof initB18ClozeLab === 'function') initB18ClozeLab();
-          if (typeof initB18QuizArena === 'function') initB18QuizArena();
-        }, 50);
-      } else if (lessonId === 'b17') {
-        const studioB17 = document.getElementById('view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20');
-        if (studioB17) studioB17.classList.add('active');
-        switchPartB17('part1');
-        setTimeout(() => {
-          if (typeof setB17SimType === 'function') setB17SimType('neutralize');
-          if (typeof initB17EnergyProfile === 'function') initB17EnergyProfile();
-          if (typeof calcB17Reaction === 'function') calcB17Reaction('h2_cl2');
-        }, 50);
-      } else if (lessonId === 'b16') {
-        const studioB16 = document.getElementById('view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20');
-        if (studioB16) studioB16.classList.add('active');
-        switchPartB16('part1');
-        setTimeout(() => {
-          if (typeof initB16Mindmap === 'function') initB16Mindmap();
-          if (typeof initB16ClozeLab === 'function') initB16ClozeLab();
-          if (typeof initB16QuizArena === 'function') initB16QuizArena();
-        }, 50);
-      } else if (lessonId === 'b15') {
-        const studioB15 = document.getElementById('view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20');
-        if (studioB15) studioB15.classList.add('active');
-        switchPartB15('part1');
-        setTimeout(() => {
-          if (typeof selectB15SampleCompound === 'function') selectB15SampleCompound('Fe2O3');
-          if (typeof initB15RedoxSim === 'function') initB15RedoxSim();
-          if (typeof initB15QuizArena === 'function') initB15QuizArena();
-        }, 50);
       } else if (lessonId === 'b14') {
-        const studioB14 = document.getElementById('view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20');
-        if (studioB14) studioB14.classList.add('active');
+        const el = document.getElementById('view-studio-b14');
+        if (el) el.classList.add('active');
         switchPartB14('part1');
         setTimeout(() => {
           if (typeof initB14Mindmap === 'function') initB14Mindmap();
           if (typeof initB14ClozeLab === 'function') initB14ClozeLab();
           if (typeof initB14QuizArena === 'function') initB14QuizArena();
         }, 50);
+      } else if (lessonId === 'b15') {
+        const el = document.getElementById('view-studio-b15');
+        if (el) el.classList.add('active');
+        switchPartB15('part1');
+        setTimeout(() => {
+          if (typeof selectB15SampleCompound === 'function') selectB15SampleCompound('Fe2O3');
+          if (typeof initB15RedoxSim === 'function') initB15RedoxSim();
+          if (typeof initB15QuizArena === 'function') initB15QuizArena();
+        }, 50);
+      } else if (lessonId === 'b16') {
+        const el = document.getElementById('view-studio-b16');
+        if (el) el.classList.add('active');
+        switchPartB16('part1');
+        setTimeout(() => {
+          if (typeof initB16Mindmap === 'function') initB16Mindmap();
+          if (typeof initB16ClozeLab === 'function') initB16ClozeLab();
+          if (typeof initB16QuizArena === 'function') initB16QuizArena();
+        }, 50);
+      } else if (lessonId === 'b17') {
+        const el = document.getElementById('view-studio-b17');
+        if (el) el.classList.add('active');
+        switchPartB17('part1');
+        setTimeout(() => {
+          if (typeof setB17SimType === 'function') setB17SimType('neutralize');
+          if (typeof initB17EnergyProfile === 'function') initB17EnergyProfile();
+          if (typeof calcB17Reaction === 'function') calcB17Reaction('h2_cl2');
+        }, 50);
+      } else if (lessonId === 'b18') {
+        const el = document.getElementById('view-studio-b18');
+        if (el) el.classList.add('active');
+        switchPartB18('part1');
+        setTimeout(() => {
+          if (typeof initB18Mindmap === 'function') initB18Mindmap();
+          if (typeof initB18ClozeLab === 'function') initB18ClozeLab();
+          if (typeof initB18QuizArena === 'function') initB18QuizArena();
+        }, 50);
+      } else if (lessonId === 'b19') {
+        const el = document.getElementById('view-studio-b19');
+        if (el) el.classList.add('active');
+        switchPartB19('part1');
+        setTimeout(() => {
+          if (typeof initB19KineticsGraph === 'function') initB19KineticsGraph();
+          if (typeof updateB19RateCalc === 'function') updateB19RateCalc();
+          if (typeof calcB19Vanthoff === 'function') calcB19Vanthoff();
+        }, 50);
+      } else if (lessonId === 'b20') {
+        const el = document.getElementById('view-studio-b20');
+        if (el) el.classList.add('active');
+        switchPartB20('part1');
+        setTimeout(() => {
+          if (typeof initB20Mindmap === 'function') initB20Mindmap();
+          if (typeof initB20ClozeLab === 'function') initB20ClozeLab();
+          if (typeof initB20QuizArena === 'function') initB20QuizArena();
+        }, 50);
+      } else if (lessonId === 'b21') {
+        const el = document.getElementById('view-studio-b21');
+        if (el) el.classList.add('active');
+        switchPartB21('part1');
+        setTimeout(() => {
+          if (typeof initB21HalogenJars === 'function') initB21HalogenJars();
+        }, 50);
+      } else if (lessonId === 'b22') {
+        const el = document.getElementById('view-studio-b22');
+        if (el) el.classList.add('active');
+        switchPartB22('part1');
+        setTimeout(() => {
+          if (typeof selectB22Molecule === 'function') selectB22Molecule('HF');
+        }, 50);
+      } else if (lessonId === 'b23') {
+        const el = document.getElementById('view-studio-b23');
+        if (el) el.classList.add('active');
+        switchPartB23('part1');
+        setTimeout(() => {
+          if (typeof initB23Mindmap === 'function') initB23Mindmap();
+        }, 50);
       }
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 60);
       window.location.hash = lessonId;
     }
 
     function backToDashboard() {
-      const studioIds = ['view-studio', 'view-studio-b2', 'view-studio-b3', 'view-studio-b4', 'view-studio-b5', 'view-studio-b6', 'view-studio-b7', 'view-studio-b8', 'view-studio-b9', 'view-studio-b10', 'view-studio-b11', 'view-studio-b12', 'view-studio-b13', 'view-studio-b14', 'view-studio-b15', 'view-studio-b16', 'view-studio-b17', 'view-studio-b18', 'view-studio-b19', 'view-studio-b20', 'view-studio-b21', 'view-studio-b22', 'view-studio-b23'];
-      studioIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.remove('active');
-      });
+      document.getElementById('view-studio').classList.remove('active');
+      document.getElementById('view-studio-b2').classList.remove('active');
+      const studioB3 = document.getElementById('view-studio-b3');
+      if (studioB3) studioB3.classList.remove('active');
+      const studioB4 = document.getElementById('view-studio-b4');
+      if (studioB4) studioB4.classList.remove('active');
+      const studioB5 = document.getElementById('view-studio-b5');
+      if (studioB5) studioB5.classList.remove('active');
+      const studioB6 = document.getElementById('view-studio-b6');
+      if (studioB6) studioB6.classList.remove('active');
+      const studioB7 = document.getElementById('view-studio-b7');
+      if (studioB7) studioB7.classList.remove('active');
+      const studioB8 = document.getElementById('view-studio-b8');
+      if (studioB8) studioB8.classList.remove('active');
+      const studioB9 = document.getElementById('view-studio-b9');
+      if (studioB9) studioB9.classList.remove('active');
+      const studioB10 = document.getElementById('view-studio-b10');
+      if (studioB10) studioB10.classList.remove('active');
+      const studioB11 = document.getElementById('view-studio-b11');
+      if (studioB11) studioB11.classList.remove('active');
+      const studioB12 = document.getElementById('view-studio-b12');
+      if (studioB12) studioB12.classList.remove('active');
+      const studioB13 = document.getElementById('view-studio-b13');
+      if (studioB13) studioB13.classList.remove('active');
       document.getElementById('view-dashboard').classList.add('active');
       window.location.hash = '';
     }
@@ -10422,6 +10705,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     ];
 
     function switchPartB7(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB7 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -11092,6 +11376,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     };
 
     function switchPartB8(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB8 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -11538,6 +11823,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     let currentPartB9 = 'part1';
 
     function switchPartB9(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB9 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -12102,6 +12388,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     };
 
     function switchPartB10(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB10 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -12612,6 +12899,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     let b11CircuitSample = 'water'; // 'sugar' | 'solid_nacl' | 'sol_nacl'
 
     function switchPartB11(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB11 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -13204,6 +13492,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     };
 
     function switchPartB12(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB12 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -13763,6 +14052,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     };
 
     function switchPartB13(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB13 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -14322,6 +14612,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     let currentPartB14 = 'part1';
 
     function switchPartB14(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB14 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -14764,6 +15055,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     let currentPartB15 = 'part1';
 
     function switchPartB15(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB15 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -15226,6 +15518,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     let currentPartB16 = 'part1';
 
     function switchPartB16(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB16 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -15677,6 +15970,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     let currentPartB17 = 'part1';
 
     function switchPartB17(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB17 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -16093,6 +16387,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     let currentPartB18 = 'part1';
 
     function switchPartB18(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB18 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -16557,6 +16852,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     let currentPartB19 = 'part1';
 
     function switchPartB19(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB19 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -16809,6 +17105,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
     let currentPartB20 = 'part1';
 
     function switchPartB20(partId) {
+      if (typeof renderMathInPage === 'function') setTimeout(renderMathInPage, 30);
       currentPartB20 = partId;
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
       ['p1', 'p2', 'p3'].forEach(p => {
@@ -17229,309 +17526,714 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
 
 
+    
     /* ==========================================================
-       BÀI 21: NHÓM HALOGEN (NHÓM VIIA)
+       LOGIC BÀI 21: NHÓM HALOGEN (CHƯƠNG 7)
        ========================================================== */
     let currentPartB21 = 'part1';
+    let b21SelectedJar = 1;
+    let b21DispKey = 'cl2_nabr';
+    let b21PrepFlowing = false;
+    let b21PrepTick = 0;
+    let b21PrepAnimId = null;
+    let b21QuizStep = 0;
+    let b21QuizScore = 0;
+    let b21QuizAnswered = false;
+
+    const b21Jars = [
+      {
+        sym: 'F₂',
+        name: 'Fluorine',
+        state: 'Khí (20 °C)',
+        colorName: 'Lục nhạt',
+        tnc: '-219,6 °C',
+        ts: '-188,1 °C',
+        bodyFill: 'rgba(217, 249, 157, 0.45)',
+        borderCol: '#84cc16',
+        desc: 'Khí màu lục nhạt, rất độc. Độ âm điện lớn nhất (3,98), tính oxi hoá mạnh nhất nhóm, bốc cháy ngay khi tiếp xúc với hơi nước.'
+      },
+      {
+        sym: 'Cl₂',
+        name: 'Chlorine',
+        state: 'Khí (20 °C)',
+        colorName: 'Vàng lục',
+        tnc: '-101,0 °C',
+        ts: '-34,1 °C',
+        bodyFill: 'rgba(134, 239, 172, 0.55)',
+        borderCol: '#16a34a',
+        desc: 'Khí màu vàng lục, mùi xốc, độc, nặng gấp 2,45 lần không khí. Tan một phần trong nước tạo nước chlorine có tính tẩy màu và sát trùng.'
+      },
+      {
+        sym: 'Br₂',
+        name: 'Bromine',
+        state: 'Lỏng (20 °C)',
+        colorName: 'Nâu đỏ',
+        tnc: '-7,3 °C',
+        ts: '+59,2 °C',
+        bodyFill: 'rgba(234, 88, 12, 0.85)',
+        vaporFill: 'rgba(251, 146, 60, 0.35)',
+        borderCol: '#ea580c',
+        desc: 'Chất lỏng màu nâu đỏ, dễ bay hơi tạo hơi màu da cam độc, gây bỏng sâu khi rơi vào da. Tương tác van der Waals mạnh hơn Cl₂.'
+      },
+      {
+        sym: 'I₂',
+        name: 'Iodine',
+        state: 'Rắn (20 °C)',
+        colorName: 'Đen tím',
+        tnc: '+113,6 °C',
+        ts: '+185,5 °C',
+        bodyFill: '#4c1d95',
+        vaporFill: 'rgba(168, 85, 247, 0.32)',
+        borderCol: '#7c3aed',
+        desc: 'Tinh thể rắn màu đen tím. Có tính thăng hoa đặc trưng (chuyển thẳng từ thể rắn sang hơi màu tím khi đun nóng ở áp suất thường).'
+      }
+    ];
+
+    const b21DispData = {
+      'cl2_nabr': {
+        title: 'Thí nghiệm 1: Sục khí Chlorine (Cl₂) vào dung dịch Sodium bromide (NaBr)',
+        equation: 'Cl₂ + 2NaBr ➔ 2NaCl + Br₂',
+        obs: 'Dung dịch NaBr không màu chuyển dần sang màu vàng cam / nâu đỏ của bromine (Br₂) tự do.',
+        principle: 'Chlorine có tính oxi hoá mạnh hơn bromine (Cl₂ > Br₂) nên đẩy được bromine ra khỏi dung dịch muối.',
+        liquidBefore: 'rgba(241, 245, 249, 0.7)',
+        liquidAfter: 'rgba(234, 88, 12, 0.65)',
+        reagentLabel: 'Sục khí Cl₂ vàng lục'
+      },
+      'br2_nai': {
+        title: 'Thí nghiệm 2: Nhỏ nước Bromine (Br₂) vào dung dịch Sodium iodide (NaI)',
+        equation: 'Br₂ + 2NaI ➔ 2NaBr + I₂',
+        obs: 'Dung dịch NaI không màu chuyển sang màu nâu sẫm / tím đen do iodine (I₂) sinh ra.',
+        principle: 'Bromine có tính oxi hoá mạnh hơn iodine (Br₂ > I₂) nên oxi hoá được ion I⁻ thành I₂.',
+        liquidBefore: 'rgba(241, 245, 249, 0.7)',
+        liquidAfter: 'rgba(109, 40, 217, 0.65)',
+        reagentLabel: 'Nhỏ nước Br₂ nâu đỏ'
+      },
+      'i2_starch': {
+        title: 'Thí nghiệm 3: Nhỏ dung dịch Iodine (I₂) vào ống nghiệm chứa Hồ tinh bột',
+        equation: 'I₂ + Hồ tinh bột ➔ Hợp chất bọc màu xanh tím đặc trưng',
+        obs: 'Dung dịch lập tức xuất hiện màu xanh tím đậm đặc trưng (mất màu khi đun nóng, hiện lại khi để nguội).',
+        principle: 'Phân tử amylose trong tinh bột có cấu trúc xoắn lò xo giữ các phân tử I₂ bên trong tạo màu xanh tím.',
+        liquidBefore: 'rgba(241, 245, 249, 0.85)',
+        liquidAfter: 'rgba(30, 58, 138, 0.82)',
+        reagentLabel: 'Nhỏ dung dịch I₂'
+      },
+      'f2_h2o': {
+        title: 'Thí nghiệm 4: Dẫn khí Fluorine (F₂) tiếp xúc với Nước (H₂O)',
+        equation: '2F₂ + 2H₂O ➔ 4HF + O₂↑ (Bốc cháy mãnh liệt)',
+        obs: 'Hơi nước bốc cháy ngay lập tức với ngọn lửa sáng, giải phóng khí oxygen (O₂). Không thể dùng F₂ đẩy Cl⁻ trong dung dịch!',
+        principle: 'Do F₂ có tính oxi hoá cực mạnh nên ưu tiên oxi hoá mãnh liệt nguyên tử oxygen (-2) trong phân tử H₂O thành O₂.',
+        liquidBefore: 'rgba(224, 242, 254, 0.7)',
+        liquidAfter: 'rgba(254, 240, 138, 0.75)',
+        reagentLabel: 'Thổi luồng khí F₂'
+      }
+    };
+
+    const b21QuizList = [
+      {
+        q: "Câu 1: Nguyên nhân chính làm cho nhiệt độ nóng chảy và nhiệt độ sôi của các đơn chất halogen tăng dần từ F₂ đến I₂ là gì?",
+        options: [
+          "Độ âm điện của các nguyên tử tăng dần từ F đến I",
+          "Khối lượng phân tử và kích thước phân tử tăng làm tương tác van der Waals tăng dần",
+          "Liên kết hydrogen giữa các phân tử X₂ bền vững dần",
+          "Năng lượng liên kết cộng hoá trị X-X tăng dần từ F₂ đến I₂"
+        ],
+        ans: 1,
+        explain: "Các phân tử X₂ đều không phân cực. Từ F₂ đến I₂, phân tử khối và bán kính đám mây electron tăng mạnh làm lực tương tác van der Waals tăng dần, dẫn đến t_nc và t_s tăng."
+      },
+      {
+        q: "Câu 2: Khi đun nóng tinh thể iodine (I₂) trong ống nghiệm ở áp suất thường, hiện tượng nào xảy ra?",
+        options: [
+          "Iodine nóng chảy thành chất lỏng màu vàng lục",
+          "Iodine phân huỷ thành nguyên tử và mất màu",
+          "Iodine thăng hoa chuyển thẳng từ thể rắn sang hơi màu tím, sau đó ngưng tụ lại ở thành ống nghiệm lạnh",
+          "Iodine bốc cháy tạo khói trắng"
+        ],
+        ans: 2,
+        explain: "Ở áp suất thường, tinh thể I₂ có tính thăng hoa: khi đun nóng chuyển thẳng từ thể rắn sang hơi màu tím mà không qua trạng thái lỏng."
+      },
+      {
+        q: "Câu 3: Phát biểu nào sau đây là SAI khi nói về tính chất hoá học của các đơn chất halogen?",
+        options: [
+          "Chlorine oxi hoá sắt (Fe) ở nhiệt độ cao tạo thành iron(III) chloride (FeCl₃)",
+          "Fluorine phản ứng nổ mạnh với hydrogen ngay trong bóng tối và nhiệt độ rất thấp (-252 °C)",
+          "Sục khí fluorine (F₂) vào dung dịch NaCl sẽ thu được khí chlorine (Cl₂) thoát ra",
+          "Nước Javel được sản xuất bằng cách dẫn khí Cl₂ vào dung dịch NaOH loãng, nguội"
+        ],
+        ans: 2,
+        explain: "Phát biểu C sai vì F₂ có tính oxi hoá quá mạnh nên khi sục vào dung dịch NaCl, F₂ lập tức oxi hoá nước mãnh liệt: 2F₂ + 2H₂O ➔ 4HF + O₂↑ chứ không đẩy được Cl₂."
+      },
+      {
+        q: "Câu 4: Trong phản ứng tự oxi hoá – khử: Cl₂ + 2NaOH ➔ NaCl + NaClO + H₂O, vai trò của Cl₂ là:",
+        options: [
+          "Chỉ là chất oxi hoá",
+          "Chỉ là chất khử",
+          "Vừa là chất oxi hoá, vừa là chất khử",
+          "Không phải chất oxi hoá, cũng không phải chất khử"
+        ],
+        ans: 2,
+        explain: "Số oxi hoá của Cl thay đổi từ 0 (trong Cl₂) xuống -1 (trong NaCl, nhận e ➔ chất oxi hoá) và tăng lên +1 (trong NaClO, nhường e ➔ chất khử)."
+      },
+      {
+        q: "Câu 5: Trong hệ thống điều chế khí Cl₂ từ MnO₂ và HCl đặc, bình rửa khí thứ nhất chứa dung dịch NaCl bão hoà có tác dụng gì?",
+        options: [
+          "Hấp thụ hơi nước làm khô khí Cl₂",
+          "Giữ lại khí HCl bay theo mà hạn chế hoà tan khí Cl₂",
+          "Trung hoà khí Cl₂ dư tránh ô nhiễm",
+          "Tăng tốc độ phản ứng sinh khí Cl₂"
+        ],
+        ans: 1,
+        explain: "Khí Cl₂ thoát ra từ bình phản ứng thường lẫn khí HCl bay hơi và hơi nước. Bình 1 chứa dung dịch NaCl bão hoà dùng để giữ lại khí HCl; Bình 2 chứa H₂SO₄ đặc dùng để hút ẩm làm khô khí Cl₂."
+      }
+    ];
 
     function switchPartB21(partId) {
       currentPartB21 = partId;
-      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : 'p3');
-      ['p1', 'p2', 'p3'].forEach(p => {
+      if (b21PrepAnimId) {
+        cancelAnimationFrame(b21PrepAnimId);
+        b21PrepAnimId = null;
+      }
+
+      const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : (partId === 'part3' ? 'p3' : 'p4'));
+      ['p1', 'p2', 'p3', 'p4'].forEach(p => {
         const btn = document.getElementById('tab-btn-b21-' + p);
         if (btn) btn.classList.toggle('active', p === partNum);
       });
 
-      ['part1', 'part2', 'part3'].forEach(p => {
+      ['part1', 'part2', 'part3', 'part4'].forEach(p => {
         const sec = document.getElementById('content-b21-' + p);
         const panel = document.getElementById('panel-b21-' + p);
         if (sec) sec.classList.toggle('active', p === partId);
         if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
       });
 
+      if (typeof renderMathInPage === 'function') renderMathInPage();
+
       const tip = document.getElementById('b21-lab-status-tip');
       const hudTool = document.getElementById('b21-hud-tool');
-      if (tip) {
-        if (partId === 'part1') {
-          tip.innerHTML = '💡 <em>Click vào từng lọ halogen để khám phá màu sắc, trạng thái và giải thích nhiệt độ sôi tăng dần.</em>';
-          if (hudTool) hudTool.innerText = 'Bảng Màu & Trạng Thái 4 Halogen';
-          setTimeout(initB21HalogenJars, 50);
-        } else if (partId === 'part2') {
-          tip.innerHTML = '💡 <em>Thí nghiệm đẩy muối: Halogen mạnh đứng trước đẩy halogen yếu đứng sau ra khỏi dung dịch muối.</em>';
-          if (hudTool) hudTool.innerText = 'Đẩy Muối Halide';
-          setTimeout(() => { simB21Displacement('cl2_nabr'); }, 50);
-        } else {
-          tip.innerHTML = '💡 <em>Hệ thống điều chế Chlorine: Thu khí đẩy không khí ngửa bình và nút bông tẩm kiềm NaOH tránh độc.</em>';
-          if (hudTool) hudTool.innerText = 'Điều Chế Khí Cl₂';
-          setTimeout(initB21PrepScheme, 50);
-        }
+
+      if (partId === 'part1') {
+        if (tip) tip.innerHTML = '💡 <em>Click vào từng lọ halogen để khám phá màu sắc, trạng thái và giải thích nhiệt độ sôi tăng dần.</em>';
+        if (hudTool) hudTool.innerText = 'Bộ 4 Lọ Đơn Chất Halogen 2.5D';
+        setTimeout(initB21HalogenJars, 50);
+      } else if (partId === 'part2') {
+        if (tip) tip.innerHTML = '💡 <em>Thí nghiệm thế halogen: Chọn cặp chất để quan sát sự biến đổi màu sắc trong ống nghiệm.</em>';
+        if (hudTool) hudTool.innerText = 'Thí Nghiệm Đẩy Muối Halide';
+        setTimeout(() => { simB21Displacement(b21DispKey); }, 50);
+      } else if (partId === 'part3') {
+        if (tip) tip.innerHTML = '💡 <em>Hệ thống điều chế Cl₂: Bấm "Đun nóng & Mở khoá HCl" để quan sát dòng khí đi qua 2 bình rửa khí.</em>';
+        if (hudTool) hudTool.innerText = 'Dây Chuyền Điều Chế Chlorine';
+        setTimeout(drawB21PrepApparatus, 50);
+      } else if (partId === 'part4') {
+        if (tip) tip.innerHTML = '💡 <em>Đấu trường trắc nghiệm: Chinh phục 5 câu hỏi cốt lõi Bài 21.</em>';
+        if (hudTool) hudTool.innerText = 'Đấu Trường Trắc Nghiệm Bài 21';
+        renderB21QuizQuestion();
       }
     }
-
-    // --- PART 1: 4 HALOGEN JARS 2.5D ---
-    let b21SelectedJar = 1; // 0: F2, 1: Cl2, 2: Br2, 3: I2
-    const b21JarsData = [
-      {
-        name: 'Fluorine (F₂)',
-        state: 'Khí • Vàng lục cực nhạt',
-        mp: '-219.6°C',
-        bp: '-188.1°C',
-        color: '#fef08a',
-        gasAlpha: 0.25,
-        desc: 'Chất khí cực độc, phản ứng mãnh liệt với mọi đơn chất (kể cả thuỷ tinh và nước ở nhiệt độ thường).'
-      },
-      {
-        name: 'Chlorine (Cl₂)',
-        state: 'Khí • Màu vàng lục đặc trưng',
-        mp: '-101.5°C',
-        bp: '-34.0°C',
-        color: '#84cc16',
-        gasAlpha: 0.6,
-        desc: 'Chất khí mùi hắc, nặng hơn không khí (d ≈ 2.5), tan vừa phải trong nước tạo nước clo tẩy màu.'
-      },
-      {
-        name: 'Bromine (Br₂)',
-        state: 'Lỏng • Màu đỏ nâu, bốc khói',
-        mp: '-7.2°C',
-        bp: '58.8°C',
-        color: '#c2410c',
-        gasAlpha: 0.85,
-        desc: 'Đơn chất phi kim duy nhất ở thể lỏng ở nhiệt độ thường, dễ bay hơi tạo hơi màu đỏ nâu rất độc.'
-      },
-      {
-        name: 'Iodine (I₂)',
-        state: 'Rắn • Tinh thể màu tím đen',
-        mp: '113.7°C',
-        bp: '184.3°C',
-        color: '#6b21a8',
-        gasAlpha: 0.95,
-        desc: 'Chất rắn có ánh kim, dễ thăng hoa khi đun nóng nhẹ tạo luồng hơi màu tím đậm tuyệt đẹp.'
-      }
-    ];
 
     function initB21HalogenJars() {
       const canvas = document.getElementById('b21HalogenCanvas');
       if (!canvas) return;
 
-      canvas.removeEventListener('click', handleB21CanvasClick);
-      canvas.addEventListener('click', handleB21CanvasClick);
-
-      window.removeEventListener('resize', drawB21HalogenJars);
-      window.addEventListener('resize', drawB21HalogenJars);
+      canvas.onclick = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const idx = Math.floor((x / rect.width) * 4);
+        if (idx >= 0 && idx < 4) {
+          b21SelectedJar = idx;
+          drawB21HalogenJars();
+        }
+      };
 
       drawB21HalogenJars();
-    }
-
-    function handleB21CanvasClick(e) {
-      const canvas = document.getElementById('b21HalogenCanvas');
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const jarWidth = rect.width / 4;
-      const jarIndex = Math.floor(clickX / jarWidth);
-      if (jarIndex >= 0 && jarIndex < 4) {
-        b21SelectedJar = jarIndex;
-        drawB21HalogenJars();
-      }
     }
 
     function drawB21HalogenJars() {
       const canvas = document.getElementById('b21HalogenCanvas');
       if (!canvas) return;
-
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = (rect.width || 500) * dpr;
-      canvas.height = (rect.height || 420) * dpr;
-
       const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-
-      ctx.clearRect(0, 0, w, h);
-      ctx.save();
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
-      const cw = rect.width || 500;
-      const ch = rect.height || 420;
 
-      const jarSlot = cw / 4;
-      const jw = Math.min(jarSlot - 24, 76);
-      const jh = 160;
-      const jy = ch * 0.58;
+      const w = rect.width;
+      const h = rect.height;
+      ctx.clearRect(0, 0, w, h);
 
-      for (let i = 0; i < 4; i++) {
-        const jx = i * jarSlot + jarSlot / 2;
-        const jar = b21JarsData[i];
-        const isSelected = (i === b21SelectedJar);
+      const colW = w / 4;
+      const jarW = Math.min(76, colW - 24);
+      const jarH = 155;
+      const jarY = 50;
 
-        // Highlight active jar background
-        if (isSelected) {
-          ctx.save();
-          ctx.fillStyle = 'rgba(2, 132, 199, 0.08)';
-          ctx.beginPath();
-          ctx.roundRect(i * jarSlot + 4, 16, jarSlot - 8, ch - 32, 12);
-          ctx.fill();
-          ctx.strokeStyle = '#0284c7';
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-          ctx.restore();
-        }
+      b21Jars.forEach((jar, i) => {
+        const cx = colW * i + colW / 2;
+        const jx = cx - jarW / 2;
+        const isSel = (i === b21SelectedJar);
 
-        // Jar glass body
+        // Vẽ nút bình thuỷ tinh
+        ctx.fillStyle = isSel ? jar.borderCol : '#64748b';
+        ctx.fillRect(cx - 18, jarY - 14, 36, 10);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(cx - 14, jarY - 4, 28, 6);
+
+        // Vẽ thân bình
         ctx.save();
-        ctx.shadowColor = isSelected ? jar.color : 'rgba(0,0,0,0.06)';
-        ctx.shadowBlur = isSelected ? 16 : 6;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-        ctx.beginPath();
-        ctx.roundRect(jx - jw/2, jy - jh, jw, jh, 12);
-        ctx.fill();
-        ctx.lineWidth = isSelected ? 3 : 2;
-        ctx.strokeStyle = isSelected ? '#0f172a' : '#94a3b8';
-        ctx.stroke();
-
-        // Contents inside
-        if (i === 0) { // F2 gas
-          ctx.fillStyle = 'rgba(254, 240, 138, 0.35)';
-          ctx.fillRect(jx - jw/2 + 2, jy - jh + 10, jw - 4, jh - 14);
-        } else if (i === 1) { // Cl2 gas
-          ctx.fillStyle = 'rgba(132, 204, 22, 0.5)';
-          ctx.fillRect(jx - jw/2 + 2, jy - jh + 10, jw - 4, jh - 14);
-        } else if (i === 2) { // Br2 liquid + vapor
-          // liquid bottom
-          ctx.fillStyle = '#9a3412';
-          ctx.fillRect(jx - jw/2 + 2, jy - 50, jw - 4, 48);
-          // vapor top
-          ctx.fillStyle = 'rgba(234, 88, 12, 0.45)';
-          ctx.fillRect(jx - jw/2 + 2, jy - jh + 10, jw - 4, jh - 60);
-        } else { // I2 solid crystals + light vapor
-          // crystals bottom
-          ctx.fillStyle = '#3b0764';
-          ctx.fillRect(jx - jw/2 + 2, jy - 40, jw - 4, 38);
-          // violet vapor
-          ctx.fillStyle = 'rgba(168, 85, 247, 0.25)';
-          ctx.fillRect(jx - jw/2 + 2, jy - jh + 10, jw - 4, jh - 50);
+        if (isSel) {
+          ctx.shadowColor = jar.borderCol;
+          ctx.shadowBlur = 14;
         }
-
-        // Jar Cap
-        ctx.fillStyle = '#475569';
         ctx.beginPath();
-        ctx.roundRect(jx - (jw - 16)/2, jy - jh - 12, jw - 16, 12, 4);
+        ctx.roundRect(jx, jarY, jarW, jarH, 10);
+        ctx.fillStyle = '#ffffff';
         ctx.fill();
+        ctx.lineWidth = isSel ? 3 : 1.8;
+        ctx.strokeStyle = isSel ? jar.borderCol : '#94a3b8';
+        ctx.stroke();
         ctx.restore();
 
-        // Label Under Jar
-        ctx.fillStyle = isSelected ? '#0f172a' : '#475569';
-        ctx.font = isSelected ? 'bold 14px Plus Jakarta Sans, sans-serif' : '600 13px Plus Jakarta Sans, sans-serif';
+        // Vẽ chất bên trong lọ
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(jx + 3, jarY + 3, jarW - 6, jarH - 6, 8);
+        ctx.clip();
+
+        if (i === 0 || i === 1) {
+          // Thể khí tràn đầy bình
+          ctx.fillStyle = jar.bodyFill;
+          ctx.fillRect(jx, jarY, jarW, jarH);
+        } else if (i === 2) {
+          // Br2: hơi màu cam phía trên, lỏng nâu đỏ phía dưới
+          ctx.fillStyle = jar.vaporFill;
+          ctx.fillRect(jx, jarY, jarW, jarH);
+          ctx.fillStyle = jar.bodyFill;
+          ctx.fillRect(jx, jarY + jarH * 0.62, jarW, jarH * 0.38);
+        } else if (i === 3) {
+          // I2: hơi tím nhạt phía trên, tinh thể rắn đen tím dưới đáy
+          ctx.fillStyle = jar.vaporFill;
+          ctx.fillRect(jx, jarY, jarW, jarH);
+          ctx.fillStyle = jar.bodyFill;
+          ctx.beginPath();
+          ctx.moveTo(jx, jarY + jarH);
+          ctx.lineTo(jx + 15, jarY + jarH - 26);
+          ctx.lineTo(jx + 38, jarY + jarH - 32);
+          ctx.lineTo(jx + 58, jarY + jarH - 22);
+          ctx.lineTo(jx + jarW, jarY + jarH);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+
+        // Nhãn lọ
+        ctx.fillStyle = 'rgba(255,255,255,0.92)';
+        ctx.fillRect(cx - 22, jarY + 45, 44, 28);
+        ctx.strokeStyle = jar.borderCol;
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(cx - 22, jarY + 45, 44, 28);
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '800 14px JetBrains Mono, monospace';
         ctx.textAlign = 'center';
-        ctx.fillText(jar.name, jx, jy + 24);
+        ctx.fillText(jar.sym, cx, jarY + 64);
 
-        ctx.font = '11.5px Plus Jakarta Sans, sans-serif';
+        ctx.fillStyle = isSel ? jar.borderCol : '#334155';
+        ctx.font = '700 13px Plus Jakarta Sans';
+        ctx.fillText(jar.name, cx, jarY + jarH + 22);
         ctx.fillStyle = '#64748b';
-        ctx.fillText(jar.state.split('•')[0].trim(), jx, jy + 42);
-      }
+        ctx.font = '11.5px Plus Jakarta Sans';
+        ctx.fillText(jar.state, cx, jarY + jarH + 38);
+      });
 
-      // Selected info card at bottom
-      const sel = b21JarsData[b21SelectedJar];
-      const boxW = Math.min(cw - 32, 460);
-      const boxH = 72;
-      const bx = (cw - boxW) / 2;
-      const by = ch - boxH - 10;
+      // Hộp thông tin chi tiết của lọ đang chọn
+      const sel = b21Jars[b21SelectedJar];
+      const bx = 20;
+      const by = jarY + jarH + 54;
+      const bw = w - 40;
+      const bh = Math.max(82, h - by - 14);
 
-      ctx.save();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
-      ctx.shadowColor = 'rgba(0,0,0,0.1)';
-      ctx.shadowBlur = 12;
+      ctx.fillStyle = '#f8fafc';
       ctx.beginPath();
-      ctx.roundRect(bx, by, boxW, boxH, 10);
+      ctx.roundRect(bx, by, bw, bh, 10);
       ctx.fill();
       ctx.lineWidth = 1.5;
-      ctx.strokeStyle = '#0284c7';
+      ctx.strokeStyle = sel.borderCol;
       ctx.stroke();
 
-      ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 13px Plus Jakarta Sans, sans-serif';
+      ctx.fillStyle = sel.borderCol;
+      ctx.font = '800 14px Plus Jakarta Sans';
       ctx.textAlign = 'left';
-      ctx.fillText(`${sel.name}: ${sel.state}`, bx + 14, by + 22);
+      ctx.fillText(sel.sym + ' – ' + sel.name + ' (' + sel.colorName + ' | t_nc: ' + sel.tnc + ' | t_s: ' + sel.ts + ')', bx + 16, by + 26);
 
-      ctx.fillStyle = '#0284c7';
-      ctx.font = 'bold 12px JetBrains Mono, monospace';
-      ctx.fillText(`Nhiệt độ nóng chảy: ${sel.mp} | Nhiệt độ sôi: ${sel.bp}`, bx + 14, by + 42);
-
-      ctx.fillStyle = '#475569';
-      ctx.font = '11.5px Plus Jakarta Sans, sans-serif';
-      ctx.fillText(sel.desc, bx + 14, by + 60);
-      ctx.restore();
-
-      ctx.restore();
+      ctx.fillStyle = '#334155';
+      ctx.font = '12.5px Plus Jakarta Sans';
+      ctx.fillText(sel.desc, bx + 16, by + 52, bw - 32);
     }
-
-    // --- PART 2: HALIDE DISPLACEMENT EXPERIMENT ---
-    const b21DispData = {
-      'cl2_nabr': {
-        title: 'Thí nghiệm: Khí Cl₂ sục vào dung dịch NaBr không màu',
-        equation: 'Cl₂⁰ + 2NaBr⁻¹ → 2NaCl⁻¹ + Br₂⁰ (Dung dịch hoá vàng nâu)',
-        obs: 'Dung dịch ban đầu trong suốt chuyển dần sang màu vàng cam, rồi đỏ nâu do Bromine (Br₂) tự do được sinh ra.',
-        principle: 'Tính oxi hoá của Chlorine mạnh hơn Bromine (Cl₂ > Br₂) nên Cl₂ đã cướp electron của ion Br⁻.'
-      },
-      'br2_nai': {
-        title: 'Thí nghiệm: Nước Bromine (Br₂) nhỏ vào dung dịch NaI',
-        equation: 'Br₂⁰ + 2NaI⁻¹ → 2NaBr⁻¹ + I₂⁰ (Iodine tự do sinh ra)',
-        obs: 'Dung dịch chuyển từ không màu sang màu vàng sẫm / nâu đen của Iodine phân tán trong nước.',
-        principle: 'Tính oxi hoá của Bromine mạnh hơn Iodine (Br₂ > I₂) nên Br₂ đẩy được I⁻ ra khỏi muối iodide.'
-      },
-      'i2_starch': {
-        title: 'Thí nghiệm: Nhận biết Iodine bằng Hồ Tinh Bột',
-        equation: 'I₂ + Hồ tinh bột → Hợp chất bọc màu xanh tím đặc trưng',
-        obs: 'Khi nhỏ vài giọt dung dịch I₂ vào ống nghiệm chứa hồ tinh bột, xuất hiện màu xanh tím đậm tức thì.',
-        principle: 'Cấu trúc xoắn ốc của tinh bột giữ các phân tử I₂ tạo phức màu xanh tím (mất màu khi đun nóng, hiện lại khi nguội).'
-      }
-    };
 
     function simB21Displacement(key) {
+      b21DispKey = key;
+      const keys = ['cl2_nabr', 'br2_nai', 'i2_starch', 'f2_h2o'];
+      keys.forEach((k, idx) => {
+        const btn = document.getElementById('btn-b21-disp-' + (idx + 1));
+        if (btn) btn.classList.toggle('active', k === key);
+      });
+
       const item = b21DispData[key];
-      if (!item) return;
-
       const card = document.getElementById('b21-disp-result-card');
-      if (!card) return;
-
-      card.innerHTML = `
-        <div style="border-bottom: 1.5px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 12px;">
-          <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">${item.title}</h3>
-          <div style="margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 700; color: #0284c7;">${item.equation}</div>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #334155; line-height: 1.6;">
-          <div><strong>👀 Hiện tượng quan sát:</strong> ${item.obs}</div>
-          <div style="padding: 10px; border-radius: 6px; background: #f0fdf4; border-left: 4px solid #16a34a; color: #166534; font-weight: 700;">
-            🛡️ Bản chất hoá học: ${item.principle}
+      if (card && item) {
+        card.innerHTML = `
+          <div style="font-weight: 800; color: #0f172a; font-size: 13.5px; margin-bottom: 4px;">
+            ${item.title} &nbsp;|&nbsp; <span style="color: #0284c7; font-family: 'JetBrains Mono', monospace;">${item.equation}</span>
           </div>
-        </div>
-      `;
+          <div style="font-size: 12.5px; color: #334155;">
+            <strong>Hiện tượng:</strong> ${item.obs}<br>
+            <strong style="color: #15803d;">Giải thích:</strong> ${item.principle}
+          </div>
+        `;
+      }
+
+      drawB21DispCanvas();
     }
 
-    // --- PART 3: CHLORINE PREPARATION SCHEME ---
-    function initB21PrepScheme() {
-      const card = document.getElementById('b21-prep-display-card');
-      if (!card) return;
+    function drawB21DispCanvas() {
+      const canvas = document.getElementById('b21DispCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
 
-      card.innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13px; color: #334155; line-height: 1.6;">
-          <div style="padding: 12px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe;">
-            <strong style="color: #1e40af; font-size: 14px;">1. Phương trình phản ứng điều chế Cl₂ trong PTN:</strong>
-            <p style="margin: 4px 0 0 0; font-family: 'JetBrains Mono', monospace; color: #1d4ed8; font-weight: 700;">
-              MnO₂ + 4HCl (đặc) —t°→ MnCl₂ + Cl₂↑ + 2H₂O
-            </p>
-          </div>
-          <div style="padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <strong style="color: #0f172a;">2. Vai trò các bình trong hệ thống thu khí:</strong>
-            <ul style="margin: 6px 0 0 16px;">
-              <li><strong>Bình 1 (Chứa dd NaCl bão hoà):</strong> Hấp thụ và giữ lại khí HCl bay theo.</li>
-              <li><strong>Bình 2 (Chứa H₂SO₄ đặc):</strong> Giữ lại hơi nước để làm khô hoàn toàn khí Cl₂.</li>
-              <li><strong>Bình 3 (Thu khí Cl₂ khô):</strong> Đặt ngửa bình vì khí Cl₂ nặng hơn không khí (d = 71/29 ≈ 2.45).</li>
-              <li><strong>Nút bông tẩm kiềm (NaOH):</strong> Chặn miệng bình để hấp thụ Cl₂ dư, ngăn khí độc thoát ra môi trường (Cl₂ + 2NaOH → NaCl + NaClO + H₂O).</li>
-            </ul>
-          </div>
-        </div>
-      `;
+      const w = rect.width;
+      const h = rect.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const item = b21DispData[b21DispKey];
+      if (!item) return;
+
+      // Vẽ 2 ống nghiệm: Trước phản ứng (Trái) và Sau khi cho thuốc thử (Phải)
+      const positions = [
+        { cx: w * 0.3, title: 'TRƯỚC KHI PHẢN ỨNG', col: item.liquidBefore, reacted: false },
+        { cx: w * 0.7, title: 'SAU KHI THÊM THUỐC THỬ', col: item.liquidAfter, reacted: true }
+      ];
+
+      // Mũi tên chuyển tiếp ở giữa
+      ctx.fillStyle = '#0284c7';
+      ctx.font = '800 13px Plus Jakarta Sans';
+      ctx.textAlign = 'center';
+      ctx.fillText('+ ' + item.reagentLabel, w * 0.5, h * 0.45);
+      ctx.font = '800 22px Plus Jakarta Sans';
+      ctx.fillText('➔', w * 0.5, h * 0.54);
+
+      const tubeW = 58;
+      const tubeH = 175;
+      const ty = 55;
+
+      positions.forEach(p => {
+        const tx = p.cx - tubeW / 2;
+
+        // Dung dịch trong ống
+        ctx.beginPath();
+        ctx.moveTo(tx + 3, ty + 65);
+        ctx.lineTo(tx + 3, ty + tubeH - 28);
+        ctx.arc(p.cx, ty + tubeH - 28, tubeW / 2 - 3, Math.PI, 0, true);
+        ctx.lineTo(tx + tubeW - 3, ty + 65);
+        ctx.closePath();
+        ctx.fillStyle = p.col;
+        ctx.fill();
+
+        // Hiệu ứng đặc biệt ở ống phải
+        if (p.reacted) {
+          if (b21DispKey === 'f2_h2o') {
+            // Ngọn lửa bốc cháy trên mặt nước
+            ctx.beginPath();
+            ctx.arc(p.cx, ty + 60, 18, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.75)';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(p.cx, ty + 62, 10, 0, Math.PI * 2);
+            ctx.fillStyle = '#fde047';
+            ctx.fill();
+          } else {
+            // Giọt thuốc thử đang nhỏ xuống
+            ctx.beginPath();
+            ctx.arc(p.cx, ty + 35, 5, 0, Math.PI * 2);
+            ctx.fillStyle = p.col;
+            ctx.fill();
+          }
+        }
+
+        // Thành ống nghiệm
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(tx, ty + tubeH - 28);
+        ctx.arc(p.cx, ty + tubeH - 28, tubeW / 2, Math.PI, 0, true);
+        ctx.lineTo(tx + tubeW, ty);
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#64748b';
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '700 12px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.title, p.cx, ty - 14);
+      });
+    }
+
+    function toggleB21PrepFlow() {
+      b21PrepFlowing = !b21PrepFlowing;
+      const btn = document.getElementById('btn-b21-prep-toggle');
+      if (btn) {
+        btn.innerHTML = b21PrepFlowing ? '⏸ Dừng đun nóng' : '▶ Đun nóng & Mở khoá HCl';
+      }
+      if (b21PrepFlowing) {
+        animateB21Prep();
+      } else if (b21PrepAnimId) {
+        cancelAnimationFrame(b21PrepAnimId);
+        b21PrepAnimId = null;
+        drawB21PrepApparatus();
+      }
+    }
+
+    function animateB21Prep() {
+      if (!b21PrepFlowing || currentPartB21 !== 'part3') return;
+      b21PrepTick += 1;
+      drawB21PrepApparatus();
+      b21PrepAnimId = requestAnimationFrame(animateB21Prep);
+    }
+
+    function drawB21PrepApparatus() {
+      const canvas = document.getElementById('b21PrepCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const baseY = h * 0.72;
+      const x1 = w * 0.16; // Bình cầu MnO2 + HCl
+      const x2 = w * 0.42; // Bình 1: dd NaCl bão hoà
+      const x3 = w * 0.66; // Bình 2: H2SO4 đặc
+      const x4 = w * 0.88; // Bình 3: Thu khí Cl2
+
+      // Ống dẫn khí nối giữa các bình
+      ctx.strokeStyle = b21PrepFlowing ? '#16a34a' : '#94a3b8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x1, baseY - 75);
+      ctx.lineTo(x1, baseY - 115);
+      ctx.lineTo(x2 - 12, baseY - 115);
+      ctx.lineTo(x2 - 12, baseY - 15);
+
+      ctx.moveTo(x2 + 12, baseY - 75);
+      ctx.lineTo(x2 + 12, baseY - 115);
+      ctx.lineTo(x3 - 12, baseY - 115);
+      ctx.lineTo(x3 - 12, baseY - 15);
+
+      ctx.moveTo(x3 + 12, baseY - 75);
+      ctx.lineTo(x3 + 12, baseY - 115);
+      ctx.lineTo(x4, baseY - 115);
+      ctx.lineTo(x4, baseY - 15);
+      ctx.stroke();
+
+      // 1. Bình cầu phản ứng
+      ctx.beginPath();
+      ctx.arc(x1, baseY - 35, 36, 0, Math.PI * 2);
+      ctx.fillStyle = b21PrepFlowing ? 'rgba(134, 239, 172, 0.35)' : '#f8fafc';
+      ctx.fill();
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = '#475569';
+      ctx.stroke();
+
+      // Hạt MnO2 đen dưới đáy bình cầu
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath();
+      ctx.arc(x1, baseY - 12, 16, 0, Math.PI, false);
+      ctx.fill();
+
+      // Ngọn lửa đèn cồn khi đun
+      if (b21PrepFlowing) {
+        ctx.beginPath();
+        ctx.arc(x1, baseY + 12, 10 + Math.sin(b21PrepTick * 0.2) * 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+      }
+
+      // 2. Bình rửa 1 (NaCl bão hoà) & 3. Bình rửa 2 (H2SO4 đặc) & 4. Bình thu Cl2
+      const bottles = [
+        { x: x2, label: 'Bình 1: dd NaCl bão hoà', sub: '(Giữ khí HCl)', fill: 'rgba(186, 230, 253, 0.55)' },
+        { x: x3, label: 'Bình 2: H₂SO₄ đặc', sub: '(Hút ẩm giữ H₂O)', fill: 'rgba(254, 240, 138, 0.55)' },
+        { x: x4, label: 'Bình thu Cl₂ khô', sub: '(Bông tẩm NaOH)', fill: b21PrepFlowing ? 'rgba(134, 239, 172, 0.65)' : 'rgba(241, 245, 249, 0.4)' }
+      ];
+
+      bottles.forEach((b, idx) => {
+        const bw = 64;
+        const bh = 88;
+        ctx.beginPath();
+        ctx.roundRect(b.x - bw / 2, baseY - bh, bw, bh, 8);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+
+        // Mực chất lỏng
+        ctx.fillStyle = b.fill;
+        if (idx < 2) {
+          ctx.fillRect(b.x - bw / 2 + 2, baseY - bh * 0.6, bw - 4, bh * 0.6 - 2);
+        } else {
+          ctx.fillRect(b.x - bw / 2 + 2, baseY - bh + 2, bw - 4, bh - 4);
+        }
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#475569';
+        ctx.stroke();
+
+        // Nút bông tẩm NaOH ở bình 3
+        if (idx === 2) {
+          ctx.beginPath();
+          ctx.arc(b.x, baseY - bh - 4, 14, 0, Math.PI * 2);
+          ctx.fillStyle = '#e2e8f0';
+          ctx.fill();
+          ctx.strokeStyle = '#94a3b8';
+          ctx.stroke();
+        }
+
+        // Bọt khí sủi qua bình khi đang chạy
+        if (b21PrepFlowing && idx < 2) {
+          for (let k = 0; k < 4; k++) {
+            const by = baseY - 15 - ((b21PrepTick * 1.5 + k * 14) % 40);
+            ctx.beginPath();
+            ctx.arc(b.x - 10 + (k % 2) * 6, by, 3.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#22c55e';
+            ctx.fill();
+          }
+        }
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '700 11.5px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText(b.label, b.x, baseY + 22);
+        ctx.fillStyle = '#0284c7';
+        ctx.font = '600 11px Plus Jakarta Sans';
+        ctx.fillText(b.sub, b.x, baseY + 38);
+      });
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '700 11.5px Plus Jakarta Sans';
+      ctx.textAlign = 'center';
+      ctx.fillText('MnO₂ + HCl đặc (t°)', x1, baseY + 32);
+    }
+
+    function renderB21QuizQuestion() {
+      const q = b21QuizList[b21QuizStep];
+      const titleEl = document.getElementById('b21-arena-q-title');
+      const textEl = document.getElementById('b21-arena-question-text');
+      const optListEl = document.getElementById('b21-arena-options-list');
+      const feedEl = document.getElementById('b21-arena-feedback-box');
+      const nextBtn = document.getElementById('btn-b21-next-q');
+
+      if (titleEl) titleEl.textContent = 'Câu hỏi ' + (b21QuizStep + 1) + ' / ' + b21QuizList.length;
+      if (textEl) textEl.textContent = q.q;
+      if (feedEl) feedEl.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
+
+      b21QuizAnswered = false;
+      if (!optListEl) return;
+      optListEl.innerHTML = '';
+
+      const letters = ['A', 'B', 'C', 'D'];
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-tool';
+        btn.style.width = '100%';
+        btn.style.textAlign = 'left';
+        btn.style.padding = '12px 16px';
+        btn.style.fontSize = '14px';
+        btn.style.display = 'flex';
+        btn.style.alignItems = 'center';
+        btn.style.gap = '12px';
+        btn.innerHTML = '<strong style="color: #0284c7;">' + letters[idx] + '.</strong> <span>' + opt + '</span>';
+        btn.onclick = () => submitB21QuizAnswer(idx);
+        optListEl.appendChild(btn);
+      });
+    }
+
+    function submitB21QuizAnswer(selectedIdx) {
+      if (b21QuizAnswered) return;
+      b21QuizAnswered = true;
+      const q = b21QuizList[b21QuizStep];
+      const isCorrect = (selectedIdx === q.ans);
+      const feedEl = document.getElementById('b21-arena-feedback-box');
+      const nextBtn = document.getElementById('btn-b21-next-q');
+      const scoreEl = document.getElementById('b21-arena-score');
+
+      if (isCorrect) {
+        b21QuizScore += 10;
+        if (scoreEl) scoreEl.textContent = 'Điểm: ' + b21QuizScore + ' / 50';
+      }
+
+      if (feedEl) {
+        feedEl.style.display = 'block';
+        if (isCorrect) {
+          feedEl.style.background = '#f0fdf4';
+          feedEl.style.border = '1px solid #86efac';
+          feedEl.style.color = '#166534';
+          feedEl.innerHTML = '<strong>✓ CHÍNH XÁC!</strong><br>' + q.explain;
+        } else {
+          feedEl.style.background = '#fef2f2';
+          feedEl.style.border = '1px solid #fca5a5';
+          feedEl.style.color = '#991b1b';
+          feedEl.innerHTML = '<strong>✗ CHƯA ĐÚNG!</strong> Đáp án đúng là <strong>' + ['A','B','C','D'][q.ans] + '</strong>.<br>' + q.explain;
+        }
+      }
+
+      if (nextBtn) {
+        nextBtn.style.display = 'inline-flex';
+        if (b21QuizStep === b21QuizList.length - 1) {
+          nextBtn.innerHTML = '<span>Xem kết quả ➔</span>';
+        } else {
+          nextBtn.innerHTML = '<span>Câu tiếp theo ➔</span>';
+        }
+      }
+    }
+
+    function nextB21Question() {
+      if (b21QuizStep < b21QuizList.length - 1) {
+        b21QuizStep++;
+        renderB21QuizQuestion();
+      } else {
+        const optListEl = document.getElementById('b21-arena-options-list');
+        const textEl = document.getElementById('b21-arena-question-text');
+        const titleEl = document.getElementById('b21-arena-q-title');
+        const feedEl = document.getElementById('b21-arena-feedback-box');
+        const nextBtn = document.getElementById('btn-b21-next-q');
+
+        if (titleEl) titleEl.textContent = '🎉 HOÀN THÀNH ĐẤU TRƯỜNG BÀI 21!';
+        if (textEl) textEl.innerHTML = 'Bạn đã hoàn thành 5/5 câu hỏi! Điểm số đạt được: <strong style="color: #0284c7; font-size: 18px;">' + b21QuizScore + ' / 50 điểm</strong>.';
+        if (optListEl) optListEl.innerHTML = '';
+        if (feedEl) feedEl.style.display = 'none';
+        if (nextBtn) {
+          nextBtn.innerHTML = '<span>↺ Làm lại đấu trường</span>';
+          nextBtn.onclick = resetB21QuizArena;
+        }
+      }
+    }
+
+    function resetB21QuizArena() {
+      b21QuizStep = 0;
+      b21QuizScore = 0;
+      const scoreEl = document.getElementById('b21-arena-score');
+      if (scoreEl) scoreEl.textContent = 'Điểm: 0 / 50';
+      const nextBtn = document.getElementById('btn-b21-next-q');
+      if (nextBtn) nextBtn.onclick = nextB21Question;
+      renderB21QuizQuestion();
     }
 
     function resetB21InteractiveState() {
@@ -17540,22 +18242,31 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         drawB21HalogenJars();
       } else if (currentPartB21 === 'part2') {
         simB21Displacement('cl2_nabr');
-      } else {
-        initB21PrepScheme();
+      } else if (currentPartB21 === 'part3') {
+        b21PrepFlowing = false;
+        const btn = document.getElementById('btn-b21-prep-toggle');
+        if (btn) btn.innerHTML = '▶ Đun nóng & Mở khoá HCl';
+        drawB21PrepApparatus();
+      } else if (currentPartB21 === 'part4') {
+        resetB21QuizArena();
       }
     }
 
 
 
-
-    
     /* ==========================================================
        LOGIC BÀI 22: HYDROGEN HALIDE & MUỐI HALIDE (CHƯƠNG 7)
        ========================================================== */
     let currentPartB22 = 'part1';
     let b22SelectedMol = 'HF';
     let b22AcidExp = 'hf_glass';
-    let b22AgNO3State = { dropped: false };
+    let b22AcidActive = false;
+    let b22AcidTick = 0;
+    let b22AcidAnimId = null;
+
+    let b22AgNO3State = { dropped: false, progress: 0 };
+    let b22SilverAnimId = null;
+
     let b22QuizStep = 0;
     let b22QuizScore = 0;
     let b22QuizAnswered = false;
@@ -17567,7 +18278,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         energy: '565 kJ/mol',
         bp: '+19,5 °C',
         bpColor: '#dc2626',
-        desc: '💡 HF có độ âm điện của F rất lớn (3,98). Liên kết H-F phân cực mạnh, tạo liên kết hydrogen liên phân tử mạnh (...H-F...H-F...), làm nhiệt độ sôi tăng vọt lên +19,5 °C (thể lỏng/khí dễ ngưng tụ).',
+        desc: '💡 HF có độ âm điện của F rất lớn (3,98). Liên kết H-F phân cực mạnh, tạo liên kết hydrogen liên phân tử bền (...H-F...H-F...), làm nhiệt độ sôi tăng vọt lên +19,5 °C.',
         hRadius: 16,
         xRadius: 28,
         xColor: '#84cc16'
@@ -17578,7 +18289,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         energy: '431 kJ/mol',
         bp: '-84,9 °C',
         bpColor: '#0284c7',
-        desc: '💡 HCl không tạo được liên kết hydrogen. Lực hút giữa các phân tử chủ yếu là tương tác Van der Waals yếu nên nhiệt độ sôi thấp (-84,9 °C).',
+        desc: '💡 HCl không tạo được liên kết hydrogen. Lực hút giữa các phân tử chủ yếu là tương tác van der Waals yếu nên nhiệt độ sôi rất thấp (-84,9 °C).',
         hRadius: 16,
         xRadius: 36,
         xColor: '#22c55e'
@@ -17589,7 +18300,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         energy: '364 kJ/mol',
         bp: '-66,7 °C',
         bpColor: '#d97706',
-        desc: '💡 Từ HCl đến HBr, khối lượng phân tử tăng (36,5 -> 81), số electron tăng làm tương tác Van der Waals mạnh hơn, khiến nhiệt độ sôi tăng lên -66,7 °C.',
+        desc: '💡 Từ HCl đến HBr, khối lượng phân tử tăng (36,5 ➔ 81), kích thước phân tử tăng làm tương tác van der Waals mạnh hơn, khiến nhiệt độ sôi tăng lên -66,7 °C.',
         hRadius: 16,
         xRadius: 44,
         xColor: '#ea580c'
@@ -17600,7 +18311,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         energy: '297 kJ/mol',
         bp: '-35,8 °C',
         bpColor: '#9333ea',
-        desc: '💡 HI có phân tử khối lớn nhất (128) và bán kính đám mây electron lớn nhất, tương tác Van der Waals mạnh nhất trong dãy HX (trừ HF có lk hydrogen), nhiệt độ sôi đạt -35,8 °C.',
+        desc: '💡 HI có phân tử khối lớn nhất (128) và bán kính đám mây electron lớn nhất, tương tác van der Waals mạnh nhất trong dãy HX (trừ HF có liên kết hydrogen), nhiệt độ sôi đạt -35,8 °C.',
         hRadius: 16,
         xRadius: 52,
         xColor: '#7e22ce'
@@ -17609,18 +18320,18 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
     const b22QuizList = [
       {
-        q: "Chất nào sau đây có nhiệt độ sôi cao bất thường trong dãy hydrogen halide và nguyên nhân chính là gì?",
+        q: "Câu 1: Chất nào sau đây có nhiệt độ sôi cao bất thường trong dãy hydrogen halide và nguyên nhân chính là gì?",
         options: [
-          "HF, do giữa các phân tử hình thành liên kết hydrogen liên phân tử",
+          "HF, do giữa các phân tử hình thành liên kết hydrogen liên phân tử bền vững",
           "HCl, do phân tử khối lớn và liên kết cộng hoá trị bền",
-          "HI, do tương tác Van der Waals lớn nhất trong nhóm",
+          "HI, do tương tác van der Waals lớn nhất trong nhóm",
           "HBr, do có tính acid mạnh nhất"
         ],
         ans: 0,
-        explain: "HF có nhiệt độ sôi cao bất thường (+19,5 °C) vì F có độ âm điện lớn và bán kính nhỏ, tạo liên kết hydrogen liên phân tử bền: ...H-F...H-F..."
+        explain: "HF có nhiệt độ sôi cao bất thường (+19,5 °C) vì nguyên tử F có độ âm điện lớn (3,98) và bán kính nhỏ, tạo liên kết hydrogen liên phân tử bền: ...H-F...H-F..."
       },
       {
-        q: "Thứ tự sắp xếp tính acid TĂNG DẦN của các dung dịch hydrohalic acid nào sau đây là đúng?",
+        q: "Câu 2: Thứ tự sắp xếp tính acid TĂNG DẦN của các dung dịch hydrohalic acid nào sau đây là đúng?",
         options: [
           "HI < HBr < HCl < HF",
           "HF < HCl < HBr < HI",
@@ -17628,10 +18339,10 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           "HF < HI < HBr < HCl"
         ],
         ans: 1,
-        explain: "Từ HF đến HI, độ dài liên kết tăng và năng lượng liên kết giảm mạnh (565 -> 297 kJ/mol), khiến khả năng phân li ra proton H+ tăng dần: HF (yếu) < HCl < HBr < HI (rất mạnh)."
+        explain: "Từ HF đến HI, độ dài liên kết H-X tăng (92 ➔ 161 pm) và năng lượng liên kết giảm mạnh (565 ➔ 297 kJ/mol), khiến khả năng phân li ra ion H+ trong nước tăng dần: HF (acid yếu) < HCl < HBr < HI (acid rất mạnh)."
       },
       {
-        q: "Dung dịch acid nào sau đây được dùng để khắc chữ, hoa văn trang trí lên thuỷ tinh?",
+        q: "Câu 3: Dung dịch acid nào sau đây hoà tan được silicon dioxide (SiO₂) và được dùng để khắc chữ, hoa văn lên thuỷ tinh?",
         options: [
           "Dung dịch Hydrochloric acid (HCl)",
           "Dung dịch Hydrofluoric acid (HF)",
@@ -17639,36 +18350,48 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           "Dung dịch Nitric acid (HNO₃)"
         ],
         ans: 1,
-        explain: "Axit HF ăn mòn thuỷ tinh do phản ứng hoà tan silica: SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O. Khí SiF₄ bay ra để lại rãnh khắc sâu."
+        explain: "Hydrofluoric acid (HF) ăn mòn thuỷ tinh do phản ứng: SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O. Khí SiF₄ bay ra để lại rãnh khắc sâu trên kính."
       },
       {
-        q: "Thuốc thử nào sau đây được sử dụng phổ biến nhất để phân biệt các ion halide trong dung dịch?",
+        q: "Câu 4: Khi nhỏ dung dịch silver nitrate (AgNO₃) vào 4 ống nghiệm chứa riêng biệt NaF, NaCl, NaBr, NaI, ống nghiệm nào KHÔNG xuất hiện kết tủa?",
         options: [
-          "Dung dịch BaCl₂",
-          "Dung dịch quỳ tím",
-          "Dung dịch AgNO₃",
-          "Dung dịch NaOH"
+          "Ống nghiệm chứa dung dịch NaCl",
+          "Ống nghiệm chứa dung dịch NaBr",
+          "Ống nghiệm chứa dung dịch NaF",
+          "Ống nghiệm chứa dung dịch NaI"
         ],
         ans: 2,
-        explain: "AgNO₃ tạo các hiện tượng đặc trưng: F- không hiện tượng (AgF tan); Cl- kết tủa trắng AgCl; Br- kết tủa vàng nhạt AgBr; I- kết tủa vàng đậm AgI."
+        explain: "Muối silver fluoride (AgF) tan tốt trong nước nên ống nghiệm chứa NaF không có kết tủa. Các ống còn lại tạo kết tủa: AgCl (trắng), AgBr (vàng nhạt), AgI (vàng đậm)."
       },
       {
-        q: "Khi cho muối rắn NaBr tác dụng với dung dịch H₂SO₄ đặc, nóng, hiện tượng quan sát được là:",
+        q: "Câu 5: Cho các muối rắn NaCl, NaBr, NaI tác dụng với dung dịch H₂SO₄ đặc, nóng. Thứ tự tính khử của các ion halide được chứng minh là:",
         options: [
-          "Chỉ có khí không màu thoát ra, không đổi màu dung dịch",
-          "Xuất hiện hơi màu nâu đỏ của Br₂ và mùi hắc của khí SO₂",
-          "Dung dịch xuất hiện kết tủa màu vàng tươi của lưu huỳnh",
-          "Không có phản ứng hoá học xảy ra"
+          "Cl⁻ < Br⁻ < I⁻ (Cl⁻ không khử được H₂SO₄ đặc; Br⁻ khử xuống SO₂; I⁻ khử sâu xuống H₂S)",
+          "I⁻ < Br⁻ < Cl⁻",
+          "Br⁻ < Cl⁻ < I⁻",
+          "Cả 3 ion đều chỉ xảy ra phản ứng trao đổi tạo khí HX"
         ],
-        ans: 1,
-        explain: "Ion Br- có tính khử mạnh, khử H₂SO₄ đặc thành khí SO₂ và bị oxi hoá thành Br₂ có màu nâu đỏ/da cam: 2NaBr + 2H₂SO₄(đ) ➔ Na₂SO₄ + Br₂ + SO₂↑ + 2H₂O."
+        ans: 0,
+        explain: "Do bán kính ion tăng dần từ Cl⁻ đến I⁻ nên khả năng nhường electron tăng: Cl⁻ không khử được H₂SO₄ đặc; Br⁻ khử S(+6) xuống SO₂(+4); I⁻ khử mạnh S(+6) xuống tận H₂S(-2)."
       }
     ];
 
+    function stopB22Animations() {
+      if (b22AcidAnimId) {
+        cancelAnimationFrame(b22AcidAnimId);
+        b22AcidAnimId = null;
+      }
+      if (b22SilverAnimId) {
+        cancelAnimationFrame(b22SilverAnimId);
+        b22SilverAnimId = null;
+      }
+    }
+
     function switchPartB22(partId) {
       currentPartB22 = partId;
+      stopB22Animations();
+
       const partNum = partId === 'part1' ? 'p1' : (partId === 'part2' ? 'p2' : (partId === 'part3' ? 'p3' : 'p4'));
-      
       ['p1', 'p2', 'p3', 'p4'].forEach(p => {
         const btn = document.getElementById('tab-btn-b22-' + p);
         if (btn) btn.classList.toggle('active', p === partNum);
@@ -17681,7 +18404,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
       });
 
-      renderMathInPane('content-b22-' + partId);
+      if (typeof renderMathInPage === 'function') renderMathInPage();
 
       const tip = document.getElementById('b22-lab-status-tip');
       const hudTool = document.getElementById('b22-hud-tool');
@@ -17691,13 +18414,14 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         if (hudTool) hudTool.innerText = 'Mô Hình Liên Kết Phân Tử HX';
         setTimeout(drawB22MoleculeCanvas, 50);
       } else if (partId === 'part2') {
-        if (tip) tip.innerHTML = '💡 <em>Thí nghiệm: Bấm "Bắt đầu phản ứng" để xem HF ăn mòn tấm thuỷ tinh hoặc HCl tác dụng kim loại.</em>';
-        if (hudTool) hudTool.innerText = 'Ăn Mòn Thuỷ Tinh & Axit HCl';
-        setTimeout(drawB22AcidCanvas, 50);
+        if (tip) tip.innerHTML = '💡 <em>Thí nghiệm: Bấm "Bắt đầu phản ứng" để quan sát hiệu ứng bọt khí và khắc chữ trên thuỷ tinh.</em>';
+        if (hudTool) hudTool.innerText = 'Ăn Mòn Thuỷ Tinh & Hydrochloric Acid';
+        b22AcidActive = false;
+        setTimeout(() => { drawB22AcidCanvas(); }, 50);
       } else if (partId === 'part3') {
-        if (tip) tip.innerHTML = '💡 <em>Nhận biết: Bấm "Nhỏ AgNO₃ Cả 4 Ống" để phân biệt màu sắc kết tủa ion halide.</em>';
+        if (tip) tip.innerHTML = '💡 <em>Nhận biết: Bấm "Nhỏ AgNO₃ Cả 4 Ống" để quan sát giọt thuốc thử rơi và tạo kết tủa lắng dần.</em>';
         if (hudTool) hudTool.innerText = 'Giá 4 Ống Nghiệm Thuốc Thử AgNO₃';
-        setTimeout(drawB22SilverCanvas, 50);
+        setTimeout(() => { drawB22SilverCanvas(); }, 50);
       } else if (partId === 'part4') {
         if (tip) tip.innerHTML = '💡 <em>Đấu trường trắc nghiệm: Hoàn thành 5 câu hỏi trọng tâm SGK Hoá học 10.</em>';
         if (hudTool) hudTool.innerText = 'Đấu Trường Trắc Nghiệm Bài 22';
@@ -17738,11 +18462,10 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       const d = b22MolData[b22SelectedMol];
 
       if (b22SelectedMol === 'HF') {
-        // Chuỗi liên kết hydrogen
         ctx.fillStyle = '#0f172a';
-        ctx.font = '700 13px Plus Jakarta Sans, sans-serif';
+        ctx.font = '700 13.5px Plus Jakarta Sans, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('Chuỗi liên kết Hydrogen liên phân tử: ··· H — F ··· H — F ··· H — F ···', w / 2, 35);
+        ctx.fillText('Chuỗi liên kết Hydrogen liên phân tử: ··· H — F ··· H — F ··· H — F ··· (t_s = +19,5 °C)', w / 2, 34);
 
         const startX = w / 2 - 160;
         const cy = h / 2 + 10;
@@ -17818,9 +18541,9 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         const cy = h / 2;
 
         ctx.fillStyle = '#0f172a';
-        ctx.font = '700 13px Plus Jakarta Sans, sans-serif';
+        ctx.font = '700 13.5px Plus Jakarta Sans, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('Mô hình liên kết cộng hoá trị phân cực H — ' + b22SelectedMol.replace('H',''), cx, 35);
+        ctx.fillText(d.name + ' • Nhiệt độ sôi: ' + d.bp, cx, 34);
 
         const hX = cx - 70;
         const xX = cx + 50;
@@ -17841,9 +18564,9 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.lineWidth = 1.5;
         ctx.stroke();
         ctx.setLineDash([]);
-        ctx.font = '11px Plus Jakarta Sans';
+        ctx.font = '11.5px Plus Jakarta Sans';
         ctx.fillStyle = '#64748b';
-        ctx.fillText('Đám mây electron phân tử & Tương tác Van der Waals', cx, cy + d.xRadius + 75);
+        ctx.fillText('Đám mây electron phân tử & Tương tác van der Waals', cx, cy + d.xRadius + 75);
 
         ctx.beginPath();
         ctx.arc(hX, cy, 18, 0, Math.PI * 2);
@@ -17884,14 +18607,20 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.strokeStyle = '#94a3b8';
         ctx.lineWidth = 1.5;
         ctx.stroke();
-        ctx.font = '11px JetBrains Mono';
-        ctx.fillStyle = '#475569';
-        ctx.fillText('d = ' + d.length + ' • Eb = ' + d.energy, (hX + xX) / 2, cy + 50);
+        ctx.font = '700 11.5px JetBrains Mono';
+        ctx.fillStyle = '#334155';
+        ctx.fillText('Độ dài lk: ' + d.length + ' • Năng lượng lk: ' + d.energy, (hX + xX) / 2, cy + 52);
       }
     }
 
     function selectB22AcidExp(expKey) {
       b22AcidExp = expKey;
+      b22AcidActive = false;
+      if (b22AcidAnimId) {
+        cancelAnimationFrame(b22AcidAnimId);
+        b22AcidAnimId = null;
+      }
+
       ['hf_glass', 'hcl_zn', 'hcl_cu', 'hcl_carb'].forEach(k => {
         const btn = document.getElementById('btn-b22-exp-' + k.replace('hf_glass','hf').replace('hcl_',''));
         if (btn) btn.classList.toggle('active', k === expKey);
@@ -17908,14 +18637,24 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         if (descEl) descEl.textContent = 'Phản ứng: NaHCO₃ + HCl ➔ NaCl + CO₂↑ + H₂O (Bột NaHCO₃ tan nhanh với hiện tượng sủi bọt khí CO₂).';
       }
 
-      drawB22AcidCanvas(false);
+      drawB22AcidCanvas();
     }
 
     function runB22AcidReaction() {
-      drawB22AcidCanvas(true);
+      b22AcidActive = true;
+      b22AcidTick = 0;
+      if (b22AcidAnimId) cancelAnimationFrame(b22AcidAnimId);
+      animateB22Acid();
     }
 
-    function drawB22AcidCanvas(isActive = false) {
+    function animateB22Acid() {
+      if (!b22AcidActive || currentPartB22 !== 'part2') return;
+      b22AcidTick += 1;
+      drawB22AcidCanvas();
+      b22AcidAnimId = requestAnimationFrame(animateB22Acid);
+    }
+
+    function drawB22AcidCanvas() {
       const canvas = document.getElementById('b22AcidCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
@@ -17931,8 +18670,8 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       ctx.clearRect(0, 0, w, h);
 
       if (b22AcidExp === 'hf_glass') {
-        const plateW = 320;
-        const plateH = 200;
+        const plateW = Math.min(340, w - 40);
+        const plateH = 190;
         const px = (w - plateW) / 2;
         const py = (h - plateH) / 2 + 10;
 
@@ -17945,82 +18684,86 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         ctx.fillStyle = '#94a3b8';
         ctx.font = '700 12px Plus Jakarta Sans';
         ctx.textAlign = 'left';
-        ctx.fillText('TẤM THUỶ TINH (SiO₂)', px + 14, py + 24);
+        ctx.fillText('TẤM KÍNH THUỶ TINH (SiO₂)', px + 14, py + 24);
 
-        if (isActive) {
+        if (b22AcidActive) {
+          // Ống nhỏ giọt HF di chuyển nhẹ
+          const dropX = px + plateW / 2 + Math.sin(b22AcidTick * 0.05) * 45;
           ctx.beginPath();
-          ctx.moveTo(px + plateW / 2 - 10, py - 40);
-          ctx.lineTo(px + plateW / 2 + 10, py - 40);
-          ctx.lineTo(px + plateW / 2 + 4, py - 5);
-          ctx.lineTo(px + plateW / 2 - 4, py - 5);
+          ctx.moveTo(dropX - 8, py - 38);
+          ctx.lineTo(dropX + 8, py - 38);
+          ctx.lineTo(dropX + 3, py - 6);
+          ctx.lineTo(dropX - 3, py - 6);
           ctx.closePath();
           ctx.fillStyle = '#bef264';
           ctx.fill();
 
+          // Giọt HF rơi
+          const dropY = py - 4 + (b22AcidTick * 2.5) % 45;
           ctx.beginPath();
-          ctx.arc(px + plateW / 2, py + 15, 5, 0, Math.PI * 2);
+          ctx.arc(dropX, dropY, 4.5, 0, Math.PI * 2);
           ctx.fillStyle = '#84cc16';
           ctx.fill();
 
-          ctx.beginPath();
-          ctx.font = '800 24px Plus Jakarta Sans';
+          // Nét khắc rãnh sâu hiện rõ dần
+          const alpha = Math.min(1, b22AcidTick / 45);
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.font = '800 22px Plus Jakarta Sans';
           ctx.fillStyle = '#f8fafc';
           ctx.textAlign = 'center';
           ctx.shadowColor = '#38bdf8';
-          ctx.shadowBlur = 15;
-          ctx.fillText('★ NEXTBAND LMS ★', px + plateW / 2, py + plateH / 2);
-          ctx.font = '700 14px Plus Jakarta Sans';
+          ctx.shadowBlur = 14;
+          ctx.fillText('★ HOÁ HỌC 10 - KNTT ★', px + plateW / 2, py + plateH / 2);
+          ctx.font = '700 13px Plus Jakarta Sans';
           ctx.fillStyle = '#facc15';
-          ctx.fillText('(Nét khắc rãnh sâu do HF ăn mòn)', px + plateW / 2, py + plateH / 2 + 30);
-          ctx.shadowBlur = 0;
+          ctx.fillText('SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O (Ăn mòn rãnh kính)', px + plateW / 2, py + plateH / 2 + 28);
+          ctx.restore();
 
-          for (let i = 0; i < 12; i++) {
-            const bx = px + 80 + Math.random() * 160;
-            const by = py + 40 + Math.random() * 80;
+          // Bọt khí SiF4 bay lên động
+          for (let i = 0; i < 10; i++) {
+            const bx = px + 60 + ((i * 27) % (plateW - 120));
+            const by = py + plateH / 2 - ((b22AcidTick * 1.4 + i * 15) % 75);
             ctx.beginPath();
-            ctx.arc(bx, by, 3 + Math.random() * 4, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.arc(bx, by, 3 + (i % 3), 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
             ctx.fill();
           }
-
-          ctx.fillStyle = '#38bdf8';
-          ctx.font = '11px JetBrains Mono';
-          ctx.fillText('SiF₄↑ (Khí bay ra)', px + plateW / 2 + 100, py + 40);
         } else {
-          ctx.fillStyle = '#64748b';
+          ctx.fillStyle = '#cbd5e1';
           ctx.font = '13px Plus Jakarta Sans';
           ctx.textAlign = 'center';
-          ctx.fillText('Bấm "Bắt đầu phản ứng" để nhỏ dung dịch HF lên tấm kính', px + plateW / 2, py + plateH / 2);
+          ctx.fillText('Bấm "▶ Bắt đầu phản ứng" để nhỏ dung dịch HF khắc chữ lên tấm thuỷ tinh', px + plateW / 2, py + plateH / 2);
         }
 
       } else {
-        const tubeW = 80;
-        const tubeH = 220;
+        const tubeW = 84;
+        const tubeH = 215;
         const tx = (w - tubeW) / 2;
-        const ty = 70;
+        const ty = 55;
+
+        ctx.beginPath();
+        ctx.moveTo(tx + 3, ty + 85);
+        ctx.lineTo(tx + 3, ty + tubeH - 42);
+        ctx.arc(tx + tubeW / 2, ty + tubeH - 42, tubeW / 2 - 3, Math.PI, 0, true);
+        ctx.lineTo(tx + tubeW - 3, ty + 85);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(186, 230, 253, 0.35)';
+        ctx.fill();
 
         ctx.beginPath();
         ctx.moveTo(tx, ty);
-        ctx.lineTo(tx, ty + tubeH - 40);
-        ctx.arc(tx + tubeW / 2, ty + tubeH - 40, tubeW / 2, Math.PI, 0, true);
+        ctx.lineTo(tx, ty + tubeH - 42);
+        ctx.arc(tx + tubeW / 2, ty + tubeH - 42, tubeW / 2, Math.PI, 0, true);
         ctx.lineTo(tx + tubeW, ty);
         ctx.strokeStyle = '#94a3b8';
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        ctx.beginPath();
-        ctx.moveTo(tx + 3, ty + 90);
-        ctx.lineTo(tx + 3, ty + tubeH - 40);
-        ctx.arc(tx + tubeW / 2, ty + tubeH - 40, tubeW / 2 - 3, Math.PI, 0, true);
-        ctx.lineTo(tx + tubeW - 3, ty + 90);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(224, 242, 254, 0.4)';
-        ctx.fill();
-
-        ctx.fillStyle = '#0284c7';
-        ctx.font = '700 11px JetBrains Mono';
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '700 11.5px JetBrains Mono';
         ctx.textAlign = 'center';
-        ctx.fillText('dd HCl loãng', tx + tubeW / 2, ty + 115);
+        ctx.fillText('dd HCl loãng', tx + tubeW / 2, ty + 110);
 
         if (b22AcidExp === 'hcl_zn') {
           ctx.beginPath();
@@ -18029,53 +18772,53 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
           ctx.fillStyle = '#94a3b8';
           ctx.fill();
           ctx.fillStyle = '#0f172a';
-          ctx.font = '700 9px Plus Jakarta Sans';
+          ctx.font = '700 9.5px Plus Jakarta Sans';
           ctx.fillText('Zn', tx + tubeW / 2, ty + tubeH - 20);
 
-          if (isActive) {
-            for (let i = 0; i < 20; i++) {
-              const bx = tx + 15 + Math.random() * (tubeW - 30);
-              const by = ty + 100 + Math.random() * 80;
+          if (b22AcidActive) {
+            for (let i = 0; i < 16; i++) {
+              const bx = tx + 16 + ((i * 11) % (tubeW - 32));
+              const by = ty + tubeH - 30 - ((b22AcidTick * 1.8 + i * 12) % 105);
               ctx.beginPath();
-              ctx.arc(bx, by, 2 + Math.random() * 3, 0, Math.PI * 2);
+              ctx.arc(bx, by, 2.5 + (i % 2), 0, Math.PI * 2);
               ctx.fillStyle = '#ffffff';
               ctx.fill();
             }
-            ctx.fillStyle = '#22c55e';
-            ctx.font = '700 12px Plus Jakarta Sans';
-            ctx.fillText('Sủi bọt khí H₂ mãnh liệt!', tx + tubeW / 2, ty + 60);
+            ctx.fillStyle = '#4ade80';
+            ctx.font = '700 12.5px Plus Jakarta Sans';
+            ctx.fillText('Khí H₂↑ thoát ra liên tục!', tx + tubeW / 2, ty + 45);
           }
         } else if (b22AcidExp === 'hcl_cu') {
           ctx.fillStyle = '#b45309';
           ctx.fillRect(tx + tubeW / 2 - 16, ty + tubeH - 35, 32, 14);
           ctx.fillStyle = '#ffffff';
-          ctx.font = '700 9px Plus Jakarta Sans';
+          ctx.font = '700 9.5px Plus Jakarta Sans';
           ctx.fillText('Lá Cu', tx + tubeW / 2, ty + tubeH - 25);
 
-          if (isActive) {
+          if (b22AcidActive) {
             ctx.fillStyle = '#f87171';
-            ctx.font = '700 12px Plus Jakarta Sans';
-            ctx.fillText('Không sủi bọt khí (Cu không phản ứng)', tx + tubeW / 2, ty + 60);
+            ctx.font = '700 12.5px Plus Jakarta Sans';
+            ctx.fillText('Không có bọt khí (Cu đứng sau H)', tx + tubeW / 2, ty + 45);
           }
         } else if (b22AcidExp === 'hcl_carb') {
           ctx.fillStyle = '#f1f5f9';
-          ctx.fillRect(tx + tubeW / 2 - 20, ty + tubeH - 30, 40, 10);
+          ctx.fillRect(tx + tubeW / 2 - 22, ty + tubeH - 30, 44, 11);
           ctx.fillStyle = '#0f172a';
           ctx.font = '700 9px Plus Jakarta Sans';
           ctx.fillText('NaHCO₃', tx + tubeW / 2, ty + tubeH - 22);
 
-          if (isActive) {
-            for (let i = 0; i < 30; i++) {
-              const bx = tx + 10 + Math.random() * (tubeW - 20);
-              const by = ty + 90 + Math.random() * 95;
+          if (b22AcidActive) {
+            for (let i = 0; i < 24; i++) {
+              const bx = tx + 12 + ((i * 9) % (tubeW - 24));
+              const by = ty + tubeH - 30 - ((b22AcidTick * 2.4 + i * 9) % 110);
               ctx.beginPath();
-              ctx.arc(bx, by, 2 + Math.random() * 4, 0, Math.PI * 2);
+              ctx.arc(bx, by, 3 + (i % 3), 0, Math.PI * 2);
               ctx.fillStyle = '#ffffff';
               ctx.fill();
             }
             ctx.fillStyle = '#38bdf8';
-            ctx.font = '700 12px Plus Jakarta Sans';
-            ctx.fillText('Sủi bọt CO₂ cực mạnh!', tx + tubeW / 2, ty + 60);
+            ctx.font = '700 12.5px Plus Jakarta Sans';
+            ctx.fillText('Sủi bọt khí CO₂↑ mãnh liệt!', tx + tubeW / 2, ty + 45);
           }
         }
       }
@@ -18083,21 +18826,38 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
 
     function triggerAgNO3All() {
       b22AgNO3State.dropped = true;
+      b22AgNO3State.progress = 0;
+      if (b22SilverAnimId) cancelAnimationFrame(b22SilverAnimId);
+
       const rf = document.getElementById('b22-res-f');
       const rcl = document.getElementById('b22-res-cl');
       const rbr = document.getElementById('b22-res-br');
       const ri = document.getElementById('b22-res-i');
 
-      if (rf) { rf.textContent = 'Tan (AgF tan)'; rf.style.color = '#64748b'; }
+      if (rf) { rf.textContent = 'Không kết tủa (AgF tan)'; rf.style.color = '#64748b'; }
       if (rcl) { rcl.textContent = 'AgCl↓ trắng'; rcl.style.color = '#0284c7'; }
       if (rbr) { rbr.textContent = 'AgBr↓ vàng nhạt'; rbr.style.color = '#d97706'; }
       if (ri) { ri.textContent = 'AgI↓ vàng đậm'; ri.style.color = '#ca8a04'; }
 
+      animateB22Silver();
+    }
+
+    function animateB22Silver() {
+      if (!b22AgNO3State.dropped || currentPartB22 !== 'part3') return;
+      b22AgNO3State.progress = Math.min(1, b22AgNO3State.progress + 0.025);
       drawB22SilverCanvas();
+      if (b22AgNO3State.progress < 1) {
+        b22SilverAnimId = requestAnimationFrame(animateB22Silver);
+      }
     }
 
     function resetAgNO3Rack() {
       b22AgNO3State.dropped = false;
+      b22AgNO3State.progress = 0;
+      if (b22SilverAnimId) {
+        cancelAnimationFrame(b22SilverAnimId);
+        b22SilverAnimId = null;
+      }
       ['f', 'cl', 'br', 'i'].forEach(k => {
         const el = document.getElementById('b22-res-' + k);
         if (el) {
@@ -18124,47 +18884,58 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       ctx.clearRect(0, 0, w, h);
 
       const tubes = [
-        { label: 'NaF (F⁻)', color: 'transparent', ppt: null, pptColor: null },
-        { label: 'NaCl (Cl⁻)', color: 'transparent', ppt: 'AgCl↓ trắng', pptColor: '#f8fafc', strokePpt: '#cbd5e1' },
-        { label: 'NaBr (Br⁻)', color: 'transparent', ppt: 'AgBr↓ vàng nhạt', pptColor: '#fef08a', strokePpt: '#eab308' },
-        { label: 'NaI (I⁻)', color: 'transparent', ppt: 'AgI↓ vàng đậm', pptColor: '#eab308', strokePpt: '#ca8a04' }
+        { label: 'Ống 1: NaF (F⁻)', ppt: null, pptColor: null },
+        { label: 'Ống 2: NaCl (Cl⁻)', ppt: 'AgCl↓ (Trắng)', pptColor: '#f8fafc', strokePpt: '#94a3b8' },
+        { label: 'Ống 3: NaBr (Br⁻)', ppt: 'AgBr↓ (Vàng nhạt)', pptColor: '#fef08a', strokePpt: '#eab308' },
+        { label: 'Ống 4: NaI (I⁻)', ppt: 'AgI↓ (Vàng đậm)', pptColor: '#eab308', strokePpt: '#a16207' }
       ];
 
       const gap = w / 4;
-      const tubeW = 44;
-      const tubeH = 200;
-      const ty = 80;
+      const tubeW = 48;
+      const tubeH = 185;
+      const ty = 65;
 
+      // Giá đỡ ống nghiệm
       ctx.fillStyle = '#e2e8f0';
-      ctx.fillRect(20, ty + tubeH - 20, w - 40, 24);
+      ctx.fillRect(20, ty + tubeH - 18, w - 40, 22);
       ctx.strokeStyle = '#cbd5e1';
       ctx.lineWidth = 2;
-      ctx.strokeRect(20, ty + tubeH - 20, w - 40, 24);
+      ctx.strokeRect(20, ty + tubeH - 18, w - 40, 22);
 
       tubes.forEach((t, i) => {
         const tx = gap * i + (gap - tubeW) / 2;
+        const cx = tx + tubeW / 2;
 
+        // Dung dịch trong ống
         ctx.beginPath();
-        ctx.moveTo(tx + 2, ty + 70);
-        ctx.lineTo(tx + 2, ty + tubeH - 20);
-        ctx.arc(tx + tubeW / 2, ty + tubeH - 20, tubeW / 2 - 2, Math.PI, 0, true);
-        ctx.lineTo(tx + tubeW - 2, ty + 70);
+        ctx.moveTo(tx + 2, ty + 65);
+        ctx.lineTo(tx + 2, ty + tubeH - 22);
+        ctx.arc(cx, ty + tubeH - 22, tubeW / 2 - 2, Math.PI, 0, true);
+        ctx.lineTo(tx + tubeW - 2, ty + 65);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(241, 245, 249, 0.6)';
+        ctx.fillStyle = 'rgba(224, 242, 254, 0.45)';
         ctx.fill();
 
         if (b22AgNO3State.dropped) {
-          ctx.beginPath();
-          ctx.arc(tx + tubeW / 2, ty + 40, 4, 0, Math.PI * 2);
-          ctx.fillStyle = '#38bdf8';
-          ctx.fill();
-
-          if (t.ppt) {
+          const p = b22AgNO3State.progress;
+          // Nếu đang trong nửa đầu hành trình: vẽ giọt AgNO3 rơi từ miệng ống xuống mặt thoáng
+          if (p < 0.45) {
+            const dropY = ty + 5 + (p / 0.45) * 58;
             ctx.beginPath();
-            ctx.moveTo(tx + 3, ty + tubeH - 55);
-            ctx.lineTo(tx + 3, ty + tubeH - 20);
-            ctx.arc(tx + tubeW / 2, ty + tubeH - 20, tubeW / 2 - 3, Math.PI, 0, true);
-            ctx.lineTo(tx + tubeW - 3, ty + tubeH - 55);
+            ctx.arc(cx, dropY, 4.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#0284c7';
+            ctx.fill();
+          }
+
+          // Từ p >= 0.35: bắt đầu tạo kết tủa lắng xuống đáy
+          if (t.ppt && p >= 0.3) {
+            const pptRatio = Math.min(1, (p - 0.3) / 0.7);
+            const pptHeight = 36 * pptRatio;
+            ctx.beginPath();
+            ctx.moveTo(tx + 3, ty + tubeH - 22 - pptHeight);
+            ctx.lineTo(tx + 3, ty + tubeH - 22);
+            ctx.arc(cx, ty + tubeH - 22, tubeW / 2 - 3, Math.PI, 0, true);
+            ctx.lineTo(tx + tubeW - 3, ty + tubeH - 22 - pptHeight);
             ctx.closePath();
             ctx.fillStyle = t.pptColor;
             ctx.fill();
@@ -18173,30 +18944,31 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
             ctx.stroke();
 
             ctx.fillStyle = '#0f172a';
-            ctx.font = '700 11px Plus Jakarta Sans';
+            ctx.font = '700 11.5px Plus Jakarta Sans';
             ctx.textAlign = 'center';
-            ctx.fillText(t.ppt, tx + tubeW / 2, ty + tubeH + 25);
-          } else {
+            ctx.fillText(t.ppt, cx, ty + tubeH + 26);
+          } else if (!t.ppt && p >= 0.45) {
             ctx.fillStyle = '#64748b';
-            ctx.font = '700 11px Plus Jakarta Sans';
+            ctx.font = '700 11.5px Plus Jakarta Sans';
             ctx.textAlign = 'center';
-            ctx.fillText('Tan (Không đục)', tx + tubeW / 2, ty + tubeH + 25);
+            ctx.fillText('AgF tan (Trong suốt)', cx, ty + tubeH + 26);
           }
         }
 
+        // Thành ống thuỷ tinh
         ctx.beginPath();
         ctx.moveTo(tx, ty);
-        ctx.lineTo(tx, ty + tubeH - 20);
-        ctx.arc(tx + tubeW / 2, ty + tubeH - 20, tubeW / 2, Math.PI, 0, true);
+        ctx.lineTo(tx, ty + tubeH - 22);
+        ctx.arc(cx, ty + tubeH - 22, tubeW / 2, Math.PI, 0, true);
         ctx.lineTo(tx + tubeW, ty);
         ctx.lineWidth = 2.5;
-        ctx.strokeStyle = '#94a3b8';
+        ctx.strokeStyle = '#64748b';
         ctx.stroke();
 
-        ctx.fillStyle = '#1e293b';
-        ctx.font = '700 13px Plus Jakarta Sans';
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '700 12.5px Plus Jakarta Sans';
         ctx.textAlign = 'center';
-        ctx.fillText(t.label, tx + tubeW / 2, ty - 15);
+        ctx.fillText(t.label, cx, ty - 14);
       });
     }
 
@@ -18267,6 +19039,8 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         nextBtn.style.display = 'inline-flex';
         if (b22QuizStep === b22QuizList.length - 1) {
           nextBtn.innerHTML = '<span>Xem kết quả chung cuộc ➔</span>';
+        } else {
+          nextBtn.innerHTML = '<span>Câu tiếp theo ➔</span>';
         }
       }
     }
@@ -18299,9 +19073,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
       const scoreEl = document.getElementById('b22-arena-score');
       if (scoreEl) scoreEl.textContent = 'Điểm: 0 / 50';
       const nextBtn = document.getElementById('btn-b22-next-q');
-      if (nextBtn) {
-        nextBtn.onclick = nextB22Question;
-      }
+      if (nextBtn) nextBtn.onclick = nextB22Question;
       renderB22QuizQuestion();
     }
 
@@ -18367,7 +19139,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         sub: 'HX • Tính acid tăng',
         color: '#6b21a8',
         bg: '#f3e8ff',
-        desc: 'HF sôi ở +19,5 °C do liên kết hydrogen. Tính acid tăng từ HF (axit yếu) đến HI (axit rất mạnh). HF ăn mòn thuỷ tinh: SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O.'
+        desc: 'HF sôi ở +19,5 °C do liên kết hydrogen. Tính acid tăng từ HF (acid yếu) đến HI (acid rất mạnh). HF ăn mòn thuỷ tinh: SiO₂ + 4HF ➔ SiF₄↑ + 2H₂O.'
       },
       {
         id: 'salt',
@@ -18466,7 +19238,7 @@ function checkB5Quiz(btn, isCorrect, feedbackText) {
         if (panel) panel.style.display = (p === partId) ? 'flex' : 'none';
       });
 
-      renderMathInPane('content-b23-' + partId);
+      if (typeof renderMathInPage === 'function') renderMathInPage();
 
       const tip = document.getElementById('b23-lab-status-tip');
       if (partId === 'part1') {
