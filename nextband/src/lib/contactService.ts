@@ -1,5 +1,4 @@
 import { API_BASE_URL, getAuthToken } from "./api";
-import { supabase } from "./supabase";
 
 export interface ContactLead {
   id: string;
@@ -139,32 +138,10 @@ export async function submitContactLead(
       };
     }
   } catch (apiErr) {
-    console.warn("[ContactService] Vercel Serverless API unreachable, executing direct Supabase fallback:", apiErr);
+    console.warn("[ContactService] Vercel Serverless API unreachable, saving to local store:", apiErr);
   }
 
-  // 2. Direct Supabase Fallback (if client network glitch prevented hitting Vercel API)
-  try {
-    const { data, error } = await supabase
-      .from("contact_leads")
-      .insert({
-        full_name: lead.fullName,
-        phone: lead.phone,
-        email: lead.email || null,
-        goal: lead.goal || null,
-        source: lead.source,
-        status: lead.status,
-      })
-      .select()
-      .single();
-
-    if (!error && data?.id) {
-      lead.id = data.id;
-    }
-  } catch (err: any) {
-    console.warn("[ContactService] Supabase fallback warning:", err?.message);
-  }
-
-  // 3. Guarantee local persistence
+  // 2. Guarantee local persistence
   saveLocalLead(lead);
 
   return {
@@ -227,39 +204,7 @@ export async function fetchAllContactLeads(params?: { preferredBranchId?: string
       }
     }
   } catch (err) {
-    console.warn("[ContactService] Backend leads list unavailable, trying fallback");
-  }
-
-  // 2. Try Supabase
-  try {
-    let query = supabase
-      .from("contact_leads")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (params?.preferredBranchId && params.preferredBranchId !== "ALL") {
-      query = query.eq("preferred_branch_id", params.preferredBranchId);
-    }
-
-    const { data, error } = await query;
-
-    if (!error && data && data.length > 0) {
-      return data.map((d: any) => ({
-        id: d.id,
-        fullName: d.full_name,
-        phone: d.phone,
-        email: d.email || "",
-        goal: d.goal || "",
-        source: d.source || "contact_page",
-        status: d.status || "NEW",
-        preferredBranchId: d.preferred_branch_id || null,
-        assignedTo: d.assigned_to || "",
-        notes: d.notes || "",
-        createdAt: d.created_at,
-      }));
-    }
-  } catch (err) {
-    console.warn("Using local leads store fallback");
+    console.warn("[ContactService] Backend leads list unavailable, using local store fallback");
   }
 
   return getLocalLeads();
@@ -342,33 +287,10 @@ export async function updateContactLead(
       return { success: true, data: json.data };
     }
   } catch (err) {
-    console.warn("[ContactService] Failed to update lead via API, trying fallback:", err);
+    console.warn("[ContactService] Failed to update lead via API, using local fallback:", err);
   }
 
-  // 2. Supabase Fallback
-  try {
-    const payload: any = {};
-    if (params.status) payload.status = params.status;
-    if (params.assignedTo !== undefined) payload.assigned_to = params.assignedTo;
-    if (params.preferredBranchId !== undefined) payload.preferred_branch_id = params.preferredBranchId;
-    if (params.notes !== undefined) payload.notes = params.notes;
-    if (params.convertedUserId !== undefined) payload.converted_user_id = params.convertedUserId;
-
-    const { data, error } = await supabase
-      .from("contact_leads")
-      .update(payload)
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (!error && data) {
-      return { success: true, data };
-    }
-  } catch (err: any) {
-    console.warn("[ContactService] Supabase update error:", err);
-  }
-
-  // 3. Local fallback
+  // 2. Local fallback
   try {
     const leads = getLocalLeads();
     const idx = leads.findIndex((l) => l.id === id);

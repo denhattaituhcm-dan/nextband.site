@@ -8,6 +8,7 @@ node_modules/
 dist/
 .env
 uploads/
+nextband/public/uploads/
 ielts-be/uploads/
 *.log
 logs/

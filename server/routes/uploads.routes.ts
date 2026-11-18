@@ -46,7 +46,7 @@ function generateFileName(originalName: string): string {
 }
 
 const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
-  const supabaseUrl = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
+  const supabaseUrl = env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co";
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || (env as any).SUPABASE_SERVICE_ROLE_KEY;
 
   const getSupabaseStorageClient = () => {

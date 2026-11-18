@@ -30,7 +30,7 @@ export function toFileUrl(path: string | null | undefined): string | null {
 
   // Nếu là direct Supabase storage path (vd: /storage/v1/...) thì giữ nguyên hoặc prepend base
   if (path.startsWith("/storage/v1/")) {
-    const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
+    const supabaseBase = (env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co").replace(/\/$/, "");
     return `${supabaseBase}${path}`;
   }
 
@@ -38,7 +38,7 @@ export function toFileUrl(path: string | null | undefined): string | null {
   const audioMatch = path.match(/^(?:\/)?uploads\/audio\/(.+)$/);
   if (audioMatch && audioMatch[1]) {
     const filename = audioMatch[1].replace(/^\/+/, "");
-    const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
+    const supabaseBase = (env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co").replace(/\/$/, "");
     return `${supabaseBase}/storage/v1/object/public/exam-assets/audio/${filename}`;
   }
 

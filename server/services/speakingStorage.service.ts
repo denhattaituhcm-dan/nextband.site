@@ -16,7 +16,7 @@ export class SpeakingStorageService {
   private supabase: SupabaseClient;
 
   constructor(private prisma: PrismaClient) {
-    const supabaseUrl = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
+    const supabaseUrl = env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co";
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
     if (!supabaseKey) {
       console.warn("[SpeakingStorageService] ⚠️ SUPABASE_SERVICE_ROLE_KEY is not configured in environment.");

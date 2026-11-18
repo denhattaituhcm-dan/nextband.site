@@ -71,7 +71,7 @@ try {
   let criticalForbidden = "";
   try {
     criticalForbidden = execSync(
-      'git grep -n -E "supabase\\s*\\.\\s*(from|rpc)\\s*\\(" -- nextband/src/ ":!nextband/src/lib/api.ts" ":!nextband/src/lib/api/**" ":!nextband/src/lib/contactService.ts" ":!nextband/src/test/" ":!nextband/src/tests/"',
+      'git grep -n -E "supabase\\s*\\.\\s*(from|rpc)\\s*\\(" -- nextband/src/ ":!nextband/src/lib/api.ts" ":!nextband/src/lib/api/**" ":!nextband/src/test/" ":!nextband/src/tests/"',
       { encoding: "utf8" }
     ).trim();
   } catch (grepErr) {
