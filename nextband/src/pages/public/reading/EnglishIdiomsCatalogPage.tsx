@@ -663,36 +663,74 @@ export default function EnglishIdiomsCatalogPage() {
       </nav>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-12">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-[#002147] via-[#0369a1] to-[#0284c7] rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden">
-          <div className="relative z-10 space-y-6 max-w-4xl mx-auto text-center flex flex-col items-center">
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Kho Thành Ngữ Tiếng Anh Theo Chủ Đề
-            </h1>
+        {/* Hero Section with Doraemon Manga Visual */}
+        <section className="bg-gradient-to-br from-[#002147] via-[#0369a1] to-[#0284c7] rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden border border-sky-400/20">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left Content */}
+            <div className="lg:col-span-7 space-y-5 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs font-bold uppercase tracking-wider backdrop-blur-xs">
+                <span>✨</span>
+                <span>4-Koma Manga Edition • Doraemon & Friends</span>
+              </div>
 
-            <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-light mx-auto">
-              Tuyển tập thành ngữ và cụm từ cố định trực quan theo giáo trình{" "}
-              <strong className="text-white font-medium">English for Everyone: English Idioms</strong>{" "}
-              (DK Publishing). Mỗi bài học trang bị đầy đủ audio bản ngữ giọng Anh/Mỹ, nghiên cứu từ nguyên học OED giải mã lý do tại sao cụm từ có nghĩa như vậy, cùng hệ thống 5 bài tập tương tác chấm điểm chuẩn xác.
-            </p>
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+                Kho Thành Ngữ Tiếng Anh Theo Chủ Đề
+              </h1>
 
-            {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 w-full">
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">19</div>
-                <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
+              <div className="bg-white/10 backdrop-blur-xs border border-white/15 rounded-2xl p-4 sm:p-5 relative">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border-2 border-amber-300 shadow-sm bg-white">
+                    <img src="/manga/characters/doraemon_happy.png" alt="Doraemon" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs sm:text-sm text-amber-200 font-bold">
+                      Doraemon nhắn nhủ:
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-100 leading-relaxed font-normal">
+                      "Học thành ngữ mà chỉ học vẹt định nghĩa thì mau quên lắm! Hãy cùng tớ, Nobita và nhóm bạn bước qua Cánh Cửa Thần Kỳ để học cách đối đáp idiom chuẩn xác trong từng bối cảnh thực tế nhé!"
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">380</div>
-                <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
+
+              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-light">
+                Tuyển tập trực quan theo chuẩn giáo trình <strong className="text-white font-medium">DK English Idioms</strong>. Trang bị đầy đủ audio bản ngữ giọng Anh/Mỹ, giải mã từ nguyên học OED và đối đáp truyện tranh sinh động.
+              </p>
+
+              {/* Quick Stats Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+                <div className="p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
+                  <div className="text-xl sm:text-2xl font-black text-amber-300">20</div>
+                  <div className="text-[11px] text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
+                </div>
+                <div className="p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
+                  <div className="text-xl sm:text-2xl font-black text-sky-200">400</div>
+                  <div className="text-[11px] text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
+                </div>
+                <div className="p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
+                  <div className="text-xl sm:text-2xl font-black text-emerald-200">100%</div>
+                  <div className="text-[11px] text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
+                </div>
+                <div className="p-3 rounded-xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
+                  <div className="text-xl sm:text-2xl font-black text-purple-200">100</div>
+                  <div className="text-[11px] text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
+                </div>
               </div>
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
-                <div className="text-2xl sm:text-3xl font-black text-emerald-200">100%</div>
-                <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
-              </div>
-              <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15 text-center">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">95</div>
-                <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
+            </div>
+
+            {/* Right Visual: Doraemon Door & Friends Banner */}
+            <div className="lg:col-span-5 flex justify-center">
+              <div className="relative group w-full max-w-md rounded-2xl overflow-hidden border-2 border-white/30 shadow-[0_12px_32px_rgba(0,0,0,0.35)] bg-sky-950/40">
+                <img
+                  src="/manga/doraemon_hero_banner.jpg"
+                  alt="Doraemon và nhóm bạn mở Cánh Cửa Thần Kỳ"
+                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent p-3 text-center">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-white drop-shadow-md">
+                    🚪 Cánh Cửa Thần Kỳ • Khám phá 400 Thành ngữ!
+                  </span>
+                </div>
               </div>
             </div>
           </div>

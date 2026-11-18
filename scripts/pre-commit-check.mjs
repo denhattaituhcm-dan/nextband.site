@@ -31,10 +31,9 @@ try {
 
   if (hasFrontendTs && existsSync(tsconfigPath)) {
     console.log("🚀 Dang kiem tra loi TypeScript (tuong tu Vercel build)...");
-    execSync(`node --max-old-space-size=3072 ./node_modules/typescript/bin/tsc -p "${tsconfigPath}" --noEmit`, {
+    execSync(`node ./node_modules/typescript/bin/tsc -p "${tsconfigPath}" --incremental false --noEmit`, {
       cwd: rootDir,
       stdio: "inherit",
-      env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=3072" },
     });
   }
 
