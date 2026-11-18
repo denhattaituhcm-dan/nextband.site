@@ -1,7 +1,7 @@
 export interface MangaCharacter {
   name: string;
-  avatar: "nobita" | "doraemon" | "suneo" | "chaien" | "shizuka";
-  emotion?: "crying" | "smug" | "angry" | "sweat" | "happy" | "surprised" | "neutral" | "sleepy";
+  avatar: "nobita" | "doraemon" | "suneo" | "chaien" | "shizuka" | "conan" | "goku" | "shin" | "dekisugi" | "sensei" | "nobi_mom" | string;
+  emotion?: "crying" | "smug" | "angry" | "sweat" | "happy" | "surprised" | "neutral" | "sleepy" | "whistle" | "wave" | "scratch" | "point" | "smile" | "aodai" | string;
   line_en: string;
   line_vi: string;
 }

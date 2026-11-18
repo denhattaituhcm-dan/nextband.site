@@ -6,14 +6,14 @@ export const UNIT_01_MANGA: Record<string, MangaComicDialogue> = {
     characterA: {
       name: "Nobita",
       avatar: "nobita",
-      emotion: "sweat",
+      emotion: "scratch",
       line_en: "Huff... puff... Doraemon, I can't take another step! After climbing this tiny hill, I realized I'm no spring chicken!",
       line_vi: "Hộc... hộc... Doraemon ơi, tớ không bước nổi bước nào nữa! Leo có mỗi cái đồi cỏn con này mà tớ thấy mình già cả hom hem rồi!"
     },
     characterB: {
       name: "Doraemon",
       avatar: "doraemon",
-      emotion: "smug",
+      emotion: "whistle",
       line_en: "You're only ten years old! Calling yourself 'no spring chicken' is ridiculous! You just need to exercise more!",
       line_vi: "Cậu mới có 10 tuổi ranh thôi đấy! Tự nhận là 'không còn trẻ trung gì nữa' nghe buồn cười chết đi được! Cậu chỉ là lười vận động thôi!"
     },

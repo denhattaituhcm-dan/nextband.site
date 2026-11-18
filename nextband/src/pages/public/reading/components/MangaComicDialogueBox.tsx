@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Volume2, Sparkles, Lightbulb, MessageCircle } from "lucide-react";
 import { MangaComicDialogue, MangaCharacter } from "@/data/idioms/unit02_manga";
 
@@ -8,13 +8,22 @@ interface MangaComicDialogueBoxProps {
   className?: string;
 }
 
-// Crisp, authentic Doraemon Anime character avatar
+// Crisp, authentic Doraemon & Extended Anime character avatar
 const MangaAvatar: React.FC<{
-  character: MangaCharacter["avatar"];
+  character: string;
+  emotion?: string;
   name: string;
   size?: number;
-}> = ({ character, name, size = 52 }) => {
-  const avatarSrc = `/manga/characters/${character}.png`;
+}> = ({ character, emotion, name, size = 52 }) => {
+  const primarySrc = emotion
+    ? `/manga/characters/${character}_${emotion}.png`
+    : `/manga/characters/${character}.png`;
+  const fallbackSrc = `/manga/characters/${character}.png`;
+  const [src, setSrc] = useState(primarySrc);
+
+  useEffect(() => {
+    setSrc(primarySrc);
+  }, [primarySrc]);
 
   return (
     <div
@@ -22,12 +31,15 @@ const MangaAvatar: React.FC<{
       style={{ width: size, height: size }}
     >
       <img
-        src={avatarSrc}
+        src={src}
         alt={name}
         className="w-full h-full object-cover object-center"
         loading="lazy"
         onError={(e) => {
-          // Fallback initial letter if image fails to load
+          if (src !== fallbackSrc) {
+            setSrc(fallbackSrc);
+            return;
+          }
           const target = e.currentTarget;
           target.style.display = "none";
           if (target.parentElement) {
@@ -123,7 +135,7 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
         <div className="relative z-10 space-y-3">
           {/* Panel 1: Character A (Setup) */}
           <div className="flex items-start gap-2.5">
-            <MangaAvatar character={characterA.avatar} name={characterA.name} size={50} />
+            <MangaAvatar character={characterA.avatar} emotion={characterA.emotion} name={characterA.name} size={50} />
 
             <div className="flex-1 relative">
               <span className="inline-block px-2 py-0.5 mb-1 rounded text-[10px] font-black uppercase tracking-wider bg-slate-200 text-slate-800">
@@ -164,7 +176,7 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
 
           {/* Panel 2: Character B (Punchline with Idiom) */}
           <div className="flex items-start gap-2.5 flex-row-reverse">
-            <MangaAvatar character={characterB.avatar} name={characterB.name} size={50} />
+            <MangaAvatar character={characterB.avatar} emotion={characterB.emotion} name={characterB.name} size={50} />
 
             <div className="flex-1 relative text-right">
               <span className="inline-block px-2 py-0.5 mb-1 rounded text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 font-bold shadow-xs">
