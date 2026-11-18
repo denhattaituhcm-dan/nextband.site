@@ -62,8 +62,7 @@ import unit19Data from "@/data/idioms/unit19";
 import { UNIT_19_ETYMOLOGY } from "@/data/idioms/unit19_etymology";
 import unit20Data from "@/data/idioms/unit20";
 import { UNIT_20_ETYMOLOGY } from "@/data/idioms/unit20_etymology";
-import { UNIT_01_MANGA } from "@/data/idioms/unit01_manga";
-import { UNIT_02_MANGA } from "@/data/idioms/unit02_manga";
+import { MANGA_BY_UNIT } from "@/data/idioms/manga";
 import { MangaComicDialogueBox } from "./components/MangaComicDialogueBox";
 
 export default function EnglishIdiomsHubPage() {
@@ -413,12 +412,7 @@ export default function EnglishIdiomsHubPage() {
       ? UNIT_19_ETYMOLOGY
       : UNIT_20_ETYMOLOGY;
 
-  const currentMangaData =
-    selectedUnitId === 1
-      ? UNIT_01_MANGA
-      : selectedUnitId === 2
-      ? UNIT_02_MANGA
-      : {};
+  const currentMangaData = MANGA_BY_UNIT[selectedUnitId] || {};
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
