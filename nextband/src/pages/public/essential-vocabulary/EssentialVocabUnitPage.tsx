@@ -71,17 +71,18 @@ export const EssentialVocabUnitPage: React.FC = () => {
     canonicalUnitId
   );
 
-  const initialTab: ActiveTab = location.pathname.endsWith("/practice")
-    ? "practice"
-    : "glossary";
+  // Default to practice mode first: students test their knowledge before looking up words
+  const initialTab: ActiveTab = location.pathname.endsWith("/glossary")
+    ? "glossary"
+    : "practice";
   const [activeTab, setActiveTab] = useState<ActiveTab>(initialTab);
   const [activeStage, setActiveStage] = useState<ActiveStage>(1);
 
   useEffect(() => {
-    if (location.pathname.endsWith("/practice")) {
-      setActiveTab("practice");
-    } else if (location.pathname.endsWith("/glossary")) {
+    if (location.pathname.endsWith("/glossary")) {
       setActiveTab("glossary");
+    } else if (location.pathname.endsWith("/practice")) {
+      setActiveTab("practice");
     }
   }, [location.pathname]);
 
@@ -90,6 +91,16 @@ export const EssentialVocabUnitPage: React.FC = () => {
     navigate(`/essential-vocabulary/unit/${canonicalUnitId}/${tab}`, {
       replace: true,
     });
+  };
+
+  // Jump to Glossary directly from a question / error lookup
+  const jumpToGlossary = (wordOrQuery: string) => {
+    const clean = wordOrQuery.replace(/^['"]|['"]$/g, "").trim();
+    setGlossarySearch(clean);
+    setPosFilter("ALL");
+    setOnlyBookmarked(false);
+    switchTab("glossary");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Glossary filters
@@ -151,6 +162,8 @@ export const EssentialVocabUnitPage: React.FC = () => {
       if (!q) return true;
       return (
         entry.displayHeadword.toLowerCase().includes(q) ||
+        entry.primaryHeadword.toLowerCase().includes(q) ||
+        entry.alternateHeadwords.some((a) => a.toLowerCase().includes(q)) ||
         entry.senses.some(
           (s) =>
             s.definitionEn.toLowerCase().includes(q) ||
@@ -351,21 +364,9 @@ export const EssentialVocabUnitPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Mode Tabs: Glossary vs Practice */}
+          {/* Mode Tabs: 4-Stage Practice first, Glossary second */}
           <div className="flex items-center gap-2">
             <div className="inline-flex rounded-xl border border-slate-200 bg-slate-100 p-1">
-              <button
-                type="button"
-                onClick={() => switchTab("glossary")}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
-                  activeTab === "glossary"
-                    ? "bg-white text-indigo-700 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <BookOpen className="h-3.5 w-3.5" />
-                Glossary ({unitData.glossary.length})
-              </button>
               <button
                 type="button"
                 onClick={() => switchTab("practice")}
@@ -377,6 +378,18 @@ export const EssentialVocabUnitPage: React.FC = () => {
               >
                 <Layers className="h-3.5 w-3.5" />
                 4-Stage Practice (30 câu)
+              </button>
+              <button
+                type="button"
+                onClick={() => switchTab("glossary")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                  activeTab === "glossary"
+                    ? "bg-white text-indigo-700 shadow-sm"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                Glossary ({unitData.glossary.length})
               </button>
             </div>
 
@@ -483,15 +496,49 @@ export const EssentialVocabUnitPage: React.FC = () => {
         {activeTab === "glossary" ? (
           /* ================= GLOSSARY VIEW ================= */
           <div>
+            {glossarySearch && (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-indigo-50 border border-indigo-200 p-3 sm:p-4 text-xs shadow-xs animate-in fade-in duration-200">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-indigo-700 shrink-0" />
+                  <span className="font-bold text-indigo-950">
+                    Đang tra từ: <span className="underline decoration-indigo-500 font-extrabold">{glossarySearch}</span> ({filteredGlossary.length} kết quả)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setGlossarySearch("")}
+                    className="text-[11px] font-semibold text-indigo-700 hover:underline cursor-pointer ml-1"
+                  >
+                    (Hiện tất cả {unitData.glossary.length} từ)
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => switchTab("practice")}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-indigo-500 transition cursor-pointer"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  Quay lại làm tiếp Exercise {activeStage}
+                </button>
+              </div>
+            )}
+
             <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-base font-bold text-slate-900">
-                  Bảng từ vựng ngữ cảnh ({unitData.glossary.length} mục từ ·{" "}
-                  {unitSummary?.headwordCount ?? unitData.glossary.length} headwords)
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base font-bold text-slate-900">
+                    Bảng từ vựng ngữ cảnh ({unitData.glossary.length} mục từ ·{" "}
+                    {unitSummary?.headwordCount ?? unitData.glossary.length} headwords)
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => switchTab("practice")}
+                    className="sm:hidden inline-flex items-center gap-1 rounded-lg bg-indigo-50 border border-indigo-200 px-2.5 py-1 text-[11px] font-bold text-indigo-700"
+                  >
+                    ← Về bài tập
+                  </button>
+                </div>
                 <p className="text-xs text-slate-500">
-                  Đọc kỹ định nghĩa, từ loại, biến thể chia từ và ví dụ trước khi bước
-                  vào 4 bài tập thực hành.
+                  Tra cứu định nghĩa, từ loại, collocations và ví dụ cho từng từ ngữ cảnh.
                 </p>
               </div>
 
@@ -694,11 +741,11 @@ export const EssentialVocabUnitPage: React.FC = () => {
           </div>
         ) : (
           /* ================= 4-STAGE PRACTICE VIEW ================= */
-          <div className="space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-xs">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-indigo-600" />
-                <span className="text-xs font-bold text-slate-800">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex items-center justify-between gap-2 rounded-xl sm:rounded-2xl border border-slate-200 bg-white p-2.5 sm:p-3.5 shadow-xs">
+              <div className="flex items-center gap-2 min-w-0">
+                <Sparkles className="h-4 w-4 text-indigo-600 shrink-0" />
+                <span className="text-xs font-bold text-slate-800 truncate">
                   Kiểm tra tức thời (Instant Feedback):
                 </span>
                 <span className="text-xs text-slate-500 hidden sm:inline">
@@ -709,7 +756,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                 type="button"
                 data-testid="toggle-evc-instant-feedback"
                 onClick={() => setInstantFeedback((v) => !v)}
-                className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${
+                className={`rounded-lg sm:rounded-xl px-2.5 sm:px-3.5 py-1 text-xs font-bold transition cursor-pointer shrink-0 ${
                   instantFeedback
                     ? "bg-emerald-600 text-white"
                     : "border border-slate-300 bg-slate-50 text-slate-600 hover:bg-slate-100"
@@ -719,8 +766,8 @@ export const EssentialVocabUnitPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Stage Stepper */}
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {/* Stage Stepper - Compact & Mobile Friendly */}
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2 sm:grid-cols-4">
               {[
                 {
                   stage: 1 as const,
@@ -753,7 +800,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                       setActiveStage(s.stage);
                       setBookmarkToast(null);
                     }}
-                    className={`flex flex-col items-start rounded-2xl border p-3.5 text-left transition ${
+                    className={`flex flex-col items-start rounded-xl sm:rounded-2xl border p-2.5 sm:p-3.5 text-left transition cursor-pointer ${
                       isCurrent
                         ? "border-indigo-600 bg-indigo-600 text-white shadow-md"
                         : "border-slate-200 bg-white text-slate-800 hover:border-indigo-300"
@@ -761,7 +808,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                   >
                     <div className="flex w-full items-center justify-between">
                       <span
-                        className={`text-xs font-extrabold uppercase tracking-wider ${
+                        className={`text-[11px] sm:text-xs font-extrabold uppercase tracking-wider ${
                           isCurrent ? "text-indigo-200" : "text-indigo-600"
                         }`}
                       >
@@ -769,7 +816,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                       </span>
                       {graded && (
                         <span
-                          className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
+                          className={`rounded-full px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-[11px] font-bold ${
                             isCurrent
                               ? "bg-white/20 text-white"
                               : "bg-emerald-100 text-emerald-800"
@@ -779,7 +826,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 text-xs font-semibold">
+                    <div className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs font-semibold leading-tight line-clamp-1 sm:line-clamp-none">
                       {s.subtitle}
                     </div>
                   </button>
@@ -858,15 +905,6 @@ export const EssentialVocabUnitPage: React.FC = () => {
             {/* ================= STAGE 1: CONTEXTUAL MCQ ================= */}
             {activeStage === 1 && (
               <div className="space-y-4">
-                <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-indigo-600">
-                    Exercise 1 · Contextual Sentence Multiple Choice
-                  </p>
-                  <p className="mt-1 text-sm font-medium text-slate-700">
-                    {unitData.exercises.stage1.instructions}
-                  </p>
-                </div>
-
                 {unitData.exercises.stage1.questions.map((q) => {
                   const selected = stage1Answers[q.questionId];
                   const itemResult = currentStageResult?.items.find(
@@ -879,7 +917,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                   return (
                     <div
                       key={q.questionId}
-                      className={`rounded-2xl border p-5 shadow-sm transition-colors ${
+                      className={`rounded-2xl border p-4 sm:p-5 shadow-sm transition-colors ${
                         isRevealed
                           ? isCorrectAnswer
                             ? "border-emerald-200 bg-emerald-50/40"
@@ -951,7 +989,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
 
                           {isRevealed && (
                             <div
-                              className={`mt-3 rounded-xl p-3 text-xs space-y-1 ${
+                              className={`mt-3 rounded-xl p-3 text-xs space-y-1.5 ${
                                 isCorrectAnswer
                                   ? "bg-emerald-50 text-emerald-900 border border-emerald-200"
                                   : "bg-rose-50 text-rose-950 border border-rose-200"
@@ -971,6 +1009,23 @@ export const EssentialVocabUnitPage: React.FC = () => {
                               <div className="mt-0.5 text-slate-700 leading-relaxed">
                                 {q.explanationVi || q.explanationEn}
                               </div>
+                              {/* One-tap Look up in Glossary */}
+                              {(() => {
+                                const linkedEntry = q.linkedEntryId ? entriesById[q.linkedEntryId] : null;
+                                const lookupWord = linkedEntry?.displayHeadword || q.canonicalAnswerText;
+                                return (
+                                  <div className="pt-1 flex items-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => jumpToGlossary(lookupWord)}
+                                      className="inline-flex items-center gap-1.5 rounded-lg bg-white border border-slate-300 hover:border-indigo-400 px-2.5 py-1 text-[11px] font-bold text-indigo-700 shadow-2xs hover:bg-indigo-50 transition cursor-pointer"
+                                    >
+                                      <BookOpen className="h-3.5 w-3.5 text-indigo-600" />
+                                      Tra từ "{lookupWord}" trong Từ vựng →
+                                    </button>
+                                  </div>
+                                );
+                              })()}
                             </div>
                           )}
                         </div>
@@ -997,15 +1052,6 @@ export const EssentialVocabUnitPage: React.FC = () => {
             {/* ================= STAGE 2: SYNONYM / COLLOCATION MCQ ================= */}
             {activeStage === 2 && (
               <div className="space-y-4">
-                <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">
-                    Exercise 2 · Synonym Replacement in Context
-                  </p>
-                  <p className="mt-1 text-sm font-medium text-slate-700">
-                    {unitData.exercises.stage2.instructions}
-                  </p>
-                </div>
-
                 {unitData.exercises.stage2.questions.map((q) => {
                   const selected = stage2Answers[q.questionId];
                   const itemResult = currentStageResult?.items.find(
@@ -1025,7 +1071,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
                   return (
                     <div
                       key={q.questionId}
-                      className={`rounded-2xl border p-5 shadow-sm transition-colors ${
+                      className={`rounded-2xl border p-4 sm:p-5 shadow-sm transition-colors ${
                         isRevealed
                           ? isCorrectAnswer
                             ? "border-emerald-200 bg-emerald-50/40"
@@ -1109,7 +1155,7 @@ export const EssentialVocabUnitPage: React.FC = () => {
 
                           {isRevealed && (
                             <div
-                              className={`mt-3 rounded-xl p-3 text-xs space-y-1 ${
+                              className={`mt-3 rounded-xl p-3 text-xs space-y-1.5 ${
                                 isCorrectAnswer
                                   ? "bg-emerald-50 text-emerald-900 border border-emerald-200"
                                   : "bg-rose-50 text-rose-950 border border-rose-200"
@@ -1129,6 +1175,27 @@ export const EssentialVocabUnitPage: React.FC = () => {
                               <div className="mt-0.5 text-slate-700 leading-relaxed">
                                 {q.explanationVi || q.explanationEn}
                               </div>
+                              {/* One-tap Look up in Glossary */}
+                              {(() => {
+                                const linkedEntry = q.answerLinkedEntryId
+                                  ? entriesById[q.answerLinkedEntryId]
+                                  : q.targetLinkedEntryId
+                                  ? entriesById[q.targetLinkedEntryId]
+                                  : null;
+                                const lookupWord = linkedEntry?.displayHeadword || q.canonicalAnswerText || q.targetWordOrPhrase;
+                                return (
+                                  <div className="pt-1 flex items-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => jumpToGlossary(lookupWord)}
+                                      className="inline-flex items-center gap-1.5 rounded-lg bg-white border border-slate-300 hover:border-indigo-400 px-2.5 py-1 text-[11px] font-bold text-indigo-700 shadow-2xs hover:bg-indigo-50 transition cursor-pointer"
+                                    >
+                                      <BookOpen className="h-3.5 w-3.5 text-indigo-600" />
+                                      Tra từ "{lookupWord}" trong Từ vựng →
+                                    </button>
+                                  </div>
+                                );
+                              })()}
                             </div>
                           )}
                         </div>
@@ -1281,11 +1348,21 @@ export const EssentialVocabUnitPage: React.FC = () => {
                               : "bg-amber-50 text-amber-900"
                           }`}
                         >
-                          <strong>
-                            Chỗ trống ({item.itemNumber}) — Đáp án đúng:{" "}
-                            {item.canonicalDisplay}
-                          </strong>
-                          <p className="mt-0.5">
+                          <div className="flex flex-wrap items-center justify-between gap-1.5">
+                            <strong>
+                              Chỗ trống ({item.itemNumber}) — Đáp án đúng:{" "}
+                              {item.canonicalDisplay}
+                            </strong>
+                            <button
+                              type="button"
+                              onClick={() => jumpToGlossary(item.canonicalAnswer)}
+                              className="inline-flex items-center gap-1 rounded-md bg-white border border-slate-300 hover:border-indigo-400 px-2 py-0.5 text-[11px] font-bold text-indigo-700 shadow-2xs hover:bg-indigo-50 transition cursor-pointer"
+                            >
+                              <BookOpen className="h-3 w-3 text-indigo-600" />
+                              Tra từ "{item.canonicalAnswer}" →
+                            </button>
+                          </div>
+                          <p className="mt-1">
                             {item.feedbackVi || item.feedbackEn}
                           </p>
                         </div>
@@ -1454,9 +1531,19 @@ export const EssentialVocabUnitPage: React.FC = () => {
                                 {String(item.submittedValue || "(trống)")}
                               </span>
                             </strong>
-                            <span className="rounded bg-white/80 px-2 py-0.5 text-[11px] font-bold">
-                              Đáp án chuẩn: {item.canonicalDisplay}
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="rounded bg-white/80 px-2 py-0.5 text-[11px] font-bold">
+                                Đáp án chuẩn: {item.canonicalDisplay}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => jumpToGlossary(item.canonicalAnswer)}
+                                className="inline-flex items-center gap-1 rounded-md bg-white border border-slate-300 hover:border-indigo-400 px-2 py-0.5 text-[11px] font-bold text-indigo-700 shadow-2xs hover:bg-indigo-50 transition cursor-pointer"
+                              >
+                                <BookOpen className="h-3 w-3 text-indigo-600" />
+                                Tra từ "{item.canonicalAnswer}" →
+                              </button>
+                            </div>
                           </div>
                           <p className="mt-1">
                             {item.feedbackVi || item.feedbackEn}

@@ -135,19 +135,19 @@ export const EssentialVocabHubPage: React.FC = () => {
 
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <Link
-                  to="/essential-vocabulary/unit/evc5-u01"
+                  to="/essential-vocabulary/unit/evc5-u01/practice"
                   className="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-400"
                 >
-                  <BookOpen className="h-4 w-4" />
-                  Học ngay Unit 1: Looking good
+                  <Layers className="h-4 w-4" />
+                  Làm bài tập Unit 1: Looking good (30 câu)
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/essential-vocabulary/unit/evc5-u01/practice"
+                  to="/essential-vocabulary/unit/evc5-u01/glossary"
                   className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15"
                 >
-                  <Layers className="h-4 w-4" />
-                  Làm bài tập 4 Giai đoạn
+                  <BookOpen className="h-4 w-4" />
+                  Tra cứu từ vựng
                 </Link>
               </div>
             </div>
@@ -401,16 +401,16 @@ export const EssentialVocabHubPage: React.FC = () => {
                   {unit.isAvailable ? (
                     <div className="flex items-center gap-2">
                       <Link
-                        to={`/essential-vocabulary/unit/${unit.unitId}/glossary`}
-                        className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-center text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+                        to={`/essential-vocabulary/unit/${unit.unitId}/practice`}
+                        className="flex-1 rounded-xl bg-indigo-600 px-3 py-2 text-center text-xs font-bold text-white transition hover:bg-indigo-500 shadow-xs"
                       >
-                        Học từ vựng
+                        {isFullyCompleted ? "Luyện lại (30 câu)" : "Làm bài tập (30 câu)"}
                       </Link>
                       <Link
-                        to={`/essential-vocabulary/unit/${unit.unitId}/practice`}
-                        className="flex-1 rounded-xl bg-indigo-600 px-3 py-2 text-center text-xs font-semibold text-white transition hover:bg-indigo-500"
+                        to={`/essential-vocabulary/unit/${unit.unitId}/glossary`}
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-center text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
                       >
-                        {isFullyCompleted ? "Luyện lại" : "Làm bài tập"}
+                        Từ vựng
                       </Link>
                     </div>
                   ) : (
