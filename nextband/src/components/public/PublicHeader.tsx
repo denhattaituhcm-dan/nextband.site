@@ -13,6 +13,15 @@ import {
   GraduationCap,
   ChevronDown,
   Sparkles,
+  BookOpen,
+  Zap,
+  Swords,
+  Mic,
+  Compass,
+  FileText,
+  Flame,
+  FlaskConical,
+  Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +29,16 @@ interface NavSubItem {
   label: string;
   href: string;
   badge?: string;
+  badgeColor?: "sky" | "rose" | "emerald" | "amber" | "purple";
+  icon?: React.ComponentType<{ className?: string }>;
+  description?: string;
   isDivider?: boolean;
+}
+
+interface NavMegaColumn {
+  title: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  items: NavSubItem[];
 }
 
 interface NavItem {
@@ -28,7 +46,44 @@ interface NavItem {
   href: string;
   badge?: string;
   isFeatured?: boolean;
+  icon?: React.ComponentType<{ className?: string }>;
+  isMegaMenu?: boolean;
+  megaColumns?: NavMegaColumn[];
   children?: NavSubItem[];
+}
+
+function renderNavBadge(
+  badge: string,
+  color?: "sky" | "rose" | "emerald" | "amber" | "purple"
+) {
+  const isLive = badge.toUpperCase() === "LIVE";
+  const isHot = badge.toUpperCase() === "HOT";
+
+  let colorClasses = "bg-sky-500/20 text-sky-300 border-sky-400/30";
+  if (color === "rose" || isLive) {
+    colorClasses = "bg-rose-500/20 text-rose-300 border-rose-400/30";
+  } else if (color === "emerald") {
+    colorClasses = "bg-emerald-500/20 text-emerald-300 border-emerald-400/30";
+  } else if (color === "amber" || isHot) {
+    colorClasses = "bg-amber-500/20 text-amber-300 border-amber-400/30";
+  } else if (color === "purple") {
+    colorClasses = "bg-purple-500/20 text-purple-300 border-purple-400/30";
+  }
+
+  return (
+    <span
+      className={cn(
+        "ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border whitespace-nowrap shrink-0 inline-flex items-center gap-1 leading-none shadow-2xs",
+        colorClasses
+      )}
+    >
+      {isLive && (
+        <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+      )}
+      {isHot && <Flame className="h-2.5 w-2.5 text-amber-300 shrink-0" />}
+      <span>{badge}</span>
+    </span>
+  );
 }
 
 const PUBLIC_NAV_ITEMS: NavItem[] = [
@@ -51,6 +106,112 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
   {
     label: "Đọc",
     href: "/reading",
+    badge: "11+ MỤC",
+    isFeatured: true,
+    icon: BookOpen,
+    isMegaMenu: true,
+    megaColumns: [
+      {
+        title: "Luyện Đọc & Đấu Trường",
+        icon: Zap,
+        items: [
+          {
+            label: "Thử thách đọc hiểu",
+            href: "/reading-challenge",
+            badge: "Mới",
+            badgeColor: "emerald",
+            icon: Sparkles,
+            description: "Đọc tương tác & bấm giờ theo unit",
+          },
+          {
+            label: "Đấu trường Live Arena",
+            href: "/arena",
+            badge: "LIVE",
+            badgeColor: "rose",
+            icon: Zap,
+            description: "Thi đấu từ vựng trực tiếp thời gian thực",
+          },
+          {
+            label: "Đấu trường từ vựng C2",
+            href: "/vocab-c2",
+            badge: "HOT",
+            badgeColor: "amber",
+            icon: Swords,
+            description: "Thử thách đối kháng từ vựng đỉnh cao",
+          },
+          {
+            label: "Speaking Forecast",
+            href: "/ielts-speaking-forecast",
+            badge: "HOT",
+            badgeColor: "rose",
+            icon: Mic,
+            description: "Bộ đề dự đoán IELTS Speaking mới nhất",
+          },
+          {
+            label: "Bài đọc phân tích",
+            href: "/reading#tu-sach",
+            badge: "Tủ sách",
+            badgeColor: "sky",
+            icon: FileText,
+            description: "Thư viện bài đọc phân tích chuyên sâu",
+          },
+        ],
+      },
+      {
+        title: "Kho Từ Vựng & Cấu Trúc",
+        icon: Layers,
+        items: [
+          {
+            label: "Essential Vocabulary (B2-C1)",
+            href: "/essential-vocabulary",
+            badge: "20 Bài",
+            badgeColor: "sky",
+            icon: GraduationCap,
+            description: "20 chủ điểm từ vựng học thuật B2-C1",
+          },
+          {
+            label: "Vocabulary in Use (C1-C2)",
+            href: "/vocab-in-use",
+            badge: "Mới",
+            badgeColor: "emerald",
+            icon: BookOpen,
+            description: "Luyện từ vựng ngữ cảnh thực tế C1-C2",
+          },
+          {
+            label: "Từ vựng nâng cao C1",
+            href: "/vocab-c1",
+            badge: "12 Bài",
+            badgeColor: "purple",
+            icon: Layers,
+            description: "12 chuyên đề từ vựng nâng cao C1",
+          },
+          {
+            label: "Từ vựng B2-C1 (Cambridge)",
+            href: "/cambridge-vocab",
+            badge: "20 Chủ đề",
+            badgeColor: "sky",
+            icon: Compass,
+            description: "Bộ từ vựng Cambridge chuẩn hóa",
+          },
+          {
+            label: "Thành ngữ thông dụng",
+            href: "/reading/idioms",
+            badge: "8 Chủ đề",
+            badgeColor: "amber",
+            icon: Flame,
+            description: "Thành ngữ & diễn đạt tự nhiên",
+          },
+          {
+            label: "Luyện tập Giới từ",
+            href: "/preposition-lab",
+            badge: "Mới",
+            badgeColor: "emerald",
+            icon: FlaskConical,
+            description: "Phòng thí nghiệm phản xạ giới từ",
+          },
+        ],
+      },
+    ],
     children: [
       { label: "Thử thách đọc hiểu", href: "/reading-challenge", badge: "Mới" },
       { label: "Bài đọc phân tích", href: "/reading#tu-sach", badge: "Bài đọc" },
@@ -101,7 +262,8 @@ export function PublicHeader() {
         location.pathname.startsWith("/vocab-c2") ||
         location.pathname.startsWith("/cambridge-vocab") ||
         location.pathname.startsWith("/preposition-lab") ||
-        location.pathname.startsWith("/arena")
+        location.pathname.startsWith("/arena") ||
+        location.pathname.startsWith("/ielts-speaking-forecast")
       ) {
         return true;
       }
@@ -119,6 +281,8 @@ export function PublicHeader() {
     if (href === "/arena" && location.pathname.startsWith("/arena")) return true;
     if (href === "/cambridge-vocab" && location.pathname.startsWith("/cambridge-vocab")) return true;
     if (href === "/preposition-lab" && (location.pathname === "/preposition-lab" || location.pathname === "/reading/preposition-lab")) return true;
+    if (href === "/ielts-speaking-forecast" && location.pathname.startsWith("/ielts-speaking-forecast")) return true;
+    if (href === "/reading-challenge" && location.pathname.startsWith("/reading-challenge")) return true;
     if (href !== "/courses" && location.pathname === href) return true;
     return false;
   };
@@ -152,70 +316,190 @@ export function PublicHeader() {
               const hasChildren = item.children && item.children.length > 0;
 
               if (hasChildren) {
+                const ItemIcon = item.icon;
                 return (
-                  <div key={item.label} className="relative group">
+                  <div key={item.label} className="relative group/navitem">
                     <Link
                       to={item.href}
                       className={cn(
-                        "px-2.5 xl:px-3 py-2 rounded-xl text-xs xl:text-[13px] font-bold tracking-wider uppercase whitespace-nowrap text-center transition-all inline-flex items-center gap-1.5",
-                        active
+                        "px-2.5 xl:px-3 py-1.5 rounded-xl text-xs xl:text-[13px] font-bold tracking-wider uppercase whitespace-nowrap text-center transition-all inline-flex items-center gap-1.5 relative overflow-hidden",
+                        item.isFeatured
+                          ? [
+                              "bg-gradient-to-r from-sky-500/20 via-blue-600/25 to-indigo-600/25",
+                              "text-sky-100 hover:text-white",
+                              "border border-sky-400/40 hover:border-sky-300",
+                              "shadow-[0_2px_12px_rgba(2,132,199,0.25)] hover:shadow-[0_4px_20px_rgba(2,132,199,0.45)]",
+                              "hover:scale-[1.03] active:scale-[0.98]",
+                            ].join(" ")
+                          : active
                           ? "bg-white/15 text-white font-black shadow-xs border border-white/20"
                           : "text-slate-300 hover:text-white hover:bg-white/10"
                       )}
                     >
-                      <span>{item.label}</span>
-                      <ChevronDown className="h-3.5 w-3.5 opacity-70 transition-transform duration-200 group-hover:rotate-180" />
+                      {item.isFeatured && (
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 -translate-x-full group-hover/navitem:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-sky-300/20 to-transparent"
+                        />
+                      )}
+                      {ItemIcon && (
+                        <ItemIcon className="h-3.5 w-3.5 text-cyan-300 shrink-0 group-hover/navitem:rotate-[-6deg] transition-transform" />
+                      )}
+                      <span className={cn(item.isFeatured && "font-black text-white drop-shadow-xs")}>
+                        {item.label}
+                      </span>
+                      {item.badge && (
+                        <span className="relative px-1.5 py-[0.5px] rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-sky-400/30 to-blue-500/30 text-sky-200 border border-sky-300/40 shadow-xs flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          {item.badge}
+                        </span>
+                      )}
+                      <ChevronDown
+                        className={cn(
+                          "h-3.5 w-3.5 transition-transform duration-200 group-hover/navitem:rotate-180",
+                          item.isFeatured ? "text-sky-300 opacity-90" : "opacity-70"
+                        )}
+                      />
                     </Link>
 
-                    {/* Dropdown Menu - Oxford Academic Navy */}
-                    <div className="absolute top-full left-0 pt-2 hidden group-hover:block transition-all z-50 animate-in fade-in-50 slide-in-from-top-1 duration-150">
-                      <div className="w-80 rounded-2xl bg-[#002147] border border-white/15 shadow-2xl shadow-[#001026]/80 p-2 space-y-1 ring-1 ring-white/10">
-                        {item.children!.map((sub, idx) => {
-                          if (sub.isDivider) {
-                            return (
-                              <div
-                                key={`divider-${idx}`}
-                                className="border-t border-white/10 my-1.5 mx-2"
-                              />
-                            );
-                          }
-
-                          const subActive = isSubActive(sub.href);
-                          const match = sub.label.match(/^(.*?)\s*(\(.*?\))$/);
-                          const mainTitle = match ? match[1] : sub.label;
-                          const subTarget = match ? match[2] : null;
-
-                          return (
-                            <Link
-                              key={sub.href + sub.label}
-                              to={sub.href}
-                              className={cn(
-                                "group/sub flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all",
-                                subActive
-                                  ? "bg-white/15 text-white font-bold border border-white/20 shadow-xs"
-                                  : "text-slate-100 hover:text-white hover:bg-white/10"
-                              )}
-                            >
-                              <div className="flex items-center gap-2 min-w-0">
-                                <span className="font-bold text-white tracking-wide truncate">
-                                  {mainTitle}
-                                </span>
-                                {subTarget && (
-                                  <span className="text-[11px] text-slate-400 group-hover/sub:text-slate-300 font-normal shrink-0">
-                                    {subTarget}
-                                  </span>
-                                )}
+                    {/* Mega Dropdown or Standard Dropdown */}
+                    {item.isMegaMenu && item.megaColumns ? (
+                      <div className="absolute top-full left-0 pt-2 hidden group-hover/navitem:block transition-all z-50 animate-in fade-in-50 slide-in-from-top-1 duration-150">
+                        <div className="w-[620px] xl:w-[680px] rounded-2xl bg-[#001938] border border-sky-500/30 shadow-2xl shadow-[#000d20]/90 p-4 ring-1 ring-sky-400/20 backdrop-blur-xl">
+                          {/* Top Header Card */}
+                          <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10 px-1">
+                            <div className="flex items-center gap-2.5">
+                              <div className="p-2 rounded-xl bg-gradient-to-br from-sky-500/30 to-indigo-500/30 text-cyan-300 border border-sky-400/30 shadow-xs">
+                                <BookOpen className="h-5 w-5" />
                               </div>
-                              {sub.badge && (
-                                <span className="ml-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-sky-500/20 text-sky-300 border border-sky-400/30 whitespace-nowrap shrink-0">
-                                  {sub.badge}
-                                </span>
-                              )}
+                              <div>
+                                <div className="text-xs font-black text-white tracking-wider uppercase flex items-center gap-2">
+                                  <span>KHO TÀI LIỆU & ĐẤU TRƯỜNG ARIS</span>
+                                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                    11+ TIỆN ÍCH MIỄN PHÍ
+                                  </span>
+                                </div>
+                                <p className="text-[11px] text-slate-300 mt-0.5">
+                                  Luyện đọc thông minh, bộ từ vựng B2-C2 & thi đấu trực tiếp
+                                </p>
+                              </div>
+                            </div>
+                            <Link
+                              to={item.href}
+                              className="px-3 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-200 hover:text-white border border-sky-400/30 text-[11px] font-bold flex items-center gap-1.5 transition-all group/all shrink-0"
+                            >
+                              <span>Vào Tủ sách</span>
+                              <ArrowRight className="h-3 w-3 group-hover/all:translate-x-0.5 transition-transform" />
                             </Link>
-                          );
-                        })}
+                          </div>
+
+                          {/* 2 Columns Grid */}
+                          <div className="grid grid-cols-2 gap-3">
+                            {item.megaColumns.map((col, cIdx) => (
+                              <div key={cIdx} className="space-y-1.5">
+                                <div className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-black uppercase tracking-wider text-sky-300/90 border-b border-white/5">
+                                  {col.icon && <col.icon className="h-3.5 w-3.5 text-sky-400" />}
+                                  <span>{col.title}</span>
+                                </div>
+
+                                <div className="space-y-1">
+                                  {col.items.map((sub) => {
+                                    const subActive = isSubActive(sub.href);
+                                    const SubIcon = sub.icon || BookOpen;
+
+                                    return (
+                                      <Link
+                                        key={sub.href + sub.label}
+                                        to={sub.href}
+                                        className={cn(
+                                          "group/sub flex items-start gap-2.5 px-2.5 py-2 rounded-xl transition-all",
+                                          subActive
+                                            ? "bg-white/15 text-white font-bold border border-white/20 shadow-xs"
+                                            : "text-slate-200 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10"
+                                        )}
+                                      >
+                                        <div className="p-1.5 rounded-lg bg-white/5 text-sky-300 group-hover/sub:bg-sky-500/20 group-hover/sub:text-white transition-colors shrink-0 mt-0.5">
+                                          <SubIcon className="h-3.5 w-3.5" />
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                          <div className="flex items-center justify-between gap-1.5">
+                                            <span className="text-xs font-bold text-white tracking-wide truncate group-hover/sub:text-cyan-200 transition-colors">
+                                              {sub.label}
+                                            </span>
+                                            {sub.badge && renderNavBadge(sub.badge, sub.badgeColor)}
+                                          </div>
+                                          {sub.description && (
+                                            <p className="text-[10px] text-slate-400 line-clamp-1 mt-0.5 font-normal group-hover/sub:text-slate-300">
+                                              {sub.description}
+                                            </p>
+                                          )}
+                                        </div>
+                                      </Link>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Bottom Footer Callout */}
+                          <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between px-2 text-[10px] text-slate-400">
+                            <span className="flex items-center gap-1">
+                              <Sparkles className="h-3 w-3 text-amber-300" />
+                              Tích lũy từ vựng tự nhiên & rèn luyện phản xạ học thuật mỗi ngày
+                            </span>
+                            <span className="text-cyan-300 font-semibold">ARIS Academic Universe</span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      /* Dropdown Menu - Oxford Academic Navy (Standard) */
+                      <div className="absolute top-full left-0 pt-2 hidden group-hover/navitem:block transition-all z-50 animate-in fade-in-50 slide-in-from-top-1 duration-150">
+                        <div className="w-80 rounded-2xl bg-[#002147] border border-white/15 shadow-2xl shadow-[#001026]/80 p-2 space-y-1 ring-1 ring-white/10">
+                          {item.children!.map((sub, idx) => {
+                            if (sub.isDivider) {
+                              return (
+                                <div
+                                  key={`divider-${idx}`}
+                                  className="border-t border-white/10 my-1.5 mx-2"
+                                />
+                              );
+                            }
+
+                            const subActive = isSubActive(sub.href);
+                            const match = sub.label.match(/^(.*?)\s*(\(.*?\))$/);
+                            const mainTitle = match ? match[1] : sub.label;
+                            const subTarget = match ? match[2] : null;
+
+                            return (
+                              <Link
+                                key={sub.href + sub.label}
+                                to={sub.href}
+                                className={cn(
+                                  "group/sub flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all",
+                                  subActive
+                                    ? "bg-white/15 text-white font-bold border border-white/20 shadow-xs"
+                                    : "text-slate-100 hover:text-white hover:bg-white/10"
+                                )}
+                              >
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <span className="font-bold text-white tracking-wide truncate">
+                                    {mainTitle}
+                                  </span>
+                                  {subTarget && (
+                                    <span className="text-[11px] text-slate-400 group-hover/sub:text-slate-300 font-normal shrink-0">
+                                      {subTarget}
+                                    </span>
+                                  )}
+                                </div>
+                                {sub.badge && renderNavBadge(sub.badge, sub.badgeColor)}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               }
@@ -383,75 +667,169 @@ export function PublicHeader() {
               const isSubMenuOpen = openMobileSubMenu === item.label;
 
               if (hasChildren) {
+                const ItemIcon = item.icon;
                 return (
                   <div key={item.label} className="space-y-1">
                     <div
                       onClick={() => setOpenMobileSubMenu(isSubMenuOpen ? null : item.label)}
                       className={cn(
-                        "px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-between cursor-pointer",
-                        active
+                        "px-3 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-between cursor-pointer group/mob overflow-hidden relative shadow-xs",
+                        item.isFeatured
+                          ? [
+                              "bg-gradient-to-r from-[#0284c7] via-[#2563eb] to-[#4f46e5]",
+                              "text-white font-black",
+                              "shadow-[0_2px_14px_rgba(2,132,199,0.35)]",
+                              "border border-sky-300/40",
+                            ].join(" ")
+                          : active
                           ? "bg-white/15 text-white font-black border border-white/20"
-                          : "text-slate-300 hover:text-white hover:bg-white/10"
+                          : "text-slate-300 hover:text-white hover:bg-white/10 font-bold"
                       )}
                     >
-                      <span>{item.label}</span>
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 opacity-70 transition-transform duration-200",
-                          isSubMenuOpen && "rotate-180"
+                      {item.isFeatured && (
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 -translate-x-full group-hover/mob:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                        />
+                      )}
+                      <div className="flex items-center gap-2">
+                        {ItemIcon && (
+                          <ItemIcon className="h-4 w-4 text-cyan-200 shrink-0" />
                         )}
-                      />
+                        <span className="drop-shadow-xs font-black tracking-wider">{item.label}</span>
+                        {item.badge && (
+                          <span className="px-1.5 py-[1px] rounded-full text-[9px] font-black uppercase tracking-wider bg-white/20 text-white border border-white/30 shadow-xs flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 text-cyan-100">
+                        {item.isFeatured && (
+                          <span className="text-[10px] font-bold normal-case opacity-90">
+                            {isSubMenuOpen ? "Thu gọn" : "11+ tiện ích"}
+                          </span>
+                        )}
+                        <ChevronDown
+                          className={cn(
+                            "h-4 w-4 transition-transform duration-200",
+                            item.isFeatured ? "text-white" : "opacity-70",
+                            isSubMenuOpen && "rotate-180"
+                          )}
+                        />
+                      </div>
                     </div>
 
                     {isSubMenuOpen && (
-                      <div className="pl-3 ml-2 border-l border-white/15 space-y-1 py-1">
-                        {item.children!.map((sub, idx) => {
-                          if (sub.isDivider) {
-                            return (
-                              <div
-                                key={`mob-div-${idx}`}
-                                className="border-t border-white/10 my-1.5 mx-2"
-                              />
-                            );
-                          }
-
-                          const subActive = isSubActive(sub.href);
-                          const match = sub.label.match(/^(.*?)\s*(\(.*?\))$/);
-                          const mainTitle = match ? match[1] : sub.label;
-                          const subTarget = match ? match[2] : null;
-
-                          return (
+                      <div
+                        className={cn(
+                          "rounded-xl py-2 px-1 space-y-2 animate-in slide-in-from-top-1 duration-150",
+                          item.isFeatured
+                            ? "bg-slate-900/70 border border-sky-500/25 pl-2.5 pr-2"
+                            : "pl-3 ml-2 border-l border-white/15"
+                        )}
+                      >
+                        {item.isMegaMenu && item.megaColumns ? (
+                          <>
+                            {/* Quick Link to /reading */}
                             <Link
-                              key={sub.href + sub.label}
-                              to={sub.href}
+                              to={item.href}
                               onClick={() => setMobileMenuOpen(false)}
-                              className={cn(
-                                "px-3 py-2 rounded-lg text-xs font-medium tracking-wide transition-colors flex items-center justify-between",
-                                subActive
-                                  ? "bg-white/15 text-white font-bold border border-white/20"
-                                  : "text-slate-200 hover:text-white hover:bg-white/10"
-                              )}
+                              className="flex items-center justify-between px-3 py-2 rounded-lg bg-gradient-to-r from-sky-500/25 to-indigo-500/25 border border-sky-400/35 text-white text-xs font-bold shadow-xs hover:brightness-110"
                             >
-                              <div className="flex items-center gap-1.5 min-w-0">
-                                <span className="font-semibold text-white truncate">
-                                  {mainTitle}
-                                </span>
-                                {subTarget && (
-                                  <span className="text-[11px] text-slate-400 font-normal shrink-0">
-                                    {subTarget}
-                                  </span>
-                                )}
+                              <div className="flex items-center gap-2">
+                                <BookOpen className="h-3.5 w-3.5 text-cyan-300" />
+                                <span>Vào Tủ sách tương tác ARIS</span>
                               </div>
-                              {sub.badge ? (
-                                <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-400/30 whitespace-nowrap shrink-0">
-                                  {sub.badge}
-                                </span>
-                              ) : (
-                                <ArrowRight className="h-3 w-3 opacity-40 shrink-0" />
-                              )}
+                              <ArrowRight className="h-3.5 w-3.5 text-cyan-300" />
                             </Link>
-                          );
-                        })}
+
+                            {item.megaColumns.map((col, cIdx) => (
+                              <div key={cIdx} className="space-y-1 pt-1">
+                                <div className="px-2 text-[10px] font-black uppercase tracking-wider text-sky-300/80 flex items-center gap-1.5">
+                                  {col.icon && <col.icon className="h-3 w-3 text-sky-400" />}
+                                  <span>{col.title}</span>
+                                </div>
+                                {col.items.map((sub) => {
+                                  const subActive = isSubActive(sub.href);
+                                  const SubIcon = sub.icon || BookOpen;
+
+                                  return (
+                                    <Link
+                                      key={sub.href + sub.label}
+                                      to={sub.href}
+                                      onClick={() => setMobileMenuOpen(false)}
+                                      className={cn(
+                                        "px-2.5 py-2 rounded-lg text-xs font-medium tracking-wide transition-colors flex items-center justify-between",
+                                        subActive
+                                          ? "bg-white/20 text-white font-bold border border-white/20"
+                                          : "text-slate-200 hover:text-white hover:bg-white/10"
+                                      )}
+                                    >
+                                      <div className="flex items-center gap-2 min-w-0">
+                                        <SubIcon className="h-3.5 w-3.5 text-cyan-300 shrink-0" />
+                                        <span className="font-semibold text-white truncate">
+                                          {sub.label}
+                                        </span>
+                                      </div>
+                                      {sub.badge ? (
+                                        renderNavBadge(sub.badge, sub.badgeColor)
+                                      ) : (
+                                        <ArrowRight className="h-3 w-3 opacity-40 shrink-0" />
+                                      )}
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            ))}
+                          </>
+                        ) : (
+                          item.children!.map((sub, idx) => {
+                            if (sub.isDivider) {
+                              return (
+                                <div
+                                  key={`mob-div-${idx}`}
+                                  className="border-t border-white/10 my-1.5 mx-2"
+                                />
+                              );
+                            }
+
+                            const subActive = isSubActive(sub.href);
+                            const match = sub.label.match(/^(.*?)\s*(\(.*?\))$/);
+                            const mainTitle = match ? match[1] : sub.label;
+                            const subTarget = match ? match[2] : null;
+
+                            return (
+                              <Link
+                                key={sub.href + sub.label}
+                                to={sub.href}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={cn(
+                                  "px-3 py-2 rounded-lg text-xs font-medium tracking-wide transition-colors flex items-center justify-between",
+                                  subActive
+                                    ? "bg-white/15 text-white font-bold border border-white/20"
+                                    : "text-slate-200 hover:text-white hover:bg-white/10"
+                                )}
+                              >
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span className="font-semibold text-white truncate">
+                                    {mainTitle}
+                                  </span>
+                                  {subTarget && (
+                                    <span className="text-[11px] text-slate-400 font-normal shrink-0">
+                                      {subTarget}
+                                    </span>
+                                  )}
+                                </div>
+                                {sub.badge ? (
+                                  renderNavBadge(sub.badge, sub.badgeColor)
+                                ) : (
+                                  <ArrowRight className="h-3 w-3 opacity-40 shrink-0" />
+                                )}
+                              </Link>
+                            );
+                          })
+                        )}
                       </div>
                     )}
                   </div>
