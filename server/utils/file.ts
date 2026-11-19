@@ -25,22 +25,46 @@ function getBaseUrl(): string {
  */
 export function toFileUrl(path: string | null | undefined): string | null {
   if (!path) return null;
-  // Nếu đã là URL đầy đủ (http/https hoặc data:) thì giữ nguyên
-  if (/^(https?:\/\/|data:)/i.test(path)) return path;
 
-  // Nếu là direct Supabase storage path (vd: /storage/v1/...) thì giữ nguyên hoặc prepend base
-  if (path.startsWith("/storage/v1/")) {
-    const supabaseBase = (env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co").replace(/\/$/, "");
-    return `${supabaseBase}${path}`;
+  const supabaseBase = (env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co").replace(/\/$/, "");
+
+  // Legacy host mapping: api.nextband.site or nextband.site /uploads/(images|audio)/<file>
+  const legacyHostMatch = path.match(/^https?:\/\/(?:api\.)?nextband\.site\/uploads\/(images|audio)\/(.+)$/i);
+  if (legacyHostMatch && legacyHostMatch[1] && legacyHostMatch[2]) {
+    const folder = legacyHostMatch[1].toLowerCase();
+    const filename = legacyHostMatch[2].replace(/^\/+/, "");
+    return `${supabaseBase}/storage/v1/object/public/exam-assets/${folder}/${filename}`;
+  }
+
+  // Canonical mapping: /uploads/images/<filename> hoặc uploads/images/<filename>
+  const imgMatch = path.match(/^(?:\/)?uploads\/images\/(.+)$/);
+  if (imgMatch && imgMatch[1]) {
+    const filename = imgMatch[1].replace(/^\/+/, "");
+    return `${supabaseBase}/storage/v1/object/public/exam-assets/images/${filename}`;
   }
 
   // Canonical mapping: /uploads/audio/<filename> hoặc uploads/audio/<filename>
   const audioMatch = path.match(/^(?:\/)?uploads\/audio\/(.+)$/);
   if (audioMatch && audioMatch[1]) {
     const filename = audioMatch[1].replace(/^\/+/, "");
-    const supabaseBase = (env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co").replace(/\/$/, "");
     return `${supabaseBase}/storage/v1/object/public/exam-assets/audio/${filename}`;
   }
+
+  // Direct exam-assets storage path: exam-assets/(images|audio|speaking-recordings)/<file>
+  const examAssetMatch = path.match(/^(?:\/)?exam-assets\/(images|audio|speaking-recordings)\/(.+)$/);
+  if (examAssetMatch && examAssetMatch[1] && examAssetMatch[2]) {
+    const folder = examAssetMatch[1];
+    const filename = examAssetMatch[2].replace(/^\/+/, "");
+    return `${supabaseBase}/storage/v1/object/public/exam-assets/${folder}/${filename}`;
+  }
+
+  // Direct Supabase storage path (vd: /storage/v1/...)
+  if (path.startsWith("/storage/v1/")) {
+    return `${supabaseBase}${path}`;
+  }
+
+  // Nếu đã là URL đầy đủ (http/https hoặc data:) thì giữ nguyên
+  if (/^(https?:\/\/|data:)/i.test(path)) return path;
 
   // Fallback: relative path khác giữ nguyên behavior cũ
   const base = getBaseUrl().replace(/\/$/, "");

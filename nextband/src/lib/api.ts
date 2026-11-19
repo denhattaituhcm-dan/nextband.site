@@ -45,14 +45,41 @@ export {
 // Helper to format URLs
 export const formatStorageUrl = (path: string | null | undefined) => {
   if (!path) return "";
+
+  // Legacy host mapping: api.nextband.site or nextband.site /uploads/(images|audio)/<file>
+  const legacyHostMatch = path.match(/^https?:\/\/(?:api\.)?nextband\.site\/uploads\/(images|audio)\/(.+)$/i);
+  if (legacyHostMatch && legacyHostMatch[1] && legacyHostMatch[2]) {
+    const folder = legacyHostMatch[1].toLowerCase();
+    const filename = legacyHostMatch[2].replace(/^\/+/, "");
+    const { data } = supabase.storage.from("exam-assets").getPublicUrl(`${folder}/${filename}`);
+    return data.publicUrl;
+  }
+
   if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("blob:") || path.startsWith("data:")) return path;
+
   let cleanPath = path.startsWith("/") ? path.slice(1) : path;
+
   if (cleanPath.startsWith("speaking-recordings/")) {
     const { data } = supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
     return data.publicUrl;
   }
   if (cleanPath.startsWith("exam-assets/")) {
-    const subClean = cleanPath.replace(/^exam-assets\//, "");
+    let subClean = cleanPath.replace(/^exam-assets\//, "");
+    if (subClean.startsWith("uploads/images/")) {
+      subClean = subClean.replace(/^uploads\/images\//, "images/");
+    } else if (subClean.startsWith("uploads/audio/")) {
+      subClean = subClean.replace(/^uploads\/audio\//, "audio/");
+    }
+    const { data } = supabase.storage.from("exam-assets").getPublicUrl(subClean);
+    return data.publicUrl;
+  }
+  if (cleanPath.startsWith("uploads/images/")) {
+    const subClean = cleanPath.replace(/^uploads\/images\//, "images/");
+    const { data } = supabase.storage.from("exam-assets").getPublicUrl(subClean);
+    return data.publicUrl;
+  }
+  if (cleanPath.startsWith("uploads/audio/")) {
+    const subClean = cleanPath.replace(/^uploads\/audio\//, "audio/");
     const { data } = supabase.storage.from("exam-assets").getPublicUrl(subClean);
     return data.publicUrl;
   }
@@ -60,9 +87,9 @@ export const formatStorageUrl = (path: string | null | undefined) => {
     if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(webm|mp3|wav|ogg|m4a)$/i.test(cleanPath)) {
       cleanPath = `speaking-recordings/${cleanPath}`;
     } else if (/\.(mp3|wav|ogg|webm|m4a|aac)$/i.test(cleanPath)) {
-      cleanPath = `uploads/audio/${cleanPath}`;
+      cleanPath = `audio/${cleanPath}`;
     } else if (/\.(jpg|jpeg|png|webp|gif|svg)$/i.test(cleanPath)) {
-      cleanPath = `uploads/images/${cleanPath}`;
+      cleanPath = `images/${cleanPath}`;
     }
   }
   const { data } = supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
@@ -95,7 +122,7 @@ export function normalizeCourseData(course: any): any {
     price: course.price ?? 0,
     isPublished: course.isPublished ?? course.is_published ?? false,
     isActive: course.isActive ?? course.is_active ?? true,
-    thumbnailUrl: course.thumbnailUrl ?? (course.thumbnail_url ? formatStorageUrl(course.thumbnail_url) : null),
+    thumbnailUrl: course.thumbnailUrl ? formatStorageUrl(course.thumbnailUrl) : (course.thumbnail_url ? formatStorageUrl(course.thumbnail_url) : null),
     createdAt: course.createdAt || course.created_at,
     updatedAt: course.updatedAt || course.updated_at,
     exams: Array.isArray(course.exams) ? course.exams.map(normalizeExamData) : [],
@@ -226,7 +253,7 @@ export const coursesApi = {
         price: c.price || 0,
         isPublished: c.isPublished ?? c.is_published ?? false,
         isActive: c.isActive ?? c.is_active ?? true,
-        thumbnailUrl: c.thumbnailUrl || c.thumbnail_url,
+        thumbnailUrl: c.thumbnailUrl ? formatStorageUrl(c.thumbnailUrl) : (c.thumbnail_url ? formatStorageUrl(c.thumbnail_url) : null),
         createdAt: c.createdAt || c.created_at,
         lessonsCount: c.lessonsCount ?? c._count?.exams ?? (c.exams && Array.isArray(c.exams) ? c.exams.length : 0),
         activeClassesCount: c.activeClassesCount ?? c._count?.classes ?? 0,
@@ -1645,7 +1672,11 @@ export const uploadsApi = {
   },
 
   deleteFile: async (url: string) => {
-    return { success: true };
+    const res = await authenticatedFetch(`${API_BASE_URL}/uploads`, {
+      method: "DELETE",
+      body: JSON.stringify({ url }),
+    });
+    return handleApiResponse<{ success: boolean; message?: string }>(res, "Xóa tệp khỏi hệ thống lưu trữ thất bại");
   },
 };
 
