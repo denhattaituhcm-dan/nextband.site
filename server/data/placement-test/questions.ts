@@ -70,7 +70,7 @@ export const canonicalPlacementTestPayload: SanitizedPlacementTestPayload = {
   skills: {
     listening: {
       title: "Kỹ năng Nghe (Listening)",
-      audioUrl: "https://gzpdlqxjggyxlkeatvvf.supabase.co/storage/v1/object/public/exam-assets/audio/1787423782098-cambridge-ielts-13-academic-listening-1-audio-1.mp3",
+      audioUrl: "https://qxtpbonwjmxmogriyfox.supabase.co/storage/v1/object/public/exam-assets/audio/1787423782098-cambridge-ielts-13-academic-listening-1-audio-1.mp3",
       questions: [
         {
           id: "43907def-1f78-4839-8751-ff1079fdee91",
