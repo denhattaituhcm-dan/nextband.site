@@ -8,7 +8,7 @@ import writingSpeakingJson from "../data/cambridge/writing_speaking.json" assert
 function loadCambridgeData() {
   return {
     itemsData: itemsJson,
-    answers: answersJson,
+    answers: answersJson as Record<string, any>,
     rules: rulesJson,
     writingSpeaking: writingSpeakingJson,
   };

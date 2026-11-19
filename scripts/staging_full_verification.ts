@@ -104,7 +104,7 @@ async function runStagingVerification() {
       SELECT polname, polcmd FROM pg_policy WHERE polrelid = 'vocab_in_use_bookmarks'::regclass ORDER BY polcmd;
     `);
     console.log(`   ✅ Active PostgreSQL RLS Policies (${policies.rows.length}):`);
-    policies.rows.forEach((p) => console.log(`      - ${p.polname} (CMD: ${p.polcmd})`));
+    policies.rows.forEach((p: any) => console.log(`      - ${p.polname} (CMD: ${p.polcmd})`));
 
     // -------------------------------------------------------------------------
     // STEP 2: PostgreSQL Native Session RLS Pentest (Direct Client Isolation)

@@ -114,12 +114,12 @@ describe("Ontology & Question Tagging Verification (Phase 1 Acceptance)", () => 
 
     const topicSkill = auditReport.find((a: any) => a.skillCode === "R_MS_TOPIC_SENTENCE_FILTER");
     expect(topicSkill).toBeDefined();
-    expect(topicSkill.weight).toBe(1.0);
-    expect(topicSkill.skillNode.name).toContain("Lọc ý chính đoạn văn");
+    expect(topicSkill!.weight).toBe(1.0);
+    expect(topicSkill!.skillNode.name).toContain("Lọc ý chính đoạn văn");
 
     const paraphraseSkill = auditReport.find((a: any) => a.skillCode === "R_MS_PARAPHRASE_DISCRIMINATION");
     expect(paraphraseSkill).toBeDefined();
-    expect(paraphraseSkill.weight).toBe(0.8);
+    expect(paraphraseSkill!.weight).toBe(0.8);
   });
 
   it("Từ chối gắn mã skill không tồn tại trong Ontology (Referential Guard)", async () => {

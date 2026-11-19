@@ -1,4 +1,4 @@
-import { PrismaClient, ArenaRoomStatus } from "@prisma/client";
+import { PrismaClient, Prisma, ArenaRoomStatus } from "@prisma/client";
 import { ArenaPinService } from "./arena-pin.service.js";
 import { ArenaBankService } from "./arena-bank.service.js";
 import { ARENA_STANDARD_QUESTIONS, ArenaQuestion } from "./arena-questions.data.js";
@@ -209,7 +209,7 @@ export class ArenaEngineService {
         roundStartedAt: nextStatus === "QUESTION_LIVE" ? now : room.roundStartedAt,
         roundDeadlineAt: deadlineAt,
         lastCommandId: commandId,
-        config: nextConfig,
+        config: nextConfig === null ? Prisma.JsonNull : (nextConfig as Prisma.InputJsonValue),
         ...(nextExpiresAt ? { expiresAt: nextExpiresAt } : {}),
       },
     });

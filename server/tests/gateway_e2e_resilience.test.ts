@@ -405,7 +405,7 @@ describe.skipIf(!isDbReady)("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE I
           where: { examId },
           select: { id: true },
         });
-        const subIds = subs.map((s) => s.id);
+        const subIds = subs.map((s: { id: string }) => s.id);
         if (subIds.length > 0) {
           await prisma.answer.deleteMany({
             where: { submissionId: { in: subIds } },

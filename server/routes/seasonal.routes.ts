@@ -153,10 +153,7 @@ export default async function seasonalRoutes(fastify: FastifyInstance) {
       try {
         const { id } = request.params;
         const result = await service.clearPayoutList(id);
-        return reply.send({
-          success: true,
-          ...result,
-        });
+        return reply.send(result);
       } catch (err: any) {
         return reply.status(500).send({ error: err.message });
       }

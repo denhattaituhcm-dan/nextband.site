@@ -34,8 +34,8 @@ describe.skipIf(!isDbReady)("ARIS Speaking Evidence Engine — Candidate Taxonom
 
       expect(allCritTags).toHaveLength(8);
 
-      const issues = allCritTags.filter((t) => t.polarity === "ISSUE");
-      const strengths = allCritTags.filter((t) => t.polarity === "STRENGTH");
+      const issues = allCritTags.filter((t: { polarity: string }) => t.polarity === "ISSUE");
+      const strengths = allCritTags.filter((t: { polarity: string }) => t.polarity === "STRENGTH");
 
       expect(issues).toHaveLength(5);
       expect(strengths).toHaveLength(3);

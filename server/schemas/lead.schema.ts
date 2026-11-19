@@ -87,5 +87,5 @@ export type CreateLeadInput = z.infer<typeof createLeadSchema> & {
 };
 export type UpdateLeadInput = z.infer<typeof updateLeadSchema>;
 export type ListLeadsQuery = z.infer<typeof listLeadsQuerySchema>;
-export type ConvertLeadInput = z.infer<typeof convertLeadSchema>;
+export type ConvertLeadInput = z.input<typeof convertLeadSchema>;
 export type CheckPhoneQuery = z.infer<typeof checkPhoneQuerySchema>;

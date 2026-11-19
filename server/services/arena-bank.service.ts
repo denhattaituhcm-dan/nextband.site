@@ -624,7 +624,7 @@ export class ArenaBankService {
           if (Array.isArray(q.options)) {
             rawOptions = q.options
               .map((o: any) => cleanHtml(typeof o === "string" ? o : o.text || ""))
-              .filter((text) => text.length > 0);
+              .filter((text: string) => text.length > 0);
           }
 
           if (rawOptions.length >= 2) {

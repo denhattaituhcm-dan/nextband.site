@@ -36,7 +36,7 @@ describe("Grade 8 Arena Question Bank Quality & Integrity Tests", () => {
 
         // Kiểm tra giải thích
         expect(q.explanation || q.correctExplanation).toBeDefined();
-        expect((q.explanation || q.correctExplanation).length).toBeGreaterThan(10);
+        expect((q.explanation || q.correctExplanation || "").length).toBeGreaterThan(10);
 
         // Kiểm tra chuẩn hóa misconception
         expect(q.misconception).toBeDefined();

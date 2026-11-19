@@ -383,10 +383,10 @@ export class AssessmentService {
         options = ["TRUE", "FALSE", "NOT GIVEN"];
       } else if (q.options) {
         if (Array.isArray(q.options)) {
-          options = q.options
+          const parsed: string[] = q.options
             .filter((o: any) => typeof o === "string" && o.trim().length > 0)
             .map((o: string) => o.replace(/<\/?font[^>]*>/gi, "").trim());
-          if (options.length === 0) options = undefined;
+          options = parsed.length > 0 ? parsed : undefined;
         } else if (typeof q.options === "object") {
           try {
             options = Object.values(q.options)

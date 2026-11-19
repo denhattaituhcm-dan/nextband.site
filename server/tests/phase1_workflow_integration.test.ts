@@ -115,7 +115,7 @@ describe.skipIf(!isDbReady)("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION
       if (studentUserId) {
         await prisma.studentMilestoneClaim.deleteMany({ where: { studentId: studentUserId } }).catch(() => {});
         const userSubs = await prisma.examSubmission.findMany({ where: { studentId: studentUserId }, select: { id: true } });
-        const userSubIds = userSubs.map(s => s.id);
+        const userSubIds = userSubs.map((s: { id: string }) => s.id);
         if (userSubIds.length > 0) {
           await prisma.speakingAssessmentEvidence.deleteMany({ where: { assessmentId: { in: userSubIds } } }).catch(() => {});
           await prisma.answer.deleteMany({ where: { submissionId: { in: userSubIds } } }).catch(() => {});
@@ -132,10 +132,10 @@ describe.skipIf(!isDbReady)("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION
       }
       if (testCourseId) {
         const exams = await prisma.exam.findMany({ where: { courseId: testCourseId }, select: { id: true } });
-        const examIds = exams.map(e => e.id);
+        const examIds = exams.map((e: { id: string }) => e.id);
         if (examIds.length > 0) {
           const subs = await prisma.examSubmission.findMany({ where: { examId: { in: examIds } }, select: { id: true } });
-          const subIds = subs.map(s => s.id);
+          const subIds = subs.map((s: { id: string }) => s.id);
           if (subIds.length > 0) {
             await prisma.speakingAssessmentEvidence.deleteMany({ where: { assessmentId: { in: subIds } } }).catch(() => {});
             await prisma.answer.deleteMany({ where: { submissionId: { in: subIds } } }).catch(() => {});
@@ -569,7 +569,7 @@ describe.skipIf(!isDbReady)("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION
       const claims = await prisma.studentMilestoneClaim.findMany({
         where: { studentId: studentUserId },
       });
-      const claimKeys = claims.map((c) => c.milestoneKey);
+      const claimKeys = claims.map((c: { milestoneKey: string }) => c.milestoneKey);
       expect(claimKeys).toContain("MILESTONE_25_PERCENT");
       expect(claimKeys).toContain("MILESTONE_50_PERCENT");
     }, 60000);
@@ -631,7 +631,7 @@ describe.skipIf(!isDbReady)("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION
       const claims = await prisma.studentMilestoneClaim.findMany({
         where: { studentId: studentUserId },
       });
-      const claimKeys = claims.map((c) => c.milestoneKey);
+      const claimKeys = claims.map((c: { milestoneKey: string }) => c.milestoneKey);
       expect(claimKeys).toContain("MILESTONE_75_PERCENT");
       expect(claimKeys).toContain("MILESTONE_GRAND_GRADUATION");
 

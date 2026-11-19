@@ -141,6 +141,7 @@ try {
     FRONTEND_URL: "http://localhost:5173",
     SUPABASE_URL: "https://qxtpbonwjmxmogriyfox.supabase.co",
     NOTIFICATION_EMAIL_TO: "arisieltsdeeplearning@gmail.com",
+    ROOT_ADMIN_EMAILS: process.env.ROOT_ADMIN_EMAILS || "admin@ielts.com,admin@nextband.site,bestcanthocity@gmail.com",
   };
 }
 

@@ -1745,13 +1745,13 @@ export class ExamSubmissionService {
           finalTotalScore = allAnswers.reduce((sum: number, a: any) => sum + (Number(a.score) || 0), 0);
         }
       } else {
-        const dbScores = allAnswers.map((a: any) => Number(a.score)).filter((s) => !isNaN(s) && s > 0);
+        const dbScores: number[] = allAnswers.map((a: any) => Number(a.score)).filter((s: number) => !isNaN(s) && s > 0);
         if (dbScores.length > 0) {
           if (isPureSubjective) {
-            const avg = dbScores.reduce((a, b) => a + b, 0) / dbScores.length;
+            const avg = dbScores.reduce((a: number, b: number) => a + b, 0) / dbScores.length;
             finalTotalScore = Math.round(avg * 2) / 2;
           } else {
-            finalTotalScore = dbScores.reduce((a, b) => a + b, 0);
+            finalTotalScore = dbScores.reduce((a: number, b: number) => a + b, 0);
           }
         } else {
           finalTotalScore = 0;
