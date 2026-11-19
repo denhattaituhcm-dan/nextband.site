@@ -157,7 +157,7 @@ export default function SubmissionGrade() {
       const updates = Object.values(grades).filter((g) => g.answerId);
 
       // Calculate total score (grading individual submission only - NEVER mutate question bank)
-      const currentTotalValue = allQuestions.reduce((sum, q: any) => {
+      const currentTotalValue = allQuestions.reduce((sum: number, q: any) => {
         const isManual = ["speaking", "writing"].includes(q._sectionType);
         if (isManual) {
           // Only include manual-grade scores that have been explicitly graded
@@ -236,12 +236,12 @@ export default function SubmissionGrade() {
     return sum + getQuestionAssessmentWeight(q);
   }, 0);
 
-  const totalPoints = allQuestions.reduce((sum, q: any) => {
+  const totalPoints = allQuestions.reduce((sum: number, q: any) => {
     return sum + getEffectiveMaxScore(q);
   }, 0);
 
   const currentTotal = useMemo(() => {
-    const total = allQuestions.reduce((sum, q: any) => {
+    const total = allQuestions.reduce((sum: number, q: any) => {
       const grade = grades[q.id];
       const answer = answerMap[q.id];
       const maxScore = getEffectiveMaxScore(q);

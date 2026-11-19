@@ -415,8 +415,8 @@ export default function EnglishIdiomsHubPage() {
   const currentMangaData = MANGA_BY_UNIT[selectedUnitId] || {};
 
   // Idioms flat list
-  const allIdioms = currentUnitData.modules.flatMap((m) =>
-    m.idioms.map((idm) => ({
+  const allIdioms: any[] = (currentUnitData.modules as any[]).flatMap((m: any) =>
+    m.idioms.map((idm: any) => ({
       ...idm,
       moduleId: m.module_id,
       moduleTitle: m.module_title,
@@ -3313,7 +3313,7 @@ export default function EnglishIdiomsHubPage() {
                     </div>
 
                     <div className="space-y-4">
-                      {ex23.questions?.map((q) => {
+                      {ex23.questions?.map((q: any) => {
                         const status = checked23[q.question_number];
                         return (
                           <div
@@ -3343,7 +3343,7 @@ export default function EnglishIdiomsHubPage() {
                               className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-sky-500"
                             >
                               <option value="">-- Chọn định nghĩa phù hợp --</option>
-                              {ex23.questions.map((opt) => (
+                              {ex23.questions.map((opt: any) => (
                                 <option key={opt.target_definition} value={opt.target_definition}>
                                   {opt.target_definition}
                                 </option>
@@ -3410,7 +3410,7 @@ export default function EnglishIdiomsHubPage() {
                     </div>
 
                     <div className="space-y-4">
-                      {ex25.questions?.map((q) => {
+                      {ex25.questions?.map((q: any) => {
                         const status = checked25[q.question_number];
                         return (
                           <div
@@ -3519,7 +3519,7 @@ export default function EnglishIdiomsHubPage() {
                     </div>
 
                     <div className="space-y-5">
-                      {ex26.questions?.map((q) => {
+                      {ex26.questions?.map((q: any) => {
                         const status = checked26[q.question_number];
                         return (
                           <div
@@ -3634,7 +3634,7 @@ export default function EnglishIdiomsHubPage() {
                     </div>
 
                     <div className="space-y-5">
-                      {ex27.questions?.map((q) => {
+                      {ex27.questions?.map((q: any) => {
                         const status = checked27[q.question_number];
                         return (
                           <div

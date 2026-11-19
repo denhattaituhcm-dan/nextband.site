@@ -82,7 +82,8 @@ export function useUnitProgress(unitNumber: number) {
             // Keep max scores
             for (const [k, v] of Object.entries(cloudRecord.scores || {})) {
               if (typeof v === 'number') {
-                mergedScores[k] = Math.max(mergedScores[k] ?? 0, v);
+                const scoreKey = k as keyof NonNullable<UnitProgressState['scores']>;
+                mergedScores[scoreKey] = Math.max(mergedScores[scoreKey] ?? 0, v);
               }
             }
 

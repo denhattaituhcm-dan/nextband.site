@@ -385,7 +385,7 @@ export default function SubmissionDetail() {
   const { objectiveQuestions, subjectiveQuestions } = useMemo(() => {
     const obj: any[] = [];
     const subj: any[] = [];
-    allQuestions.forEach((q) => {
+    allQuestions.forEach((q: any) => {
       if (isSubjectiveQuestion(q, q.sectionType)) {
         subj.push(q);
       } else {
@@ -536,7 +536,7 @@ export default function SubmissionDetail() {
           new Set(studentSelections.map((v) => v.toLowerCase())),
         ).sort();
         const normalizedCorrect = Array.from(
-          new Set(alternatives.map((v) => v.toLowerCase())),
+          new Set(alternatives.map((v: string) => v.toLowerCase())),
         ).sort();
         if (
           normalizedStudent.length === normalizedCorrect.length &&
@@ -545,7 +545,7 @@ export default function SubmissionDetail() {
           correctCount += questionWeight;
         }
       } else {
-        const normalizedAlternatives = alternatives.map((a) => a.toLowerCase());
+        const normalizedAlternatives = alternatives.map((a: string) => a.toLowerCase());
         if (normalizedAlternatives.includes(studentText.trim().toLowerCase())) {
           correctCount += questionWeight;
         }

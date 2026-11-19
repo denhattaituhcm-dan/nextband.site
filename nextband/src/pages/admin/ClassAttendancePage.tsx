@@ -31,7 +31,7 @@ export default function ClassAttendancePage() {
   useEffect(() => {
     if (rawStudents && rawStudents.length > 0) {
       const initialState: Record<string, AttendanceStatus> = {};
-      rawStudents.forEach((s) => {
+      rawStudents.forEach((s: any) => {
         initialState[s.studentId] = s.status as AttendanceStatus;
       });
       setAttendanceState(initialState);
@@ -133,7 +133,7 @@ export default function ClassAttendancePage() {
           <CardTitle className="text-base">Danh sách Học viên ({students.length})</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {students.map((student) => {
+          {students.map((student: any) => {
             const currentStatus = attendanceState[student.studentId] || "UNMARKED";
 
             return (

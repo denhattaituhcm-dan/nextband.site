@@ -268,7 +268,7 @@ export function WritingGrader({
 
   // Total word count across all student answers
   const totalWordCount = useMemo(() => {
-    return writingQuestions.reduce((sum, q) => {
+    return writingQuestions.reduce((sum: number, q: any) => {
       const text = q.answerText || "";
       const count = text.trim() ? text.trim().split(/\s+/).filter(Boolean).length : 0;
       return sum + count;
@@ -329,7 +329,7 @@ export function WritingGrader({
 
     // Hydrate sentence feedbacks per question
     const fbMap: Record<string, SentenceFeedbackItem[]> = {};
-    writingQuestions.forEach((q) => {
+    writingQuestions.forEach((q: any) => {
       const qFb = q.feedback ? parseStructuredFeedback(q.feedback) : null;
       if (qFb?.sentenceFeedbacks && qFb.sentenceFeedbacks.length > 0) {
         fbMap[q.questionId] = qFb.sentenceFeedbacks;
@@ -356,7 +356,7 @@ export function WritingGrader({
   const handleAiDiagnose = async () => {
     // Combine text from all writing questions for holistic diagnosis
     const combinedTexts = writingQuestions
-      .map((q, idx) => {
+      .map((q: any, idx: number) => {
         const title = q.questionTitle || `Câu ${idx + 1}`;
         const ans = (q.answerText || "").trim();
         return ans ? `[${title}]\n${ans}` : null;
@@ -375,7 +375,7 @@ export function WritingGrader({
 
       // Extract prompts
       const combinedPrompts = writingQuestions
-        .map((q, idx) => {
+        .map((q: any, idx: number) => {
           const p = [q.instructions, q.questionText].filter(Boolean).join(" - ");
           return p ? `Yêu cầu ${idx + 1}: ${p}` : null;
         })
@@ -399,7 +399,7 @@ export function WritingGrader({
             });
           } else {
             // Distribute or assign to the first question that has text
-            const firstWithText = writingQuestions.find(q => (q.answerText || "").trim().length > 0);
+            const firstWithText = writingQuestions.find((q: any) => (q.answerText || "").trim().length > 0);
             if (firstWithText) {
               setSentenceFeedbacksMap(prev => ({
                 ...prev,
@@ -876,7 +876,7 @@ export function WritingGrader({
               )}
 
               {/* Continuous Stream of All Writing Questions / Exercises */}
-              {writingQuestions.map((qItem, idx) => {
+              {writingQuestions.map((qItem: any, idx: number) => {
                 questionCounter++;
                 const itemAnswerText = (qItem.answerText || "").trim();
                 const itemWordCount = itemAnswerText ? itemAnswerText.split(/\s+/).filter(Boolean).length : 0;

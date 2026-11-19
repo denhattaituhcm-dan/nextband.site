@@ -292,7 +292,7 @@ export function ListeningSection({
                           : question.id;
 
                       const qGlobalIndex =
-                        allQuestions.findIndex((q) => q.id === question.id) + 1;
+                        allQuestions.findIndex((q: any) => q.id === question.id) + 1;
                       const displayNumber =
                         question.displayNumber ??
                         question.displayLabel ??

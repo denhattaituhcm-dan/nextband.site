@@ -203,8 +203,8 @@ export const StudentAttendanceTimeline: React.FC<StudentAttendanceTimelineProps>
         </CardHeader>
 
         <CardContent className='p-0 divide-y divide-border'>
-          {sessions.map((sess) => {
-            const myAtt = mySessions.find((s) => s.sessionId === sess.id);
+          {sessions.map((sess: any) => {
+            const myAtt = mySessions.find((s: any) => s.sessionId === sess.id);
             const isCompleted = sess.status === 'COMPLETED';
             const sessionDate = sess.sessionDate ? new Date(sess.sessionDate) : null;
             const isPast = sessionDate ? sessionDate < new Date() : false;

@@ -183,7 +183,7 @@ export function SpeakingSection({
                     const isCurrent = question.id === currentQuestionId;
                     const hasAnswer = !!answers[question.id];
                     const qGlobalIndex =
-                      allQuestions.findIndex((q) => q.id === question.id) + 1;
+                      allQuestions.findIndex((q: any) => q.id === question.id) + 1;
 
                     return (
                       <Card
