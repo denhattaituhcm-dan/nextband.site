@@ -121,7 +121,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "Mới",
             badgeColor: "emerald",
             icon: Sparkles,
-            description: "Đọc tương tác & bấm giờ theo unit",
           },
           {
             label: "Đấu trường Live Arena",
@@ -129,7 +128,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "LIVE",
             badgeColor: "rose",
             icon: Zap,
-            description: "Thi đấu từ vựng trực tiếp thời gian thực",
           },
           {
             label: "Đấu trường từ vựng C2",
@@ -137,7 +135,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "HOT",
             badgeColor: "amber",
             icon: Swords,
-            description: "Thử thách đối kháng từ vựng đỉnh cao",
           },
           {
             label: "Speaking Forecast",
@@ -145,7 +142,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "HOT",
             badgeColor: "rose",
             icon: Mic,
-            description: "Bộ đề dự đoán IELTS Speaking mới nhất",
           },
           {
             label: "Bài đọc phân tích",
@@ -153,7 +149,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "Tủ sách",
             badgeColor: "sky",
             icon: FileText,
-            description: "Thư viện bài đọc phân tích chuyên sâu",
           },
         ],
       },
@@ -167,7 +162,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "20 Bài",
             badgeColor: "sky",
             icon: GraduationCap,
-            description: "20 chủ điểm từ vựng học thuật B2-C1",
           },
           {
             label: "Vocabulary in Use (C1-C2)",
@@ -175,7 +169,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "Mới",
             badgeColor: "emerald",
             icon: BookOpen,
-            description: "Luyện từ vựng ngữ cảnh thực tế C1-C2",
           },
           {
             label: "Từ vựng nâng cao C1",
@@ -183,7 +176,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "12 Bài",
             badgeColor: "purple",
             icon: Layers,
-            description: "12 chuyên đề từ vựng nâng cao C1",
           },
           {
             label: "Từ vựng B2-C1 (Cambridge)",
@@ -191,7 +183,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "20 Chủ đề",
             badgeColor: "sky",
             icon: Compass,
-            description: "Bộ từ vựng Cambridge chuẩn hóa",
           },
           {
             label: "Thành ngữ thông dụng",
@@ -199,7 +190,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "8 Chủ đề",
             badgeColor: "amber",
             icon: Flame,
-            description: "Thành ngữ & diễn đạt tự nhiên",
           },
           {
             label: "Luyện tập Giới từ",
@@ -207,7 +197,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
             badge: "Mới",
             badgeColor: "emerald",
             icon: FlaskConical,
-            description: "Phòng thí nghiệm phản xạ giới từ",
           },
         ],
       },
@@ -365,29 +354,24 @@ export function PublicHeader() {
                     {/* Mega Dropdown or Standard Dropdown */}
                     {item.isMegaMenu && item.megaColumns ? (
                       <div className="absolute top-full left-0 pt-2 hidden group-hover/navitem:block transition-all z-50 animate-in fade-in-50 slide-in-from-top-1 duration-150">
-                        <div className="w-[620px] xl:w-[680px] rounded-2xl bg-[#001938] border border-sky-500/30 shadow-2xl shadow-[#000d20]/90 p-4 ring-1 ring-sky-400/20 backdrop-blur-xl">
+                        <div className="w-[580px] rounded-2xl bg-[#001938] border border-sky-500/30 shadow-2xl shadow-[#000d20]/90 p-3.5 ring-1 ring-sky-400/20 backdrop-blur-xl">
                           {/* Top Header Card */}
-                          <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10 px-1">
-                            <div className="flex items-center gap-2.5">
-                              <div className="p-2 rounded-xl bg-gradient-to-br from-sky-500/30 to-indigo-500/30 text-cyan-300 border border-sky-400/30 shadow-xs">
-                                <BookOpen className="h-5 w-5" />
+                          <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-white/10 px-1">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1.5 rounded-lg bg-gradient-to-br from-sky-500/30 to-indigo-500/30 text-cyan-300 border border-sky-400/30 shadow-xs">
+                                <BookOpen className="h-4 w-4" />
                               </div>
-                              <div>
-                                <div className="text-xs font-black text-white tracking-wider uppercase flex items-center gap-2">
-                                  <span>KHO TÀI LIỆU & ĐẤU TRƯỜNG ARIS</span>
-                                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                    11+ TIỆN ÍCH MIỄN PHÍ
-                                  </span>
-                                </div>
-                                <p className="text-[11px] text-slate-300 mt-0.5">
-                                  Luyện đọc thông minh, bộ từ vựng B2-C2 & thi đấu trực tiếp
-                                </p>
-                              </div>
+                              <span className="text-xs font-black text-white tracking-wider uppercase">
+                                KHO TÀI LIỆU & ĐẤU TRƯỜNG ARIS
+                              </span>
+                              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                11+ TIỆN ÍCH
+                              </span>
                             </div>
                             <Link
                               to={item.href}
-                              className="px-3 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-200 hover:text-white border border-sky-400/30 text-[11px] font-bold flex items-center gap-1.5 transition-all group/all shrink-0"
+                              className="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-200 hover:text-white border border-sky-400/30 text-[11px] font-bold flex items-center gap-1 transition-all group/all shrink-0"
                             >
                               <span>Vào Tủ sách</span>
                               <ArrowRight className="h-3 w-3 group-hover/all:translate-x-0.5 transition-transform" />
@@ -395,15 +379,15 @@ export function PublicHeader() {
                           </div>
 
                           {/* 2 Columns Grid */}
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-2 gap-2.5">
                             {item.megaColumns.map((col, cIdx) => (
-                              <div key={cIdx} className="space-y-1.5">
+                              <div key={cIdx} className="space-y-1">
                                 <div className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-black uppercase tracking-wider text-sky-300/90 border-b border-white/5">
                                   {col.icon && <col.icon className="h-3.5 w-3.5 text-sky-400" />}
                                   <span>{col.title}</span>
                                 </div>
 
-                                <div className="space-y-1">
+                                <div className="space-y-0.5">
                                   {col.items.map((sub) => {
                                     const subActive = isSubActive(sub.href);
                                     const SubIcon = sub.icon || BookOpen;
@@ -413,43 +397,27 @@ export function PublicHeader() {
                                         key={sub.href + sub.label}
                                         to={sub.href}
                                         className={cn(
-                                          "group/sub flex items-start gap-2.5 px-2.5 py-2 rounded-xl transition-all",
+                                          "group/sub flex items-center justify-between px-2.5 py-2 rounded-xl transition-all",
                                           subActive
                                             ? "bg-white/15 text-white font-bold border border-white/20 shadow-xs"
                                             : "text-slate-200 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10"
                                         )}
                                       >
-                                        <div className="p-1.5 rounded-lg bg-white/5 text-sky-300 group-hover/sub:bg-sky-500/20 group-hover/sub:text-white transition-colors shrink-0 mt-0.5">
-                                          <SubIcon className="h-3.5 w-3.5" />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                          <div className="flex items-center justify-between gap-1.5">
-                                            <span className="text-xs font-bold text-white tracking-wide truncate group-hover/sub:text-cyan-200 transition-colors">
-                                              {sub.label}
-                                            </span>
-                                            {sub.badge && renderNavBadge(sub.badge, sub.badgeColor)}
+                                        <div className="flex items-center gap-2 min-w-0">
+                                          <div className="p-1 rounded-lg bg-white/5 text-sky-300 group-hover/sub:bg-sky-500/20 group-hover/sub:text-white transition-colors shrink-0">
+                                            <SubIcon className="h-3.5 w-3.5" />
                                           </div>
-                                          {sub.description && (
-                                            <p className="text-[10px] text-slate-400 line-clamp-1 mt-0.5 font-normal group-hover/sub:text-slate-300">
-                                              {sub.description}
-                                            </p>
-                                          )}
+                                          <span className="text-xs font-semibold text-white tracking-wide truncate group-hover/sub:text-cyan-200 transition-colors">
+                                            {sub.label}
+                                          </span>
                                         </div>
+                                        {sub.badge && renderNavBadge(sub.badge, sub.badgeColor)}
                                       </Link>
                                     );
                                   })}
                                 </div>
                               </div>
                             ))}
-                          </div>
-
-                          {/* Bottom Footer Callout */}
-                          <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between px-2 text-[10px] text-slate-400">
-                            <span className="flex items-center gap-1">
-                              <Sparkles className="h-3 w-3 text-amber-300" />
-                              Tích lũy từ vựng tự nhiên & rèn luyện phản xạ học thuật mỗi ngày
-                            </span>
-                            <span className="text-cyan-300 font-semibold">ARIS Academic Universe</span>
                           </div>
                         </div>
                       </div>
