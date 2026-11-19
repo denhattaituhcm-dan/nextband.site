@@ -7,18 +7,22 @@ console.log("🔍 [SANITY CHECK] Initiating Pre-Deploy Architecture Integrity Ga
 
 let hasErrors = false;
 
-// Gate 1: Check Circular Dependencies
+// Gate 1: Check Circular Dependencies (Frontend .ts/.tsx with tsconfig & Backend .ts with tsconfig)
 console.log("👉 [Gate 1] Checking Circular Dependencies...");
 try {
-  const madgeOutput = execSync("npx madge --circular --extensions ts server/ nextband/src/", {
+  const feOutput = execSync("npx madge --circular --extensions ts,tsx --ts-config nextband/tsconfig.app.json nextband/src/", {
     encoding: "utf8",
     env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=4096" }
   });
-  if (madgeOutput.includes("Found")) {
-    console.error("❌ FAILED: Circular dependencies detected!\n", madgeOutput);
+  const beOutput = execSync("npx madge --circular --extensions ts --ts-config tsconfig.json server/", {
+    encoding: "utf8",
+    env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=4096" }
+  });
+  if (feOutput.includes("Found") || beOutput.includes("Found")) {
+    console.error("❌ FAILED: Circular dependencies detected!\n", feOutput, beOutput);
     hasErrors = true;
   } else {
-    console.log("✅ PASSED: 0 Circular dependencies.\n");
+    console.log("✅ PASSED: 0 Circular dependencies across Frontend (ts,tsx + tsconfig) and Backend (ts + tsconfig).\n");
   }
 } catch (err) {
   console.error("❌ FAILED: Circular check error:\n", err.stdout || err.message);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Check, Lock, Award, ArrowRight, AlertTriangle, Sparkles } from "lucide-react";
-import { AscentLessonNode } from "@/components/student/AcademicAscentWorld";
+import type { AscentLessonNode } from "./types";
 import { SPATIAL_TOKENS, SpatialNodeType } from "@/lib/spatial/spatial-tokens";
 import { SpatialCapability } from "@/lib/spatial/useSpatialCapability";
 

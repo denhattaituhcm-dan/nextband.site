@@ -1,4 +1,4 @@
-import { MyClassEnrollment } from "@/lib/api";
+import type { MyClassEnrollment } from "@/types/domain.types";
 export type { MyClassEnrollment };
 
 /**

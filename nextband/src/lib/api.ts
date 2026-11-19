@@ -12,7 +12,9 @@ import { adaptSession } from "../adapters/session.adapter";
 import { normalizeSubmissionStatus } from "./submissionStatus";
 import { toCanonicalClass, toCanonicalStudent } from "./classDataMapper";
 import { AudioStorageService } from "./audioStorageService";
-import type { ClassPeerRank } from "../types/domain.types";
+import type { ClassPeerRank, MyClassEnrollment } from "../types/domain.types";
+
+export type { MyClassEnrollment };
 
 import {
   resolveApiBaseUrl,
@@ -1494,19 +1496,6 @@ export const usersApi = {
  * INVARIANT-01: API failure MUST NEVER be represented as an empty array.
  * INVARIANT-02: PRE_ENROLLMENT MUST ONLY originate from { status:"ok", data:[] }.
  */
-export interface MyClassEnrollment {
-  id: string;
-  classId: string;
-  className: string;
-  courseId: string;
-  courseTitle: string;
-  courseSlug?: string | null;
-  teacherName: string | null;
-  isActive: boolean;
-  membershipStatus: string;
-  joinedAt: string;
-}
-
 export type MyClassesResult =
   | { status: "ok"; data: MyClassEnrollment[] }
   | { status: "unauthenticated" }

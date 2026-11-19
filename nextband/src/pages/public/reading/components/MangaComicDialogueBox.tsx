@@ -8,16 +8,65 @@ interface MangaComicDialogueBoxProps {
   className?: string;
 }
 
+const KNOWN_EMOTION_AVATARS = new Set([
+  "chaien_angry",
+  "chaien_happy",
+  "doraemon_angry",
+  "doraemon_happy",
+  "doraemon_sad",
+  "doraemon_whistle",
+  "doraemon_wink",
+  "nobita_exhausted",
+  "nobita_point",
+  "nobita_scratch",
+  "shizuka_aodai",
+  "shizuka_smile",
+  "suneo_smug",
+]);
+
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function buildIdiomRegex(targetIdiom: string, flags: string): RegExp | null {
+  if (!targetIdiom || !targetIdiom.trim()) return null;
+  try {
+    let cleaned = targetIdiom
+      .trim()
+      // Drop trailing optional preposition hints like "(to)", "(with)", "(of)"
+      .replace(/\s*\((?:to|with|of|on|in|for|at|from|about|by)\)\s*$/i, "")
+      // Drop leading optional words like "(like) " so core phrase highlights reliably
+      .replace(/^\([^)]+\)\s+/i, "")
+      .replace(/[()]/g, "")
+      .trim();
+
+    if (!cleaned) return null;
+
+    let pattern = escapeRegExp(cleaned);
+    // Support possessive / pronoun inflections (e.g. one's -> his, someone's -> Nobita's)
+    pattern = pattern
+      .replace(/\b(?:someone|one)'s\b/gi, "(?:\\b[A-Za-z]+'?s|my|your|his|her|its|our|their)")
+      .replace(/\bsomeone\b/gi, "(?:\\b[A-Za-z]+|me|you|him|her|us|them)")
+      .replace(/\s+/g, "\\s+");
+
+    return new RegExp(`(${pattern})`, flags);
+  } catch {
+    return null;
+  }
+}
+
 // Crisp, authentic Doraemon & Extended Anime character avatar
 const MangaAvatar: React.FC<{
   character: string;
   emotion?: string;
   name: string;
   size?: number;
-}> = ({ character, emotion, name, size = 52 }) => {
-  const primarySrc = emotion
-    ? `/manga/characters/${character}_${emotion}.png`
-    : `/manga/characters/${character}.png`;
+}> = ({ character, emotion, name, size = 50 }) => {
+  const emotionKey = emotion ? `${character}_${emotion}` : "";
+  const primarySrc =
+    emotionKey && KNOWN_EMOTION_AVATARS.has(emotionKey)
+      ? `/manga/characters/${emotionKey}.png`
+      : `/manga/characters/${character}.png`;
   const fallbackSrc = `/manga/characters/${character}.png`;
   const [src, setSrc] = useState(primarySrc);
 
@@ -43,7 +92,14 @@ const MangaAvatar: React.FC<{
           const target = e.currentTarget;
           target.style.display = "none";
           if (target.parentElement) {
-            target.parentElement.classList.add("flex", "items-center", "justify-center", "bg-amber-100", "font-black", "text-amber-900");
+            target.parentElement.classList.add(
+              "flex",
+              "items-center",
+              "justify-center",
+              "bg-amber-100",
+              "font-black",
+              "text-amber-900"
+            );
             target.parentElement.innerText = name.slice(0, 1).toUpperCase();
           }
         }}
@@ -59,16 +115,39 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
 }) => {
   const [speakingLine, setSpeakingLine] = useState<string | null>(null);
 
-  if (!dialogue) {
+  useEffect(() => {
+    setSpeakingLine(null);
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    return () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [dialogue]);
+
+  const resolvedTurns: MangaCharacter[] = dialogue
+    ? dialogue.turns && dialogue.turns.length > 0
+      ? dialogue.turns
+      : [dialogue.characterA, dialogue.characterB].filter(
+          (c): c is MangaCharacter => Boolean(c)
+        )
+    : [];
+
+  if (!dialogue || resolvedTurns.length === 0) {
     return (
       <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-center">
         <MessageCircle className="w-6 h-6 text-slate-400 mx-auto mb-1.5" />
-        <p className="text-xs text-slate-500">Manga bối cảnh cho thành ngữ này đang được cập nhật thêm.</p>
+        <p className="text-xs text-slate-500">
+          Manga bối cảnh cho thành ngữ này đang được cập nhật thêm.
+        </p>
       </div>
     );
   }
 
-  const { context_situation, characterA, characterB, punchline_tip } = dialogue;
+  const { context_situation, punchline_tip } = dialogue;
+  const avatarSize = resolvedTurns.length >= 3 ? 46 : 50;
 
   const playVoice = (text: string, identifier: string) => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -83,16 +162,19 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
     }
   };
 
-  // Helper to highlight target idiom in dialogue text
+  const hasIdiomMatch = (text: string): boolean => {
+    const regex = buildIdiomRegex(targetIdiom, "i");
+    return regex ? regex.test(text) : false;
+  };
+
   const renderHighlightedLine = (text: string) => {
-    if (!targetIdiom) return text;
-    const cleanTarget = targetIdiom.replace(/[()]/g, "").trim();
-    const regex = new RegExp(`(${cleanTarget})`, "gi");
+    const regex = buildIdiomRegex(targetIdiom, "gi");
+    if (!regex) return text;
     const parts = text.split(regex);
     return (
       <>
         {parts.map((part, i) =>
-          regex.test(part) ? (
+          part && i % 2 === 1 ? (
             <span
               key={i}
               className="px-1.5 py-0.5 rounded-md bg-amber-300 text-slate-950 font-black underline decoration-amber-600 decoration-2 shadow-xs"
@@ -106,6 +188,8 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
       </>
     );
   };
+
+  const firstMatchedIdx = resolvedTurns.findIndex((t) => hasIdiomMatch(t.line_en));
 
   return (
     <div className={`w-full space-y-3 select-text ${className}`}>
@@ -131,89 +215,98 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
           </div>
         )}
 
-        {/* Two Dialogue Panels (Setup & Punchline) */}
-        <div className="relative z-10 space-y-3">
-          {/* Panel 1: Character A (Setup) */}
-          <div className="flex items-start gap-2.5">
-            <MangaAvatar character={characterA.avatar} emotion={characterA.emotion} name={characterA.name} size={50} />
+        {/* Flexible 2-4 Dialogue Panels */}
+        <div className="relative z-10 space-y-2.5">
+          {resolvedTurns.map((turn, idx) => {
+            const isRight = idx % 2 === 1;
+            const isAccent =
+              firstMatchedIdx >= 0
+                ? hasIdiomMatch(turn.line_en)
+                : idx === resolvedTurns.length - 1;
+            const voiceKey = `turn-${idx}`;
+            const isSpeaking = speakingLine === voiceKey;
 
-            <div className="flex-1 relative">
-              <span className="inline-block px-2 py-0.5 mb-1 rounded text-[10px] font-black uppercase tracking-wider bg-slate-200 text-slate-800">
-                {characterA.name}
-              </span>
+            return (
+              <div
+                key={voiceKey}
+                className={`flex items-start gap-2.5 ${isRight ? "flex-row-reverse" : ""}`}
+              >
+                <MangaAvatar
+                  character={turn.avatar}
+                  emotion={turn.emotion}
+                  name={turn.name}
+                  size={avatarSize}
+                />
 
-              {/* Comic Speech Bubble */}
-              <div className="relative bg-white border-2 border-slate-900 rounded-2xl rounded-tl-xs p-2.5 shadow-xs">
-                {/* Speech tail */}
-                <div className="absolute -left-2 top-2 w-0 h-0 border-t-6 border-t-transparent border-r-6 border-r-slate-900 border-b-6 border-b-transparent" />
-                <div className="absolute -left-1 top-2.5 w-0 h-0 border-t-5 border-t-transparent border-r-5 border-r-white border-b-5 border-b-transparent" />
-
-                <div className="flex items-start justify-between gap-1.5">
-                  <p className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
-                    "{renderHighlightedLine(characterA.line_en)}"
-                  </p>
-
-                  <button
-                    type="button"
-                    onClick={() => playVoice(characterA.line_en, "charA")}
-                    className={`shrink-0 p-1.5 rounded-lg border cursor-pointer transition ${
-                      speakingLine === "charA"
-                        ? "bg-amber-500 text-white border-amber-600 animate-pulse"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-300"
+                <div className={`flex-1 relative ${isRight ? "text-right" : ""}`}>
+                  <span
+                    className={`inline-block px-2 py-0.5 mb-1 rounded text-[10px] font-black uppercase tracking-wider ${
+                      isAccent
+                        ? "bg-amber-400 text-slate-950 font-bold shadow-xs"
+                        : "bg-slate-200 text-slate-800"
                     }`}
-                    title="Nghe phát âm"
                   >
-                    <Volume2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                    {turn.name}
+                  </span>
 
-                <p className="text-[10.5px] text-slate-500 font-medium italic mt-1 pt-1 border-t border-slate-100">
-                  {characterA.line_vi}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Panel 2: Character B (Punchline with Idiom) */}
-          <div className="flex items-start gap-2.5 flex-row-reverse">
-            <MangaAvatar character={characterB.avatar} emotion={characterB.emotion} name={characterB.name} size={50} />
-
-            <div className="flex-1 relative text-right">
-              <span className="inline-block px-2 py-0.5 mb-1 rounded text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 font-bold shadow-xs">
-                {characterB.name}
-              </span>
-
-              {/* Comic Speech Bubble */}
-              <div className="relative bg-linear-to-b from-amber-50/90 to-white border-2 border-slate-900 rounded-2xl rounded-tr-xs p-2.5 shadow-xs text-left">
-                {/* Speech tail right */}
-                <div className="absolute -right-2 top-2 w-0 h-0 border-t-6 border-t-transparent border-l-6 border-l-slate-900 border-b-6 border-b-transparent" />
-                <div className="absolute -right-1 top-2.5 w-0 h-0 border-t-5 border-t-transparent border-l-5 border-l-white border-b-5 border-b-transparent" />
-
-                <div className="flex items-start justify-between gap-1.5">
-                  <p className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
-                    "{renderHighlightedLine(characterB.line_en)}"
-                  </p>
-
-                  <button
-                    type="button"
-                    onClick={() => playVoice(characterB.line_en, "charB")}
-                    className={`shrink-0 p-1.5 rounded-lg border cursor-pointer transition ${
-                      speakingLine === "charB"
-                        ? "bg-amber-500 text-white border-amber-600 animate-pulse"
-                        : "bg-amber-100 text-amber-900 hover:bg-amber-200 border-amber-300"
+                  {/* Comic Speech Bubble */}
+                  <div
+                    className={`relative border-2 border-slate-900 rounded-2xl p-2.5 shadow-xs text-left ${
+                      isRight ? "rounded-tr-xs" : "rounded-tl-xs"
+                    } ${
+                      isAccent
+                        ? "bg-linear-to-b from-amber-50/90 to-white"
+                        : "bg-white"
                     }`}
-                    title="Nghe phát âm"
                   >
-                    <Volume2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                    {/* Speech tail */}
+                    {isRight ? (
+                      <>
+                        <div className="absolute -right-2 top-2 w-0 h-0 border-t-6 border-t-transparent border-l-6 border-l-slate-900 border-b-6 border-b-transparent" />
+                        <div className="absolute -right-1 top-2.5 w-0 h-0 border-t-5 border-t-transparent border-l-5 border-l-white border-b-5 border-b-transparent" />
+                      </>
+                    ) : (
+                      <>
+                        <div className="absolute -left-2 top-2 w-0 h-0 border-t-6 border-t-transparent border-r-6 border-r-slate-900 border-b-6 border-b-transparent" />
+                        <div className="absolute -left-1 top-2.5 w-0 h-0 border-t-5 border-t-transparent border-r-5 border-r-white border-b-5 border-b-transparent" />
+                      </>
+                    )}
 
-                <p className="text-[10.5px] text-slate-600 font-medium italic mt-1 pt-1 border-t border-amber-200/60">
-                  {characterB.line_vi}
-                </p>
+                    <div className="flex items-start justify-between gap-1.5">
+                      <p className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
+                        "{renderHighlightedLine(turn.line_en)}"
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={() => playVoice(turn.line_en, voiceKey)}
+                        className={`shrink-0 p-1.5 rounded-lg border cursor-pointer transition ${
+                          isSpeaking
+                            ? "bg-amber-500 text-white border-amber-600 animate-pulse"
+                            : isAccent
+                              ? "bg-amber-100 text-amber-900 hover:bg-amber-200 border-amber-300"
+                              : "bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-300"
+                        }`}
+                        title="Nghe phát âm"
+                      >
+                        <Volume2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <p
+                      className={`text-[10.5px] font-medium italic mt-1 pt-1 border-t ${
+                        isAccent
+                          ? "text-slate-600 border-amber-200/60"
+                          : "text-slate-500 border-slate-100"
+                      }`}
+                    >
+                      {turn.line_vi}
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
 

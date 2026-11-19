@@ -11,3 +11,17 @@ export interface ClassPeerRank {
   rank: number;
   isMe: boolean;
 }
+
+export interface MyClassEnrollment {
+  id: string;
+  classId: string;
+  className: string;
+  courseId: string;
+  courseTitle: string;
+  courseSlug?: string | null;
+  teacherName: string | null;
+  isActive: boolean;
+  membershipStatus: string;
+  joinedAt: string;
+}
+

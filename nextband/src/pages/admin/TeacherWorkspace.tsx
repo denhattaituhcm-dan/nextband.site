@@ -71,50 +71,9 @@ import {
   getSkillBadgeConfig,
   ExamSkillType,
 } from "@/lib/examSkillHelper";
+import type { WorkbookItem } from "@/types/teacherWorkspace.types";
 
-export type { SentenceFeedbackItem };
-
-// Model Workbook Homework Item (Gắn với Buổi học / Lesson)
-export interface WorkbookItem {
-  id: string;
-  submissionId?: string;
-  answerId?: string;
-  lessonNumber: number;
-  lessonTitle: string;
-  orderIndex: number;
-  title: string;
-  type: string;
-  skill?: ExamSkillType;
-  isAutoGraded?: boolean;
-  dueDate?: string;
-  status: "unsubmitted" | "in_progress" | "submitted" | "graded" | "needs_revision";
-  isOverdue: boolean;
-  submissionTiming?: {
-    isLate: boolean;
-    lateDays: number;
-  };
-  score?: number;
-  feedback?: string;
-  primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
-  revisionRequired?: boolean;
-  sentenceFeedbacks?: SentenceFeedbackItem[];
-  submittedAt?: string;
-  answerText?: string;
-  audioUrl?: string;
-  objectiveScore?: number;
-  bandScore?: number;
-  criteriaScores?: any;
-  answers: Array<{
-    id?: string;
-    questionId: string;
-    questionTitle?: string;
-    questionText?: string;
-    answerText?: string;
-    audioUrl?: string;
-    score?: number | null;
-    feedback?: string | null;
-  }>;
-}
+export type { SentenceFeedbackItem, WorkbookItem };
 
 export interface WorkspaceStudent {
   id: string;

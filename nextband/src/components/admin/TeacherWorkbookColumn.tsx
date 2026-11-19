@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { WorkbookStatusBadge } from "@/components/admin/WorkbookStatusBadge";
 import { AcademicInsightWidget, type PedagogicalProfileData } from "@/components/admin/AcademicInsightWidget";
 import { getSkillBadgeConfig } from "@/lib/examSkillHelper";
-import type { WorkbookItem } from "@/pages/admin/TeacherWorkspace";
+import type { WorkbookItem } from "@/types/teacherWorkspace.types";
 
 export interface GroupedWorkbookLesson {
   lessonNumber: number;

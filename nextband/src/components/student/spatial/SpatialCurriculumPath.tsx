@@ -4,7 +4,7 @@ import { Trophy, Sparkles, ChevronDown, ChevronUp, Compass, ArrowRight, Layers }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { routes } from "@/lib/routes";
-import { AscentLessonNode } from "@/components/student/AcademicAscentWorld";
+import type { AscentLessonNode } from "./types";
 import { useSpatialCapability } from "@/lib/spatial/useSpatialCapability";
 import { SpatialAtmosphereCanvas } from "./SpatialAtmosphereCanvas";
 import { SpatialCurriculumNode } from "./SpatialCurriculumNode";
