@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { SEO } from "@/components/common/SEO";
 import {
   Volume2,
@@ -7,13 +7,137 @@ import {
   Compass,
   BookOpen,
   Sparkles,
+  CheckCircle2,
+  RotateCcw,
 } from "lucide-react";
 import { MasterCuratorShelf } from "@/features/reading/components/MasterCuratorShelf";
 import { VOCAB_IN_USE_UNITS } from "@/data/vocabInUse";
+import {
+  READING_CASE_CATALOG,
+  READING_LEVEL_TIERS,
+  READING_TOPICS,
+} from "@/data/readingCases/caseRegistry";
+import {
+  ReadingLevelTier,
+  ReadingStatusFilter,
+  ReadingTopicFilter,
+} from "@/features/reading/types";
+import { useReadingProgress } from "@/features/reading/hooks/useReadingProgress";
+import "@/features/reading/reading-container.css";
+
+const VALID_LEVELS = new Set<ReadingLevelTier>(["all", "foundation", "c1", "c2"]);
+const VALID_TOPICS = new Set<ReadingTopicFilter>([
+  "all",
+  "mindset",
+  "science",
+  "tech",
+  "education",
+  "society",
+  "economics",
+]);
+const VALID_STATUSES = new Set<ReadingStatusFilter>(["all", "unread", "read"]);
 
 export default function ReadingUniversePage() {
   const [popoverOpen, setPopoverOpen] = useState(true);
-  const [selectedTopic, setSelectedTopic] = useState("all");
+  const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { progressMap } = useReadingProgress();
+
+  const rawLevel = searchParams.get("level") as ReadingLevelTier | null;
+  const rawTopic = searchParams.get("topic") as ReadingTopicFilter | null;
+  const rawStatus = searchParams.get("status") as ReadingStatusFilter | null;
+
+  const selectedLevel: ReadingLevelTier =
+    rawLevel && VALID_LEVELS.has(rawLevel) ? rawLevel : "all";
+  const selectedTopic: ReadingTopicFilter =
+    rawTopic && VALID_TOPICS.has(rawTopic) ? rawTopic : "all";
+  const selectedStatus: ReadingStatusFilter =
+    rawStatus && VALID_STATUSES.has(rawStatus) ? rawStatus : "all";
+
+  const updateFilterParams = (updates: {
+    level?: ReadingLevelTier;
+    topic?: ReadingTopicFilter;
+    status?: ReadingStatusFilter;
+  }) => {
+    const next = new URLSearchParams(searchParams);
+    const nextLevel = updates.level ?? selectedLevel;
+    const nextTopic = updates.topic ?? selectedTopic;
+    const nextStatus = updates.status ?? selectedStatus;
+
+    if (nextLevel === "all") next.delete("level");
+    else next.set("level", nextLevel);
+
+    if (nextTopic === "all") next.delete("topic");
+    else next.set("topic", nextTopic);
+
+    if (nextStatus === "all") next.delete("status");
+    else next.set("status", nextStatus);
+
+    setSearchParams(next, { replace: true });
+  };
+
+  const resetAllFilters = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("level");
+    next.delete("topic");
+    next.delete("status");
+    setSearchParams(next, { replace: true });
+  };
+
+  const readCount = useMemo(
+    () =>
+      READING_CASE_CATALOG.filter((item) => Boolean(progressMap[item.id]?.isRead))
+        .length,
+    [progressMap]
+  );
+
+  const levelCounts = useMemo(() => {
+    const counts: Record<ReadingLevelTier, number> = {
+      all: 0,
+      foundation: 0,
+      c1: 0,
+      c2: 0,
+    };
+    for (const item of READING_CASE_CATALOG) {
+      const topicMatch =
+        selectedTopic === "all" || item.topics.includes(selectedTopic);
+      const isRead = Boolean(progressMap[item.id]?.isRead);
+      const statusMatch =
+        selectedStatus === "all" ||
+        (selectedStatus === "read" && isRead) ||
+        (selectedStatus === "unread" && !isRead);
+      if (topicMatch && statusMatch) {
+        counts.all += 1;
+        counts[item.levelTier] += 1;
+      }
+    }
+    return counts;
+  }, [progressMap, selectedStatus, selectedTopic]);
+
+  const filteredCatalog = useMemo(() => {
+    return READING_CASE_CATALOG.filter((item) => {
+      const levelMatch =
+        selectedLevel === "all" || item.levelTier === selectedLevel;
+      const topicMatch =
+        selectedTopic === "all" || item.topics.includes(selectedTopic);
+      const isRead = Boolean(progressMap[item.id]?.isRead);
+      const statusMatch =
+        selectedStatus === "all" ||
+        (selectedStatus === "read" && isRead) ||
+        (selectedStatus === "unread" && !isRead);
+      return levelMatch && topicMatch && statusMatch;
+    });
+  }, [progressMap, selectedLevel, selectedStatus, selectedTopic]);
+
+  const handleRandomDiscovery = () => {
+    const unread = READING_CASE_CATALOG.filter(
+      (item) => !progressMap[item.id]?.isRead
+    );
+    const pool = unread.length > 0 ? unread : READING_CASE_CATALOG;
+    const picked = pool[Math.floor(Math.random() * pool.length)] || READING_CASE_CATALOG[0];
+    navigate(`/reading/${picked.id}`);
+  };
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2D2825] font-sans selection:bg-[#F2DBD3] selection:text-[#2D2825]">
@@ -53,12 +177,13 @@ export default function ReadingUniversePage() {
             <span className="text-[11px] font-mono text-[#9E948A] hidden sm:inline">
               VOLUME 2026.10
             </span>
-            <Link
-              to="/reading/case-002"
+            <button
+              type="button"
+              onClick={handleRandomDiscovery}
               className="px-3.5 py-1.5 rounded-full bg-[#EFE9DF] text-[#635951] text-xs font-semibold hover:bg-[#E5DDCF] transition cursor-pointer"
             >
               Khám phá ngẫu nhiên 🎲
-            </Link>
+            </button>
           </div>
         </div>
       </nav>
@@ -155,900 +280,313 @@ export default function ReadingUniversePage() {
 
         {/* Reading Feed Section */}
         <section id="tu-sach" className="space-y-6 pt-2">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE3D9] pb-4">
-            <div>
-              <h2 className="font-serif text-2xl sm:text-3xl text-[#241F1C]">
-                Bài đọc tuyển chọn tuần này
-              </h2>
-              <p className="text-xs text-[#8C827A] mt-1 font-light">
-                Không bài tập, không đếm ngược — chỉ có kiến thức và từ vựng tinh chọn.
+          <div className="space-y-4 border-b border-[#EAE3D9] pb-5">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <h2 className="font-serif text-2xl sm:text-3xl text-[#241F1C]">
+                  Bài đọc tuyển chọn tuần này
+                </h2>
+                <p className="text-xs text-[#8C827A] mt-1 font-light">
+                  Không bài tập, không đếm ngược — chỉ có kiến thức và từ vựng tinh chọn.
+                </p>
+              </div>
+
+              {/* Overall Reading Progress + Read Status Filter */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#E5DDCF] text-xs font-semibold text-[#4E453E] shadow-2xs">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>
+                    Đã đọc {readCount}/{READING_CASE_CATALOG.length} bài
+                  </span>
+                </span>
+
+                <div
+                  role="group"
+                  aria-label="Lọc theo trạng thái đọc"
+                  className="inline-flex items-center gap-1 bg-[#EFE9DF] p-0.5 rounded-xl"
+                >
+                  {(
+                    [
+                      { id: "all", label: "Tất cả" },
+                      { id: "unread", label: "Chưa đọc" },
+                      { id: "read", label: "Đã đọc" },
+                    ] as const
+                  ).map((st) => (
+                    <button
+                      key={st.id}
+                      type="button"
+                      onClick={() => updateFilterParams({ status: st.id })}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition cursor-pointer ${
+                        selectedStatus === st.id
+                          ? "bg-[#2D2825] text-white shadow-2xs"
+                          : "text-[#635951] hover:text-[#2D2825]"
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Level Tiers Filter Bar (URL synced ?level=...) */}
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[#8C827A] mr-1">
+                  Trình độ:
+                </span>
+                {READING_LEVEL_TIERS.map((tier) => {
+                  const isActive = selectedLevel === tier.id;
+                  return (
+                    <button
+                      key={tier.id}
+                      type="button"
+                      onClick={() => updateFilterParams({ level: tier.id })}
+                      title={tier.description}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer border ${
+                        isActive
+                          ? "bg-[#C86D51] text-white border-[#B55B3F] shadow-xs"
+                          : "bg-white text-[#574D44] border-[#E5DDCF] hover:border-[#C86D51]/60 hover:text-[#2D2825]"
+                      }`}
+                    >
+                      <span>{tier.shortLabel}</span>
+                      <span
+                        className={`ml-1.5 text-[10px] font-mono px-1.5 py-0.5 rounded-full ${
+                          isActive
+                            ? "bg-white/20 text-white"
+                            : "bg-[#EFE9DF] text-[#635951]"
+                        }`}
+                      >
+                        {levelCounts[tier.id]}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Topic Filter Bar (URL synced ?topic=...) */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-[#8C827A] mr-1">
+                  Chủ đề:
+                </span>
+                {READING_TOPICS.map((topic) => (
+                  <button
+                    key={topic.id}
+                    type="button"
+                    onClick={() => updateFilterParams({ topic: topic.id })}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                      selectedTopic === topic.id
+                        ? "bg-[#2D2825] text-white"
+                        : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
+                    }`}
+                  >
+                    {topic.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Data-Driven Reading Cards Grid with CSS Container Queries */}
+          {filteredCatalog.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-[#DFD5C7] bg-white p-10 text-center space-y-3">
+              <p className="font-serif text-xl text-[#2D2825]">
+                Không có bài đọc nào khớp với bộ lọc hiện tại
               </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-xs text-[#8C827A]">
+                Hãy thử chọn lại trình độ, chủ đề hoặc trạng thái đọc khác.
+              </p>
               <button
                 type="button"
-                onClick={() => setSelectedTopic("all")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                  selectedTopic === "all"
-                    ? "bg-[#2D2825] text-white"
-                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
-                }`}
+                onClick={resetAllFilters}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2D2825] text-white text-xs font-semibold hover:bg-[#3F3834] transition cursor-pointer"
               >
-                Tất cả chủ đề
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedTopic("mindset")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                  selectedTopic === "mindset"
-                    ? "bg-[#2D2825] text-white"
-                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
-                }`}
-              >
-                Phát triển bản thân
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedTopic("science")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                  selectedTopic === "science"
-                    ? "bg-[#2D2825] text-white"
-                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
-                }`}
-              >
-                Khoa học & Trái đất
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedTopic("tech")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                  selectedTopic === "tech"
-                    ? "bg-[#2D2825] text-white"
-                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
-                }`}
-              >
-                Công nghệ & AI
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedTopic("education")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                  selectedTopic === "education"
-                    ? "bg-[#2D2825] text-white"
-                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
-                }`}
-              >
-                Giáo dục & Đọc sâu
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedTopic("society")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                  selectedTopic === "society"
-                    ? "bg-[#2D2825] text-white"
-                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
-                }`}
-              >
-                Xã hội & Tâm lý
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedTopic("economics")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                  selectedTopic === "economics"
-                    ? "bg-[#2D2825] text-white"
-                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
-                }`}
-              >
-                Kinh tế & Toàn cầu hóa
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Đặt lại bộ lọc</span>
               </button>
             </div>
-          </div>
+          ) : (
+            <div className="reading-shelf-cq">
+              <div className="reading-shelf-grid">
+                {filteredCatalog.map((item) => {
+                  const prog = progressMap[item.id];
+                  const isRead = Boolean(prog?.isRead);
+                  const scrollPercent = prog?.scrollPercent ?? 0;
+                  const tasksCompleted = prog?.tasksCompleted ?? 0;
+                  const inProgress = !isRead && (scrollPercent > 0 || tasksCompleted > 0);
+                  const isBrokenImg = Boolean(brokenImages[item.id]);
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Story Card 1: Warren Buffett */}
-            {(selectedTopic === "all" || selectedTopic === "mindset") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#C86D51]/50 hover:shadow-xl hover:shadow-[#C86D51]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1000&auto=format&fit=crop&q=80"
-                      alt="Warren Buffett Strategy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Phát triển bản thân
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
-                        Fast Company
-                      </span>
-                    </div>
-                  </div>
+                  const pubBadgeClass =
+                    item.publicationBadgeVariant === "red"
+                      ? "bg-[#E53E3E] text-white font-bold tracking-wider"
+                      : item.publicationBadgeVariant === "amber"
+                      ? "bg-[#D97706] text-white font-bold tracking-wider"
+                      : item.publicationBadgeVariant === "teal"
+                      ? "bg-[#0D9488] text-white font-bold tracking-wider"
+                      : item.publicationBadgeVariant === "gold"
+                      ? "bg-[#F59E0B] text-[#2D2825] font-bold tracking-wider"
+                      : "bg-white/90 text-[#2D2825] font-medium";
 
-                  <div className="p-6 sm:p-7 space-y-3">
-                    {/* Quiet Academic Metadata */}
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #02</span>
-                      <span>·</span>
-                      <span>5 min read</span>
-                      <span>·</span>
-                      <span className="text-[#9C4124] font-normal">
-                        14 từ vựng trọng tâm
-                      </span>
-                    </div>
+                  return (
+                    <article
+                      key={item.id}
+                      className="reading-card-cq group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#C86D51]/50 hover:shadow-xl hover:shadow-[#2D2825]/5 transition-all duration-300 flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                          {!isBrokenImg ? (
+                            <img
+                              src={item.imageUrl}
+                              alt={item.imageAlt}
+                              onError={() =>
+                                setBrokenImages((prev) => ({
+                                  ...prev,
+                                  [item.id]: true,
+                                }))
+                              }
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                            />
+                          ) : (
+                            <div
+                              className="w-full h-full p-5 flex flex-col justify-between bg-[#F3ECE1] relative"
+                              style={{
+                                backgroundImage:
+                                  "radial-gradient(rgba(45,40,37,0.08) 1px, transparent 1px)",
+                                backgroundSize: "14px 14px",
+                              }}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span
+                                  className="h-9 w-9 rounded-xl flex items-center justify-center text-white text-xs font-mono font-black shadow-xs"
+                                  style={{ backgroundColor: item.accentColor }}
+                                >
+                                  {item.publicationMonogram}
+                                </span>
+                              </div>
+                              <div className="flex items-end justify-between">
+                                <span className="text-[11px] font-mono uppercase tracking-wider text-[#635951]">
+                                  {item.publication}
+                                </span>
+                                <span className="font-serif text-4xl font-black text-[#2D2825]/15 leading-none select-none">
+                                  {item.cefrLabel}
+                                </span>
+                              </div>
+                            </div>
+                          )}
 
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#C86D51] transition-colors leading-snug">
-                      <Link to="/reading/case-002">
-                        Bài #02: Kỹ Năng Đòn Bẩy Của Warren Buffett Trong Kỷ Nguyên AI
-                      </Link>
-                    </h3>
-                  </div>
-                </div>
+                          {/* Top-left Source & Topic Badges */}
+                          <div className="absolute top-3.5 left-3.5 right-3.5 flex items-start justify-between gap-2 pointer-events-none">
+                            <div className="flex flex-wrap gap-1.5">
+                              <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                                {item.badgeCategory}
+                              </span>
+                              <span
+                                className={`px-2.5 py-1 rounded-md backdrop-blur-md text-[11px] ${pubBadgeClass}`}
+                              >
+                                {item.publication}
+                              </span>
+                            </div>
 
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-002"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#C86D51] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
+                            {/* Top-right Level & Read Status Badges */}
+                            <div className="flex flex-col items-end gap-1 shrink-0">
+                              <span className="px-2 py-0.5 rounded-md bg-white/95 backdrop-blur-md text-[#2D2825] text-[10px] font-mono font-bold shadow-xs border border-black/5">
+                                {item.cefrLabel} · {item.ieltsBand.toFixed(1)}
+                              </span>
+                              {isRead && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-600/95 backdrop-blur-md text-white text-[10px] font-bold shadow-xs">
+                                  <CheckCircle2 className="h-3 w-3" />
+                                  Đã đọc
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
 
-            {/* Story Card 2: Greenland Ice Lake */}
-            {(selectedTopic === "all" || selectedTopic === "science") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#4B799E]/50 hover:shadow-xl hover:shadow-[#4B799E]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#E1EAF0] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?w=1000&auto=format&fit=crop&q=80"
-                      alt="Greenland Glacier Lake"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Khám phá Địa lý
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
-                        Science Alert
-                      </span>
-                    </div>
-                  </div>
+                        <div className="reading-card-body space-y-2.5">
+                          {/* Quiet Academic Metadata */}
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#8A7E75] font-light">
+                            <span>{item.readingNumber}</span>
+                            <span>·</span>
+                            <span>{item.displayReadTime}</span>
+                            <span>·</span>
+                            <span
+                              className="font-semibold"
+                              style={{ color: item.accentColor }}
+                            >
+                              {item.highlightMeta}
+                            </span>
+                            {item.subMeta && (
+                              <>
+                                <span>·</span>
+                                <span>{item.subMeta}</span>
+                              </>
+                            )}
+                          </div>
 
-                  <div className="p-6 sm:p-7 space-y-3">
-                    {/* Quiet Academic Metadata */}
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #01</span>
-                      <span>·</span>
-                      <span>4 min read</span>
-                      <span>·</span>
-                      <span className="text-[#3E6585] font-normal">
-                        18 thuật ngữ địa lý
-                      </span>
-                    </div>
+                          <h3 className="reading-card-title font-serif font-medium text-[#241F1C] group-hover:text-[#C86D51] transition-colors">
+                            <Link to={`/reading/${item.id}`}>
+                              {item.titleVi}
+                            </Link>
+                          </h3>
 
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#4B799E] transition-colors leading-snug">
-                      <Link to="/reading/case-001">
-                        Bài #01: Bí Ẩn 8 Triệu Mét Khối Nước Biến Mất Trong 90 Phút
-                      </Link>
-                    </h3>
-                  </div>
-                </div>
+                          <p className="text-xs text-[#7D736A] italic leading-snug line-clamp-2">
+                            {item.titleEn}
+                          </p>
 
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-001"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#4B799E] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
+                          {item.summaryVi && (
+                            <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light pt-0.5">
+                              {item.summaryVi}
+                            </p>
+                          )}
+                        </div>
+                      </div>
 
-            {/* Story Card 3: Generative AI Paradox (The Guardian) */}
-            {(selectedTopic === "all" || selectedTopic === "tech") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#6B46C1]/50 hover:shadow-xl hover:shadow-[#6B46C1]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1000&auto=format&fit=crop&q=80"
-                      alt="Generative AI Paradox"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Công nghệ & Xã hội
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
-                        The Guardian
-                      </span>
-                    </div>
-                  </div>
+                      <div className="px-6 sm:px-7 pb-5 pt-3 border-t border-[#F5EFE7] flex items-center justify-between gap-3 text-xs text-[#8C827A]">
+                        <div className="min-w-0 flex-1">
+                          {isRead ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                              Đã hoàn thành
+                            </span>
+                          ) : inProgress ? (
+                            <div className="space-y-1 max-w-[160px]">
+                              <div className="flex items-center justify-between text-[10px] font-medium text-[#635951]">
+                                <span>Đang đọc {scrollPercent}%</span>
+                                {tasksCompleted > 0 && <span>{tasksCompleted}/4 câu</span>}
+                              </div>
+                              <div className="h-1.5 w-full rounded-full bg-[#EFE9DF] overflow-hidden">
+                                <div
+                                  className="h-full bg-[#C86D51] rounded-full transition-all"
+                                  style={{ width: `${Math.max(8, scrollPercent)}%` }}
+                                />
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-[11px] text-[#9E948A]">
+                              Band {item.ieltsBand.toFixed(1)} · {item.cefrLabel}
+                            </span>
+                          )}
+                        </div>
 
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #03</span>
-                      <span>·</span>
-                      <span>6 min read</span>
-                      <span>·</span>
-                      <span className="text-[#6B46C1] font-normal">
-                        IELTS Band 7.5+
-                      </span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#6B46C1] transition-colors leading-snug">
-                      <Link to="/reading/case-003">
-                        Bài #03: Nghịch Lý AI Tạo Sinh: Xáo Trộn Trí Tuệ & Năng Lực Con Người
-                      </Link>
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-003"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#6B46C1] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 4: The EdTech Delusion (The Guardian) */}
-            {(selectedTopic === "all" || selectedTopic === "education") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#1E6091]/50 hover:shadow-xl hover:shadow-[#1E6091]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=1000&auto=format&fit=crop&q=80"
-                      alt="The EdTech Delusion & Deep Reading"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Giáo dục & Đọc sâu
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
-                        The Guardian
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #04</span>
-                      <span>·</span>
-                      <span>5 min read</span>
-                      <span>·</span>
-                      <span className="text-[#1E6091] font-normal">
-                        IELTS Band 7.5+
-                      </span>
-                      <span>·</span>
-                      <span>Phê phán sư phạm</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#1E6091] transition-colors leading-snug">
-                      <Link to="/reading/case-004">
-                        Bài #04: Ảo Tưởng EdTech: Lớp Học Màn Hình & Sự Xói Mòn Của Đọc Sâu
-                      </Link>
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-004"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#1E6091] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 5: The Techno-Fix Myth (The Guardian) */}
-            {(selectedTopic === "all" || selectedTopic === "science") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#2D6A4F]/50 hover:shadow-xl hover:shadow-[#2D6A4F]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1000&auto=format&fit=crop&q=80"
-                      alt="The Techno-Fix Myth & Planetary Boundaries"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Môi trường & Sinh thái
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
-                        The Guardian
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #05</span>
-                      <span>·</span>
-                      <span>6 min read</span>
-                      <span>·</span>
-                      <span className="text-[#2D6A4F] font-normal">
-                        IELTS Band 7.5+
-                      </span>
-                      <span>·</span>
-                      <span>Kinh tế sinh thái</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#2D6A4F] transition-colors leading-snug">
-                      <Link to="/reading/case-005">
-                        Bài #05: Ảo Tưởng Công Nghệ Xanh: Vì Sao Đổi Mới Kỹ Thuật Không Đủ Cứu Trái Đất
-                      </Link>
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-005"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#2D6A4F] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 6: The Hyperconnected Loneliness Epidemic (The Guardian) */}
-            {(selectedTopic === "all" || selectedTopic === "society") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#B85A3A]/50 hover:shadow-xl hover:shadow-[#B85A3A]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1000&auto=format&fit=crop&q=80"
-                      alt="The Hyperconnected Loneliness Epidemic"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Xã hội & Tâm lý
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
-                        The Guardian
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #06</span>
-                      <span>·</span>
-                      <span>6 min read</span>
-                      <span>·</span>
-                      <span className="text-[#B85A3A] font-normal">
-                        IELTS Band 7.5+
-                      </span>
-                      <span>·</span>
-                      <span>Tâm lý xã hội học</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#B85A3A] transition-colors leading-snug">
-                      <Link to="/reading/case-006">
-                        Bài #06: Đại Dịch Cô Đơn Số: Vòng Lặp Dopamine & Sự Tan Rã Của Cộng Đồng
-                      </Link>
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-006"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#B85A3A] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 7: Demographic Winter & Pension Crisis (The Economist) */}
-            {(selectedTopic === "all" || selectedTopic === "economics" || selectedTopic === "society") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#C53030]/50 hover:shadow-xl hover:shadow-[#C53030]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1516307365426-bea591f05011?w=1000&auto=format&fit=crop&q=80"
-                      alt="Demographic Winter & Pension Crisis"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Kinh tế vĩ mô & Dân số
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-[#E53E3E] backdrop-blur-md text-white text-[11px] font-bold tracking-wider">
-                        The Economist
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #07</span>
-                      <span>·</span>
-                      <span>6 min read</span>
-                      <span>·</span>
-                      <span className="text-[#C53030] font-bold">
-                        IELTS Band 8.0
-                      </span>
-                      <span>·</span>
-                      <span>Phân tích tài khóa</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#C53030] transition-colors leading-snug">
-                      <Link to="/reading/case-007">
-                        Bài #07: Mùa Đông Nhân Khẩu Học: Lao Động Teo Tóp & Khủng Hoảng Hưu Trí Toàn Cầu
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Tỷ lệ sinh sụt giảm nghiêm trọng đang làm sụp đổ mô hình lương hưu Pay-As-You-Go của phương Tây. Phân tích kinh tế vĩ mô sắc bén từ The Economist về 'bộ ba bất khả thi' của an sinh xã hội và cách khai phóng 'cổ tức bạc' (Silver Dividend).
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-007"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#C53030] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 8: Deglobalisation & Supply Chain Autarky (The Economist) */}
-            {(selectedTopic === "all" || selectedTopic === "economics") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#2B6CB0]/50 hover:shadow-xl hover:shadow-[#2B6CB0]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1000&auto=format&fit=crop&q=80"
-                      alt="Deglobalisation & Supply Chains"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Địa kinh tế & Chuỗi cung ứng
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-[#E53E3E] backdrop-blur-md text-white text-[11px] font-bold tracking-wider">
-                        The Economist
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #08</span>
-                      <span>·</span>
-                      <span>6 min read</span>
-                      <span>·</span>
-                      <span className="text-[#2B6CB0] font-bold">
-                        IELTS Band 8.0
-                      </span>
-                      <span>·</span>
-                      <span>Thương mại quốc tế</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#2B6CB0] transition-colors leading-snug">
-                      <Link to="/reading/case-008">
-                        Bài #08: Cái Bẫy Phi Toàn Cầu Hóa: Vũ Khí Hóa Chuỗi Cung Ứng & Cái Giá Của Tự Cung Tự Cấp
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Làn sóng 'Friend-shoring' và trợ cấp bảo hộ chất bán dẫn có thực sự giúp các cường quốc an toàn, hay chỉ tạo ra lạm phát cấu trúc và làm suy thoái năng suất? Bóc tách góc nhìn kinh tế tự do sắc lẹm từ The Economist.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-008"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#2B6CB0] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 9: The 60-Second Brain (The Conversation) */}
-            {(selectedTopic === "all" || selectedTopic === "tech" || selectedTopic === "society") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#D97706]/50 hover:shadow-xl hover:shadow-[#D97706]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=1000&auto=format&fit=crop&q=80"
-                      alt="The 60-Second Brain & Video Algorithms"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Khoa học não bộ & MXH
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-[#D97706] backdrop-blur-md text-white text-[11px] font-bold tracking-wider">
-                        The Conversation
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #09</span>
-                      <span>·</span>
-                      <span>5 min read</span>
-                      <span>·</span>
-                      <span className="text-[#D97706] font-bold">
-                        IELTS Band 7.5+
-                      </span>
-                      <span>·</span>
-                      <span>Thần kinh học hành vi</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#D97706] transition-colors leading-snug">
-                      <Link to="/reading/case-009">
-                        Bài #09: Não Bộ 60 Giây: Thuật Toán Video Ngắn Đang Tái Lập Trình Sự Tập Trung Như Thế Nào?
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Lướt TikTok và Reels liên tục tác động ra sao đến vỏ não trước trán đang phát triển của người trẻ? Bóc tách góc nhìn khoa học thần kinh về hội chứng 'Continuous Partial Attention' và cái bẫy đa nhiệm số từ The Conversation.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-009"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#D97706] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 10: The Death of the Starter Home (The Conversation) */}
-            {(selectedTopic === "all" || selectedTopic === "economics" || selectedTopic === "society") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#0D9488]/50 hover:shadow-xl hover:shadow-[#0D9488]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1000&auto=format&fit=crop&q=80"
-                      alt="The Death of the Starter Home & Generation Rent"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Quy hoạch đô thị & Bất động sản
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-[#0D9488] backdrop-blur-md text-white text-[11px] font-bold tracking-wider">
-                        The Conversation
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #10</span>
-                      <span>·</span>
-                      <span>6 min read</span>
-                      <span>·</span>
-                      <span className="text-[#0D9488] font-bold">
-                        IELTS Band 7.5+
-                      </span>
-                      <span>·</span>
-                      <span>Xã hội học đô thị</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#0D9488] transition-colors leading-snug">
-                      <Link to="/reading/case-010">
-                        Bài #10: Sự Biến Mất Của Ngôi Nhà Đầu Tiên: Thế Hệ Đi Thuê & Cái Bẫy Cấu Trúc Bất Động Sản
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Vì sao giới trẻ ngày nay không thể mua nhà dù làm việc chăm chỉ hơn các thế hệ trước? Phân tích sắc sảo từ các nhà xã hội học đô thị về hiện tượng 'Tài chính hóa nhà ở' và cuộc khủng hoảng sinh sản lan rộng từ gánh nặng tiền thuê nhà.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-010"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#0D9488] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 11: Alien Oceans & Hadal Zone (National Geographic) */}
-            {(selectedTopic === "all" || selectedTopic === "science") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#0284C7]/50 hover:shadow-xl hover:shadow-[#0284C7]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1000&auto=format&fit=crop&q=80"
-                      alt="Alien Oceans & Hadal Zone"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Sinh vật biển & Khám phá
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
-                        National Geographic
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #11</span>
-                      <span>·</span>
-                      <span>6 min read</span>
-                      <span>·</span>
-                      <span className="text-[#0284C7] font-bold">
-                        IELTS Band 7.5+
-                      </span>
-                      <span>·</span>
-                      <span>Hải dương học cực hạn</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#0284C7] transition-colors leading-snug">
-                      <Link to="/reading/case-011">
-                        Bài #11: Đại Dương Vùng Vô Quang: Sinh Vật Kỳ Dị Vùng Hadal & Tranh Cãi Khai Thác Đáy Biển
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Xuống độ sâu hơn 6.000 mét nơi bóng tối vĩnh cửu và áp suất nghiền nát tàu ngầm, sự sống vẫn phát triển kỳ diệu nhờ hóa tổng hợp (chemosynthesis). Nhưng liệu cơn khát kim loại cho pin xe điện có hủy diệt thế giới sơ khai này?
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-011"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#0284C7] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 12: Lasers Beneath the Canopy (National Geographic) */}
-            {(selectedTopic === "all" || selectedTopic === "science" || selectedTopic === "tech") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#15803D]/50 hover:shadow-xl hover:shadow-[#15803D]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1000&auto=format&fit=crop&q=80"
-                      alt="Lasers Beneath the Canopy & Maya Archaeology"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Khảo cổ học & Viễn thám
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
-                        National Geographic
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #12</span>
-                      <span>·</span>
-                      <span>6 min read</span>
-                      <span>·</span>
-                      <span className="text-[#15803D] font-bold">
-                        IELTS Band 7.5+
-                      </span>
-                      <span>·</span>
-                      <span>Khảo cổ học công nghệ cao</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#15803D] transition-colors leading-snug">
-                      <Link to="/reading/case-012">
-                        Bài #12: Tia Laser Dưới Tán Rừng Già: Công Nghệ LiDAR Viết Lại Lịch Sử Văn Minh Cổ Đại
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Bằng cách bắn hàng triệu xung laser xuyên qua rừng rậm Guatemala, công nghệ LiDAR đã bóc tách lớp lá cây để hé lộ hơn 60.000 công trình cổ và mạng lưới cao tốc đá nối liền siêu đô thị Maya, làm đảo lộn hoàn toàn nhận thức lịch sử thế giới.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-012"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#15803D] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 13: The Rewilding Paradox (National Geographic & Nature) */}
-            {(selectedTopic === "all" || selectedTopic === "science" || selectedTopic === "society") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#16A34A]/50 hover:shadow-xl hover:shadow-[#16A34A]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1575550959106-5a7defe28b56?w=1000&auto=format&fit=crop&q=80"
-                      alt="The Rewilding Paradox & Apex Predators"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Động vật học & Bảo tồn
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
-                        National Geographic
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #13</span>
-                      <span>·</span>
-                      <span>7 min read</span>
-                      <span>·</span>
-                      <span className="text-[#16A34A] font-bold">
-                        IELTS Band 8.0+
-                      </span>
-                      <span>·</span>
-                      <span>Sinh thái học quần thể</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#16A34A] transition-colors leading-snug">
-                      <Link to="/reading/case-013">
-                        Bài #13: Nghịch Lý Dã Hóa: Thú Ăn Thịt Đầu Chuỗi, Dòng Chảy Sinh Thái & Sinh Kế Nông Dân
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Hồi sinh loài sói và gấu xám giúp phục hồi dòng chảy sông ngòi và thảm thực vật qua hiệu ứng 'Trophic Cascades'. Nhưng làm thế nào để giải quyết xung đột gay gắt khi thú săn mồi đe dọa đàn cừu của người nông dân vùng nông thôn?
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-013"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#16A34A] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 14: The Wondrous World of Fungi (National Geographic) */}
-            {(selectedTopic === "all" || selectedTopic === "science" || selectedTopic === "tech") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#854D0E]/50 hover:shadow-xl hover:shadow-[#854D0E]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1546842931-886c185b4c8c?w=1000&auto=format&fit=crop&q=80"
-                      alt="The Wondrous World of Fungi & Mycotextiles"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Công nghệ sinh học & Mycobiome
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
-                        National Geographic
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #14</span>
-                      <span>·</span>
-                      <span>8 min read</span>
-                      <span>·</span>
-                      <span className="text-[#854D0E] font-bold">
-                        IELTS Band 8.0+
-                      </span>
-                      <span>·</span>
-                      <span>Khoa học nấm & Vật liệu sống</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#854D0E] transition-colors leading-snug">
-                      <Link to="/reading/case-014">
-                        Bài #14: Thế Giới Kỳ Diệu Của Loài Nấm: Sinh Vật Xâm Lấn, Hệ Nấm Mycobiome & Tương Lai Da Sinh Học
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Từ hiểm họa nấm tử thần xâm thực rừng sồi California đến khám phá chấn động về hệ nấm nội sinh (mycobiome) trong khối u ung thư, và cuộc cách mạng thời trang tuần hoàn từ sợi nấm (mycotextiles) trên tạp chí National Geographic Tháng 4/2024.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-014"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#854D0E] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-
-            {/* Story Card 15: Surprising Scenes in Stone (National Geographic) */}
-            {(selectedTopic === "all" || selectedTopic === "society" || selectedTopic === "science") && (
-              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#B45309]/50 hover:shadow-xl hover:shadow-[#B45309]/5 transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
-                    <img
-                      src="https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=1000&auto=format&fit=crop&q=80"
-                      alt="Surprising Scenes in Stone & Huqoq Mosaics"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
-                        Khảo cổ học & Nghệ thuật Mosaic
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
-                        National Geographic
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 sm:p-7 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
-                      <span>Reading #15</span>
-                      <span>·</span>
-                      <span>8 min read</span>
-                      <span>·</span>
-                      <span className="text-[#B45309] font-bold">
-                        IELTS Band 8.0+
-                      </span>
-                      <span>·</span>
-                      <span>Văn minh cổ đại & Lịch sử</span>
-                    </div>
-
-                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#B45309] transition-colors leading-snug">
-                      <Link to="/reading/case-015">
-                        Bài #15: Kiệt Tác Tranh Đá Huqoq: Khảo Cổ Học Giáo Đường Cổ & Bản Lĩnh Kiên Cường Vùng Galilee
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Khai quật giáo đường Do Thái 1.600 năm tuổi tại Huqoq hé lộ những bức tranh khảm đá (tesserae) vô giá về Samson, tháp Babel và cuộc gặp gỡ bí ẩn với Alexander Đại đế, đảo ngược hoàn toàn quan niệm về sự suy tàn dưới thời Byzantine.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
-                  <Link
-                    to="/reading/case-015"
-                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#B45309] flex items-center gap-1"
-                  >
-                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </article>
-            )}
-          </div>
+                        <Link
+                          to={`/reading/${item.id}`}
+                          className="group-hover:translate-x-1 transition-transform font-semibold flex items-center gap-1 shrink-0"
+                          style={{ color: item.accentColor }}
+                        >
+                          {isRead
+                            ? "Đọc lại"
+                            : inProgress
+                            ? "Tiếp tục đọc"
+                            : "Bắt đầu đọc"}{" "}
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Link>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Academic Reading Methodology Philosophy Section */}

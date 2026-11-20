@@ -4,6 +4,8 @@ import { CheckCircle2, AlertTriangle, XCircle, ArrowRight, RotateCcw, Award, Com
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { CrimeSceneBlueprint } from "./CrimeSceneBlueprint";
+import { useReadingProgress } from "../hooks/useReadingProgress";
+import { NextReadsSection } from "./NextReadsSection";
 
 interface CaseAutopsyProps {
   readingCase: ReadingCase;
@@ -22,7 +24,9 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
   selectedEvidenceIds,
   onRetry,
 }) => {
+  const { progressMap } = useReadingProgress();
   const isCase1 = readingCase.id === "case-001";
+  const isCase2 = readingCase.id === "case-002";
 
   // Dynamic score calculations based on readingCase definition
   const task1Obj = readingCase.tasks.find((t) => t.id === "task-01");
@@ -97,14 +101,19 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
           {isFullMastery
             ? isCase1
               ? "Tuyệt vời! Bạn đã kết luận chính xác cơ chế nứt gãy thủy lực ngầm (Hydro-Fracturing) dựa trên dữ liệu cảm biến thực địa."
-              : "Tuyệt vời! Bạn đã kết luận chính xác đòn bẩy giao tiếp theo nguyên lý của Warren Buffett và đối chiếu đủ các bằng chứng cốt lõi."
+              : isCase2
+              ? "Tuyệt vời! Bạn đã kết luận chính xác đòn bẩy giao tiếp theo nguyên lý của Warren Buffett và đối chiếu đủ các bằng chứng cốt lõi."
+              : readingCase.final_deduction.explanation ||
+                "Tuyệt vời! Bạn đã giải mã chuẩn xác luận điểm trung tâm và đối chiếu đầy đủ các dẫn chứng cốt lõi của bài đọc."
             : isOverInference
             ? isCase1
               ? "Bạn đã chọn đúng cơ chế, nhưng các bằng chứng đối chiếu chưa đầy đủ (Cần chú ý đối chiếu dữ liệu nhiệt độ đá đáy)."
-              : "Bạn đã chọn đúng kết luận chính, nhưng các bằng chứng đối chiếu từ 3 nguồn chưa đầy đủ."
+              : "Bạn đã chọn đúng kết luận chính, nhưng các bằng chứng đối chiếu từ các nguồn chưa đầy đủ."
             : isCase1
             ? "Chưa giải mã hoàn tất hồ sơ. Hãy chú ý đối chiếu mâu thuẫn giữa giả thuyết nhiệt địa chất và số liệu cảm biến thực tế."
-            : "Chưa giải mã hoàn tất hồ sơ. Hãy chú ý đối chiếu mâu thuẫn giữa kỹ năng AI và kỹ năng thấu cảm giữa người với người."}
+            : isCase2
+            ? "Chưa giải mã hoàn tất hồ sơ. Hãy chú ý đối chiếu mâu thuẫn giữa kỹ năng AI và kỹ năng thấu cảm giữa người với người."
+            : "Một vài nhận định hoặc dẫn chứng vẫn cần rà soát lại. Hãy đối chiếu kỹ từng đoạn nguồn để tránh bẫy suy diễn quá đà."}
         </p>
       </div>
 
@@ -119,84 +128,92 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
 
           <div className="space-y-3 text-sm">
             {/* Task 1 */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/80">
-              <div>
+            <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+              <div className="min-w-0">
                 <p className="font-bold text-stone-800">1. Locating Specific Detail (Task 1)</p>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-stone-500 line-clamp-2">
                   {isCase1
                     ? "Quét chi tiết gờ băng không có dấu hiệu tràn nước"
-                    : "Xác định chứng chỉ Dale Carnegie duy nhất tại văn phòng"}
+                    : isCase2
+                    ? "Xác định chứng chỉ Dale Carnegie duy nhất tại văn phòng"
+                    : (task1Obj && "question" in task1Obj ? task1Obj.question : "Xác định chi tiết trọng tâm trong Nguồn 1")}
                 </p>
               </div>
               {task1Correct ? (
-                <span className="flex items-center text-xs font-bold text-emerald-600">
+                <span className="flex items-center shrink-0 text-xs font-bold text-emerald-600">
                   <CheckCircle2 className="h-4 w-4 mr-1" /> Đạt
                 </span>
               ) : (
-                <span className="flex items-center text-xs font-bold text-rose-600">
+                <span className="flex items-center shrink-0 text-xs font-bold text-rose-600">
                   <XCircle className="h-4 w-4 mr-1" /> Chưa đạt
                 </span>
               )}
             </div>
 
             {/* Task 2 */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/80">
-              <div>
+            <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+              <div className="min-w-0">
                 <p className="font-bold text-stone-800">2. Cross-Source Matching (Task 2)</p>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-stone-500 line-clamp-2">
                   {isCase1
                     ? "Đối chiếu mâu thuẫn giữa Giả thuyết & Cảm biến"
-                    : "Đối chiếu giới hạn của AI so với khả năng xây dựng niềm tin"}
+                    : isCase2
+                    ? "Đối chiếu giới hạn của AI so với khả năng xây dựng niềm tin"
+                    : (task2Obj && "question" in task2Obj ? task2Obj.question : "Đối chiếu luận điểm giữa các nguồn tài liệu")}
                 </p>
               </div>
               {task2Correct ? (
-                <span className="flex items-center text-xs font-bold text-emerald-600">
+                <span className="flex items-center shrink-0 text-xs font-bold text-emerald-600">
                   <CheckCircle2 className="h-4 w-4 mr-1" /> Đạt
                 </span>
               ) : (
-                <span className="flex items-center text-xs font-bold text-rose-600">
+                <span className="flex items-center shrink-0 text-xs font-bold text-rose-600">
                   <XCircle className="h-4 w-4 mr-1" /> Chưa đạt
                 </span>
               )}
             </div>
 
             {/* Task 3 */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/80">
-              <div>
+            <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+              <div className="min-w-0">
                 <p className="font-bold text-stone-800">3. Boundary-Restricted Inference (Task 3)</p>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-stone-500 line-clamp-2">
                   {isCase1
                     ? "Suy luận chính xác dữ liệu sóng xung kích 03:12"
-                    : "Suy luận nguyên lý tâm lý của việc lắng nghe tích cực"}
+                    : isCase2
+                    ? "Suy luận nguyên lý tâm lý của việc lắng nghe tích cực"
+                    : (task3Obj && "question" in task3Obj ? task3Obj.question : "Suy luận giới hạn dựa trên dữ liệu văn bản")}
                 </p>
               </div>
               {task3Correct ? (
-                <span className="flex items-center text-xs font-bold text-emerald-600">
+                <span className="flex items-center shrink-0 text-xs font-bold text-emerald-600">
                   <CheckCircle2 className="h-4 w-4 mr-1" /> Đạt
                 </span>
               ) : (
-                <span className="flex items-center text-xs font-bold text-rose-600">
+                <span className="flex items-center shrink-0 text-xs font-bold text-rose-600">
                   <XCircle className="h-4 w-4 mr-1" /> Chưa đạt
                 </span>
               )}
             </div>
 
             {/* Task 4 */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/80">
-              <div>
+            <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+              <div className="min-w-0">
                 <p className="font-bold text-stone-800">4. Text-Grounded Evidence (Task 4 - Prove)</p>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-stone-500 line-clamp-2">
                   {isCase1
                     ? "Trích dẫn câu văn xác nhận khe nứt sâu 850m tới đá đáy"
-                    : "Trích dẫn nguyên lý khách hàng mua niềm tin và sự tự tin"}
+                    : isCase2
+                    ? "Trích dẫn nguyên lý khách hàng mua niềm tin và sự tự tin"
+                    : (task4Obj && "instruction" in task4Obj ? task4Obj.instruction : "Ghim câu văn dẫn chứng chính xác trong bài đọc")}
                 </p>
               </div>
               {task4ProveCorrect ? (
-                <span className="flex items-center text-xs font-bold text-emerald-600">
+                <span className="flex items-center shrink-0 text-xs font-bold text-emerald-600">
                   <CheckCircle2 className="h-4 w-4 mr-1" /> Đạt
                 </span>
               ) : (
-                <span className="flex items-center text-xs font-bold text-rose-600">
+                <span className="flex items-center shrink-0 text-xs font-bold text-rose-600">
                   <XCircle className="h-4 w-4 mr-1" /> Chưa đạt
                 </span>
               )}
@@ -233,7 +250,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
                   </ul>
                 </div>
               </>
-            ) : (
+            ) : isCase2 ? (
               <>
                 <div className="rounded-xl bg-amber-50 border border-amber-200 p-3">
                   <p className="text-xs font-bold text-amber-900 uppercase tracking-wider mb-1">
@@ -253,6 +270,32 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
                     <li>Khách hàng mua sự tự tin, nhà đầu tư rót vốn cho người sáng lập mà họ tin cậy.</li>
                   </ul>
                 </div>
+              </>
+            ) : (
+              <>
+                {readingCase.autopsy.traps.map((trap, idx) => (
+                  <div key={idx} className="rounded-xl bg-amber-50 border border-amber-200 p-3">
+                    <p className="text-xs font-bold text-amber-900 uppercase tracking-wider mb-1">
+                      ⚠️ Bẫy #{idx + 1}: {trap.type.replace(/_/g, " ")}
+                    </p>
+                    <p className="text-xs text-stone-700 leading-relaxed">
+                      {trap.description}
+                    </p>
+                  </div>
+                ))}
+
+                {readingCase.autopsy.takeaways.length > 0 && (
+                  <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200">
+                    <p className="text-xs font-bold text-stone-800 uppercase tracking-wider mb-1.5">
+                      💡 Đúc Kết Tư Duy & Từ Vựng Trọng Tâm:
+                    </p>
+                    <ul className="list-disc list-inside space-y-1.5 text-xs text-stone-700 leading-relaxed">
+                      {readingCase.autopsy.takeaways.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -277,7 +320,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
         </div>
       )}
 
-      {!isCase1 && (
+      {isCase2 && (
         <div className="mt-8 rounded-2xl border border-emerald-200 bg-white p-6 space-y-3 shadow-xs">
           <div className="flex items-center gap-2 border-b border-emerald-100 pb-3">
             <Sparkles className="h-5 w-5 text-emerald-600" />
@@ -315,6 +358,11 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
           </div>
         </div>
       )}
+
+      {/* Next Recommended Readings */}
+      <div className="mt-8">
+        <NextReadsSection currentCaseId={readingCase.id} progressMap={progressMap} />
+      </div>
 
       {/* Bottom Actions */}
       <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-stone-200 pt-6">
