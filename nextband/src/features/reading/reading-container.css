@@ -1,0 +1,99 @@
+/* Native CSS Container Queries & Reading UX Animations */
+
+.reading-canvas-cq {
+  container-type: inline-size;
+  container-name: reading-canvas;
+}
+
+.reading-bilingual-col-headers {
+  display: none;
+}
+
+.reading-bilingual-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+@container reading-canvas (min-width: 720px) {
+  .reading-bilingual-col-headers {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .reading-bilingual-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+}
+
+.reading-shelf-cq {
+  container-type: inline-size;
+  container-name: reading-shelf;
+}
+
+.reading-shelf-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+}
+
+@container reading-shelf (min-width: 640px) {
+  .reading-shelf-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container reading-shelf (min-width: 1000px) {
+  .reading-shelf-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.reading-card-cq {
+  container-type: inline-size;
+  container-name: reading-card;
+}
+
+.reading-card-body {
+  padding: 1.25rem;
+}
+
+.reading-card-title {
+  font-size: 1.25rem;
+  line-height: 1.35;
+}
+
+@container reading-card (min-width: 340px) {
+  .reading-card-body {
+    padding: 1.5rem 1.75rem;
+  }
+
+  .reading-card-title {
+    font-size: 1.45rem;
+    line-height: 1.32;
+  }
+}
+
+@keyframes reading-para-flash {
+  0% {
+    background-color: rgba(251, 191, 36, 0.28);
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.55);
+  }
+  70% {
+    background-color: rgba(251, 191, 36, 0.12);
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.35);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.reading-para-flash {
+  animation: reading-para-flash 2.1s ease-out;
+  border-radius: 0.75rem;
+}

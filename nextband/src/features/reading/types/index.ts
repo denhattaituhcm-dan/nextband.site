@@ -91,6 +91,35 @@ export interface VocabularyTerm {
 export interface Paragraph {
   id: string;
   text: string;
+  text_vi?: string;
+}
+
+export type ReadingMode = "english" | "bilingual";
+
+export type ReadingLevelTier = "all" | "foundation" | "c1" | "c2";
+
+export type ReadingTopicFilter =
+  | "all"
+  | "mindset"
+  | "science"
+  | "tech"
+  | "education"
+  | "society"
+  | "economics";
+
+export type ReadingStatusFilter = "all" | "unread" | "read";
+
+export interface CaseGlossaryItem {
+  id: string;
+  key: string;
+  term: string;
+  matchedForm: string;
+  paragraphId: string;
+  paragraphNumber: number;
+  sourceId: string;
+  termData: VocabularyTerm;
+  isCuratedChunk: boolean;
+  tier: "chunk" | "deep" | "academic";
 }
 
 export interface DossierSource {

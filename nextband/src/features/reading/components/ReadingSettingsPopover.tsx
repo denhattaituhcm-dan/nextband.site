@@ -1,5 +1,5 @@
 import React from "react";
-import { SlidersHorizontal, Type, AlignLeft, AlignJustify, Sun, Moon, BookOpen, Minus, Plus } from "lucide-react";
+import { SlidersHorizontal, AlignLeft, AlignJustify, Sun, Moon, BookOpen, Minus, Plus, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export interface ReaderSettings {
@@ -8,6 +8,7 @@ export interface ReaderSettings {
   fontFamily: "sans" | "serif" | "mono";
   theme: "light" | "eink" | "dark";
   textAlign: "left" | "justify";
+  readingMode?: "english" | "bilingual";
 }
 
 interface ReadingSettingsPopoverProps {
@@ -238,6 +239,38 @@ export const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
                 >
                   <AlignJustify className="h-3.5 w-3.5" />
                   <span>Justify</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Section 3: Optional Bilingual Mode */}
+            <div className="space-y-2 pt-1 border-t border-stone-300/80">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
+                <Languages className="h-3.5 w-3.5 text-stone-700" />
+                <span>Chế độ hiển thị (Display Mode)</span>
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => onChange({ readingMode: "english" })}
+                  className={`flex items-center justify-center gap-1.5 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    (settings.readingMode ?? "english") === "english"
+                      ? "bg-stone-900 text-white shadow-xs"
+                      : "bg-stone-200/90 hover:bg-stone-300 text-stone-800"
+                  }`}
+                >
+                  <span>Chỉ tiếng Anh</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onChange({ readingMode: "bilingual" })}
+                  className={`flex items-center justify-center gap-1.5 h-8 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    settings.readingMode === "bilingual"
+                      ? "bg-stone-900 text-white shadow-xs"
+                      : "bg-stone-200/90 hover:bg-stone-300 text-stone-800"
+                  }`}
+                >
+                  <span>Song ngữ</span>
                 </button>
               </div>
             </div>

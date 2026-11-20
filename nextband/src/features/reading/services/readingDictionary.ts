@@ -5472,12 +5472,24 @@ export function enrichCognitiveTerm(
   );
 }
 
+export function getCaseDictionaryMap(caseId?: string): Record<string, VocabularyTerm> {
+  if (!caseId) return GLOBAL_DICTIONARY;
+  return {
+    ...ALL_CURATED_CHUNKS,
+    ...(CASE_DICTIONARIES[caseId] || {}),
+  };
+}
+
 /**
  * Helper to match a raw word in a target dictionary with exact, normalized, single-word, and lemmatized stems
  */
 function findInDictionary(rawWord: string, dict: Record<string, VocabularyTerm>): VocabularyTerm | null {
   if (!rawWord || !dict) return null;
-  const clean = rawWord.trim().toLowerCase();
+  const clean = rawWord
+    .trim()
+    .toLowerCase()
+    .replace(/['’]s$/i, "")
+    .replace(/['’]$/i, "");
 
   // 1. Direct match with exact phrase
   if (dict[clean]) return dict[clean];
@@ -5490,23 +5502,58 @@ function findInDictionary(rawWord: string, dict: Record<string, VocabularyTerm>)
   const singleWord = clean.replace(/[^a-z0-9-]/g, "").trim();
   if (dict[singleWord]) return dict[singleWord];
 
-  // 4. Lemmatization fallbacks (plural -s/es, past tense -ed, progressive -ing, -ly)
+  // 4. Lemmatization fallbacks (plural -s/es/ies, past -ed/ied/doubled, progressive -ing/doubled, -er/-est, -ly)
   const candidates: string[] = [];
-  if (singleWord.endsWith("ies")) candidates.push(singleWord.slice(0, -3) + "y");
-  if (singleWord.endsWith("es")) candidates.push(singleWord.slice(0, -2));
-  if (singleWord.endsWith("s")) candidates.push(singleWord.slice(0, -1));
-  if (singleWord.endsWith("ed")) {
-    candidates.push(singleWord.slice(0, -2));
-    candidates.push(singleWord.slice(0, -1));
+  const pushCand = (c: string) => {
+    if (c && c.length >= 2 && !candidates.includes(c)) candidates.push(c);
+  };
+
+  if (singleWord.endsWith("ies") && singleWord.length > 4) {
+    pushCand(singleWord.slice(0, -3) + "y");
   }
-  if (singleWord.endsWith("ing")) {
-    candidates.push(singleWord.slice(0, -3));
-    candidates.push(singleWord.slice(0, -3) + "e");
+  if (singleWord.endsWith("ied") && singleWord.length > 4) {
+    pushCand(singleWord.slice(0, -3) + "y");
   }
-  if (singleWord.endsWith("ly")) {
-    candidates.push(singleWord.slice(0, -2));
-    if (singleWord.endsWith("ily")) candidates.push(singleWord.slice(0, -3) + "y");
-    if (singleWord.endsWith("ally")) candidates.push(singleWord.slice(0, -4));
+  if (/(?:ches|shes|sses|xes|zes|oes)$/.test(singleWord) && singleWord.length > 4) {
+    pushCand(singleWord.slice(0, -2));
+  }
+  if (singleWord.endsWith("es")) pushCand(singleWord.slice(0, -2));
+  if (singleWord.endsWith("s") && !singleWord.endsWith("ss")) pushCand(singleWord.slice(0, -1));
+
+  if (singleWord.endsWith("ed") && singleWord.length > 3) {
+    const stem = singleWord.slice(0, -2);
+    pushCand(stem);
+    pushCand(singleWord.slice(0, -1));
+    if (/([b-df-hj-np-tv-z])\1$/.test(stem)) {
+      pushCand(stem.slice(0, -1));
+    }
+  }
+  if (singleWord.endsWith("ing") && singleWord.length > 4) {
+    const stem = singleWord.slice(0, -3);
+    pushCand(stem);
+    pushCand(stem + "e");
+    if (/([b-df-hj-np-tv-z])\1$/.test(stem)) {
+      pushCand(stem.slice(0, -1));
+    }
+  }
+  if (singleWord.endsWith("er") && singleWord.length > 4) {
+    const stem = singleWord.slice(0, -2);
+    pushCand(stem);
+    pushCand(singleWord.slice(0, -1));
+    if (singleWord.endsWith("ier")) pushCand(singleWord.slice(0, -3) + "y");
+    if (/([b-df-hj-np-tv-z])\1$/.test(stem)) pushCand(stem.slice(0, -1));
+  }
+  if (singleWord.endsWith("est") && singleWord.length > 5) {
+    const stem = singleWord.slice(0, -3);
+    pushCand(stem);
+    pushCand(singleWord.slice(0, -2));
+    if (singleWord.endsWith("iest")) pushCand(singleWord.slice(0, -4) + "y");
+    if (/([b-df-hj-np-tv-z])\1$/.test(stem)) pushCand(stem.slice(0, -1));
+  }
+  if (singleWord.endsWith("ly") && singleWord.length > 4) {
+    pushCand(singleWord.slice(0, -2));
+    if (singleWord.endsWith("ily")) pushCand(singleWord.slice(0, -3) + "y");
+    if (singleWord.endsWith("ally")) pushCand(singleWord.slice(0, -4));
   }
 
   for (const cand of candidates) {
