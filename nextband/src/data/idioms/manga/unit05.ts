@@ -17,13 +17,6 @@ export const UNIT_05_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "wink",
         line_en: "Haha, I knew you'd call my Translation Bread the best thing since sliced bread—literally!",
         line_vi: "Haha, tớ biết ngay cậu sẽ khen Bánh Mì Chuyển Ngữ là phát minh tuyệt đỉnh nhất từ trước tới nay mà—đúng nghĩa đen luôn!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "exhausted",
-        line_en: "Wait... does that mean I have to eat a whole bakery before tomorrow's history midterm?",
-        line_vi: "Khoan... thế chẳng lẽ trước kỳ thi giữa kỳ Lịch sử ngày mai tớ phải ăn hết cả một tiệm bánh à?!"
       }
     ],
     punchline_tip: {
@@ -144,13 +137,6 @@ export const UNIT_05_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Hehe, let's just say I employed a very discreet 22nd-century contractor for first-class craftsmanship!",
         line_vi: "Hehe, cứ hiểu là tớ mới thuê một nhà thầu bí mật đến từ thế kỷ 22 cho thành phẩm hạng nhất này đi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Too bad your math test scores under that first-class desk lamp are still economy class...",
-        line_vi: "Tiếc là mấy bài kiểm tra toán nằm dưới chiếc đèn bàn hạng nhất này vẫn cứ ở mức vé hạng bét..."
       }
     ],
     punchline_tip: {
@@ -271,13 +257,6 @@ export const UNIT_05_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "And Shizuka dropping by with freshly baked honey sponge cake? That's definitely the icing on the cake!",
         line_vi: "Lại còn thêm vụ Shizuka ghé tặng bánh bông lan mật ong mới ra lò nữa chứ? Đúng chuẩn niềm vui nhân đôi luôn!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Hold on—why are you already holding a fork?! That cake has MY name written on the box!",
-        line_vi: "Khoan—sao cậu đã cầm sẵn nĩa trên tay rồi hả?! Hộp bánh đó có ghi tên TỚ bên ngoài mà!"
       }
     ],
     punchline_tip: {
@@ -399,12 +378,6 @@ export const UNIT_05_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Whoa, top-of-the-line gears look awesome! Hand over the remote so I can crash-test it down the stairs!",
         line_vi: "Chà, hàng cao cấp đỉnh nhất có khác! Đưa cái điều khiển đây để tớ cho nó chạy thử nghiệm lao xuống cầu thang xem bền không!"
-      },
-      {
-        name: "Suneo",
-        avatar: "suneo",
-        line_en: "NO! Top of the line does NOT mean Giant-proof! Please stay five meters away from my baby!",
-        line_vi: "ĐỪNG! Hàng cao cấp nhất KHÔNG đồng nghĩa với chống được bàn tay phá hoại của Chaien đâu! Tránh xa bảo bối của tớ năm mét đi mà!"
       }
     ],
     punchline_tip: {
@@ -523,13 +496,6 @@ export const UNIT_05_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "conan",
         line_en: "Good luck out there, Suneo. Kaito Kid is definitely a tough act to follow for any stage magician.",
         line_vi: "Chúc may mắn nhé Suneo. Với bất kỳ ảo thuật gia sân khấu nào thì Kaito Kid đúng là cái bóng quá lớn khó lòng nối tiếp rồi."
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Tell you what—take out a hidden snack instead of a coin, and at least Doraemon will clap!",
-        line_vi: "Hay thế này—cậu giấu sẵn miếng bánh ngọt thay vì đồng xu đi, ít ra Doraemon cũng sẽ vỗ tay nhiệt tình!"
       }
     ],
     punchline_tip: {

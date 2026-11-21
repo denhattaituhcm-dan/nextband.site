@@ -16,13 +16,6 @@ export const UNIT_10_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Hold on, Shizuka! Let me lend a hand with the top stack before your knees wobble!",
         line_vi: "Đợi chút Shizuka! Để tớ phụ một tay bê chồng trên cùng trước khi cậu mỏi rụng chân nhé!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Now THAT's genuine gentlemanly spirit! ...Wait, Nobita, watch the second stair step before you trip!",
-        line_vi: "ĐÓ mới đúng tinh thần quý ông lịch thiệp chứ! ...Khoan Nobita, nhìn bậc cầu thang thứ hai kẻo vấp bây giờ!"
       }
     ],
     punchline_tip: {
@@ -112,13 +105,6 @@ export const UNIT_10_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smile",
         line_en: "Everyone feels discouraged after losing a match. I'll go sit beside him and offer a sympathetic ear.",
         line_vi: "Ai thua trận mà chẳng nản lòng. Để tớ lại ngồi cạnh lắng nghe xem cậu ấy tâm sự gì cho nhẹ lòng nhé."
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "happy",
-        line_en: "Thanks for listening, Shizuka... Nobody ever lets me talk about strategy without expecting me to yell!",
-        line_vi: "Cảm ơn cậu đã chịu nghe tớ nói, Shizuka... Chẳng mấy khi có người chịu ngồi nghe tớ tâm sự chuyện chiến thuật mà không sợ tớ nổi nóng!"
       }
     ],
     punchline_tip: {
@@ -205,13 +191,6 @@ export const UNIT_10_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "shizuka",
         line_en: "Come on, Gian—it was clearly an accident! Stop giving Nobita a hard time over a two-millimeter mud spot!",
         line_vi: "Thôi nào Chaien—rõ ràng đó chỉ là tai nạn vô tình thôi mà! Đừng có làm khó trách móc Nobita mãi chỉ vì vết bùn hai mi-li-mét nữa!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Here—take my clean handkerchief and let's wipe it off so we can finally finish our match!",
-        line_vi: "Đây—cầm lấy khăn tay sạch của tớ lau phát là bóng loáng ngay, đá tiếp trận đấu đi nào!"
       }
     ],
     punchline_tip: {
@@ -296,13 +275,6 @@ export const UNIT_10_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "suneo",
         line_en: "Wait—my dad canceled the credit card order when he saw my English quiz score!!",
         line_vi: "Khoan—bố tớ hủy đơn thẻ tín dụng ngay lúc thấy điểm bài kiểm tra tiếng Anh của tớ mà!!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Good thing Doraemon brought the Super-Spring Shoelaces! Tie them on—we're jumping two meters higher than the other team!",
-        line_vi: "May mà Doraemon mang theo Dây Giày Siêu Lò Xo! Xỏ vào đi—đội mình sắp bật cao hơn đối thủ hai mét rồi!"
       }
     ],
     punchline_tip: {
@@ -422,13 +394,6 @@ export const UNIT_10_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "Nobita! Who told you to borrow my gadgets for cheap practical jokes on your classmates?!",
         line_vi: "Nobita! Ai cho phép cậu mượn bảo bối của tớ để bày trò chơi khăm bạn bè thế hả?!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Oops... sorry! Look on the bright side, Suneo—at least Shizuka laughed so hard she forgot you missed the bowling pin!",
-        line_vi: "Úi... xin lỗi nha! Nhìn mặt tích cực đi Suneo—ít ra Shizuka cười nghiêng ngả quên luôn chuyện cậu ném trượt bóng bowling rồi!"
       }
     ],
     punchline_tip: {

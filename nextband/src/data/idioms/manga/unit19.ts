@@ -17,13 +17,6 @@ export const UNIT_19_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "whistle",
         line_en: "It's already 9:05 p.m., Nobita—walking there on the off-chance that one spare comic issue sits behind the counter feels awfully slim!",
         line_vi: "Chín giờ năm phút tối rồi Nobita ơi—đi bộ qua đó cầu may phòng khi còn sót đúng một cuốn truyện dự phòng sau quầy thì mong manh lắm đấy!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "LOOK!! Lights inside are still glowing AND Uncle Tanaka just waved from behind the magazine rack!! Worth running every meter!",
-        line_vi: "NHÌN KÌA!! Đèn bên trong vẫn sáng LẠI CÒN thấy bác Tanaka vẫy tay sau giá tạp chí nữa!! Bõ công chạy từng mét luôn!"
       }
     ],
     punchline_tip: {
@@ -171,13 +164,6 @@ export const UNIT_19_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "suneo",
         line_en: "HOW?! Dad bought me a carbon-fiber tournament fishing rod and zero bites in two hours—that has to be pure beginner's luck!!",
         line_vi: "KIỂU GÌ VẬY?! Bố tớ mua cho cần câu sợi các-bon thi đấu chuyên nghiệp mà hai tiếng chưa cắn câu phát nào—đây đích thị chỉ là vận may người mới chơi thôi!!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Beginner's luck or not, Suneo—looks like Nobita's humble rice-ball bait beats shiny chrome lures today! Catch and release gently, Nobita!",
-        line_vi: "Vận may lính mới hay không thì hôm nay mồi cơm nắm mộc mạc của Nobita vẫn ăn đứt mồi giả bóng loáng rồi Suneo nhé! Nhẹ tay gỡ lưỡi thả cá về hồ thôi Nobita!"
       }
     ],
     punchline_tip: {
@@ -265,13 +251,6 @@ export const UNIT_19_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "conan",
         line_en: "Look at the digital gate clock—trains here depart on the exact second! Looks like you're completely out of luck until the 6:30 express.",
         line_vi: "Nhìn đồng hồ điện tử cửa ga kìa—tàu ở đây xuất phát chuẩn tới từng giây! Xem ra hôm nay anh hết may rồi, đành đợi chuyến tốc hành 6 giờ 30 thôi."
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Pssst—Doraemon already left twenty minutes ago with ALL of us! Want to share a warm red-bean snack while waiting on the bench, Suneo?",
-        line_vi: "Suỵt—Doraemon đi cùng tụi tớ từ hai mươi phút trước rồi! Trong lúc ngồi ghế chờ ở sân ga ăn chung bánh đậu đỏ ấm với tớ không Suneo?"
       }
     ],
     punchline_tip: {
@@ -359,13 +338,6 @@ export const UNIT_19_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "No kidding! After two solid weeks of steady practice, winning a ring-toss carnival prize for Shizuka is definitely in the cards tonight!",
         line_vi: "Đâu có đùa đâu! Sau trọn hai tuần luyện tập nghiêm túc, tối nay chuyện Nobita giật giải ném vòng lễ hội tặng Shizuka chắc chắn nằm gọn trong tầm tay rồi!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "You bet! Wait—can the carnival booth target stand still instead of wobbling like a dizzy duck?!",
-        line_vi: "Chắc chắn rồi! Khoan—quầy ném vòng lễ hội có giữ cái cọc đứng yên chứ không lắc lư như con vịt chóng mặt đúng không?!"
       }
     ],
     punchline_tip: {
@@ -485,13 +457,6 @@ export const UNIT_19_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "dekisugi",
         line_en: "Love the engineering enthusiasm, Suneo, yet orbiting Earth inside a soda-powered laundry basket is totally pie in the sky!",
         line_vi: "Rất thích tinh thần say mê chế tạo của cậu Suneo ạ, nhưng bay vào quỹ đạo Trái Đất bằng giỏ giặt chạy nước ngọt thì đúng là bánh vẽ phi thực tế quá!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Though if you actually want to picnic cleanly on Crater Nine without exploding soda bottles, climb inside my Real Space Boat!",
-        line_vi: "Cơ mà nếu muốn đi dã ngoại thật trên Hố Mặt Trăng Số Chín mà không làm nổ tung chai soda thì leo vào Thuyền Vũ Trụ Thật của tớ nè!"
       }
     ],
     punchline_tip: {

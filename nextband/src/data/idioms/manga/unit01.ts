@@ -17,13 +17,6 @@ export const UNIT_01_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "You're literally a ten-year-old fourth grader! Stop acting like a tired grandfather and do your homework!",
         line_vi: "Cậu mới có mười tuổi học lớp bốn thôi đấy! Đừng có làm bộ như ông cụ non thở ngắn than dài nữa, lo làm bài tập đi!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Ten is practically middle-aged in nap years! My joints need a two-hour afternoon rest!",
-        line_vi: "Mười tuổi tính theo tuổi ngủ trưa là trung niên rồi! Xương khớp của tớ cần được nghỉ ngơi hai tiếng buổi chiều!"
       }
     ],
     punchline_tip: {
@@ -113,13 +106,6 @@ export const UNIT_01_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "scratch",
         line_en: "It might be as old as the hills, but at least the battery lasts for three whole weeks without charging!",
         line_vi: "Nó có cổ lỗ sĩ thật đấy, nhưng ít ra pin của nó chơi được ba tuần liền không cần cắm sạc nhé!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Wait till Suneo sees my twenty-second-century Virtual Reality Capsule—his console will look like a stone tablet!",
-        line_vi: "Đợi đến lúc Suneo nhìn thấy Khoang Thực Tế Ảo thế kỷ 22 của tớ xem, máy của cậu ta sẽ trông chẳng khác gì phiến đá thời tiền sử!"
       }
     ],
     punchline_tip: {
@@ -209,13 +195,6 @@ export const UNIT_01_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smug",
         line_en: "In the prime of your life at age eleven? Well, just don't strike out on the very first pitch, Captain!",
         line_vi: "Mới mười một tuổi mà đã đỉnh cao cuộc đời rồi cơ à? Thế thì ráng đừng có bị đánh trượt ngay quả bóng đầu tiên đấy Đội trưởng!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "exhausted",
-        line_en: "Just please keep that prime energy restricted to baseball and away from the karaoke microphone!",
-        line_vi: "Làm ơn chỉ dùng cái phong độ đỉnh cao đó vào bóng chày thôi chứ đừng đụng vào chiếc micro hát karaoke nhé!"
       }
     ],
     punchline_tip: {
@@ -304,13 +283,6 @@ export const UNIT_01_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "If you want peaceful twilight years like that, you'd better start passing your fifth-grade exams first!",
         line_vi: "Nếu cậu muốn có những năm tháng xế chiều an nhàn như thế thì tốt nhất bây giờ lo thi đỗ lớp năm trước đi!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Can't I skip the exams and jump straight to the flower-watering retirement part?",
-        line_vi: "Tớ không thể bỏ qua đoạn thi cử rồi nhảy thẳng tới phần nghỉ hưu tưới hoa luôn được hả?"
       }
     ],
     punchline_tip: {
@@ -399,13 +371,6 @@ export const UNIT_01_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "scratch",
         line_en: "Reaching such a ripe old age with so many achievements is truly something to look up to!",
         line_vi: "Sống đến tuổi thượng thọ như thế với biết bao thành tựu đúng là điều đáng ngưỡng mộ thật đấy!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "His diary says his secret to longevity was walking ten thousand steps a day and never skipping homework!",
-        line_vi: "Nhật ký của cụ viết rằng bí quyết trường thọ là đi bộ mười ngàn bước mỗi ngày và không bao giờ trốn làm bài tập đấy!"
       }
     ],
     punchline_tip: {

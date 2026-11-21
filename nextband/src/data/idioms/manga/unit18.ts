@@ -17,13 +17,6 @@ export const UNIT_18_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Now THAT'S music to my robotic ears! Let's back up your fresh start by setting two alarm clocks across the room!",
         line_vi: "ĐÓ mới là âm nhạc êm tai nhất với chú mèo máy này chứ! Để tớ tiếp sức khởi đầu mới bằng cách đặt hẳn hai cái đồng hồ báo thức ở góc phòng bên kia!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Deal! Wait... can my fresh start politely postpone cleaning the hallway window until Saturday?!",
-        line_vi: "Chốt luôn! Khoan... khởi đầu mới có thể lịch sự dời lịch lau cửa sổ hành lang sang thứ Bảy được không?!"
       }
     ],
     punchline_tip: {
@@ -143,13 +136,6 @@ export const UNIT_18_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Believe it! From today onward, Nobita Nobi has officially turned over a new leaf—disciplined, helpful, unstoppable!",
         line_vi: "Tin đi nhé! Kể từ hôm nay trở đi, Nobi Nobita đã chính thức sang trang làm người mới—kỷ luật, chăm chỉ, không gì cản nổi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Bravo! Let's see how long this shiny new leaf lasts once evening superhero reruns come on TV at 7:00...",
-        line_vi: "Hoan hô! Để xem trang sách mới tinh tươm này trụ được bao lâu khi phim Siêu Nhân chiếu lại lúc 7 giờ tối nay..."
       }
     ],
     punchline_tip: {
@@ -269,13 +255,6 @@ export const UNIT_18_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "dekisugi",
         line_en: "Good point—let's get the ball rolling! Giant, help me measure these four legs cleanly while Nobita and Shizuka sand down the tabletop edges!",
         line_vi: "Đúng đấy—bắt tay khởi động vào việc ngay thôi! Chaien phụ mình đo bốn chân bàn nhé, còn Nobita với Shizuka chà nhám cạnh mặt bàn cho mịn!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "On it! Wait—where's the sandpaper?! Oh, Doraemon accidentally used two sheets to polish his smooth bell!",
-        line_vi: "Rõ rồi! Khoan—giấy nhám đâu mất tiêu?! À, Doraemon lỡ lấy hai tờ đem đánh bóng cái chuông cổ rồi!"
       }
     ],
     punchline_tip: {
@@ -396,13 +375,6 @@ export const UNIT_18_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "sad",
         line_en: "Yeah... As our final beach evening drew to a close, even Giant looked quietly nostalgic watching the lighthouse blink.",
         line_vi: "Ừ... Khi buổi tối cuối cùng trên bãi biển dần khép lại, ngay cả Chaien cũng trầm ngâm lặng lẽ ngắm ngọn hải đăng nhấp nháy kìa."
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Wait... nobody mention that tomorrow morning means unpacking sandy backpacks AND starting August homework sheets!",
-        line_vi: "Khoan... cấm ai nhắc rằng sáng mai đồng nghĩa với việc dọn ba lô đầy cát VÀ bắt tay làm tờ bài tập tháng Tám nhé!"
       }
     ],
     punchline_tip: {
@@ -522,13 +494,6 @@ export const UNIT_18_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smile",
         line_en: "Cheer up, Nobita! All good things must come to an end—besides, seeing everyone back in class together isn't half bad either!",
         line_vi: "Vui lên đi Nobita! Tiệc vui nào rồi cũng phải tàn thôi—vả lại quay lại lớp gặp đầy đủ bạn bè mỗi sáng cũng vui lắm chứ!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Plus the sooner fall term starts, the sooner autumn festival mooncakes and sweet roasted chestnuts arrive!",
-        line_vi: "Cộng thêm học kỳ thu càng sớm bắt đầu thì bánh trung thu lễ hội và hạt dẻ rang nóng hổi càng nhanh tới nhé!"
       }
     ],
     punchline_tip: {

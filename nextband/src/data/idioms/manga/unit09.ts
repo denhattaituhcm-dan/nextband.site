@@ -17,13 +17,6 @@ export const UNIT_09_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Mark this calendar! Seeing eye to eye on anything without a five-minute argument is a miracle for those two!",
         line_vi: "Đánh dấu ngày này vào lịch đi! Hai cậu ấy chịu nhìn về cùng một hướng đồng thuận hoàn toàn mà không cãi nhau năm phút đúng là kỳ tích!"
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "happy",
-        line_en: "Of course we see eye to eye—more evening light means more time for my midnight park concerts too!",
-        line_vi: "Đương nhiên là đồng lòng rồi—có thêm đèn tối nghĩa là có thêm giờ tổ chức liveshow công viên nửa đêm của tớ nữa mà!"
       }
     ],
     punchline_tip: {
@@ -111,13 +104,6 @@ export const UNIT_09_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Awesome! Wait till Gian climbs onto the stage after you and plays his solo trumpet!",
         line_vi: "Tuyệt cú mèo! Chờ tới lượt Chaien bước lên sân khấu sau cậu và thổi kèn đồng độc tấu nữa là hết sảy!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "sad",
-        line_en: "Shh! Nobody gave a thumbs-up to that trumpet solo—half the auditorium chairs are still rattling from last year!",
-        line_vi: "Suỵt! Chẳng ai dám giơ ngón cái cho màn kèn đồng đó đâu—một nửa ghế hội trường tới giờ vẫn còn rung bần bật từ năm ngoái kìa!"
       }
     ],
     punchline_tip: {
@@ -205,13 +191,6 @@ export const UNIT_09_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Wait—chilled matcha cream hits the spot after afternoon nap! Guess we'll just have to agree to disagree on dessert flavor!",
         line_vi: "Khoan—kem trà xanh mát lạnh ăn sau giấc ngủ trưa mới đỉnh chứ! Chắc tụi mình đành tôn trọng quan điểm riêng của nhau vụ vị bánh thôi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Fine—agreement reached! You eat the matcha one, and hand over those three red bean ones right now!",
-        line_vi: "Được—thống nhất hòa bình! Cậu ăn cái trà xanh đó đi, rồi đưa hết ba cái đậu đỏ kia qua đây ngay!"
       }
     ],
     punchline_tip: {
@@ -298,13 +277,6 @@ export const UNIT_09_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "scratch",
         line_en: "Haha, don't mind them! Those two fight like cats and dogs whenever there's only one limited-edition baseball card left!",
         line_vi: "Haha, kệ hai cậu ta đi! Cứ hễ còn sót đúng một tấm thẻ bóng chày hiếm là hai đứa đó lại cãi nhau như chó với mèo ngay!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Watch—in ten minutes they'll forget all about it and team up to challenge us to a baseball match!",
-        line_vi: "Chống mắt xem—mười phút nữa kiểu gì tụi nó cũng quên sạch rồi bắt tay rủ tụi mình ra thi đấu bóng chày lại ngay!"
       }
     ],
     punchline_tip: {
@@ -424,13 +396,6 @@ export const UNIT_09_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "dekisugi",
         line_en: "Yes! We managed to hammer out a deal: soccer practice Mondays through Fridays, and quiet comic-book club every Saturday morning!",
         line_vi: "Rồi! Bọn mình đã đàm phán xong xuôi một thỏa thuận công bằng: tập bóng từ thứ Hai đến thứ Sáu, còn sáng thứ Bảy dành cho câu lạc bộ truyện tranh!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "exhausted",
-        line_en: "Just one tiny detail left—does Gian's Sunday singing show count as soccer practice or a noise emergency?!",
-        line_vi: "Còn đúng một chi tiết nhỏ—buổi hát Chủ Nhật của Chaien tính vào giờ tập thể thao hay tình trạng khẩn cấp tiếng ồn thế?!"
       }
     ],
     punchline_tip: {

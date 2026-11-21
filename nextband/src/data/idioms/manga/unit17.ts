@@ -17,13 +17,6 @@ export const UNIT_17_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smug",
         line_en: "Hate to burst your bubble, Nobita, but 150 yen compared to the 50,000-yen sticker price is literally a drop in the ocean!",
         line_vi: "Rất tiếc phải dội gáo nước lạnh nhé Nobita, nhưng 150 yên so với giá niêm yết 50.000 yên thì chỉ như hạt muối bỏ bể thôi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Better start mowing weeds and washing dishes cleanly—wait, how about starting with a tiny 200-yen paper model rocket first?!",
-        line_vi: "Tốt nhất đi nhổ cỏ với rửa bát kiếm thêm tiền thưởng từ mẹ đi—khoan, hay mình bắt đầu từ mô hình tên lửa giấy 200 yên trước?!"
       }
     ],
     punchline_tip: {
@@ -145,13 +138,6 @@ export const UNIT_17_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "Nice try! You come up with a thousand-and-one creative excuses every time homework shows up—finish Page Twelve first!",
         line_vi: "Khéo miệng ghê! Cứ hễ thấy bài tập về nhà xuất hiện là cậu bịa ra hàng nghìn hàng vạn lý do sáng tạo—làm xong Trang Mười Hai trước đã!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "exhausted",
-        line_en: "Fine... Excuse 1,002: my yellow pencil tip just snapped neatly cleanly off! Sharpening takes five seconds!",
-        line_vi: "Thôi được... Lý do thứ 1.002: đầu bút chì vàng vừa gãy gọn rồi! Gọt bút mất đúng năm giây thôi!"
       }
     ],
     punchline_tip: {
@@ -271,13 +257,6 @@ export const UNIT_17_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Aha!! Keep flipping—LOOK AT PAGE NINETEEN! A giant 65 right there in red ink from last autumn!",
         line_vi: "À HA!! Lật tiếp đi—NHÌN TRANG MƯỜI CHÍN KÌA! Con số 65 mực đỏ chói lọi từ mùa thu năm ngoái đây này!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "whistle",
-        line_en: "Wait... holding it sideways? Nice try, buddy—upside down 59 wasn't 65... Okay, wait, 59 still beats zero by fifty-nine points!",
-        line_vi: "Khoan... xoay ngang tờ giấy hả? Khôn ghê ha bạn thân—số 59 lộn ngược chứ đâu phải 65... Thôi được rồi, 59 điểm vẫn ăn đứt số không rồi!"
       }
     ],
     punchline_tip: {
@@ -396,13 +375,6 @@ export const UNIT_17_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "conan",
         line_en: "Whoa, brother! Your left skateboard wheel missed that cabbage stand by literally a hair's breadth!!",
         line_vi: "Trời ơi anh hai! Bánh ván trượt bên trái của anh sượt qua quầy bắp cải trong đường tơ kẽ tóc đúng nghĩa đen luôn!!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "angry",
-        line_en: "Hand back the Turbo Hoverboard immediately!! Next time learn steering cleanly on flat grass before riding downhill!",
-        line_vi: "Trả ngay Ván Trượt Siêu Tốc đây!! Lần sau học bẻ lái đàng hoàng trên bãi cỏ phẳng trước khi lao xuống dốc nha!"
       }
     ],
     punchline_tip: {
@@ -523,13 +495,6 @@ export const UNIT_17_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Think my tiny red bat-kite can compete alongside a silk phoenix kite?!",
         line_vi: "Cậu nghĩ con diều dơi đỏ tí hon của tớ có đọ lại được với diều phượng hoàng lụa kia không?!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Even better—tie this Gentle Breeze Fan beneath its tail and your little kite dances loops around every pro flyer!",
-        line_vi: "Dư sức—gắn Quạt Gió Dịu Dàng này dưới đuôi diều đi rồi xem con diều nhỏ của cậu nhào lộn quanh mọi cao thủ!"
       }
     ],
     punchline_tip: {

@@ -16,13 +16,6 @@ export const UNIT_16_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "whistle",
         line_en: "Uh-oh! Looks like Gian has a serious ax to grind with you about telling the whole class he sang off-key yesterday!",
         line_vi: "Ối! Có vẻ Chaien đang giữ mối ấm ức thù dai với cậu vụ hôm qua cậu đi kể khắp lớp chuyện cậu ta hát lệch tông rồi!"
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "angry",
-        line_en: "Honekawa!! Step outside right now so we can discuss your music criticism!",
-        line_vi: "Honekawa!! Bước ra sân ngay lập tức để tụi mình bàn luận lại bài phê bình âm nhạc của cậu!"
       }
     ],
     punchline_tip: {
@@ -110,13 +103,6 @@ export const UNIT_16_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "conan",
         line_en: "Picking a joint anniversary surprise without accidentally spoiling it or picking the wrong color is a total minefield, Nobita!",
         line_vi: "Chọn quà bất ngờ chung cho hai bác mà vừa không lộ bí mật vừa không chọn nhầm màu đúng là một bãi mìn đầy rủi ro đấy anh Nobita!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Simple fix: let's bake handmade family coupons for Sunday chores plus two hot green-tea mug sets—zero minefields, 100% tears of joy!",
-        line_vi: "Cách gỡ dễ ợt: tụi mình tự làm phiếu quà tặng dọn nhà Chủ Nhật kèm bộ hai cốc trà xanh giữ nhiệt—né sạch bãi mìn, 100% cảm động!"
       }
     ],
     punchline_tip: {
@@ -268,13 +254,6 @@ export const UNIT_16_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "sad",
         line_en: "Keeping you focused past five minutes without sneaking a nap is always an uphill battle—drink some cold peppermint water and sit up straight!",
         line_vi: "Giữ cậu tập trung quá năm phút mà không gục xuống ngủ luôn là một cuộc chiến leo dốc gian nan tột cùng—uống ngụm nước bạc hà mát rồi ngồi thẳng lưng lên coi!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Wait—if I climb this uphill battle cleanly to Problem Ten, do I earn ONE strawberry Dorayaki snack break?!",
-        line_vi: "Khoan—nếu tớ vượt qua ngọn núi gian nan tới gọn Bài Số Mười, tớ có được thưởng ĐÚNG MỘT chiếc bánh rán dâu giờ giải lao không?!"
       }
     ],
     punchline_tip: {
@@ -361,13 +340,6 @@ export const UNIT_16_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "conan",
         line_en: "Easy! Notice the two soccer bags? Sixth graders use red-striped size-five balls, ours are blue size-four—you guys simply grabbed swapped mesh sacks!",
         line_vi: "Bình tĩnh nào! Nhìn hai túi bóng kìa? Khối sáu dùng bóng cỡ năm sọc đỏ, tụi mình dùng cỡ bốn sọc xanh—hai bên cầm nhầm bao lưới của nhau thôi!"
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "happy",
-        line_en: "Oh!! Haha, sorry upperclassman! Swap bags cleanly and let's settle any rivalry with a friendly shootout match instead!",
-        line_vi: "À ha!! Haha xin lỗi đàn anh nha! Đổi túi lại gọn gàng rồi giải quyết mọi mâu thuẫn bằng trận sút luân lưu giao hữu nhé!"
       }
     ],
     punchline_tip: {
@@ -455,13 +427,6 @@ export const UNIT_16_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "wink",
         line_en: "Haha! Looks like you seriously dodged a bullet by failing Suneo's audition and playing 'Quiet Sleeping Cloud' backstage instead!",
         line_vi: "Haha! Xem ra cậu vừa thoát nạn trong gang tấc khi trượt buổi thử vai của Suneo để đóng vai 'Đám Mây Ngủ Yên' êm ái đấy nhé!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Haha yeah!! Lying on fluffy cotton wool props was practically paid afternoon napping!",
-        line_vi: "Haha chuẩn luôn!! Nằm gọn trên đống bông gòn đạo cụ chẳng khác nào được trả công ngủ trưa!"
       }
     ],
     punchline_tip: {

@@ -17,13 +17,6 @@ export const UNIT_08_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "sad",
         line_en: "Yikes... Look at those bent handlebars—it's squashed as flat as a pancake!",
         line_vi: "Ối trời... Nhìn cái ghi-đông bị đè bẹp dúm kia kìa—nó phẳng lì như chiếc bánh kếp luôn rồi!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Quick! Pull out the Inflating Bicycle Pump before Suneo notices his scooter turned into aluminum foil!",
-        line_vi: "Nhanh lên! Lôi Bơm Thổi Phồng Xe Đạp ra trước khi Suneo phát hiện chiếc xe biến thành tờ giấy bạc!"
       }
     ],
     punchline_tip: {
@@ -111,13 +104,6 @@ export const UNIT_08_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "No way! Sensei warned us: if I spoon-feed you every calculation, your brain will never learn to solve a puzzle alone!",
         line_vi: "Không đời nào! Thầy giáo dặn rồi: nếu tớ cứ mớm tận mồm từng phép tính thì não cậu chẳng bao giờ tự giải nổi một bài toán đâu!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Fine! Then lend me a fork instead and give me just ONE hint for Question Three!",
-        line_vi: "Được rồi! Vậy đổi sang cho mượn cái nĩa đi—gợi ý cho tớ ĐÚNG một bước đầu câu Ba thôi!"
       }
     ],
     punchline_tip: {
@@ -206,13 +192,6 @@ export const UNIT_08_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "Forget it—he's turned into a complete couch potato all weekend! Four straight hours of cartoons and potato chips!",
         line_vi: "Thôi khỏi chờ—cậu ta biến thành củ khoai tây mọc rễ trên ghế sô-pha suốt cuối tuần rồi! Bốn tiếng liền dán mắt vào hoạt hình với bim bim!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "exhausted",
-        line_en: "Wait... did someone say kite flying?! Hold my chips—nobody outflies me if Shizuka is cheering!",
-        line_vi: "Khoan... ai vừa nhắc thả diều thế?! Cầm giùm bịch snack—nếu có Shizuka cổ vũ thì tớ không thua ai đâu nhé!"
       }
     ],
     punchline_tip: {
@@ -302,13 +281,6 @@ export const UNIT_08_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "Forget that gig, Nobita! Giant pays peanuts while treating everyone like full-time servants!",
         line_vi: "Nghỉ việc đó ngay đi Nobita! Chaien trả công bèo bọt rẻ mạt mà sai người ta như người hầu toàn thời gian ấy!"
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "happy",
-        line_en: "Hey! Plus you got free admission to hear me hum while pitching—that's worth at least a million yen!",
-        line_vi: "Này! Cộng thêm vé miễn phí nghe tớ ngâm nga hát lúc ném bóng nữa—chỗ đó đáng giá ít nhất một triệu yên đấy nhé!"
       }
     ],
     punchline_tip: {
@@ -397,13 +369,6 @@ export const UNIT_08_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Warm and toasty feet, peeled sweet tangerines, and zero errands outside—winter evenings don't get better than this!",
         line_vi: "Chân ấm sực, quýt ngọt lột sẵn, lại chẳng phải ra ngoài gió lạnh—buổi tối mùa đông còn gì tuyệt vời hơn thế nữa!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "exhausted",
-        line_en: "Wait... Mom just called from the kitchen asking who forgot to shovel snow off the front steps...",
-        line_vi: "Khoan... mẹ vừa gọi vọng từ bếp hỏi ai quên xúc tuyết ngoài bậc thềm cửa chính kìa..."
       }
     ],
     punchline_tip: {

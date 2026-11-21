@@ -17,13 +17,6 @@ export const UNIT_15_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "I've got my heart set on that brass star-watching telescope downtown! Shizuka and I are going to spot Saturn's rings cleanly!",
         line_vi: "Tớ quyết tâm dồn trọn trái tim rước bằng được chiếc kính thiên văn bằng đồng ở trung tâm phố! Tớ với Shizuka sẽ ngắm rõ vành đai Sao Thổ luôn!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Aww, look at that dedication! Fine—wash my spare pocket neatly once and I'll pitch in three shiny 500-yen coins!",
-        line_vi: "Ôi, nhìn quyết tâm đó kìa! Thôi được—giặt sạch cái túi dự phòng cho tớ một lần đi rồi tớ góp phụ cậu ba đồng 500 yên sáng loáng!"
       }
     ],
     punchline_tip: {
@@ -172,13 +165,6 @@ export const UNIT_15_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Whoa, eighty points all on your own?! You truly deserve a huge pat on the back—let's celebrate with extra custard pancakes!",
         line_vi: "Chà, tự lực đạt tám mươi điểm luôn hả?! Cậu thực sự xứng đáng nhận tràng pháo tay khen ngợi nồng nhiệt—hôm nay khao luôn bánh rán nhân kem trứng đặc biệt nhé!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Haha, easy on the shoulder pats—wait till Mom sees this tonight, she might double my weekend comic budget!",
-        line_vi: "Haha, vỗ lưng nhẹ tay thôi—chờ tối nay mẹ thấy tờ bài thi này, khéo mẹ tăng gấp đôi ngân sách truyện tranh cuối tuần luôn ấy chứ!"
       }
     ],
     punchline_tip: {
@@ -267,13 +253,6 @@ export const UNIT_15_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Let's not follow a stiff timetable today—just open the door near an interesting seaside cafe and play it by ear from there!",
         line_vi: "Hôm nay khỏi lập thời khóa biểu cứng nhắc đi—cứ mở cửa ra ngay quán cà phê ven biển nào dễ thương rồi tới đâu hay tới đó tùy cơ ứng biến!"
-      },
-      {
-        name: "Shizuka",
-        avatar: "shizuka",
-        emotion: "smile",
-        line_en: "Ooh, spontaneous coastal adventures sound lovely! Wait—did anyone remember sunblock and spare socks?",
-        line_vi: "Ồ, chuyến phiêu lưu ngẫu hứng ven biển nghe thích quá đi! Khoan—có ai nhớ mang kem chống nắng với tất dự phòng chưa?"
       }
     ],
     punchline_tip: {
@@ -361,13 +340,6 @@ export const UNIT_15_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "conan",
         line_en: "Smart sleight-of-hand diversion—he popped magnesium smoke capsules right when you glanced away, then clipped onto the exterior maintenance wire!",
         line_vi: "Chiêu đánh lạc hướng cao tay đấy—hắn bóp viên khói ma-giê đúng tích tắc mắt hướng chỗ khác rồi móc dây cáp bảo trì bên ngoài tuột xuống rồi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Even my Tracking Radar needed two seconds to lock back on—that phantom thief moves way too smoothly!",
-        line_vi: "Ngay cả Ra-đa Truy Vết của tớ còn mất hai giây mới dò lại tín hiệu—tên siêu trộm ảo thuật đó hành động mượt mà đáng gờm thật!"
       }
     ],
     punchline_tip: {
@@ -456,13 +428,6 @@ export const UNIT_15_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "You've got this completely memorized, Shizuka! Break a leg out there—we're clapping loudest from the front row!",
         line_vi: "Cậu thuộc nhuần nhuyễn từng lời thoại hết rồi Shizuka ơi! Chúc biểu diễn đại thành công nhé—tụi tớ ngồi hàng đầu vỗ tay to nhất hội trường luôn!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Wait—don't look so worried, Nobita literally meant 'Good luck!'—though please watch out for that moat step anyway!",
-        line_vi: "Khoan—đừng hoảng hốt hiểu nhầm câu chúc 'gãy chân' theo nghĩa đen nhé, Nobita chúc 'Chúc may mắn!' đấy—cơ mà bước qua mép hào cẩn thận vẫn hơn nha!"
       }
     ],
     punchline_tip: {

@@ -17,13 +17,6 @@ export const UNIT_03_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "whistle",
         line_en: "He really does! Same round glasses and clumsy smile... Let's just hope he was much better at math than you!",
         line_vi: "Giống thật đấy! Cũng cặp kính tròn xoe với nụ cười ngố tàu... Chỉ mong cụ giỏi toán hơn cậu thôi!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Look at the caption underneath: 'Little Nobiru sleeping through arithmetic class'... Yep, definitely my ancestor!",
-        line_vi: "Nhìn dòng chú thích bên dưới kìa: 'Cậu bé Nobiru ngủ gật trong giờ số học'... Chuẩn cụ tổ của tớ không trượt đi đâu được!"
       }
     ],
     punchline_tip: {
@@ -113,13 +106,6 @@ export const UNIT_03_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "exhausted",
         line_en: "I know... I feel so dizzy. Please pull out a gadget that feeds me delicious meals instantly!",
         line_vi: "Tớ biết rồi... Hoa hết cả mắt rồi đây. Mau lấy bảo bối nào cho tớ ăn no nê tức thì đi mà!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "No gadgets needed—Mom just made a huge pot of curry rice downstairs, so march straight to the dining table!",
-        line_vi: "Chẳng cần bảo bối nào hết—mẹ vừa nấu một nồi cơm cà ri to tướng dưới nhà kìa, đi thẳng xuống bàn ăn mau!"
       }
     ],
     punchline_tip: {
@@ -240,13 +226,6 @@ export const UNIT_03_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "DID YOU JUST SAY RAT?! Don't mention that word in front of me! Here's your towel, now go take a hot bath!",
         line_vi: "CẬU VỪA NÓI CHUỘT ĐẤY HẢ?! Cấm nhắc từ đó trước mặt tớ! Khăn của cậu đây, mau đi tắm nước nóng ngay đi!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Achoo! Only Doraemon would panic over an idiom while I'm freezing to death!",
-        line_vi: "Hắt xì! Đúng là chỉ có Doraemon mới nhảy dựng lên vì một câu thành ngữ trong khi tớ đang lạnh cóng!"
       }
     ],
     punchline_tip: {
@@ -335,13 +314,6 @@ export const UNIT_03_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "conan",
         line_en: "You might look the part on the outside, Nobita, but solving a real case requires deductive logic, not just costume flair!",
         line_vi: "Trang phục bên ngoài thì có vẻ ra dáng đấy Nobita, nhưng phá án thực tế đòi hỏi tư duy suy luận chứ không phải chỉ ăn diện điệu đà!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Start by deducing where you lost your left shoe five minutes ago, Detective Nobita!",
-        line_vi: "Hãy bắt đầu bằng việc suy luận xem cậu làm rơi chiếc giày bên trái ở đâu năm phút trước đi đã, Thám tử Nobita!"
       }
     ],
     punchline_tip: {
@@ -463,13 +435,6 @@ export const UNIT_03_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "scratch",
         line_en: "Having blue blood doesn't excuse you from having to do homework like the rest of us, Suneo!",
         line_vi: "Dù cậu có dòng máu quý tộc hoàng gia đi nữa thì mai cậu vẫn phải nộp bài tập về nhà như tụi này thôi Suneo ơi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "whistle",
-        line_en: "And when we visited the Edo period in the Time Machine, your ancestor was actually the Shogun's horse stable sweeper!",
-        line_vi: "Mà hồi tụi tớ đi Cỗ máy Thời gian về thời Edo, cụ tổ của cậu thực ra là người quét dọn chuồng ngựa cho Tướng quân cơ mà!"
       }
     ],
     punchline_tip: {

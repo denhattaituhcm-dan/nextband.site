@@ -17,13 +17,6 @@ export const UNIT_04_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smile",
         line_en: "Whoa, that drawing is wild! You really have a vivid imagination when it comes to daydreaming, Nobita.",
         line_vi: "Ồ, bức vẽ bay bổng ghê! Riêng khoản mơ mộng thì cậu đúng là có trí tưởng tượng phong phú thật đấy Nobita."
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "angry",
-        line_en: "Too bad that vivid imagination stops working the second you open your actual math workbook!",
-        line_vi: "Tiếc là trí tưởng tượng phong phú đó lại tắt ngấm ngay khoảnh khắc cậu mở quyển bài tập toán thật ra!"
       }
     ],
     punchline_tip: {
@@ -111,13 +104,6 @@ export const UNIT_04_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "dekisugi",
         line_en: "Always! My dad is super down to earth—he says awards don't change how we treat our neighbors.",
         line_vi: "Lúc nào cũng vậy! Bố mình cực kỳ giản dị thực tế—bố bảo giải thưởng chẳng thể thay đổi cách mình đối xử với hàng xóm."
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "That's true class! Meanwhile, Suneo bought a megaphone just to announce he got new sneakers!",
-        line_vi: "Đó mới là đẳng cấp thực sự! Trong khi đó Suneo phải mua hẳn cái loa phóng thanh chỉ để khoe đôi giày mới!"
       }
     ],
     punchline_tip: {
@@ -206,13 +192,6 @@ export const UNIT_04_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Wait until you hear Giant's singing voice swapped with a baby duck's quack!",
         line_vi: "Chờ nghe giọng hát của Chaien bị đổi thành tiếng vịt con kêu cạp cạp nữa mới đỉnh!"
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "angry",
-        line_en: "Quack?! Did my heroic voice just sound like a rubber bath toy?! Give me that flashlight!",
-        line_vi: "Cạp cạp á?! Giọng ca hào hùng của tớ vừa biến thành vịt cao su bóp kêu chít chít đấy hả?! Đưa cái đèn pin đó đây!"
       }
     ],
     punchline_tip: {
@@ -299,13 +278,6 @@ export const UNIT_04_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "wink",
         line_en: "Don't tell me tough-guy Gian has secretly turned into a fuddy-duddy who's terrified of new gadgets!",
         line_vi: "Đừng nói đại ca Chaien nhà ta giờ lại biến thành ông cụ cổ hủ bảo thủ sợ đồ công nghệ mới nhé!"
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "angry",
-        line_en: "Who's a fuddy-duddy?! Hand me that helmet right now—just hold my hand if there are virtual spiders!",
-        line_vi: "Ai bảo thủ cổ hủ hả?! Đưa cái mũ đó đây ngay—nhưng mà nhớ nắm tay tớ nếu trong đó có nhện ảo đấy nhé!"
       }
     ],
     punchline_tip: {
@@ -425,13 +397,6 @@ export const UNIT_04_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "WHOA! Did you just hit ten tin cans blindfolded?! Nobita is a total dark horse when he holds a cork gun!",
         line_vi: "TRỜI ĐẤT! Cậu vừa bịt mắt bắn rụng mười lon thiếc liên tiếp luôn hả?! Nobita đúng là con ngựa ô bí ẩn mỗi khi cầm súng nút bần!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Hehe! Napping, cat's cradle, and sharpshooting—my three undefeated secret superpowers!",
-        line_vi: "Hehe! Ngủ trưa, chơi đan dây và thiện xạ—ba siêu năng lực bí mật bất bại của tớ đấy!"
       }
     ],
     punchline_tip: {

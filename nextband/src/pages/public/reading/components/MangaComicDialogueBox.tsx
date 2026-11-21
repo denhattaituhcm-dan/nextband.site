@@ -24,35 +24,235 @@ const KNOWN_EMOTION_AVATARS = new Set([
   "suneo_smug",
 ]);
 
+const VERB_GROUPS: ReadonlyArray<ReadonlySet<string>> = [
+  new Set(["be", "am", "is", "are", "was", "were", "been", "being", "it's", "that's", "he's", "she's", "you're", "we're", "they're", "i'm"]),
+  new Set(["have", "has", "had", "having", "got", "get", "gets", "getting", "with", "need", "needs"]),
+  new Set(["do", "does", "did", "done", "doing"]),
+  new Set(["don't", "doesn't", "didn't", "not", "won't", "wouldn't", "can't", "couldn't", "never", "aren't", "isn't", "wasn't", "weren't"]),
+  new Set(["get", "gets", "got", "gotten", "getting"]),
+  new Set(["go", "goes", "went", "gone", "going"]),
+  new Set(["come", "comes", "came", "coming"]),
+  new Set(["make", "makes", "made", "making"]),
+  new Set(["take", "takes", "took", "taken", "taking"]),
+  new Set(["give", "gives", "gave", "given", "giving"]),
+  new Set(["lose", "loses", "lost", "losing"]),
+  new Set(["run", "runs", "ran", "running"]),
+  new Set(["bear", "bears", "bore", "borne", "bearing"]),
+  new Set(["fall", "falls", "fell", "fallen", "falling"]),
+  new Set(["feel", "feels", "felt", "feeling"]),
+  new Set(["leave", "leaves", "left", "leaving"]),
+  new Set(["put", "puts", "putting"]),
+  new Set(["set", "sets", "setting"]),
+  new Set(["bite", "bites", "bit", "bitten", "biting"]),
+  new Set(["wear", "wears", "wore", "worn", "wearing"]),
+  new Set(["let", "lets", "letting"]),
+  new Set(["send", "sends", "sent", "sending"]),
+  new Set(["shake", "shakes", "shook", "shaken", "shaking"]),
+  new Set(["slip", "slips", "slipped", "slipping"]),
+  new Set(["stir", "stirs", "stirred", "stirring"]),
+  new Set(["stick", "sticks", "stuck", "sticking"]),
+  new Set(["drop", "drops", "dropped", "dropping"]),
+  new Set(["twist", "twists", "twisted", "twisting"]),
+  new Set(["open", "opens", "opened", "opening"]),
+  new Set(["reduce", "reduces", "reduced", "reducing"]),
+  new Set(["kick", "kicks", "kicked", "kicking"]),
+  new Set(["want", "wants", "wanted", "wanting"]),
+  new Set(["die", "dies", "died", "dying"]),
+  new Set(["bury", "buries", "buried", "burying"]),
+  new Set(["jump", "jumps", "jumped", "jumping"]),
+  new Set(["grin", "grins", "grinned", "grinning"]),
+  new Set(["poke", "pokes", "poked", "poking"]),
+  new Set(["pull", "pulls", "pulled", "pulling"]),
+  new Set(["treat", "treats", "treated", "treating"]),
+  new Set(["offer", "offers", "offered", "offering"]),
+  new Set(["butter", "butters", "buttered", "buttering"]),
+  new Set(["feed", "feeds", "fed", "feeding"]),
+  new Set(["spoon-feed", "spoon-feeds", "spoon-fed", "spoon-feeding"]),
+  new Set(["badger", "badgers", "badgered", "badgering"]),
+  new Set(["act", "acts", "acted", "acting", "behave", "behaves", "behaved", "behaving"]),
+  new Set(["could", "can", "will", "would"]),
+  new Set(["keep", "keeps", "kept", "keeping"]),
+  new Set(["break", "breaks", "broke", "broken", "breaking"]),
+  new Set(["jog", "jogs", "jogged", "jogging"]),
+  new Set(["stand", "stands", "stood", "standing"]),
+  new Set(["look", "looks", "looked", "looking"]),
+  new Set(["bring", "brings", "brought", "bringing"]),
+  new Set(["start", "starts", "started", "starting"]),
+  new Set(["hit", "hits", "hitting"]),
+  new Set(["drift", "drifts", "drifted", "drifting"]),
+  new Set(["strike", "strikes", "struck", "striking"]),
+  new Set(["improve", "improves", "improved", "improving"]),
+  new Set(["chicken", "chickens", "chickened", "chickening"]),
+  new Set(["know", "knows", "knew", "known", "knowing", "learn", "learns", "learned"]),
+  new Set(["reach", "reaches", "reached", "reaching"]),
+  new Set(["drive", "drives", "drove", "driven", "driving"]),
+  new Set(["weep", "weeps", "wept", "weeping"]),
+  new Set(["rack", "racks", "racked", "racking"]),
+  new Set(["cross", "crosses", "crossed", "crossing"]),
+  new Set(["stab", "stabs", "stabbed", "stabbing"]),
+  new Set(["catch", "catches", "caught", "catching"]),
+  new Set(["agree", "agrees", "agreed", "agreeing"]),
+  new Set(["fight", "fights", "fought", "fighting"]),
+  new Set(["hold", "holds", "held", "holding"]),
+  new Set(["meet", "meets", "met", "meeting"]),
+  new Set(["fling", "flings", "flung", "flinging"]),
+  new Set(["on", "off"]),
+  new Set(["that", "this"]),
+  new Set(["a", "an", "the", "my", "your", "his", "her", "our", "their"]),
+  new Set(["name", "title"]),
+];
+
+const PRONOUN_TOKENS = new Set([
+  "someone's",
+  "one's",
+  "my",
+  "your",
+  "his",
+  "her",
+  "its",
+  "our",
+  "their",
+  "someone",
+  "me",
+  "you",
+  "him",
+  "us",
+  "them",
+  "it",
+  "i",
+  "he",
+  "she",
+  "we",
+  "they",
+  "you've",
+  "i've",
+  "we've",
+  "they've",
+  "he's",
+  "she's",
+  "you'd",
+  "she'd",
+  "he'd",
+  "i'd",
+  "they'd",
+  "myself",
+  "yourself",
+  "himself",
+  "herself",
+  "ourselves",
+  "themselves",
+  "oneself",
+]);
+
 function escapeRegExp(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function buildIdiomRegex(targetIdiom: string, flags: string): RegExp | null {
+function tokenToPattern(tok: string): { pat: string; isPronoun: boolean } {
+  const low = tok.toLowerCase();
+  if (PRONOUN_TOKENS.has(low)) {
+    return { pat: "(?:[A-Za-z']+(?:\\s+[A-Za-z']+){0,2})", isPronoun: true };
+  }
+  for (const grp of VERB_GROUPS) {
+    if (grp.has(low)) {
+      const alts = Array.from(grp)
+        .sort((a, b) => b.length - a.length)
+        .map((w) => escapeRegExp(w))
+        .join("|");
+      return { pat: `(?:${alts})`, isPronoun: false };
+    }
+  }
+  const esc = escapeRegExp(tok).replace(/-/g, "[\\s-]");
+  if (low.endsWith("s") && low.length > 3) {
+    const base = escapeRegExp(tok.slice(0, -1)).replace(/-/g, "[\\s-]");
+    return { pat: `(?:${esc}|${base})`, isPronoun: false };
+  }
+  return { pat: `(?:${esc}(?:s|es|ed|ing)?)`, isPronoun: false };
+}
+
+export function buildIdiomRegex(targetIdiom: string, flags: string): RegExp | null {
   if (!targetIdiom || !targetIdiom.trim()) return null;
   try {
     let cleaned = targetIdiom
       .trim()
-      // Drop trailing optional preposition hints like "(to)", "(with)", "(of)"
+      .replace(/[!?.]+$/, "")
+      .trim()
       .replace(/\s*\((?:to|with|of|on|in|for|at|from|about|by)\)\s*$/i, "")
-      // Drop leading optional words like "(like) " so core phrase highlights reliably
+      .replace(/\s+on\s+it$/i, "")
+      .replace(/^(?:it's|it)\s+/i, "")
+      .replace(/^almost\s+/i, "")
       .replace(/^\([^)]+\)\s+/i, "")
+      .replace(/\s*\(someone\)\s*$/i, "")
+      .replace(/\s+someone$/i, "")
       .replace(/[()]/g, "")
       .trim();
 
     if (!cleaned) return null;
 
-    let pattern = escapeRegExp(cleaned);
-    // Support possessive / pronoun inflections (e.g. one's -> his, someone's -> Nobita's)
-    pattern = pattern
-      .replace(/\b(?:someone|one)'s\b/gi, "(?:\\b[A-Za-z]+'?s|my|your|his|her|its|our|their)")
-      .replace(/\bsomeone\b/gi, "(?:\\b[A-Za-z]+|me|you|him|her|us|them)")
-      .replace(/\s+/g, "\\s+");
+    let tokens = cleaned.split(/\s+/);
+    let leadingPrefix = "";
 
-    return new RegExp(`(${pattern})`, flags);
+    if (tokens.length >= 2 && (tokens[0].toLowerCase() === "a" || tokens[0].toLowerCase() === "an")) {
+      tokens = tokens.slice(1);
+      leadingPrefix = "(?:(?:a|an|the|my|your|his|her|our|their)\\s+(?:[A-Za-z-]+\\s+)?)?";
+    } else if (tokens.length >= 2 && tokens[0].toLowerCase() === "not") {
+      tokens = tokens.slice(1);
+      leadingPrefix =
+        "(?:(?:do|does|did|will|would|can|could|are|is|was|were)n't(?:\\s+(?:really|going\\s+to))?|(?:do|does|did|will|would|can|could|is|are|was|were|he's|she's|it's|they're|we're|you're|i'm)?\\s*not(?:\\s+going\\s+to)?|never|won't|can't)\\s+";
+    } else if (
+      tokens.length >= 3 &&
+      ["behaved", "took", "had", "have"].includes(tokens[0].toLowerCase())
+    ) {
+      const firstPat = tokenToPattern(tokens[0]).pat;
+      tokens = tokens.slice(1);
+      leadingPrefix = `(?:${firstPat}\\s+)?`;
+    }
+
+    const joiner =
+      "[\\s-]+(?:(?:to|that|of|completely|totally|really|just|right|a\\s+bit|quite|very|so|too|all|whole|major|serious|true|truly|longtime|giant|real|total|complete|huge|massive|fond|warm|joyful|wonderful|enthusiastic|fair|overtime|exact|even|more|finally|happy|childhood|pottery|service|workers|friends|him|her|me|us|them|half|the|theater|audience)[\\s-]+)*";
+
+    const parts: string[] = [];
+    tokens.forEach((t, idx) => {
+      const { pat, isPronoun } = tokenToPattern(t);
+      if (idx === 0) {
+        parts.push(pat);
+      } else if (isPronoun) {
+        parts.push(`(?:${joiner}${pat})?`);
+      } else {
+        parts.push(`${joiner}${pat}`);
+      }
+    });
+
+    const fullPat = leadingPrefix + parts.join("");
+    return new RegExp(`\\b(${fullPat})\\b`, flags);
   } catch {
     return null;
   }
+}
+
+export function renderHighlightedIdiomText(
+  text: string,
+  targetIdiom: string,
+  highlightClassName = "px-1.5 py-0.5 rounded-md bg-amber-300 text-slate-950 font-black underline decoration-amber-600 decoration-2 shadow-xs"
+): React.ReactNode {
+  if (!text) return text;
+  const regex = buildIdiomRegex(targetIdiom, "gi");
+  if (!regex) return text;
+  const parts = text.split(regex);
+  if (parts.length <= 1) return text;
+  return (
+    <>
+      {parts.map((part, i) =>
+        part && i % 2 === 1 ? (
+          <span key={i} className={highlightClassName}>
+            {part}
+          </span>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
 }
 
 // Crisp, authentic Doraemon & Extended Anime character avatar
@@ -161,28 +361,6 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
     return regex ? regex.test(text) : false;
   };
 
-  const renderHighlightedLine = (text: string) => {
-    const regex = buildIdiomRegex(targetIdiom, "gi");
-    if (!regex) return text;
-    const parts = text.split(regex);
-    return (
-      <>
-        {parts.map((part, i) =>
-          part && i % 2 === 1 ? (
-            <span
-              key={i}
-              className="px-1.5 py-0.5 rounded-md bg-amber-300 text-slate-950 font-black underline decoration-amber-600 decoration-2 shadow-xs"
-            >
-              {part}
-            </span>
-          ) : (
-            part
-          )
-        )}
-      </>
-    );
-  };
-
   const firstMatchedIdx = resolvedTurns.findIndex((t) => hasIdiomMatch(t.line_en));
 
   return (
@@ -268,7 +446,7 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
 
                     <div className="flex items-start justify-between gap-1.5">
                       <p className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
-                        "{renderHighlightedLine(turn.line_en)}"
+                        "{renderHighlightedIdiomText(turn.line_en, targetIdiom)}"
                       </p>
 
                       <button
@@ -328,7 +506,7 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
               <span>🔥</span> Dùng Idiom ấn tượng:
             </span>
             <p className="text-slate-900 font-bold leading-relaxed text-[11.5px]">
-              "{punchline_tip.punchline_idiom}"
+              "{renderHighlightedIdiomText(punchline_tip.punchline_idiom, targetIdiom)}"
             </p>
           </div>
         </div>

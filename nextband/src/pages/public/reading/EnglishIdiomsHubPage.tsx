@@ -59,7 +59,10 @@ import { UNIT_19_ETYMOLOGY } from "@/data/idioms/unit19_etymology";
 import unit20Data from "@/data/idioms/unit20";
 import { UNIT_20_ETYMOLOGY } from "@/data/idioms/unit20_etymology";
 import { MANGA_BY_UNIT } from "@/data/idioms/manga";
-import { MangaComicDialogueBox } from "./components/MangaComicDialogueBox";
+import {
+  MangaComicDialogueBox,
+  renderHighlightedIdiomText,
+} from "./components/MangaComicDialogueBox";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
@@ -435,42 +438,14 @@ export default function EnglishIdiomsHubPage() {
     );
   });
 
-  // Highlight keywords safely
+  // Highlight keywords safely using shared inflection-aware idiom highlighter
   const renderHighlightedSentence = (sentence: string, headword: string) => {
     if (!sentence) return null;
-    const cleanHeadword = (headword || "")
-      .replace(/\([^)]*\)/g, "")
-      .replace(/^(as|in the|that|a|an)\s+/i, "")
-      .replace(/one's/i, "")
-      .trim();
-    const token = cleanHeadword.split(/\s+/).filter((t) => t.length > 2)[0] || cleanHeadword;
-    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const escapedToken = escapeRegex(token);
-    const escapedClean = escapeRegex(cleanHeadword);
-
-    let parts: string[] = [];
-    try {
-      const pattern = new RegExp(`(${escapedClean}|${escapedToken}[a-z]*)`, "gi");
-      parts = sentence.split(pattern);
-    } catch {
-      return <span>{sentence}</span>;
-    }
-
-    return parts
-      .filter((p) => p !== undefined && p !== null && p !== "")
-      .map((part, idx) => {
-        const lowerPart = part.toLowerCase();
-        const isMatch =
-          (token && lowerPart.startsWith(token.toLowerCase())) ||
-          (cleanHeadword && lowerPart === cleanHeadword.toLowerCase());
-        return isMatch ? (
-          <mark key={idx} className="bg-purple-100 text-purple-900 font-bold px-1 rounded-xs">
-            {part}
-          </mark>
-        ) : (
-          <span key={idx}>{part}</span>
-        );
-      });
+    return renderHighlightedIdiomText(
+      sentence,
+      headword,
+      "bg-purple-100 text-purple-900 font-bold px-1 rounded-xs"
+    );
   };
 
   // EXERCISE 1.3 LOGIC

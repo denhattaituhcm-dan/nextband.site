@@ -17,12 +17,6 @@ export const UNIT_11_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "sad",
         line_en: "Sigh... Those two have been at each other's throats since morning recess! Nobody can even practice passing!",
         line_vi: "Haizz... Hai đứa đó cứ chực lao vào ăn thua đủ với nhau suốt từ giờ ra chơi buổi sáng tới giờ! Cả đội chẳng ai tập chuyền bóng nổi luôn!"
-      },
-      {
-        name: "Shizuka",
-        avatar: "shizuka",
-        line_en: "Flip a coin, boys! If you keep fighting, the vacant lot lights will turn off before the first goal!",
-        line_vi: "Tung đồng xu đi hai cậu ơi! Cứ cãi nhau kiểu này thì đèn sân bãi tắt phụt trước cả khi ghi được bàn đầu tiên đấy!"
       }
     ],
     punchline_tip: {
@@ -109,13 +103,6 @@ export const UNIT_11_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "sad",
         line_en: "He cried his eyes out after stepping on his own favorite manga volume and tearing three pages!",
         line_vi: "Cậu ấy khóc cạn nước mắt suốt nãy giờ vì lỡ giẫm rách mất ba trang cuốn truyện tranh yêu thích nhất của mình đấy!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "exhausted",
-        line_en: "Sniff... it was the limited holographic cover issue too! Glue tape won't make it smooth again!",
-        line_vi: "Hức... đó còn là tập bìa ba chiều giới hạn nữa chứ! Dán băng keo vào nó hết phẳng phiu rồi!"
       }
     ],
     punchline_tip: {
@@ -233,13 +220,6 @@ export const UNIT_11_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "dekisugi",
         line_en: "Not tonight! Finals are officially over—even honor students need to let their hair down and win some arcade prizes!",
         line_vi: "Tối nay nghỉ ngơi hoàn toàn! Thi cuối kỳ xong xuôi rồi—đến học sinh gương mẫu cũng cần xả hơi hết mình đi gắp thú bông chứ!"
-      },
-      {
-        name: "Shizuka",
-        avatar: "shizuka",
-        emotion: "smile",
-        line_en: "Awesome! First round of strawberry crepes is on me—let's celebrate freedom!",
-        line_vi: "Tuyệt vời! Chầu bánh kếp dâu đầu tiên tớ khao hết—quẩy mừng tự do thôi nào!"
       }
     ],
     punchline_tip: {
@@ -329,13 +309,6 @@ export const UNIT_11_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smile",
         line_en: "Haha, don't get tongue-tied, Nobita! A simple 'Happy Birthday' with this pretty ribbon card means just as much!",
         line_vi: "Haha, đừng líu lưỡi ấp úng thế Nobita! Chỉ cần một câu 'Chúc mừng sinh nhật' kèm tấm thiệp thắt nơ xinh này là tớ vui lắm rồi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "whistle",
-        line_en: "Psst! Wait till I tell her you practiced that speech in front of the bathroom mirror for forty minutes!",
-        line_vi: "Suỵt! Để tớ kể cho cậu ấy nghe cậu tập dượt bài diễn văn đó trước gương phòng tắm suốt bốn mươi phút nhé!"
       }
     ],
     punchline_tip: {
@@ -424,13 +397,6 @@ export const UNIT_11_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "exhausted",
         line_en: "Wait, Suneo, abort mission!! He didn't get scared—Doraemon just saw red and reached for the Giant Air Cannon!!",
         line_vi: "Khoan đã Suneo, hủy nhiệm vụ ngay!! Cậu ấy không sợ đâu—Doraemon vừa nổi trận lôi đình mắt đỏ ngầu rút Đại Bác Không Khí ra rồi kìa!!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "angry",
-        line_en: "PRACTICAL JOKE WITH A FAKE MOUSE?! NOBODY LEAVES THIS ROOM UNTIL SOMEONE EXPLAINS!!",
-        line_vi: "DÁM ĐÙA DAI BẰNG CHUỘT GIẢ HẢ?! KHÔNG AI ĐƯỢC RỜI KHỎI PHÒNG NÀY CHO TỚI KHI GIẢI THÍCH RÕ RÀNG!!"
       }
     ],
     punchline_tip: {

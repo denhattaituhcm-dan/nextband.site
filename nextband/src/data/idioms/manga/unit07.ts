@@ -17,13 +17,6 @@ export const UNIT_07_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "Stop yelling, you giant scaredy-cat! That's just a laundry towel blowing off the clothesline!",
         line_vi: "Ngừng hét lại đi đồ nhát cáy to xác! Đó chỉ là cái khăn tắm phơi dây bị gió thổi bay quẹt qua thôi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "whistle",
-        line_en: "Look who's talking, Gian—two minutes ago you jumped three feet over a plastic garden frog!",
-        line_vi: "Ai đang nói ai thế Chaien—hai phút trước chính cậu vừa nhảy dựng lên cao ba thước vì giẫm phải con ếch nhựa ngoài vườn kìa!"
       }
     ],
     punchline_tip: {
@@ -141,13 +134,6 @@ export const UNIT_07_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "conan",
         line_en: "Hold on, Gian! Look at those muddy paw prints by the dugout—you're barking up the wrong tree accusing Nobita.",
         line_vi: "Khoan đã anh Chaien! Nhìn dấu chân bùn lầy cạnh băng ghế kia kìa—anh buộc tội anh Nobita là sủa nhầm gốc cây rồi đấy."
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Yup! Look over by that oak tree—Muku the dog thought your new glove was a giant chew bone!",
-        line_vi: "Chuẩn luôn! Nhìn qua gốc cây sồi kia kìa—chú chó Muku tưởng găng tay mới của cậu là cục xương gặm khổng lồ đấy!"
       }
     ],
     punchline_tip: {
@@ -236,13 +222,6 @@ export const UNIT_07_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Don't tell me you're gonna chicken out of diving after boasting all morning at school, Nobita!",
         line_vi: "Đừng nói với tớ là cậu định rút lui bỏ cuộc vào phút chót sau khi chém gió suốt buổi sáng ở trường đấy nhé Nobita!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "I'm not chickening out! I'm... uh... tactically descending the ladder to check the water temperature first!",
-        line_vi: "Tớ không hề chùn bước nha! Tớ chỉ... ờ... đang rút lui chiến thuật xuống cầu thang kiểm tra nhiệt độ nước trước thôi!"
       }
     ],
     punchline_tip: {
@@ -332,13 +311,6 @@ export const UNIT_07_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Shh! I'm basically a night owl when there's an exciting comic cliffhanger! Look how wide awake my eyes are!",
         line_vi: "Suỵt! Tớ vốn là cú đêm chính hiệu mỗi khi đọc trúng tập truyện gay cấn mà! Nhìn hai mắt tớ mở to tỉnh táo ghê chưa!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "whistle",
-        line_en: "Wide awake at 2 a.m., zero energy by 7 a.m.—guess who's going to sleepwalk into the school trash can tomorrow!",
-        line_vi: "Tỉnh như sáo lúc 2 giờ đêm, sập nguồn lúc 7 giờ sáng—đoán xem ngày mai ai sẽ mộng du bước thẳng vào thùng rác trường học!"
       }
     ],
     punchline_tip: {
@@ -458,12 +430,6 @@ export const UNIT_07_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "Whoa, get off your high horse right now, Suneo! Two days ago you paid your cousin to trace half your practice sheet!",
         line_vi: "Này, leo ngay khỏi con ngựa cao ngạo tự mãn đó xuống đi Suneo! Mới hai hôm trước cậu còn thuê anh họ đồ giúp một nửa trang tập viết kia mà!"
-      },
-      {
-        name: "Suneo",
-        avatar: "suneo",
-        line_en: "Gasp—how did you know that?! Quiet down before Sensei hears!!",
-        line_vi: "Ớ—sao cậu biết chuyện đó?! Nói nhỏ lại trước khi thầy giáo nghe thấy!!"
       }
     ],
     punchline_tip: {

@@ -16,13 +16,6 @@ export const UNIT_14_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "scratch",
         line_en: "Ugh!! Wait—don't ring the buzzer yet, Dekisugi!! His name starts with an M... Ma... Macaroon? No! It's right on the tip of my tongue!!",
         line_vi: "Ối!! Khoan—đừng bấm chuông vội Dekisugi ơi!! Tên ông ấy bắt đầu bằng chữ M... Ma... Bánh Macaron? Không phải! Tới ngay đầu lưỡi rồi mà chưa bật ra được!!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "whistle",
-        line_en: "Sorry, Nobita—Magellan isn't spelled like a French cookie! Time's up, Dekisugi buzzed in!",
-        line_vi: "Xin lỗi Nobita—tên nhà thám hiểm Magellan không có viết giống tên bánh quy Pháp đâu nhé! Hết giờ rồi, Dekisugi bấm chuông mất tiêu!"
       }
     ],
     punchline_tip: {
@@ -173,13 +166,6 @@ export const UNIT_14_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "shizuka",
         line_en: "Uh-oh! Seeing Suneo juggle oranges under his desk made Nobita completely lose his train of thought!",
         line_vi: "Ối! Nhìn Suneo tung hứng quýt dưới gầm bàn làm Nobita bị đứt phăng mạch suy nghĩ luôn rồi kìa!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Er... in conclusion, cats love vitamin C and afternoon naps! Thank you for listening!!",
-        line_vi: "Ờ... tóm lại là loài mèo rất yêu thích vitamin C và giấc ngủ trưa ạ! Em xin hết bài thuyết trình!!"
       }
     ],
     punchline_tip: {
@@ -326,13 +312,6 @@ export const UNIT_14_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "exhausted",
         line_en: "Rule one: look left... rule two... uh... wait... why did my mind just go completely blank right at the podium?!",
         line_vi: "Quy tắc một: nhìn bên trái... quy tắc hai... ờ... khoan... sao đầu óc em tự dưng trống rỗng trắng xóa ngay trên bục giảng thế này?!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "sad",
-        line_en: "Sigh... he stayed up worrying instead of sleeping well, and stage fright wiped his entire short-term memory clean!",
-        line_vi: "Haizz... thức khuya lo âu chứ chẳng chịu ngủ sớm, rồi run trước đám đông xóa sạch trí nhớ ngắn hạn luôn rồi!"
       }
     ],
     punchline_tip: {
@@ -452,13 +431,6 @@ export const UNIT_14_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "whistle",
         line_en: "Did you check under your math textbook cushion?Wait—no, you'd never open your math textbook voluntarily!",
         line_vi: "Cậu kiểm tra dưới gáy sách giáo khoa toán chưa? Khoan—không đời nào, cậu có bao giờ tự giác mở sách toán ra đâu mà giấu vào đó!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "WAIT A SECOND!! That's WHY I hid it inside the math textbook—so nobody including ME would accidentally spend it!! Look on Page 50!!",
-        line_vi: "KHOAN ĐÃ!! ĐÓ CHÍNH LÀ LÝ DO tớ giấu nó trong sách toán—để không ai kể cả TỚ lỡ tay tiêu mất!! Lật trang 50 coi!!"
       }
     ],
     punchline_tip: {
@@ -548,13 +520,6 @@ export const UNIT_14_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "Haha yeah! Remember when Gian fell asleep leaning on the bento basket and woke up with rice grains stuck across his cheek?!",
         line_vi: "Haha chuẩn luôn! Nhớ lần Chaien ngủ gật tựa đầu lên giỏ cơm hộp tới lúc dậy dính đầy hạt cơm trên má không?!"
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "angry",
-        line_en: "Hey!! I thought we agreed never to stir up memories about that bento box nap again!!",
-        line_vi: "Này!! Tưởng tụi mình giao kèo cấm khơi lại chuyện ngủ gật dính cơm hộp đó rồi cơ mà!!"
       }
     ],
     punchline_tip: {

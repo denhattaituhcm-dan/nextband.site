@@ -15,7 +15,10 @@ import {
   ArrowRight,
   ExternalLink,
 } from "lucide-react";
-import { MangaComicDialogueBox } from "./components/MangaComicDialogueBox";
+import {
+  MangaComicDialogueBox,
+  renderHighlightedIdiomText,
+} from "./components/MangaComicDialogueBox";
 import { MangaComicDialogue } from "@/data/idioms/manga/types";
 
 export interface IdiomItemForDeck {
@@ -458,7 +461,7 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
                             Ví dụ thực tế:
                           </span>
                           <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium">
-                            "{item.example_sentence}"
+                            "{renderHighlightedIdiomText(item.example_sentence, item.idiom)}"
                           </p>
                           {item.example_sentence_vi && (
                             <p className="text-xs text-slate-500 italic">

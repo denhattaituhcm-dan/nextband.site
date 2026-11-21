@@ -17,13 +17,6 @@ export const UNIT_06_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smile",
         line_en: "Watching you litter right after taking someone's snack really leaves a bad taste in my mouth, Gian.",
         line_vi: "Thấy cậu vừa giật đồ ăn của bạn xong lại xả rác bừa bãi thực sự để lại ấn tượng rất khó chịu trong lòng tớ đấy Chaien ạ."
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "angry",
-        line_en: "Guh... stop lecturing me with those disappointed eyes! Fine—I'll pick it up right now!",
-        line_vi: "Hừ... đừng nhìn tớ bằng ánh mắt thất vọng kiểu đó nữa! Được rồi—tớ nhặt bỏ thùng rác ngay đây!"
       }
     ],
     punchline_tip: {
@@ -141,13 +134,6 @@ export const UNIT_06_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "exhausted",
         line_en: "Wait, Sensei—even my sleep-deprived handwriting at 2 a.m. counts for artistic minimalism, right?",
         line_vi: "Khoan đã thầy—kể cả nét chữ ngái ngủ lúc 2 giờ sáng của em cũng được tính là nghệ thuật tối giản mà thầy?"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "angry",
-        line_en: "Two a.m.?! You slept through all evening and scribbled that five minutes before the school bell rang!",
-        line_vi: "Hai giờ sáng cái gì?! Cậu ngủ thẳng cẳng cả tối rồi mới ngoáy vội đúng năm phút trước khi chuông vào lớp reo!"
       }
     ],
     punchline_tip: {
@@ -268,13 +254,6 @@ export const UNIT_06_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "Next time tell Dad not to pick a motel just because it's half price! This place is totally cheap and nasty!",
         line_vi: "Lần sau nhắc bố đừng chọn nhà nghỉ chỉ vì giảm giá một nửa nữa nhé! Chỗ này đúng chuẩn vừa rẻ tiền vừa tồi tàn ghê rợn!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Forget the motel—pull out the Portable Hotel Tent right now so we can sleep under the stars!",
-        line_vi: "Quên cái nhà nghỉ này đi—lôi Lều Khách Sạn Di Động ra ngay để tụi mình ngủ dưới trời sao cho sạch!"
       }
     ],
     punchline_tip: {
@@ -394,12 +373,6 @@ export const UNIT_06_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "conan",
         line_en: "Your timing is steady enough, Suneo, though juggling two plastic spheres probably won't set the world on fire.",
         line_vi: "Nhịp tay của anh cũng tạm ổn đấy anh Suneo, nhưng màn tung hai quả bóng nhựa chắc khó mà gây tiếng vang chấn động được đâu."
-      },
-      {
-        name: "Suneo",
-        avatar: "suneo",
-        line_en: "Says you! Wait till you see my secret move... okay fine, I dropped all three.",
-        line_vi: "Nhóc biết gì! Chờ xem chiêu bí mật của anh... thôi được rồi, rớt sạch cả ba quả luôn."
       }
     ],
     punchline_tip: {
@@ -519,13 +492,6 @@ export const UNIT_06_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "First you lost my Bamboo Copter, then you soaked my Time Cloth, and now my last Dorayaki?! THAT IS THE LAST STRAW!",
         line_vi: "Đầu tiên cậu làm mất Chong Chóng Tre, xong ngâm ướt Khăn Trùm Thời Gian, giờ tới chiếc bánh rán cuối cùng của tớ hả?! ĐÂY LÀ GIỌT NƯỚC TRÀN LY RỒI ĐẤY!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "exhausted",
-        line_en: "Eek! Take cover! When his eyes narrow like that, a Shock Gun chase is coming!",
-        line_vi: "Á! Chui xuống gầm bàn mau! Mắt cậu ta nheo lại kiểu đó là sắp bị Súng Gây Sốc bắn đuổi chạy quanh nhà rồi!"
       }
     ],
     punchline_tip: {

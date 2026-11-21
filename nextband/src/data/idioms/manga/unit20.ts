@@ -16,13 +16,6 @@ export const UNIT_20_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "dekisugi",
         line_en: "Oh, folding geometric T-nets is a piece of cake! Leave tiny 5mm paper tabs along the side edges—snap, folded neatly in ten seconds!",
         line_vi: "Ồ, gấp hình khai triển chữ T là chuyện dễ như ăn bánh ấy mà! Chừa mép gấp 5 mi-li-mét dọc các cạnh bên—tách cái xong gọn trong mười giây!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Whoa, ten seconds flat?! Wait—can you make my ten-page weekend arithmetic homework a piece of cake too?!",
-        line_vi: "Chà, đúng mười giây luôn hả?! Khoan—cậu biến luôn mười trang bài tập số học cuối tuần của tớ thành chuyện dễ như ăn kẹo được không?!"
       }
     ],
     punchline_tip: {
@@ -143,13 +136,6 @@ export const UNIT_20_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Nice catch straight back into the pan!! Golden honey surface, zero burned black crumbs—see, making breakfast was easy peasy!",
         line_vi: "Hất gọn đáp lại đúng lòng chảo luôn!! Bề mặt vàng mật ong, không một vết cháy khét—thấy chưa, tự làm bữa sáng dễ như ăn kẹo mà!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "scratch",
-        line_en: "Haha yeah!! Wait... don't look behind the stove—maybe pancake test #1 is still stuck gently onto the kitchen ceiling lamp...",
-        line_vi: "Haha chuẩn!! Khoan... đừng ngước lên sau bếp nhé—hình như chiếc bánh thử nghiệm Số 1 vẫn đang dính êm ái trên chao đèn trần bếp..."
       }
     ],
     punchline_tip: {
@@ -237,13 +223,6 @@ export const UNIT_20_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "suneo",
         line_en: "Wait a minute! How is Nobita swatting Gian's fastest pitches like shooting fish in a barrel?! Check his spectacles right now!!",
         line_vi: "Khoan đã! Làm sao Nobita vụt trúng mấy cú ném nhanh nhất của Chaien dễ như bắn cá trong thùng thế này?! Kiểm tra mắt kính cậu ta ngay đi!!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "angry",
-        line_en: "BUSTED!! Nobita! Hand back my 0.5-Second Future Predictor Lenses immediately—real baseball forbids cheating!!",
-        line_vi: "BẮT QUẢ TANG!! Nobita! Trả ngay Kính Tiên Tri Trước 0,5 Giây lại cho tớ—thi đấu thể thao chân chính cấm ăn gian!!"
       }
     ],
     punchline_tip: {
@@ -332,13 +311,6 @@ export const UNIT_20_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "suneo",
         line_en: "Ugh, scrubbing burned sauce off heavy cast-iron grates is always a huge pain in the neck! Look, I'll pay for dish soap—someone else scrub!",
         line_vi: "Ối, ngồi cọ vết cháy khét trên vỉ gang nặng trịch lúc nào cũng là cực hình phiền phức khó chịu nhất! Này, tớ bao tiền nước rửa chén—ai đứng cọ giùm đi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Lazy excuse rejected, Suneo! Put on those rubber gloves cleanly—many hands finish scrubbing in four minutes flat!",
-        line_vi: "Bác bỏ lý do lười biếng nhé Suneo! Đeo găng tay cao su vô gọn gàng đi—mỗi người một tay chà đúng bốn phút là bóng loáng!"
       }
     ],
     punchline_tip: {
@@ -456,13 +428,6 @@ export const UNIT_20_MANGA: Record<string, MangaComicDialogue> = {
         avatar: "dekisugi",
         line_en: "Hand-soldering forty tiny LED circuits overnight is going to be a tall order, Suneo—we'll need all five of us gluing and testing nonstop until ten!",
         line_vi: "Tự hàn thủ công bốn mươi mạch đèn LED nhỏ xuyên đêm thực sự là một yêu cầu quá nặng nề đấy Suneo ạ—cả năm người phải phối hợp dán và test liên tục tới mười giờ mới kịp!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Hold on—how about plugging in solar snap-connectors cleanly? No soldering irons needed, everyone finishes safely before 7 p.m.!",
-        line_vi: "Khoan—dùng khớp nối năng lượng mặt trời bấm tạch một cái thì sao? Khỏi cần mỏ hàn nóng, cả nhóm hoàn thành an toàn trước 7 giờ tối luôn!"
       }
     ],
     punchline_tip: {

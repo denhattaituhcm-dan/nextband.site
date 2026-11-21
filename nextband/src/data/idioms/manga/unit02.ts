@@ -17,13 +17,6 @@ export const UNIT_02_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Cheer up! Use this 'Time Letterbox'! You can easily get in touch again without regretting that you lost touch for so long!",
         line_vi: "Vui lên nào! Dùng 'Hòm thư Thời gian' này đi! Cậu sẽ dễ dàng kết nối lại mà không phải tiếc nuối vì đã mất liên lạc bấy lâu!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Awesome! Let me borrow your Translation Jelly first so my English postcard doesn't have ten spelling mistakes!",
-        line_vi: "Tuyệt cú mèo! Cho tớ mượn Bánh mì Chuyển ngữ trước đã để tấm bưu thiếp tiếng Anh của tớ không bị dính mười lỗi chính tả!"
       }
     ],
     punchline_tip: {
@@ -145,13 +138,6 @@ export const UNIT_02_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "sad",
         line_en: "Hmph, you should have known by now! Suneo has always been a fair-weather friend!",
         line_vi: "Hứ, cậu phải biết tính nó từ lâu rồi chứ! Suneo xưa nay chỉ là bạn cơ hội lúc vui vẻ thôi!"
-      },
-      {
-        name: "Suneo",
-        avatar: "suneo",
-        emotion: "smug",
-        line_en: "I prefer to call it tactical retreating for self-preservation, thank you very much!",
-        line_vi: "Tớ thích gọi đó là rút lui chiến thuật để bảo toàn tính mạng hơn, xin cảm ơn nhé!"
       }
     ],
     punchline_tip: {
@@ -273,13 +259,6 @@ export const UNIT_02_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Bwahaha! We hit it off right away! Tomorrow he's coming to my yard to hear my private 2-hour concert!",
         line_vi: "Bwahaha! Bọn tao vừa gặp là bắt sóng cực ăn ý luôn! Ngày mai nó sẽ sang sân nhà tao nghe buổi hòa nhạc 2 tiếng độc quyền!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "exhausted",
-        line_en: "Oh no... if those two perform a duet, every glass window in Tokyo will shatter!",
-        line_vi: "Ối giời ơi... hai người đó mà song ca với nhau thì toàn bộ cửa kính ở Tokyo sẽ vỡ vụn hết mất thôi!"
       }
     ],
     punchline_tip: {
@@ -401,13 +380,6 @@ export const UNIT_02_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "wink",
         line_en: "So he's the black sheep of the family, huh? But honestly, his rock guitar riffs sound super cool to me!",
         line_vi: "Vậy ra anh ấy là 'chú cừu đen' lạc loài trong họ à? Nhưng thật lòng thì tớ thấy mấy khúc guitar rock của anh ấy ngầu phết đấy chứ!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Plus, Sunekichi builds the best remote-controlled battleships in Japan—he's our hero!",
-        line_vi: "Đã thế anh Sunekichi còn chế tạo tàu chiến điều khiển từ xa đỉnh nhất nước Nhật nữa—anh ấy là thần tượng của tụi tớ đấy!"
       }
     ],
     punchline_tip: {
@@ -529,13 +501,6 @@ export const UNIT_02_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "sad",
         line_en: "WAHH Nobita! Of course I'm in your immediate family! We share a room and eat dorayaki together every single day!",
         line_vi: "OAAA Nobita! Tất nhiên tớ là người trong gia đình ruột thịt trực hệ của cậu rồi! Ngày nào bọn mình cũng ngủ chung phòng và ăn bánh rán với nhau mà!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Haha, I'm just teasing! I already wrote 'Doraemon - Best Big Brother' right at the top of the list!",
-        line_vi: "Haha, tớ trêu cậu tí thôi! Tớ đã ghi 'Doraemon - Người anh trai tuyệt nhất' ngay dòng đầu tiên của danh sách rồi!"
       }
     ],
     punchline_tip: {

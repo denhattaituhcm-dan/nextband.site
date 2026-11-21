@@ -47,13 +47,6 @@ export const UNIT_13_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "scratch",
         line_en: "Swallow hard... Why did I complain so much as a little kid?! Watching this gives me such a lump in my throat...",
         line_vi: "Nghẹn quá... Hồi nhỏ sao tớ hay mè nheo nhõng nhẽo với bà thế không biết?! Xem lại cảnh này làm cổ họng tớ nghẹn ứ chực khóc luôn..."
-      },
-      {
-        name: "Shizuka",
-        avatar: "shizuka",
-        emotion: "smile",
-        line_en: "Grandma knew how sweet you really were, Nobita—that's why she always smiled every time you hugged her!",
-        line_vi: "Bà luôn biết cậu sống tình cảm mà Nobita—thế nên lần nào cậu ôm bà, bà cũng mỉm cười hiền hậu hết đấy!"
       }
     ],
     punchline_tip: {
@@ -140,13 +133,6 @@ export const UNIT_13_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "angry",
         line_en: "Quit being such a downer, Suneo! We barely stepped onto the boardwalk and you're already whining like a rainy Monday!",
         line_vi: "Thôi ngay cái thói càm ràm làm tụt hứng cả nhóm đi Suneo! Mới đặt chân lên cầu gỗ ven biển mà cậu đã rên rỉ như sáng thứ Hai trời mưa rồi!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "Look over the waves—sunlight just broke right through! Last one into the water buys iced lemonades!",
-        line_vi: "Nhìn ra ngoài sóng kìa—nắng vàng vừa bừng lên rực rỡ rồi đó! Ai xuống nước sau cùng phải khao chanh đá nhé!"
       }
     ],
     punchline_tip: {
@@ -234,13 +220,6 @@ export const UNIT_13_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "exhausted",
         line_en: "No!! Where is it?! I stayed up past ten writing it—Wait... I left the folder sitting beside my teacup at home! I could kick myself!!",
         line_vi: "Không!! Đâu mất rồi?! Tối qua mình thức quá mười giờ để viết mà—Khoan... Tớ để quên bìa bài ngay cạnh chén trà ở nhà rồi! Tức bản thân muốn tự đá một cái quá!!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "Psst, look outside the hallway window—check out my Mini Rocket Delivery Drone dropping your blue folder right onto your lap!",
-        line_vi: "Suỵt, nhìn ra cửa sổ hành lang kìa—xem Máy Bay Giao Hàng Tên Lửa Mini của tớ thả bìa bài màu xanh xuống gọn lỏn trên đùi cậu nè!"
       }
     ],
     punchline_tip: {
@@ -328,13 +307,6 @@ export const UNIT_13_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "sad",
         line_en: "Don't tell me... Tell me you didn't just get that sinking feeling realizing you packed your comic stash instead of math notebooks!",
         line_vi: "Đừng nói với tớ là... Đừng nói cậu vừa thắt hẫng tim gan khi nhận ra mình nhét đống truyện tranh vào cặp thay vì vở toán nhé!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "LOOK! Five volumes of Space Rangers and ONE chewed eraser! Pull out the Anywhere Door—RIGHT NOW!!",
-        line_vi: "NHÌN NÈ! Năm cuốn Chiến Binh Vũ Trụ với ĐÚNG MỘT cục tẩy gặm nham nhở! Rút Cánh Cửa Thần Kỳ ra—NGAY LẬP TỨC!!"
       }
     ],
     punchline_tip: {
@@ -484,13 +456,6 @@ export const UNIT_13_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smug",
         line_en: "Haha! Don't tell anyone—tough-guy Gian is secretly shaking in his boots because of that plastic skeleton hanging above the ticket booth!",
         line_vi: "Haha! Suỵt đừng kể ai—đại ca Chaien hổ báo thực ra đang run như cầy sấy vì bộ xương nhựa treo trên quầy bán vé kia kìa!"
-      },
-      {
-        name: "Chaien",
-        avatar: "chaien",
-        emotion: "angry",
-        line_en: "I'm NOT shaking!! It's... it's an autumn breeze blowing straight up my ankles! Who's walking in first—Nobita, lead the way!",
-        line_vi: "Tớ KHÔNG hề run nha!! Chỉ là... gió thu thổi lùa ngay cổ chân thôi! Ai đi tiên phong nào—Nobita, cậu bước vô trước đi!"
       }
     ],
     punchline_tip: {

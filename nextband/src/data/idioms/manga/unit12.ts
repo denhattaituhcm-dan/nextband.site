@@ -17,13 +17,6 @@ export const UNIT_12_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smile",
         line_en: "Congratulations, Nobita! Seeing your study flashcards pay off has put you right on cloud nine today!",
         line_vi: "Chúc mừng cậu Nobita! Công sức học thẻ từ vựng phát huy tác dụng làm hôm nay cậu lâng lâng vui như trên chín tầng mây rồi nhé!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "happy",
-        line_en: "Hooray! Keep smiling on cloud nine while I run home to prepare Mom's camera before she faints from pride!",
-        line_vi: "Hoan hô! Cứ bay lâng lâng trên mây đi trong lúc tớ chạy về chuẩn bị máy ảnh cho mẹ trước khi bác ngất xỉu vì tự hào!"
       }
     ],
     punchline_tip: {
@@ -112,13 +105,6 @@ export const UNIT_12_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "point",
         line_en: "AIR CONDITIONING AND FREE POPSICLES?! Sensei's announcement is pure music to our ears!!",
         line_vi: "ĐIỀU HÒA MÁT LẠNH VÀ KEM MIỄN PHÍ Á?! Thông báo của thầy đúng là âm nhạc rót vào tai bọn em luôn!!"
-      },
-      {
-        name: "Suneo",
-        avatar: "suneo",
-        emotion: "smug",
-        line_en: "Especially when my mom won't even nag me about sweating through my brand-new linen polo shirt!",
-        line_vi: "Nhất là mẹ tớ cũng chẳng cằn nhằn vụ tớ làm ướt đẫm chiếc áo polo vải lanh mới toanh nữa!"
       }
     ],
     punchline_tip: {
@@ -208,13 +194,6 @@ export const UNIT_12_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "sad",
         line_en: "Please no! That three-hundred-year-old pine bonsai is his absolute pride and joy! Use the Time Glove—CATCH IT MID-AIR!",
         line_vi: "Làm ơn đừng trúng! Cây tùng bonsai ba trăm năm tuổi đó là niềm tự hào và báu vật tâm can của bác ấy đấy! Đeo Găng Tay Thời Gian—CHỤP GIỮA KHÔNG TRUNG MAU!"
-      },
-      {
-        name: "Nobita",
-        avatar: "nobita",
-        emotion: "point",
-        line_en: "CAUGHT IT! One millimeter above the branch! Phew... his pride and joy survived without losing a single pine needle!",
-        line_vi: "CHỤP ĐƯỢC RỒI! Cách cành cây đúng một mi-li-mét! Phù... báu vật của bác ấy bình an vô sự không rụng nổi một lá kim!"
       }
     ],
     punchline_tip: {
@@ -335,13 +314,6 @@ export const UNIT_12_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "happy",
         line_en: "Haha, look at Nobita actually wide awake before 7 a.m.! Let's dash to the pier before the ferry leaves!",
         line_vi: "Haha, nhìn Nobita nay tự giác tỉnh táo trước 7 giờ sáng kìa! Chạy nhanh ra bến tàu trước khi phà rời bến thôi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "whistle",
-        line_en: "Wait up, Mr. Raring-to-Go! You forgot to actually put pants on over your pajama shorts!!",
-        line_vi: "Chờ chút anh bạn háo hức xuất phát ơi! Cậu quên chưa mặc quần dài ra ngoài chiếc quần đùi ngủ kìa!!"
       }
     ],
     punchline_tip: {
@@ -462,13 +434,6 @@ export const UNIT_12_MANGA: Record<string, MangaComicDialogue> = {
         emotion: "smile",
         line_en: "Packed my hiking bag at 8 p.m. and went to bed early! Wait till you smell the pine trees at the first ridge!",
         line_vi: "Tớ xếp xong ba lô leo núi từ 8 giờ tối rồi đi ngủ sớm đấy! Chờ cậu lên tới sườn dốc đầu tiên ngửi mùi rừng thông thơm lừng đi!"
-      },
-      {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "wink",
-        line_en: "See, Nobita? Reading 'just one more manga chapter' at midnight clearly doesn't produce bushy tails!",
-        line_vi: "Thấy chưa Nobita? Thói quen đọc 'nốt đúng một chương truyện' lúc nửa đêm rõ ràng không tạo ra tinh thần phấn chấn đâu nhé!"
       }
     ],
     punchline_tip: {
