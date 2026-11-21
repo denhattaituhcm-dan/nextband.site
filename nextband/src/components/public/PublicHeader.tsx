@@ -106,7 +106,6 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
   {
     label: "Đọc",
     href: "/reading",
-    badge: "11+ MỤC",
     isFeatured: true,
     icon: BookOpen,
     isMegaMenu: true,
