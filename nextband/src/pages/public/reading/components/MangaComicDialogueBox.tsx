@@ -127,13 +127,7 @@ export const MangaComicDialogueBox: React.FC<MangaComicDialogueBoxProps> = ({
     };
   }, [dialogue]);
 
-  const resolvedTurns: MangaCharacter[] = dialogue
-    ? dialogue.turns && dialogue.turns.length > 0
-      ? dialogue.turns
-      : [dialogue.characterA, dialogue.characterB].filter(
-          (c): c is MangaCharacter => Boolean(c)
-        )
-    : [];
+  const resolvedTurns: MangaCharacter[] = dialogue?.turns ?? [];
 
   if (!dialogue || resolvedTurns.length === 0) {
     return (

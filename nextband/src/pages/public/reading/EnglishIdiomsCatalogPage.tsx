@@ -4,13 +4,9 @@ import { SEO } from "@/components/common/SEO";
 import {
   BookOpen,
   Volume2,
-  FileCheck2,
-  Compass,
-  ArrowRight,
   Search,
   CheckCircle2,
   Clock,
-  Layers,
   GraduationCap,
 } from "lucide-react";
 interface UnitCatalogItem {
@@ -656,7 +652,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              19 Units Sẵn Sàng (380 Idioms)
+              20 Units Sẵn Sàng (400 Idioms)
             </span>
           </div>
         </div>

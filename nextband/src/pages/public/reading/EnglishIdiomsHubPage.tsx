@@ -3,15 +3,11 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { SEO } from "@/components/common/SEO";
 import {
   Volume2,
-  ArrowRight,
   Search,
   CheckCircle2,
   XCircle,
-  HelpCircle,
   RotateCcw,
-  Sparkles,
   ChevronDown,
-  BookOpen,
   Compass,
   Lightbulb,
   History,
@@ -1560,7 +1556,7 @@ export default function EnglishIdiomsHubPage() {
                   comic_dialogue: currentMangaData[item.id],
                 }))}
                 etymologyData={currentEtymologyData as any}
-                mangaData={currentMangaData as any}
+                mangaData={currentMangaData}
                 bookmarkedIds={bookmarkedIds}
                 onToggleBookmark={toggleBookmark}
                 listenedIds={listenedIds}

@@ -51,11 +51,11 @@ export const UNIT_07_MANGA: Record<string, MangaComicDialogue> = {
         line_vi: "Đừng hòng lừa nữa! Sáng nay cậu báo động giả hai lần chỉ để ăn vụng bánh rán của tớ rồi! Tớ không mắc bẫy đâu!"
       },
       {
-        name: "Doraemon",
-        avatar: "doraemon",
-        emotion: "sad",
-        line_en: "...Wait a second. Why did my whiskers just twitch? THERE REALLY IS A MOUSE ON THE TABLE!!",
-        line_vi: "...Khoan đã. Sao ria mép tớ tự dưng giật giật thế này? CÓ CON CHUỘT THẬT ĐANG NGỒI TRÊN BÀN KÌA!!"
+        name: "Nobita",
+        avatar: "nobita",
+        emotion: "exhausted",
+        line_en: "I'm not lying this time!! Look right beside your teacup—THERE REALLY IS A MOUSE ON THE TABLE!!",
+        line_vi: "Lần này tớ không nói dối đâu!! Nhìn ngay cạnh tách trà của cậu kìa—CÓ CON CHUỘT THẬT ĐANG NGỒI TRÊN BÀN KÌA!!"
       }
     ],
     punchline_tip: {

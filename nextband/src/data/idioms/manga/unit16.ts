@@ -514,7 +514,7 @@ export const UNIT_16_MANGA: Record<string, MangaComicDialogue> = {
       {
         name: "Nobita",
         avatar: "nobita",
-        emotion: "angry",
+        emotion: "exhausted",
         line_en: "SUNEO!! You swore on your rare robot figurine you wouldn't spill my talent-show surprise—you totally stabbed me in the back!!",
         line_vi: "SUNEO!! Cậu đã thề trên mô hình rô-bốt quý sẽ giữ bí mật tiết mục hội diễn của tớ cơ mà—cậu đâm sau lưng tớ một nhát đau điếng luôn rồi!!"
       },

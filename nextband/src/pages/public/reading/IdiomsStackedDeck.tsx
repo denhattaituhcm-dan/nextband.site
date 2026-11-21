@@ -13,11 +13,10 @@ import {
   CheckCircle2,
   Layers,
   ArrowRight,
-  FileCheck2,
   ExternalLink,
-  MessageCircle,
 } from "lucide-react";
 import { MangaComicDialogueBox } from "./components/MangaComicDialogueBox";
+import { MangaComicDialogue } from "@/data/idioms/manga/types";
 
 export interface IdiomItemForDeck {
   id: string;
@@ -51,13 +50,13 @@ export interface IdiomItemForDeck {
     explanation: string;
     is_ielts_writing_safe: boolean;
   };
-  comic_dialogue?: any;
+  comic_dialogue?: MangaComicDialogue;
 }
 
 interface IdiomsStackedDeckProps {
   idioms: IdiomItemForDeck[];
   etymologyData?: Record<string, any>;
-  mangaData?: Record<string, any>;
+  mangaData?: Record<string, MangaComicDialogue>;
   bookmarkedIds: Set<string>;
   onToggleBookmark: (id: string) => void;
   listenedIds: Set<string>;
@@ -77,7 +76,7 @@ export const IdiomsStackedDeck: React.FC<IdiomsStackedDeckProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [deckList, setDeckList] = useState<IdiomItemForDeck[]>(() => idioms ?? []);
-  const [cardTab, setCardTab] = useState<"front" | "comic" | "context" | "etymology" | "exam">("front");
+  const [cardTab, setCardTab] = useState<"front" | "comic" | "etymology" | "exam">("front");
   
   // Drag and dismiss state
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
