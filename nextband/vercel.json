@@ -32,7 +32,7 @@
       "destination": "/api/index.js"
     },
     {
-      "source": "/((?!api|assets|favicon|logo|Logo).*)",
+      "source": "/((?!api|assets|favicon|logo|Logo|uploads).*)",
       "destination": "/index.html"
     }
   ],
@@ -52,6 +52,15 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(images|teachers|mascot|audio|sound)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, stale-while-revalidate=86400"
         }
       ]
     }
