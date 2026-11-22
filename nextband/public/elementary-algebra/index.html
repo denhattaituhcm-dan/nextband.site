@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prealgebra 2e — Multi-Chapter Visual Math Notebook v3.0</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="./book-manifest.js"></script>
+  <style>
+    :root {
+      --paper-cream: #fffdf8;
+      --dot-color: #d6d3cd;
+      --ink-primary: #18181b;
+      --ink-secondary: #3f3f46;
+      --ink-muted: #71717a;
+      --hi-yellow: #fef08a;
+      --accent-blue: #2563eb;
+      --accent-navy: #1e3a8a;
+      --accent-rose: #be123c;
+      --border-soft: #e4e2dd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #e7e5e4;
+      color: var(--ink-primary);
+      display: flex;
+      min-height: 100vh;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .katex { font-size: 1.14em !important; }
+    aside {
+      width: 305px;
+      background: #18181b;
+      color: #f4f4f5;
+      padding: 20px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-tag {
+      display: inline-block;
+      background: #fde047;
+      color: #18181b;
+      font-weight: 800;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+      width: fit-content;
+    }
+    aside h1 { font-size: 1.05rem; margin: 0 0 4px 0; color: #fff; }
+    aside .sub { font-size: 0.76rem; color: #a1a1aa; margin-bottom: 14px; }
+    .chapter-select-box {
+      margin-bottom: 14px;
+    }
+    .chapter-select-box label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: #a1a1aa;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .chapter-select-box select {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 8px;
+      background: #27272a;
+      color: #fde047;
+      border: 1px solid #3f3f46;
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+    }
+    .score-pill {
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      border-radius: 9px;
+      padding: 9px 12px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+    }
+    .score-pill b { color: #4ade80; font-size: 1rem; }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      color: #d4d4d8;
+      padding: 9px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .nav-btn .sec-num {
+      background: #27272a;
+      color: #fde047;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 2px 7px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    .nav-btn:hover { background: #27272a; color: #fff; }
+    .nav-btn.active { background: #2563eb; color: #fff; font-weight: 600; }
+    .nav-btn.active .sec-num { background: #1e3a8a; color: #fff; }
+    .nav-stats {
+      margin-top: auto;
+      padding: 12px;
+      background: #27272a;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      color: #a1a1aa;
+      line-height: 1.6;
+    }
+    main {
+      flex: 1;
+      padding: 24px 32px;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .notebook-sheet {
+      background-color: var(--paper-cream);
+      background-image: radial-gradient(var(--dot-color) 1.15px, transparent 1.15px);
+      background-size: 22px 22px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(24, 24, 27, 0.08);
+      padding: 32px 40px 48px 40px;
+      border: 1px solid #d6d3cd;
+    }
+    .sec-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: 2px solid var(--ink-primary);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .sec-kicker { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--accent-blue); }
+    .sec-title { font-size: 1.8rem; margin: 0; font-weight: 800; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 9px 15px;
+      border-radius: 9px;
+      border: 1.5px solid #d4d4d8;
+      background: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .tab-btn.active { background: var(--ink-primary); color: #fde047; border-color: var(--ink-primary); }
+    .hi-kw { background: linear-gradient(180deg, transparent 35%, var(--hi-yellow) 35%); font-weight: 700; padding: 0 3px; }
+    .bilingual-drawer {
+      background: #fffbeb;
+      border: 1.5px solid #fcd34d;
+      border-radius: 12px;
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+    .bilingual-drawer summary {
+      padding: 12px 18px;
+      font-weight: 800;
+      font-size: 0.94rem;
+      color: #92400e;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      background: #fef3c7;
+    }
+    .bilingual-drawer-body { padding: 14px 18px; }
+    .cue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 10px 0; }
+    .cue-card { background: #fff; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; font-size: 0.86rem; }
+    .cue-card .en { font-weight: 800; color: var(--accent-navy); }
+    .cue-card .math-badge { float: right; background: #eff6ff; color: #1d4ed8; font-weight: 800; padding: 1px 7px; border-radius: 5px; font-family: monospace; }
+    .trap-alert { background: #fff1f2; border-left: 4px solid var(--accent-rose); padding: 8px 14px; margin-top: 8px; font-size: 0.87rem; color: #881337; }
+    .stepper-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: #f4f1ea; padding: 10px 14px; border-radius: 12px; margin-bottom: 22px; border: 1px solid var(--border-soft); }
+    .step-pill { background: #fff; border: 1px solid #d4d4d8; padding: 6px 12px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+    .step-pill.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); font-weight: 700; }
+    .skill-unit { background: #fff; border: 1px solid var(--border-soft); border-radius: 14px; padding: 26px 30px; margin-bottom: 24px; }
+    .skill-unit-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid #f4f4f5; padding-bottom: 12px; }
+    .skill-index-badge { background: var(--ink-primary); color: #fde047; font-weight: 800; font-size: 0.78rem; padding: 4px 10px; border-radius: 6px; }
+    .sticky-rule { background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 10px; padding: 16px 20px; margin: 18px 0; }
+    .sticky-rule.how-to { background: #f0f9ff; border-color: #0284c7; }
+    .fig-container { background: #fff; border: 1px solid #e4e4e7; border-radius: 10px; padding: 12px; margin: 14px 0; text-align: center; }
+    .fig-container img { max-width: 100%; max-height: 260px; display: block; margin: 0 auto; }
+    .fig-caption-toggle { margin-top: 8px; text-align: left; background: #fafafa; border: 1px dashed #d4d4d8; border-radius: 6px; padding: 4px 10px; font-size: 0.78rem; color: var(--ink-muted); }
+    .example-split-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 18px; margin: 22px 0; }
+    @media (max-width: 960px) { .example-split-grid { grid-template-columns: 1fr; } }
+    .worked-pane { background: #f8fafc; border: 1.5px solid #cbd5e1; border-top: 4px solid var(--accent-blue); border-radius: 12px; padding: 18px 20px; }
+    .try-pane { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-top: 4px solid #16a34a; border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+    .try-card { background: #fff; border: 1px solid #dcfce7; border-radius: 10px; padding: 14px; }
+    .problem-statement { font-weight: 600; background: #fff; padding: 11px 14px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 12px; }
+    .step-timeline { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .step-row { display: flex; gap: 10px; background: #fff; padding: 8px 11px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.93rem; }
+    .step-row.final-step { background: #f0fdf4; border-color: #86efac; font-weight: 600; }
+    .step-num { background: #e2e8f0; color: #334155; font-weight: 800; font-size: 0.72rem; padding: 2px 7px; border-radius: 999px; flex-shrink: 0; }
+    .step-row.final-step .step-num { background: #16a34a; color: #fff; }
+    .active-recall-box { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .input-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .math-input { flex: 1; min-width: 130px; padding: 7px 11px; border: 1.5px solid #cbd5e1; border-radius: 7px; font-size: 0.88rem; }
+    .check-btn { background: var(--ink-primary); color: #fff; border: none; border-radius: 7px; padding: 7px 13px; font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+    .feedback-msg { font-size: 0.83rem; font-weight: 700; padding: 6px 10px; border-radius: 6px; display: none; }
+    .feedback-msg.ok { display: block; background: #dcfce7; color: #166534; }
+    .feedback-msg.err { display: block; background: #fef3c7; color: #92400e; }
+    .md-table { width: 100%; border-collapse: collapse; margin: 12px 0; background: #fff; font-size: 0.9rem; }
+    .md-table th, .md-table td { border: 1px solid #e2e8f0; padding: 7px 10px; text-align: center; }
+    .md-table th { background: #f1f5f9; }
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .glossary-card { background: #fff; border: 1.5px solid var(--border-soft); border-radius: 12px; padding: 16px; }
+    .practice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 16px; }
+    .pre-line { white-space: pre-line; }
+  </style>
+</head>
+<body>
+  <aside>
+    <span class="brand-tag">APP SHELL v3.0 • MULTI-CHAPTER</span>
+    <h1>Prealgebra 2e</h1>
+    <div class="sub">OpenStax CC BY-NC-SA 4.0<br/>Nạp động từng chương (Sharded Architecture)</div>
+    <div class="chapter-select-box">
+      <label>Chọn Chương (Chapter):</label>
+      <select id="chapter-select" onchange="loadChapter(Number(this.value))"></select>
+    </div>
+    <div class="score-pill">
+      <span>🏆 Đã giải đúng:</span>
+      <b id="solved-count">0 câu</b>
+    </div>
+    <div id="nav-list"></div>
+    <div class="nav-stats" id="nav-stats"></div>
+  </aside>
+  <main>
+    <div class="notebook-sheet" id="app">Đang tải dữ liệu chương...</div>
+  </main>
+
+  <script>
+    window.__OPENSTAX_CHAPTERS__ = window.__OPENSTAX_CHAPTERS__ || {};
+    const MANIFEST = window.__OPENSTAX_MANIFEST__;
+    const MEDIA_BASE = MANIFEST.mediaBaseUrl;
+
+    let currentChapter = null;
+    let currentSecIdx = 1;
+    let currentTab = 'lesson';
+    let currentSkillIdx = 0;
+    let selectedSkillGroup = 'ALL';
+    let solvedMap = {};
+    try { solvedMap = JSON.parse(localStorage.getItem('openstax_v3_solved') || '{}'); } catch (e) {}
+
+    function updateSolvedCount() {
+      const el = document.getElementById('solved-count');
+      if (el) el.textContent = Object.keys(solvedMap).length + ' câu';
+    }
+
+    function markSolved(uid) {
+      solvedMap[uid] = true;
+      try { localStorage.setItem('openstax_v3_solved', JSON.stringify(solvedMap)); } catch (e) {}
+      updateSolvedCount();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.getElementById('app'), {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false }
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    const HIGHLIGHT_TERMS = [
+      'counting numbers', 'natural numbers', 'whole numbers', 'number line', 'origin', 'coordinate',
+      'place value', 'rounding', 'sum', 'difference', 'product', 'quotient', 'dividend', 'divisor',
+      'variable', 'constant', 'expression', 'equation', 'coefficient', 'like terms', 'prime number', 'composite number', 'multiple', 'factor'
+    ];
+
+    function highlightProse(text) {
+      if (!text) return '';
+      const parts = String(text).split(/(\$[^$]+\$)/g);
+      return parts.map(part => {
+        if (part.startsWith('$') && part.endsWith('$')) return escapeHtml(part);
+        let html = escapeHtml(part);
+        for (const term of HIGHLIGHT_TERMS) {
+          html = html.replace(new RegExp('\\b(' + term + ')\\b', 'gi'), '<span class="hi-kw">$1</span>');
+        }
+        return html;
+      }).join('');
+    }
+
+    function renderTables(tables) {
+      if (!tables || !tables.length) return '';
+      return tables.map(t => {
+        const headers = t.headers && t.headers.length
+          ? '<thead><tr>' + t.headers.map(h => '<th>' + escapeHtml(h) + '</th>').join('') + '</tr></thead>'
+          : '';
+        const rows = (t.rows || []).map(r => '<tr>' + r.map(c => '<td>' + escapeHtml(c) + '</td>').join('') + '</tr>').join('');
+        return '<table class="md-table">' + headers + '<tbody>' + rows + '</tbody></table>';
+      }).join('');
+    }
+
+    function renderImages(images) {
+      if (!images || !images.length) return '';
+      return images.map(img => `
+        <div class="fig-container">
+          <img src="${MEDIA_BASE + img.filename}" alt="${escapeHtml(img.alt)}" loading="lazy" />
+          ${img.alt ? '<details class="fig-caption-toggle"><summary>ℹ️ Mô tả trực quan hình vẽ</summary><div>' + escapeHtml(img.alt) + '</div></details>' : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderStepTimeline(solution) {
+      if (!solution) return '';
+      const rawLines = (solution.text || '').split('\n').map(l => l.trim()).filter(Boolean);
+      const stepsHtml = rawLines.map((line, idx) => {
+        const isFinal = idx === rawLines.length - 1 && rawLines.length > 1;
+        return `
+          <div class="step-row ${isFinal ? 'final-step' : ''}">
+            <span class="step-num">${isFinal ? '✓ Kết luận' : 'Bước ' + (idx + 1)}</span>
+            <div style="flex:1;">${escapeHtml(line)}</div>
+          </div>
+        `;
+      }).join('');
+      return '<div class="step-timeline">' + stepsHtml + renderImages(solution.images) + renderTables(solution.tables) + '</div>';
+    }
+
+    function normalizeMathAnswer(str) {
+      return String(str || '').toLowerCase().replace(/\$/g, '').replace(/,/g, '').replace(/\s+/g, ' ').replace(/[.;]/g, '').trim();
+    }
+
+    window.checkInteractiveAnswer = function(uid, expectedEncoded, inputId, fbId) {
+      const expected = decodeURIComponent(expectedEncoded);
+      const inp = document.getElementById(inputId);
+      const fb = document.getElementById(fbId);
+      if (!inp || !fb) return;
+      const u = normalizeMathAnswer(inp.value);
+      const e = normalizeMathAnswer(expected);
+      if (!u) { fb.className = 'feedback-msg err'; fb.textContent = '⚠️ Nhập đáp án trước khi bấm Chấm!'; return; }
+      if (u === e || (e.length > 2 && e.includes(u))) {
+        fb.className = 'feedback-msg ok';
+        fb.textContent = '✓ Chính xác! (' + expected + ')';
+        markSolved(uid);
+      } else {
+        fb.className = 'feedback-msg err';
+        fb.textContent = '✗ Chưa khớp. Thử lại hoặc mở xem đáp án chuẩn bên dưới!';
+      }
+    };
+
+    function renderActiveRecall(ex) {
+      if (!ex.hasOfficialSolution || !ex.solution) return '';
+      const validSubs = (ex.subQuestions || []).filter(sq => sq.answer);
+      if (validSubs.length > 0) {
+        return '<div class="active-recall-box">' + validSubs.map(sq => {
+          const inpId = 'inp-' + ex.uid + '-' + sq.label;
+          const fbId = 'fb-' + ex.uid + '-' + sq.label;
+          const enc = encodeURIComponent(sq.answer);
+          return `
+            <div>
+              <div class="input-row">
+                <span style="font-weight:700;font-size:0.84rem;min-width:95px;">Ý (${sq.label}):</span>
+                <input type="text" id="${inpId}" class="math-input" placeholder="Đáp án ý (${sq.label})..."
+                  onkeydown="if(event.key==='Enter') checkInteractiveAnswer('${ex.uid}.${sq.label}', '${enc}', '${inpId}', '${fbId}')" />
+                <button class="check-btn" onclick="checkInteractiveAnswer('${ex.uid}.${sq.label}', '${enc}', '${inpId}', '${fbId}')">Chấm</button>
+              </div>
+              <div id="${fbId}" class="feedback-msg"></div>
+            </div>
+          `;
+        }).join('') + '</div>';
+      }
+      const solText = (ex.solution.text || '').trim();
+      if (solText && solText.length < 120 && !solText.includes('\n')) {
+        const inpId = 'inp-' + ex.uid;
+        const fbId = 'fb-' + ex.uid;
+        const enc = encodeURIComponent(solText);
+        return `
+          <div class="active-recall-box">
+            <div class="input-row">
+              <input type="text" id="${inpId}" class="math-input" placeholder="Nhập đáp án rồi ấn Enter..."
+                onkeydown="if(event.key==='Enter') checkInteractiveAnswer('${ex.uid}', '${enc}', '${inpId}', '${fbId}')" />
+              <button class="check-btn" onclick="checkInteractiveAnswer('${ex.uid}', '${enc}', '${inpId}', '${fbId}')">Kiểm tra</button>
+            </div>
+            <div id="${fbId}" class="feedback-msg"></div>
+          </div>
+        `;
+      }
+      return '';
+    }
+
+    function populateChapterSelect() {
+      const sel = document.getElementById('chapter-select');
+      sel.innerHTML = MANIFEST.chapters.map(ch => `
+        <option value="${ch.number}" ${!ch.isBuilt ? 'disabled' : ''}>
+          Ch ${ch.number}: ${escapeHtml(ch.title)} ${ch.isBuilt ? '✓' : '(Chưa build)'}
+        </option>
+      `).join('');
+    }
+
+    window.loadChapter = function(chNum) {
+      const chInfo = MANIFEST.chapters.find(c => c.number === chNum);
+      if (!chInfo || !chInfo.isBuilt) return;
+
+      const finish = () => {
+        currentChapter = window.__OPENSTAX_CHAPTERS__[chNum];
+        currentSecIdx = currentChapter.sections.length > 1 ? 1 : 0;
+        currentSkillIdx = 0;
+        selectedSkillGroup = 'ALL';
+        renderSidebar();
+        renderMain();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      if (window.__OPENSTAX_CHAPTERS__[chNum]) {
+        finish();
+      } else {
+        const script = document.createElement('script');
+        script.src = './chapters/' + chInfo.code + '.js';
+        script.onload = finish;
+        document.body.appendChild(script);
+      }
+    };
+
+    window.selectSection = function(idx) {
+      currentSecIdx = idx;
+      currentSkillIdx = 0;
+      selectedSkillGroup = 'ALL';
+      renderSidebar();
+      renderMain();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    window.selectTab = function(t) { currentTab = t; renderMain(); };
+    window.selectSkillStep = function(idx) { currentSkillIdx = idx; renderMain(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    window.filterSkill = function(v) { selectedSkillGroup = v; renderMain(); };
+
+    function renderSidebar() {
+      const nav = document.getElementById('nav-list');
+      nav.innerHTML = currentChapter.sections.map((sec, idx) => `
+        <button class="nav-btn ${idx === currentSecIdx ? 'active' : ''}" onclick="selectSection(${idx})">
+          <span class="sec-num">${sec.number}</span>
+          <span>${escapeHtml(sec.title)}</span>
+        </button>
+      `).join('');
+
+      const s = currentChapter.summary;
+      document.getElementById('nav-stats').innerHTML = `
+        <strong style="color:#fde047;">📊 Chương ${currentChapter.number} (Schema v3.0)</strong><br/>
+        • Canonical UIDs: <b>${currentChapter.qualityGate.checkedUids}</b><br/>
+        • Quality Gate: <b style="color:#4ade80;">${currentChapter.qualityGate.passed ? 'PASSED ✓' : 'FAILED'}</b><br/>
+        • Ví dụ: <b>${s.totalWorkedExamples}</b> • Try-It: <b>${s.totalTryItExercises}</b><br/>
+        • Practice: <b>${s.totalPracticeExercises}</b> • Glossary: <b>${s.totalGlossaryTerms}</b>
+      `;
+      updateSolvedCount();
+    }
+
+    function renderMain() {
+      const sec = currentChapter.sections[currentSecIdx];
+      const app = document.getElementById('app');
+      let tabContent = '';
+
+      if (currentTab === 'lesson') {
+        const bg = sec.bilingualGuide;
+        const bgHtml = bg ? `
+          <details class="bilingual-drawer" open>
+            <summary><span>📒 Cẩm nang Song ngữ & Từ khóa Dịch đề Toán</span><span>▾</span></summary>
+            <div class="bilingual-drawer-body">
+              <div style="font-size:0.94rem;color:#78350f;margin-bottom:8px;"><b>Trọng tâm:</b> ${escapeHtml(bg.notebookSummaryVi)}</div>
+              <div class="cue-grid">
+                ${(bg.wordProblemCues || []).map(c => `
+                  <div class="cue-card">
+                    <span class="math-badge">${escapeHtml(c.mathNotation)}</span>
+                    <div class="en">"${escapeHtml(c.phraseEn)}"</div>
+                    <div style="color:#52525b;margin-top:3px;">➔ ${escapeHtml(c.meaningVi)}</div>
+                  </div>
+                `).join('')}
+              </div>
+              ${(bg.commonTrapsVi || []).map(t => '<div class="trap-alert">⚠️ <b>Bẫy cần tránh:</b> ' + escapeHtml(t) + '</div>').join('')}
+            </div>
+          </details>
+        ` : '';
+
+        const subs = sec.subsections || [];
+        const stepperHtml = subs.length > 1 ? `
+          <div class="stepper-bar">
+            <span style="font-size:0.78rem;font-weight:800;color:#71717a;">KỸ NĂNG:</span>
+            ${subs.map((sub, i) => `<button class="step-pill ${currentSkillIdx === i ? 'active' : ''}" onclick="selectSkillStep(${i})">${i + 1}. ${escapeHtml(sub.title)}</button>`).join('')}
+            <button class="step-pill ${currentSkillIdx === -1 ? 'active' : ''}" onclick="selectSkillStep(-1)">Xem tất cả (${subs.length})</button>
+          </div>
+        ` : '';
+
+        const visible = currentSkillIdx === -1 ? subs.map((s, idx) => ({ sub: s, idx })) : (subs[currentSkillIdx] ? [{ sub: subs[currentSkillIdx], idx: currentSkillIdx }] : []);
+
+        const unitsHtml = visible.map(({ sub, idx }) => `
+          <div class="skill-unit">
+            <div class="skill-unit-header">
+              <span class="skill-index-badge">KỸ NĂNG ${idx + 1} / ${subs.length}</span>
+              <h3 style="margin:0;">${escapeHtml(sub.title)}</h3>
+            </div>
+            ${sub.paragraphs.map(p => '<p class="pre-line">' + highlightProse(p) + '</p>').join('')}
+            ${renderImages(sub.figures)}
+            ${renderTables(sub.tables)}
+            ${sub.conceptNotes.map(cn => `
+              <div class="sticky-rule ${cn.type === 'how-to-steps' ? 'how-to' : ''}">
+                <h4 style="margin:0 0 6px 0;">📌 ${escapeHtml(cn.title)}</h4>
+                <div class="pre-line">${highlightProse(cn.text)}</div>
+                ${renderTables(cn.tables)}
+              </div>
+            `).join('')}
+            ${sub.workedExamples.map(ex => `
+              <div class="example-split-grid">
+                <div class="worked-pane">
+                  <div style="font-size:0.78rem;font-weight:800;color:#1e40af;margin-bottom:8px;">📘 WORKED EXAMPLE ${ex.number} <small style="color:#64748b;">(${ex.uid})</small></div>
+                  <div class="problem-statement pre-line">${escapeHtml(ex.prompt)}</div>
+                  ${renderImages(ex.images)}
+                  ${renderTables(ex.tables)}
+                  ${renderStepTimeline(ex.solution)}
+                </div>
+                <div class="try-pane">
+                  <div style="font-size:0.78rem;font-weight:800;color:#166534;">⚡ TRY IT NOW! (THỰC HÀNH ĐỐI CHIẾU)</div>
+                  ${ex.tryItExercises.map((tr, tIdx) => `
+                    <div class="try-card">
+                      <div style="font-size:0.76rem;font-weight:800;color:#15803d;margin-bottom:4px;">BÀI TỰ LUYỆN #${tIdx + 1}</div>
+                      <div class="pre-line" style="font-weight:600;font-size:0.95rem;">${escapeHtml(tr.prompt)}</div>
+                      ${renderImages(tr.images)}
+                      ${renderActiveRecall(tr)}
+                      ${tr.solution ? '<details style="margin-top:8px;font-size:0.85rem;"><summary style="cursor:pointer;color:#15803d;font-weight:700;">👁️ Xem đáp án chuẩn</summary><div class="pre-line" style="margin-top:6px;padding:7px;background:#f0fdf4;border-radius:6px;font-weight:700;">' + escapeHtml(tr.solution.text) + '</div></details>' : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('');
+
+        tabContent = bgHtml + stepperHtml + unitsHtml;
+      } else if (currentTab === 'glossary') {
+        tabContent = '<div class="glossary-grid">' + sec.glossary.map(g => `
+          <div class="glossary-card">
+            <div><span class="hi-kw" style="font-size:1.06rem;">${escapeHtml(g.term)}</span></div>
+            ${g.termVi ? '<div style="color:#1d4ed8;font-weight:700;margin-top:6px;">🇻🇳 ' + escapeHtml(g.termVi) + '</div>' : ''}
+            <p style="font-size:0.9rem;margin:8px 0 4px 0;"><b>EN:</b> ${escapeHtml(g.definition)}</p>
+            ${g.definitionVi ? '<p style="font-size:0.9rem;margin:4px 0;"><b>VI:</b> ' + escapeHtml(g.definitionVi) + '</p>' : ''}
+            ${g.memoryTipVi ? '<div style="margin-top:8px;background:#fffbeb;border-left:3px solid #f59e0b;padding:7px 10px;font-size:0.84rem;">💡 ' + escapeHtml(g.memoryTipVi) + '</div>' : ''}
+          </div>
+        `).join('') + '</div>';
+      } else if (currentTab === 'practice') {
+        const groups = ['ALL', ...new Set(sec.practiceExercises.map(e => e.skillGroup))];
+        const filtered = selectedSkillGroup === 'ALL' ? sec.practiceExercises : sec.practiceExercises.filter(e => e.skillGroup === selectedSkillGroup);
+        tabContent = `
+          <div style="margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#f4f1ea;padding:10px 14px;border-radius:10px;">
+            <b>Lọc kỹ năng:</b>
+            <select onchange="filterSkill(this.value)" style="padding:7px 10px;border-radius:6px;">
+              ${groups.map(g => `<option value="${escapeHtml(g)}" ${g === selectedSkillGroup ? 'selected' : ''}>${escapeHtml(g)}</option>`).join('')}
+            </select>
+            <span style="font-size:0.85rem;color:#52525b;"><b>${filtered.length}</b> / ${sec.practiceExercises.length} câu</span>
+          </div>
+          <div class="practice-grid">
+            ${filtered.map((ex, i) => `
+              <div class="skill-unit" style="padding:16px 18px;margin-bottom:0;">
+                <div style="font-size:0.8rem;font-weight:800;margin-bottom:6px;">Câu #${i + 1} <small style="color:#71717a;">• ${escapeHtml(ex.skillGroup)} • ${ex.uid}</small></div>
+                ${ex.instruction ? '<div style="font-size:0.83rem;color:#52525b;font-style:italic;margin-bottom:6px;">' + escapeHtml(ex.instruction) + '</div>' : ''}
+                <div class="pre-line" style="font-weight:600;margin-bottom:8px;">${escapeHtml(ex.prompt)}</div>
+                ${renderImages(ex.images)}
+                ${renderTables(ex.tables)}
+                ${renderActiveRecall(ex)}
+                ${ex.solution ? '<details style="margin-top:8px;font-size:0.85rem;"><summary style="cursor:pointer;color:#2563eb;font-weight:700;">👁️ Xem đáp án chuẩn</summary><div class="pre-line" style="margin-top:6px;padding:7px;background:#f8fafc;border-radius:6px;font-weight:700;color:#15803d;">' + escapeHtml(ex.solution.text) + '</div></details>' : ''}
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      app.innerHTML = `
+        <div class="sec-header">
+          <div>
+            <div class="sec-kicker">Chapter ${currentChapter.number} • Section ${sec.number} • UID: ${sec.uid}</div>
+            <h2 class="sec-title">${escapeHtml(sec.title)}</h2>
+          </div>
+          <div class="tabs">
+            <button class="tab-btn ${currentTab === 'lesson' ? 'active' : ''}" onclick="selectTab('lesson')">📖 Bài giảng (${sec.stats.subsectionCount})</button>
+            <button class="tab-btn ${currentTab === 'glossary' ? 'active' : ''}" onclick="selectTab('glossary')">🔤 Từ vựng (${sec.stats.glossaryCount})</button>
+            <button class="tab-btn ${currentTab === 'practice' ? 'active' : ''}" onclick="selectTab('practice')">✍️ Luyện tập (${sec.stats.practiceExerciseCount})</button>
+          </div>
+        </div>
+        ${tabContent}
+      `;
+      renderMath();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      populateChapterSelect();
+      const firstBuilt = MANIFEST.chapters.find(c => c.isBuilt);
+      if (firstBuilt) loadChapter(firstBuilt.number);
+    });
+  </script>
+</body>
+</html>

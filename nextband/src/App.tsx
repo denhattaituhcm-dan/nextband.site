@@ -120,6 +120,7 @@ const SpeakingForecastHubPage = lazyWithRetry(() => import("@/pages/public/speak
 const SpeakingForecastSeasonPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastSeason"));
 const SpeakingForecastTopicPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastTopic"));
 const ChemistryLabPage = lazyWithRetry(() => import("@/pages/public/ChemistryLabPage"));
+const ElementaryAlgebraPage = lazyWithRetry(() => import("@/pages/public/ElementaryAlgebraPage"));
 const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingUniversePage"));
 const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
 const EnglishIdiomsCatalogPage = lazyWithRetry(() => import("@/pages/public/reading/EnglishIdiomsCatalogPage"));
@@ -400,6 +401,7 @@ const App = () => (
                 <Route path="/ielts-speaking-forecast/:seasonSlug/:topicSlug" element={<SpeakingForecastTopicPage />} />
                 <Route path="/chemistry" element={<ChemistryLabPage />} />
                 <Route path="/hoa-10" element={<Navigate to="/chemistry" replace />} />
+                <Route path="/elementary-algebra" element={<ElementaryAlgebraPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/reading" element={<ReadingUniversePage />} />

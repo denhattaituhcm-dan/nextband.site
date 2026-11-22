@@ -215,7 +215,14 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
       { label: "Speaking Forecast", href: "/ielts-speaking-forecast", badge: "HOT" },
     ],
   },
-  { label: "Chemistry 10", href: "/chemistry", badge: "3D LAB" },
+  {
+    label: "Môn học",
+    href: "/chemistry",
+    children: [
+      { label: "Chemistry 10", href: "/chemistry", badge: "3D LAB", badgeColor: "sky" },
+      { label: "Elementary Algebra", href: "/elementary-algebra", badge: "11 Chương", badgeColor: "emerald" },
+    ],
+  },
   { label: "Tự học", href: "https://tuhoc.nextband.vn", isFeatured: true },
   { label: "Tiến bộ", href: "/results" },
   { label: "Giảng viên", href: "/teachers" },
@@ -236,6 +243,14 @@ export function PublicHeader() {
         location.pathname.startsWith("/courses") ||
         location.pathname.startsWith("/academic-system") ||
         location.pathname.startsWith("/assessment")
+      ) {
+        return true;
+      }
+    }
+    if (item.href === "/chemistry") {
+      if (
+        location.pathname.startsWith("/chemistry") ||
+        location.pathname.startsWith("/elementary-algebra")
       ) {
         return true;
       }
