@@ -1,4 +1,5 @@
 import { PrismaClient, InvitationStatus } from '@prisma/client';
+import { randomBytes } from 'crypto';
 import { InvitationRepository } from '../repositories/invitation.repository.js';
 import { ClassRepository } from '../repositories/class.repository.js';
 import { AuthorizationService } from './authorization.service.js';
@@ -61,8 +62,8 @@ export class InvitationService {
       classId,
     });
 
-    const code = inviteCode ? inviteCode.toUpperCase() : Math.random().toString(36).substring(2, 8).toUpperCase();
-    const token = `token_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const code = inviteCode ? inviteCode.toUpperCase() : randomBytes(4).toString('hex').slice(0, 6).toUpperCase();
+    const token = `token_${Date.now()}_${randomBytes(8).toString('hex')}`;
     const expiresAt = expiresInDays ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000) : null;
 
     return this.invitationRepo.create({

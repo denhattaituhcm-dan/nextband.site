@@ -35937,7 +35937,7 @@ var require_helmet = __commonJS({
 var require_helmet2 = __commonJS({
   "node_modules/@fastify/helmet/index.js"(exports, module) {
     "use strict";
-    var { randomBytes: randomBytes2 } = __require("node:crypto");
+    var { randomBytes: randomBytes6 } = __require("node:crypto");
     var fp3 = require_plugin2();
     var helmet2 = require_helmet();
     async function fastifyHelmet(fastify, options) {
@@ -35990,8 +35990,8 @@ var require_helmet2 = __commonJS({
     async function replyDecorators(request, reply, configuration, enableCSP) {
       if (enableCSP) {
         reply.cspNonce = {
-          script: randomBytes2(16).toString("hex"),
-          style: randomBytes2(16).toString("hex")
+          script: randomBytes6(16).toString("hex"),
+          style: randomBytes6(16).toString("hex")
         };
       }
       reply.helmet = function(opts) {
@@ -53252,6 +53252,7 @@ import fs from "fs";
 var import_dotenv, isTestEnv, WEAK_SECRETS, envSchema, envData, env;
 var init_env = __esm({
   "server/config/env.ts"() {
+    "use strict";
     init_zod();
     import_dotenv = __toESM(require_main(), 1);
     isTestEnv = process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
@@ -53376,7 +53377,8 @@ var init_env = __esm({
         MAX_FILE_SIZE: "52428800",
         FRONTEND_URL: "http://localhost:5173",
         SUPABASE_URL: "https://qxtpbonwjmxmogriyfox.supabase.co",
-        NOTIFICATION_EMAIL_TO: "arisieltsdeeplearning@gmail.com"
+        NOTIFICATION_EMAIL_TO: "arisieltsdeeplearning@gmail.com",
+        ROOT_ADMIN_EMAILS: process.env.ROOT_ADMIN_EMAILS || "admin@ielts.com,admin@nextband.site,bestcanthocity@gmail.com"
       };
     }
     env = envData;
@@ -81605,6 +81607,7 @@ __export(speakingStorage_service_exports, {
 var SPEAKING_BUCKET, RETENTION_DURATIONS_MS, SpeakingStorageService;
 var init_speakingStorage_service = __esm({
   "server/services/speakingStorage.service.ts"() {
+    "use strict";
     init_dist4();
     init_env();
     SPEAKING_BUCKET = "speaking-recordings";
@@ -81621,7 +81624,7 @@ var init_speakingStorage_service = __esm({
     SpeakingStorageService = class {
       constructor(prisma) {
         this.prisma = prisma;
-        const supabaseUrl = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
+        const supabaseUrl = env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co";
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
         if (!supabaseKey) {
           console.warn("[SpeakingStorageService] \u26A0\uFE0F SUPABASE_SERVICE_ROLE_KEY is not configured in environment.");
@@ -81652,6 +81655,21 @@ var init_speakingStorage_service = __esm({
        * Khởi tạo bản ghi Asset ở trạng thái UPLOADING (Draft 12h)
        */
       async registerDraftAsset(params) {
+        const existing = await this.prisma.speakingRecordingAsset.findUnique({
+          where: { id: params.id }
+        });
+        if (existing) {
+          if (existing.status === "ACTIVE" || existing.status === "PURGED") {
+            const err = new Error("B\u1EA3n ghi \xE2m \u0111\xE3 \u0111\u01B0\u1EE3c ch\u1ED1t, kh\xF4ng th\u1EC3 ghi \u0111\xE8");
+            err.statusCode = 409;
+            throw err;
+          }
+          if (existing.uploadedBy && existing.uploadedBy !== params.uploadedBy) {
+            const err = new Error("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n ghi \u0111\xE8 b\u1EA3n ghi \xE2m c\u1EE7a ng\u01B0\u1EDDi d\xF9ng kh\xE1c");
+            err.statusCode = 403;
+            throw err;
+          }
+        }
         const expiresAt = new Date(Date.now() + RETENTION_DURATIONS_MS.DRAFT);
         return this.prisma.speakingRecordingAsset.upsert({
           where: { id: params.id },
@@ -81662,7 +81680,7 @@ var init_speakingStorage_service = __esm({
             questionId: params.questionId,
             retentionType: "DRAFT",
             status: "UPLOADING",
-            uploadedBy: params.uploadedBy,
+            uploadedBy: params.uploadedBy || null,
             expiresAt
           },
           update: {
@@ -81677,6 +81695,19 @@ var init_speakingStorage_service = __esm({
        * Xác nhận tải lên thành công và kích hoạt Asset
        */
       async confirmAssetUploaded(params) {
+        const existing = await this.prisma.speakingRecordingAsset.findUnique({
+          where: { id: params.id }
+        });
+        if (!existing) {
+          const err = new Error("Kh\xF4ng t\xECm th\u1EA5y b\u1EA3n ghi \xE2m nh\xE1p c\u1EA7n x\xE1c nh\u1EADn");
+          err.statusCode = 404;
+          throw err;
+        }
+        if (existing.uploadedBy && existing.uploadedBy !== params.uploadedBy) {
+          const err = new Error("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n x\xE1c nh\u1EADn b\u1EA3n ghi \xE2m c\u1EE7a ng\u01B0\u1EDDi d\xF9ng kh\xE1c");
+          err.statusCode = 403;
+          throw err;
+        }
         return this.prisma.speakingRecordingAsset.update({
           where: { id: params.id },
           data: {
@@ -81897,6 +81928,7 @@ import { NotificationType } from "@prisma/client";
 var NotificationService;
 var init_notification_service = __esm({
   "server/services/notification.service.ts"() {
+    "use strict";
     NotificationService = class {
       constructor(prisma) {
         this.prisma = prisma;
@@ -82283,6 +82315,7 @@ import { basename, resolve, sep } from "path";
 var AuthorizationError, NotFoundError, ValidationError, AuthorizationService;
 var init_authorization_service = __esm({
   "server/services/authorization.service.ts"() {
+    "use strict";
     AuthorizationError = class extends Error {
       statusCode;
       constructor(message2, statusCode = 403) {
@@ -94525,6 +94558,7 @@ __export(leadNotification_service_exports, {
 var import_nodemailer, LeadNotificationService, leadNotificationService;
 var init_leadNotification_service = __esm({
   "server/services/leadNotification.service.ts"() {
+    "use strict";
     import_nodemailer = __toESM(require_nodemailer(), 1);
     init_env();
     LeadNotificationService = class {
@@ -94853,6 +94887,7 @@ function calculateTrend(prevAccuracy, currAccuracy) {
 var QUESTION_METADATA_MAP, DiagnosticService;
 var init_diagnostic_service = __esm({
   "server/services/diagnostic.service.ts"() {
+    "use strict";
     QUESTION_METADATA_MAP = {
       matching: {
         label: "Matching Information / Headings",
@@ -95270,6 +95305,7 @@ var init_diagnostic_service = __esm({
 var ClassRepository;
 var init_class_repository = __esm({
   "server/repositories/class.repository.ts"() {
+    "use strict";
     ClassRepository = class {
       constructor(prisma) {
         this.prisma = prisma;
@@ -95484,6 +95520,7 @@ function formatDateKey(date) {
 var RoomCollisionService;
 var init_room_collision_service = __esm({
   "server/services/room-collision.service.ts"() {
+    "use strict";
     RoomCollisionService = class {
       /**
        * Validates whether a set of planned sessions in a specified room collides with any
@@ -95614,6 +95651,7 @@ function isHolidayDate(date, customHolidays) {
 var OFFICIAL_VIETNAM_HOLIDAYS;
 var init_holiday_helper = __esm({
   "server/utils/holiday.helper.ts"() {
+    "use strict";
     OFFICIAL_VIETNAM_HOLIDAYS = [
       // 2025
       { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2025", startDate: "2025-01-01", endDate: "2025-01-01" },
@@ -95685,6 +95723,7 @@ function isManualGradingRequired(submission) {
 }
 var init_examSkillHelper = __esm({
   "server/utils/examSkillHelper.ts"() {
+    "use strict";
   }
 });
 
@@ -95694,6 +95733,7 @@ import { NotificationType as NotificationType2 } from "@prisma/client";
 var ClassService;
 var init_class_service = __esm({
   "server/services/class.service.ts"() {
+    "use strict";
     init_class_repository();
     init_authorization_service();
     init_notification_service();
@@ -97096,7 +97136,7 @@ var init_class_service = __esm({
             if (existingUser) {
               resolvedStudentIds.add(existingUser.userId);
             } else {
-              const autoPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+              const autoPassword = crypto2.randomBytes(12).toString("base64url");
               const fullName = email.split("@")[0];
               const dbResult = await this.prisma.$queryRawUnsafe(
                 `
@@ -97444,6 +97484,7 @@ __export(lead_schema_exports, {
 var createLeadSchema, updateLeadSchema, listLeadsQuerySchema, convertLeadSchema, checkPhoneQuerySchema;
 var init_lead_schema = __esm({
   "server/schemas/lead.schema.ts"() {
+    "use strict";
     init_zod();
     createLeadSchema = external_exports.object({
       fullName: external_exports.string({ required_error: "H\u1ECD v\xE0 t\xEAn l\xE0 b\u1EAFt bu\u1ED9c" }).trim().min(2, "H\u1ECD v\xE0 t\xEAn ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 2 k\xFD t\u1EF1").max(255, "H\u1ECD v\xE0 t\xEAn kh\xF4ng \u0111\u01B0\u1EE3c v\u01B0\u1EE3t qu\xE1 255 k\xFD t\u1EF1"),
@@ -97500,6 +97541,7 @@ __export(class_scheduler_service_exports, {
 var ClassSchedulerService;
 var init_class_scheduler_service = __esm({
   "server/services/class-scheduler.service.ts"() {
+    "use strict";
     init_class_service();
     ClassSchedulerService = class {
       constructor(prisma, log) {
@@ -97578,6 +97620,7 @@ import crypto4 from "crypto";
 var ArenaPinService;
 var init_arena_pin_service = __esm({
   "server/services/arena-pin.service.ts"() {
+    "use strict";
     ArenaPinService = class {
       constructor(prisma) {
         this.prisma = prisma;
@@ -97659,6 +97702,7 @@ function sanitizePublicArenaConfig(rawConfig) {
 var MAX_CONCURRENT_COMMUNITY_ROOMS, MAX_COMMUNITY_PLAYERS_PER_ROOM, MAX_VIP_PLAYERS_PER_ROOM, COMMUNITY_LOBBY_TTL_MS, VIP_ROOM_TTL_MS, ArenaRoomService;
 var init_arena_room_service = __esm({
   "server/services/arena-room.service.ts"() {
+    "use strict";
     init_arena_pin_service();
     MAX_CONCURRENT_COMMUNITY_ROOMS = 20;
     MAX_COMMUNITY_PLAYERS_PER_ROOM = 20;
@@ -98113,6 +98157,7 @@ var init_arena_room_service = __esm({
 var ARENA_STANDARD_QUESTIONS, ARENA_COLLOCATION_EXTENDED_QUESTIONS, ARENA_COLLOCATION_DECK_QUESTIONS;
 var init_arena_questions_data = __esm({
   "server/services/arena-questions.data.ts"() {
+    "use strict";
     ARENA_STANDARD_QUESTIONS = [
       {
         id: "q_colloc_01",
@@ -98528,6 +98573,7 @@ var init_arena_questions_data = __esm({
 var WEEK_1_QUESTIONS;
 var init_week1_data = __esm({
   "server/services/bank_parts/week1.data.ts"() {
+    "use strict";
     WEEK_1_QUESTIONS = {
       "WEEK 1 \u2013 DAY 1": [
         {
@@ -99143,6 +99189,7 @@ var init_week1_data = __esm({
 var WEEK_2_QUESTIONS;
 var init_week2_data = __esm({
   "server/services/bank_parts/week2.data.ts"() {
+    "use strict";
     WEEK_2_QUESTIONS = {
       "WEEK 2 \u2013 DAY 1": [
         {
@@ -99758,6 +99805,7 @@ var init_week2_data = __esm({
 var WEEK_3_QUESTIONS;
 var init_week3_data = __esm({
   "server/services/bank_parts/week3.data.ts"() {
+    "use strict";
     WEEK_3_QUESTIONS = {
       "WEEK 3 \u2013 DAY 1": [
         {
@@ -100373,6 +100421,7 @@ var init_week3_data = __esm({
 var WEEK_4_QUESTIONS;
 var init_week4_data = __esm({
   "server/services/bank_parts/week4.data.ts"() {
+    "use strict";
     WEEK_4_QUESTIONS = {
       "WEEK 4 \u2013 DAY 1": [
         {
@@ -100988,6 +101037,7 @@ var init_week4_data = __esm({
 var WEEK_5_QUESTIONS;
 var init_week5_data = __esm({
   "server/services/bank_parts/week5.data.ts"() {
+    "use strict";
     WEEK_5_QUESTIONS = {
       "WEEK 5 \u2013 DAY 1": [
         {
@@ -101603,6 +101653,7 @@ var init_week5_data = __esm({
 var WEEK_6_QUESTIONS;
 var init_week6_data = __esm({
   "server/services/bank_parts/week6.data.ts"() {
+    "use strict";
     WEEK_6_QUESTIONS = {
       "WEEK 6 \u2013 DAY 1": [
         {
@@ -102118,6 +102169,7 @@ var init_week6_data = __esm({
 var WEEK_7_QUESTIONS;
 var init_week7_data = __esm({
   "server/services/bank_parts/week7.data.ts"() {
+    "use strict";
     WEEK_7_QUESTIONS = {
       "WEEK 7 \u2013 DAY 1": [
         {
@@ -102633,6 +102685,7 @@ var init_week7_data = __esm({
 var WEEK_8_QUESTIONS;
 var init_week8_data = __esm({
   "server/services/bank_parts/week8.data.ts"() {
+    "use strict";
     WEEK_8_QUESTIONS = {
       "WEEK 8 \u2013 DAY 1": [
         {
@@ -103148,6 +103201,7 @@ var init_week8_data = __esm({
 var WEEK_9_QUESTIONS;
 var init_week9_data = __esm({
   "server/services/bank_parts/week9.data.ts"() {
+    "use strict";
     WEEK_9_QUESTIONS = {
       "WEEK 9 \u2013 DAY 1": [
         {
@@ -103695,6 +103749,7 @@ function matchDoerLessonKey(title) {
 var DOER_ARENA_LESSON_QUESTIONS;
 var init_doer_questions_bank_data = __esm({
   "server/services/doer-questions-bank.data.ts"() {
+    "use strict";
     init_week1_data();
     init_week2_data();
     init_week3_data();
@@ -103722,6 +103777,7 @@ var init_doer_questions_bank_data = __esm({
 var BUILDER_WEEK_1_QUESTIONS;
 var init_week1_data2 = __esm({
   "server/services/builder_bank_parts/week1.data.ts"() {
+    "use strict";
     BUILDER_WEEK_1_QUESTIONS = {
       "WEEK 1 \u2013 DAY 1": [
         {
@@ -104397,6 +104453,7 @@ var init_week1_data2 = __esm({
 var BUILDER_WEEK_2_QUESTIONS;
 var init_week2_data2 = __esm({
   "server/services/builder_bank_parts/week2.data.ts"() {
+    "use strict";
     BUILDER_WEEK_2_QUESTIONS = {
       "WEEK 2 \u2013 DAY 1": [
         {
@@ -105072,6 +105129,7 @@ var init_week2_data2 = __esm({
 var BUILDER_WEEK_3_QUESTIONS;
 var init_week3_data2 = __esm({
   "server/services/builder_bank_parts/week3.data.ts"() {
+    "use strict";
     BUILDER_WEEK_3_QUESTIONS = {
       "WEEK 3 \u2013 DAY 1": [
         {
@@ -105747,6 +105805,7 @@ var init_week3_data2 = __esm({
 var BUILDER_WEEK_4_QUESTIONS;
 var init_week4_data2 = __esm({
   "server/services/builder_bank_parts/week4.data.ts"() {
+    "use strict";
     BUILDER_WEEK_4_QUESTIONS = {
       "WEEK 4 \u2013 DAY 1": [
         {
@@ -106423,6 +106482,7 @@ var init_week4_data2 = __esm({
 var BUILDER_WEEK_5_QUESTIONS;
 var init_week5_data2 = __esm({
   "server/services/builder_bank_parts/week5.data.ts"() {
+    "use strict";
     BUILDER_WEEK_5_QUESTIONS = {
       "WEEK 5 \u2013 DAY 1": [
         {
@@ -107098,6 +107158,7 @@ var init_week5_data2 = __esm({
 var BUILDER_WEEK_6_QUESTIONS;
 var init_week6_data2 = __esm({
   "server/services/builder_bank_parts/week6.data.ts"() {
+    "use strict";
     BUILDER_WEEK_6_QUESTIONS = {
       "WEEK 6 \u2013 DAY 1": [
         {
@@ -107773,6 +107834,7 @@ var init_week6_data2 = __esm({
 var BUILDER_WEEK_7_QUESTIONS;
 var init_week7_data2 = __esm({
   "server/services/builder_bank_parts/week7.data.ts"() {
+    "use strict";
     BUILDER_WEEK_7_QUESTIONS = {
       // ==========================================
       // WEEK 7 - DAY 1 - WRITING: HEDGING SKILLS & CONDITIONALS
@@ -108457,6 +108519,7 @@ var init_week7_data2 = __esm({
 var BUILDER_WEEK_8_QUESTIONS;
 var init_week8_data2 = __esm({
   "server/services/builder_bank_parts/week8.data.ts"() {
+    "use strict";
     BUILDER_WEEK_8_QUESTIONS = {
       // ==========================================
       // WEEK 8 - DAY 1 - WRITING: TASK 1 OVERVIEW & KEY FEATURES
@@ -109141,6 +109204,7 @@ var init_week8_data2 = __esm({
 var BUILDER_WEEK_9_QUESTIONS;
 var init_week9_data2 = __esm({
   "server/services/builder_bank_parts/week9.data.ts"() {
+    "use strict";
     BUILDER_WEEK_9_QUESTIONS = {
       // ==========================================
       // WEEK 9 - DAY 1 - WRITING: TASK 1 INTRO & OVERVIEW MASTERY
@@ -109857,6 +109921,7 @@ function matchBuilderLessonKey(title) {
 var BUILDER_ARENA_LESSON_QUESTIONS;
 var init_builder_questions_bank_data = __esm({
   "server/services/builder-questions-bank.data.ts"() {
+    "use strict";
     init_week1_data2();
     init_week2_data2();
     init_week3_data2();
@@ -109884,6 +109949,7 @@ var init_builder_questions_bank_data = __esm({
 var GRADE8_UNIT1_QUESTIONS;
 var init_unit1_data = __esm({
   "server/services/grade8_bank_parts/unit1.data.ts"() {
+    "use strict";
     GRADE8_UNIT1_QUESTIONS = {
       "UNIT 1 \u2013 LEISURE TIME": [
         {
@@ -110115,6 +110181,7 @@ var init_unit1_data = __esm({
 var GRADE8_UNIT2_QUESTIONS;
 var init_unit2_data = __esm({
   "server/services/grade8_bank_parts/unit2.data.ts"() {
+    "use strict";
     GRADE8_UNIT2_QUESTIONS = {
       "UNIT 2 \u2013 LIFE IN THE COUNTRYSIDE": [
         {
@@ -110382,6 +110449,7 @@ function matchGrade8LessonKey(title) {
 var GRADE8_ARENA_LESSON_QUESTIONS;
 var init_grade8_questions_bank_data = __esm({
   "server/services/grade8-questions-bank.data.ts"() {
+    "use strict";
     init_unit1_data();
     init_unit2_data();
     GRADE8_ARENA_LESSON_QUESTIONS = normalizeBankQuestions({
@@ -110395,6 +110463,7 @@ var init_grade8_questions_bank_data = __esm({
 var MASTER_WEEK_1_QUESTIONS;
 var init_week1_data3 = __esm({
   "server/services/master_bank_parts/week1.data.ts"() {
+    "use strict";
     MASTER_WEEK_1_QUESTIONS = {
       "WEEK 1 \u2013 DAY 1": [
         {
@@ -111070,6 +111139,7 @@ var init_week1_data3 = __esm({
 var MASTER_WEEK_2_QUESTIONS;
 var init_week2_data3 = __esm({
   "server/services/master_bank_parts/week2.data.ts"() {
+    "use strict";
     MASTER_WEEK_2_QUESTIONS = {
       "WEEK 2 \u2013 DAY 1": [
         {
@@ -111745,6 +111815,7 @@ var init_week2_data3 = __esm({
 var MASTER_WEEK_3_QUESTIONS;
 var init_week3_data3 = __esm({
   "server/services/master_bank_parts/week3.data.ts"() {
+    "use strict";
     MASTER_WEEK_3_QUESTIONS = {
       "WEEK 3 \u2013 DAY 1": [
         {
@@ -112420,6 +112491,7 @@ var init_week3_data3 = __esm({
 var MASTER_WEEK_4_QUESTIONS;
 var init_week4_data3 = __esm({
   "server/services/master_bank_parts/week4.data.ts"() {
+    "use strict";
     MASTER_WEEK_4_QUESTIONS = {
       "WEEK 4 \u2013 DAY 1": [
         {
@@ -113095,6 +113167,7 @@ var init_week4_data3 = __esm({
 var MASTER_WEEK_5_QUESTIONS;
 var init_week5_data3 = __esm({
   "server/services/master_bank_parts/week5.data.ts"() {
+    "use strict";
     MASTER_WEEK_5_QUESTIONS = {
       "WEEK 5 \u2013 DAY 1": [
         {
@@ -113770,6 +113843,7 @@ var init_week5_data3 = __esm({
 var MASTER_WEEK_6_QUESTIONS;
 var init_week6_data3 = __esm({
   "server/services/master_bank_parts/week6.data.ts"() {
+    "use strict";
     MASTER_WEEK_6_QUESTIONS = {
       "WEEK 6 \u2013 DAY 1": [
         {
@@ -114445,6 +114519,7 @@ var init_week6_data3 = __esm({
 var MASTER_WEEK_7_QUESTIONS;
 var init_week7_data3 = __esm({
   "server/services/master_bank_parts/week7.data.ts"() {
+    "use strict";
     MASTER_WEEK_7_QUESTIONS = {
       "WEEK 7 \u2013 DAY 1": [
         {
@@ -115120,6 +115195,7 @@ var init_week7_data3 = __esm({
 var MASTER_WEEK_8_QUESTIONS;
 var init_week8_data3 = __esm({
   "server/services/master_bank_parts/week8.data.ts"() {
+    "use strict";
     MASTER_WEEK_8_QUESTIONS = {
       "WEEK 8 \u2013 DAY 1": [
         {
@@ -115795,6 +115871,7 @@ var init_week8_data3 = __esm({
 var MASTER_WEEK_9_QUESTIONS;
 var init_week9_data3 = __esm({
   "server/services/master_bank_parts/week9.data.ts"() {
+    "use strict";
     MASTER_WEEK_9_QUESTIONS = {
       "WEEK 9 \u2013 DAY 1": [
         {
@@ -116489,6 +116566,7 @@ function matchMasterLessonKey(title) {
 var MASTER_ARENA_LESSON_QUESTIONS;
 var init_master_questions_bank_data = __esm({
   "server/services/master-questions-bank.data.ts"() {
+    "use strict";
     init_week1_data3();
     init_week2_data3();
     init_week3_data3();
@@ -116516,6 +116594,7 @@ var init_master_questions_bank_data = __esm({
 var LEADER_WEEK_1_QUESTIONS;
 var init_week1_data4 = __esm({
   "server/services/leader_bank_parts/week1.data.ts"() {
+    "use strict";
     LEADER_WEEK_1_QUESTIONS = {
       "WEEK 1 \u2013 DAY 1": [
         {
@@ -117191,6 +117270,7 @@ var init_week1_data4 = __esm({
 var LEADER_WEEK_2_QUESTIONS;
 var init_week2_data4 = __esm({
   "server/services/leader_bank_parts/week2.data.ts"() {
+    "use strict";
     LEADER_WEEK_2_QUESTIONS = {
       "WEEK 2 \u2013 DAY 1": [
         {
@@ -117866,6 +117946,7 @@ var init_week2_data4 = __esm({
 var LEADER_WEEK_3_QUESTIONS;
 var init_week3_data4 = __esm({
   "server/services/leader_bank_parts/week3.data.ts"() {
+    "use strict";
     LEADER_WEEK_3_QUESTIONS = {
       "WEEK 3 \u2013 DAY 1": [
         {
@@ -118541,6 +118622,7 @@ var init_week3_data4 = __esm({
 var LEADER_WEEK_4_QUESTIONS;
 var init_week4_data4 = __esm({
   "server/services/leader_bank_parts/week4.data.ts"() {
+    "use strict";
     LEADER_WEEK_4_QUESTIONS = [
       // ==========================================
       // WEEK 4 – DAY 1: ACADEMIC PARAPHRASING, 40-60 APPROACH & COHESION MASTERY
@@ -119279,6 +119361,7 @@ var init_week4_data4 = __esm({
 var LEADER_WEEK_5_QUESTIONS;
 var init_week5_data4 = __esm({
   "server/services/leader_bank_parts/week5.data.ts"() {
+    "use strict";
     LEADER_WEEK_5_QUESTIONS = [
       // ==========================================
       // WEEK 5 – DAY 1: PREPOSITIONAL COLLOCATIONS & GENERALIZED TASK 2 BLUEPRINT
@@ -120017,6 +120100,7 @@ var init_week5_data4 = __esm({
 var LEADER_WEEK_6_QUESTIONS;
 var init_week6_data4 = __esm({
   "server/services/leader_bank_parts/week6.data.ts"() {
+    "use strict";
     LEADER_WEEK_6_QUESTIONS = [
       // ==========================================
       // WEEK 6 – DAY 1: FULL ESSAY TIMED MASTERCLASS: STRICT ENVIRONMENTAL REGULATIONS VS ECONOMY
@@ -120755,6 +120839,7 @@ var init_week6_data4 = __esm({
 var LEADER_WEEK_7_QUESTIONS;
 var init_week7_data4 = __esm({
   "server/services/leader_bank_parts/week7.data.ts"() {
+    "use strict";
     LEADER_WEEK_7_QUESTIONS = [
       // ==========================================
       // WEEK 7 – DAY 1: GROUPING & SIGNPOSTING: NAME FIRST VS FEATURE FIRST & 5-MIN TASK 2 FLASH-DRILL
@@ -121493,6 +121578,7 @@ var init_week7_data4 = __esm({
 var LEADER_WEEK_8_QUESTIONS;
 var init_week8_data4 = __esm({
   "server/services/leader_bank_parts/week8.data.ts"() {
+    "use strict";
     LEADER_WEEK_8_QUESTIONS = [
       // ==========================================
       // WEEK 8 – DAY 1: DYNAMIC CHART: ABSOLUTE VS PROPORTIONAL GROWTH & 5-MIN TASK 2 FLASH-DRILL
@@ -122231,6 +122317,7 @@ var init_week8_data4 = __esm({
 var LEADER_WEEK_9_QUESTIONS;
 var init_week9_data4 = __esm({
   "server/services/leader_bank_parts/week9.data.ts"() {
+    "use strict";
     LEADER_WEEK_9_QUESTIONS = [
       // ==========================================
       // WEEK 9 – DAY 1: LINE GRAPH SYNTHESIS & MULTI-LINE TREND CLUSTERING & 5-MIN TASK 2 FLASH-DRILL
@@ -122969,6 +123056,7 @@ var init_week9_data4 = __esm({
 var LEADER_WEEK_10_QUESTIONS;
 var init_week10_data = __esm({
   "server/services/leader_bank_parts/week10.data.ts"() {
+    "use strict";
     LEADER_WEEK_10_QUESTIONS = [
       // ==========================================
       // WEEK 10 – DAY 1: MAPS & SPATIAL TRANSFORMATION & 5-MIN TASK 2 FLASH-DRILL
@@ -123766,6 +123854,7 @@ function matchLeaderLessonKey(title) {
 var lessonsMap, LEADER_ARENA_LESSON_QUESTIONS;
 var init_leader_questions_bank_data = __esm({
   "server/services/leader-questions-bank.data.ts"() {
+    "use strict";
     init_week1_data4();
     init_week2_data4();
     init_week3_data4();
@@ -123922,6 +124011,7 @@ function flattenBankItems(bank) {
 var VALID_ARENA_TOPIC_KEYS, ArenaBankService;
 var init_arena_bank_service = __esm({
   "server/services/arena-bank.service.ts"() {
+    "use strict";
     init_arena_questions_data();
     init_doer_questions_bank_data();
     init_builder_questions_bank_data();
@@ -124394,9 +124484,11 @@ var arena_engine_service_exports = {};
 __export(arena_engine_service_exports, {
   ArenaEngineService: () => ArenaEngineService
 });
+import { Prisma as Prisma2 } from "@prisma/client";
 var ArenaEngineService;
 var init_arena_engine_service = __esm({
   "server/services/arena-engine.service.ts"() {
+    "use strict";
     init_arena_pin_service();
     init_arena_bank_service();
     init_arena_room_service();
@@ -124549,7 +124641,7 @@ var init_arena_engine_service = __esm({
             roundStartedAt: nextStatus === "QUESTION_LIVE" ? now : room.roundStartedAt,
             roundDeadlineAt: deadlineAt,
             lastCommandId: commandId,
-            config: nextConfig,
+            config: nextConfig === null ? Prisma2.JsonNull : nextConfig,
             ...nextExpiresAt ? { expiresAt: nextExpiresAt } : {}
           }
         });
@@ -126109,17 +126201,33 @@ function getBaseUrl() {
 }
 function toFileUrl(path3) {
   if (!path3) return null;
-  if (/^(https?:\/\/|data:)/i.test(path3)) return path3;
-  if (path3.startsWith("/storage/v1/")) {
-    const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
-    return `${supabaseBase}${path3}`;
+  const supabaseBase = (env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co").replace(/\/$/, "");
+  const legacyHostMatch = path3.match(/^https?:\/\/(?:api\.)?nextband\.site\/uploads\/(images|audio)\/(.+)$/i);
+  if (legacyHostMatch && legacyHostMatch[1] && legacyHostMatch[2]) {
+    const folder = legacyHostMatch[1].toLowerCase();
+    const filename = legacyHostMatch[2].replace(/^\/+/, "");
+    return `${supabaseBase}/storage/v1/object/public/exam-assets/${folder}/${filename}`;
+  }
+  const imgMatch = path3.match(/^(?:\/)?uploads\/images\/(.+)$/);
+  if (imgMatch && imgMatch[1]) {
+    const filename = imgMatch[1].replace(/^\/+/, "");
+    return `${supabaseBase}/storage/v1/object/public/exam-assets/images/${filename}`;
   }
   const audioMatch = path3.match(/^(?:\/)?uploads\/audio\/(.+)$/);
   if (audioMatch && audioMatch[1]) {
     const filename = audioMatch[1].replace(/^\/+/, "");
-    const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
     return `${supabaseBase}/storage/v1/object/public/exam-assets/audio/${filename}`;
   }
+  const examAssetMatch = path3.match(/^(?:\/)?exam-assets\/(images|audio|speaking-recordings)\/(.+)$/);
+  if (examAssetMatch && examAssetMatch[1] && examAssetMatch[2]) {
+    const folder = examAssetMatch[1];
+    const filename = examAssetMatch[2].replace(/^\/+/, "");
+    return `${supabaseBase}/storage/v1/object/public/exam-assets/${folder}/${filename}`;
+  }
+  if (path3.startsWith("/storage/v1/")) {
+    return `${supabaseBase}${path3}`;
+  }
+  if (/^(https?:\/\/|data:)/i.test(path3)) return path3;
   const base = getBaseUrl().replace(/\/$/, "");
   const relative = path3.startsWith("/") ? path3 : `/${path3}`;
   return `${base}${relative}`;
@@ -126284,7 +126392,7 @@ var canonicalPlacementTestPayload = {
   skills: {
     listening: {
       title: "K\u1EF9 n\u0103ng Nghe (Listening)",
-      audioUrl: "https://gzpdlqxjggyxlkeatvvf.supabase.co/storage/v1/object/public/exam-assets/audio/1787423782098-cambridge-ielts-13-academic-listening-1-audio-1.mp3",
+      audioUrl: "https://qxtpbonwjmxmogriyfox.supabase.co/storage/v1/object/public/exam-assets/audio/1787423782098-cambridge-ielts-13-academic-listening-1-audio-1.mp3",
       questions: [
         {
           id: "43907def-1f78-4839-8751-ff1079fdee91",
@@ -126926,8 +127034,8 @@ var AssessmentService = class {
         options = ["TRUE", "FALSE", "NOT GIVEN"];
       } else if (q.options) {
         if (Array.isArray(q.options)) {
-          options = q.options.filter((o) => typeof o === "string" && o.trim().length > 0).map((o) => o.replace(/<\/?font[^>]*>/gi, "").trim());
-          if (options.length === 0) options = void 0;
+          const parsed = q.options.filter((o) => typeof o === "string" && o.trim().length > 0).map((o) => o.replace(/<\/?font[^>]*>/gi, "").trim());
+          options = parsed.length > 0 ? parsed : void 0;
         } else if (typeof q.options === "object") {
           try {
             options = Object.values(q.options).filter((o) => typeof o === "string" && o.trim().length > 0).map((o) => String(o).replace(/<\/?font[^>]*>/gi, "").trim());
@@ -133961,6 +134069,7 @@ async function submissionsRoutes(fastify) {
 }
 
 // server/routes/users.routes.ts
+import { randomBytes } from "crypto";
 var usersRoutes = async (fastify) => {
   fastify.get(
     "/",
@@ -134559,7 +134668,7 @@ var usersRoutes = async (fastify) => {
           }
         });
       }
-      const finalPassword = password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const finalPassword = password || randomBytes(12).toString("base64url");
       const parsedDob = dateOfBirth ? new Date(dateOfBirth).toISOString().split("T")[0] : null;
       try {
         const dbResult = await fastify.prisma.$queryRawUnsafe(`
@@ -135181,7 +135290,7 @@ function generateFileName(originalName) {
   return `${Date.now()}-${randomUUID2()}${safeExt}`;
 }
 var uploadsRoutes = async (fastify) => {
-  const supabaseUrl = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
+  const supabaseUrl = env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co";
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
   const getSupabaseStorageClient = () => {
     if (!serviceRoleKey) {
@@ -135940,8 +136049,8 @@ async function classesRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       const { id: classId, studentId } = request.params;
-      const { randomBytes: randomBytes2 } = await import("crypto");
-      const newToken = `nb_p_${randomBytes2(8).toString("hex")}`;
+      const { randomBytes: randomBytes6 } = await import("crypto");
+      const newToken = `nb_p_${randomBytes6(8).toString("hex")}`;
       const updated = await fastify.prisma.classStudent.update({
         where: { classId_studentId: { classId, studentId } },
         data: { parentToken: newToken }
@@ -137093,6 +137202,7 @@ var site_settings_routes_default = siteSettingsRoutes;
 
 // server/services/invitation.service.ts
 import { InvitationStatus } from "@prisma/client";
+import { randomBytes as randomBytes2 } from "crypto";
 
 // server/repositories/invitation.repository.ts
 var InvitationRepository = class {
@@ -137154,8 +137264,8 @@ var InvitationService = class {
       userRoles,
       classId
     });
-    const code = inviteCode ? inviteCode.toUpperCase() : Math.random().toString(36).substring(2, 8).toUpperCase();
-    const token = `token_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const code = inviteCode ? inviteCode.toUpperCase() : randomBytes2(4).toString("hex").slice(0, 6).toUpperCase();
+    const token = `token_${Date.now()}_${randomBytes2(8).toString("hex")}`;
     const expiresAt = expiresInDays ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1e3) : null;
     return this.invitationRepo.create({
       class: { connect: { id: classId } },
@@ -137666,6 +137776,7 @@ var notifications_routes_default = notificationsRoutes;
 // server/services/lead.service.ts
 init_leadNotification_service();
 import { LeadStatus } from "@prisma/client";
+import { randomBytes as randomBytes3 } from "crypto";
 var LeadService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -137892,7 +138003,7 @@ var LeadService = class {
     if (existingUser) {
       throw new Error(`Email ${email} \u0111\xE3 t\u1ED3n t\u1EA1i tr\xEAn h\u1EC7 th\u1ED1ng`);
     }
-    const finalPassword = input.password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+    const finalPassword = input.password || randomBytes3(12).toString("base64url");
     let validatedTargetClass = null;
     if (input.targetClassId) {
       validatedTargetClass = await this.prisma.class.findUnique({
@@ -138589,11 +138700,16 @@ var speakingStorageRoutes = async (fastify) => {
       );
       if (!data) return;
       const userId = request.user?.id || null;
-      const asset = await speakingService.registerDraftAsset({
-        ...data,
-        uploadedBy: userId
-      });
-      return reply.status(201).send(asset);
+      try {
+        const asset = await speakingService.registerDraftAsset({
+          ...data,
+          uploadedBy: userId
+        });
+        return reply.status(201).send(asset);
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.status(statusCode).send({ error: err?.message || "Kh\xF4ng th\u1EC3 \u0111\u0103ng k\xFD b\u1EA3n ghi \xE2m nh\xE1p" });
+      }
     }
   );
   fastify.post(
@@ -138606,8 +138722,17 @@ var speakingStorageRoutes = async (fastify) => {
         reply
       );
       if (!data) return;
-      const asset = await speakingService.confirmAssetUploaded(data);
-      return reply.send(asset);
+      const userId = request.user?.id || null;
+      try {
+        const asset = await speakingService.confirmAssetUploaded({
+          ...data,
+          uploadedBy: userId
+        });
+        return reply.send(asset);
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.status(statusCode).send({ error: err?.message || "Kh\xF4ng th\u1EC3 x\xE1c nh\u1EADn b\u1EA3n ghi \xE2m" });
+      }
     }
   );
   fastify.post(
@@ -141083,7 +141208,7 @@ async function tuitionRoutes(fastify) {
   const service = new TuitionService(fastify.prisma);
   fastify.get(
     "/summary",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { branchId = "ALL" } = request.query || {};
       try {
@@ -141103,7 +141228,7 @@ async function tuitionRoutes(fastify) {
   );
   fastify.patch(
     "/students/:classStudentId",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { classStudentId } = request.params;
       const parsed = updateTuitionSchema.safeParse(request.body);
@@ -142894,7 +143019,7 @@ var teacherProfileRoutes = async (fastify) => {
 var teacher_profile_routes_default = teacherProfileRoutes;
 
 // server/services/snapshot.service.ts
-import { randomBytes } from "crypto";
+import { randomBytes as randomBytes4 } from "crypto";
 
 // server/services/risk-engine.service.ts
 function isEligibleForScholarship(task, context) {
@@ -143034,7 +143159,7 @@ var SnapshotService = class {
    * Generates a random unique parent access token
    */
   generateParentToken() {
-    return `nb_p_${randomBytes(8).toString("hex")}`;
+    return `nb_p_${randomBytes4(8).toString("hex")}`;
   }
   /**
    * Calculates the weekly snapshot cut-off point.
@@ -143552,53 +143677,64 @@ var parentReportsRoutes = async (fastify) => {
       });
     }
   });
-  fastify.post("/public/parent-reports/:token/cheer", async (request, reply) => {
-    const { token } = request.params;
-    try {
-      const enrollment = await prisma.classStudent.findUnique({
-        where: { parentToken: token },
-        select: {
-          classId: true,
-          studentId: true
+  fastify.post(
+    "/public/parent-reports/:token/cheer",
+    {
+      config: {
+        rateLimit: {
+          max: 10,
+          timeWindow: "10 minutes"
         }
-      });
-      if (!enrollment) {
-        return reply.status(404).send({ success: false, error: "Token kh\xF4ng h\u1EE3p l\u1EC7" });
       }
-      const latestSnapshot = await prisma.weeklySnapshot.findFirst({
-        where: {
-          classId: enrollment.classId,
-          studentId: enrollment.studentId
-        },
-        orderBy: { weekNumber: "desc" }
-      });
-      if (latestSnapshot) {
-        await prisma.weeklySnapshot.update({
-          where: { id: latestSnapshot.id },
-          data: { parentEncouraged: true }
+    },
+    async (request, reply) => {
+      const { token } = request.params;
+      try {
+        const enrollment = await prisma.classStudent.findUnique({
+          where: { parentToken: token },
+          select: {
+            classId: true,
+            studentId: true
+          }
+        });
+        if (!enrollment) {
+          return reply.status(404).send({ success: false, error: "Token kh\xF4ng h\u1EE3p l\u1EC7" });
+        }
+        const latestSnapshot = await prisma.weeklySnapshot.findFirst({
+          where: {
+            classId: enrollment.classId,
+            studentId: enrollment.studentId
+          },
+          orderBy: { weekNumber: "desc" }
+        });
+        if (latestSnapshot) {
+          await prisma.weeklySnapshot.update({
+            where: { id: latestSnapshot.id },
+            data: { parentEncouraged: true }
+          });
+        }
+        await notificationService.createNotification(prisma, {
+          userId: enrollment.studentId,
+          type: "SYSTEM",
+          title: "\u2764\uFE0F Ba M\u1EB9 v\u1EEBa th\u1EA3 tim b\xE1o c\xE1o c\u1EE7a b\u1EA1n!",
+          message: "Ba M\u1EB9 v\u1EEBa xem ti\u1EBFn \u0111\u1ED9 tu\u1EA7n n\xE0y v\xE0 g\u1EEDi l\u1EDDi \u0111\u1ED9ng vi\xEAn t\u1EDBi b\u1EA1n. Gi\u1EEF v\u1EEFng phong \u0111\u1ED9 nh\xE9!",
+          link: "/profile",
+          entityType: "PARENT_CHEER",
+          entityId: latestSnapshot?.id || enrollment.classId
+        });
+        return reply.send({
+          success: true,
+          message: "\u0110\xE3 g\u1EEDi l\u1EDDi khen th\xE0nh c\xF4ng \u0111\u1EBFn em!"
+        });
+      } catch (err) {
+        fastify.log.error(err, "Failed to process parent cheer");
+        return reply.status(500).send({
+          success: false,
+          error: "Kh\xF4ng th\u1EC3 g\u1EEDi l\u1EDDi \u0111\u1ED9ng vi\xEAn: " + err.message
         });
       }
-      await notificationService.createNotification(prisma, {
-        userId: enrollment.studentId,
-        type: "SYSTEM",
-        title: "\u2764\uFE0F Ba M\u1EB9 v\u1EEBa th\u1EA3 tim b\xE1o c\xE1o c\u1EE7a b\u1EA1n!",
-        message: "Ba M\u1EB9 v\u1EEBa xem ti\u1EBFn \u0111\u1ED9 tu\u1EA7n n\xE0y v\xE0 g\u1EEDi l\u1EDDi \u0111\u1ED9ng vi\xEAn t\u1EDBi b\u1EA1n. Gi\u1EEF v\u1EEFng phong \u0111\u1ED9 nh\xE9!",
-        link: "/profile",
-        entityType: "PARENT_CHEER",
-        entityId: latestSnapshot?.id || enrollment.classId
-      });
-      return reply.send({
-        success: true,
-        message: "\u0110\xE3 g\u1EEDi l\u1EDDi khen th\xE0nh c\xF4ng \u0111\u1EBFn em!"
-      });
-    } catch (err) {
-      fastify.log.error(err, "Failed to process parent cheer");
-      return reply.status(500).send({
-        success: false,
-        error: "Kh\xF4ng th\u1EC3 g\u1EEDi l\u1EDDi \u0111\u1ED9ng vi\xEAn: " + err.message
-      });
     }
-  });
+  );
 };
 var parent_reports_routes_default = parentReportsRoutes;
 
@@ -143606,108 +143742,140 @@ var parent_reports_routes_default = parentReportsRoutes;
 init_zod();
 init_notification_service();
 var reEnrollmentRequestSchema = external_exports.object({
-  token: external_exports.string().optional(),
-  classId: external_exports.string().optional(),
-  studentId: external_exports.string().optional(),
-  parentPhone: external_exports.string().optional(),
-  scholarshipAmount: external_exports.number().optional().default(5e5)
+  token: external_exports.string().trim().min(1).optional(),
+  classId: external_exports.string().trim().min(1).optional(),
+  studentId: external_exports.string().trim().min(1).optional(),
+  parentPhone: external_exports.string().trim().max(30).optional(),
+  scholarshipAmount: external_exports.number().min(0).max(5e6).optional().default(5e5)
 });
 var reEnrollmentRoutes = async (fastify) => {
   const prisma = fastify.prisma;
   const notificationService = new NotificationService(prisma);
-  fastify.post("/public/re-enrollment/request", async (request, reply) => {
-    const parseResult = reEnrollmentRequestSchema.safeParse(request.body);
-    if (!parseResult.success) {
-      return reply.status(400).send({
-        success: false,
-        error: "D\u1EEF li\u1EC7u y\xEAu c\u1EA7u kh\xF4ng h\u1EE3p l\u1EC7"
-      });
-    }
-    const { token, classId, studentId, parentPhone, scholarshipAmount } = parseResult.data;
-    try {
-      let enrollment;
-      if (token) {
-        enrollment = await prisma.classStudent.findUnique({
-          where: { parentToken: token },
-          include: {
-            class: true,
-            student: true
-          }
-        });
-      } else if (classId && studentId) {
-        enrollment = await prisma.classStudent.findUnique({
-          where: {
-            classId_studentId: { classId, studentId }
-          },
-          include: {
-            class: true,
-            student: true
-          }
-        });
+  fastify.post(
+    "/public/re-enrollment/request",
+    {
+      preHandler: [optionalAuthenticate],
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "10 minutes"
+        }
       }
-      if (!enrollment) {
-        return reply.status(404).send({
+    },
+    async (request, reply) => {
+      const parseResult = reEnrollmentRequestSchema.safeParse(request.body);
+      if (!parseResult.success) {
+        return reply.status(400).send({
           success: false,
-          error: "Kh\xF4ng t\xECm th\u1EA5y th\xF4ng tin h\u1ECDc vi\xEAn \u0111\u1EC3 t\xE1i t\u1EE5c."
+          error: "D\u1EEF li\u1EC7u y\xEAu c\u1EA7u kh\xF4ng h\u1EE3p l\u1EC7"
         });
       }
-      const student = enrollment.student;
-      const cls = enrollment.class;
-      const phoneToContact = parentPhone || student.parentPhone || student.phone || "0900000000";
-      const formattedAmount = `${scholarshipAmount.toLocaleString("vi-VN")}\u0111`;
-      const lead = await prisma.contactLead.create({
-        data: {
-          fullName: student.fullName || "H\u1ECDc vi\xEAn NextBand",
-          phone: phoneToContact,
-          source: "RE_ENROLLMENT_HUB",
-          status: "NEW",
-          notes: `[T\xC1I T\u1EE4C PARENT HUB] Y\xEAu c\u1EA7u b\u1EA3o l\u01B0u H\u1ECDc b\u1ED5ng K\u1EF7 lu\u1EADt ${formattedAmount} c\u1EE7a em ${student.fullName} (L\u1EDBp ${cls.name}) \u0111\u1EC3 \u0111\u0103ng k\xFD kh\xF3a h\u1ECDc k\u1EBF ti\u1EBFp.`
+      const { token, classId, studentId, parentPhone, scholarshipAmount } = parseResult.data;
+      try {
+        let enrollment;
+        if (token) {
+          enrollment = await prisma.classStudent.findUnique({
+            where: { parentToken: token },
+            include: {
+              class: true,
+              student: true
+            }
+          });
+        } else if (classId && studentId) {
+          const authUser = request.user;
+          if (!authUser) {
+            return reply.status(401).send({
+              success: false,
+              error: "Vui l\xF2ng \u0111\u0103ng nh\u1EADp ho\u1EB7c s\u1EED d\u1EE5ng li\xEAn k\u1EBFt Parent Hub h\u1EE3p l\u1EC7 \u0111\u1EC3 \u0111\u0103ng k\xFD t\xE1i t\u1EE5c."
+            });
+          }
+          const roles = Array.isArray(authUser.roles) ? authUser.roles : [];
+          const isStaffOrAdmin = roles.includes("admin") || roles.includes("teacher") || roles.includes("staff");
+          if (!isStaffOrAdmin && authUser.id !== studentId) {
+            return reply.status(403).send({
+              success: false,
+              error: "B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n g\u1EEDi y\xEAu c\u1EA7u t\xE1i t\u1EE5c cho h\u1ECDc vi\xEAn kh\xE1c."
+            });
+          }
+          enrollment = await prisma.classStudent.findUnique({
+            where: {
+              classId_studentId: { classId, studentId }
+            },
+            include: {
+              class: true,
+              student: true
+            }
+          });
+        } else {
+          return reply.status(400).send({
+            success: false,
+            error: "Thi\u1EBFu m\xE3 x\xE1c th\u1EF1c b\xE1o c\xE1o ph\u1EE5 huynh (token) ho\u1EB7c th\xF4ng tin l\u1EDBp h\u1ECDc."
+          });
         }
-      });
-      const admins = await prisma.userRole.findMany({
-        where: { role: "admin" },
-        select: { userId: true }
-      });
-      const recipientUserIds = /* @__PURE__ */ new Set();
-      admins.forEach((a) => recipientUserIds.add(a.userId));
-      if (cls.teacherId) {
-        recipientUserIds.add(cls.teacherId);
-      }
-      if (recipientUserIds.size > 0) {
-        await notificationService.createBatchNotifications(
-          prisma,
-          Array.from(recipientUserIds).map((userId) => ({
-            userId,
-            type: "RE_ENROLLMENT_INTENT",
-            title: "\u{1F3AF} Y\xEAu c\u1EA7u T\xE1i t\u1EE5c Kh\xF3a h\u1ECDc m\u1EDBi!",
-            message: `Ph\u1EE5 huynh em ${student.fullName} (L\u1EDBp ${cls.name}) v\u1EEBa b\u1EA5m b\u1EA3o l\u01B0u H\u1ECDc b\u1ED5ng ${formattedAmount} \u0111\u1EC3 \u0111\u0103ng k\xFD kh\xF3a m\u1EDBi.`,
-            link: "/admin/leads",
-            entityType: "RE_ENROLLMENT_LEAD",
-            entityId: lead.id
-          }))
-        );
-      }
-      const hotlinePhone = process.env.VITE_HOTLINE_ZALO_PHONE || "0981977797";
-      const prefilledText = `Ch\xE0o Th\u1EA7y/C\xF4 NextBand, t\xF4i l\xE0 ph\u1EE5 huynh em ${student.fullName} (L\u1EDBp ${cls.name}). T\xF4i mu\u1ED1n \u0111\u0103ng k\xFD gi\u1EEF ch\u1ED7 kh\xF3a ti\u1EBFp theo v\xE0 \xE1p d\u1EE5ng H\u1ECDc b\u1ED5ng K\u1EF7 lu\u1EADt ${formattedAmount} c\u1EE7a con \u1EA1.`;
-      const zaloDeepLink = `https://zalo.me/${hotlinePhone}?text=${encodeURIComponent(prefilledText)}`;
-      return reply.send({
-        success: true,
-        message: "\u0110\xE3 ti\u1EBFp nh\u1EADn y\xEAu c\u1EA7u t\xE1i t\u1EE5c th\xE0nh c\xF4ng!",
-        data: {
-          leadId: lead.id,
-          hotlinePhone,
-          zaloDeepLink,
-          prefilledText
+        if (!enrollment) {
+          return reply.status(404).send({
+            success: false,
+            error: "Kh\xF4ng t\xECm th\u1EA5y th\xF4ng tin h\u1ECDc vi\xEAn \u0111\u1EC3 t\xE1i t\u1EE5c."
+          });
         }
-      });
-    } catch (err) {
-      fastify.log.error(err, "Failed to process re-enrollment request");
-      return reply.status(500).send({
-        success: false,
-        error: "L\u1ED7i h\u1EC7 th\u1ED1ng khi g\u1EEDi y\xEAu c\u1EA7u t\xE1i t\u1EE5c: " + err.message
-      });
+        const student = enrollment.student;
+        const cls = enrollment.class;
+        const phoneToContact = parentPhone || student.parentPhone || student.phone || "0900000000";
+        const formattedAmount = `${scholarshipAmount.toLocaleString("vi-VN")}\u0111`;
+        const lead = await prisma.contactLead.create({
+          data: {
+            fullName: student.fullName || "H\u1ECDc vi\xEAn NextBand",
+            phone: phoneToContact,
+            source: "RE_ENROLLMENT_HUB",
+            status: "NEW",
+            notes: `[T\xC1I T\u1EE4C PARENT HUB] Y\xEAu c\u1EA7u b\u1EA3o l\u01B0u H\u1ECDc b\u1ED5ng K\u1EF7 lu\u1EADt ${formattedAmount} c\u1EE7a em ${student.fullName} (L\u1EDBp ${cls.name}) \u0111\u1EC3 \u0111\u0103ng k\xFD kh\xF3a h\u1ECDc k\u1EBF ti\u1EBFp.`
+          }
+        });
+        const admins = await prisma.userRole.findMany({
+          where: { role: "admin" },
+          select: { userId: true }
+        });
+        const recipientUserIds = /* @__PURE__ */ new Set();
+        admins.forEach((a) => recipientUserIds.add(a.userId));
+        if (cls.teacherId) {
+          recipientUserIds.add(cls.teacherId);
+        }
+        if (recipientUserIds.size > 0) {
+          await notificationService.createBatchNotifications(
+            prisma,
+            Array.from(recipientUserIds).map((userId) => ({
+              userId,
+              type: "RE_ENROLLMENT_INTENT",
+              title: "\u{1F3AF} Y\xEAu c\u1EA7u T\xE1i t\u1EE5c Kh\xF3a h\u1ECDc m\u1EDBi!",
+              message: `Ph\u1EE5 huynh em ${student.fullName} (L\u1EDBp ${cls.name}) v\u1EEBa b\u1EA5m b\u1EA3o l\u01B0u H\u1ECDc b\u1ED5ng ${formattedAmount} \u0111\u1EC3 \u0111\u0103ng k\xFD kh\xF3a m\u1EDBi.`,
+              link: "/admin/leads",
+              entityType: "RE_ENROLLMENT_LEAD",
+              entityId: lead.id
+            }))
+          );
+        }
+        const hotlinePhone = process.env.VITE_HOTLINE_ZALO_PHONE || "0981977797";
+        const prefilledText = `Ch\xE0o Th\u1EA7y/C\xF4 NextBand, t\xF4i l\xE0 ph\u1EE5 huynh em ${student.fullName} (L\u1EDBp ${cls.name}). T\xF4i mu\u1ED1n \u0111\u0103ng k\xFD gi\u1EEF ch\u1ED7 kh\xF3a ti\u1EBFp theo v\xE0 \xE1p d\u1EE5ng H\u1ECDc b\u1ED5ng K\u1EF7 lu\u1EADt ${formattedAmount} c\u1EE7a con \u1EA1.`;
+        const zaloDeepLink = `https://zalo.me/${hotlinePhone}?text=${encodeURIComponent(prefilledText)}`;
+        return reply.send({
+          success: true,
+          message: "\u0110\xE3 ti\u1EBFp nh\u1EADn y\xEAu c\u1EA7u t\xE1i t\u1EE5c th\xE0nh c\xF4ng!",
+          data: {
+            leadId: lead.id,
+            hotlinePhone,
+            zaloDeepLink,
+            prefilledText
+          }
+        });
+      } catch (err) {
+        fastify.log.error(err, "Failed to process re-enrollment request");
+        return reply.status(500).send({
+          success: false,
+          error: "L\u1ED7i h\u1EC7 th\u1ED1ng khi g\u1EEDi y\xEAu c\u1EA7u t\xE1i t\u1EE5c: " + err.message
+        });
+      }
     }
-  });
+  );
 };
 var re_enrollment_routes_default = reEnrollmentRoutes;
 
@@ -145686,10 +145854,7 @@ async function seasonalRoutes(fastify) {
       try {
         const { id } = request.params;
         const result = await service.clearPayoutList(id);
-        return reply.send({
-          success: true,
-          ...result
-        });
+        return reply.send(result);
       } catch (err) {
         return reply.status(500).send({ error: err.message });
       }
@@ -145698,7 +145863,10 @@ async function seasonalRoutes(fastify) {
 }
 
 // server/routes/arena.routes.ts
+import { randomBytes as randomBytes5 } from "crypto";
 init_arena_room_service();
+var MAX_SOLO_QUESTIONS = 50;
+var MAX_POINTS_PER_SOLO_QUESTION = 2600;
 async function arenaRoutes(fastify) {
   const roomService = new ArenaRoomService(fastify.prisma);
   fastify.post(
@@ -145990,23 +146158,53 @@ async function arenaRoutes(fastify) {
   );
   fastify.post(
     "/solo/runs",
-    { preHandler: [optionalAuthenticate] },
+    {
+      preHandler: [optionalAuthenticate],
+      config: {
+        rateLimit: {
+          max: 15,
+          timeWindow: "5 minutes"
+        }
+      }
+    },
     async (request, reply) => {
       const user = request.user;
       const userId = user?.userId || user?.id || null;
       const body = request.body;
-      if (!body || typeof body.totalScore !== "number") {
+      if (!body || typeof body.totalScore !== "number" || !Number.isFinite(body.totalScore) || typeof body.correctCount !== "number" || !Number.isFinite(body.correctCount)) {
         return reply.code(400).send({ success: false, error: "D\u1EEF li\u1EC7u k\u1EBFt qu\u1EA3 kh\xF4ng h\u1EE3p l\u1EC7." });
       }
-      const nickname = (body.nickname || "Chi\u1EBFn Binh IELTS").trim().slice(0, 50);
-      const avatarId = Number(body.avatarId) || 0;
-      const totalScore = Math.max(0, Math.floor(body.totalScore));
-      const correctCount = Math.max(0, Math.min(50, Number(body.correctCount) || 0));
-      const totalQuestions = Math.max(1, Number(body.totalQuestions) || 10);
-      const maxStreak = Math.max(0, Number(body.maxStreak) || 0);
-      const avgResponseMs = Math.max(0, Number(body.avgResponseMs) || 0);
-      const questionIds = Array.isArray(body.questionIds) ? body.questionIds.map(String) : [];
-      const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const rawTotalQuestions = body.totalQuestions !== void 0 ? Number(body.totalQuestions) : 10;
+      if (!Number.isInteger(rawTotalQuestions) || rawTotalQuestions < 1 || rawTotalQuestions > MAX_SOLO_QUESTIONS) {
+        return reply.code(400).send({
+          success: false,
+          error: `T\u1ED5ng s\u1ED1 c\xE2u h\u1ECFi kh\xF4ng h\u1EE3p l\u1EC7 (1 - ${MAX_SOLO_QUESTIONS}).`
+        });
+      }
+      const rawCorrectCount = Math.floor(body.correctCount);
+      if (rawCorrectCount < 0 || rawCorrectCount > rawTotalQuestions) {
+        return reply.code(400).send({
+          success: false,
+          error: "S\u1ED1 c\xE2u tr\u1EA3 l\u1EDDi \u0111\xFAng kh\xF4ng h\u1EE3p l\u1EC7."
+        });
+      }
+      const rawTotalScore = Math.floor(body.totalScore);
+      const maxAllowedScore = rawCorrectCount * MAX_POINTS_PER_SOLO_QUESTION;
+      if (rawTotalScore < 0 || rawTotalScore > maxAllowedScore) {
+        return reply.code(400).send({
+          success: false,
+          error: "\u0110i\u1EC3m s\u1ED1 v\u01B0\u1EE3t qu\xE1 ng\u01B0\u1EE1ng h\u1EE3p l\u1EC7 c\u1EE7a h\u1EC7 th\u1ED1ng ch\u1EA5m \u0111i\u1EC3m \u0110\u1EA5u Tr\u01B0\u1EDDng."
+        });
+      }
+      const nickname = (body.nickname || "Chi\u1EBFn Binh IELTS").trim().slice(0, 50) || "Chi\u1EBFn Binh IELTS";
+      const avatarId = Math.max(0, Math.min(100, Math.floor(Number(body.avatarId) || 0)));
+      const totalScore = rawTotalScore;
+      const correctCount = rawCorrectCount;
+      const totalQuestions = rawTotalQuestions;
+      const maxStreak = Math.max(0, Math.min(correctCount, Math.floor(Number(body.maxStreak) || 0)));
+      const avgResponseMs = Math.max(0, Math.min(6e4, Math.floor(Number(body.avgResponseMs) || 0)));
+      const questionIds = Array.isArray(body.questionIds) ? body.questionIds.slice(0, MAX_SOLO_QUESTIONS).map((id) => String(id).slice(0, 100)) : [];
+      const randomSuffix = randomBytes5(4).toString("hex").slice(0, 6).toUpperCase();
       const newChallengeCode = `DL-${randomSuffix}`;
       const run = await fastify.prisma.arenaSoloRun.create({
         data: {
@@ -146118,12 +146316,21 @@ async function arenaRoutes(fastify) {
 }
 
 // server/routes/reading-discussion.routes.ts
+init_zod();
+var createDiscussionSchema = external_exports.object({
+  caseId: external_exports.string().trim().min(1, "Thi\u1EBFu th\xF4ng tin caseId").max(60, "caseId qu\xE1 d\xE0i"),
+  authorName: external_exports.string().trim().min(1, "Vui l\xF2ng nh\u1EADp t\xEAn hi\u1EC3n th\u1ECB").max(80, "T\xEAn hi\u1EC3n th\u1ECB t\u1ED1i \u0111a 80 k\xFD t\u1EF1"),
+  authorBadge: external_exports.string().trim().max(40, "Danh x\u01B0ng t\u1ED1i \u0111a 40 k\xFD t\u1EF1").optional(),
+  content: external_exports.string().trim().min(1, "N\u1ED9i dung lu\u1EADn \u0111i\u1EC3m kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng").max(2e3, "N\u1ED9i dung lu\u1EADn \u0111i\u1EC3m kh\xF4ng \u0111\u01B0\u1EE3c v\u01B0\u1EE3t qu\xE1 2000 k\xFD t\u1EF1"),
+  type: external_exports.enum(["THESIS_IDEA", "COUNTER_ARG", "VOCAB_QUESTION"]).optional().default("THESIS_IDEA")
+});
+var RESERVED_STAFF_BADGE_PATTERN = /\b(admin|quản\s*trị|giáo\s*viên|giảng\s*viên|ban\s*học\s*thuật|aris\s*staff|moderator)\b/i;
 var readingDiscussionRoutes = async (fastify) => {
   fastify.get("/:caseId", async (request, reply) => {
     const { caseId } = request.params;
     try {
       const discussions = await fastify.prisma.readingDiscussion.findMany({
-        where: { caseId },
+        where: { caseId: String(caseId).slice(0, 60) },
         orderBy: [
           { upvotes: "desc" },
           { createdAt: "desc" }
@@ -146142,58 +146349,94 @@ var readingDiscussionRoutes = async (fastify) => {
       });
     }
   });
-  fastify.post("/", async (request, reply) => {
-    const body = request.body;
-    if (!body.caseId || !body.content || !body.authorName) {
-      return reply.status(400).send({
-        success: false,
-        error: "Thi\u1EBFu th\xF4ng tin caseId, authorName ho\u1EB7c n\u1ED9i dung lu\u1EADn \u0111i\u1EC3m"
-      });
-    }
-    try {
-      const newDiscussion = await fastify.prisma.readingDiscussion.create({
-        data: {
-          caseId: body.caseId,
-          authorName: body.authorName.trim().slice(0, 80),
-          authorBadge: body.authorBadge?.trim() || "H\u1ECDc Vi\xEAn",
-          content: body.content.trim(),
-          type: body.type || "THESIS_IDEA",
-          upvotes: 0
+  fastify.post(
+    "/",
+    {
+      preHandler: [optionalAuthenticate],
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "10 minutes"
         }
-      });
-      return reply.status(201).send({
-        success: true,
-        data: newDiscussion
-      });
-    } catch (error) {
-      request.log.error(error);
-      return reply.status(500).send({
-        success: false,
-        error: "Failed to create discussion"
-      });
-    }
-  });
-  fastify.post("/:id/upvote", async (request, reply) => {
-    const { id } = request.params;
-    try {
-      const updated = await fastify.prisma.readingDiscussion.update({
-        where: { id },
-        data: {
-          upvotes: { increment: 1 }
+      }
+    },
+    async (request, reply) => {
+      const parsed = createDiscussionSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          success: false,
+          error: parsed.error.issues[0]?.message || "Thi\u1EBFu th\xF4ng tin caseId, authorName ho\u1EB7c n\u1ED9i dung lu\u1EADn \u0111i\u1EC3m"
+        });
+      }
+      const { caseId, authorName, authorBadge, content, type } = parsed.data;
+      const userRoles = Array.isArray(request.user?.roles) ? request.user.roles : [];
+      const isPrivilegedStaff = userRoles.includes("admin") || userRoles.includes("teacher");
+      let safeAuthorName = authorName;
+      let safeAuthorBadge = authorBadge || "H\u1ECDc Vi\xEAn";
+      if (!isPrivilegedStaff) {
+        if (RESERVED_STAFF_BADGE_PATTERN.test(safeAuthorBadge)) {
+          safeAuthorBadge = "H\u1ECDc Vi\xEAn";
         }
-      });
-      return reply.send({
-        success: true,
-        data: updated
-      });
-    } catch (error) {
-      request.log.error(error);
-      return reply.status(500).send({
-        success: false,
-        error: "Failed to upvote discussion"
-      });
+        if (RESERVED_STAFF_BADGE_PATTERN.test(safeAuthorName)) {
+          safeAuthorName = safeAuthorName.replace(RESERVED_STAFF_BADGE_PATTERN, "H\u1ECDc Vi\xEAn").trim() || "H\u1ECDc Vi\xEAn";
+        }
+      }
+      try {
+        const newDiscussion = await fastify.prisma.readingDiscussion.create({
+          data: {
+            caseId,
+            authorName: safeAuthorName,
+            authorBadge: safeAuthorBadge,
+            content,
+            type,
+            upvotes: 0
+          }
+        });
+        return reply.status(201).send({
+          success: true,
+          data: newDiscussion
+        });
+      } catch (error) {
+        request.log.error(error);
+        return reply.status(500).send({
+          success: false,
+          error: "Failed to create discussion"
+        });
+      }
     }
-  });
+  );
+  fastify.post(
+    "/:id/upvote",
+    {
+      config: {
+        rateLimit: {
+          max: 20,
+          timeWindow: "10 minutes"
+        }
+      }
+    },
+    async (request, reply) => {
+      const { id } = request.params;
+      try {
+        const updated = await fastify.prisma.readingDiscussion.update({
+          where: { id },
+          data: {
+            upvotes: { increment: 1 }
+          }
+        });
+        return reply.send({
+          success: true,
+          data: updated
+        });
+      } catch (error) {
+        request.log.error(error);
+        return reply.status(500).send({
+          success: false,
+          error: "Failed to upvote discussion"
+        });
+      }
+    }
+  );
 };
 var reading_discussion_routes_default = readingDiscussionRoutes;
 

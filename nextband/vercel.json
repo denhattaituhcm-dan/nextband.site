@@ -8,6 +8,16 @@
       "includeFiles": "{node_modules/.prisma/client/**,nextband/node_modules/.prisma/client/**,prisma/**,nextband/prisma/**}"
     }
   },
+  "crons": [
+    {
+      "path": "/api/v1/cron/weekly-snapshot",
+      "schedule": "15 11 * * 0"
+    },
+    {
+      "path": "/api/v1/cron/class-maintenance",
+      "schedule": "0 17 * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/v1/health",

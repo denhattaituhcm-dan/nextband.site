@@ -1,4 +1,5 @@
 import { PrismaClient, LeadStatus } from "@prisma/client";
+import { randomBytes } from "crypto";
 import { CreateLeadInput, UpdateLeadInput, ListLeadsQuery, ConvertLeadInput } from "../schemas/lead.schema.js";
 import { leadNotificationService } from "./leadNotification.service.js";
 
@@ -263,7 +264,7 @@ export class LeadService {
       throw new Error(`Email ${email} đã tồn tại trên hệ thống`);
     }
 
-    const finalPassword = input.password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+    const finalPassword = input.password || randomBytes(12).toString("base64url");
 
     // OP-GAP-02: Pre-validate targetClassId before creating user in Postgres
     let validatedTargetClass: any = null;

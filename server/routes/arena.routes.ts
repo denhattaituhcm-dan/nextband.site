@@ -1,6 +1,10 @@
 import { FastifyInstance } from "fastify";
+import { randomBytes } from "crypto";
 import { authenticate, optionalAuthenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { ArenaRoomService } from "../services/arena-room.service.js";
+
+const MAX_SOLO_QUESTIONS = 50;
+const MAX_POINTS_PER_SOLO_QUESTION = 2600; // (1000 base + 15s * 20 time bonus) * 2.0 max streak multiplier
 
 export default async function arenaRoutes(fastify: FastifyInstance) {
   const roomService = new ArenaRoomService(fastify.prisma);
@@ -401,27 +405,72 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
     };
   }>(
     "/solo/runs",
-    { preHandler: [optionalAuthenticate] },
+    {
+      preHandler: [optionalAuthenticate],
+      config: {
+        rateLimit: {
+          max: 15,
+          timeWindow: "5 minutes",
+        },
+      },
+    },
     async (request, reply) => {
       const user = request.user as any;
       const userId = user?.userId || user?.id || null;
       const body = request.body;
 
-      if (!body || typeof body.totalScore !== "number") {
+      if (
+        !body ||
+        typeof body.totalScore !== "number" ||
+        !Number.isFinite(body.totalScore) ||
+        typeof body.correctCount !== "number" ||
+        !Number.isFinite(body.correctCount)
+      ) {
         return reply.code(400).send({ success: false, error: "Dữ liệu kết quả không hợp lệ." });
       }
 
-      const nickname = (body.nickname || "Chiến Binh IELTS").trim().slice(0, 50);
-      const avatarId = Number(body.avatarId) || 0;
-      const totalScore = Math.max(0, Math.floor(body.totalScore));
-      const correctCount = Math.max(0, Math.min(50, Number(body.correctCount) || 0));
-      const totalQuestions = Math.max(1, Number(body.totalQuestions) || 10);
-      const maxStreak = Math.max(0, Number(body.maxStreak) || 0);
-      const avgResponseMs = Math.max(0, Number(body.avgResponseMs) || 0);
-      const questionIds = Array.isArray(body.questionIds) ? body.questionIds.map(String) : [];
+      const rawTotalQuestions = body.totalQuestions !== undefined ? Number(body.totalQuestions) : 10;
+      if (
+        !Number.isInteger(rawTotalQuestions) ||
+        rawTotalQuestions < 1 ||
+        rawTotalQuestions > MAX_SOLO_QUESTIONS
+      ) {
+        return reply.code(400).send({
+          success: false,
+          error: `Tổng số câu hỏi không hợp lệ (1 - ${MAX_SOLO_QUESTIONS}).`,
+        });
+      }
 
-      // Sinh mã thách đấu ngẫu nhiên 6 ký tự viết hoa duy nhất (vd: DL-9X2Y)
-      const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const rawCorrectCount = Math.floor(body.correctCount);
+      if (rawCorrectCount < 0 || rawCorrectCount > rawTotalQuestions) {
+        return reply.code(400).send({
+          success: false,
+          error: "Số câu trả lời đúng không hợp lệ.",
+        });
+      }
+
+      const rawTotalScore = Math.floor(body.totalScore);
+      const maxAllowedScore = rawCorrectCount * MAX_POINTS_PER_SOLO_QUESTION;
+      if (rawTotalScore < 0 || rawTotalScore > maxAllowedScore) {
+        return reply.code(400).send({
+          success: false,
+          error: "Điểm số vượt quá ngưỡng hợp lệ của hệ thống chấm điểm Đấu Trường.",
+        });
+      }
+
+      const nickname = (body.nickname || "Chiến Binh IELTS").trim().slice(0, 50) || "Chiến Binh IELTS";
+      const avatarId = Math.max(0, Math.min(100, Math.floor(Number(body.avatarId) || 0)));
+      const totalScore = rawTotalScore;
+      const correctCount = rawCorrectCount;
+      const totalQuestions = rawTotalQuestions;
+      const maxStreak = Math.max(0, Math.min(correctCount, Math.floor(Number(body.maxStreak) || 0)));
+      const avgResponseMs = Math.max(0, Math.min(60000, Math.floor(Number(body.avgResponseMs) || 0)));
+      const questionIds = Array.isArray(body.questionIds)
+        ? body.questionIds.slice(0, MAX_SOLO_QUESTIONS).map((id) => String(id).slice(0, 100))
+        : [];
+
+      // Sinh mã thách đấu ngẫu nhiên 6 ký tự viết hoa duy nhất bằng CSPRNG (vd: DL-9X2Y8A)
+      const randomSuffix = randomBytes(4).toString("hex").slice(0, 6).toUpperCase();
       const newChallengeCode = `DL-${randomSuffix}`;
 
       const run = await fastify.prisma.arenaSoloRun.create({

@@ -14,10 +14,10 @@ const updateTuitionSchema = z.object({
 export default async function tuitionRoutes(fastify: FastifyInstance) {
   const service = new TuitionService(fastify.prisma);
 
-  // GET /admin/tuition/summary - Báo cáo tổng hợp học phí & danh sách công nợ
+  // GET /admin/tuition/summary - Báo cáo tổng hợp học phí & danh sách công nợ (Admin only)
   fastify.get(
     "/summary",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { branchId = "ALL" } = (request.query || {}) as { branchId?: string };
 
@@ -37,10 +37,10 @@ export default async function tuitionRoutes(fastify: FastifyInstance) {
     }
   );
 
-  // PATCH /admin/tuition/students/:classStudentId - Cập nhật học phí & trạng thái đóng tiền của học viên
+  // PATCH /admin/tuition/students/:classStudentId - Cập nhật học phí & trạng thái đóng tiền của học viên (Admin only)
   fastify.patch<{ Params: { classStudentId: string } }>(
     "/students/:classStudentId",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { classStudentId } = request.params;
       const parsed = updateTuitionSchema.safeParse(request.body);

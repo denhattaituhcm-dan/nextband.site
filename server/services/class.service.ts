@@ -1737,9 +1737,8 @@ export class ClassService {
         if (existingUser) {
           resolvedStudentIds.add(existingUser.userId);
         } else {
-          // Pre-provision via atomic DB function
-          const autoPassword =
-            Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+          // Pre-provision via atomic DB function with CSPRNG password
+          const autoPassword = crypto.randomBytes(12).toString("base64url");
           const fullName = email.split("@")[0];
 
           const dbResult: any = await this.prisma.$queryRawUnsafe(

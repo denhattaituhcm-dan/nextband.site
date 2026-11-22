@@ -1,4 +1,4 @@
-import { API_BASE_URL, authenticatedFetch, fetchWithResilience } from "../client";
+import { API_BASE_URL, authenticatedFetch, fetchWithResilience, getAuthToken } from "../client";
 
 export interface ParentReportData {
   student: {
@@ -152,9 +152,14 @@ export const parentHubApi = {
     zaloDeepLink: string;
     prefilledText: string;
   }> {
+    const authToken = await getAuthToken();
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (authToken) {
+      headers["Authorization"] = `Bearer ${authToken}`;
+    }
     const res = await fetchWithResilience(`${API_BASE_URL}/public/re-enrollment/request`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(payload),
     });
     if (!res.ok) {

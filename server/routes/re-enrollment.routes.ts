@@ -1,51 +1,85 @@
 import { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
 import { NotificationService } from '../services/notification.service.js';
+import { optionalAuthenticate } from '../middlewares/auth.middleware.js';
 
 const reEnrollmentRequestSchema = z.object({
-  token: z.string().optional(),
-  classId: z.string().optional(),
-  studentId: z.string().optional(),
-  parentPhone: z.string().optional(),
-  scholarshipAmount: z.number().optional().default(500000),
+  token: z.string().trim().min(1).optional(),
+  classId: z.string().trim().min(1).optional(),
+  studentId: z.string().trim().min(1).optional(),
+  parentPhone: z.string().trim().max(30).optional(),
+  scholarshipAmount: z.number().min(0).max(5_000_000).optional().default(500000),
 });
 
 const reEnrollmentRoutes: FastifyPluginAsync = async (fastify) => {
   const prisma = fastify.prisma;
   const notificationService = new NotificationService(prisma);
 
-  fastify.post('/public/re-enrollment/request', async (request: any, reply: any) => {
-    const parseResult = reEnrollmentRequestSchema.safeParse(request.body);
-    if (!parseResult.success) {
-      return reply.status(400).send({
-        success: false,
-        error: 'Dữ liệu yêu cầu không hợp lệ',
-      });
-    }
-
-    const { token, classId, studentId, parentPhone, scholarshipAmount } = parseResult.data;
-
-    try {
-      let enrollment;
-      if (token) {
-        enrollment = await prisma.classStudent.findUnique({
-          where: { parentToken: token },
-          include: {
-            class: true,
-            student: true,
-          },
-        });
-      } else if (classId && studentId) {
-        enrollment = await prisma.classStudent.findUnique({
-          where: {
-            classId_studentId: { classId, studentId },
-          },
-          include: {
-            class: true,
-            student: true,
-          },
+  fastify.post(
+    '/public/re-enrollment/request',
+    {
+      preHandler: [optionalAuthenticate],
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: '10 minutes',
+        },
+      },
+    },
+    async (request: any, reply: any) => {
+      const parseResult = reEnrollmentRequestSchema.safeParse(request.body);
+      if (!parseResult.success) {
+        return reply.status(400).send({
+          success: false,
+          error: 'Dữ liệu yêu cầu không hợp lệ',
         });
       }
+
+      const { token, classId, studentId, parentPhone, scholarshipAmount } = parseResult.data;
+
+      try {
+        let enrollment;
+        if (token) {
+          enrollment = await prisma.classStudent.findUnique({
+            where: { parentToken: token },
+            include: {
+              class: true,
+              student: true,
+            },
+          });
+        } else if (classId && studentId) {
+          const authUser = request.user;
+          if (!authUser) {
+            return reply.status(401).send({
+              success: false,
+              error: 'Vui lòng đăng nhập hoặc sử dụng liên kết Parent Hub hợp lệ để đăng ký tái tục.',
+            });
+          }
+
+          const roles: string[] = Array.isArray(authUser.roles) ? authUser.roles : [];
+          const isStaffOrAdmin = roles.includes('admin') || roles.includes('teacher') || roles.includes('staff');
+          if (!isStaffOrAdmin && authUser.id !== studentId) {
+            return reply.status(403).send({
+              success: false,
+              error: 'Bạn không có quyền gửi yêu cầu tái tục cho học viên khác.',
+            });
+          }
+
+          enrollment = await prisma.classStudent.findUnique({
+            where: {
+              classId_studentId: { classId, studentId },
+            },
+            include: {
+              class: true,
+              student: true,
+            },
+          });
+        } else {
+          return reply.status(400).send({
+            success: false,
+            error: 'Thiếu mã xác thực báo cáo phụ huynh (token) hoặc thông tin lớp học.',
+          });
+        }
 
       if (!enrollment) {
         return reply.status(404).send({

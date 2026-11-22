@@ -53,8 +53,25 @@ export class SpeakingStorageService {
     referenceType: string;
     referenceId: string;
     questionId?: string;
-    uploadedBy?: string;
+    uploadedBy?: string | null;
   }) {
+    const existing = await this.prisma.speakingRecordingAsset.findUnique({
+      where: { id: params.id },
+    });
+
+    if (existing) {
+      if (existing.status === "ACTIVE" || existing.status === "PURGED") {
+        const err: any = new Error("Bản ghi âm đã được chốt, không thể ghi đè");
+        err.statusCode = 409;
+        throw err;
+      }
+      if (existing.uploadedBy && existing.uploadedBy !== params.uploadedBy) {
+        const err: any = new Error("Bạn không có quyền ghi đè bản ghi âm của người dùng khác");
+        err.statusCode = 403;
+        throw err;
+      }
+    }
+
     const expiresAt = new Date(Date.now() + RETENTION_DURATIONS_MS.DRAFT);
     return this.prisma.speakingRecordingAsset.upsert({
       where: { id: params.id },
@@ -65,7 +82,7 @@ export class SpeakingStorageService {
         questionId: params.questionId,
         retentionType: "DRAFT",
         status: "UPLOADING",
-        uploadedBy: params.uploadedBy,
+        uploadedBy: params.uploadedBy || null,
         expiresAt,
       },
       update: {
@@ -86,7 +103,24 @@ export class SpeakingStorageService {
     mimeType?: string;
     sizeBytes?: number;
     durationMs?: number;
+    uploadedBy?: string | null;
   }) {
+    const existing = await this.prisma.speakingRecordingAsset.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!existing) {
+      const err: any = new Error("Không tìm thấy bản ghi âm nháp cần xác nhận");
+      err.statusCode = 404;
+      throw err;
+    }
+
+    if (existing.uploadedBy && existing.uploadedBy !== params.uploadedBy) {
+      const err: any = new Error("Bạn không có quyền xác nhận bản ghi âm của người dùng khác");
+      err.statusCode = 403;
+      throw err;
+    }
+
     return this.prisma.speakingRecordingAsset.update({
       where: { id: params.id },
       data: {

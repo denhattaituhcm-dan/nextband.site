@@ -1,4 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
+import { randomBytes } from "crypto";
 import { paginationSchema } from "../schemas/common.schema.js";
 import { authenticate, requireRoles, invalidateUserAuthCache } from "../middlewares/auth.middleware.js";
 import { handleValidation } from "../utils/validation.js";
@@ -690,8 +691,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      // Final password (provided or securely generated)
-      const finalPassword = password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      // Final password (provided or securely generated via CSPRNG)
+      const finalPassword = password || randomBytes(12).toString("base64url");
       const parsedDob = dateOfBirth ? new Date(dateOfBirth).toISOString().split("T")[0] : null;
 
       try {

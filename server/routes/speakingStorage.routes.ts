@@ -60,12 +60,17 @@ const speakingStorageRoutes: FastifyPluginAsync = async (fastify) => {
       if (!data) return;
 
       const userId = (request as any).user?.id || null;
-      const asset = await speakingService.registerDraftAsset({
-        ...(data as any),
-        uploadedBy: userId,
-      });
+      try {
+        const asset = await speakingService.registerDraftAsset({
+          ...(data as any),
+          uploadedBy: userId,
+        });
 
-      return reply.status(201).send(asset);
+        return reply.status(201).send(asset);
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.status(statusCode).send({ error: err?.message || "Không thể đăng ký bản ghi âm nháp" });
+      }
     },
   );
 
@@ -81,8 +86,17 @@ const speakingStorageRoutes: FastifyPluginAsync = async (fastify) => {
       );
       if (!data) return;
 
-      const asset = await speakingService.confirmAssetUploaded(data as any);
-      return reply.send(asset);
+      const userId = (request as any).user?.id || null;
+      try {
+        const asset = await speakingService.confirmAssetUploaded({
+          ...(data as any),
+          uploadedBy: userId,
+        });
+        return reply.send(asset);
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.status(statusCode).send({ error: err?.message || "Không thể xác nhận bản ghi âm" });
+      }
     },
   );
 

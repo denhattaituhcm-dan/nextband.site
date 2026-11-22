@@ -233,7 +233,17 @@ const parentReportsRoutes: FastifyPluginAsync = async (fastify) => {
    * POST /public/parent-reports/:token/cheer
    * Parent sends encouragement/heart to student
    */
-  fastify.post('/public/parent-reports/:token/cheer', async (request: any, reply: any) => {
+  fastify.post(
+    '/public/parent-reports/:token/cheer',
+    {
+      config: {
+        rateLimit: {
+          max: 10,
+          timeWindow: '10 minutes',
+        },
+      },
+    },
+    async (request: any, reply: any) => {
     const { token } = request.params;
 
     try {

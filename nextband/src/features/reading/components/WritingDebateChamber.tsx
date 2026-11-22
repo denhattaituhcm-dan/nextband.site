@@ -12,6 +12,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { API_BASE_URL } from "@/lib/api/client";
 
 export interface DiscussionItem {
   id: string;
@@ -118,7 +119,7 @@ export function WritingDebateChamber({ caseId }: WritingDebateChamberProps) {
   const fetchDiscussions = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/reading-discussions/${caseId}`);
+      const res = await fetch(`${API_BASE_URL}/reading-discussions/${caseId}`);
       if (res.ok) {
         const json = await res.json();
         if (json.success && Array.isArray(json.data)) {
@@ -153,7 +154,7 @@ export function WritingDebateChamber({ caseId }: WritingDebateChamberProps) {
         type: contributionType,
       };
 
-      const res = await fetch("/api/reading-discussions", {
+      const res = await fetch(`${API_BASE_URL}/reading-discussions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -198,7 +199,7 @@ export function WritingDebateChamber({ caseId }: WritingDebateChamberProps) {
     );
 
     try {
-      await fetch(`/api/reading-discussions/${id}/upvote`, { method: "POST" });
+      await fetch(`${API_BASE_URL}/reading-discussions/${id}/upvote`, { method: "POST" });
     } catch {
       // optimistic state retained
     }
