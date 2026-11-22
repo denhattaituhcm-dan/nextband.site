@@ -24,7 +24,7 @@ export interface SEOProps {
 }
 
 const DEFAULT_DOMAIN = "https://nextband.site";
-const DEFAULT_IMAGE = `${DEFAULT_DOMAIN}/logo.png`;
+const DEFAULT_IMAGE = `${DEFAULT_DOMAIN}/og-default.png?v=20261122`;
 
 function setMetaTag(attrName: "name" | "property", attrValue: string, content: string) {
   let tag = document.querySelector(`meta[${attrName}="${attrValue}"]`);

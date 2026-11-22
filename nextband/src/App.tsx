@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { AnalyticsTracker } from "@/components/common/AnalyticsTracker";
 
 /**
  * Detects stale Vite chunk errors (happen after a new deployment or network hiccup).
@@ -370,6 +371,7 @@ const App = () => (
       <TooltipProvider>
         <Sonner />
         <BrowserRouter>
+          <AnalyticsTracker />
           <Suspense fallback={<PageLoader />}>
             <Routes>
               {/* ============================================================ */}

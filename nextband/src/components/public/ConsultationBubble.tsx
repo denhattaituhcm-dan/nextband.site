@@ -9,6 +9,7 @@ import {
   TrialClassModal,
 } from "./ConsultationModals";
 import { ZaloIcon } from "@/components/common/ZaloIcon";
+import { trackEvent } from "@/lib/analytics";
 
 
 type ModalType = "roadmap" | "assessment" | "trial" | null;
@@ -96,6 +97,7 @@ export function ConsultationBubble() {
   ];
 
   const handleOptionClick = (option: { id: string; path?: string }) => {
+    trackEvent("click_consultation", { option_id: option.id });
     setIsOpen(false);
     if (option.path) {
       navigate(option.path);
@@ -105,6 +107,7 @@ export function ConsultationBubble() {
   };
 
   const handleDirectZaloClick = () => {
+    trackEvent("click_zalo_direct", { source: "consultation_bubble" });
     window.open(zaloUrl, "_blank", "noopener,noreferrer");
     setIsOpen(false);
   };

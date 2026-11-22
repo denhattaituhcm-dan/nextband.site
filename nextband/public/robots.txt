@@ -4,16 +4,33 @@ Allow: /about
 Allow: /method
 Allow: /academic-system
 Allow: /courses
+Allow: /self-study-courses
 Allow: /teachers
 Allow: /results
 Allow: /careers
 Allow: /contact
 Allow: /assessment
+Allow: /diagnostic
+Allow: /ielts-speaking-forecast
+Allow: /reading
+Allow: /reading-challenge
+Allow: /vocab-c1
+Allow: /vocab-c2
+Allow: /cambridge-vocab
+Allow: /vocab-in-use
+Allow: /essential-vocabulary
+Allow: /c1-mastery
+Allow: /preposition-lab
+Allow: /arena
+Allow: /news
 Allow: /terms
 Allow: /privacy
 
 Disallow: /app/
 Disallow: /admin/
 Disallow: /exam/
+Disallow: /login
+Disallow: /forgot-password
+Disallow: /reset-password
 
 Sitemap: https://nextband.site/sitemap.xml
