@@ -399,9 +399,6 @@ const App = () => (
                 <Route path="/ielts-speaking-forecast" element={<SpeakingForecastHubPage />} />
                 <Route path="/ielts-speaking-forecast/:seasonSlug" element={<SpeakingForecastSeasonPage />} />
                 <Route path="/ielts-speaking-forecast/:seasonSlug/:topicSlug" element={<SpeakingForecastTopicPage />} />
-                <Route path="/chemistry" element={<ChemistryLabPage />} />
-                <Route path="/hoa-10" element={<Navigate to="/chemistry" replace />} />
-                <Route path="/elementary-algebra" element={<ElementaryAlgebraPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/reading" element={<ReadingUniversePage />} />
@@ -414,6 +411,11 @@ const App = () => (
               {/* ============================================================ */}
               {/* 1.1 CLEAN-ROOM ASSESSMENT & READING INTERFACE (Focus Mode)   */}
               {/* ============================================================ */}
+              {/* Subject Focus Apps (Distraction-Free Fullscreen Mode) */}
+              <Route path="/chemistry" element={<ChemistryLabPage />} />
+              <Route path="/hoa-10" element={<Navigate to="/chemistry" replace />} />
+              <Route path="/elementary-algebra" element={<ElementaryAlgebraPage />} />
+
               {/* English Idioms Focus App (Standalone Specialized Environment) */}
               <Route path="/reading/idioms" element={<EnglishIdiomsCatalogPage />} />
               <Route path="/reading/idioms/:unitId" element={<EnglishIdiomsHubPage />} />
