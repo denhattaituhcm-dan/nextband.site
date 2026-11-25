@@ -415,7 +415,8 @@ const App = () => (
               {/* Subject Focus Apps (Distraction-Free Fullscreen Mode) */}
               <Route path="/chemistry" element={<ChemistryLabPage />} />
               <Route path="/hoa-10" element={<Navigate to="/chemistry" replace />} />
-              <Route path="/elementary-algebra" element={<ElementaryAlgebraPage />} />
+              <Route path="/prealgebra" element={<ElementaryAlgebraPage />} />
+              <Route path="/elementary-algebra" element={<Navigate to="/prealgebra" replace />} />
               <Route path="/grade-6-math" element={<Grade6MathPage />} />
 
               {/* English Idioms Focus App (Standalone Specialized Environment) */}

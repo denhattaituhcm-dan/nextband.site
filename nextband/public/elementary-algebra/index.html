@@ -284,8 +284,8 @@
       if (window.renderMathInElement) {
         renderMathInElement(document.getElementById('app'), {
           delimiters: [
-            { left: '$$', right: '$$', display: true },
-            { left: '$', right: '$', display: false }
+            { left: '\\[', right: '\\]', display: true },
+            { left: '\\(', right: '\\)', display: false }
           ],
           throwOnError: false
         });
@@ -300,9 +300,9 @@
 
     function highlightProse(text) {
       if (!text) return '';
-      const parts = String(text).split(/(\$[^$]+\$)/g);
+      const parts = String(text).split(/(\\([\s\S]*?\\))/g);
       return parts.map(part => {
-        if (part.startsWith('$') && part.endsWith('$')) return escapeHtml(part);
+        if (part.startsWith('\\(') && part.endsWith('\\)')) return escapeHtml(part);
         let html = escapeHtml(part);
         for (const term of HIGHLIGHT_TERMS) {
           html = html.replace(new RegExp('\\b(' + term + ')\\b', 'gi'), '<span class="hi-kw">$1</span>');
@@ -335,11 +335,20 @@
     function renderStepTimeline(solution) {
       if (!solution) return '';
       const rawLines = (solution.text || '').split('\n').map(l => l.trim()).filter(Boolean);
+      const isRemark = (line) => /^(notice|note|remember|be careful|we will|this is|recall)/i.test(line);
+      let finalIdx = rawLines.length - 1;
+      if (rawLines.length > 1 && isRemark(rawLines[finalIdx])) {
+        finalIdx = rawLines.length - 2;
+      }
       const stepsHtml = rawLines.map((line, idx) => {
-        const isFinal = idx === rawLines.length - 1 && rawLines.length > 1;
+        const remark = isRemark(line);
+        const isFinal = !remark && idx === finalIdx && rawLines.length > 1;
+        const badge = remark ? '💡 Lưu ý' : (isFinal ? '✓ Kết luận' : 'Bước ' + (idx + 1));
+        const rowStyle = remark ? 'background:#fffbeb;border-color:#fde68a;' : '';
+        const numStyle = remark ? 'background:#f59e0b;color:#fff;' : '';
         return `
-          <div class="step-row ${isFinal ? 'final-step' : ''}">
-            <span class="step-num">${isFinal ? '✓ Kết luận' : 'Bước ' + (idx + 1)}</span>
+          <div class="step-row ${isFinal ? 'final-step' : ''}" style="${rowStyle}">
+            <span class="step-num" style="${numStyle}">${badge}</span>
             <div style="flex:1;">${escapeHtml(line)}</div>
           </div>
         `;
@@ -347,8 +356,75 @@
       return '<div class="step-timeline">' + stepsHtml + renderImages(solution.images) + renderTables(solution.tables) + '</div>';
     }
 
-    function normalizeMathAnswer(str) {
-      return String(str || '').toLowerCase().replace(/\$/g, '').replace(/,/g, '').replace(/\s+/g, ' ').replace(/[.;]/g, '').trim();
+    // Mathematically rigorous numeric & expression parser (NEVER deletes decimal points or accepts substrings!)
+    function parseMathValue(raw) {
+      let s = String(raw || '').trim()
+        .replace(/^\\\(|\\\)$/g, '')
+        .replace(/\$/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      // Remove trailing sentence punctuation only (never decimal point between digits)
+      s = s.replace(/[.;]+$/, '').trim();
+      // Remove thousands commas ONLY when between digits (e.g. 64,000 -> 64000)
+      const noComma = s.replace(/(?<=\d),(?=\d{3}\b)/g, '');
+      // LaTeX fraction \frac{a}{b}
+      const latexFrac = noComma.match(/^(-?)\\frac\{\s*(-?\d+(?:\.\d+)?)\s*\}\{\s*(-?\d+(?:\.\d+)?)\s*\}$/);
+      if (latexFrac) {
+        const sign = latexFrac[1] === '-' ? -1 : 1;
+        const den = Number(latexFrac[3]);
+        return den !== 0 ? sign * (Number(latexFrac[2]) / den) : null;
+      }
+      // Mixed number: "2 1/2" or "-2 1/2"
+      const mixed = noComma.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+      if (mixed) {
+        const whole = Number(mixed[1]);
+        const frac = Number(mixed[2]) / Number(mixed[3]);
+        return whole < 0 ? whole - frac : whole + frac;
+      }
+      // Simple fraction: "1/2" or "-3/4"
+      const frac = noComma.match(/^(-?\d+(?:\.\d+)?)\s*\/\s*(-?\d+(?:\.\d+)?)$/);
+      if (frac) {
+        const den = Number(frac[2]);
+        return den !== 0 ? Number(frac[1]) / den : null;
+      }
+      // Plain integer or decimal
+      if (/^[+-]?\d+(?:\.\d+)?$/.test(noComma)) {
+        return Number(noComma);
+      }
+      return null;
+    }
+
+    function normalizeTextExact(str) {
+      return String(str || '')
+        .toLowerCase()
+        .replace(/^\\\(|\\\)$/g, '')
+        .replace(/\$/g, '')
+        .replace(/-/g, ' ')
+        .replace(/[.;]+$/g, '')
+        .replace(/\s*,\s*/g, ', ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function isMathAnswerEqual(userRaw, expectedRaw) {
+      // 1. Single numeric equivalence (handles 1/2 == 0.5, 0.50 == 0.5, 64,000 == 64000, rejects 3.5 vs 35 & 6 vs 64,000)
+      const uNum = parseMathValue(userRaw);
+      const eNum = parseMathValue(expectedRaw);
+      if (uNum !== null && eNum !== null) {
+        return Math.abs(uNum - eNum) < 1e-9;
+      }
+      // 2. Comma-separated list of numbers (e.g. "2, 9, 241, 376")
+      if (String(expectedRaw).includes(',') && String(userRaw).includes(',')) {
+        const uParts = String(userRaw).split(',').map(p => parseMathValue(p));
+        const eParts = String(expectedRaw).split(',').map(p => parseMathValue(p));
+        if (uParts.length === eParts.length && uParts.every(v => v !== null) && eParts.every(v => v !== null)) {
+          const uSorted = [...uParts].sort((a, b) => a - b);
+          const eSorted = [...eParts].sort((a, b) => a - b);
+          return uSorted.every((v, i) => Math.abs(v - eSorted[i]) < 1e-9);
+        }
+      }
+      // 3. Exact normalized text equality (NO substring includes!)
+      return normalizeTextExact(userRaw) === normalizeTextExact(expectedRaw);
     }
 
     window.checkInteractiveAnswer = function(uid, expectedEncoded, inputId, fbId) {
@@ -356,10 +432,12 @@
       const inp = document.getElementById(inputId);
       const fb = document.getElementById(fbId);
       if (!inp || !fb) return;
-      const u = normalizeMathAnswer(inp.value);
-      const e = normalizeMathAnswer(expected);
-      if (!u) { fb.className = 'feedback-msg err'; fb.textContent = '⚠️ Nhập đáp án trước khi bấm Chấm!'; return; }
-      if (u === e || (e.length > 2 && e.includes(u))) {
+      if (!String(inp.value || '').trim()) {
+        fb.className = 'feedback-msg err';
+        fb.textContent = '⚠️ Nhập đáp án trước khi bấm Chấm!';
+        return;
+      }
+      if (isMathAnswerEqual(inp.value, expected)) {
         fb.className = 'feedback-msg ok';
         fb.textContent = '✓ Chính xác! (' + expected + ')';
         markSolved(uid);
@@ -604,6 +682,13 @@
           </div>
         </div>
         ${tabContent}
+        <footer style="margin-top:36px;padding-top:14px;border-top:1px solid #e4e2dd;font-size:0.78rem;color:#71717a;line-height:1.55;">
+          <strong>Attribution &amp; License:</strong> Content adapted from <em>OpenStax Prealgebra 2e</em> (Rice University), licensed under
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer" style="color:#2563eb;">CC BY-NC-SA 4.0</a>
+          (Non-Commercial, ShareAlike). Access for free at
+          <a href="https://openstax.org/books/prealgebra-2e/pages/1-introduction" target="_blank" rel="noopener noreferrer" style="color:#2563eb;">openstax.org/books/prealgebra-2e</a>.
+          Vietnamese bilingual study guides added by NextBand Education.
+        </footer>
       `;
       renderMath();
     }

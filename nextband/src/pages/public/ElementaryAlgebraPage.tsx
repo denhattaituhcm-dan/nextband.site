@@ -7,8 +7,8 @@ export default function ElementaryAlgebraPage() {
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-[#e7e5e4]">
       <SEO
-        title="Elementary Algebra - Học Toán Tiếng Anh Song Ngữ (11 Chương) | NextBand"
-        description="Số hoá giáo trình mở OpenStax Prealgebra 2e (CC BY-NC-SA 4.0) kết hợp cẩm nang song ngữ Anh-Việt phong cách Big Fat Notebook: 11 chương, 5.682 bài tập tương tác chấm điểm tự động."
+        title="Prealgebra 2e (OpenStax) - Học Toán Tiếng Anh Song Ngữ (11 Chương) | NextBand"
+        description="Số hoá giáo trình mở OpenStax Prealgebra 2e (CC BY-NC-SA 4.0) kết hợp cẩm nang song ngữ Anh-Việt: 11 chương, 5.682 bài tập tương tác chấm điểm tự động."
       />
       <Link
         to="/"
