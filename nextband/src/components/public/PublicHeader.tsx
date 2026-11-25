@@ -221,6 +221,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Chemistry 10", href: "/chemistry", badge: "3D LAB", badgeColor: "sky" },
       { label: "Elementary Algebra", href: "/elementary-algebra", badge: "11 Chương", badgeColor: "emerald" },
+      { label: "Grade 6 Math (IM)", href: "/grade-6-math", badge: "9 Units", badgeColor: "amber" },
     ],
   },
   { label: "Tự học", href: "https://tuhoc.nextband.vn", isFeatured: true },
@@ -250,7 +251,8 @@ export function PublicHeader() {
     if (item.href === "/chemistry") {
       if (
         location.pathname.startsWith("/chemistry") ||
-        location.pathname.startsWith("/elementary-algebra")
+        location.pathname.startsWith("/elementary-algebra") ||
+        location.pathname.startsWith("/grade-6-math")
       ) {
         return true;
       }

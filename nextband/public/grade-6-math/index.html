@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grade 6 Math — Illustrative Mathematics × Visual Math Notebook</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="./book-manifest.js"></script>
+  <style>
+    :root {
+      --paper-cream: #fffdf8;
+      --dot-color: #d6d3cd;
+      --ink-primary: #18181b;
+      --ink-secondary: #3f3f46;
+      --ink-muted: #71717a;
+      --accent-blue: #2563eb;
+      --accent-emerald: #15803d;
+      --border-soft: #e4e2dd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #e7e5e4;
+      color: var(--ink-primary);
+      display: flex;
+      min-height: 100vh;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .katex { font-size: 1.12em !important; }
+    aside {
+      width: 310px;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 20px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-tag {
+      display: inline-block;
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      width: fit-content;
+    }
+    aside h1 { font-size: 1.06rem; margin: 0 0 4px 0; color: #fff; }
+    aside .sub { font-size: 0.76rem; color: #94a3b8; margin-bottom: 14px; }
+    .unit-select-box { margin-bottom: 14px; }
+    .unit-select-box label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .unit-select-box select {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 8px;
+      background: #1e293b;
+      color: #fde047;
+      border: 1px solid #334155;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .progress-pill {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 9px;
+      padding: 9px 12px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+    }
+    .progress-pill b { color: #4ade80; }
+    .nav-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      color: #cbd5e1;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+    .nav-btn .l-num {
+      background: #1e293b;
+      color: #38bdf8;
+      font-weight: 800;
+      font-size: 0.74rem;
+      padding: 2px 7px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    .nav-btn:hover { background: #1e293b; color: #fff; }
+    .nav-btn.active { background: #2563eb; color: #fff; font-weight: 600; }
+    .nav-btn.active .l-num { background: #1e3a8a; color: #fff; }
+    .nav-footer {
+      margin-top: auto;
+      padding: 12px;
+      background: #1e293b;
+      border-radius: 8px;
+      font-size: 0.74rem;
+      color: #94a3b8;
+      line-height: 1.55;
+    }
+    main {
+      flex: 1;
+      padding: 24px 32px;
+      max-width: 1180px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .notebook-sheet {
+      background-color: var(--paper-cream);
+      background-image: radial-gradient(var(--dot-color) 1.15px, transparent 1.15px);
+      background-size: 22px 22px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 30px 38px 48px 38px;
+      border: 1px solid #d6d3cd;
+    }
+    .sec-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 14px;
+      border-bottom: 2px solid var(--ink-primary);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+    .sec-kicker { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--accent-blue); }
+    .sec-title { font-size: 1.75rem; margin: 2px 0 0 0; font-weight: 800; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 9px 15px;
+      border-radius: 9px;
+      border: 1.5px solid #cbd5e1;
+      background: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .tab-btn.active { background: #0f172a; color: #fde047; border-color: #0f172a; }
+    .bilingual-drawer {
+      background: #fffbeb;
+      border: 1.5px solid #fcd34d;
+      border-radius: 12px;
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+    .bilingual-drawer summary {
+      padding: 12px 18px;
+      font-weight: 800;
+      font-size: 0.94rem;
+      color: #92400e;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      background: #fef3c7;
+    }
+    .bilingual-drawer-body { padding: 14px 18px; }
+    .cue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; margin: 10px 0; }
+    .cue-card { background: #fff; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; font-size: 0.85rem; }
+    .cue-card .en { font-weight: 800; color: #1e3a8a; }
+    .cue-card .math-badge { float: right; background: #eff6ff; color: #1d4ed8; font-weight: 800; padding: 1px 7px; border-radius: 5px; font-family: monospace; }
+    .trap-alert { background: #fff1f2; border-left: 4px solid #be123c; padding: 8px 14px; margin-top: 8px; font-size: 0.87rem; color: #881337; }
+    .activity-card, .problem-card {
+      background: #ffffff;
+      border: 1px solid var(--border-soft);
+      border-top: 4px solid var(--accent-blue);
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin-bottom: 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .problem-card { border-top-color: #16a34a; }
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+    .card-title-row h3 { margin: 0; font-size: 1.15rem; color: #0f172a; }
+    .im-html-body img {
+      max-width: 100%;
+      height: auto;
+      max-height: 360px;
+      display: block;
+      margin: 14px auto;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      padding: 6px;
+      background: #fff;
+    }
+    .im-html-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 0.92rem;
+    }
+    .im-html-body th, .im-html-body td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    .im-html-body th { background: #f1f5f9; }
+    .im-html-body ol, .im-html-body ul { padding-left: 22px; }
+    .im-html-body li { margin-bottom: 6px; }
+    .summary-box {
+      background: #f0f9ff;
+      border: 1.5px solid #38bdf8;
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin-bottom: 22px;
+    }
+    .done-btn {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1.5px solid #cbd5e1;
+      background: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .done-btn.checked {
+      background: #16a34a;
+      color: #fff;
+      border-color: #16a34a;
+    }
+  </style>
+</head>
+<body>
+  <aside>
+    <span class="brand-tag">ILLUSTRATIVE MATHEMATICS • CC BY 4.0</span>
+    <h1>Grade 6 Math</h1>
+    <div class="sub">Toán THCS Lớp 6 Song Ngữ (9 Units)<br/>Visual Math Notebook Architecture</div>
+    <div class="unit-select-box">
+      <label>Chọn Chương (Unit):</label>
+      <select id="unit-select" onchange="loadUnit(Number(this.value))"></select>
+    </div>
+    <div class="progress-pill">
+      <span>✅ Bài tập đã hoàn thành:</span>
+      <b id="done-count">0 bài</b>
+    </div>
+    <div id="lesson-nav"></div>
+    <div class="nav-footer" id="unit-stats"></div>
+  </aside>
+  <main>
+    <div class="notebook-sheet" id="app">Đang tải dữ liệu Grade 6 Math...</div>
+  </main>
+
+  <script>
+    window.__IM_G6_UNITS__ = window.__IM_G6_UNITS__ || {};
+    const MANIFEST = window.__IM_G6_MANIFEST__;
+    let currentUnit = null;
+    let currentLessonIdx = 0;
+    let currentTab = 'lesson'; // 'lesson' | 'summary' | 'practice'
+    let doneMap = {};
+    try { doneMap = JSON.parse(localStorage.getItem('im_g6_done') || '{}'); } catch (e) {}
+
+    function updateDoneCount() {
+      const el = document.getElementById('done-count');
+      if (el) el.textContent = Object.keys(doneMap).length + ' bài';
+    }
+
+    window.toggleDone = function(uid) {
+      if (doneMap[uid]) delete doneMap[uid];
+      else doneMap[uid] = true;
+      try { localStorage.setItem('im_g6_done', JSON.stringify(doneMap)); } catch (e) {}
+      updateDoneCount();
+      renderMain();
+    };
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderMath() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.getElementById('app'), {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '\\[', right: '\\]', display: true },
+            { left: '\\(', right: '\\)', display: false },
+            { left: '$', right: '$', display: false }
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function populateUnitSelect() {
+      const sel = document.getElementById('unit-select');
+      sel.innerHTML = MANIFEST.units.map(u => `
+        <option value="${u.number}">Unit ${u.number}: ${escapeHtml(u.title)}</option>
+      `).join('');
+    }
+
+    window.loadUnit = function(uNum) {
+      const uInfo = MANIFEST.units.find(u => u.number === uNum);
+      if (!uInfo) return;
+      const finish = () => {
+        currentUnit = window.__IM_G6_UNITS__[uNum];
+        currentLessonIdx = 0;
+        currentTab = 'lesson';
+        renderSidebar();
+        renderMain();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      if (window.__IM_G6_UNITS__[uNum]) {
+        finish();
+      } else {
+        const s = document.createElement('script');
+        s.src = './units/' + uInfo.code + '.js';
+        s.onload = finish;
+        document.body.appendChild(s);
+      }
+    };
+
+    window.selectLesson = function(idx) {
+      currentLessonIdx = idx;
+      renderSidebar();
+      renderMain();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.selectTab = function(t) { currentTab = t; renderMain(); };
+
+    function renderSidebar() {
+      const nav = document.getElementById('lesson-nav');
+      nav.innerHTML = currentUnit.lessons.map((l, idx) => `
+        <button class="nav-btn ${idx === currentLessonIdx ? 'active' : ''}" onclick="selectLesson(${idx})">
+          <span class="l-num">L${l.number}</span>
+          <span>${escapeHtml(l.title)}</span>
+        </button>
+      `).join('');
+
+      document.getElementById('unit-stats').innerHTML = `
+        <strong style="color:#fde047;">📘 Unit ${currentUnit.number}</strong><br/>
+        • ${currentUnit.lessons.length} bài học (Lessons)<br/>
+        • ${currentUnit.totalActivities} hoạt động trực quan<br/>
+        • ${currentUnit.totalProblems} bài tập thực hành<br/>
+        • Nguồn: Illustrative Mathematics (CC BY 4.0)
+      `;
+      updateDoneCount();
+    }
+
+    function renderMain() {
+      const lesson = currentUnit.lessons[currentLessonIdx];
+      const app = document.getElementById('app');
+      const bi = currentUnit.bilingual;
+
+      const biHtml = bi ? `
+        <details class="bilingual-drawer" open>
+          <summary><span>📒 Cẩm nang Song ngữ Unit ${currentUnit.number}: ${escapeHtml(bi.titleVi)}</span><span>▾</span></summary>
+          <div class="bilingual-drawer-body">
+            <div style="font-size:0.94rem;color:#78350f;margin-bottom:8px;"><b>Trọng tâm chương:</b> ${escapeHtml(bi.summaryVi)}</div>
+            <div class="cue-grid">
+              ${(bi.cues || []).map(c => `
+                <div class="cue-card">
+                  <span class="math-badge">${escapeHtml(c.math)}</span>
+                  <div class="en">"${escapeHtml(c.en)}"</div>
+                  <div style="color:#52525b;margin-top:3px;">➔ ${escapeHtml(c.vi)}</div>
+                </div>
+              `).join('')}
+            </div>
+            ${(bi.trapsVi || []).map(t => '<div class="trap-alert">⚠️ <b>Lưu ý quan trọng:</b> ' + escapeHtml(t) + '</div>').join('')}
+          </div>
+        </details>
+      ` : '';
+
+      let bodyHtml = '';
+      if (currentTab === 'lesson') {
+        bodyHtml = `
+          ${lesson.introText ? '<p style="font-size:1.05rem;font-weight:600;color:#1e3a8a;margin-bottom:18px;">💡 ' + escapeHtml(lesson.introText) + '</p>' : ''}
+          ${lesson.activities.map(act => `
+            <div class="activity-card">
+              <div class="card-title-row"><h3>📘 ${escapeHtml(act.title)}</h3></div>
+              <div class="im-html-body">${act.html}</div>
+            </div>
+          `).join('')}
+        `;
+      } else if (currentTab === 'summary') {
+        bodyHtml = `
+          <div class="summary-box">
+            <h3 style="margin-top:0;color:#0369a1;">📌 Lesson ${lesson.number} Summary (Tóm tắt trọng tâm)</h3>
+            <div class="im-html-body">${lesson.summaryHtml || '<p>Bài học này là bài dự án/thực hành tổng hợp không có mục Summary riêng.</p>'}</div>
+          </div>
+          ${lesson.glossary && lesson.glossary.length ? `
+            <div class="activity-card" style="border-top-color:#f59e0b;">
+              <div class="card-title-row"><h3>🔤 Glossary Entries (Thuật ngữ Toán học)</h3></div>
+              ${lesson.glossary.map(g => `
+                <div style="margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #e2e8f0;">
+                  <div style="font-weight:800;color:#1e3a8a;font-size:1.02rem;">${escapeHtml(g.term)}</div>
+                  <div class="im-html-body">${g.definitionHtml}</div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        `;
+      } else if (currentTab === 'practice') {
+        bodyHtml = lesson.practiceProblems.length ? lesson.practiceProblems.map((pr, idx) => {
+          const uid = 'u' + currentUnit.number + '.l' + lesson.number + '.p' + (idx + 1);
+          const isDone = Boolean(doneMap[uid]);
+          return `
+            <div class="problem-card">
+              <div class="card-title-row">
+                <h3>✍️ ${escapeHtml(pr.title)}</h3>
+                <button class="done-btn ${isDone ? 'checked' : ''}" onclick="toggleDone('${uid}')">
+                  ${isDone ? '✓ Đã làm xong' : '○ Đánh dấu đã làm'}
+                </button>
+              </div>
+              <div class="im-html-body">${pr.html}</div>
+            </div>
+          `;
+        }).join('') : '<p>Bài học này không có phần Practice Problems riêng.</p>';
+      }
+
+      app.innerHTML = `
+        <div class="sec-header">
+          <div>
+            <div class="sec-kicker">Unit ${currentUnit.number}: ${escapeHtml(currentUnit.title)} • Lesson ${lesson.number}</div>
+            <h2 class="sec-title">${escapeHtml(lesson.title)}</h2>
+          </div>
+          <div class="tabs">
+            <button class="tab-btn ${currentTab === 'lesson' ? 'active' : ''}" onclick="selectTab('lesson')">📖 Hoạt động (${lesson.activities.length})</button>
+            <button class="tab-btn ${currentTab === 'summary' ? 'active' : ''}" onclick="selectTab('summary')">📌 Tóm tắt & Từ vựng</button>
+            <button class="tab-btn ${currentTab === 'practice' ? 'active' : ''}" onclick="selectTab('practice')">✍️ Bài tập (${lesson.practiceProblems.length})</button>
+          </div>
+        </div>
+        ${biHtml}
+        ${bodyHtml}
+      `;
+      renderMath();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      populateUnitSelect();
+      loadUnit(1);
+    });
+  </script>
+</body>
+</html>
