@@ -41,11 +41,11 @@ const COURSE_NAMES: Record<CourseKey, string> = {
 
 // ARIS standard tuition per course (identical for Online & Offline)
 const COURSE_TUITION: Record<CourseKey, number> = {
-  starter: 4500000,
-  dreamer: 5000000,
-  builder: 5500000,
-  master: 6000000,
-  leader: 7000000,
+  starter: 4900000,
+  dreamer: 5400000,
+  builder: 6000000,
+  master: 6600000,
+  leader: 7400000,
 };
 
 // 1. Học bổng Tinh Anh (Khóa đầu tiên)

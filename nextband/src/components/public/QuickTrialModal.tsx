@@ -26,6 +26,15 @@ interface QuickTrialModalProps {
   initialCourseSlug?: string;
 }
 
+const EXTRA_PROGRAM_LABELS: Record<string, string> = {
+  thcs: "Tiếng Anh THCS (Lớp 6–9) — 1.000.000đ/tháng",
+  thpt: "Tiếng Anh THPT (Lớp 10–12) — 1.000.000đ/tháng",
+  "cambridge-kids": "Cambridge FLYERS — 1.000.000đ/tháng",
+  "cambridge-flyers": "Cambridge FLYERS — 1.000.000đ/tháng",
+  "cambridge-ket": "Cambridge KET (A2 Key) — 1.200.000đ/tháng",
+  "cambridge-pet": "Cambridge PET (B1 Preliminary) — 1.500.000đ/tháng",
+};
+
 export function QuickTrialModal({
   isOpen,
   onOpenChange,
@@ -33,16 +42,29 @@ export function QuickTrialModal({
 }: QuickTrialModalProps) {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState(initialCourseSlug);
+  const [selectedCourse, setSelectedCourse] = useState(
+    initialCourseSlug === "cambridge-kids" ? "cambridge-flyers" : initialCourseSlug
+  );
   const [shiftPreference, setShiftPreference] = useState("Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (initialCourseSlug && COURSE_CATALOG[initialCourseSlug]) {
-      setSelectedCourse(initialCourseSlug);
+    const normalized =
+      initialCourseSlug === "cambridge-kids" ? "cambridge-flyers" : initialCourseSlug;
+    if (
+      normalized &&
+      (COURSE_CATALOG[normalized] || EXTRA_PROGRAM_LABELS[normalized])
+    ) {
+      setSelectedCourse(normalized);
     }
   }, [initialCourseSlug, isOpen]);
+
+  const resolveSelectedTitle = (key: string) => {
+    if (COURSE_CATALOG[key]) return COURSE_CATALOG[key].title;
+    if (EXTRA_PROGRAM_LABELS[key]) return EXTRA_PROGRAM_LABELS[key];
+    return COURSE_CATALOG.starter.title;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,8 +74,7 @@ export function QuickTrialModal({
 
     setLoading(true);
     try {
-      const currentCourseObj = COURSE_CATALOG[selectedCourse] || COURSE_CATALOG.starter;
-      const courseTitle = currentCourseObj?.title || selectedCourse;
+      const courseTitle = resolveSelectedTitle(selectedCourse);
       const goal = `${courseTitle} | Ca học: ${shiftPreference}`;
 
       await submitContactLead({
@@ -82,7 +103,7 @@ export function QuickTrialModal({
     onOpenChange(false);
   };
 
-  const currentCourse = COURSE_CATALOG[selectedCourse] || COURSE_CATALOG.starter;
+  const selectedDisplayTitle = resolveSelectedTitle(selectedCourse);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
@@ -108,9 +129,9 @@ export function QuickTrialModal({
             </div>
 
             <div className="p-4 rounded-2xl bg-muted/60 border border-border/80 text-left space-y-1.5 text-xs text-foreground/80">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Khóa học đăng ký:</span>
-                <span className="font-bold text-foreground">{currentCourse.title}</span>
+              <div className="flex justify-between gap-2">
+                <span className="text-muted-foreground shrink-0">Khóa học đăng ký:</span>
+                <span className="font-bold text-foreground text-right">{selectedDisplayTitle}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Ca học mong muốn:</span>
@@ -190,12 +211,17 @@ export function QuickTrialModal({
                     <SelectTrigger id="trial-course" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
                       <SelectValue placeholder="Chọn khóa học" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="starter">Khóa DREAMER (Mất gốc → 3.0) — 4.500.000đ</SelectItem>
-                      <SelectItem value="dreamer">Khóa DOER (3.0 → 4.0) — 5.000.000đ</SelectItem>
-                      <SelectItem value="builder">Khóa BUILDER (4.0 → 5.0) — 5.500.000đ</SelectItem>
-                      <SelectItem value="master">Khóa MASTER (5.0 → 6.0) — 6.000.000đ</SelectItem>
-                      <SelectItem value="leader">Khóa LEADER (6.0 → 6.5+) — 7.000.000đ</SelectItem>
+                    <SelectContent className="rounded-xl max-h-[300px]">
+                      <SelectItem value="thcs">Tiếng Anh THCS (Lớp 6–9) — 1.000.000đ/tháng</SelectItem>
+                      <SelectItem value="thpt">Tiếng Anh THPT (Lớp 10–12) — 1.000.000đ/tháng</SelectItem>
+                      <SelectItem value="cambridge-flyers">Cambridge FLYERS — 1.000.000đ/tháng</SelectItem>
+                      <SelectItem value="cambridge-ket">Cambridge KET (A2 Key) — 1.200.000đ/tháng</SelectItem>
+                      <SelectItem value="cambridge-pet">Cambridge PET (B1 Prelim) — 1.500.000đ/tháng</SelectItem>
+                      <SelectItem value="starter">Khóa IELTS DREAMER (Đầu ra 3.0) — 4.900.000đ</SelectItem>
+                      <SelectItem value="dreamer">Khóa IELTS DOER (3.0 → 4.0) — 5.400.000đ</SelectItem>
+                      <SelectItem value="builder">Khóa IELTS BUILDER (4.0 → 5.0) — 6.000.000đ</SelectItem>
+                      <SelectItem value="master">Khóa IELTS MASTER (5.0 → 6.0) — 6.600.000đ</SelectItem>
+                      <SelectItem value="leader">Khóa IELTS LEADER (6.0 → 6.5+) — 7.400.000đ</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

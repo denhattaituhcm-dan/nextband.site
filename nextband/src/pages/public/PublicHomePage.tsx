@@ -1,114 +1,175 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { SectionContainer } from "@/components/public/SectionContainer";
 import { AcademicRankSystem } from "@/components/public/AcademicRankSystem";
 import { ArisBentoGrid } from "@/components/public/ArisBentoGrid";
 import { HeroDiagnosticHook } from "@/components/public/HeroDiagnosticHook";
+import { TransparentProgramsOverview } from "@/components/public/TransparentProgramsOverview";
+import { QuickTrialModal } from "@/components/public/QuickTrialModal";
 import { StickyMobileActionBar } from "@/components/public/StickyMobileActionBar";
-import { PlaceholderCard } from "@/components/public/PlaceholderCard";
 import { Button } from "@/components/ui/button";
 import AcademicPhrase from "@/components/common/AcademicPhrase";
 import { SEO } from "@/components/common/SEO";
 import {
   ArrowRight,
   GraduationCap,
-  BookOpen,
   Target,
-  Brain,
   CheckCircle2,
   FileCheck,
   RefreshCw,
   TrendingUp,
-  ShieldCheck,
-  UserCheck,
   Users,
   Compass,
   Flame,
   FileText,
   Sparkles,
-  Clock,
   BookmarkCheck,
+  Award,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export default function PublicHomePage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [trialModalOpen, setTrialModalOpen] = useState(false);
+  const [selectedTrialCourse, setSelectedTrialCourse] = useState("starter");
+
+  const handleOpenTrial = (courseKey = "starter") => {
+    setSelectedTrialCourse(courseKey);
+    setTrialModalOpen(true);
+  };
+
+  const scrollToTuition = () => {
+    const el = document.getElementById("bang-hoc-phi");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  useEffect(() => {
+    if (location.hash === "#bang-hoc-phi") {
+      const timer = setTimeout(() => {
+        const el = document.getElementById("bang-hoc-phi");
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 120);
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash]);
 
   return (
     <div className="flex flex-col bg-[#FBF9F5]">
       <SEO
-        title="Nextband — Học Tiếng Anh Từ Bản Chất"
-        description="ARIS — Học tiếng Anh từ bản chất. Không học mẹo. Không học thuộc bài mẫu. Định vị chính xác năng lực và bóc tách từng lỗi sai để đạt điểm IELTS mong muốn."
+        title="ARIS • DAN IELTS (NextBand) — Đào Tạo Tiếng Anh THCS, THPT, Cambridge & IELTS"
+        description="Học tiếng Anh từ bản chất: Lộ trình rõ ràng & học phí công khai cho Tiếng Anh THCS, THPT (1tr/tháng), Cambridge Flyers/KET/PET và Luyện thi IELTS từ mất gốc lên 6.5+ chỉ 12 tháng. Lớp siêu nhỏ tối đa 08 học viên, GV IELTS 8.0+."
       />
 
       {/* ========================================================================= */}
-      {/* SECTION 1: HERO SECTION                                                   */}
+      {/* SECTION 1: HERO SECTION — ẤN TƯỢNG, RÕ RÀNG & KHÁI QUÁT NGAY TỪ ĐẦU      */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-border/80 bg-[radial-gradient(ellipse_at_top_right,rgba(0,33,71,0.07)_0%,transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(220,38,38,0.05)_0%,transparent_45%)]">
+      <section className="relative overflow-hidden pt-10 pb-16 sm:pt-16 sm:pb-24 border-b border-border/80 bg-[radial-gradient(ellipse_at_top_right,rgba(0,33,71,0.08)_0%,transparent_52%),radial-gradient(ellipse_at_bottom_left,rgba(220,38,38,0.06)_0%,transparent_48%)]">
         {/* Soft Ambient Blur Spots */}
         <div className="absolute top-10 right-10 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 left-10 w-80 h-80 bg-brand-red/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
-            {/* Left: Headline, Subheadline & Primary Action */}
-            <div className="lg:col-span-7 space-y-7 text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
-                <GraduationCap className="h-4 w-4" />
-                <span>NextBand • Nền Tảng Học Thuật ARIS</span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-center">
+            {/* Left: Clear Positioning, Programs Summary, Key Metrics & CTAs */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              {/* Top Dual Badges */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/25 text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-2xs">
+                  <GraduationCap className="h-4 w-4" />
+                  <span>ARIS • DAN IELTS</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleOpenTrial("starter")}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-100 hover:bg-amber-200/80 text-amber-950 border border-amber-300 text-xs sm:text-sm font-black transition-colors shadow-2xs cursor-pointer"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+                  <span>Test trình độ &amp; Học thử 02 buổi miễn phí!</span>
+                </button>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[62px] font-black text-foreground tracking-tight leading-[1.12]">
+              <h1 className="text-4xl sm:text-5xl lg:text-[56px] xl:text-[60px] font-black text-foreground tracking-tight leading-[1.12]">
                 Học tiếng Anh{" "}
                 <AcademicPhrase
                   text="từ bản chất!"
                   className="font-montserrat font-black tracking-normal inline-block"
                 />
-                <br />
-                <span className="text-[#002147] block mt-2">
-                  Không học mẹo. Không học thuộc bài mẫu.
+                <span className="text-[#002147] block mt-2 text-3xl sm:text-4xl lg:text-[44px] leading-[1.18]">
+                  Từ mất gốc lên <span className="text-brand-red">IELTS 6.5+</span> chỉ 12 tháng.
                 </span>
               </h1>
 
-              <p className="text-lg sm:text-xl lg:text-[22px] text-foreground/85 font-normal leading-relaxed max-w-2xl">
-                Định vị chính xác năng lực, bóc tách từng lỗi sai và xây dựng tư duy ngôn ngữ vững chắc cùng đội ngũ giảng viên ARIS.
+              <p className="text-base sm:text-lg lg:text-xl text-foreground/85 font-medium leading-relaxed max-w-2xl">
+                Hệ thống đào tạo bài bản với <strong>học phí công khai minh bạch</strong> cho{" "}
+                <strong className="text-[#002147]">Tiếng Anh THCS – THPT</strong>,{" "}
+                <strong className="text-[#002147]">Chứng chỉ Cambridge (Flyers • KET • PET)</strong> và{" "}
+                <strong className="text-[#002147]">Luyện thi IELTS</strong>. Không học mẹo, chấm chữa sát sao 1:1 từng câu trên nền tảng NextBand LMS.
               </p>
 
+              {/* 4 High-Impact Overview Metric Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-1">
+                <div className="p-3 sm:p-3.5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs">
+                  <div className="text-lg sm:text-xl font-black text-[#002147]">≤ 08 HV</div>
+                  <div className="text-[11px] sm:text-xs font-semibold text-foreground/75 mt-0.5 leading-snug">
+                    Lớp siêu nhỏ (= ½ trung tâm lớn)
+                  </div>
+                </div>
+                <div className="p-3 sm:p-3.5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs">
+                  <div className="text-lg sm:text-xl font-black text-brand-red">IELTS 8.0+</div>
+                  <div className="text-[11px] sm:text-xs font-semibold text-foreground/75 mt-0.5 leading-snug">
+                    100% Giáo viên chuyên môn đứng lớp
+                  </div>
+                </div>
+                <div className="p-3 sm:p-3.5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs">
+                  <div className="text-lg sm:text-xl font-black text-emerald-700">+1.0 Band</div>
+                  <div className="text-[11px] sm:text-xs font-semibold text-foreground/75 mt-0.5 leading-snug">
+                    Lộ trình tinh gọn 9–10 tuần/khóa
+                  </div>
+                </div>
+                <div
+                  onClick={scrollToTuition}
+                  className="p-3 sm:p-3.5 rounded-2xl bg-amber-50/90 hover:bg-amber-100/80 border border-amber-200/90 shadow-2xs cursor-pointer transition-colors"
+                >
+                  <div className="text-lg sm:text-xl font-black text-amber-900">Từ 1tr/tháng</div>
+                  <div className="text-[11px] sm:text-xs font-bold text-amber-800 mt-0.5 leading-snug">
+                    Công khai học phí • Xem ngay ↓
+                  </div>
+                </div>
+              </div>
+
               {/* Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full sm:w-auto">
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3.5 w-full sm:w-auto">
                 <Button
                   size="lg"
-                  onClick={() => navigate("/assessment")}
-                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-extrabold text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-brand-red-foreground shadow-lg shadow-brand-red/20 gap-2.5 whitespace-normal text-center transition-all"
+                  onClick={() => handleOpenTrial("starter")}
+                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-7 h-auto min-h-14 py-3 sm:py-0 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-brand-red-foreground shadow-lg shadow-brand-red/20 gap-2 whitespace-normal text-center transition-all"
                 >
-                  <span>Đánh giá năng lực miễn phí</span>
+                  <span>Đăng ký Test &amp; Học thử miễn phí</span>
                   <ArrowRight className="h-5 w-5 shrink-0" />
                 </Button>
 
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={() => navigate("/academic-system")}
-                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-bold text-base sm:text-lg border-2 border-[#002147]/20 bg-background/80 hover:bg-[#002147]/5 text-foreground whitespace-normal text-center shadow-xs"
+                  onClick={scrollToTuition}
+                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-7 h-auto min-h-14 py-3 sm:py-0 font-extrabold text-base border-2 border-[#002147]/25 bg-white hover:bg-[#002147] hover:text-white text-[#002147] whitespace-normal text-center shadow-2xs transition-colors"
                 >
-                  Khám phá hệ thống học thuật
+                  Xem bảng học phí công khai
                 </Button>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="pt-7 border-t border-border/80 flex flex-wrap items-center gap-6 sm:gap-8 text-sm sm:text-base text-foreground/80 font-bold">
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-success" />
-                  Giảng viên có chứng chỉ chuyên môn
-                </span>
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-success" />
-                  Lộ trình cá nhân hóa
-                </span>
-                <span className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-success" />
-                  Học cùng lớp — thi đua cùng tiến
-                </span>
+              {/* Quick Online Assessment Sub-link */}
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm text-foreground/80 font-bold pt-1">
+                <button
+                  type="button"
+                  onClick={() => navigate("/assessment")}
+                  className="inline-flex items-center gap-1.5 text-brand-blue hover:text-brand-red underline underline-offset-4 cursor-pointer"
+                >
+                  <Award className="h-4 w-4 shrink-0" />
+                  <span>Hoặc làm bài kiểm tra năng lực 4 kỹ năng Online ngay →</span>
+                </button>
               </div>
             </div>
 
@@ -121,7 +182,12 @@ export default function PublicHomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 2: THE ACADEMIC DIAGNOSIS SYSTEM (ĐỊNH VỊ THƯƠNG HIỆU ARIS)       */}
+      {/* SECTION 2: TỔNG QUAN 3 HỆ ĐÀO TẠO & BẢNG HỌC PHÍ CÔNG KHAI                */}
+      {/* ========================================================================= */}
+      <TransparentProgramsOverview onOpenTrial={handleOpenTrial} />
+
+      {/* ========================================================================= */}
+      {/* SECTION 3: THE ACADEMIC DIAGNOSIS SYSTEM (PHƯƠNG PHÁP ARIS)               */}
       {/* ========================================================================= */}
       <SectionContainer
         badge="Phương pháp & Nền tảng ARIS"
@@ -193,8 +259,6 @@ export default function PublicHomePage() {
           </div>
         </div>
       </SectionContainer>
-
-
 
       {/* ========================================================================= */}
       {/* SECTION 4: THE ARIS-7 ACADEMIC RANK SYSTEM                               */}
@@ -354,7 +418,7 @@ export default function PublicHomePage() {
       </SectionContainer>
 
       {/* ========================================================================= */}
-      {/* SECTION 5.5: THE METACOGNITIVE MIRROR (TẤM GƯƠNG TỰ SOI CHIẾU NĂNG LỰC)   */}
+      {/* SECTION 6: THE METACOGNITIVE MIRROR (TẤM GƯƠNG TỰ SOI CHIẾU NĂNG LỰC)     */}
       {/* ========================================================================= */}
       <SectionContainer
         badge="Triết Lý Chẩn Đoán Độc Quyền"
@@ -482,165 +546,6 @@ export default function PublicHomePage() {
             </div>
           </div>
         </div>
-
-        {/* Action Button */}
-        <div className="mt-10 flex justify-center text-center w-full max-w-full">
-          <Button
-            size="lg"
-            onClick={() => navigate("/assessment")}
-            className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 font-extrabold text-sm sm:text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5 whitespace-normal text-center"
-          >
-            <span>Trải nghiệm Chẩn đoán Năng lực ARIS Miễn Phí</span>
-            <ArrowRight className="h-5 w-5 shrink-0" />
-          </Button>
-        </div>
-      </SectionContainer>
-
-      {/* ========================================================================= */}
-      {/* SECTION 6: 5-COURSE PROGRESSION PATHWAYS                                 */}
-      {/* ========================================================================= */}
-      <SectionContainer
-        badge="Lộ Trình Đào Tạo"
-        title="5 Chặng rèn luyện bám sát từng mốc năng lực."
-        description="Đúng trình độ, đúng thời điểm. 5 khóa học được thiết kế chuẩn xác theo 2 chặng phát triển."
-        background="muted"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-          {/* Pathway 1: Foundation */}
-          <div className="p-8 rounded-3xl bg-card border border-border/80 space-y-6 shadow-2xs">
-            <div className="space-y-1.5 border-b border-border/60 pb-4">
-              <span className="text-xs font-mono uppercase tracking-widest text-brand-blue font-extrabold">
-                Giai Đoạn 1: Xây Nền Năng Lực
-              </span>
-              <h3 className="text-2xl font-black text-foreground">
-                Lộ Trình Nền Tảng (Mất gốc → 5.0)
-              </h3>
-              <p className="text-sm text-foreground/75 leading-relaxed">
-                Tập trung phát âm IPA chuẩn, làm chủ ngữ pháp câu và đọc/nghe hiểu văn bản học thuật.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div
-                onClick={() => navigate("/courses/starter")}
-                className="p-4 rounded-2xl border border-border/70 bg-muted/20 hover:border-[#EE6873]/50 hover:bg-[#EE6873]/5 transition-all cursor-pointer flex items-center justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-xs px-2.5 py-0.5 rounded-md bg-[#EE6873]/15 text-[#EE6873] border border-[#EE6873]/30">
-                      DREAMER
-                    </span>
-                    <span className="text-sm font-extrabold text-foreground">Đầu ra 3.0</span>
-                  </div>
-                  <p className="text-xs text-foreground/70 mt-1">Mất gốc → Nền tảng phát âm IPA &amp; Từ vựng sinh hoạt</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </div>
-
-              <div
-                onClick={() => navigate("/courses/dreamer")}
-                className="p-4 rounded-2xl border border-border/70 bg-muted/20 hover:border-[#294398]/50 hover:bg-[#294398]/5 transition-all cursor-pointer flex items-center justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-xs px-2.5 py-0.5 rounded-md bg-[#294398]/15 text-[#294398] border border-[#294398]/30">
-                      DOER
-                    </span>
-                    <span className="text-sm font-extrabold text-foreground">3.0 → 4.0</span>
-                  </div>
-                  <p className="text-xs text-foreground/70 mt-1">Ngữ pháp câu phức &amp; Đọc hiểu đoạn văn học thuật ngắn</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </div>
-
-              <div
-                onClick={() => navigate("/courses/builder")}
-                className="p-4 rounded-2xl border border-border/70 bg-muted/20 hover:border-[#F37C42]/50 hover:bg-[#F37C42]/5 transition-all cursor-pointer flex items-center justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-xs px-2.5 py-0.5 rounded-md bg-[#F37C42]/15 text-[#F37C42] border border-[#F37C42]/30">
-                      BUILDER
-                    </span>
-                    <span className="text-sm font-extrabold text-foreground">4.0 → 5.0</span>
-                  </div>
-                  <p className="text-xs text-foreground/70 mt-1">Làm quen 4 kỹ năng IELTS &amp; Viết đoạn văn có luận điểm</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </div>
-            </div>
-          </div>
-
-          {/* Pathway 2: Breakthrough */}
-          <div className="p-8 rounded-3xl bg-card border border-border/80 space-y-6 shadow-2xs">
-            <div className="space-y-1.5 border-b border-border/60 pb-4">
-              <span className="text-xs font-mono uppercase tracking-widest text-brand-red font-extrabold">
-                Giai Đoạn 2: Bứt Phá Điểm Số
-              </span>
-              <h3 className="text-2xl font-black text-foreground">
-                Lộ Trình Chuyên Sâu (5.0 → 6.5+)
-              </h3>
-              <p className="text-sm text-foreground/75 leading-relaxed">
-                Huấn luyện phương pháp The ARIS Way, viết luận Task 2 và phản xạ nói đa chiều.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div
-                onClick={() => navigate("/courses/master")}
-                className="p-4 rounded-2xl border border-border/70 bg-muted/20 hover:border-[#538442]/50 hover:bg-[#538442]/5 transition-all cursor-pointer flex items-center justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-xs px-2.5 py-0.5 rounded-md bg-[#538442]/15 text-[#538442] border border-[#538442]/30">
-                      MASTER
-                    </span>
-                    <span className="text-sm font-extrabold text-foreground">5.0 → 6.0</span>
-                  </div>
-                  <p className="text-xs text-foreground/70 mt-1">Viết luận Task 2, mô tả biểu đồ Task 1 &amp; Phản xạ Speaking</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </div>
-
-              <div
-                onClick={() => navigate("/courses/leader")}
-                className="p-4 rounded-2xl border border-border/70 bg-muted/20 hover:border-[#D12E33]/50 hover:bg-[#D12E33]/5 transition-all cursor-pointer flex items-center justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-xs px-2.5 py-0.5 rounded-md bg-[#D12E33]/15 text-[#D12E33] border border-[#D12E33]/30">
-                      LEADER
-                    </span>
-                    <span className="text-sm font-extrabold text-foreground">6.0 → 6.5+</span>
-                  </div>
-                  <p className="text-xs text-foreground/70 mt-1">Văn phong học thuật tự nhiên &amp; Tư duy phản biện cấp cao</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-brand-blue-soft/50 border border-brand-blue/20 text-xs text-foreground/80 font-bold space-y-1.5">
-              <div className="flex items-center gap-2 text-brand-blue">
-                <Users className="h-4 w-4" />
-                <span>Lớp nhỏ — kết nối thật</span>
-              </div>
-              <p className="text-foreground/65 font-medium leading-relaxed">
-                Tối đa 8 học viên mỗi lớp. Giáo viên biết tên từng người — bảng xếp hạng không phải con số ẩn danh mà là những người học thật, cùng tiến bộ với bạn mỗi ngày.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-10 flex justify-center text-center w-full max-w-full">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/courses")}
-            className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 font-extrabold text-sm sm:text-base border-2 border-border/80 hover:bg-muted whitespace-normal text-center"
-          >
-            <span>Xem chi tiết toàn bộ 5 chương trình đào tạo</span>
-            <ArrowRight className="h-5 w-5 ml-2 shrink-0" />
-          </Button>
-        </div>
       </SectionContainer>
 
       {/* ========================================================================= */}
@@ -650,44 +555,51 @@ export default function PublicHomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-7">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white border border-white/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
             <Target className="h-4 w-4 text-brand-cyan" />
-            <span>Bắt Đầu Đúng Cách</span>
+            <span>Test Trình Độ &amp; Học Thử Miễn Phí</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
-            Bắt đầu bằng việc biết chính xác bạn đang ở đâu.
+            Trải nghiệm thực tế 02 buổi học trước khi quyết định.
           </h2>
 
           <p className="text-base sm:text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto">
-            Kiểm tra năng lực đầu vào miễn phí để nhận phân tích chi tiết điểm mạnh, điểm yếu và gợi ý lộ trình thăng hạng.
+            Kiểm tra trình độ đầu vào miễn phí, nhận tư vấn lộ trình sát năng lực (THCS, THPT, Cambridge hoặc IELTS) và trực tiếp trải nghiệm lớp học tối đa 08 học viên.
           </p>
 
           {/* Community social proof line */}
-          <div className="flex items-center justify-center gap-2 text-white/70 text-sm font-semibold">
+          <div className="flex items-center justify-center gap-2 text-white/75 text-sm font-semibold">
             <Users className="h-4 w-4 text-brand-cyan shrink-0" />
-            <span>Tham gia cùng hàng trăm học viên đang thi đua và cùng nhau chinh phục mục tiêu IELTS.</span>
+            <span>CS1: 68B Phan Bội Châu, P. Dĩ An • CS2 (DAN IELTS): 103B đường 12, P. Tam Bình, TP. HCM</span>
           </div>
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 w-full max-w-full">
             <Button
               size="lg"
-              onClick={() => navigate("/assessment")}
+              onClick={() => handleOpenTrial("starter")}
               className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 font-extrabold text-base sm:text-lg bg-brand-red text-white hover:bg-brand-red-hover shadow-md border-0 gap-2.5 whitespace-normal text-center"
             >
-              <span>Làm bài kiểm tra năng lực ngay</span>
+              <span>Đăng ký Test &amp; Học thử 02 buổi</span>
               <ArrowRight className="h-5 w-5 text-white shrink-0" />
             </Button>
 
             <Button
               size="lg"
               variant="outline"
-              onClick={() => navigate("/contact")}
+              onClick={() => navigate("/assessment")}
               className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 font-bold text-base sm:text-lg border-2 border-white/40 text-white bg-transparent hover:bg-white/10 hover:text-white whitespace-normal text-center"
             >
-              Liên hệ nhận tư vấn trực tiếp
+              Làm bài test Online ngay
             </Button>
           </div>
         </div>
       </section>
+
+      {/* Quick Trial Modal */}
+      <QuickTrialModal
+        isOpen={trialModalOpen}
+        onOpenChange={setTrialModalOpen}
+        initialCourseSlug={selectedTrialCourse}
+      />
 
       {/* Floating Sticky Conversion Bar on Mobile */}
       <StickyMobileActionBar />
