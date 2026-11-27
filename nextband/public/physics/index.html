@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bilingual Physics Studio v4.0 — OpenStax High School Physics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="./book-manifest.js"></script>
+  <script src="./vocab-bank.js"></script>
+  <style>
+    /* ==========================================================================
+       NEXTBAND ACADEMIC DESIGN SYSTEM v4.5 — "WARM PARCHMENT & EDITORIAL INK"
+       Standardized UI/UX Foundation for Math, Physics & Science Bilingual Books
+       ========================================================================== */
+    :root {
+      /* Surface Hierarchy (Low-glare warm parchment scale — ZERO harsh black/white shock) */
+      --bg-canvas: #f8f5ef;          /* Outer warm alabaster workspace */
+      --bg-sidebar: #f1ebe0;         /* Antique parchment left rail (giấy cũ dịu mắt) */
+      --bg-sidebar-hover: #e7dfd0;
+      --bg-sidebar-active: #e2d8c5;
+      --bg-card: #fffdf9;            /* Warm cream reading surface */
+      --bg-card-tinted: #f6f1e7;     /* Soft parchment callout & formula surface */
+      --bg-vi-bridge: #f4f7f5;       /* Calm sage-tint for Vietnamese explanations */
+
+      /* Ink & Typography */
+      --ink-primary: #1f1d1a;        /* Deep espresso charcoal (softer than #000) */
+      --ink-body: #2d2a26;           /* Optimal long-form reading ink */
+      --ink-muted: #6e675d;          /* Warm stone muted metadata */
+
+      /* Semantic Accents (Muted Academic Palette) */
+      --accent-primary: #1e4d6b;     /* Deep academic teal-blue */
+      --accent-amber: #b45309;       /* Warm ochre / terracotta highlight */
+      --accent-amber-soft: #fef3c7;
+      --accent-sage: #1f6f54;        /* Calm scientific emerald */
+      --accent-sage-soft: #ecfdf5;
+      --accent-indigo: #4338ca;      /* Worked example marker */
+      --accent-rose: #be123c;        /* False-friend warning */
+
+      /* Borders & Elevation */
+      --border-soft: #e6dfd2;
+      --border-strong: #d5cab8;
+      --shadow-card: 0 2px 10px rgba(45, 42, 38, 0.04);
+      --shadow-float: 0 12px 32px rgba(31, 29, 26, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+    /* Subtle thin scrollbars across all panes */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d5cab8; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #b8aa94; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-canvas);
+      color: var(--ink-primary);
+      display: flex;
+      min-height: 100vh;
+      font-size: 15.5px;
+      line-height: 1.75;
+    }
+    .katex { font-size: 1.12em !important; color: var(--ink-primary); }
+
+    /* 1. LEFT SIDEBAR — WARM PARCHMENT (Màu giấy cũ dịu mắt) */
+    aside.left-nav {
+      width: 268px;
+      background: var(--bg-sidebar);
+      color: var(--ink-primary);
+      padding: 22px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-strong);
+    }
+    .studio-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #e5dac6;
+      color: #5c4928;
+      font-weight: 800;
+      font-size: 0.68rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.6px;
+      margin-bottom: 10px;
+      width: fit-content;
+      border: 1px solid #d5c5aa;
+    }
+    aside.left-nav h1 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.25rem;
+      margin: 0 0 2px 0;
+      color: var(--ink-primary);
+      font-weight: 600;
+    }
+    aside.left-nav .sub { font-size: 0.76rem; color: var(--ink-muted); margin-bottom: 16px; }
+    .ch-picker label {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+    .ch-picker select {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 9px;
+      background: var(--bg-card);
+      color: var(--ink-primary);
+      border: 1.5px solid var(--border-strong);
+      font-weight: 700;
+      font-size: 0.83rem;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    .ch-picker select:focus { outline: none; border-color: var(--accent-primary); }
+    .sec-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-left: 3px solid transparent;
+      color: var(--ink-body);
+      padding: 8px 10px;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      font-size: 0.84rem;
+      margin-bottom: 3px;
+      line-height: 1.42;
+      transition: all 0.14s;
+    }
+    .sec-btn .s-num {
+      background: #e6dfd2;
+      color: #574c3b;
+      font-weight: 800;
+      font-size: 0.72rem;
+      padding: 2px 6px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    .sec-btn:hover { background: var(--bg-sidebar-hover); }
+    .sec-btn.active {
+      background: var(--bg-sidebar-active);
+      border-left-color: var(--accent-amber);
+      color: var(--ink-primary);
+      font-weight: 700;
+    }
+    .sec-btn.active .s-num { background: var(--accent-amber); color: #fffdf9; }
+    .nav-hint {
+      margin-top: auto;
+      padding: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      line-height: 1.55;
+    }
+    .nav-hint strong { color: var(--ink-primary); }
+
+    /* 2. MAIN WORKSPACE (2-Column Editorial + Sticky Companion Rail) */
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 308px;
+      gap: 24px;
+      padding: 24px 30px;
+      max-width: 1300px;
+      margin: 0 auto;
+      align-items: start;
+    }
+    @media (max-width: 1120px) {
+      .workspace { grid-template-columns: 1fr; }
+      .right-rail { position: static !important; max-height: none !important; }
+    }
+
+    /* EDITORIAL HERO HEADER (Warm Parchment Stone — NO dark block!) */
+    .reading-column { max-width: 800px; width: 100%; }
+    .hero-card {
+      background: var(--bg-card-tinted);
+      color: var(--ink-primary);
+      border: 1px solid var(--border-strong);
+      border-top: 4px solid var(--accent-primary);
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 16px;
+    }
+    .hero-kicker { font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: var(--accent-primary); }
+    .hero-title {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.95rem;
+      margin: 4px 0 14px 0;
+      line-height: 1.24;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+
+    /* 3-Mode Bilingual Switcher (Clean typographic badges — no broken Windows flag emojis!) */
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .mode-switcher {
+      display: inline-flex;
+      background: #e9e2d4;
+      padding: 3px;
+      border-radius: 9px;
+      border: 1px solid var(--border-strong);
+    }
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: var(--ink-muted);
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .mode-btn.active {
+      background: var(--bg-card);
+      color: var(--ink-primary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .tab-pill {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-card);
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .tab-pill:hover { border-color: var(--accent-primary); color: var(--ink-primary); }
+    .tab-pill.active { background: var(--accent-primary); color: #fffdf9; border-color: var(--accent-primary); }
+
+    /* EDITORIAL CARDS */
+    .editorial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 24px 30px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .editorial-card h3 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.42rem;
+      margin: 0 0 14px 0;
+      color: var(--ink-primary);
+      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 8px;
+    }
+    .vi-bridge-box {
+      background: var(--bg-vi-bridge);
+      border-left: 3.5px solid var(--accent-sage);
+      border-radius: 0 10px 10px 0;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 0.94rem;
+      color: #1c3d32;
+    }
+    .vi-bridge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent-sage);
+      margin-bottom: 4px;
+    }
+    .lang-chip {
+      display: inline-block;
+      background: var(--accent-sage);
+      color: #fff;
+      font-size: 0.64rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    .en-prose p {
+      margin: 0 0 14px 0;
+      color: var(--ink-body);
+      font-size: 1.01rem;
+      line-height: 1.8;
+    }
+
+    /* INLINE CLICK-TO-LOOKUP TERMS */
+    .dict-term {
+      border-bottom: 1.5px dotted #1e4d6b;
+      color: var(--ink-primary);
+      cursor: pointer;
+      padding: 0 1px;
+      border-radius: 3px;
+      transition: background 0.12s;
+    }
+    .dict-term:hover { background: #e8f1f5; }
+    .dict-term.physics-core {
+      background: linear-gradient(180deg, transparent 60%, #fde68a 60%);
+      border-bottom: 1.5px solid #b45309;
+      font-weight: 600;
+    }
+
+    /* BILINGUAL CHEAT SHEET */
+    .cheat-sheet {
+      background: #fbf6e9;
+      border: 1px solid #e6d3a7;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .trap-pill {
+      background: #fdf2f4;
+      border-left: 3.5px solid var(--accent-rose);
+      padding: 8px 12px;
+      margin-top: 8px;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.87rem;
+      color: #881337;
+    }
+
+    /* 3-STEP WORKED EXAMPLE */
+    .we-card {
+      background: #faf8f5;
+      border: 1px solid #dcd5c9;
+      border-top: 3.5px solid var(--accent-indigo);
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 22px;
+    }
+    .we-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-top: 12px;
+    }
+    .step-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .b-strat { background: #e0e7ff; color: #3730a3; }
+    .b-sol { background: #dcfce7; color: #166534; }
+    .b-disc { background: #fef3c7; color: #92400e; }
+
+    /* SNAP LAB & PHYSICS IN ACTION (NASA) */
+    .lab-card {
+      background: #f2f9f7;
+      border: 1px solid #bfe3da;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+    }
+    .feature-card {
+      background: #f8f5fc;
+      border: 1px solid #dfd3f2;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+    }
+
+    /* FIGURES WITH CLICK-TO-ZOOM */
+    .fig-wrap {
+      background: #ffffff;
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 12px;
+      margin: 14px 0;
+      text-align: center;
+      cursor: zoom-in;
+      transition: box-shadow 0.15s;
+    }
+    .fig-wrap:hover { box-shadow: 0 4px 14px rgba(30, 77, 107, 0.12); }
+    .fig-wrap img { max-width: 100%; max-height: 320px; display: block; margin: 0 auto; }
+    .zoom-hint { font-size: 0.74rem; color: var(--ink-muted); margin-top: 6px; }
+
+    /* LIGHTBOX MODAL */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(31, 29, 26, 0.82);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      backdrop-filter: blur(4px);
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner {
+      background: var(--bg-card);
+      border-radius: 14px;
+      max-width: 92vw;
+      max-height: 90vh;
+      padding: 18px;
+      overflow: auto;
+      text-align: center;
+    }
+    .lightbox-inner img { max-width: 100%; max-height: 76vh; }
+
+    /* 3. RIGHT STICKY COMPANION RAIL (Warm Parchment Harmony — ZERO black cards!) */
+    aside.right-rail {
+      position: sticky;
+      top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+    .rail-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 14px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow-card);
+    }
+    .rail-card.formula-panel {
+      background: var(--bg-card-tinted);
+      border: 1px solid var(--border-strong);
+      border-top: 3.5px solid var(--accent-amber);
+    }
+    .rail-title {
+      font-size: 0.73rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 0 0 10px 0;
+      color: var(--accent-primary);
+    }
+    .rail-card.formula-panel .rail-title { color: var(--accent-amber); }
+    .eq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-bottom: 8px;
+    }
+    .eq-item .n { font-size: 0.74rem; color: var(--ink-muted); display: block; margin-bottom: 2px; }
+    .eq-item .f { font-size: 1.05rem; color: var(--ink-primary); font-weight: 600; }
+    .lookup-input-row { display: flex; gap: 6px; }
+    .lookup-input {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 10px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 8px;
+      font-size: 0.84rem;
+      background: #ffffff;
+      color: var(--ink-primary);
+    }
+    .lookup-input:focus { outline: none; border-color: var(--accent-primary); }
+    .lookup-btn {
+      background: var(--accent-primary);
+      color: #fffdf9;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 13px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .lookup-btn:hover { background: #163a52; }
+    .saved-word {
+      background: var(--bg-card-tinted);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-top: 8px;
+      font-size: 0.82rem;
+    }
+
+    /* FLOATING DICTIONARY POPOVER (Warm Elevated Paper Card) */
+    #dict-popover {
+      position: fixed;
+      z-index: 9500;
+      width: 330px;
+      max-width: 90vw;
+      background: var(--bg-card);
+      color: var(--ink-primary);
+      border: 1.5px solid var(--accent-primary);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-float);
+      display: none;
+    }
+    #dict-popover .pop-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid var(--border-soft); padding-bottom: 6px; }
+    #dict-popover .pop-word { font-weight: 800; font-size: 1.02rem; color: var(--accent-primary); }
+    #dict-popover .pop-ipa { font-size: 0.78rem; color: var(--ink-muted); margin-left: 6px; }
+    #dict-popover .pop-close { background: none; border: none; color: var(--ink-muted); cursor: pointer; font-size: 1rem; }
+    #dict-popover .pop-vi { font-size: 0.9rem; line-height: 1.55; color: var(--ink-body); }
+    #dict-popover .pop-tip { margin-top: 8px; font-size: 0.8rem; color: #78350f; background: #fef3c7; padding: 6px 9px; border-radius: 6px; }
+
+    /* QUIZ CARDS */
+    .mc-options { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .mc-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      background: var(--bg-card-tinted);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 9px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 0.93rem;
+      color: var(--ink-body);
+      transition: all 0.14s;
+    }
+    .mc-btn:hover { border-color: var(--accent-primary); background: #eef5f8; }
+    .mc-btn.selected { border-color: var(--accent-primary); background: #e3eff5; font-weight: 600; }
+    .mc-btn.correct { border-color: var(--accent-sage); background: #dcfce7; color: #14532d; font-weight: 700; }
+    .mc-btn.wrong { border-color: var(--accent-rose); background: #ffe4e6; color: #881337; }
+    .mc-letter {
+      background: var(--ink-primary);
+      color: #fffdf9;
+      font-weight: 800;
+      font-size: 0.74rem;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .quiz-explain {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 9px;
+      font-size: 0.9rem;
+      background: var(--accent-sage-soft);
+      border-left: 4px solid var(--accent-sage);
+      color: #14532d;
+    }
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+    .pre-line { white-space: pre-line; }
+  </style>
+</head>
+<body>
+  <!-- LEFT NAVIGATION -->
+  <aside class="left-nav">
+    <span class="studio-badge">⚡ PHYSICS STUDIO v4.0</span>
+    <h1>High School Physics</h1>
+    <div class="sub">OpenStax CC BY 4.0 • Song Ngữ GDPT 2018</div>
+    <div class="ch-picker">
+      <label>Chọn Chương (Chapter):</label>
+      <select id="ch-select" onchange="loadChapter(Number(this.value))"></select>
+    </div>
+    <div id="sec-nav"></div>
+    <div class="nav-hint">
+      💡 <strong>Mẹo tra từ siêu tốc:</strong><br/>
+      • <b>Bấm vào từ gạch chân</b> trong bài để xem nghĩa Vật Lý + IPA.<br/>
+      • <b>Nhấp đúp hoặc bôi đen bất kỳ từ tiếng Anh nào</b> để dịch ngay tại chỗ!
+    </div>
+  </aside>
+
+  <!-- MAIN 2-COLUMN WORKSPACE -->
+  <div class="workspace">
+    <div class="reading-column" id="app">Đang nạp Bilingual Physics Studio...</div>
+
+    <!-- RIGHT STICKY COMPANION RAIL -->
+    <aside class="right-rail">
+      <div class="rail-card formula-panel" id="rail-equations">
+        <div class="rail-title">⚡ Key Equations (Công thức bài này)</div>
+        <div id="rail-eq-list" style="font-size:0.84rem;color:var(--ink-muted);">Đang tải...</div>
+      </div>
+
+      <div class="rail-card">
+        <div class="rail-title">🔍 Tra Từ Nhanh (Instant Lookup)</div>
+        <div class="lookup-input-row">
+          <input id="quick-lookup-input" class="lookup-input" type="text" placeholder="Nhập từ tiếng Anh..."
+            onkeydown="if(event.key==='Enter') lookupWordFromInput()" />
+          <button class="lookup-btn" onclick="lookupWordFromInput()">Tra</button>
+        </div>
+        <div id="rail-lookup-result"></div>
+      </div>
+
+      <div class="rail-card">
+        <div class="rail-title">📓 Sổ Tay Từ Vừa Tra (<span id="saved-count">0</span>)</div>
+        <div id="rail-saved-list" style="font-size:0.8rem;color:var(--ink-muted);">Bấm vào từ gạch chân hoặc nhấp đúp bất kỳ từ nào trong bài để lưu vào đây.</div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- FLOATING DICTIONARY POPOVER -->
+  <div id="dict-popover">
+    <div class="pop-head">
+      <div><span class="pop-word" id="pop-word"></span><span class="pop-ipa" id="pop-ipa"></span></div>
+      <button class="pop-close" onclick="closePopover()">✕</button>
+    </div>
+    <div class="pop-vi" id="pop-vi"></div>
+    <div class="pop-tip" id="pop-tip" style="display:none;"></div>
+  </div>
+
+  <!-- IMAGE LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <img id="lb-img" src="" alt="" />
+      <p id="lb-alt" style="font-size:0.85rem;color:#475569;margin:10px 0 0 0;"></p>
+      <button onclick="closeLightbox()" style="margin-top:10px;padding:6px 14px;border-radius:6px;border:none;background:#0f172a;color:#fff;cursor:pointer;font-weight:700;">Đóng (Esc)</button>
+    </div>
+  </div>
+
+  <script>
+    window.__OPENSTAX_PHYSICS__ = window.__OPENSTAX_PHYSICS__ || {};
+    const MANIFEST = window.__OPENSTAX_PHYSICS_MANIFEST__;
+    const VOCAB_BANK = window.__PHYSICS_VOCAB_BANK__ || {};
+    const MEDIA_BASE = MANIFEST.mediaBaseUrl;
+
+    let currentChapter = null;
+    let currentSecIdx = 1;
+    let currentTab = 'lesson'; // 'lesson' | 'glossary' | 'practice'
+    let readingMode = 'bilingual'; // 'bilingual' | 'en' | 'vi'
+    let selectedCategory = 'ALL';
+    let selectedChoices = {};
+    let savedNotebook = [];
+
+    // Precompute sorted terms for longest-match inline highlighting
+    const DICT_KEYS = Object.keys(VOCAB_BANK).sort((a, b) => b.length - a.length);
+    const DICT_REGEX = DICT_KEYS.length
+      ? new RegExp('\\b(' + DICT_KEYS.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'gi')
+      : null;
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Annotate English prose with clickable dictionary spans while strictly preserving \(...\) KaTeX formulas!
+    function annotateInteractiveProse(text) {
+      if (!text) return '';
+      const parts = String(text).split(/(\\([\s\S]*?\\))/g);
+      return parts.map(part => {
+        if (part.startsWith('\\(') && part.endsWith('\\)')) return escapeHtml(part);
+        let safe = escapeHtml(part);
+        if (!DICT_REGEX) return safe;
+        return safe.replace(DICT_REGEX, (match) => {
+          const key = match.toLowerCase();
+          const entry = VOCAB_BANK[key];
+          const cls = entry && entry.isPhysicsTerm ? 'dict-term physics-core' : 'dict-term';
+          return `<span class="${cls}" onclick="showDictPopover(event, '${encodeURIComponent(key)}')">${match}</span>`;
+        });
+      }).join('');
+    }
+
+    function renderMath(el) {
+      if (window.renderMathInElement) {
+        renderMathInElement(el || document.body, {
+          delimiters: [
+            { left: '\\[', right: '\\]', display: true },
+            { left: '\\(', right: '\\)', display: false }
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    function addToSavedNotebook(word, vi) {
+      const key = word.toLowerCase();
+      if (!savedNotebook.find(x => x.word.toLowerCase() === key)) {
+        savedNotebook.unshift({ word, vi });
+        if (savedNotebook.length > 15) savedNotebook.pop();
+        document.getElementById('saved-count').textContent = savedNotebook.length;
+        document.getElementById('rail-saved-list').innerHTML = savedNotebook.map(item => `
+          <div class="saved-word">
+            <strong style="color:#1e3a8a;">${escapeHtml(item.word)}</strong>: ${escapeHtml(item.vi)}
+          </div>
+        `).join('');
+      }
+    }
+
+    async function lookupWord(rawWord) {
+      const clean = String(rawWord || '').trim().replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '');
+      if (!clean || clean.length > 45) return null;
+      const lower = clean.toLowerCase();
+      // 1. Offline exact or singular match
+      const direct = VOCAB_BANK[lower] || VOCAB_BANK[lower.replace(/s$/, '')] || VOCAB_BANK[lower.replace(/es$/, '')] || VOCAB_BANK[lower.replace(/ed$/, '')] || VOCAB_BANK[lower.replace(/ing$/, '')];
+      if (direct) {
+        return { word: clean, ipa: direct.ipa || '', vi: direct.vi, tip: direct.tip || '', source: 'Từ điển Vật Lý SGK' };
+      }
+      // 2. Live online fallback via MyMemory API (free, no key needed)
+      try {
+        const res = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(clean) + '&langpair=en|vi');
+        const json = await res.json();
+        const translated = json && json.responseData && json.responseData.translatedText;
+        if (translated) {
+          return { word: clean, ipa: '', vi: translated, tip: 'Dịch nhanh trực tuyến (MyMemory)', source: 'Online' };
+        }
+      } catch (e) {}
+      return { word: clean, ipa: '', vi: 'Không tìm thấy trong từ điển offline (cần kết nối mạng để dịch từ mở rộng).', tip: '' };
+    }
+
+    window.showDictPopover = async function(ev, encodedWord) {
+      if (ev) ev.stopPropagation();
+      const word = decodeURIComponent(encodedWord);
+      const pop = document.getElementById('dict-popover');
+      const x = Math.min(window.innerWidth - 350, Math.max(16, (ev ? ev.clientX : 300) + 10));
+      const y = Math.min(window.innerHeight - 190, Math.max(16, (ev ? ev.clientY : 200) + 14));
+      pop.style.left = x + 'px';
+      pop.style.top = y + 'px';
+      pop.style.display = 'block';
+      document.getElementById('pop-word').textContent = word;
+      document.getElementById('pop-ipa').textContent = '';
+      document.getElementById('pop-vi').textContent = 'Đang tra nghĩa...';
+      document.getElementById('pop-tip').style.display = 'none';
+
+      const res = await lookupWord(word);
+      if (!res) return;
+      document.getElementById('pop-word').textContent = res.word;
+      document.getElementById('pop-ipa').textContent = res.ipa;
+      document.getElementById('pop-vi').textContent = res.vi;
+      if (res.tip) {
+        const tipEl = document.getElementById('pop-tip');
+        tipEl.textContent = '💡 ' + res.tip;
+        tipEl.style.display = 'block';
+      }
+      addToSavedNotebook(res.word, res.vi);
+    };
+
+    window.closePopover = function() {
+      document.getElementById('dict-popover').style.display = 'none';
+    };
+
+    window.lookupWordFromInput = async function() {
+      const inp = document.getElementById('quick-lookup-input');
+      const box = document.getElementById('rail-lookup-result');
+      const q = inp.value.trim();
+      if (!q) return;
+      box.innerHTML = '<div class="saved-word">Đang tra...</div>';
+      const res = await lookupWord(q);
+      if (res) {
+        box.innerHTML = `
+          <div class="saved-word" style="background:#eff6ff;border-color:#93c5fd;">
+            <strong style="color:#1e3a8a;">${escapeHtml(res.word)}</strong> <small style="color:#2563eb;">${escapeHtml(res.ipa)}</small><br/>
+            ${escapeHtml(res.vi)}
+          </div>
+        `;
+        addToSavedNotebook(res.word, res.vi);
+      }
+    };
+
+    // Double-click ANY English word in the reading column to instantly translate it!
+    document.addEventListener('dblclick', (e) => {
+      if (!e.target.closest('.reading-column')) return;
+      const sel = window.getSelection().toString().trim();
+      if (sel && /^[a-zA-Z\s-]{2,35}$/.test(sel)) {
+        showDictPopover(e, encodeURIComponent(sel));
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#dict-popover') && !e.target.closest('.dict-term')) closePopover();
+    });
+
+    window.openLightbox = function(url, alt) {
+      document.getElementById('lb-img').src = url;
+      document.getElementById('lb-alt').textContent = alt || '';
+      document.getElementById('lightbox').classList.add('open');
+    };
+    window.closeLightbox = function() { document.getElementById('lightbox').classList.remove('open'); };
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeLightbox(); closePopover(); } });
+
+    function renderImages(imgs) {
+      if (!imgs || !imgs.length) return '';
+      return imgs.map(img => `
+        <div class="fig-wrap" onclick="openLightbox('${MEDIA_BASE + img.filename}', '${escapeHtml(img.alt).replace(/'/g, '\\&#39;')}')">
+          <img src="${MEDIA_BASE + img.filename}" alt="${escapeHtml(img.alt)}" loading="lazy" />
+          <div class="zoom-hint">🔍 Bấm vào hình để phóng to rõ nét</div>
+        </div>
+      `).join('');
+    }
+
+    function populateChapterSelect() {
+      document.getElementById('ch-select').innerHTML = MANIFEST.chapters.map(ch => `
+        <option value="${ch.number}" ${!ch.isBuilt ? 'disabled' : ''}>
+          Ch ${ch.number}: ${escapeHtml(ch.title)} ${ch.isBuilt ? '✓' : '(Chưa build)'}
+        </option>
+      `).join('');
+    }
+
+    window.loadChapter = function(chNum) {
+      const info = MANIFEST.chapters.find(c => c.number === chNum);
+      if (!info || !info.isBuilt) return;
+      const finish = () => {
+        currentChapter = window.__OPENSTAX_PHYSICS__[chNum];
+        currentSecIdx = currentChapter.sections.length > 1 ? 1 : 0;
+        currentTab = 'lesson';
+        selectedCategory = 'ALL';
+        renderSidebar();
+        renderMain();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      if (window.__OPENSTAX_PHYSICS__[chNum]) finish();
+      else {
+        const s = document.createElement('script');
+        s.src = './chapters/' + info.code + '.js';
+        s.onload = finish;
+        document.body.appendChild(s);
+      }
+    };
+
+    window.selectSection = function(idx) { currentSecIdx = idx; selectedCategory = 'ALL'; renderSidebar(); renderMain(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    window.selectTab = function(t) { currentTab = t; renderMain(); };
+    window.setReadingMode = function(m) { readingMode = m; renderMain(); };
+    window.filterCat = function(v) { selectedCategory = v; renderMain(); };
+    window.pickChoice = function(qUid, label) { selectedChoices[qUid] = label; renderMain(); };
+
+    function renderSidebar() {
+      document.getElementById('sec-nav').innerHTML = currentChapter.sections.map((s, idx) => `
+        <button class="sec-btn ${idx === currentSecIdx ? 'active' : ''}" onclick="selectSection(${idx})">
+          <span class="s-num">${s.number}</span>
+          <span>${escapeHtml(s.title)}</span>
+        </button>
+      `).join('');
+    }
+
+    function renderRightRail(sec) {
+      const eqBox = document.getElementById('rail-eq-list');
+      if (sec.keyEquations.length) {
+        eqBox.innerHTML = sec.keyEquations.map(eq => `
+          <div class="eq-item">
+            <span class="n">${escapeHtml(eq.name)}</span>
+            <span class="f">${escapeHtml(eq.formula)}</span>
+          </div>
+        `).join('');
+      } else {
+        eqBox.innerHTML = '<div style="font-size:0.82rem;color:#94a3b8;">Bài học này tập trung khái niệm lý thuyết, không có công thức mới.</div>';
+      }
+      renderMath(document.getElementById('rail-equations'));
+    }
+
+    function renderMain() {
+      const sec = currentChapter.sections[currentSecIdx];
+      renderRightRail(sec);
+      const app = document.getElementById('app');
+      let body = '';
+
+      if (currentTab === 'lesson') {
+        const bg = sec.bilingualGuide;
+        const cheatHtml = (bg && readingMode !== 'en') ? `
+          <div class="cheat-sheet">
+            <div style="font-weight:800;color:#92400e;margin-bottom:6px;">📒 Cẩm nang Trọng tâm & Bẫy Vật Lý (SGK GDPT 2018)</div>
+            <div style="font-size:0.93rem;color:#78350f;">${escapeHtml(bg.notebookSummaryVi)}</div>
+            ${(bg.commonTrapsVi || []).map(t => '<div class="trap-pill">' + escapeHtml(t) + '</div>').join('')}
+          </div>
+        ` : '';
+
+        const loHtml = sec.learningObjectives.length ? `
+          <div class="editorial-card" style="background:#f8fafc;padding:16px 22px;">
+            <div style="font-size:0.78rem;font-weight:800;text-transform:uppercase;color:#2563eb;margin-bottom:6px;">🎯 Learning Objectives (Mục tiêu bài học)</div>
+            <ul style="margin:0;padding-left:20px;font-size:0.93rem;">${sec.learningObjectives.map(o => '<li>' + annotateInteractiveProse(o) + '</li>').join('')}</ul>
+          </div>
+        ` : '';
+
+        // Theory subsections (with integrated Vietnamese summary per subsection!)
+        const subsHtml = sec.subsections.map(sub => `
+          <div class="editorial-card">
+            <h3>${escapeHtml(sub.title)}</h3>
+            ${(sub.summaryVi && readingMode !== 'en') ? `
+              <div class="vi-bridge-box">
+                <span class="vi-bridge-tag"><span class="lang-chip">VI</span> Tóm tắt bản chất Vật Lý</span>
+                ${escapeHtml(sub.summaryVi)}
+              </div>
+            ` : ''}
+            ${readingMode !== 'vi' ? `
+              <div class="en-prose">
+                ${sub.paragraphs.map(p => '<p class="pre-line">' + annotateInteractiveProse(p) + '</p>').join('')}
+              </div>
+            ` : ''}
+            ${renderImages(sub.figures)}
+          </div>
+        `).join('');
+
+        // Integrated Worked Examples (3 steps) right inside the lesson flow!
+        const weHtml = sec.workedExamples.map(ex => `
+          <div class="we-card">
+            <div style="font-size:0.75rem;font-weight:800;color:#4f46e5;text-transform:uppercase;">📘 Worked Example ${ex.number} • Giải Toán Vật Lý 3 Bước</div>
+            <h3 style="margin:4px 0 10px 0;font-family:'Newsreader',serif;font-size:1.35rem;">${escapeHtml(ex.title)}</h3>
+            <div class="pre-line" style="font-weight:600;color:#0f172a;">${annotateInteractiveProse(ex.problem)}</div>
+            ${renderImages(ex.problemImages)}
+            ${ex.strategy ? '<div class="we-step"><span class="step-badge b-strat">Bước 1: Strategy (Chiến lược)</span><div class="pre-line">' + annotateInteractiveProse(ex.strategy) + '</div></div>' : ''}
+            ${ex.solution ? '<div class="we-step"><span class="step-badge b-sol">Bước 2: Solution (Lời giải tính toán)</span><div class="pre-line">' + annotateInteractiveProse(ex.solution) + '</div>' + renderImages(ex.solutionImages) + '</div>' : ''}
+            ${ex.discussion ? '<div class="we-step"><span class="step-badge b-disc">Bước 3: Discussion (Biện luận Vật Lý)</span><div class="pre-line">' + annotateInteractiveProse(ex.discussion) + '</div></div>' : ''}
+          </div>
+        `).join('');
+
+        // Physics in Action & Tips for Success (e.g., NASA Mars Climate Orbiter — no longer dropped!)
+        const featHtml = (sec.tipsAndFeatures || []).map(f => `
+          <div class="feature-card">
+            <div style="font-size:0.74rem;font-weight:800;color:#7e22ce;text-transform:uppercase;margin-bottom:4px;">${f.type === 'tip' ? '💡 Tips for Success' : '🚀 Physics in Action (Thực tế)'}</div>
+            <h4 style="margin:0 0 8px 0;color:#581c87;">${escapeHtml(f.title)}</h4>
+            <div class="pre-line" style="font-size:0.95rem;">${annotateInteractiveProse(f.text)}</div>
+            ${renderImages(f.images)}
+          </div>
+        `).join('');
+
+        // Snap Labs
+        const labHtml = sec.snapLabs.map(lab => `
+          <div class="lab-card">
+            <div style="font-size:0.74rem;font-weight:800;color:#0f766e;text-transform:uppercase;margin-bottom:4px;">🧪 Snap Lab (Thí nghiệm thực hành nhanh)</div>
+            <h4 style="margin:0 0 8px 0;color:#115e59;">${escapeHtml(lab.title)}</h4>
+            <div class="pre-line" style="font-size:0.95rem;">${annotateInteractiveProse(lab.text)}</div>
+            ${renderImages(lab.images)}
+          </div>
+        `).join('');
+
+        body = cheatHtml + loHtml + subsHtml + weHtml + featHtml + labHtml;
+      } else if (currentTab === 'glossary') {
+        body = '<div class="glossary-grid">' + sec.glossary.map(g => `
+          <div class="editorial-card" style="margin-bottom:0;padding:18px;">
+            <div style="font-weight:800;font-size:1.05rem;color:#0f172a;">${escapeHtml(g.term)}</div>
+            ${g.termVi ? '<div style="color:#2563eb;font-weight:700;margin-top:4px;">🇻🇳 ' + escapeHtml(g.termVi) + '</div>' : ''}
+            <p style="font-size:0.88rem;margin:8px 0 4px 0;"><b>EN:</b> ${escapeHtml(g.definition)}</p>
+            ${g.definitionVi ? '<p style="font-size:0.88rem;margin:4px 0;color:#334155;"><b>VI:</b> ' + escapeHtml(g.definitionVi) + '</p>' : ''}
+            ${g.memoryTipVi ? '<div style="margin-top:8px;background:#fffbeb;border-left:3px solid #f59e0b;padding:7px 10px;font-size:0.82rem;">💡 ' + escapeHtml(g.memoryTipVi) + '</div>' : ''}
+          </div>
+        `).join('') + '</div>';
+      } else if (currentTab === 'practice') {
+        const cats = ['ALL', ...new Set(sec.assessments.map(a => a.categoryLabel))];
+        const filtered = selectedCategory === 'ALL' ? sec.assessments : sec.assessments.filter(a => a.categoryLabel === selectedCategory);
+        body = `
+          <div style="margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#fff;padding:10px 14px;border-radius:10px;border:1px solid #e2e8f0;">
+            <b>Phân loại câu hỏi:</b>
+            <select onchange="filterCat(this.value)" style="padding:7px 10px;border-radius:6px;border:1px solid #cbd5e1;">
+              ${cats.map(c => `<option value="${escapeHtml(c)}" ${c === selectedCategory ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+            </select>
+            <span style="font-size:0.84rem;color:#475569;"><b>${filtered.length}</b> / ${sec.assessments.length} câu</span>
+          </div>
+          ${filtered.map((q, idx) => {
+            const picked = selectedChoices[q.uid];
+            const hasKey = Boolean(q.correctChoice);
+            return `
+              <div class="editorial-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <span style="font-size:0.78rem;font-weight:800;color:#2563eb;">Câu #${idx + 1} • ${escapeHtml(q.categoryLabel)}</span>
+                  <span style="font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:${hasKey ? '#dcfce7' : '#f1f5f9'};color:${hasKey ? '#166534' : '#64748b'};">
+                    ${hasKey ? '✓ Có chấm & giải thích VI' : 'Tự luyện (OpenStax gốc)'}
+                  </span>
+                </div>
+                <div class="pre-line" style="font-weight:600;">${annotateInteractiveProse(q.prompt)}</div>
+                ${renderImages(q.images)}
+                ${q.isMultipleChoice ? `
+                  <div class="mc-options">
+                    ${q.choices.map(ch => {
+                      let stateCls = '';
+                      if (picked) {
+                        if (hasKey && ch.label === q.correctChoice) stateCls = 'correct';
+                        else if (hasKey && picked === ch.label && ch.label !== q.correctChoice) stateCls = 'wrong';
+                        else if (!hasKey && picked === ch.label) stateCls = 'selected';
+                      }
+                      return `
+                        <button class="mc-btn ${stateCls}" onclick="pickChoice('${q.uid}', '${ch.label}')">
+                          <span class="mc-letter">${ch.label}</span>
+                          <span>${annotateInteractiveProse(ch.text)}</span>
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
+                ` : ''}
+                ${(picked && hasKey && q.explanationVi) ? `
+                  <div class="quiz-explain">
+                    <strong>${picked === q.correctChoice ? '🎉 Chính xác!' : '❌ Chưa đúng — Đáp án đúng là (' + q.correctChoice.toUpperCase() + ')'}</strong><br/>
+                    ${escapeHtml(q.explanationVi)}
+                  </div>
+                ` : ''}
+                ${q.solution ? '<details style="margin-top:10px;"><summary style="cursor:pointer;font-weight:700;color:#15803d;">👁️ Xem lời giải gốc</summary><div class="pre-line" style="margin-top:6px;">' + escapeHtml(q.solution) + '</div></details>' : ''}
+              </div>
+            `;
+          }).join('')}
+        `;
+      }
+
+      app.innerHTML = `
+        <div class="hero-card">
+          <div class="hero-kicker">Chapter ${currentChapter.number}: ${escapeHtml(currentChapter.title)} • Section ${sec.number}</div>
+          <h2 class="hero-title">${escapeHtml(sec.title)}</h2>
+          <div class="controls-row">
+            <div class="mode-switcher">
+              <button class="mode-btn ${readingMode === 'bilingual' ? 'active' : ''}" onclick="setReadingMode('bilingual')">EN–VI Song ngữ</button>
+              <button class="mode-btn ${readingMode === 'en' ? 'active' : ''}" onclick="setReadingMode('en')">EN Nguyên bản</button>
+              <button class="mode-btn ${readingMode === 'vi' ? 'active' : ''}" onclick="setReadingMode('vi')">VI Tóm tắt</button>
+            </div>
+            <span style="font-size:0.78rem;color:var(--ink-muted);">💡 Bấm từ gạch chân hoặc nhấp đúp từ bất kỳ để tra nghĩa</span>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <button class="tab-pill ${currentTab === 'lesson' ? 'active' : ''}" onclick="selectTab('lesson')">📖 Bài giảng + Ví dụ + Thí nghiệm</button>
+          <button class="tab-pill ${currentTab === 'glossary' ? 'active' : ''}" onclick="selectTab('glossary')">🔤 Từ điển Song ngữ (${sec.stats.glossaryCount})</button>
+          <button class="tab-pill ${currentTab === 'practice' ? 'active' : ''}" onclick="selectTab('practice')">✍️ Luyện tập (${sec.stats.assessmentCount})</button>
+        </div>
+
+        ${body}
+
+        <footer style="margin-top:32px;padding-top:14px;border-top:1px solid #cbd5e1;font-size:0.78rem;color:#64748b;line-height:1.55;">
+          <strong>Attribution &amp; License:</strong> Content adapted from <em>OpenStax High School Physics</em> (Rice University), licensed under
+          <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" style="color:#2563eb;">CC BY 4.0</a>.
+          Access for free at <a href="https://openstax.org/books/physics/pages/1-introduction" target="_blank" rel="noopener noreferrer" style="color:#2563eb;">openstax.org/books/physics</a>.
+          Vietnamese bilingual guides &amp; contextual dictionary added by NextBand Education.
+        </footer>
+      `;
+      renderMath(app);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      populateChapterSelect();
+      const firstBuilt = MANIFEST.chapters.find(c => c.isBuilt);
+      if (firstBuilt) loadChapter(firstBuilt.number);
+    });
+  </script>
+</body>
+</html>

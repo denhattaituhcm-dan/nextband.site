@@ -122,6 +122,7 @@ const SpeakingForecastTopicPage = lazyWithRetry(() => import("@/pages/public/spe
 const ChemistryLabPage = lazyWithRetry(() => import("@/pages/public/ChemistryLabPage"));
 const ElementaryAlgebraPage = lazyWithRetry(() => import("@/pages/public/ElementaryAlgebraPage"));
 const Grade6MathPage = lazyWithRetry(() => import("@/pages/public/Grade6MathPage"));
+const PhysicsPage = lazyWithRetry(() => import("@/pages/public/PhysicsPage"));
 const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingUniversePage"));
 const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
 const EnglishIdiomsCatalogPage = lazyWithRetry(() => import("@/pages/public/reading/EnglishIdiomsCatalogPage"));
@@ -415,6 +416,7 @@ const App = () => (
               {/* Subject Focus Apps (Distraction-Free Fullscreen Mode) */}
               <Route path="/chemistry" element={<ChemistryLabPage />} />
               <Route path="/hoa-10" element={<Navigate to="/chemistry" replace />} />
+              <Route path="/physics" element={<PhysicsPage />} />
               <Route path="/prealgebra" element={<ElementaryAlgebraPage />} />
               <Route path="/elementary-algebra" element={<Navigate to="/prealgebra" replace />} />
               <Route path="/grade-6-math" element={<Grade6MathPage />} />
