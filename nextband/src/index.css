@@ -721,6 +721,86 @@
     font-family: 'Merriweather', 'Lora', 'Newsreader', Georgia, 'Times New Roman', serif;
     font-feature-settings: "kern" 1, "liga" 1;
   }
+
+  /* ========================================================================= */
+  /* ARIS HERO ENTRANCE & SUBTLE AMBIENT MOTION (600-750ms staggered reveal)  */
+  /* ========================================================================= */
+  @keyframes aris-hero-reveal {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes aris-hero-slide-left {
+    0% {
+      opacity: 0;
+      transform: translate3d(18px, 0, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes aris-brush-wipe {
+    0% {
+      clip-path: inset(0 100% 0 0);
+      opacity: 0.35;
+    }
+    100% {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes aris-ambient-float {
+    0%, 100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -8px, 0);
+    }
+  }
+
+  .aris-enter {
+    opacity: 0;
+    animation: aris-hero-reveal 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    will-change: opacity, transform;
+  }
+
+  .aris-enter-right {
+    opacity: 0;
+    animation: aris-hero-slide-left 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    will-change: opacity, transform;
+  }
+
+  .aris-brush-highlight {
+    animation: aris-brush-wipe 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+    will-change: clip-path, opacity;
+  }
+
+  .aris-ambient-float {
+    animation: aris-ambient-float 8s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aris-enter,
+    .aris-enter-right,
+    .aris-brush-highlight,
+    .aris-ambient-float,
+    .academic-char-living {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      clip-path: none !important;
+      will-change: auto !important;
+    }
+  }
 }
 
 

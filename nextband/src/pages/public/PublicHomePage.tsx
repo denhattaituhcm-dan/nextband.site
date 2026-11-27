@@ -45,37 +45,69 @@ export default function PublicHomePage() {
       {/* SECTION 1: HERO SECTION                                                   */}
       {/* ========================================================================= */}
       <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-border/80 bg-[radial-gradient(ellipse_at_top_right,rgba(0,33,71,0.07)_0%,transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(220,38,38,0.05)_0%,transparent_45%)]">
-        {/* Soft Ambient Blur Spots */}
-        <div className="absolute top-10 right-10 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-80 h-80 bg-brand-red/5 rounded-full blur-3xl pointer-events-none" />
+        {/* Soft Ambient Blur Spots & Minimal Academic Accents */}
+        <div className="absolute top-10 right-10 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none aris-ambient-float" />
+        <div
+          className="absolute bottom-10 left-10 w-80 h-80 bg-brand-red/5 rounded-full blur-3xl pointer-events-none aris-ambient-float"
+          style={{ animationDelay: "2.5s" }}
+        />
+        <div
+          aria-hidden="true"
+          className="hidden sm:block absolute top-16 left-[14%] w-2.5 h-2.5 rounded-full bg-brand-red/20 pointer-events-none aris-ambient-float"
+          style={{ animationDelay: "1s" }}
+        />
+        <div
+          aria-hidden="true"
+          className="hidden sm:block absolute bottom-20 right-[42%] w-2 h-2 rounded-full bg-brand-blue/25 pointer-events-none aris-ambient-float"
+          style={{ animationDelay: "3.2s" }}
+        />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
             {/* Left: Headline, Subheadline & Primary Action */}
             <div className="lg:col-span-7 space-y-7 text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
+              <div
+                className="aris-enter inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs"
+                style={{ animationDelay: "0ms" }}
+              >
                 <GraduationCap className="h-4 w-4" />
                 <span>NextBand • Nền Tảng Học Thuật ARIS</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[62px] font-black text-foreground tracking-tight leading-[1.12]">
+              <h1
+                className="aris-enter text-4xl sm:text-5xl lg:text-6xl xl:text-[62px] font-black text-foreground tracking-tight leading-[1.12]"
+                style={{ animationDelay: "100ms" }}
+              >
                 Học tiếng Anh{" "}
-                <AcademicPhrase
-                  text="từ bản chất!"
-                  className="font-montserrat font-black tracking-normal inline-block"
-                />
+                <span className="relative inline-block px-1.5 -mx-1">
+                  <span
+                    aria-hidden="true"
+                    className="aris-brush-highlight absolute inset-x-0 bottom-1 top-2 bg-brand-red/10 border-b-[3px] border-brand-red/60 rounded-md -rotate-[0.6deg] pointer-events-none"
+                    style={{ animationDelay: "280ms" }}
+                  />
+                  <AcademicPhrase
+                    text="từ bản chất!"
+                    className="relative z-10 font-montserrat font-black tracking-normal inline-block"
+                  />
+                </span>
                 <br />
                 <span className="text-[#002147] block mt-2">
                   Không học mẹo. Không học thuộc bài mẫu.
                 </span>
               </h1>
 
-              <p className="text-lg sm:text-xl lg:text-[22px] text-foreground/85 font-normal leading-relaxed max-w-2xl">
-                Định vị chính xác năng lực, bóc tách từng lỗi sai và xây dựng tư duy ngôn ngữ vững chắc cùng đội ngũ giảng viên ARIS.
+              <p
+                className="aris-enter text-lg sm:text-xl lg:text-[22px] text-foreground/85 font-normal leading-relaxed max-w-2xl"
+                style={{ animationDelay: "210ms" }}
+              >
+                Chỉ cần bạn kiên trì đi đúng phương pháp, ARIS đã chuẩn bị sẵn hệ thống định vị năng lực, bóc tách từng lỗi sai và lộ trình cá nhân hóa để bạn tự tin chinh phục band điểm mơ ước.
               </p>
 
               {/* Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full sm:w-auto">
+              <div
+                className="aris-enter pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full sm:w-auto"
+                style={{ animationDelay: "320ms" }}
+              >
                 <Button
                   size="lg"
                   onClick={() => navigate("/assessment")}
@@ -96,7 +128,10 @@ export default function PublicHomePage() {
               </div>
 
               {/* Trust Indicators */}
-              <div className="pt-7 border-t border-border/80 flex flex-wrap items-center gap-6 sm:gap-8 text-sm sm:text-base text-foreground/80 font-bold">
+              <div
+                className="aris-enter pt-7 border-t border-border/80 flex flex-wrap items-center gap-6 sm:gap-8 text-sm sm:text-base text-foreground/80 font-bold"
+                style={{ animationDelay: "420ms" }}
+              >
                 <span className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-success" />
                   Giảng viên có chứng chỉ chuyên môn
@@ -113,7 +148,10 @@ export default function PublicHomePage() {
             </div>
 
             {/* Right: Interactive Diagnostic Hook Sandbox */}
-            <div className="lg:col-span-5 relative">
+            <div
+              className="lg:col-span-5 relative aris-enter-right"
+              style={{ animationDelay: "220ms" }}
+            >
               <HeroDiagnosticHook onStartFullAssessment={() => navigate("/assessment")} />
             </div>
           </div>
