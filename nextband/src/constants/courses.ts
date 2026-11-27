@@ -296,8 +296,8 @@ export const COURSE_CATALOG: Record<string, CourseData> = {
     totalHours: 60,
     schedule: "03 buổi / tuần, 02 giờ / buổi",
     classSize: "Tối đa 08 học viên / lớp",
-    tuition: "7.000.000đ",
-    tuitionNum: 7000000,
+    tuition: "6.900.000đ",
+    tuitionNum: 6900000,
     description:
       "Tinh chỉnh văn phong học thuật tự nhiên, kiểm soát độ chính xác ngữ nghĩa và hoàn thiện tư duy phản biện cấp cao.",
     metadata: ["10 tuần · 30 buổi · 60 giờ", "Tối đa 8 học viên", "Luyện đề phòng thi NextBand"],

@@ -45,7 +45,7 @@ const COURSE_TUITION: Record<CourseKey, number> = {
   dreamer: 5000000,
   builder: 5500000,
   master: 6000000,
-  leader: 7000000,
+  leader: 6900000,
 };
 
 // 1. Học bổng Tinh Anh (Khóa đầu tiên)

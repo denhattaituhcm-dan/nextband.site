@@ -195,7 +195,7 @@ export function QuickTrialModal({
                       <SelectItem value="dreamer">Khóa DOER (3.0 → 4.0) — 5.000.000đ</SelectItem>
                       <SelectItem value="builder">Khóa BUILDER (4.0 → 5.0) — 5.500.000đ</SelectItem>
                       <SelectItem value="master">Khóa MASTER (5.0 → 6.0) — 6.000.000đ</SelectItem>
-                      <SelectItem value="leader">Khóa LEADER (6.0 → 6.5+) — 7.000.000đ</SelectItem>
+                      <SelectItem value="leader">Khóa LEADER (6.0 → 6.5+) — 6.900.000đ</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
