@@ -38,7 +38,7 @@ export default function CambridgeKidsCoursePage() {
       desc: "Nấc thang cao nhất của hệ Young Learners (YLE). Giúp học sinh diễn đạt mạch lạc bằng câu phức, làm quen với cấu trúc bài đọc thông tin học thuật dài 150-200 từ.",
       stats: [
         { label: "Chuẩn đầu ra", val: "14 - 15 Khiên (A2)" },
-        { label: "Học phí công khai", val: "1.000.000đ / tháng" },
+        { label: "Vốn từ vựng", val: "1.200+ Từ" },
         { label: "Quy mô", val: "Tối đa 8 học viên" },
         { label: "Bệ phóng IELTS", val: "Tương đương 3.5 - 4.0" },
       ],
@@ -58,7 +58,7 @@ export default function CambridgeKidsCoursePage() {
       desc: "Bước chuyển bản lề sang hệ Cambridge General. Rèn luyện kỹ năng phân tích văn bản thực tế (báo chí, thông báo), viết email/ghi chú và phản xạ giao tiếp với giám khảo.",
       stats: [
         { label: "Chuẩn đầu ra", val: "Pass with Merit/Distinction" },
-        { label: "Học phí công khai", val: "1.200.000đ / tháng" },
+        { label: "Vốn từ vựng", val: "1.800+ Từ" },
         { label: "Quy mô", val: "Tối đa 8 học viên" },
         { label: "Bệ phóng IELTS", val: "Tương đương 4.0 - 4.5" },
       ],
@@ -78,7 +78,7 @@ export default function CambridgeKidsCoursePage() {
       desc: "Khóa học tinh hoa dành cho học sinh THCS định hướng thi chuyên hoặc lấy chứng chỉ IELTS sớm. Đào tạo tư duy lập luận phản biện, phân tích dữ liệu và viết luận 100 từ.",
       stats: [
         { label: "Chuẩn đầu ra", val: "B1 / B2 CEFR Quốc tế" },
-        { label: "Học phí công khai", val: "1.500.000đ / tháng" },
+        { label: "Vốn từ vựng", val: "2.500+ Từ học thuật" },
         { label: "Quy mô", val: "Tối đa 8 học viên" },
         { label: "Bệ phóng IELTS", val: "Tiến thẳng vào IELTS 5.5+" },
       ],
