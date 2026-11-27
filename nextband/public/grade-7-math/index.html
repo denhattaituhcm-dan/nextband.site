@@ -356,6 +356,7 @@
     .im-html-body th { background: var(--bg-card-tinted); color: var(--ink-primary); }
     .im-html-body ol, .im-html-body ul { padding-left: 22px; }
     .im-html-body li { margin-bottom: 6px; }
+    .im-html-body iframe { max-width: 100%; border-radius: 10px; margin: 12px auto; display: block; border: 1px solid var(--border-soft); }
 
     .summary-box {
       background: var(--bg-vi-bridge);
@@ -803,7 +804,7 @@
 
         <div class="tab-bar">
           <button class="tab-pill ${currentTab === 'lesson' ? 'active' : ''}" onclick="selectTab('lesson')">📖 Hoạt động (${lesson.activities.length})</button>
-          <button class="tab-pill ${currentTab === 'summary' ? 'active' : ''}" onclick="selectTab('summary')">📌 Tóm tắt & Từ vựng</button>
+          <button class="tab-pill ${currentTab === 'summary' ? 'active' : ''}" onclick="selectTab('summary')">📌 Tóm tắt & Từ vựng${lesson.glossary && lesson.glossary.length ? ' (' + lesson.glossary.length + ')' : ''}</button>
           <button class="tab-pill ${currentTab === 'practice' ? 'active' : ''}" onclick="selectTab('practice')">✍️ Bài tập (${lesson.practiceProblems.length})</button>
         </div>
 
