@@ -223,6 +223,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
       { label: "Physics (High School)", href: "/physics", badge: "23 Chương", badgeColor: "purple" },
       { label: "Prealgebra 2e", href: "/prealgebra", badge: "11 Chương", badgeColor: "emerald" },
       { label: "Grade 6 Math (IM)", href: "/grade-6-math", badge: "9 Units", badgeColor: "amber" },
+      { label: "Grade 7 Math (IM)", href: "/grade-7-math", badge: "9 Units", badgeColor: "amber" },
     ],
   },
   { label: "Tự học", href: "https://tuhoc.nextband.vn", isFeatured: true },
@@ -255,7 +256,8 @@ export function PublicHeader() {
         location.pathname.startsWith("/physics") ||
         location.pathname.startsWith("/prealgebra") ||
         location.pathname.startsWith("/elementary-algebra") ||
-        location.pathname.startsWith("/grade-6-math")
+        location.pathname.startsWith("/grade-6-math") ||
+        location.pathname.startsWith("/grade-7-math")
       ) {
         return true;
       }

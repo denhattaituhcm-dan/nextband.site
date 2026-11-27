@@ -122,6 +122,7 @@ const SpeakingForecastTopicPage = lazyWithRetry(() => import("@/pages/public/spe
 const ChemistryLabPage = lazyWithRetry(() => import("@/pages/public/ChemistryLabPage"));
 const ElementaryAlgebraPage = lazyWithRetry(() => import("@/pages/public/ElementaryAlgebraPage"));
 const Grade6MathPage = lazyWithRetry(() => import("@/pages/public/Grade6MathPage"));
+const Grade7MathPage = lazyWithRetry(() => import("@/pages/public/Grade7MathPage"));
 const PhysicsPage = lazyWithRetry(() => import("@/pages/public/PhysicsPage"));
 const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingUniversePage"));
 const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
@@ -420,6 +421,7 @@ const App = () => (
               <Route path="/prealgebra" element={<ElementaryAlgebraPage />} />
               <Route path="/elementary-algebra" element={<Navigate to="/prealgebra" replace />} />
               <Route path="/grade-6-math" element={<Grade6MathPage />} />
+              <Route path="/grade-7-math" element={<Grade7MathPage />} />
 
               {/* English Idioms Focus App (Standalone Specialized Environment) */}
               <Route path="/reading/idioms" element={<EnglishIdiomsCatalogPage />} />
